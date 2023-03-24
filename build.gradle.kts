@@ -50,3 +50,17 @@ dependencies {
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }
+
+jib {
+    if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+        dockerClient.environment = mapOf(
+            "DOCKER_HOST" to "localhost:2375"
+        )
+    }
+}
+
+ktor {
+    docker {
+        localImageName.set("hideout")
+    }
+}
