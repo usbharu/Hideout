@@ -15,8 +15,8 @@ fun Application.login(){
             post("/login") {
                 println("aaaaaaaaaaaaaaaaaaaaa")
                 val principal = call.principal<UserIdPrincipal>()
-                call.sessions.set(UserSession(principal!!.name))
-                call.respondRedirect("/users/${principal.name}")
+//                call.sessions.set(UserSession(principal!!.name))
+                call.respondRedirect("/users/${principal!!.name}")
             }
         }
 
