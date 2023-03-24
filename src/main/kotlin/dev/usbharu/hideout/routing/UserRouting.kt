@@ -45,6 +45,7 @@ fun Application.user(userService: UserService,activityPubUserService: ActivityPu
                     )
                     val name = call.parameters["name"]
                     if (typeOfActivityPub) {
+                        println("Required Activity !!")
                         val userModel = activityPubUserService.generateUserModel(name!!)
                         return@get call.respondAp(userModel)
                     }
