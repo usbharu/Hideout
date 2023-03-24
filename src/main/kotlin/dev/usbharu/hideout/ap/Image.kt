@@ -6,7 +6,7 @@ open class Image : Object {
 
     protected constructor() : super()
     constructor(type: List<String> = emptyList(), name: String, mediaType: String?, url: String?) : super(
-        type,
+        add(type,"Image"),
         name
     ) {
         this.mediaType = mediaType

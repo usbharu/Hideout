@@ -8,7 +8,7 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 
 suspend fun <T : JsonLd> ApplicationCall.respondAp(message: T, status: HttpStatusCode = HttpStatusCode.OK) {
-    message.context += "https://www.w3.org/activitystreams"
+    message.context += "https://www.w3.org/ns/activitystreams"
     val activityJson = Config.configData.objectMapper.writeValueAsString(message)
     respondText(activityJson, ContentType.Application.Activity, status)
 }

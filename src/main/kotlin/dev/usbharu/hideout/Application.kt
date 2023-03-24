@@ -1,5 +1,7 @@
 package dev.usbharu.hideout
 
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.config.ConfigData
@@ -21,7 +23,7 @@ import io.ktor.server.auth.*
 import io.ktor.util.*
 import org.jetbrains.exposed.sql.Database
 import org.koin.ktor.ext.inject
-import java.util.Base64
+import java.util.*
 
 fun main(args: Array<String>): Unit =
     io.ktor.server.netty.EngineMain.main(args)
@@ -30,19 +32,24 @@ fun main(args: Array<String>): Unit =
 fun Application.module() {
     val module = org.koin.dsl.module {
 
-        single<Database>{ Database.connect(
-            url = "jdbc:h2:./test;MODE=POSTGRESQL",
-            driver = "org.h2.Driver",
-        ) }
-        single<ConfigData>{ ConfigData(
-            environment.config.property("hideout.hostname").getString(),
-            jacksonObjectMapper()
-        ) }
-        single<IUserRepository>{UserRepository(get())}
-        single<IUserAuthRepository>{UserAuthRepository(get())}
-        single<IUserAuthService>{ UserAuthService(get(),get()) }
+        single<Database> {
+            Database.connect(
+                url = "jdbc:h2:./test;MODE=POSTGRESQL",
+                driver = "org.h2.Driver",
+            )
+        }
+        single<ConfigData> {
+            ConfigData(
+                environment.config.property("hideout.hostname").getString(),
+                jacksonObjectMapper().enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+                    .setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
+            )
+        }
+        single<IUserRepository> { UserRepository(get()) }
+        single<IUserAuthRepository> { UserAuthRepository(get()) }
+        single<IUserAuthService> { UserAuthService(get(), get()) }
         single<UserService> { UserService(get()) }
-        single<ActivityPubUserService> { ActivityPubUserService(get())}
+        single<ActivityPubUserService> { ActivityPubUserService(get()) }
     }
     configureKoin(module)
     val configData by inject<ConfigData>()
@@ -59,7 +66,7 @@ fun Application.module() {
     configureSerialization()
     configureSockets()
     val activityPubUserService by inject<ActivityPubUserService>()
-    user(userService,activityPubUserService)
+    user(userService, activityPubUserService)
     login()
     register(userAuthService)
     wellKnown(userService)
