@@ -46,12 +46,12 @@ fun Application.wellKnown(userService: UserService) {
             }
 
             get("/webfinger") {
-                val uri = call.request.queryParameters["resource"] ?: return@get call.respond(
-                    HttpStatusCode.BadRequest
+                val uri = call.request.queryParameters["resource"] ?: return@get call.respondText("resource was not found",
+                    status = HttpStatusCode.BadRequest
                 )
 
                 if (uri.startsWith("acct:")) {
-                    return@get call.respond(HttpStatusCode.BadRequest)
+                    return@get call.respondText("$uri was not found.",status =HttpStatusCode.BadRequest)
                 }
                 val accountName = uri.substringBeforeLast("@")
                 val userEntity = userService.findByName(accountName)
