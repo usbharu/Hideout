@@ -50,7 +50,7 @@ fun Application.wellKnown(userService: UserService) {
                     status = HttpStatusCode.BadRequest
                 )
 
-                if (uri.startsWith("acct:")) {
+                if (uri.decodeURLPart().startsWith("acct:")) {
                     return@get call.respondText("$uri was not found.",status =HttpStatusCode.BadRequest)
                 }
                 val accountName = uri.substringBeforeLast("@")
