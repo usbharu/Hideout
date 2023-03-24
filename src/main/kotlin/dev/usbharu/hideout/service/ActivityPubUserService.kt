@@ -1,27 +1,39 @@
 package dev.usbharu.hideout.service
 
 import dev.usbharu.hideout.ap.Image
+import dev.usbharu.hideout.ap.Key
 import dev.usbharu.hideout.ap.Person
 import dev.usbharu.hideout.config.Config
 
-class ActivityPubUserService(private val userService: UserService) {
-    suspend fun generateUserModel(name:String):Person{
+class ActivityPubUserService(
+    private val userService: UserService,
+    private val userAuthService: IUserAuthService
+) {
+    suspend fun generateUserModel(name: String): Person {
         val userEntity = userService.findByName(name)
+        val userAuthEntity = userAuthService.findByUserId(userEntity.id)
         val userUrl = "${Config.configData.hostname}/users/$name"
         return Person(
-            emptyList(),
-            userEntity.name,
-            userUrl,
-            name,
-            userEntity.description,
-            "$userUrl/inbox",
-            "$userUrl/outbox",
-            userUrl,
-            Image(
-                emptyList(),
-                "$userUrl/icon.png",
-                "image/png",
-                "$userUrl/icon.png"
+            type = emptyList(),
+            name = userEntity.name,
+            id = userUrl,
+            preferredUsername = name,
+            summary = userEntity.description,
+            inbox = "$userUrl/inbox",
+            outbox = "$userUrl/outbox",
+            url = userUrl,
+            icon = Image(
+                type = emptyList(),
+                name = "$userUrl/icon.png",
+                mediaType = "image/png",
+                url = "$userUrl/icon.png"
+            ),
+            publicKey = Key(
+                type = emptyList(),
+                name = "Public Key",
+                id = "$userUrl/pubkey",
+                owner = userUrl,
+                publicKeyPem = userAuthEntity.publicKey
             )
         )
     }
