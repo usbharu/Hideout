@@ -1,0 +1,86 @@
+package dev.usbharu.hideout.service
+
+import dev.usbharu.hideout.domain.model.User
+import dev.usbharu.hideout.domain.model.UserAuthentication
+import dev.usbharu.hideout.exception.UserNotFoundException
+import dev.usbharu.hideout.repository.IUserAuthRepository
+import dev.usbharu.hideout.repository.IUserRepository
+import io.ktor.util.*
+import java.security.KeyPair
+import java.security.KeyPairGenerator
+import java.security.MessageDigest
+import java.security.interfaces.RSAPrivateCrtKey
+import java.security.interfaces.RSAPrivateKey
+import java.security.interfaces.RSAPublicKey
+import java.util.*
+
+class UserAuthService(
+    val userRepository: IUserRepository,
+    val userAuthRepository: IUserAuthRepository
+) : IUserAuthService {
+
+
+    override fun hash(password: String): String {
+        val digest = sha256.digest(password.toByteArray(Charsets.UTF_8))
+        return hex(digest)
+    }
+
+    override suspend fun usernameAlreadyUse(username: String): Boolean {
+        userRepository.findByName(username) ?: return false
+        return true
+    }
+
+    override suspend fun registerAccount(username: String, hash: String) {
+        val registerUser = User(
+            name = username,
+            screenName = username,
+            description = ""
+        )
+        val createdUser = userRepository.create(registerUser)
+
+        val keyPair = generateKeyPair()
+        val privateKey = keyPair.private as RSAPrivateKey
+        val publicKey = keyPair.public as RSAPublicKey
+
+
+        val userAuthentication = UserAuthentication(
+            createdUser.id,
+            hash,
+            publicKey.toPem(),
+            privateKey.toPem()
+        )
+
+        userAuthRepository.create(userAuthentication)
+    }
+
+    override suspend fun verifyAccount(username: String, password: String): Boolean {
+        val userEntity = userRepository.findByName(username)
+            ?: throw UserNotFoundException("$username was not found")
+        val userAuthEntity = userAuthRepository.findByUserId(userEntity.id)
+            ?: throw UserNotFoundException("$username auth data was not found")
+        return userAuthEntity.hash == hash(password)
+    }
+
+    private fun generateKeyPair(): KeyPair {
+        val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
+        keyPairGenerator.initialize(1024)
+        return keyPairGenerator.generateKeyPair()
+    }
+
+
+    private fun RSAPublicKey.toPem(): String {
+        return "-----BEGIN RSA PUBLIC KEY-----\n" +
+                Base64.getEncoder().encodeToString(encoded) + "\n" +
+                "-----END RSA PUBLIC KEY-----"
+    }
+
+    private fun RSAPrivateKey.toPem(): String {
+        return "-----BEGIN RSA PRIVATE KEY-----\n" +
+                Base64.getEncoder().encodeToString(encoded) + "\n" +
+                "-----END RSA PRIVATE KEY-----"
+    }
+
+    companion object {
+        val sha256: MessageDigest = MessageDigest.getInstance("SHA-256")
+    }
+}
