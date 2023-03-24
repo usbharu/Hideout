@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 
 object Config {
-    var configData:ConfigData = ConfigData("", jacksonObjectMapper())
+    var configData: ConfigData = ConfigData()
 }
 
-data class ConfigData(val hostname:String,val objectMapper: ObjectMapper)
+data class ConfigData(val hostname: String = "", val objectMapper: ObjectMapper = jacksonObjectMapper())

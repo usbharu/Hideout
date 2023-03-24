@@ -25,8 +25,7 @@ import org.jetbrains.exposed.sql.Database
 import org.koin.ktor.ext.inject
 import java.util.*
 
-fun main(args: Array<String>): Unit =
-    io.ktor.server.netty.EngineMain.main(args)
+fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 @Suppress("unused") // application.conf references the main function. This annotation prevents the IDE from marking it as unused.
 fun Application.module() {
@@ -34,8 +33,8 @@ fun Application.module() {
 
         single<Database> {
             Database.connect(
-                url = "jdbc:h2:./test;MODE=POSTGRESQL",
-                driver = "org.h2.Driver",
+                url = environment.config.property("hideout.database.url").getString(),
+                driver = environment.config.property("hideout.database.driver").getString(),
             )
         }
         single<ConfigData> {
