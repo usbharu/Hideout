@@ -49,15 +49,15 @@ fun Application.wellKnown(userService: UserService) {
                 val uri = call.request.queryParameters["resource"] ?: return@get call.respondText("resource was not found",
                     status = HttpStatusCode.BadRequest
                 )
-
-                if (uri.decodeURLPart().startsWith("acct:")) {
+                val decodeURLPart = uri.decodeURLPart()
+                if (!decodeURLPart.startsWith("acct:")) {
                     return@get call.respondText("$uri was not found.",status =HttpStatusCode.BadRequest)
                 }
-                val accountName = uri.substringBeforeLast("@")
+                val accountName = uri.substringBeforeLast("@").substringAfter("@")
                 val userEntity = userService.findByName(accountName)
 
                 return@get call.respond(WebFingerResource(
-                    subject = userEntity.name,
+                    subject = decodeURLPart,
                     listOf(
                         WebFingerResource.Link(
                             rel ="self",
