@@ -13,8 +13,9 @@ open class Object : JsonLd {
     companion object {
         @JvmStatic
         protected fun add(list:List<String>,type:String):List<String> {
-            list.toMutableList().add(type)
-            return list.distinct()
+            val toMutableList = list.toMutableList()
+            toMutableList.add(type)
+            return toMutableList.distinct()
         }
     }
 }
