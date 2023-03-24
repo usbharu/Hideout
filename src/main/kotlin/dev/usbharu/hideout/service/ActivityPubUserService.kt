@@ -7,7 +7,7 @@ import dev.usbharu.hideout.config.Config
 class ActivityPubUserService(private val userService: UserService) {
     suspend fun generateUserModel(name:String):Person{
         val userEntity = userService.findByName(name)
-        val userUrl = "${Config.configData.hostname}/$name"
+        val userUrl = "${Config.configData.hostname}/users/$name"
         return Person(
             emptyList(),
             "Icon",

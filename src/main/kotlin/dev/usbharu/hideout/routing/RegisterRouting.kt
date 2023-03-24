@@ -45,7 +45,6 @@ fun Application.register(userAuthService: IUserAuthService) {
 
             val hash = userAuthService.hash(password)
             userAuthService.registerAccount(username,hash)
-            call.sessions.set(UserSession(username))
 //            call.respondRedirect("/login")
             call.respondRedirect("/users/$username")
         }
