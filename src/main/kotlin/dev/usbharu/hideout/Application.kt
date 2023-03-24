@@ -10,10 +10,7 @@ import dev.usbharu.hideout.repository.IUserAuthRepository
 import dev.usbharu.hideout.repository.IUserRepository
 import dev.usbharu.hideout.repository.UserAuthRepository
 import dev.usbharu.hideout.repository.UserRepository
-import dev.usbharu.hideout.routing.login
-import dev.usbharu.hideout.routing.register
-import dev.usbharu.hideout.routing.user
-import dev.usbharu.hideout.routing.wellKnown
+import dev.usbharu.hideout.routing.*
 import dev.usbharu.hideout.service.ActivityPubUserService
 import dev.usbharu.hideout.service.IUserAuthService
 import dev.usbharu.hideout.service.UserAuthService
@@ -69,4 +66,5 @@ fun Application.module() {
     login()
     register(userAuthService)
     wellKnown(userService)
+    userActivityPubRouting()
 }
