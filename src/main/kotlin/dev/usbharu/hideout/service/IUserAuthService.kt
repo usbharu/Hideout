@@ -1,5 +1,7 @@
 package dev.usbharu.hideout.service
 
+import dev.usbharu.hideout.domain.model.UserAuthenticationEntity
+
 interface IUserAuthService {
     fun hash(password:String): String
 
@@ -7,4 +9,6 @@ interface IUserAuthService {
     suspend fun registerAccount(username: String, hash: String)
 
     suspend fun verifyAccount(username: String,password: String): Boolean
+
+    suspend fun findByUserId(userId: Long):UserAuthenticationEntity
 }

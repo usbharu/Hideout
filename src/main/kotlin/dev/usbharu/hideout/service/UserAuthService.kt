@@ -2,6 +2,7 @@ package dev.usbharu.hideout.service
 
 import dev.usbharu.hideout.domain.model.User
 import dev.usbharu.hideout.domain.model.UserAuthentication
+import dev.usbharu.hideout.domain.model.UserAuthenticationEntity
 import dev.usbharu.hideout.exception.UserNotFoundException
 import dev.usbharu.hideout.repository.IUserAuthRepository
 import dev.usbharu.hideout.repository.IUserRepository
@@ -61,6 +62,10 @@ class UserAuthService(
         return userAuthEntity.hash == hash(password)
     }
 
+    override suspend fun findByUserId(userId: Long): UserAuthenticationEntity {
+        return userAuthRepository.findByUserId(userId) ?: throw UserNotFoundException("$userId was not found")
+    }
+
     private fun generateKeyPair(): KeyPair {
         val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
         keyPairGenerator.initialize(1024)
@@ -69,14 +74,14 @@ class UserAuthService(
 
 
     private fun RSAPublicKey.toPem(): String {
-        return "-----BEGIN RSA PUBLIC KEY-----\n" +
-                Base64.getEncoder().encodeToString(encoded) + "\n" +
+        return "-----BEGIN RSA PUBLIC KEY-----" +
+                Base64.getEncoder().encodeToString(encoded) +
                 "-----END RSA PUBLIC KEY-----"
     }
 
     private fun RSAPrivateKey.toPem(): String {
-        return "-----BEGIN RSA PRIVATE KEY-----\n" +
-                Base64.getEncoder().encodeToString(encoded) + "\n" +
+        return "-----BEGIN RSA PRIVATE KEY-----" +
+                Base64.getEncoder().encodeToString(encoded) +
                 "-----END RSA PRIVATE KEY-----"
     }
 

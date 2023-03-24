@@ -8,6 +8,7 @@ open class Person : Object {
     private var outbox:String? = null
     private var url:String? = null
     private var icon:Image? = null
+    private var publicKey:Key? = null
     protected constructor() : super()
     constructor(
         type: List<String> = emptyList(),
@@ -18,7 +19,8 @@ open class Person : Object {
         inbox: String?,
         outbox: String?,
         url: String?,
-        icon: Image?
+        icon: Image?,
+        publicKey: Key?
     ) : super(add(type,"Person"), name) {
         this.id = id
         this.preferredUsername = preferredUsername
@@ -27,6 +29,7 @@ open class Person : Object {
         this.outbox = outbox
         this.url = url
         this.icon = icon
+        this.publicKey =  publicKey
     }
 
 }

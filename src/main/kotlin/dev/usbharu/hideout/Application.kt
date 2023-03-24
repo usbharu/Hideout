@@ -48,7 +48,7 @@ fun Application.module() {
         single<IUserAuthRepository> { UserAuthRepository(get()) }
         single<IUserAuthService> { UserAuthService(get(), get()) }
         single<UserService> { UserService(get()) }
-        single<ActivityPubUserService> { ActivityPubUserService(get()) }
+        single<ActivityPubUserService> { ActivityPubUserService(get(),get()) }
     }
     configureKoin(module)
     val configData by inject<ConfigData>()
