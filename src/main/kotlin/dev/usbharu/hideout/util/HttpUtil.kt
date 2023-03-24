@@ -15,7 +15,7 @@ object HttpUtil {
         if (subType == "activity+json") {
             return true
         }
-        if (subType == "ld+json" && parameter == "https://www.w3.org/ns/activitystreams") {
+        if (subType == "ld+json") {
             return true
 
         }

@@ -16,10 +16,10 @@ import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 
 @Suppress("unused")
-fun Application.user(userService: UserService,activityPubUserService: ActivityPubUserService) {
+fun Application.user(userService: UserService, activityPubUserService: ActivityPubUserService) {
     routing {
         route("/users") {
-            authenticate( tokenAuth,optional = true) {
+            authenticate(tokenAuth, optional = true) {
 
                 get {
                     val limit = call.request.queryParameters["limit"]?.toInt()
@@ -37,7 +37,8 @@ fun Application.user(userService: UserService,activityPubUserService: ActivityPu
                     call.respond(HttpStatusCode.Created)
                 }
                 get("/{name}") {
-                    val contentType = ContentType.parse(call.request.accept()?:"*/*")
+                    val contentType = ContentType.parse(call.request.accept() ?: "*/*")
+                    call.application.environment.log.debug("Accept Content-Type : ${contentType.contentType}/${contentType.contentSubtype} ${contentType.parameters}")
                     val typeOfActivityPub = HttpUtil.isContentTypeOfActivityPub(
                         contentType.contentType,
                         contentType.contentSubtype,
@@ -67,9 +68,9 @@ fun Application.user(userService: UserService,activityPubUserService: ActivityPu
             }
 
             authenticate(tokenAuth) {
-                get("/admin"){
-                    println("cccccccccccc "+call.principal<UserIdPrincipal>())
-                    println("cccccccccccc "+call.principal<UserSession>())
+                get("/admin") {
+                    println("cccccccccccc " + call.principal<UserIdPrincipal>())
+                    println("cccccccccccc " + call.principal<UserSession>())
 
                     return@get call.respondText {
                         "you alredy in admin !! hello " +
