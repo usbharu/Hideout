@@ -10,7 +10,7 @@ class ActivityPubUserService(private val userService: UserService) {
         val userUrl = "${Config.configData.hostname}/users/$name"
         return Person(
             emptyList(),
-            "Icon",
+            userEntity.name,
             userUrl,
             name,
             userEntity.description,
