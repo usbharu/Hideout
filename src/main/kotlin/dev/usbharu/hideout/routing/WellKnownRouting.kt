@@ -1,7 +1,6 @@
 package dev.usbharu.hideout.routing
 
 import dev.usbharu.hideout.config.Config
-import dev.usbharu.hideout.exception.UserNotFoundException
 import dev.usbharu.hideout.service.UserService
 import dev.usbharu.hideout.util.HttpUtil.Activity
 import io.ktor.http.*
@@ -46,26 +45,33 @@ fun Application.wellKnown(userService: UserService) {
             }
 
             get("/webfinger") {
-                val uri = call.request.queryParameters["resource"] ?: return@get call.respondText("resource was not found",
+                val uri = call.request.queryParameters["resource"] ?: return@get call.respondText(
+                    "resource was not found",
                     status = HttpStatusCode.BadRequest
                 )
                 val decodeURLPart = uri.decodeURLPart()
                 if (!decodeURLPart.startsWith("acct:")) {
-                    return@get call.respondText("$uri was not found.",status =HttpStatusCode.BadRequest)
+                    return@get call.respondText(
+                        "$uri was not found.",
+                        status = HttpStatusCode.BadRequest
+                    )
                 }
-                val accountName = uri.substringBeforeLast("@").substringAfter("@")
+                val accountName =
+                    uri.substringBeforeLast("@").substringAfter("acct:").trimStart('@')
                 val userEntity = userService.findByName(accountName)
 
-                return@get call.respond(WebFingerResource(
-                    subject = decodeURLPart,
-                    listOf(
-                        WebFingerResource.Link(
-                            rel ="self",
-                            type = ContentType.Application.Activity.toString(),
-                            href = "${Config.configData.hostname}/users/${userEntity.name}"
+                return@get call.respond(
+                    WebFingerResource(
+                        subject = decodeURLPart,
+                        listOf(
+                            WebFingerResource.Link(
+                                rel = "self",
+                                type = ContentType.Application.Activity.toString(),
+                                href = "${Config.configData.hostname}/users/${userEntity.name}"
+                            )
                         )
                     )
-                ))
+                )
             }
 
         }
@@ -73,7 +79,7 @@ fun Application.wellKnown(userService: UserService) {
 }
 
 @Serializable
-data class WebFingerResource(val subject:String,val links:List<Link>){
+data class WebFingerResource(val subject: String, val links: List<Link>) {
     @Serializable
-    data class Link(val rel:String,val type:String,val href:String)
+    data class Link(val rel: String, val type: String, val href: String)
 }
