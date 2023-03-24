@@ -58,7 +58,6 @@ fun Application.module() {
     configureMonitoring()
     configureSerialization()
     configureSockets()
-    configureRouting()
     val activityPubUserService by inject<ActivityPubUserService>()
     user(userService,activityPubUserService)
     login()
