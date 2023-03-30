@@ -25,11 +25,12 @@ fun Application.userActivityPubRouting(activityPubService: ActivityPubService, a
                     }
                     val bodyText = call.receiveText()
                     println(bodyText)
+                    call.respond(HttpStatusCode.OK)
                     when (activityPubService.switchApType(bodyText)) {
                         ActivityPubService.ActivityType.Follow -> {
                             val readValue = Config.configData.objectMapper.readValue<Follow>(bodyText)
                             activityPubUserService.receiveFollow(readValue)
-
+                            return@post
                         }
 
                         ActivityPubService.ActivityType.Undo -> {
