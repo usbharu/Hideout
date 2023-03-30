@@ -45,7 +45,8 @@ fun Application.module() {
         single<IUserAuthRepository> { UserAuthRepository(get()) }
         single<IUserAuthService> { UserAuthService(get(), get()) }
         single<UserService> { UserService(get()) }
-        single<ActivityPubUserService> { ActivityPubUserService(get(), get(),get()) }
+        single<WebFingerService> { WebFingerService(get(),get(),get(),get()) }
+        single<ActivityPubUserService> { ActivityPubUserService(get(), get(),get(),get()) }
         single<ActivityPubService> { ActivityPubService() }
         single<HttpClient> { HttpClient(CIO) }
     }
