@@ -38,6 +38,7 @@ class WebFingerService(
             }.body<Person>()
         } catch (e: ResponseException) {
             if (e.response.status == HttpStatusCode.NotFound) {
+                e.printStackTrace()
                 return null
             }
             throw e
