@@ -11,10 +11,9 @@ import dev.usbharu.hideout.repository.IUserRepository
 import dev.usbharu.hideout.repository.UserAuthRepository
 import dev.usbharu.hideout.repository.UserRepository
 import dev.usbharu.hideout.routing.*
-import dev.usbharu.hideout.service.ActivityPubUserService
-import dev.usbharu.hideout.service.IUserAuthService
-import dev.usbharu.hideout.service.UserAuthService
-import dev.usbharu.hideout.service.UserService
+import dev.usbharu.hideout.service.*
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.util.*
@@ -47,6 +46,8 @@ fun Application.module() {
         single<IUserAuthService> { UserAuthService(get(), get()) }
         single<UserService> { UserService(get()) }
         single<ActivityPubUserService> { ActivityPubUserService(get(), get(),get()) }
+        single<ActivityPubService> { ActivityPubService() }
+        single<HttpClient> { HttpClient(CIO) }
     }
     configureKoin(module)
     val configData by inject<ConfigData>()
@@ -67,5 +68,6 @@ fun Application.module() {
     login()
     register(userAuthService)
     wellKnown(userService)
-    userActivityPubRouting()
+    val activityPubService by inject<ActivityPubService>()
+    userActivityPubRouting(activityPubService)
 }
