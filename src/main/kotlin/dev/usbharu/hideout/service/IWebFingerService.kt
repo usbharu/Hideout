@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.service
 
+import dev.usbharu.hideout.ap.Person
 import dev.usbharu.hideout.domain.model.UserEntity
 import dev.usbharu.hideout.webfinger.WebFinger
 
@@ -12,4 +13,6 @@ interface IWebFingerService {
         val webFinger = fetch(acct)?: throw IllegalArgumentException()
         return sync(webFinger)
     }
+
+    suspend fun fetchUserModel(actor: String): Person?
 }

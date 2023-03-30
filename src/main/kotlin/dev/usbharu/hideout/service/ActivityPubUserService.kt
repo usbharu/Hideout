@@ -12,7 +12,7 @@ class ActivityPubUserService(
         private val httpClient: HttpClient,
         private val userService: UserService,
         private val userAuthService: IUserAuthService,
-        private val webFingerService: WebFingerService
+        private val webFingerService: IWebFingerService
 ) {
     suspend fun generateUserModel(name: String): Person {
         val userEntity = userService.findByName(name)
@@ -43,20 +43,9 @@ class ActivityPubUserService(
         )
     }
 
-    suspend fun fetchUserModel(url: String): Person? {
-        return try {
-            httpClient.get(url).body<Person>()
-        } catch (e: ResponseException) {
-            if (e.response.status == HttpStatusCode.NotFound) {
-                return null
-            }
-            throw e
-        }
-    }
-
     suspend fun receiveFollow(follow: Follow) {
         val actor = follow.actor ?: throw IllegalArgumentException("actor is null")
-        val person = fetchUserModel(actor) ?: throw IllegalArgumentException("actor is not found")
+        val person = webFingerService.fetchUserModel(actor) ?: throw IllegalArgumentException("actor is not found")
         val inboxUrl = person.inbox ?: throw IllegalArgumentException("inbox is not found")
         httpClient.post(inboxUrl) {
             setBody(Accept(
