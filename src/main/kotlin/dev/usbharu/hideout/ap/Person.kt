@@ -4,7 +4,7 @@ open class Person : Object {
     private var id:String? = null
     var preferredUsername:String? = null
     var summary:String? = null
-    private var inbox:String? = null
+    var inbox:String? = null
     private var outbox:String? = null
     private var url:String? = null
     private var icon:Image? = null
