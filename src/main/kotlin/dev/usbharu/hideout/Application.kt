@@ -41,14 +41,14 @@ fun Application.module() {
                     .setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
             )
         }
+        single<HttpClient> { HttpClient(CIO) }
         single<IUserRepository> { UserRepository(get()) }
         single<IUserAuthRepository> { UserAuthRepository(get()) }
         single<IUserAuthService> { UserAuthService(get(), get()) }
         single<UserService> { UserService(get()) }
-        single<WebFingerService> { WebFingerService(get(),get(),get(),get()) }
-        single<ActivityPubUserService> { ActivityPubUserService(get(), get(),get(),get()) }
         single<ActivityPubService> { ActivityPubService() }
-        single<HttpClient> { HttpClient(CIO) }
+        single<ActivityPubUserService> { ActivityPubUserService(get(), get(),get(),get()) }
+        single<IWebFingerService> { WebFingerService(get(),get()) }
     }
     configureKoin(module)
     val configData by inject<ConfigData>()
@@ -70,5 +70,5 @@ fun Application.module() {
     register(userAuthService)
     wellKnown(userService)
     val activityPubService by inject<ActivityPubService>()
-    userActivityPubRouting(activityPubService)
+    userActivityPubRouting(activityPubService, activityPubUserService)
 }

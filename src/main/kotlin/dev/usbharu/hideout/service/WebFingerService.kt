@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.service
 
+import dev.usbharu.hideout.ap.Person
 import dev.usbharu.hideout.domain.model.User
 import dev.usbharu.hideout.domain.model.UserEntity
 import dev.usbharu.hideout.util.HttpUtil
@@ -12,9 +13,7 @@ import io.ktor.http.*
 
 class WebFingerService(
     private val httpClient: HttpClient,
-    private val userService: UserService,
-    private val userAuthService: IUserAuthService,
-    private val activityPubUserService: ActivityPubUserService
+    private val userService: UserService
 ) : IWebFingerService {
     override suspend fun fetch(acct: String): WebFinger? {
 
@@ -24,6 +23,17 @@ class WebFingerService(
         return try {
             httpClient.get("https://$domain/.well-known/webfinger?resource=acct:$fullName")
                 .body<WebFinger>()
+        } catch (e: ResponseException) {
+            if (e.response.status == HttpStatusCode.NotFound) {
+                return null
+            }
+            throw e
+        }
+    }
+
+    override suspend fun fetchUserModel(url: String): Person? {
+        return try {
+            httpClient.get(url).body<Person>()
         } catch (e: ResponseException) {
             if (e.response.status == HttpStatusCode.NotFound) {
                 return null
@@ -46,7 +56,7 @@ class WebFingerService(
         val domain = fullName.substringAfterLast("@")
         val userName = fullName.substringBeforeLast("@")
 
-        val userModel = activityPubUserService.fetchUserModel(link) ?: throw Exception()
+        val userModel = fetchUserModel(link) ?: throw Exception()
 
         val user = User(
             userModel.preferredUsername ?: throw IllegalStateException(),
