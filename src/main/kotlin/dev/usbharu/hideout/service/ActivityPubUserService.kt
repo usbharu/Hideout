@@ -2,6 +2,7 @@ package dev.usbharu.hideout.service
 
 import dev.usbharu.hideout.ap.*
 import dev.usbharu.hideout.config.Config
+import dev.usbharu.hideout.util.HttpUtil.Activity
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.*
@@ -48,6 +49,7 @@ class ActivityPubUserService(
         val person = webFingerService.fetchUserModel(actor) ?: throw IllegalArgumentException("actor is not found")
         val inboxUrl = person.inbox ?: throw IllegalArgumentException("inbox is not found")
         httpClient.post(inboxUrl) {
+            contentType(ContentType.Application.Activity)
             setBody(Accept(
                     name = "Follow",
                     `object` = follow,
