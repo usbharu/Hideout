@@ -16,7 +16,7 @@ fun Application.wellKnown(userService: UserService) {
             get("/host-meta") {
                 //language=XML
                 val xml = """
-                    <?xml version="1.0" encoding="UTF-8"?><XRD xmlns="http://docs.oasis-open.org/ns/xri/xrd-1.0"><Link rel="lrdd" type="application/xrd+xml" template="${Config.configData.hostname}/.well-known/webfinger?resource={uri}"/></XRD>
+                    <?xml version="1.0" encoding="UTF-8"?><XRD xmlns="http://docs.oasis-open.org/ns/xri/xrd-1.0"><Link rel="lrdd" type="application/xrd+xml" template="${Config.configData.url}/.well-known/webfinger?resource={uri}"/></XRD>
                 """.trimIndent()
                 return@get call.respondText(
                     contentType = ContentType("application", "xrd+xml"),
@@ -32,7 +32,7 @@ fun Application.wellKnown(userService: UserService) {
                         {
                           "rel": "lrdd",
                           "type": "application/jrd+json",
-                          "template": "${Config.configData.hostname}/.well-known/webfinger?resource={uri}"
+                          "template": "${Config.configData.url}/.well-known/webfinger?resource={uri}"
                         }
                       ]
                     }
@@ -67,7 +67,7 @@ fun Application.wellKnown(userService: UserService) {
                             WebFingerResource.Link(
                                 rel = "self",
                                 type = ContentType.Application.Activity.toString(),
-                                href = "${Config.configData.hostname}/users/${userEntity.name}"
+                                href = "${Config.configData.url}/users/${userEntity.name}"
                             )
                         )
                     )

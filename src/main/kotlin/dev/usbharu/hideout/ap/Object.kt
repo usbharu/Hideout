@@ -2,7 +2,7 @@ package dev.usbharu.hideout.ap
 
 open class Object : JsonLd {
     private var type: List<String> = emptyList()
-    private var name: String? = null
+    var name: String? = null
 
     protected constructor()
     constructor(type: List<String>, name: String) : super() {

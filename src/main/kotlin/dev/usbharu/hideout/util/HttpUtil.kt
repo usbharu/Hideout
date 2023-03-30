@@ -15,14 +15,18 @@ object HttpUtil {
         if (subType == "activity+json") {
             return true
         }
-        if (subType == "ld+json") {
-            return true
+        return subType == "ld+json"
+    }
 
-        }
-        return false
+    fun isContentTypeOfActivityPub(contentType: ContentType): Boolean {
+        return isContentTypeOfActivityPub(
+            contentType.contentType,
+            contentType.contentSubtype,
+            contentType.parameter("profile").orEmpty()
+        )
     }
 
     val ContentType.Application.Activity: ContentType
-        get() = ContentType("application","activity+json")
+        get() = ContentType("application", "activity+json")
 //    fun
 }
