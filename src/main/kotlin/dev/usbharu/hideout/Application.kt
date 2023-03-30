@@ -12,10 +12,12 @@ import dev.usbharu.hideout.repository.UserAuthRepository
 import dev.usbharu.hideout.repository.UserRepository
 import dev.usbharu.hideout.routing.*
 import dev.usbharu.hideout.service.*
+import dev.usbharu.hideout.util.HttpUtil.Activity
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
+import io.ktor.http.*
 import io.ktor.serialization.jackson.*
 import io.ktor.server.application.*
 import org.jetbrains.exposed.sql.Database
@@ -46,7 +48,8 @@ fun Application.module() {
         single<HttpClient> {
             HttpClient(CIO) {
                 install(ContentNegotiation) {
-                    jackson {
+
+                    jackson(ContentType.Application.Activity) {
                         enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
                         setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
                         configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
