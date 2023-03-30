@@ -50,7 +50,8 @@ fun Application.user(userService: UserService, activityPubUserService: ActivityP
                         val userModel = activityPubUserService.generateUserModel(name!!)
                         return@get call.respondAp(userModel)
                     }
-
+                    name?.let { it1 -> userService.findByName(it1).id }
+                        ?.let { it2 -> println(userService.findFollowersById(it2)) }
                     val principal = call.principal<UserIdPrincipal>()
                     if (principal != null && name != null) {
 //                        iUserService.findByName(name)

@@ -2,8 +2,8 @@ package dev.usbharu.hideout.ap
 
 open class Person : Object {
     private var id:String? = null
-    private var preferredUsername:String? = null
-    private var summary:String? = null
+    var preferredUsername:String? = null
+    var summary:String? = null
     private var inbox:String? = null
     private var outbox:String? = null
     private var url:String? = null

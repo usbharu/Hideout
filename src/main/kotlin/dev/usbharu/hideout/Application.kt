@@ -36,8 +36,9 @@ fun Application.module() {
         }
         single<ConfigData> {
             ConfigData(
-                environment.config.property("hideout.hostname").getString(),
-                jacksonObjectMapper().enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+                url = environment.config.propertyOrNull("hideout.url")?.getString()
+                    ?: environment.config.property("hideout.hostname").getString(),
+                objectMapper =  jacksonObjectMapper().enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
                     .setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
             )
         }
@@ -45,7 +46,7 @@ fun Application.module() {
         single<IUserAuthRepository> { UserAuthRepository(get()) }
         single<IUserAuthService> { UserAuthService(get(), get()) }
         single<UserService> { UserService(get()) }
-        single<ActivityPubUserService> { ActivityPubUserService(get(),get()) }
+        single<ActivityPubUserService> { ActivityPubUserService(get(), get(),get()) }
     }
     configureKoin(module)
     val configData by inject<ConfigData>()

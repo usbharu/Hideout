@@ -5,17 +5,17 @@ import org.jetbrains.exposed.sql.ReferenceOption
 
 data class UserAuthentication(
     val userId: Long,
-    val hash: String,
+    val hash: String?,
     val publicKey: String,
-    val privateKey: String
+    val privateKey: String?
 )
 
 data class UserAuthenticationEntity(
     val id: Long,
     val userId: Long,
-    val hash: String,
+    val hash: String?,
     val publicKey: String,
-    val privateKey: String
+    val privateKey: String?
 ) {
     constructor(id: Long, userAuthentication: UserAuthentication) : this(
         id,
@@ -28,7 +28,7 @@ data class UserAuthenticationEntity(
 
 object UsersAuthentication : LongIdTable("users_auth") {
     val userId = long("user_id").references(Users.id, onUpdate = ReferenceOption.CASCADE)
-    val hash = varchar("hash", length = 64)
+    val hash = varchar("hash", length = 64).nullable()
     val publicKey = varchar("public_key", length = 1000_000)
-    val privateKey = varchar("private_key", length = 1000_000)
+    val privateKey = varchar("private_key", length = 1000_000).nullable()
 }

@@ -13,6 +13,7 @@ class UserAuthRepository(private val database: Database) : IUserAuthRepository {
     init {
         transaction(database) {
             SchemaUtils.create(UsersAuthentication)
+            SchemaUtils.createMissingTablesAndColumns(UsersAuthentication)
         }
     }
 

@@ -7,4 +7,8 @@ object Config {
     var configData: ConfigData = ConfigData()
 }
 
-data class ConfigData(val hostname: String = "", val objectMapper: ObjectMapper = jacksonObjectMapper())
+data class ConfigData(
+    val url: String = "",
+    val domain: String = url.substringAfter("://").substringBeforeLast(":"),
+    val objectMapper: ObjectMapper = jacksonObjectMapper()
+)
