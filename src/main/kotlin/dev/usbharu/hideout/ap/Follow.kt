@@ -13,4 +13,6 @@ open class Follow : Object{
         this.`object` = `object`
         this.actor = actor
     }
+
+
 }
