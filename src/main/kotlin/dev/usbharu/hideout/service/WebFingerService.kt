@@ -12,8 +12,8 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 
 class WebFingerService(
-    private val httpClient: HttpClient,
-    private val userService: UserService
+        private val httpClient: HttpClient,
+        private val userService: UserService
 ) : IWebFingerService {
     override suspend fun fetch(acct: String): WebFinger? {
 
@@ -22,7 +22,7 @@ class WebFingerService(
 
         return try {
             httpClient.get("https://$domain/.well-known/webfinger?resource=acct:$fullName")
-                .body<WebFinger>()
+                    .body<WebFinger>()
         } catch (e: ResponseException) {
             if (e.response.status == HttpStatusCode.NotFound) {
                 return null
@@ -33,7 +33,9 @@ class WebFingerService(
 
     override suspend fun fetchUserModel(url: String): Person? {
         return try {
-            httpClient.get(url).body<Person>()
+            httpClient.get(url) {
+                header("Accept", "application/activity+json")
+            }.body<Person>()
         } catch (e: ResponseException) {
             if (e.response.status == HttpStatusCode.NotFound) {
                 return null
@@ -46,9 +48,9 @@ class WebFingerService(
 
         val link = webFinger.links.find {
             it.rel == "self" && HttpUtil.isContentTypeOfActivityPub(
-                ContentType.parse(
-                    it.type.orEmpty()
-                )
+                    ContentType.parse(
+                            it.type.orEmpty()
+                    )
             )
         }?.href ?: throw Exception()
 
@@ -59,10 +61,10 @@ class WebFingerService(
         val userModel = fetchUserModel(link) ?: throw Exception()
 
         val user = User(
-            userModel.preferredUsername ?: throw IllegalStateException(),
-            domain,
-            userName,
-            userModel.summary.orEmpty()
+                userModel.preferredUsername ?: throw IllegalStateException(),
+                domain,
+                userName,
+                userModel.summary.orEmpty()
         )
         return userService.create(user)
     }
