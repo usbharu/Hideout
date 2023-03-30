@@ -1,8 +1,7 @@
 package dev.usbharu.hideout
 
 import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.DeserializationFeature
+feat:import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.config.ConfigData
@@ -15,9 +14,10 @@ import dev.usbharu.hideout.routing.*
 import dev.usbharu.hideout.service.*
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.logging.*
+import io.ktor.serialization.jackson.*
 import io.ktor.server.application.*
-import io.ktor.server.auth.*
-import io.ktor.util.*
 import org.jetbrains.exposed.sql.Database
 import org.koin.ktor.ext.inject
 import java.util.*
@@ -38,18 +38,33 @@ fun Application.module() {
             ConfigData(
                 url = environment.config.propertyOrNull("hideout.url")?.getString()
                     ?: environment.config.property("hideout.hostname").getString(),
-                objectMapper =  jacksonObjectMapper().enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-                    .setSerializationInclusion(JsonInclude.Include.NON_EMPTY).configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false)
+                objectMapper = jacksonObjectMapper().enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+                    .setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
+                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             )
         }
-        single<HttpClient> { HttpClient(CIO) }
+        single<HttpClient> {
+            HttpClient(CIO) {
+                install(ContentNegotiation) {
+                    jackson {
+                        enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+                        setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
+                        configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                    }
+                }
+                install(Logging) {
+                    logger = Logger.DEFAULT
+                    level = LogLevel.HEADERS
+                }
+            }
+        }
         single<IUserRepository> { UserRepository(get()) }
         single<IUserAuthRepository> { UserAuthRepository(get()) }
         single<IUserAuthService> { UserAuthService(get(), get()) }
         single<UserService> { UserService(get()) }
         single<ActivityPubService> { ActivityPubService() }
-        single<ActivityPubUserService> { ActivityPubUserService(get(), get(),get(),get()) }
-        single<IWebFingerService> { WebFingerService(get(),get()) }
+        single<ActivityPubUserService> { ActivityPubUserService(get(), get(), get(), get()) }
+        single<IWebFingerService> { WebFingerService(get(), get()) }
     }
     configureKoin(module)
     val configData by inject<ConfigData>()
