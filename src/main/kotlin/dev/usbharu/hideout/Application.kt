@@ -1,6 +1,7 @@
 package dev.usbharu.hideout
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import dev.usbharu.hideout.config.Config
@@ -38,7 +39,7 @@ fun Application.module() {
                 url = environment.config.propertyOrNull("hideout.url")?.getString()
                     ?: environment.config.property("hideout.hostname").getString(),
                 objectMapper =  jacksonObjectMapper().enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-                    .setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
+                    .setSerializationInclusion(JsonInclude.Include.NON_EMPTY).configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false)
             )
         }
         single<HttpClient> { HttpClient(CIO) }
