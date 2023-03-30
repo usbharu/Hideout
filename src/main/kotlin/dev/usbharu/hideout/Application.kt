@@ -22,6 +22,7 @@ import io.ktor.serialization.jackson.*
 import io.ktor.server.application.*
 import org.jetbrains.exposed.sql.Database
 import org.koin.ktor.ext.inject
+import java.lang.Compiler.enable
 import java.util.*
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
@@ -49,7 +50,7 @@ fun Application.module() {
             HttpClient(CIO) {
                 install(ContentNegotiation) {
 
-                    jackson(ContentType.Application.Activity) {
+                    jackson {
                         enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
                         setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
                         configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
