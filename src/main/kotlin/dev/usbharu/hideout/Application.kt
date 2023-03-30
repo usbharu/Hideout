@@ -1,7 +1,7 @@
 package dev.usbharu.hideout
 
 import com.fasterxml.jackson.annotation.JsonInclude
-feat:import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.config.ConfigData
