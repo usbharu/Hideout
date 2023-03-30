@@ -80,15 +80,18 @@ class UserRepository(private val database: Database) : IUserRepository {
 
     override suspend fun findFollowersById(id: Long): List<UserEntity> {
         return query {
-            val followers = Users.alias("followers")
-            Users.leftJoin(
+            val followers = Users.alias("FOLLOWERS")
+            Users.innerJoin(
                 otherTable = UsersFollowers,
                 onColumn = { Users.id },
                 otherColumn = { UsersFollowers.userId })
-                .leftJoin(
+
+                .innerJoin(
                     otherTable = followers,
                     onColumn = { UsersFollowers.followerId },
                     otherColumn = { followers[Users.id] })
+
+                .slice(followers.get(Users.id), followers.get(Users.name), followers.get(Users.domain), followers.get(Users.screenName), followers.get(Users.description))
                 .select { Users.id eq id }
                 .map {
                     UserEntity(
