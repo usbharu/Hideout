@@ -100,7 +100,7 @@ val httpSignaturePlugin = createClientPlugin("HttpSign",::HttpSignaturePluginCon
                 }
             }
 
-            val builder = HttpMessageSigner.builder().algorithm(algorithmType).keyId(keyId).keyMap(keyMap)
+            val builder = HttpMessageSigner.builder().algorithm(algorithmType).keyId("${Config.configData.url}/users/$keyId/pubkey").keyMap(keyMap)
             var tmp = builder
             headers.forEach {
                 tmp = tmp.addHeaderToSign(it)

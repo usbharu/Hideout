@@ -50,6 +50,7 @@ class ActivityPubUserService(
         val inboxUrl = person.inbox ?: throw IllegalArgumentException("inbox is not found")
         httpClient.post(inboxUrl) {
             contentType(ContentType.Application.Activity)
+            header("Signature","keyId=\"${person.preferredUsername}\",algorithm=\"rsa-sha256\",headers=\"(request-target) host date\"")
             setBody(Accept(
                     name = "Follow",
                     `object` = follow,
