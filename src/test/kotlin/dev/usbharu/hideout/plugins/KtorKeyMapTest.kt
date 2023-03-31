@@ -7,6 +7,7 @@ import dev.usbharu.hideout.domain.model.UserEntity
 import dev.usbharu.hideout.repository.IUserAuthRepository
 import dev.usbharu.hideout.repository.IUserRepository
 import dev.usbharu.hideout.service.UserAuthService
+import dev.usbharu.hideout.service.toPem
 import org.junit.jupiter.api.Test
 import java.security.KeyPairGenerator
 import java.security.interfaces.RSAPrivateKey
@@ -87,17 +88,5 @@ class KtorKeyMapTest {
         }))
 
         ktorKeyMap.getPrivateKey("test")
-    }
-
-    private fun RSAPublicKey.toPem(): String {
-        return "-----BEGIN RSA PUBLIC KEY-----" +
-                Base64.getEncoder().encodeToString(encoded) +
-                "-----END RSA PUBLIC KEY-----"
-    }
-
-    private fun RSAPrivateKey.toPem(): String {
-        return "-----BEGIN RSA PRIVATE KEY-----" +
-                Base64.getEncoder().encodeToString(encoded) +
-                "-----END RSA PRIVATE KEY-----"
     }
 }

@@ -8,6 +8,7 @@ import dev.usbharu.hideout.domain.model.UserEntity
 import dev.usbharu.hideout.repository.IUserAuthRepository
 import dev.usbharu.hideout.repository.IUserRepository
 import dev.usbharu.hideout.service.UserAuthService
+import dev.usbharu.hideout.service.toPem
 import io.ktor.client.*
 import io.ktor.client.engine.mock.*
 import io.ktor.client.plugins.logging.*
@@ -106,17 +107,5 @@ class ActivityPubKtTest {
         httpClient.postAp("https://localhost", "test", JsonLd(emptyList()))
 
 
-    }
-
-    fun RSAPublicKey.toPem(): String {
-        return "-----BEGIN RSA PUBLIC KEY-----" +
-                Base64.getEncoder().encodeToString(encoded) +
-                "-----END RSA PUBLIC KEY-----"
-    }
-
-    fun RSAPrivateKey.toPem(): String {
-        return "-----BEGIN RSA PRIVATE KEY-----" +
-                Base64.getEncoder().encodeToString(encoded) +
-                "-----END RSA PRIVATE KEY-----"
     }
 }
