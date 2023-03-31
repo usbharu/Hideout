@@ -61,8 +61,9 @@ val httpSignaturePlugin = createClientPlugin("HttpSign", ::HttpSignaturePluginCo
         if (request.bodyType?.type == String::class) {
             println(body as String)
             println("Digest !!")
+//            UserAuthService.sha256.reset()
             val digest =
-                hex(UserAuthService.sha256.digest((body as String).toByteArray(Charsets.UTF_8)))
+            Base64.getEncoder().encodeToString(UserAuthService.sha256.digest(body.toByteArray(Charsets.UTF_8)))
             request.headers.append("Digest", "sha-256="+digest)
         }
 
