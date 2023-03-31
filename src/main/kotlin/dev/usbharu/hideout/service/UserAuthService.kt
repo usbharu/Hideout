@@ -12,6 +12,8 @@ import io.ktor.util.*
 import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.MessageDigest
+import java.security.PrivateKey
+import java.security.PublicKey
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.util.*
@@ -81,19 +83,21 @@ class UserAuthService(
     }
 
 
-    private fun RSAPublicKey.toPem(): String {
-        return "-----BEGIN RSA PUBLIC KEY-----" +
-                Base64.getEncoder().encodeToString(encoded) +
-                "-----END RSA PUBLIC KEY-----"
-    }
 
-    private fun RSAPrivateKey.toPem(): String {
-        return "-----BEGIN RSA PRIVATE KEY-----" +
-                Base64.getEncoder().encodeToString(encoded) +
-                "-----END RSA PRIVATE KEY-----"
-    }
 
     companion object {
         val sha256: MessageDigest = MessageDigest.getInstance("SHA-256")
     }
+}
+
+public fun PublicKey.toPem(): String {
+    return "-----BEGIN RSA PUBLIC KEY-----" +
+            Base64.getEncoder().encodeToString(encoded).chunked(64).joinToString("\n") +
+            "-----END RSA PUBLIC KEY-----"
+}
+
+public fun PrivateKey.toPem(): String {
+    return "-----BEGIN RSA PRIVATE KEY-----" +
+            Base64.getEncoder().encodeToString(encoded).chunked(64).joinToString("\n") +
+            "-----END RSA PRIVATE KEY-----"
 }

@@ -152,7 +152,7 @@ class KtorKeyMap(private val userAuthRepository: IUserAuthService) : KeyMap {
             userAuthRepository.findByUsername(
                 username
             ).publicKey?.replace("-----BEGIN PUBLIC KEY-----", "-----END PUBLIC KEY-----")?.replace("", "")
-                ?.replace("\\n", "")
+                ?.replace("\n", "")
         )
         val x509EncodedKeySpec = X509EncodedKeySpec(publicBytes)
         return@runBlocking KeyFactory.getInstance("RSA").generatePublic(x509EncodedKeySpec)
@@ -165,7 +165,7 @@ class KtorKeyMap(private val userAuthRepository: IUserAuthService) : KeyMap {
             userAuthRepository.findByUsername(
                 username
             ).privateKey?.replace("-----BEGIN RSA PRIVATE KEY-----", "")?.replace("-----END RSA PRIVATE KEY-----", "")
-                ?.replace("\\n", "")
+                ?.replace("\n", "")
         )
         val x509EncodedKeySpec = PKCS8EncodedKeySpec(publicBytes)
         return@runBlocking KeyFactory.getInstance("RSA").generatePrivate(x509EncodedKeySpec)
