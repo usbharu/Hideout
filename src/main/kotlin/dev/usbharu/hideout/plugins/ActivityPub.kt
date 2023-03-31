@@ -122,7 +122,8 @@ val httpSignaturePlugin = createClientPlugin("HttpSign", ::HttpSignaturePluginCo
                 }
 
                 override fun addHeader(name: String?, value: String?) {
-                    name?.let { request.header(it, "\"${value?.trim(',')}\"") }
+                    val split = value?.split("=").orEmpty()
+                    name?.let { request.header(it, split.get(0)+"=\""+split.get(1).trim('"')+"\"") }
                 }
 
                 override fun method(): String {
