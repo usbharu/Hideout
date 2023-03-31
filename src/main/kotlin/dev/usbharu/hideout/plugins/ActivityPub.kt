@@ -51,6 +51,7 @@ class HttpSignaturePluginConfig {
 val httpSignaturePlugin = createClientPlugin("HttpSign", ::HttpSignaturePluginConfig) {
     val keyMap = pluginConfig.keyMap
     val format = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US)
+    format.timeZone = TimeZone.getTimeZone("GMT")
     onRequest { request, body ->
 
 
