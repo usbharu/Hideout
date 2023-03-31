@@ -11,4 +11,6 @@ interface IUserAuthService {
     suspend fun verifyAccount(username: String,password: String): Boolean
 
     suspend fun findByUserId(userId: Long):UserAuthenticationEntity
+
+    suspend fun findByUsername(username: String):UserAuthenticationEntity
 }

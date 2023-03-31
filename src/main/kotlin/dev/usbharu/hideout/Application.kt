@@ -12,17 +12,14 @@ import dev.usbharu.hideout.repository.UserAuthRepository
 import dev.usbharu.hideout.repository.UserRepository
 import dev.usbharu.hideout.routing.*
 import dev.usbharu.hideout.service.*
-import dev.usbharu.hideout.util.HttpUtil.Activity
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
-import io.ktor.http.*
 import io.ktor.serialization.jackson.*
 import io.ktor.server.application.*
 import org.jetbrains.exposed.sql.Database
 import org.koin.ktor.ext.inject
-import java.lang.Compiler.enable
 import java.util.*
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
@@ -59,6 +56,9 @@ fun Application.module() {
                 install(Logging) {
                     logger = Logger.DEFAULT
                     level = LogLevel.ALL
+                }
+                install(httpSignaturePlugin){
+                    keyMap = KtorKeyMap(get())
                 }
             }
         }

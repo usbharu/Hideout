@@ -68,6 +68,12 @@ class UserAuthService(
         return userAuthRepository.findByUserId(userId) ?: throw UserNotFoundException("$userId was not found")
     }
 
+    override suspend fun findByUsername(username: String): UserAuthenticationEntity {
+        val userEntity = userRepository.findByName(username) ?: throw UserNotFoundException("$username was not found")
+        return userAuthRepository.findByUserId(userEntity.id)
+            ?: throw UserNotFoundException("$username auth data was not found")
+    }
+
     private fun generateKeyPair(): KeyPair {
         val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
         keyPairGenerator.initialize(1024)
