@@ -164,7 +164,7 @@ class KtorKeyMap(private val userAuthRepository: IUserAuthService) : KeyMap {
         val publicBytes = Base64.getDecoder().decode(
             userAuthRepository.findByUsername(
                 username
-            ).privateKey?.replace("-----BEGIN RSA PRIVATE KEY-----", "")?.replace("-----END RSA PRIVATE KEY-----", "")
+            ).privateKey?.replace("-----BEGIN PRIVATE KEY-----", "")?.replace("-----END PRIVATE KEY-----", "")
                 ?.replace("\n", "")
         )
         val x509EncodedKeySpec = PKCS8EncodedKeySpec(publicBytes)

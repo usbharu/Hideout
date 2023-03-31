@@ -91,13 +91,13 @@ class UserAuthService(
 }
 
 public fun PublicKey.toPem(): String {
-    return "-----BEGIN RSA PUBLIC KEY-----" +
+    return "-----BEGIN PUBLIC KEY-----" +
             Base64.getEncoder().encodeToString(encoded).chunked(64).joinToString("\n") +
-            "-----END RSA PUBLIC KEY-----"
+            "-----END PUBLIC KEY-----"
 }
 
 public fun PrivateKey.toPem(): String {
-    return "-----BEGIN RSA PRIVATE KEY-----" +
+    return "-----BEGIN PRIVATE KEY-----" +
             Base64.getEncoder().encodeToString(encoded).chunked(64).joinToString("\n") +
-            "-----END RSA PRIVATE KEY-----"
+            "-----END PRIVATE KEY-----"
 }
