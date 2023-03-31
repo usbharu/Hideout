@@ -22,6 +22,7 @@ import java.net.URI
 import java.security.KeyFactory
 import java.security.PrivateKey
 import java.security.PublicKey
+import java.security.spec.PKCS8EncodedKeySpec
 import java.security.spec.X509EncodedKeySpec
 import java.text.SimpleDateFormat
 import java.util.*
@@ -160,10 +161,10 @@ class KtorKeyMap(private val userAuthRepository: IUserAuthService) : KeyMap {
         val publicBytes = Base64.getDecoder().decode(
             userAuthRepository.findByUsername(
                 username
-            ).privateKey?.replace("-----BEGIN PUBLIC KEY-----", "-----END PUBLIC KEY-----")?.replace("", "")
+            ).privateKey?.replace("-----BEGIN RSA PRIVATE KEY-----", "")?.replace("-----END RSA PRIVATE KEY-----", "")
                 ?.replace("\\n", "")
         )
-        val x509EncodedKeySpec = X509EncodedKeySpec(publicBytes)
+        val x509EncodedKeySpec = PKCS8EncodedKeySpec(publicBytes)
         return@runBlocking KeyFactory.getInstance("RSA").generatePrivate(x509EncodedKeySpec)
     }
 
