@@ -49,7 +49,8 @@ val httpSignaturePlugin = createClientPlugin("HttpSign",::HttpSignaturePluginCon
 
 
         request.header("Date", format.format(Date()))
-
+        println(request.bodyType)
+        println(request.bodyType?.type)
         if (request.bodyType?.type == String::class) {
             println("Digest !!")
             val digest =
