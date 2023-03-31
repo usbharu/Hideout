@@ -6,8 +6,10 @@ import dev.usbharu.hideout.repository.IUserAuthRepository
 import dev.usbharu.hideout.service.IUserAuthService
 import dev.usbharu.hideout.service.UserAuthService
 import dev.usbharu.hideout.util.HttpUtil.Activity
+import io.ktor.client.*
 import io.ktor.client.plugins.api.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
@@ -36,6 +38,16 @@ suspend fun <T : JsonLd> ApplicationCall.respondAp(message: T, status: HttpStatu
     message.context += "https://www.w3.org/ns/activitystreams"
     val activityJson = Config.configData.objectMapper.writeValueAsString(message)
     respondText(activityJson, ContentType.Application.Activity, status)
+}
+
+suspend fun HttpClient.postAp(urlString: String,username:String,jsonLd: JsonLd): HttpResponse {
+    return this.post(urlString){
+        header("Accept", ContentType.Application.Activity)
+        header("Content-Type", ContentType.Application.Activity)
+        header("Signature","keyId=\"$username\",algorithm=\"rsa-sha256\",headers=\"(request-target) digest date\"")
+        val text = Config.configData.objectMapper.writeValueAsString(jsonLd)
+        setBody(text)
+    }
 }
 
 class HttpSignaturePluginConfig {
