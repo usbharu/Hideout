@@ -144,10 +144,11 @@ class KtorKeyMap(private val userAuthRepository: IUserAuthService) : KeyMap {
     override fun getPublicKey(keyId: String?): PublicKey = runBlocking {
         val username = (keyId ?: throw IllegalArgumentException("keyId is null")).substringBeforeLast("/pubkey")
             .substringAfterLast("/")
-        val publicBytes = java.util.Base64.getDecoder().decode(
+        val publicBytes = Base64.getDecoder().decode(
             userAuthRepository.findByUsername(
                 username
-            ).publicKey
+            ).publicKey?.replace("-----BEGIN PUBLIC KEY-----", "-----END PUBLIC KEY-----")?.replace("", "")
+                ?.replace("\\n", "")
         )
         val x509EncodedKeySpec = X509EncodedKeySpec(publicBytes)
         return@runBlocking KeyFactory.getInstance("RSA").generatePublic(x509EncodedKeySpec)
@@ -156,10 +157,11 @@ class KtorKeyMap(private val userAuthRepository: IUserAuthService) : KeyMap {
     override fun getPrivateKey(keyId: String?): PrivateKey = runBlocking {
         val username = (keyId ?: throw IllegalArgumentException("keyId is null")).substringBeforeLast("/pubkey")
             .substringAfterLast("/")
-        val publicBytes = java.util.Base64.getDecoder().decode(
+        val publicBytes = Base64.getDecoder().decode(
             userAuthRepository.findByUsername(
                 username
-            ).privateKey
+            ).privateKey?.replace("-----BEGIN PUBLIC KEY-----", "-----END PUBLIC KEY-----")?.replace("", "")
+                ?.replace("\\n", "")
         )
         val x509EncodedKeySpec = X509EncodedKeySpec(publicBytes)
         return@runBlocking KeyFactory.getInstance("RSA").generatePrivate(x509EncodedKeySpec)
