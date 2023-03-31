@@ -146,7 +146,7 @@ val httpSignaturePlugin = createClientPlugin("HttpSign", ::HttpSignaturePluginCo
 
 class KtorKeyMap(private val userAuthRepository: IUserAuthService) : KeyMap {
     override fun getPublicKey(keyId: String?): PublicKey = runBlocking {
-        val username = (keyId ?: throw IllegalArgumentException("keyId is null")).substringBeforeLast("/pubkey")
+        val username = (keyId ?: throw IllegalArgumentException("keyId is null")).substringBeforeLast("#pubkey")
             .substringAfterLast("/")
         val publicBytes = Base64.getDecoder().decode(
             userAuthRepository.findByUsername(
@@ -159,7 +159,7 @@ class KtorKeyMap(private val userAuthRepository: IUserAuthService) : KeyMap {
     }
 
     override fun getPrivateKey(keyId: String?): PrivateKey = runBlocking {
-        val username = (keyId ?: throw IllegalArgumentException("keyId is null")).substringBeforeLast("/pubkey")
+        val username = (keyId ?: throw IllegalArgumentException("keyId is null")).substringBeforeLast("#pubkey")
             .substringAfterLast("/")
         val publicBytes = Base64.getDecoder().decode(
             userAuthRepository.findByUsername(
