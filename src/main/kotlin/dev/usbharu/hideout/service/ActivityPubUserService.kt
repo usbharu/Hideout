@@ -33,7 +33,7 @@ class ActivityPubUserService(
             publicKey = Key(
                 type = emptyList(),
                 name = "Public Key",
-                id = "$userUrl/pubkey",
+                id = "$userUrl#pubkey",
                 owner = userUrl,
                 publicKeyPem = userAuthEntity.publicKey
             )
@@ -45,7 +45,7 @@ class ActivityPubUserService(
         val person = webFingerService.fetchUserModel(actor) ?: throw IllegalArgumentException("actor is not found")
         val inboxUrl = person.inbox ?: throw IllegalArgumentException("inbox is not found")
         httpClient.postAp(
-            inboxUrl, "${follow.`object`!!}/pubkey", Accept(
+            inboxUrl, "${follow.`object`!!}#pubkey", Accept(
                 name = "Follow",
                 `object` = follow,
                 actor = follow.`object`.orEmpty()
