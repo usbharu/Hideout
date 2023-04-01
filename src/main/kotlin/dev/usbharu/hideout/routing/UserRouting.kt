@@ -67,7 +67,7 @@ fun Application.user(userService: UserService, activityPubUserService: ActivityP
                     }
                 }
                 get("/{name}/icon.png"){
-                    call.respondBytes(Application::class.java.classLoader.getResourceAsStream("/icon.png").readAllBytes(),ContentType.Image.PNG)
+                    call.respondBytes(javaClass.classLoader.getResourceAsStream("icon.png").readAllBytes(),ContentType.Image.PNG)
                 }
             }
 
