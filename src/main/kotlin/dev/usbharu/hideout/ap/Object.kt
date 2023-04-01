@@ -1,6 +1,12 @@
 package dev.usbharu.hideout.ap
 
+import com.fasterxml.jackson.core.JsonGenerator
+import com.fasterxml.jackson.databind.JsonSerializer
+import com.fasterxml.jackson.databind.SerializerProvider
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
+
 open class Object : JsonLd {
+    @JsonSerialize(using = TypeSerializer::class)
     private var type: List<String> = emptyList()
     var name: String? = null
 
@@ -18,4 +24,20 @@ open class Object : JsonLd {
             return toMutableList.distinct()
         }
     }
+}
+
+public class TypeSerializer : JsonSerializer<List<String>>() {
+    override fun serialize(value: List<String>?, gen: JsonGenerator?, serializers: SerializerProvider?) {
+        println(value)
+        if (value?.size == 1) {
+            gen?.writeString(value[0])
+        } else {
+            gen?.writeStartArray()
+            value?.forEach {
+                gen?.writeString(it)
+            }
+            gen?.writeEndArray()
+        }
+    }
+
 }
