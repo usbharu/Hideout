@@ -66,6 +66,9 @@ fun Application.user(userService: UserService, activityPubUserService: ActivityP
                         "hello $name !!"
                     }
                 }
+                get("/{name}/icon.png"){
+                    call.respondBytes(Application::class.java.classLoader.getResourceAsStream("icon.png").readAllBytes())
+                }
             }
 
             authenticate(tokenAuth) {
