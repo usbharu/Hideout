@@ -29,7 +29,7 @@ fun Application.userActivityPubRouting(activityPubService: ActivityPubService, a
                         ActivityPubService.ActivityType.Follow -> {
                             val readValue = Config.configData.objectMapper.readValue<Follow>(bodyText)
                             activityPubUserService.receiveFollow(readValue)
-                            return@post call.respond(HttpStatusCode.Created)
+                            return@post call.respond(HttpStatusCode.Accepted)
                         }
 
                         ActivityPubService.ActivityType.Undo -> {
