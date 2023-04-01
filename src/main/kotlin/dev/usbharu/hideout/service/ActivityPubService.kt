@@ -15,7 +15,7 @@ class ActivityPubService() {
         return when(typeAsText){
             "Follow" -> ActivityType.Follow
             "Undo" -> ActivityType.Undo
-            else -> throw IllegalArgumentException(typeAsText)
+            else -> ActivityType.Undo
         }
     }
 }

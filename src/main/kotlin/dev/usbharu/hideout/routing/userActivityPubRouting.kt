@@ -33,8 +33,7 @@ fun Application.userActivityPubRouting(activityPubService: ActivityPubService, a
                         }
 
                         ActivityPubService.ActivityType.Undo -> {
-                            call.respond(HttpStatusCode.BadGateway)
-                            TODO()
+                            return@post call.respond(HttpStatusCode.Accepted)
                         }
                     }
 
