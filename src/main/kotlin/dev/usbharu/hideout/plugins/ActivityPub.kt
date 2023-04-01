@@ -35,6 +35,7 @@ suspend fun <T : JsonLd> ApplicationCall.respondAp(message: T, status: HttpStatu
 }
 
 suspend fun HttpClient.postAp(urlString: String, username: String, jsonLd: JsonLd): HttpResponse {
+    jsonLd.context += "https://www.w3.org/ns/activitystreams"
     return this.post(urlString) {
         header("Accept", ContentType.Application.Activity)
         header("Content-Type", ContentType.Application.Activity)
