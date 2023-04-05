@@ -1,8 +1,9 @@
-package dev.usbharu.hideout.service
+package dev.usbharu.hideout.service.impl
 
 import dev.usbharu.hideout.ap.Person
 import dev.usbharu.hideout.domain.model.User
 import dev.usbharu.hideout.domain.model.UserEntity
+import dev.usbharu.hideout.service.IWebFingerService
 import dev.usbharu.hideout.util.HttpUtil
 import dev.usbharu.hideout.webfinger.WebFinger
 import io.ktor.client.*

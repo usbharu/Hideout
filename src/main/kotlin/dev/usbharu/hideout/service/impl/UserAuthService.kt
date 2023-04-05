@@ -1,13 +1,13 @@
-package dev.usbharu.hideout.service
+package dev.usbharu.hideout.service.impl
 
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.domain.model.User
 import dev.usbharu.hideout.domain.model.UserAuthentication
 import dev.usbharu.hideout.domain.model.UserAuthenticationEntity
-import dev.usbharu.hideout.domain.model.Users.screenName
 import dev.usbharu.hideout.exception.UserNotFoundException
 import dev.usbharu.hideout.repository.IUserAuthRepository
 import dev.usbharu.hideout.repository.IUserRepository
+import dev.usbharu.hideout.service.IUserAuthService
 import io.ktor.util.*
 import java.security.KeyPair
 import java.security.KeyPairGenerator

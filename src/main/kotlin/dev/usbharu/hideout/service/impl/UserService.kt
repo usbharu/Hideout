@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.service
+package dev.usbharu.hideout.service.impl
 
 import dev.usbharu.hideout.domain.model.User
 import dev.usbharu.hideout.domain.model.UserEntity

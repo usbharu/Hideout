@@ -1,6 +1,5 @@
-package dev.usbharu.hideout.service
+package dev.usbharu.hideout.service.impl
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import dev.usbharu.hideout.config.Config
 
 class ActivityPubService() {
@@ -10,7 +9,7 @@ class ActivityPubService() {
         Undo
     }
 
-    fun switchApType(json:String):ActivityType{
+    fun switchApType(json:String): ActivityType {
         val typeAsText = Config.configData.objectMapper.readTree(json).get("type").asText()
         return when(typeAsText){
             "Follow" -> ActivityType.Follow

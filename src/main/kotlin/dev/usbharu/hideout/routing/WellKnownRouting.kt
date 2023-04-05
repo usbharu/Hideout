@@ -1,7 +1,7 @@
 package dev.usbharu.hideout.routing
 
 import dev.usbharu.hideout.config.Config
-import dev.usbharu.hideout.service.UserService
+import dev.usbharu.hideout.service.impl.UserService
 import dev.usbharu.hideout.util.HttpUtil.Activity
 import io.ktor.http.*
 import io.ktor.server.application.*
