@@ -28,6 +28,14 @@ repositories {
     mavenCentral()
 }
 
+kotlin {
+    target {
+        compilations.all {
+            kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
+        }
+    }
+}
+
 dependencies {
     implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-auth-jvm:$ktor_version")
@@ -63,6 +71,8 @@ dependencies {
     implementation("tech.barbero.http-messages-signing:http-messages-signing-core:1.0.0")
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+
+    implementation("org.drewcarlson:kjob-core:0.6.0")
 }
 
 jib {
