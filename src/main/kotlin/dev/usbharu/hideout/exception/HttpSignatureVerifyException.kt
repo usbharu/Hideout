@@ -1,6 +1,6 @@
-package dev.usbharu.hideout.exception.ap
+package dev.usbharu.hideout.exception
 
-class JsonParseException : IllegalArgumentException {
+class HttpSignatureVerifyException : IllegalArgumentException {
     constructor() : super()
     constructor(s: String?) : super(s)
     constructor(message: String?, cause: Throwable?) : super(message, cause)

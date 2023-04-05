@@ -1,7 +1,7 @@
 package dev.usbharu.hideout.service.activitypub
 
 interface ActivityPubService {
-    fun parseActivity(json:String): List<ActivityType>
+    fun parseActivity(json:String): ActivityType
 
     fun processActivity(json:String, type: ActivityType)
 }

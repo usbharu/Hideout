@@ -2,10 +2,10 @@ package dev.usbharu.hideout.service.activitypub
 
 import com.fasterxml.jackson.databind.JsonNode
 import dev.usbharu.hideout.config.Config
-import dev.usbharu.hideout.exception.ap.JsonParseException
+import dev.usbharu.hideout.exception.JsonParseException
 
 class ActivityPubServiceImpl : ActivityPubService {
-    override fun parseActivity(json: String): List<ActivityType> {
+    override fun parseActivity(json: String): ActivityType {
         val readTree = Config.configData.objectMapper.readTree(json)
         if (readTree.isObject.not()) {
             throw JsonParseException("Json is not object.")
@@ -13,10 +13,10 @@ class ActivityPubServiceImpl : ActivityPubService {
         val type = readTree["type"]
         if (type.isArray) {
             return type.mapNotNull { jsonNode: JsonNode ->
-                ActivityType.values().filter { it.name.equals(jsonNode.toPrettyString(), true) }
-            }.flatten()
+                ActivityType.values().firstOrNull { it.name.equals(jsonNode.asText(), true) }
+            }.first()
         }
-        return ActivityType.values().filter { it.name.equals(type.toPrettyString(), true) }
+        return ActivityType.values().first { it.name.equals(type.asText(), true) }
     }
 
     override fun processActivity(json: String, type: ActivityType) {
