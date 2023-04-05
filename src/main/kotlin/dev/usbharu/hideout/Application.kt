@@ -12,6 +12,7 @@ import dev.usbharu.hideout.repository.UserAuthRepository
 import dev.usbharu.hideout.repository.UserRepository
 import dev.usbharu.hideout.routing.*
 import dev.usbharu.hideout.service.*
+import dev.usbharu.hideout.service.impl.*
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*

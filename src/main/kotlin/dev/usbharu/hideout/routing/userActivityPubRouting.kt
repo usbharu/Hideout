@@ -3,8 +3,8 @@ package dev.usbharu.hideout.routing
 import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.ap.Follow
 import dev.usbharu.hideout.config.Config
-import dev.usbharu.hideout.service.ActivityPubService
-import dev.usbharu.hideout.service.ActivityPubUserService
+import dev.usbharu.hideout.service.impl.ActivityPubService
+import dev.usbharu.hideout.service.impl.ActivityPubUserService
 import dev.usbharu.hideout.util.HttpUtil
 import io.ktor.http.*
 import io.ktor.server.application.*
