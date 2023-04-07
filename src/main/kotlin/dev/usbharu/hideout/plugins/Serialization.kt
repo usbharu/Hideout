@@ -10,9 +10,4 @@ fun Application.configureSerialization() {
     install(ContentNegotiation) {
         jackson()
     }
-    routing {
-        get("/json/kotlinx-serialization") {
-            call.respond(mapOf("hello" to "world"))
-        }
-    }
 }
