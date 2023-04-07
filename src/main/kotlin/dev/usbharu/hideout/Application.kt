@@ -9,6 +9,7 @@ import dev.usbharu.hideout.service.IUserAuthService
 import dev.usbharu.hideout.service.activitypub.ActivityPubService
 import dev.usbharu.hideout.service.activitypub.ActivityPubServiceImpl
 import dev.usbharu.hideout.service.impl.UserAuthService
+import dev.usbharu.hideout.service.impl.UserService
 import dev.usbharu.hideout.service.signature.HttpSignatureVerifyService
 import dev.usbharu.hideout.service.signature.HttpSignatureVerifyServiceImpl
 import io.ktor.server.application.*
@@ -40,6 +41,7 @@ fun Application.module() {
         single<IUserAuthService> { UserAuthService(get(), get()) }
         single<HttpSignatureVerifyService> { HttpSignatureVerifyServiceImpl(get()) }
         single<ActivityPubService> { ActivityPubServiceImpl() }
+        single<UserService> { UserService(get()) }
     }
 
     configureKoin(module)
@@ -47,5 +49,9 @@ fun Application.module() {
     configureSockets()
     configureMonitoring()
     configureSerialization()
-    configureRouting(inject<HttpSignatureVerifyService>().value, inject<ActivityPubService>().value)
+    configureRouting(
+        inject<HttpSignatureVerifyService>().value,
+        inject<ActivityPubService>().value,
+        inject<UserService>().value
+    )
 }
