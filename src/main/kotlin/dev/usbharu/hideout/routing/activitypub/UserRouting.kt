@@ -11,6 +11,7 @@ import io.ktor.server.routing.*
 fun Routing.usersAP(activityPubService: ActivityPubService){
     route("/users/{name}"){
         createChild(ContentTypeRouteSelector(ContentType.Application.Activity)).handle {
+
             call.respond(HttpStatusCode.NotImplemented)
         }
     }

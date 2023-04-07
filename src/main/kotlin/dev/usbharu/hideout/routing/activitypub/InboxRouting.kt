@@ -1,5 +1,8 @@
 package dev.usbharu.hideout.routing.activitypub
 
+import dev.usbharu.hideout.config.Config
+import dev.usbharu.hideout.domain.model.ActivityPubObjectResponse
+import dev.usbharu.hideout.domain.model.ActivityPubStringResponse
 import dev.usbharu.hideout.exception.HttpSignatureVerifyException
 import dev.usbharu.hideout.service.signature.HttpSignatureVerifyService
 import io.ktor.http.*
@@ -8,7 +11,10 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Routing.inbox(httpSignatureVerifyService: HttpSignatureVerifyService,activityPubService: dev.usbharu.hideout.service.activitypub.ActivityPubService){
+fun Routing.inbox(
+    httpSignatureVerifyService: HttpSignatureVerifyService,
+    activityPubService: dev.usbharu.hideout.service.activitypub.ActivityPubService
+){
 
         route("/inbox") {
             get {
@@ -21,10 +27,12 @@ fun Routing.inbox(httpSignatureVerifyService: HttpSignatureVerifyService,activit
                 val json = call.receiveText()
                 val activityTypes = activityPubService.parseActivity(json)
                 val response = activityPubService.processActivity(json, activityTypes)
-                return@post if (response != null) {
-                    call.respond(response.httpStatusCode, response.message)
-                }else {
-                    call.respond(HttpStatusCode.InternalServerError)
+                when (response) {
+                    is ActivityPubObjectResponse -> call.respond(response.httpStatusCode, Config.configData.objectMapper.writeValueAsString(response.message.apply { context =
+                        listOf("https://www.w3.org/ns/activitystreams")
+                    }))
+                    is ActivityPubStringResponse -> call.respond(response.httpStatusCode, response.message)
+                    null -> call.respond(HttpStatusCode.NotImplemented)
                 }
             }
         }
