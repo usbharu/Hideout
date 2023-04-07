@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.routing.activitypub
 
+import dev.usbharu.hideout.domain.model.ActivityPubResponse
 import dev.usbharu.hideout.plugins.configureRouting
 import dev.usbharu.hideout.service.activitypub.ActivityPubService
 import dev.usbharu.hideout.service.activitypub.ActivityType
@@ -30,7 +31,7 @@ class UsersAPTest {
                     TODO("Not yet implemented")
                 }
 
-                override fun processActivity(json: String, type: ActivityType) {
+                override fun processActivity(json: String, type: ActivityType): ActivityPubResponse? {
                     TODO("Not yet implemented")
                 }
             })
