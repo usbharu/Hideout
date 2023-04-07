@@ -73,6 +73,10 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
 
     implementation("org.drewcarlson:kjob-core:0.6.0")
+    testImplementation("io.ktor:ktor-server-test-host-jvm:2.2.4")
+
+    testImplementation("org.slf4j:slf4j-simple:2.0.7")
+
 }
 
 jib {

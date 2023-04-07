@@ -11,9 +11,6 @@ import io.ktor.server.routing.*
 fun Routing.usersAP(activityPubService: ActivityPubService){
     route("/users/{name}"){
         createChild(ContentTypeRouteSelector(ContentType.Application.Activity)).handle {
-            val json = call.receiveText()
-            val activityTypes = activityPubService.parseActivity(json)
-            activityPubService.processActivity(json,activityTypes)
             call.respond(HttpStatusCode.NotImplemented)
         }
     }
@@ -21,10 +18,10 @@ fun Routing.usersAP(activityPubService: ActivityPubService){
 
 class ContentTypeRouteSelector(private val contentType: ContentType) : RouteSelector() {
     override fun evaluate(context: RoutingResolveContext, segmentIndex: Int): RouteSelectorEvaluation {
-        return if (context.call.request.contentType() == contentType) {
+        return if (ContentType.parse(context.call.request.accept() ?: return RouteSelectorEvaluation.FailedParameter) == contentType) {
             RouteSelectorEvaluation.Constant
         } else {
-            RouteSelectorEvaluation.Failed
+            RouteSelectorEvaluation.FailedParameter
         }
     }
 
