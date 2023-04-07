@@ -2,6 +2,7 @@ package dev.usbharu.hideout.service.activitypub
 
 import com.fasterxml.jackson.databind.JsonNode
 import dev.usbharu.hideout.config.Config
+import dev.usbharu.hideout.domain.model.ActivityPubResponse
 import dev.usbharu.hideout.exception.JsonParseException
 
 class ActivityPubServiceImpl : ActivityPubService {
@@ -19,7 +20,7 @@ class ActivityPubServiceImpl : ActivityPubService {
         return ActivityType.values().first { it.name.equals(type.asText(), true) }
     }
 
-    override fun processActivity(json: String, type: ActivityType) {
+    override fun processActivity(json: String, type: ActivityType): ActivityPubResponse? {
         when (type) {
             ActivityType.Accept -> TODO()
             ActivityType.Add -> TODO()

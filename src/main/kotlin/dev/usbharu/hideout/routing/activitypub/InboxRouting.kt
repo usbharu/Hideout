@@ -20,8 +20,12 @@ fun Routing.inbox(httpSignatureVerifyService: HttpSignatureVerifyService,activit
                 }
                 val json = call.receiveText()
                 val activityTypes = activityPubService.parseActivity(json)
-                activityPubService.processActivity(json,activityTypes)
-                call.respond(HttpStatusCode.NotImplemented)
+                val response = activityPubService.processActivity(json, activityTypes)
+                return@post if (response != null) {
+                    call.respond(response.httpStatusCode, response.message)
+                }else {
+                    call.respond(HttpStatusCode.InternalServerError)
+                }
             }
         }
         route("/users/{name}/inbox"){
