@@ -2,6 +2,7 @@ package dev.usbharu.hideout.routing.activitypub
 
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.exception.ParameterNotExistException
+import dev.usbharu.hideout.plugins.respondAp
 import dev.usbharu.hideout.service.activitypub.ActivityPubUserService
 import dev.usbharu.hideout.util.HttpUtil.Activity
 import dev.usbharu.hideout.util.HttpUtil.JsonLd
@@ -17,8 +18,10 @@ fun Routing.usersAP(activityPubUserService: ActivityPubUserService) {
             val name =
                 call.parameters["name"] ?: throw ParameterNotExistException("Parameter(name='name') does not exist.")
             val person = activityPubUserService.getPersonByName(name)
-            call.response.header("Content-Type", ContentType.Application.Activity.toString())
-            return@handle call.respond(HttpStatusCode.OK, Config.configData.objectMapper.writeValueAsString(person))
+            return@handle call.respondAp(
+                person,
+                HttpStatusCode.OK
+            )
         }
     }
 }
