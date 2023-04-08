@@ -10,6 +10,7 @@ import dev.usbharu.hideout.repository.IUserAuthRepository
 import dev.usbharu.hideout.repository.IUserRepository
 import dev.usbharu.hideout.repository.UserAuthRepository
 import dev.usbharu.hideout.repository.UserRepository
+import dev.usbharu.hideout.routing.register
 import dev.usbharu.hideout.service.IUserAuthService
 import dev.usbharu.hideout.service.activitypub.ActivityPubService
 import dev.usbharu.hideout.service.activitypub.ActivityPubServiceImpl
@@ -59,11 +60,13 @@ fun Application.module() {
         single<ActivityPubUserService> { ActivityPubUserServiceImpl(get(), get()) }
     }
 
+
     configureKoin(module)
     configureHTTP()
     configureSockets()
     configureMonitoring()
     configureSerialization()
+    register(inject<IUserAuthService>().value)
     configureRouting(
         inject<HttpSignatureVerifyService>().value,
         inject<ActivityPubService>().value,
