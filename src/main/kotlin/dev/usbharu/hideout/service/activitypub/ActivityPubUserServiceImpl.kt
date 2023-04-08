@@ -12,7 +12,7 @@ class ActivityPubUserServiceImpl(private val userService: UserService, private v
     override suspend fun getPersonByName(name: String): Person {
         val userEntity = userService.findByName(name)
         val userAuthEntity = userAuthService.findByUserId(userEntity.id)
-        val userUrl = "${Config.configData.url}/users$name"
+        val userUrl = "${Config.configData.url}/users/$name"
         return Person(
             type = emptyList(),
             name = userEntity.name,
