@@ -1,5 +1,10 @@
 package dev.usbharu.hideout
 
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import dev.usbharu.hideout.config.Config
+import dev.usbharu.hideout.config.ConfigData
 import dev.usbharu.hideout.plugins.*
 import dev.usbharu.hideout.repository.IUserAuthRepository
 import dev.usbharu.hideout.repository.IUserRepository
@@ -28,6 +33,13 @@ val Application.property: Application.(propertyName: String) -> String
 @Suppress("unused") // application.conf references the main function. This annotation prevents the IDE from marking it as unused.
 fun Application.module() {
 
+    Config.configData = ConfigData(
+        url = property("hideout.url"),
+        objectMapper = jacksonObjectMapper().enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+            .setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+    )
+
     val module = org.koin.dsl.module {
         single<Database> {
             Database.connect(
@@ -44,7 +56,7 @@ fun Application.module() {
         single<HttpSignatureVerifyService> { HttpSignatureVerifyServiceImpl(get()) }
         single<ActivityPubService> { ActivityPubServiceImpl() }
         single<UserService> { UserService(get()) }
-        single<ActivityPubUserService> { ActivityPubUserServiceImpl(get(),get()) }
+        single<ActivityPubUserService> { ActivityPubUserServiceImpl(get(), get()) }
     }
 
     configureKoin(module)
