@@ -8,6 +8,8 @@ import dev.usbharu.hideout.repository.UserRepository
 import dev.usbharu.hideout.service.IUserAuthService
 import dev.usbharu.hideout.service.activitypub.ActivityPubService
 import dev.usbharu.hideout.service.activitypub.ActivityPubServiceImpl
+import dev.usbharu.hideout.service.activitypub.ActivityPubUserService
+import dev.usbharu.hideout.service.activitypub.ActivityPubUserServiceImpl
 import dev.usbharu.hideout.service.impl.UserAuthService
 import dev.usbharu.hideout.service.impl.UserService
 import dev.usbharu.hideout.service.signature.HttpSignatureVerifyService
@@ -42,6 +44,7 @@ fun Application.module() {
         single<HttpSignatureVerifyService> { HttpSignatureVerifyServiceImpl(get()) }
         single<ActivityPubService> { ActivityPubServiceImpl() }
         single<UserService> { UserService(get()) }
+        single<ActivityPubUserService> { ActivityPubUserServiceImpl(get(),get()) }
     }
 
     configureKoin(module)
@@ -52,6 +55,7 @@ fun Application.module() {
     configureRouting(
         inject<HttpSignatureVerifyService>().value,
         inject<ActivityPubService>().value,
-        inject<UserService>().value
+        inject<UserService>().value,
+        inject<ActivityPubUserService>().value
     )
 }

@@ -13,4 +13,21 @@ open class Image : Object {
         this.url = url
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Image) return false
+        if (!super.equals(other)) return false
+
+        if (mediaType != other.mediaType) return false
+        return url == other.url
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + (mediaType?.hashCode() ?: 0)
+        result = 31 * result + (url?.hashCode() ?: 0)
+        return result
+    }
+
+
 }

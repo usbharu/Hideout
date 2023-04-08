@@ -5,6 +5,7 @@ import dev.usbharu.hideout.routing.activitypub.outbox
 import dev.usbharu.hideout.routing.activitypub.usersAP
 import dev.usbharu.hideout.routing.wellknown.webfinger
 import dev.usbharu.hideout.service.activitypub.ActivityPubService
+import dev.usbharu.hideout.service.activitypub.ActivityPubUserService
 import dev.usbharu.hideout.service.impl.UserService
 import dev.usbharu.hideout.service.signature.HttpSignatureVerifyService
 import io.ktor.server.application.*
@@ -14,13 +15,14 @@ import io.ktor.server.routing.*
 fun Application.configureRouting(
     httpSignatureVerifyService: HttpSignatureVerifyService,
     activityPubService: ActivityPubService,
-    userService:UserService
+    userService:UserService,
+    activityPubUserService: ActivityPubUserService
 ) {
     install(AutoHeadResponse)
     routing {
         inbox(httpSignatureVerifyService, activityPubService)
         outbox()
-        usersAP(activityPubService)
+        usersAP(activityPubUserService)
         webfinger(userService)
     }
 }
