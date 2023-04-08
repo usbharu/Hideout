@@ -18,7 +18,7 @@ fun Routing.usersAP(activityPubUserService: ActivityPubUserService) {
                 call.parameters["name"] ?: throw ParameterNotExistException("Parameter(name='name') does not exist.")
             val person = activityPubUserService.getPersonByName(name)
             call.response.header("Content-Type", ContentType.Application.Activity.toString())
-            call.respond(HttpStatusCode.OK, Config.configData.objectMapper.writeValueAsString(person))
+            return@handle call.respond(HttpStatusCode.OK, Config.configData.objectMapper.writeValueAsString(person))
         }
     }
 }
