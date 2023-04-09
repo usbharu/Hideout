@@ -1,11 +1,12 @@
 package dev.usbharu.hideout.service.activitypub
 
 import com.fasterxml.jackson.databind.JsonNode
+import dev.usbharu.hideout.ap.Follow
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.domain.model.ActivityPubResponse
 import dev.usbharu.hideout.exception.JsonParseException
 
-class ActivityPubServiceImpl : ActivityPubService {
+class ActivityPubServiceImpl(private val activityPubFollowService: ActivityPubFollowService) : ActivityPubService {
     override fun parseActivity(json: String): ActivityType {
         val readTree = Config.configData.objectMapper.readTree(json)
         if (readTree.isObject.not()) {
@@ -20,8 +21,8 @@ class ActivityPubServiceImpl : ActivityPubService {
         return ActivityType.values().first { it.name.equals(type.asText(), true) }
     }
 
-    override fun processActivity(json: String, type: ActivityType): ActivityPubResponse? {
-        when (type) {
+    override suspend fun processActivity(json: String, type: ActivityType): ActivityPubResponse? {
+        return when (type) {
             ActivityType.Accept -> TODO()
             ActivityType.Add -> TODO()
             ActivityType.Announce -> TODO()
@@ -31,7 +32,13 @@ class ActivityPubServiceImpl : ActivityPubService {
             ActivityType.Delete -> TODO()
             ActivityType.Dislike -> TODO()
             ActivityType.Flag -> TODO()
-            ActivityType.Follow -> TODO()
+            ActivityType.Follow -> activityPubFollowService.receiveFollow(
+                Config.configData.objectMapper.readValue(
+                    json,
+                    Follow::class.java
+                )
+            )
+
             ActivityType.Ignore -> TODO()
             ActivityType.Invite -> TODO()
             ActivityType.Join -> TODO()

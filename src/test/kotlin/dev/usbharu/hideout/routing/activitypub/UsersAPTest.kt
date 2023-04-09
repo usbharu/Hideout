@@ -74,7 +74,7 @@ class UsersAPTest {
                     TODO("Not yet implemented")
                 }
 
-                override fun processActivity(json: String, type: ActivityType): ActivityPubResponse? {
+                override suspend fun processActivity(json: String, type: ActivityType): ActivityPubResponse? {
                     TODO("Not yet implemented")
                 }
             }, UserService(object : IUserRepository {
