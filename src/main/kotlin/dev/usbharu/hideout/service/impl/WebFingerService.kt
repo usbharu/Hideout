@@ -66,8 +66,12 @@ class WebFingerService(
                 userModel.preferredUsername ?: throw IllegalStateException(),
                 domain,
                 userName,
-                userModel.summary.orEmpty()
+                userModel.summary.orEmpty(),
+            "",
+            "",
+            ""
         )
+        TODO()
         return userService.create(user)
     }
 }

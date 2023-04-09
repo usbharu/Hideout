@@ -10,6 +10,8 @@ interface IUserRepository {
 
     suspend fun findByName(name: String): UserEntity?
 
+    suspend fun findByUrl(url:String):UserEntity?
+
     suspend fun update(userEntity: UserEntity)
 
     suspend fun delete(id: Long)

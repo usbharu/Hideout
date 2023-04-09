@@ -26,6 +26,10 @@ class UserService(private val userRepository: IUserRepository) {
             ?: throw UserNotFoundException("$name was not found.")
     }
 
+    suspend fun findByUrl(url: String): UserEntity {
+        return userRepository.findByUrl(url) ?: throw UserNotFoundException("$url was not found.")
+    }
+
     suspend fun create(user: User): UserEntity {
         return userRepository.create(user)
     }
