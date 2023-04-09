@@ -41,7 +41,19 @@ fun Routing.inbox(
                 call.respond(HttpStatusCode.NotImplemented)
             }
             post {
-                call.respond(HttpStatusCode.MethodNotAllowed)
+                if (httpSignatureVerifyService.verify(call.request.headers).not()) {
+                    throw HttpSignatureVerifyException()
+                }
+                val json = call.receiveText()
+                val activityTypes = activityPubService.parseActivity(json)
+                val response = activityPubService.processActivity(json, activityTypes)
+                when (response) {
+                    is ActivityPubObjectResponse -> call.respond(response.httpStatusCode, Config.configData.objectMapper.writeValueAsString(response.message.apply { context =
+                        listOf("https://www.w3.org/ns/activitystreams")
+                    }))
+                    is ActivityPubStringResponse -> call.respond(response.httpStatusCode, response.message)
+                    null -> call.respond(HttpStatusCode.NotImplemented)
+                }
             }
         }
 
