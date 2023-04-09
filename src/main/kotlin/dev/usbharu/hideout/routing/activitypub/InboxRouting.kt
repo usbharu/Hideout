@@ -46,6 +46,7 @@ fun Routing.inbox(
                 }
                 val json = call.receiveText()
                 val activityTypes = activityPubService.parseActivity(json)
+                println(activityTypes)
                 val response = activityPubService.processActivity(json, activityTypes)
                 when (response) {
                     is ActivityPubObjectResponse -> call.respond(response.httpStatusCode, Config.configData.objectMapper.writeValueAsString(response.message.apply { context =
