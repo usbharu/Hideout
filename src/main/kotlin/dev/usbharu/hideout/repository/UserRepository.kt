@@ -55,6 +55,9 @@ class UserRepository(private val database: Database) : IUserRepository {
                 it[domain] = user.domain
                 it[screenName] = user.screenName
                 it[description] = user.description
+                it[inbox] = user.inbox
+                it[outbox] = user.outbox
+                it[url] = user.url
             }[Users.id].value, user)
         }
     }
@@ -134,6 +137,9 @@ class UserRepository(private val database: Database) : IUserRepository {
                 it[domain] = userEntity.domain
                 it[screenName] = userEntity.screenName
                 it[description] = userEntity.description
+                it[inbox] = userEntity.inbox
+                it[outbox] = userEntity.outbox
+                it[url] = userEntity.url
             }
         }
     }
