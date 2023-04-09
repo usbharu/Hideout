@@ -5,7 +5,7 @@ import dev.usbharu.hideout.domain.model.ActivityPubResponse
 interface ActivityPubService {
     fun parseActivity(json:String): ActivityType
 
-    fun processActivity(json:String, type: ActivityType): ActivityPubResponse?
+    suspend fun processActivity(json:String, type: ActivityType): ActivityPubResponse?
 }
 
 enum class ActivityType {

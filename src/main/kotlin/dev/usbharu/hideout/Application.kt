@@ -12,12 +12,11 @@ import dev.usbharu.hideout.repository.UserAuthRepository
 import dev.usbharu.hideout.repository.UserRepository
 import dev.usbharu.hideout.routing.register
 import dev.usbharu.hideout.service.IUserAuthService
-import dev.usbharu.hideout.service.activitypub.ActivityPubService
-import dev.usbharu.hideout.service.activitypub.ActivityPubServiceImpl
-import dev.usbharu.hideout.service.activitypub.ActivityPubUserService
-import dev.usbharu.hideout.service.activitypub.ActivityPubUserServiceImpl
+import dev.usbharu.hideout.service.activitypub.*
 import dev.usbharu.hideout.service.impl.UserAuthService
 import dev.usbharu.hideout.service.impl.UserService
+import dev.usbharu.hideout.service.job.JobQueueService
+import dev.usbharu.hideout.service.job.KJobJobQueueService
 import dev.usbharu.hideout.service.signature.HttpSignatureVerifyService
 import dev.usbharu.hideout.service.signature.HttpSignatureVerifyServiceImpl
 import io.ktor.server.application.*
@@ -55,7 +54,12 @@ fun Application.module() {
         single<IUserAuthRepository> { UserAuthRepository(get()) }
         single<IUserAuthService> { UserAuthService(get(), get()) }
         single<HttpSignatureVerifyService> { HttpSignatureVerifyServiceImpl(get()) }
-        single<ActivityPubService> { ActivityPubServiceImpl() }
+        single<JobQueueService> { val kJobJobQueueService = KJobJobQueueService(get())
+            kJobJobQueueService.init(listOf())
+            kJobJobQueueService
+        }
+        single<ActivityPubFollowService>{ ActivityPubFollowServiceImpl(get()) }
+        single<ActivityPubService> { ActivityPubServiceImpl(get()) }
         single<UserService> { UserService(get()) }
         single<ActivityPubUserService> { ActivityPubUserServiceImpl(get(), get()) }
     }
