@@ -25,7 +25,10 @@ class UserRepository(private val database: Database) : IUserRepository {
             this[Users.name],
             this[Users.domain],
             this[Users.screenName],
-            this[Users.description]
+            this[Users.description],
+            this[Users.inbox],
+            this[Users.outbox],
+            this[Users.url]
         )
     }
 
@@ -35,7 +38,10 @@ class UserRepository(private val database: Database) : IUserRepository {
             this[Users.name],
             this[Users.domain],
             this[Users.screenName],
-            this[Users.description]
+            this[Users.description],
+            this[Users.inbox],
+            this[Users.outbox],
+            this[Users.url],
         )
     }
 
@@ -78,6 +84,12 @@ class UserRepository(private val database: Database) : IUserRepository {
         }
     }
 
+    override suspend fun findByUrl(url: String): UserEntity? {
+        return query {
+            Users.select { Users.url eq url }.singleOrNull()?.toUserEntity()
+        }
+    }
+
     override suspend fun findFollowersById(id: Long): List<UserEntity> {
         return query {
             val followers = Users.alias("FOLLOWERS")
@@ -91,7 +103,13 @@ class UserRepository(private val database: Database) : IUserRepository {
                     onColumn = { UsersFollowers.followerId },
                     otherColumn = { followers[Users.id] })
 
-                .slice(followers.get(Users.id), followers.get(Users.name), followers.get(Users.domain), followers.get(Users.screenName), followers.get(Users.description))
+                .slice(
+                    followers.get(Users.id),
+                    followers.get(Users.name),
+                    followers.get(Users.domain),
+                    followers.get(Users.screenName),
+                    followers.get(Users.description)
+                )
                 .select { Users.id eq id }
                 .map {
                     UserEntity(
@@ -100,6 +118,9 @@ class UserRepository(private val database: Database) : IUserRepository {
                         domain = it[followers[Users.domain]],
                         screenName = it[followers[Users.screenName]],
                         description = it[followers[Users.description]],
+                        inbox = it[followers[Users.inbox]],
+                        outbox = it[followers[Users.outbox]],
+                        url = it[followers[Users.url]],
                     )
                 }
         }

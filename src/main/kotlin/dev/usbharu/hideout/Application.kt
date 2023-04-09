@@ -19,6 +19,9 @@ import dev.usbharu.hideout.service.job.JobQueueParentService
 import dev.usbharu.hideout.service.job.KJobJobQueueParentService
 import dev.usbharu.hideout.service.signature.HttpSignatureVerifyService
 import dev.usbharu.hideout.service.signature.HttpSignatureVerifyServiceImpl
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.logging.*
 import io.ktor.server.application.*
 import org.jetbrains.exposed.sql.Database
 import org.koin.ktor.ext.inject
@@ -54,14 +57,23 @@ fun Application.module() {
         single<IUserAuthRepository> { UserAuthRepository(get()) }
         single<IUserAuthService> { UserAuthService(get(), get()) }
         single<HttpSignatureVerifyService> { HttpSignatureVerifyServiceImpl(get()) }
-        single<JobQueueParentService> { val kJobJobQueueService = KJobJobQueueParentService(get())
+        single<JobQueueParentService> {
+            val kJobJobQueueService = KJobJobQueueParentService(get())
             kJobJobQueueService.init(listOf())
             kJobJobQueueService
         }
-        single<ActivityPubFollowService>{ ActivityPubFollowServiceImpl(get()) }
+        single<HttpClient> {
+            HttpClient(CIO).config {
+                install(Logging) {
+                    logger = Logger.DEFAULT
+                    level = LogLevel.ALL
+                }
+            }
+        }
+        single<ActivityPubFollowService> { ActivityPubFollowServiceImpl(get(), get(), get()) }
         single<ActivityPubService> { ActivityPubServiceImpl(get()) }
         single<UserService> { UserService(get()) }
-        single<ActivityPubUserService> { ActivityPubUserServiceImpl(get(), get()) }
+        single<ActivityPubUserService> { ActivityPubUserServiceImpl(get(), get(),get()) }
     }
 
 

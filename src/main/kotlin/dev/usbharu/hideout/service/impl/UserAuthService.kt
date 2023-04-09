@@ -9,11 +9,7 @@ import dev.usbharu.hideout.repository.IUserAuthRepository
 import dev.usbharu.hideout.repository.IUserRepository
 import dev.usbharu.hideout.service.IUserAuthService
 import io.ktor.util.*
-import java.security.KeyPair
-import java.security.KeyPairGenerator
-import java.security.MessageDigest
-import java.security.PrivateKey
-import java.security.PublicKey
+import java.security.*
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.util.*
@@ -35,11 +31,15 @@ class UserAuthService(
     }
 
     override suspend fun registerAccount(username: String, hash: String) {
+        val url = "${Config.configData.url}/users/$username"
         val registerUser = User(
             name = username,
             domain = Config.configData.domain,
             screenName = username,
-            description = ""
+            description = "",
+            inbox = "$url/inbox",
+            outbox = "$url/outbox",
+            url = url
         )
         val createdUser = userRepository.create(registerUser)
 
@@ -81,8 +81,6 @@ class UserAuthService(
         keyPairGenerator.initialize(1024)
         return keyPairGenerator.generateKeyPair()
     }
-
-
 
 
     companion object {

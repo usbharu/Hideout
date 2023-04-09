@@ -1,15 +1,23 @@
 package dev.usbharu.hideout.service.activitypub
 
+import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.ap.Image
 import dev.usbharu.hideout.ap.Key
 import dev.usbharu.hideout.ap.Person
 import dev.usbharu.hideout.config.Config
+import dev.usbharu.hideout.exception.UserNotFoundException
 import dev.usbharu.hideout.service.IUserAuthService
 import dev.usbharu.hideout.service.impl.UserService
+import dev.usbharu.hideout.util.HttpUtil.Activity
+import io.ktor.client.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
 
-class ActivityPubUserServiceImpl(private val userService: UserService, private val userAuthService: IUserAuthService) :
+class ActivityPubUserServiceImpl(private val userService: UserService, private val userAuthService: IUserAuthService,private val httpClient: HttpClient) :
     ActivityPubUserService {
     override suspend fun getPersonByName(name: String): Person {
+        // TODO: JOINで書き直し
         val userEntity = userService.findByName(name)
         val userAuthEntity = userAuthService.findByUserId(userEntity.id)
         val userUrl = "${Config.configData.url}/users/$name"
@@ -36,5 +44,42 @@ class ActivityPubUserServiceImpl(private val userService: UserService, private v
                 publicKeyPem = userAuthEntity.publicKey
             )
         )
+    }
+
+    override suspend fun fetchPerson(url: String): Person {
+        return try {
+            val userEntity = userService.findByUrl(url)
+            val userAuthEntity = userAuthService.findByUsername(userEntity.name)
+            return Person(
+                type = emptyList(),
+                name = userEntity.name,
+                id = url,
+                preferredUsername = userEntity.name,
+                summary = userEntity.description,
+                inbox = "$url/inbox",
+                outbox = "$url/outbox",
+                url = url,
+                icon = Image(
+                    type = emptyList(),
+                    name = "$url/icon.png",
+                    mediaType = "image/png",
+                    url = "$url/icon.png"
+                ),
+                publicKey = Key(
+                    type = emptyList(),
+                    name = "Public Key",
+                    id = "$url#pubkey",
+                    owner = url,
+                    publicKeyPem = userAuthEntity.publicKey
+                )
+            )
+
+        } catch (e:UserNotFoundException){
+            val httpResponse = httpClient.get(url) {
+                accept(ContentType.Application.Activity)
+            }
+            Config.configData.objectMapper.readValue<Person>(httpResponse.bodyAsText())
+        }
+
     }
 }
