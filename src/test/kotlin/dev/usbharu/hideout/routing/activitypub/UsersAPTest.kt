@@ -90,6 +90,10 @@ class UsersAPTest {
                     TODO("Not yet implemented")
                 }
 
+                override suspend fun findByUrl(url: String): UserEntity? {
+                    TODO("Not yet implemented")
+                }
+
                 override suspend fun update(userEntity: UserEntity) {
                     TODO("Not yet implemented")
                 }
@@ -120,6 +124,10 @@ class UsersAPTest {
             }), object : ActivityPubUserService {
                 override suspend fun getPersonByName(name: String): Person {
                     return person
+                }
+
+                override suspend fun fetchPerson(url: String): Person {
+                    TODO("Not yet implemented")
                 }
 
             })

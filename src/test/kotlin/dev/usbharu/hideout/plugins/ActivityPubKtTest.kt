@@ -32,7 +32,11 @@ class ActivityPubKtTest {
             }
 
             override suspend fun findByName(name: String): UserEntity? {
-                return UserEntity(1, "test", "localhost", "test", "")
+                return UserEntity(1, "test", "localhost", "test", "","","","")
+            }
+
+            override suspend fun findByUrl(url: String): UserEntity? {
+                TODO("Not yet implemented")
             }
 
             override suspend fun update(userEntity: UserEntity) {
