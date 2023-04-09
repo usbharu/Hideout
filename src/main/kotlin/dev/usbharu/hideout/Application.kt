@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.config.ConfigData
+import dev.usbharu.hideout.domain.model.job.ReceiveFollowJob
 import dev.usbharu.hideout.plugins.*
 import dev.usbharu.hideout.repository.IUserAuthRepository
 import dev.usbharu.hideout.repository.IUserRepository
@@ -19,10 +20,17 @@ import dev.usbharu.hideout.service.job.JobQueueParentService
 import dev.usbharu.hideout.service.job.KJobJobQueueParentService
 import dev.usbharu.hideout.service.signature.HttpSignatureVerifyService
 import dev.usbharu.hideout.service.signature.HttpSignatureVerifyServiceImpl
+import dev.usbharu.kjob.exposed.ExposedKJob
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.server.application.*
+import kjob.core.Job
+import kjob.core.KJob
+import kjob.core.dsl.JobContextWithProps
+import kjob.core.dsl.JobRegisterContext
+import kjob.core.dsl.KJobFunctions
+import kjob.core.kjob
 import org.jetbrains.exposed.sql.Database
 import org.koin.ktor.ext.inject
 
@@ -34,7 +42,7 @@ val Application.property: Application.(propertyName: String) -> String
     }
 
 @Suppress("unused") // application.conf references the main function. This annotation prevents the IDE from marking it as unused.
-fun Application.module() {
+fun Application.parent() {
 
     Config.configData = ConfigData(
         url = property("hideout.url"),
@@ -73,7 +81,7 @@ fun Application.module() {
         single<ActivityPubFollowService> { ActivityPubFollowServiceImpl(get(), get(), get()) }
         single<ActivityPubService> { ActivityPubServiceImpl(get()) }
         single<UserService> { UserService(get()) }
-        single<ActivityPubUserService> { ActivityPubUserServiceImpl(get(), get(),get()) }
+        single<ActivityPubUserService> { ActivityPubUserServiceImpl(get(), get(), get()) }
     }
 
 
@@ -89,4 +97,18 @@ fun Application.module() {
         inject<UserService>().value,
         inject<ActivityPubUserService>().value
     )
+}
+@Suppress("unused")
+fun Application.worker() {
+    val kJob = kjob(ExposedKJob) {
+        connectionDatabase = inject<Database>().value
+    }.start()
+
+    val activityPubService = inject<ActivityPubService>().value
+
+    kJob.register(ReceiveFollowJob){
+        execute {
+            activityPubService.processActivity(this,it)
+        }
+    }
 }

@@ -13,6 +13,7 @@ import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.domain.model.ActivityPubResponse
 import dev.usbharu.hideout.domain.model.User
 import dev.usbharu.hideout.domain.model.UserEntity
+import dev.usbharu.hideout.domain.model.job.HideoutJob
 import dev.usbharu.hideout.plugins.configureRouting
 import dev.usbharu.hideout.plugins.configureSerialization
 import dev.usbharu.hideout.repository.IUserRepository
@@ -28,6 +29,7 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.server.config.*
 import io.ktor.server.testing.*
+import kjob.core.dsl.JobContextWithProps
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -77,6 +79,14 @@ class UsersAPTest {
                 override suspend fun processActivity(json: String, type: ActivityType): ActivityPubResponse? {
                     TODO("Not yet implemented")
                 }
+
+                override suspend fun <T : HideoutJob> processActivity(
+                    job: JobContextWithProps<T>,
+                    hideoutJob: HideoutJob
+                ) {
+                    TODO("Not yet implemented")
+                }
+
             }, UserService(object : IUserRepository {
                 override suspend fun create(user: User): UserEntity {
                     TODO("Not yet implemented")

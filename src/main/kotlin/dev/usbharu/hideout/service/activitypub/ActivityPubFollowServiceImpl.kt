@@ -27,7 +27,7 @@ class ActivityPubFollowServiceImpl(
         return ActivityPubStringResponse(HttpStatusCode.OK, "{}", ContentType.Application.Json)
     }
 
-    suspend fun receiveFollowJob(props: JobProps<ReceiveFollowJob>) {
+    override suspend fun receiveFollowJob(props: JobProps<ReceiveFollowJob>) {
         val actor = props[ReceiveFollowJob.actor]
         val person = activityPubUserService.fetchPerson(actor)
         val follow = Config.configData.objectMapper.readValue<Follow>(props[ReceiveFollowJob.follow])

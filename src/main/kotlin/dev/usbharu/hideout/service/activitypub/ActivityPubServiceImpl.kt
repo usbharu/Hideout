@@ -4,7 +4,14 @@ import com.fasterxml.jackson.databind.JsonNode
 import dev.usbharu.hideout.ap.Follow
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.domain.model.ActivityPubResponse
+import dev.usbharu.hideout.domain.model.job.HideoutJob
+import dev.usbharu.hideout.domain.model.job.ReceiveFollowJob
 import dev.usbharu.hideout.exception.JsonParseException
+import kjob.core.Job
+import kjob.core.dsl.JobContextWithProps
+import kjob.core.job.JobProps
+import kotlin.reflect.full.createInstance
+import kotlin.reflect.full.primaryConstructor
 
 class ActivityPubServiceImpl(private val activityPubFollowService: ActivityPubFollowService) : ActivityPubService {
     override fun parseActivity(json: String): ActivityType {
@@ -60,4 +67,12 @@ class ActivityPubServiceImpl(private val activityPubFollowService: ActivityPubFo
             ActivityType.Other -> TODO()
         }
     }
+
+    override suspend fun <T : HideoutJob> processActivity(job: JobContextWithProps<T>, hideoutJob: HideoutJob) {
+        when (hideoutJob) {
+            ReceiveFollowJob -> activityPubFollowService.receiveFollowJob(job.props as JobProps<ReceiveFollowJob>)
+        }
+    }
+
+
 }
