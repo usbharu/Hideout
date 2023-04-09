@@ -1,6 +1,7 @@
 package dev.usbharu.hideout.service.activitypub
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import dev.usbharu.hideout.ap.Accept
 import dev.usbharu.hideout.ap.Follow
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.domain.model.ActivityPubResponse
@@ -34,7 +35,11 @@ class ActivityPubFollowServiceImpl(
         httpClient.postAp(
             urlString = person.inbox ?: throw IllegalArgumentException("inbox is not found"),
             username = "${props[ReceiveFollowJob.targetActor]}#pubkey",
-            jsonLd = follow
+            jsonLd = Accept(
+                name = "Follow",
+                `object` = follow,
+                actor = props[ReceiveFollowJob.targetActor]
+            )
         )
     }
 }
