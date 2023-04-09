@@ -8,7 +8,7 @@ import kjob.core.dsl.KJobFunctions
 import kjob.core.kjob
 import org.jetbrains.exposed.sql.Database
 
-class KJobJobWorkerService(private val database: Database) : JobWorkerService {
+class KJobJobQueueWorkerService(private val database: Database) : JobQueueWorkerService {
 
     val kjob by lazy {
         kjob(ExposedKJob) {

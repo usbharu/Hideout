@@ -15,8 +15,8 @@ import dev.usbharu.hideout.service.IUserAuthService
 import dev.usbharu.hideout.service.activitypub.*
 import dev.usbharu.hideout.service.impl.UserAuthService
 import dev.usbharu.hideout.service.impl.UserService
-import dev.usbharu.hideout.service.job.JobQueueService
-import dev.usbharu.hideout.service.job.KJobJobQueueService
+import dev.usbharu.hideout.service.job.JobQueueParentService
+import dev.usbharu.hideout.service.job.KJobJobQueueParentService
 import dev.usbharu.hideout.service.signature.HttpSignatureVerifyService
 import dev.usbharu.hideout.service.signature.HttpSignatureVerifyServiceImpl
 import io.ktor.server.application.*
@@ -54,7 +54,7 @@ fun Application.module() {
         single<IUserAuthRepository> { UserAuthRepository(get()) }
         single<IUserAuthService> { UserAuthService(get(), get()) }
         single<HttpSignatureVerifyService> { HttpSignatureVerifyServiceImpl(get()) }
-        single<JobQueueService> { val kJobJobQueueService = KJobJobQueueService(get())
+        single<JobQueueParentService> { val kJobJobQueueService = KJobJobQueueParentService(get())
             kJobJobQueueService.init(listOf())
             kJobJobQueueService
         }
