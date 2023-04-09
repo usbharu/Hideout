@@ -7,7 +7,7 @@ import kjob.core.dsl.ScheduleContext
 import kjob.core.kjob
 import org.jetbrains.exposed.sql.Database
 
-class KJobJobQueueService(private val database: Database) : JobQueueService {
+class KJobJobQueueParentService(private val database: Database) : JobQueueParentService {
 
     val kjob: KJob = kjob(ExposedKJob) {
         connectionDatabase =  database
