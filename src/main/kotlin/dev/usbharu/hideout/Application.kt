@@ -76,6 +76,9 @@ fun Application.parent() {
                     logger = Logger.DEFAULT
                     level = LogLevel.ALL
                 }
+                install(httpSignaturePlugin){
+                    keyMap = KtorKeyMap(get())
+                }
             }
         }
         single<ActivityPubFollowService> { ActivityPubFollowServiceImpl(get(), get(), get()) }
