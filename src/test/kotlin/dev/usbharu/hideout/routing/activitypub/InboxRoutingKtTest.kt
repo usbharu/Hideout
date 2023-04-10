@@ -70,4 +70,27 @@ class InboxRoutingKtTest {
             Assertions.assertEquals(HttpStatusCode.MethodNotAllowed, it.status)
         }
     }
+
+    @Test
+    fun `ユーザーのinboxに空のリクエストボディでPOSTしたら400が帰ってくる`() = testApplication {
+        environment {
+            config = ApplicationConfig("empty.conf")
+        }
+        val httpSignatureVerifyService = mock<HttpSignatureVerifyService>{
+            on { verify(any()) } doReturn true
+        }
+        val activityPubService = mock<ActivityPubService>{
+            on { parseActivity(any()) } doThrow JsonParseException()
+        }
+        val userService = mock<UserService>()
+        val activityPubUserService = mock<ActivityPubUserService>()
+        application {
+            configureStatusPages()
+            configureSerialization()
+            configureRouting(httpSignatureVerifyService, activityPubService, userService, activityPubUserService)
+        }
+        client.post("/users/test/inbox").let {
+            Assertions.assertEquals(HttpStatusCode.BadRequest, it.status)
+        }
+    }
 }
