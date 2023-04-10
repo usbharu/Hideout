@@ -26,11 +26,23 @@ class KtorKeyMapTest {
                 TODO("Not yet implemented")
             }
 
+            override suspend fun findByIds(ids: List<Long>): List<UserEntity> {
+                TODO("Not yet implemented")
+            }
+
             override suspend fun findByName(name: String): UserEntity? {
                 return UserEntity(1, "test", "localhost", "test", "","","","")
             }
 
+            override suspend fun findByNameAndDomains(names: List<Pair<String, String>>): List<UserEntity> {
+                TODO("Not yet implemented")
+            }
+
             override suspend fun findByUrl(url: String): UserEntity? {
+                TODO("Not yet implemented")
+            }
+
+            override suspend fun findByUrls(urls: List<String>): List<UserEntity> {
                 TODO("Not yet implemented")
             }
 

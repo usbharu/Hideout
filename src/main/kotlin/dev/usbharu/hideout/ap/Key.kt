@@ -1,9 +1,9 @@
 package dev.usbharu.hideout.ap
 
 open class Key : Object{
-    private var id:String? = null
-    private var owner:String? = null
-    private var publicKeyPem:String? = null
+    var id:String? = null
+    var owner:String? = null
+    var publicKeyPem:String? = null
     protected constructor() : super()
     constructor(
         type: List<String>,

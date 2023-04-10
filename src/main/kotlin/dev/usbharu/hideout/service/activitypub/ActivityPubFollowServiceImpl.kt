@@ -8,6 +8,7 @@ import dev.usbharu.hideout.domain.model.ActivityPubResponse
 import dev.usbharu.hideout.domain.model.ActivityPubStringResponse
 import dev.usbharu.hideout.domain.model.job.ReceiveFollowJob
 import dev.usbharu.hideout.plugins.postAp
+import dev.usbharu.hideout.service.impl.UserService
 import dev.usbharu.hideout.service.job.JobQueueParentService
 import io.ktor.client.*
 import io.ktor.http.*
@@ -16,6 +17,7 @@ import kjob.core.job.JobProps
 class ActivityPubFollowServiceImpl(
     private val jobQueueParentService: JobQueueParentService,
     private val activityPubUserService: ActivityPubUserService,
+    private val userService: UserService,
     private val httpClient: HttpClient
 ) : ActivityPubFollowService {
     override suspend fun receiveFollow(follow: Follow): ActivityPubResponse {
@@ -32,14 +34,19 @@ class ActivityPubFollowServiceImpl(
         val actor = props[ReceiveFollowJob.actor]
         val person = activityPubUserService.fetchPerson(actor)
         val follow = Config.configData.objectMapper.readValue<Follow>(props[ReceiveFollowJob.follow])
+        val targetActor = props[ReceiveFollowJob.targetActor]
         httpClient.postAp(
             urlString = person.inbox ?: throw IllegalArgumentException("inbox is not found"),
-            username = "${props[ReceiveFollowJob.targetActor]}#pubkey",
+            username = "$targetActor#pubkey",
             jsonLd = Accept(
                 name = "Follow",
                 `object` = follow,
-                actor = props[ReceiveFollowJob.targetActor]
+                actor = targetActor
             )
         )
+        val users =
+            userService.findByUrls(listOf(targetActor, follow.actor ?: throw IllegalArgumentException("actor is null")))
+
+        userService.addFollowers(users.first { it.url == targetActor }.id, users.first { it.url == follow.actor }.id)
     }
 }

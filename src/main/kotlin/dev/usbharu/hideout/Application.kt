@@ -81,7 +81,7 @@ fun Application.parent() {
                 }
             }
         }
-        single<ActivityPubFollowService> { ActivityPubFollowServiceImpl(get(), get(), get()) }
+        single<ActivityPubFollowService> { ActivityPubFollowServiceImpl(get(), get(), get(),get()) }
         single<ActivityPubService> { ActivityPubServiceImpl(get()) }
         single<UserService> { UserService(get()) }
         single<ActivityPubUserService> { ActivityPubUserServiceImpl(get(), get(), get()) }

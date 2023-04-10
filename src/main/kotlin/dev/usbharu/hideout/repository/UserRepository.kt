@@ -79,6 +79,14 @@ class UserRepository(private val database: Database) : IUserRepository {
         }
     }
 
+    override suspend fun findByIds(ids: List<Long>): List<UserEntity> {
+        return query {
+            Users.select { Users.id inList ids }.map {
+                it.toUserEntity()
+            }
+        }
+    }
+
     override suspend fun findByName(name: String): UserEntity? {
         return query {
             Users.select { Users.name eq name }.map {
@@ -87,10 +95,24 @@ class UserRepository(private val database: Database) : IUserRepository {
         }
     }
 
+    override suspend fun findByNameAndDomains(names: List<Pair<String, String>>): List<UserEntity> {
+        return query {
+            val selectAll = Users.selectAll()
+            names.forEach { (name, domain) ->
+                selectAll.orWhere { Users.name eq name and (Users.domain eq domain) }
+            }
+            selectAll.map { it.toUserEntity() }
+        }
+    }
+
     override suspend fun findByUrl(url: String): UserEntity? {
         return query {
             Users.select { Users.url eq url }.singleOrNull()?.toUserEntity()
         }
+    }
+
+    override suspend fun findByUrls(urls: List<String>): List<UserEntity> {
+        TODO("Not yet implemented")
     }
 
     override suspend fun findFollowersById(id: Long): List<UserEntity> {

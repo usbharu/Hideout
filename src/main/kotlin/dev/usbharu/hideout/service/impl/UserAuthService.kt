@@ -4,6 +4,7 @@ import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.domain.model.User
 import dev.usbharu.hideout.domain.model.UserAuthentication
 import dev.usbharu.hideout.domain.model.UserAuthenticationEntity
+import dev.usbharu.hideout.domain.model.UserEntity
 import dev.usbharu.hideout.exception.UserNotFoundException
 import dev.usbharu.hideout.repository.IUserAuthRepository
 import dev.usbharu.hideout.repository.IUserRepository
@@ -74,6 +75,10 @@ class UserAuthService(
         val userEntity = userRepository.findByName(username) ?: throw UserNotFoundException("$username was not found")
         return userAuthRepository.findByUserId(userEntity.id)
             ?: throw UserNotFoundException("$username auth data was not found")
+    }
+
+    override suspend fun createAccount(userEntity: UserAuthentication): UserAuthenticationEntity {
+        return userAuthRepository.create(userEntity)
     }
 
     private fun generateKeyPair(): KeyPair {
