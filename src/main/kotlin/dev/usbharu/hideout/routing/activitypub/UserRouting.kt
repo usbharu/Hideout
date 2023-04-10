@@ -1,6 +1,5 @@
 package dev.usbharu.hideout.routing.activitypub
 
-import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.exception.ParameterNotExistException
 import dev.usbharu.hideout.plugins.respondAp
 import dev.usbharu.hideout.service.activitypub.ActivityPubUserService
@@ -9,7 +8,6 @@ import dev.usbharu.hideout.util.HttpUtil.JsonLd
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Routing.usersAP(activityPubUserService: ActivityPubUserService) {
