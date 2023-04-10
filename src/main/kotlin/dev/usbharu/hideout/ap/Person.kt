@@ -5,10 +5,10 @@ open class Person : Object {
     var preferredUsername:String? = null
     var summary:String? = null
     var inbox:String? = null
-    private var outbox:String? = null
+    var outbox:String? = null
     private var url:String? = null
     private var icon:Image? = null
-    private var publicKey:Key? = null
+    var publicKey:Key? = null
     protected constructor() : super()
     constructor(
         type: List<String> = emptyList(),

@@ -5,7 +5,10 @@ import dev.usbharu.hideout.ap.Image
 import dev.usbharu.hideout.ap.Key
 import dev.usbharu.hideout.ap.Person
 import dev.usbharu.hideout.config.Config
+import dev.usbharu.hideout.domain.model.User
+import dev.usbharu.hideout.domain.model.UserAuthentication
 import dev.usbharu.hideout.exception.UserNotFoundException
+import dev.usbharu.hideout.exception.ap.IllegalActivityPubObjectException
 import dev.usbharu.hideout.service.IUserAuthService
 import dev.usbharu.hideout.service.impl.UserService
 import dev.usbharu.hideout.util.HttpUtil.Activity
@@ -14,7 +17,11 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 
-class ActivityPubUserServiceImpl(private val userService: UserService, private val userAuthService: IUserAuthService,private val httpClient: HttpClient) :
+class ActivityPubUserServiceImpl(
+    private val userService: UserService,
+    private val userAuthService: IUserAuthService,
+    private val httpClient: HttpClient
+) :
     ActivityPubUserService {
     override suspend fun getPersonByName(name: String): Person {
         // TODO: JOINで書き直し
@@ -74,11 +81,32 @@ class ActivityPubUserServiceImpl(private val userService: UserService, private v
                 )
             )
 
-        } catch (e:UserNotFoundException){
+        } catch (e: UserNotFoundException) {
             val httpResponse = httpClient.get(url) {
                 accept(ContentType.Application.Activity)
             }
-            Config.configData.objectMapper.readValue<Person>(httpResponse.bodyAsText())
+            val person = Config.configData.objectMapper.readValue<Person>(httpResponse.bodyAsText())
+            val userEntity = userService.create(
+                User(
+                    name = person.preferredUsername
+                        ?: throw IllegalActivityPubObjectException("preferredUsername is null"),
+                    domain = url.substringAfter(":").substringBeforeLast("/"),
+                    screenName = person.name ?: throw IllegalActivityPubObjectException("name is null"),
+                    description = person.summary ?: throw IllegalActivityPubObjectException("summary is null"),
+                    inbox = person.inbox ?: throw IllegalActivityPubObjectException("inbox is null"),
+                    outbox = person.outbox ?: throw IllegalActivityPubObjectException("outbox is null"),
+                    url = url
+                )
+            )
+            userAuthService.createAccount(
+                UserAuthentication(
+                    userEntity.id,
+                    null,
+                    person.publicKey?.publicKeyPem ?: throw IllegalActivityPubObjectException("publicKey is null"),
+                    null
+                )
+            )
+            person
         }
 
     }
