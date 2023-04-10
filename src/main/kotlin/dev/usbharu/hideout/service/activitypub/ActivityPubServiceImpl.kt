@@ -10,12 +10,16 @@ import dev.usbharu.hideout.exception.JsonParseException
 import kjob.core.Job
 import kjob.core.dsl.JobContextWithProps
 import kjob.core.job.JobProps
+import org.slf4j.LoggerFactory
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.primaryConstructor
 
 class ActivityPubServiceImpl(private val activityPubFollowService: ActivityPubFollowService) : ActivityPubService {
+
+    val logger = LoggerFactory.getLogger(this::class.java)
     override fun parseActivity(json: String): ActivityType {
         val readTree = Config.configData.objectMapper.readTree(json)
+        logger.debug("readTree: {}", readTree)
         if (readTree.isObject.not()) {
             throw JsonParseException("Json is not object.")
         }

@@ -25,7 +25,9 @@ fun Routing.inbox(
                     throw HttpSignatureVerifyException()
                 }
                 val json = call.receiveText()
+                call.application.log.trace("Received: $json")
                 val activityTypes = activityPubService.parseActivity(json)
+                call.application.log.debug("ActivityTypes: ${activityTypes.name}")
                 val response = activityPubService.processActivity(json, activityTypes)
                 when (response) {
                     is ActivityPubObjectResponse -> call.respond(response.httpStatusCode, Config.configData.objectMapper.writeValueAsString(response.message.apply { context =
@@ -38,7 +40,7 @@ fun Routing.inbox(
         }
         route("/users/{name}/inbox"){
             get {
-                call.respond(HttpStatusCode.NotImplemented)
+                call.respond(HttpStatusCode.MethodNotAllowed)
             }
             post {
                 if (httpSignatureVerifyService.verify(call.request.headers).not()) {
