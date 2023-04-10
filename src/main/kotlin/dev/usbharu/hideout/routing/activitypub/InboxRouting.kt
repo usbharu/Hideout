@@ -30,9 +30,13 @@ fun Routing.inbox(
                 call.application.log.debug("ActivityTypes: ${activityTypes.name}")
                 val response = activityPubService.processActivity(json, activityTypes)
                 when (response) {
-                    is ActivityPubObjectResponse -> call.respond(response.httpStatusCode, Config.configData.objectMapper.writeValueAsString(response.message.apply { context =
-                        listOf("https://www.w3.org/ns/activitystreams")
-                    }))
+                    is ActivityPubObjectResponse -> call.respond(
+                        response.httpStatusCode,
+                        Config.configData.objectMapper.writeValueAsString(response.message.apply {
+                            context =
+                                listOf("https://www.w3.org/ns/activitystreams")
+                        })
+                    )
                     is ActivityPubStringResponse -> call.respond(response.httpStatusCode, response.message)
                     null -> call.respond(HttpStatusCode.NotImplemented)
                 }
@@ -47,13 +51,18 @@ fun Routing.inbox(
                     throw HttpSignatureVerifyException()
                 }
                 val json = call.receiveText()
+                call.application.log.trace("Received: $json")
                 val activityTypes = activityPubService.parseActivity(json)
-                println(activityTypes)
+                call.application.log.debug("ActivityTypes: ${activityTypes.name}")
                 val response = activityPubService.processActivity(json, activityTypes)
                 when (response) {
-                    is ActivityPubObjectResponse -> call.respond(response.httpStatusCode, Config.configData.objectMapper.writeValueAsString(response.message.apply { context =
-                        listOf("https://www.w3.org/ns/activitystreams")
-                    }))
+                    is ActivityPubObjectResponse -> call.respond(
+                        response.httpStatusCode,
+                        Config.configData.objectMapper.writeValueAsString(response.message.apply {
+                            context =
+                                listOf("https://www.w3.org/ns/activitystreams")
+                        })
+                    )
                     is ActivityPubStringResponse -> call.respond(response.httpStatusCode, response.message)
                     null -> call.respond(HttpStatusCode.NotImplemented)
                 }
