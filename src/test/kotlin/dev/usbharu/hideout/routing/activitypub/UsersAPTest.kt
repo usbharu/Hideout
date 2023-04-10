@@ -31,7 +31,7 @@ import kotlin.test.assertEquals
 class UsersAPTest {
 
     @Test()
-    fun `ユーザのURLにAcceptヘッダーをActivityにしてアクセスしたときPersonが返ってくるか`() = testApplication {
+    fun `ユーザのURLにAcceptヘッダーをActivityにしてアクセスしたときPersonが返ってくる`() = testApplication {
         environment {
             config = ApplicationConfig("empty.conf")
         }
