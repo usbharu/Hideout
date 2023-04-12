@@ -10,14 +10,14 @@ sealed class ActivityPubResponse(
 )
 
 class ActivityPubStringResponse(
-    httpStatusCode: HttpStatusCode,
+    httpStatusCode: HttpStatusCode = HttpStatusCode.OK,
     val message: String,
     contentType: ContentType = ContentType.Application.Activity
 ) :
     ActivityPubResponse(httpStatusCode, contentType)
 
 class ActivityPubObjectResponse(
-    httpStatusCode: HttpStatusCode,
+    httpStatusCode: HttpStatusCode = HttpStatusCode.OK,
     val message: JsonLd,
     contentType: ContentType = ContentType.Application.Activity
 ) :
