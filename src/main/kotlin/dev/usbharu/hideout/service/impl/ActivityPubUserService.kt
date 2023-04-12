@@ -1,8 +1,10 @@
-package dev.usbharu.hideout.service
+package dev.usbharu.hideout.service.impl
 
 import dev.usbharu.hideout.ap.*
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.plugins.postAp
+import dev.usbharu.hideout.service.IUserAuthService
+import dev.usbharu.hideout.service.IWebFingerService
 import io.ktor.client.*
 
 class ActivityPubUserService(

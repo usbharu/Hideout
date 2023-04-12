@@ -28,5 +28,8 @@ object HttpUtil {
 
     val ContentType.Application.Activity: ContentType
         get() = ContentType("application", "activity+json")
+
+    val ContentType.Application.JsonLd: ContentType
+        get() = ContentType("application", "ld+json", listOf(HeaderValueParam("profile", "https://www.w3.org/ns/activitystreams")))
 //    fun
 }

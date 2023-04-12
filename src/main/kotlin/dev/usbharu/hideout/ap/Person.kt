@@ -5,10 +5,10 @@ open class Person : Object {
     var preferredUsername:String? = null
     var summary:String? = null
     var inbox:String? = null
-    private var outbox:String? = null
+    var outbox:String? = null
     private var url:String? = null
     private var icon:Image? = null
-    private var publicKey:Key? = null
+    var publicKey:Key? = null
     protected constructor() : super()
     constructor(
         type: List<String> = emptyList(),
@@ -31,5 +31,32 @@ open class Person : Object {
         this.icon = icon
         this.publicKey =  publicKey
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Person) return false
+
+        if (id != other.id) return false
+        if (preferredUsername != other.preferredUsername) return false
+        if (summary != other.summary) return false
+        if (inbox != other.inbox) return false
+        if (outbox != other.outbox) return false
+        if (url != other.url) return false
+        if (icon != other.icon) return false
+        return publicKey == other.publicKey
+    }
+
+    override fun hashCode(): Int {
+        var result = id?.hashCode() ?: 0
+        result = 31 * result + (preferredUsername?.hashCode() ?: 0)
+        result = 31 * result + (summary?.hashCode() ?: 0)
+        result = 31 * result + (inbox?.hashCode() ?: 0)
+        result = 31 * result + (outbox?.hashCode() ?: 0)
+        result = 31 * result + (url?.hashCode() ?: 0)
+        result = 31 * result + (icon?.hashCode() ?: 0)
+        result = 31 * result + (publicKey?.hashCode() ?: 0)
+        return result
+    }
+
 
 }

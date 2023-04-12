@@ -24,6 +24,26 @@ open class Object : JsonLd {
             return toMutableList.distinct()
         }
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Object) return false
+
+        if (type != other.type) return false
+        return name == other.name
+    }
+
+    override fun hashCode(): Int {
+        var result = type.hashCode()
+        result = 31 * result + (name?.hashCode() ?: 0)
+        return result
+    }
+
+    override fun toString(): String {
+        return "Object(type=$type, name=$name) ${super.toString()}"
+    }
+
+
 }
 
 public class TypeSerializer : JsonSerializer<List<String>>() {

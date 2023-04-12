@@ -7,8 +7,8 @@ import dev.usbharu.hideout.domain.model.UserAuthenticationEntity
 import dev.usbharu.hideout.domain.model.UserEntity
 import dev.usbharu.hideout.repository.IUserAuthRepository
 import dev.usbharu.hideout.repository.IUserRepository
-import dev.usbharu.hideout.service.UserAuthService
-import dev.usbharu.hideout.service.toPem
+import dev.usbharu.hideout.service.impl.UserAuthService
+import dev.usbharu.hideout.service.impl.toPem
 import io.ktor.client.*
 import io.ktor.client.engine.mock.*
 import io.ktor.client.plugins.logging.*
@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Test
 import java.security.KeyPairGenerator
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
-import java.util.*
 
 class ActivityPubKtTest {
     @Test
@@ -32,8 +31,24 @@ class ActivityPubKtTest {
                 TODO("Not yet implemented")
             }
 
+            override suspend fun findByIds(ids: List<Long>): List<UserEntity> {
+                TODO("Not yet implemented")
+            }
+
             override suspend fun findByName(name: String): UserEntity? {
-                return UserEntity(1, "test", "localhost", "test", "")
+                return UserEntity(1, "test", "localhost", "test", "","","","")
+            }
+
+            override suspend fun findByNameAndDomains(names: List<Pair<String, String>>): List<UserEntity> {
+                TODO("Not yet implemented")
+            }
+
+            override suspend fun findByUrl(url: String): UserEntity? {
+                TODO("Not yet implemented")
+            }
+
+            override suspend fun findByUrls(urls: List<String>): List<UserEntity> {
+                TODO("Not yet implemented")
             }
 
             override suspend fun update(userEntity: UserEntity) {

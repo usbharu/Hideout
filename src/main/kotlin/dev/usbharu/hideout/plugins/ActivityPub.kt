@@ -3,7 +3,7 @@ package dev.usbharu.hideout.plugins
 import dev.usbharu.hideout.ap.JsonLd
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.service.IUserAuthService
-import dev.usbharu.hideout.service.UserAuthService
+import dev.usbharu.hideout.service.impl.UserAuthService
 import dev.usbharu.hideout.util.HttpUtil.Activity
 import io.ktor.client.*
 import io.ktor.client.plugins.api.*
@@ -12,7 +12,6 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
-import io.ktor.util.*
 import kotlinx.coroutines.runBlocking
 import tech.barbero.http.message.signing.HttpMessage
 import tech.barbero.http.message.signing.HttpMessageSigner

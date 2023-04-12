@@ -1,19 +1,16 @@
-package dev.usbharu.hideout.service
+package dev.usbharu.hideout.service.impl
 
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.domain.model.User
 import dev.usbharu.hideout.domain.model.UserAuthentication
 import dev.usbharu.hideout.domain.model.UserAuthenticationEntity
-import dev.usbharu.hideout.domain.model.Users.screenName
+import dev.usbharu.hideout.domain.model.UserEntity
 import dev.usbharu.hideout.exception.UserNotFoundException
 import dev.usbharu.hideout.repository.IUserAuthRepository
 import dev.usbharu.hideout.repository.IUserRepository
+import dev.usbharu.hideout.service.IUserAuthService
 import io.ktor.util.*
-import java.security.KeyPair
-import java.security.KeyPairGenerator
-import java.security.MessageDigest
-import java.security.PrivateKey
-import java.security.PublicKey
+import java.security.*
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.util.*
@@ -35,11 +32,15 @@ class UserAuthService(
     }
 
     override suspend fun registerAccount(username: String, hash: String) {
+        val url = "${Config.configData.url}/users/$username"
         val registerUser = User(
             name = username,
             domain = Config.configData.domain,
             screenName = username,
-            description = ""
+            description = "",
+            inbox = "$url/inbox",
+            outbox = "$url/outbox",
+            url = url
         )
         val createdUser = userRepository.create(registerUser)
 
@@ -76,13 +77,15 @@ class UserAuthService(
             ?: throw UserNotFoundException("$username auth data was not found")
     }
 
+    override suspend fun createAccount(userEntity: UserAuthentication): UserAuthenticationEntity {
+        return userAuthRepository.create(userEntity)
+    }
+
     private fun generateKeyPair(): KeyPair {
         val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
         keyPairGenerator.initialize(1024)
         return keyPairGenerator.generateKeyPair()
     }
-
-
 
 
     companion object {
