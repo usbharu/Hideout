@@ -133,7 +133,10 @@ class UserRepository(private val database: Database) : IUserRepository {
                     followers.get(Users.name),
                     followers.get(Users.domain),
                     followers.get(Users.screenName),
-                    followers.get(Users.description)
+                    followers.get(Users.description),
+                    followers.get(Users.inbox),
+                    followers.get(Users.outbox),
+                    followers.get(Users.url)
                 )
                 .select { Users.id eq id }
                 .map {
