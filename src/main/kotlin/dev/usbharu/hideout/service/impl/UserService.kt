@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.service
+package dev.usbharu.hideout.service.impl
 
 import dev.usbharu.hideout.domain.model.User
 import dev.usbharu.hideout.domain.model.UserEntity
@@ -21,9 +21,25 @@ class UserService(private val userRepository: IUserRepository) {
         return userRepository.findById(id) ?: throw UserNotFoundException("$id was not found.")
     }
 
+    suspend fun findByIds(ids: List<Long>): List<UserEntity> {
+        return userRepository.findByIds(ids)
+    }
+
     suspend fun findByName(name: String): UserEntity {
         return userRepository.findByName(name)
             ?: throw UserNotFoundException("$name was not found.")
+    }
+
+    suspend fun findByNameAndDomains(names: List<Pair<String,String>>): List<UserEntity> {
+        return userRepository.findByNameAndDomains(names)
+    }
+
+    suspend fun findByUrl(url: String): UserEntity {
+        return userRepository.findByUrl(url) ?: throw UserNotFoundException("$url was not found.")
+    }
+
+    suspend fun findByUrls(urls: List<String>): List<UserEntity> {
+        return userRepository.findByUrls(urls)
     }
 
     suspend fun create(user: User): UserEntity {

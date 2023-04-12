@@ -4,8 +4,8 @@ import dev.usbharu.hideout.domain.model.User
 import dev.usbharu.hideout.plugins.UserSession
 import dev.usbharu.hideout.plugins.respondAp
 import dev.usbharu.hideout.plugins.tokenAuth
-import dev.usbharu.hideout.service.ActivityPubUserService
-import dev.usbharu.hideout.service.UserService
+import dev.usbharu.hideout.service.impl.ActivityPubUserService
+import dev.usbharu.hideout.service.impl.UserService
 import dev.usbharu.hideout.util.HttpUtil
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -13,7 +13,6 @@ import io.ktor.server.auth.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.server.sessions.*
 
 @Suppress("unused")
 fun Application.user(userService: UserService, activityPubUserService: ActivityPubUserService) {

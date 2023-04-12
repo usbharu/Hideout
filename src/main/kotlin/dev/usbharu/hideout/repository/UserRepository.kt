@@ -25,7 +25,10 @@ class UserRepository(private val database: Database) : IUserRepository {
             this[Users.name],
             this[Users.domain],
             this[Users.screenName],
-            this[Users.description]
+            this[Users.description],
+            this[Users.inbox],
+            this[Users.outbox],
+            this[Users.url]
         )
     }
 
@@ -35,7 +38,10 @@ class UserRepository(private val database: Database) : IUserRepository {
             this[Users.name],
             this[Users.domain],
             this[Users.screenName],
-            this[Users.description]
+            this[Users.description],
+            this[Users.inbox],
+            this[Users.outbox],
+            this[Users.url],
         )
     }
 
@@ -49,6 +55,9 @@ class UserRepository(private val database: Database) : IUserRepository {
                 it[domain] = user.domain
                 it[screenName] = user.screenName
                 it[description] = user.description
+                it[inbox] = user.inbox
+                it[outbox] = user.outbox
+                it[url] = user.url
             }[Users.id].value, user)
         }
     }
@@ -70,12 +79,40 @@ class UserRepository(private val database: Database) : IUserRepository {
         }
     }
 
+    override suspend fun findByIds(ids: List<Long>): List<UserEntity> {
+        return query {
+            Users.select { Users.id inList ids }.map {
+                it.toUserEntity()
+            }
+        }
+    }
+
     override suspend fun findByName(name: String): UserEntity? {
         return query {
             Users.select { Users.name eq name }.map {
                 it.toUserEntity()
             }.singleOrNull()
         }
+    }
+
+    override suspend fun findByNameAndDomains(names: List<Pair<String, String>>): List<UserEntity> {
+        return query {
+            val selectAll = Users.selectAll()
+            names.forEach { (name, domain) ->
+                selectAll.orWhere { Users.name eq name and (Users.domain eq domain) }
+            }
+            selectAll.map { it.toUserEntity() }
+        }
+    }
+
+    override suspend fun findByUrl(url: String): UserEntity? {
+        return query {
+            Users.select { Users.url eq url }.singleOrNull()?.toUserEntity()
+        }
+    }
+
+    override suspend fun findByUrls(urls: List<String>): List<UserEntity> {
+        TODO("Not yet implemented")
     }
 
     override suspend fun findFollowersById(id: Long): List<UserEntity> {
@@ -91,7 +128,16 @@ class UserRepository(private val database: Database) : IUserRepository {
                     onColumn = { UsersFollowers.followerId },
                     otherColumn = { followers[Users.id] })
 
-                .slice(followers.get(Users.id), followers.get(Users.name), followers.get(Users.domain), followers.get(Users.screenName), followers.get(Users.description))
+                .slice(
+                    followers.get(Users.id),
+                    followers.get(Users.name),
+                    followers.get(Users.domain),
+                    followers.get(Users.screenName),
+                    followers.get(Users.description),
+                    followers.get(Users.inbox),
+                    followers.get(Users.outbox),
+                    followers.get(Users.url)
+                )
                 .select { Users.id eq id }
                 .map {
                     UserEntity(
@@ -100,6 +146,9 @@ class UserRepository(private val database: Database) : IUserRepository {
                         domain = it[followers[Users.domain]],
                         screenName = it[followers[Users.screenName]],
                         description = it[followers[Users.description]],
+                        inbox = it[followers[Users.inbox]],
+                        outbox = it[followers[Users.outbox]],
+                        url = it[followers[Users.url]],
                     )
                 }
         }
@@ -113,6 +162,9 @@ class UserRepository(private val database: Database) : IUserRepository {
                 it[domain] = userEntity.domain
                 it[screenName] = userEntity.screenName
                 it[description] = userEntity.description
+                it[inbox] = userEntity.inbox
+                it[outbox] = userEntity.outbox
+                it[url] = userEntity.url
             }
         }
     }

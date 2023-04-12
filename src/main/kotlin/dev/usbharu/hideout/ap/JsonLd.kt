@@ -25,6 +25,23 @@ open class JsonLd {
     }
 
     protected constructor()
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is JsonLd) return false
+
+        return context == other.context
+    }
+
+    override fun hashCode(): Int {
+        return context.hashCode()
+    }
+
+    override fun toString(): String {
+        return "JsonLd(context=$context)"
+    }
+
+
 }
 
 public class ContextDeserializer : JsonDeserializer<String>() {

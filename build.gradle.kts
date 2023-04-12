@@ -28,6 +28,14 @@ repositories {
     mavenCentral()
 }
 
+kotlin {
+    target {
+        compilations.all {
+            kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
+        }
+    }
+}
+
 dependencies {
     implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-auth-jvm:$ktor_version")
@@ -51,18 +59,30 @@ dependencies {
     implementation("io.insert-koin:koin-ktor:$koin_version")
     implementation("io.insert-koin:koin-logger-slf4j:$koin_version")
     implementation("io.ktor:ktor-client-logging-jvm:2.2.4")
+    implementation("io.ktor:ktor-server-host-common-jvm:2.2.4")
+    implementation("io.ktor:ktor-server-status-pages-jvm:2.2.4")
 
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
+    testImplementation("io.ktor:ktor-client-mock:$ktor_version")
 
     implementation("io.ktor:ktor-client-core:$ktor_version")
     implementation("io.ktor:ktor-client-cio:$ktor_version")
     implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
     testImplementation("io.ktor:ktor-client-mock:$ktor_version")
-
     implementation("tech.barbero.http-messages-signing:http-messages-signing-core:1.0.0")
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
+    testImplementation("org.mockito:mockito-inline:5.2.0")
+
+
+    implementation("org.drewcarlson:kjob-core:0.6.0")
+    testImplementation("io.ktor:ktor-server-test-host-jvm:2.2.4")
+
+    testImplementation("org.slf4j:slf4j-simple:2.0.7")
+
 }
 
 jib {

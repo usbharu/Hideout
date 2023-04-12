@@ -8,7 +8,15 @@ interface IUserRepository {
 
     suspend fun findById(id: Long): UserEntity?
 
+    suspend fun findByIds(ids: List<Long>): List<UserEntity>
+
     suspend fun findByName(name: String): UserEntity?
+
+    suspend fun findByNameAndDomains(names: List<Pair<String,String>>): List<UserEntity>
+
+    suspend fun findByUrl(url:String):UserEntity?
+
+    suspend fun findByUrls(urls: List<String>): List<UserEntity>
 
     suspend fun update(userEntity: UserEntity)
 
