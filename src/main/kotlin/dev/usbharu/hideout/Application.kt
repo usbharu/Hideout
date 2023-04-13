@@ -90,6 +90,7 @@ fun Application.parent() {
 
     configureKoin(module)
     configureHTTP()
+    configureStaticRouting()
     configureMonitoring()
     configureSerialization()
     register(inject<IUserAuthService>().value)
