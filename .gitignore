@@ -35,3 +35,5 @@ out/
 ### VS Code ###
 .vscode/
 *.db
+/src/main/resources/static/
+/node_modules/
