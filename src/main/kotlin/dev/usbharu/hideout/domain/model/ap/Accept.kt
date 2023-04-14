@@ -1,7 +1,7 @@
-package dev.usbharu.hideout.ap
+package dev.usbharu.hideout.domain.model.ap
 
 open class Accept : Object {
-    public var `object`:Object? = null
+    public var `object`: Object? = null
     public var actor:String? = null
     protected constructor() : super()
     constructor(

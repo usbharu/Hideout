@@ -6,9 +6,9 @@ import com.fasterxml.jackson.annotation.Nulls
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import dev.usbharu.hideout.ap.Image
-import dev.usbharu.hideout.ap.Key
-import dev.usbharu.hideout.ap.Person
+import dev.usbharu.hideout.domain.model.ap.Image
+import dev.usbharu.hideout.domain.model.ap.Key
+import dev.usbharu.hideout.domain.model.ap.Person
 import dev.usbharu.hideout.plugins.configureRouting
 import dev.usbharu.hideout.plugins.configureSerialization
 import dev.usbharu.hideout.service.activitypub.ActivityPubService

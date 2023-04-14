@@ -1,7 +1,8 @@
 package dev.usbharu.hideout.ap
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import org.junit.jupiter.api.Assertions.*
+import dev.usbharu.hideout.domain.model.ap.Accept
+import dev.usbharu.hideout.domain.model.ap.Follow
 import org.junit.jupiter.api.Test
 
 class ContextSerializerTest{

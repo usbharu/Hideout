@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.ap
+package dev.usbharu.hideout.domain.model.ap
 
 open class Person : Object {
     private var id:String? = null
@@ -7,8 +7,8 @@ open class Person : Object {
     var inbox:String? = null
     var outbox:String? = null
     private var url:String? = null
-    private var icon:Image? = null
-    var publicKey:Key? = null
+    private var icon: Image? = null
+    var publicKey: Key? = null
     protected constructor() : super()
     constructor(
         type: List<String> = emptyList(),

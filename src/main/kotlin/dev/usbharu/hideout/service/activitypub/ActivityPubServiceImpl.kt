@@ -1,18 +1,15 @@
 package dev.usbharu.hideout.service.activitypub
 
 import com.fasterxml.jackson.databind.JsonNode
-import dev.usbharu.hideout.ap.Follow
+import dev.usbharu.hideout.domain.model.ap.Follow
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.domain.model.ActivityPubResponse
 import dev.usbharu.hideout.domain.model.job.HideoutJob
 import dev.usbharu.hideout.domain.model.job.ReceiveFollowJob
 import dev.usbharu.hideout.exception.JsonParseException
-import kjob.core.Job
 import kjob.core.dsl.JobContextWithProps
 import kjob.core.job.JobProps
 import org.slf4j.LoggerFactory
-import kotlin.reflect.full.createInstance
-import kotlin.reflect.full.primaryConstructor
 
 class ActivityPubServiceImpl(private val activityPubFollowService: ActivityPubFollowService) : ActivityPubService {
 
