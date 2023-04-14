@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.ap
+package dev.usbharu.hideout.domain.model.ap
 
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonSerializer

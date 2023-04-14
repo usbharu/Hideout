@@ -1,6 +1,6 @@
 package dev.usbharu.hideout.plugins
 
-import dev.usbharu.hideout.ap.JsonLd
+import dev.usbharu.hideout.domain.model.ap.JsonLd
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.service.IUserAuthService
 import dev.usbharu.hideout.service.impl.UserAuthService

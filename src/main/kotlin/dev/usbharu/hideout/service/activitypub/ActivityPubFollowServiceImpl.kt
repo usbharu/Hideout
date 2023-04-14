@@ -1,8 +1,8 @@
 package dev.usbharu.hideout.service.activitypub
 
 import com.fasterxml.jackson.module.kotlin.readValue
-import dev.usbharu.hideout.ap.Accept
-import dev.usbharu.hideout.ap.Follow
+import dev.usbharu.hideout.domain.model.ap.Accept
+import dev.usbharu.hideout.domain.model.ap.Follow
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.domain.model.ActivityPubResponse
 import dev.usbharu.hideout.domain.model.ActivityPubStringResponse

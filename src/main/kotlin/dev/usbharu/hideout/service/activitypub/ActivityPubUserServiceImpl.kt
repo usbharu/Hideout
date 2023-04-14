@@ -1,9 +1,9 @@
 package dev.usbharu.hideout.service.activitypub
 
 import com.fasterxml.jackson.module.kotlin.readValue
-import dev.usbharu.hideout.ap.Image
-import dev.usbharu.hideout.ap.Key
-import dev.usbharu.hideout.ap.Person
+import dev.usbharu.hideout.domain.model.ap.Image
+import dev.usbharu.hideout.domain.model.ap.Key
+import dev.usbharu.hideout.domain.model.ap.Person
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.domain.model.User
 import dev.usbharu.hideout.domain.model.UserAuthentication
