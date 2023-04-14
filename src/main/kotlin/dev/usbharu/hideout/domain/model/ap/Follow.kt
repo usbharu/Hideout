@@ -1,6 +1,6 @@
-package dev.usbharu.hideout.ap
+package dev.usbharu.hideout.domain.model.ap
 
-open class Follow : Object{
+open class Follow : Object {
     public var `object`:String? = null
     public var actor:String? = null
     protected constructor() : super()

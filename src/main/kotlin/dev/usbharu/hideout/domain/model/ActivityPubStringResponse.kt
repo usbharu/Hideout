@@ -1,6 +1,6 @@
 package dev.usbharu.hideout.domain.model
 
-import dev.usbharu.hideout.ap.JsonLd
+import dev.usbharu.hideout.domain.model.ap.JsonLd
 import dev.usbharu.hideout.util.HttpUtil.Activity
 import io.ktor.http.*
 
