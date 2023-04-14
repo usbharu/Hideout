@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.ap
+package dev.usbharu.hideout.domain.model.ap
 
 open class Image : Object {
     private var mediaType: String? = null

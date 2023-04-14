@@ -1,6 +1,6 @@
-package dev.usbharu.hideout.ap
+package dev.usbharu.hideout.domain.model.ap
 
-open class Key : Object{
+open class Key : Object {
     var id:String? = null
     var owner:String? = null
     var publicKeyPem:String? = null

@@ -4,10 +4,10 @@
 package dev.usbharu.hideout.service.activitypub
 
 import com.fasterxml.jackson.module.kotlin.readValue
-import dev.usbharu.hideout.ap.*
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.config.ConfigData
 import dev.usbharu.hideout.domain.model.UserEntity
+import dev.usbharu.hideout.domain.model.ap.*
 import dev.usbharu.hideout.domain.model.job.ReceiveFollowJob
 import dev.usbharu.hideout.service.impl.UserService
 import dev.usbharu.hideout.service.job.JobQueueParentService
