@@ -39,6 +39,7 @@ class PostRepositoryImpl(database: Database, private val idGenerateService: IdGe
             }
             return@query PostEntity(
                 generateId,
+                post.userId,
                 post.overview,
                 post.text,
                 post.createdAt,

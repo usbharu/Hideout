@@ -25,11 +25,6 @@ import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.server.application.*
-import kjob.core.Job
-import kjob.core.KJob
-import kjob.core.dsl.JobContextWithProps
-import kjob.core.dsl.JobRegisterContext
-import kjob.core.dsl.KJobFunctions
 import kjob.core.kjob
 import org.jetbrains.exposed.sql.Database
 import org.koin.ktor.ext.inject
@@ -76,15 +71,16 @@ fun Application.parent() {
                     logger = Logger.DEFAULT
                     level = LogLevel.ALL
                 }
-                install(httpSignaturePlugin){
+                install(httpSignaturePlugin) {
                     keyMap = KtorKeyMap(get())
                 }
             }
         }
-        single<ActivityPubFollowService> { ActivityPubFollowServiceImpl(get(), get(), get(),get()) }
-        single<ActivityPubService> { ActivityPubServiceImpl(get()) }
+        single<ActivityPubFollowService> { ActivityPubFollowServiceImpl(get(), get(), get(), get()) }
+        single<ActivityPubService> { ActivityPubServiceImpl(get(), get()) }
         single<UserService> { UserService(get()) }
         single<ActivityPubUserService> { ActivityPubUserServiceImpl(get(), get(), get()) }
+        single<ActivityPubNoteService> { ActivityPubNoteServiceImpl(get(), get(), get()) }
     }
 
 
@@ -101,6 +97,7 @@ fun Application.parent() {
         inject<ActivityPubUserService>().value
     )
 }
+
 @Suppress("unused")
 fun Application.worker() {
     val kJob = kjob(ExposedKJob) {
@@ -109,9 +106,9 @@ fun Application.worker() {
 
     val activityPubService = inject<ActivityPubService>().value
 
-    kJob.register(ReceiveFollowJob){
+    kJob.register(ReceiveFollowJob) {
         execute {
-            activityPubService.processActivity(this,it)
+            activityPubService.processActivity(this, it)
         }
     }
 }
