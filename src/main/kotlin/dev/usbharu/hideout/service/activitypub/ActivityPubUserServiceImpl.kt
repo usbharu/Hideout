@@ -16,6 +16,7 @@ import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import org.slf4j.LoggerFactory
 
 class ActivityPubUserServiceImpl(
     private val userService: UserService,
@@ -23,6 +24,8 @@ class ActivityPubUserServiceImpl(
     private val httpClient: HttpClient
 ) :
     ActivityPubUserService {
+
+        private val logger = LoggerFactory.getLogger(this::class.java)
     override suspend fun getPersonByName(name: String): Person {
         // TODO: JOINで書き直し
         val userEntity = userService.findByName(name)
@@ -91,8 +94,8 @@ class ActivityPubUserServiceImpl(
                     name = person.preferredUsername
                         ?: throw IllegalActivityPubObjectException("preferredUsername is null"),
                     domain = url.substringAfter(":").substringBeforeLast("/"),
-                    screenName = person.name ?: throw IllegalActivityPubObjectException("name is null"),
-                    description = person.summary ?: throw IllegalActivityPubObjectException("summary is null"),
+                    screenName = (person.name ?: person.preferredUsername) ?: throw IllegalActivityPubObjectException("preferredUsername is null"),
+                    description = person.summary ?: "",
                     inbox = person.inbox ?: throw IllegalActivityPubObjectException("inbox is null"),
                     outbox = person.outbox ?: throw IllegalActivityPubObjectException("outbox is null"),
                     url = url

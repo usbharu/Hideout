@@ -1,9 +1,10 @@
 package dev.usbharu.hideout.service.activitypub
 
 import com.fasterxml.jackson.databind.JsonNode
-import dev.usbharu.hideout.domain.model.ap.Follow
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.domain.model.ActivityPubResponse
+import dev.usbharu.hideout.domain.model.ap.Follow
+import dev.usbharu.hideout.domain.model.job.DeliverPostJob
 import dev.usbharu.hideout.domain.model.job.HideoutJob
 import dev.usbharu.hideout.domain.model.job.ReceiveFollowJob
 import dev.usbharu.hideout.exception.JsonParseException
@@ -11,7 +12,10 @@ import kjob.core.dsl.JobContextWithProps
 import kjob.core.job.JobProps
 import org.slf4j.LoggerFactory
 
-class ActivityPubServiceImpl(private val activityPubFollowService: ActivityPubFollowService) : ActivityPubService {
+class ActivityPubServiceImpl(
+    private val activityPubFollowService: ActivityPubFollowService,
+    private val activityPubNoteService: ActivityPubNoteService
+) : ActivityPubService {
 
     val logger = LoggerFactory.getLogger(this::class.java)
     override fun parseActivity(json: String): ActivityType {
@@ -70,8 +74,10 @@ class ActivityPubServiceImpl(private val activityPubFollowService: ActivityPubFo
     }
 
     override suspend fun <T : HideoutJob> processActivity(job: JobContextWithProps<T>, hideoutJob: HideoutJob) {
+        logger.debug("processActivity: ${hideoutJob.name}")
         when (hideoutJob) {
             ReceiveFollowJob -> activityPubFollowService.receiveFollowJob(job.props as JobProps<ReceiveFollowJob>)
+            DeliverPostJob -> activityPubNoteService.createNoteJob(job.props as JobProps<DeliverPostJob>)
         }
     }
 

@@ -9,3 +9,9 @@ object ReceiveFollowJob : HideoutJob("ReceiveFollowJob"){
     val follow = string("follow")
     val targetActor = string("targetActor")
 }
+
+object DeliverPostJob : HideoutJob("DeliverPostJob"){
+    val post = string("post")
+    val actor = string("actor")
+    val inbox = string("inbox")
+}
