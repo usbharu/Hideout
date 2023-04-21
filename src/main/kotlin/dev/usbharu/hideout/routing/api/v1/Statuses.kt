@@ -10,7 +10,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Route.statuses(postService: IPostService) {
-    route("statuses") {
+    route("/statuses") {
         post {
             val status: StatusForPost = call.receive()
             val post = Post(
