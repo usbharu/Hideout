@@ -3,6 +3,7 @@ package dev.usbharu.hideout.service.activitypub
 import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.domain.model.PostEntity
+import dev.usbharu.hideout.domain.model.ap.Create
 import dev.usbharu.hideout.domain.model.ap.Note
 import dev.usbharu.hideout.domain.model.job.DeliverPostJob
 import dev.usbharu.hideout.plugins.postAp
@@ -51,7 +52,10 @@ class ActivityPubNoteServiceImpl(
         httpClient.postAp(
             urlString = inbox,
             username = "$actor#pubkey",
-            jsonLd = note
+            jsonLd = Create(
+                name = "Create Note",
+                `object` = note
+            )
         )
     }
 }
