@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.config.ConfigData
+import dev.usbharu.hideout.domain.model.job.DeliverPostJob
 import dev.usbharu.hideout.domain.model.job.ReceiveFollowJob
 import dev.usbharu.hideout.plugins.*
 import dev.usbharu.hideout.repository.*
@@ -110,6 +111,11 @@ fun Application.worker() {
     val activityPubService = inject<ActivityPubService>().value
 
     kJob.register(ReceiveFollowJob) {
+        execute {
+            activityPubService.processActivity(this, it)
+        }
+    }
+    kJob.register(DeliverPostJob){
         execute {
             activityPubService.processActivity(this, it)
         }
