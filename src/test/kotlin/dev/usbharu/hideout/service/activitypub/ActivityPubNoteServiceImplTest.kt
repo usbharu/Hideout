@@ -66,7 +66,7 @@ class ActivityPubNoteServiceImplTest {
             1L, 1L, null, "test text", 1L, 1, "https://example.com"
         )
         activityPubNoteService.createNote(postEntity)
-        verify(jobQueueParentService,times(2)).schedule(eq(DeliverPostJob), any())
+        verify(jobQueueParentService, times(2)).schedule(eq(DeliverPostJob), any())
     }
 
     @Test
@@ -76,12 +76,13 @@ class ActivityPubNoteServiceImplTest {
             assertEquals("https://follower.example.com/inbox", httpRequestData.url.toString())
             respondOk()
         })
-        val activityPubNoteService = ActivityPubNoteServiceImpl(httpClient,mock(),mock())
+        val activityPubNoteService = ActivityPubNoteServiceImpl(httpClient, mock(), mock())
         activityPubNoteService.createNoteJob(
             JobProps(
-                data = mapOf<String,Any>(
+                data = mapOf<String, Any>(
                     DeliverPostJob.actor.name to "https://follower.example.com",
-                    DeliverPostJob.post.name to "{\"id\":\"https://example.com\",\"type\":\"Note\",\"attributedTo\":\"https://example.com\",\"content\":\"test text\",\"to\":[\"https://www.w3.org/ns/activitystreams#Public\"],\"cc\":[\"https://example.com/followers\"],\"published\":\"2021-01-01T00:00:00.000Z\",\"url\":\"https://example.com\"}",
+                    DeliverPostJob.post.name to "{\"id\":1,\"userId\":1,\"inReplyToId\":null,\"text\":\"test text\"," +
+                            "\"createdAt\":1,\"updatedAt\":1,\"url\":\"https://example.com\"}",
                     DeliverPostJob.inbox.name to "https://follower.example.com/inbox"
                 ),
                 json = Json
