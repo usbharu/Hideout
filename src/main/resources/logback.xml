@@ -9,4 +9,6 @@
   </root>
   <logger name="org.eclipse.jetty" level="INFO"/>
   <logger name="io.netty" level="INFO"/>
+  <logger name="kjob.core.internal.scheduler.JobServiceImpl" level="INFO"/>
+  <logger name="Exposed" level="INFO"/>
 </configuration>
