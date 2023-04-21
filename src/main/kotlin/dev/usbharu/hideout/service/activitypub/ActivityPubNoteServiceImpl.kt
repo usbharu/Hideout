@@ -10,12 +10,15 @@ import dev.usbharu.hideout.service.impl.UserService
 import dev.usbharu.hideout.service.job.JobQueueParentService
 import io.ktor.client.*
 import kjob.core.job.JobProps
+import org.slf4j.LoggerFactory
 
 class ActivityPubNoteServiceImpl(
     private val httpClient: HttpClient,
     private val jobQueueParentService: JobQueueParentService,
     private val userService: UserService
 ) : ActivityPubNoteService {
+
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     override suspend fun createNote(post: PostEntity) {
         val followers = userService.findFollowersById(post.userId)
@@ -35,6 +38,7 @@ class ActivityPubNoteServiceImpl(
         val actor = props[DeliverPostJob.actor]
         val note = Config.configData.objectMapper.readValue<Note>(props[DeliverPostJob.post])
         val inbox = props[DeliverPostJob.inbox]
+        logger.debug("createNoteJob: actor={}, note={}, inbox={}", actor, note, inbox)
         httpClient.postAp(
             urlString = inbox,
             username = "$actor#pubkey",

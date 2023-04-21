@@ -74,6 +74,7 @@ class ActivityPubServiceImpl(
     }
 
     override suspend fun <T : HideoutJob> processActivity(job: JobContextWithProps<T>, hideoutJob: HideoutJob) {
+        logger.debug("processActivity: ${hideoutJob.name}")
         when (hideoutJob) {
             ReceiveFollowJob -> activityPubFollowService.receiveFollowJob(job.props as JobProps<ReceiveFollowJob>)
             DeliverPostJob -> activityPubNoteService.createNoteJob(job.props as JobProps<DeliverPostJob>)
