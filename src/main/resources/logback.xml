@@ -11,4 +11,5 @@
   <logger name="io.netty" level="INFO"/>
   <logger name="kjob.core.internal.scheduler.JobServiceImpl" level="INFO"/>
   <logger name="Exposed" level="INFO"/>
+  <logger name="io.ktor.server.plugins.contentnegotiation" level="INFO"/>
 </configuration>
