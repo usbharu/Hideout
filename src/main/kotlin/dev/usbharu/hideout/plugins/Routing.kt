@@ -25,10 +25,10 @@ fun Application.configureRouting(
     routing {
         inbox(httpSignatureVerifyService, activityPubService)
         outbox()
-        usersAP(activityPubUserService)
+        usersAP(activityPubUserService,userService)
         webfinger(userService)
 
-        route("api/v1") {
+        route("/api/v1") {
             statuses(postService)
         }
 
