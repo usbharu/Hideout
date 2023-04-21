@@ -13,6 +13,7 @@ object Posts : Table() {
     val url = varchar("url", 500)
     val repostId = long("repostId").references(id).nullable()
     val replyId = long("replyId").references(id).nullable()
+    override val primaryKey: PrimaryKey = PrimaryKey(id)
 }
 
 data class Post(
@@ -21,7 +22,6 @@ data class Post(
     val text: String,
     val createdAt: Long,
     val visibility: Int,
-    val url: String,
     val repostId: Long? = null,
     val replyId: Long? = null
 )

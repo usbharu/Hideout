@@ -70,7 +70,7 @@ class UsersAPTest {
 
         application {
             configureSerialization()
-            configureRouting(httpSignatureVerifyService, activityPubService, userService, activityPubUserService)
+            configureRouting(httpSignatureVerifyService, activityPubService, userService, activityPubUserService,mock())
         }
         client.get("/users/test") {
             accept(ContentType.Application.Activity)

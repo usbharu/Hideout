@@ -1,9 +1,7 @@
 package dev.usbharu.hideout.repository
 
-import dev.usbharu.hideout.domain.model.Post
-import dev.usbharu.hideout.domain.model.PostEntity
-import dev.usbharu.hideout.domain.model.Posts
-import dev.usbharu.hideout.domain.model.toPost
+import dev.usbharu.hideout.config.Config
+import dev.usbharu.hideout.domain.model.*
 import dev.usbharu.hideout.service.IdGenerateService
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.*
@@ -26,6 +24,8 @@ class PostRepositoryImpl(database: Database, private val idGenerateService: IdGe
         return query {
 
             val generateId = idGenerateService.generateId()
+            val name = Users.select { Users.id eq post.userId }.single().toUser().name
+            val postUrl = Config.configData.url + "/users/$name/posts/$generateId"
             Posts.insert {
                 it[id] = generateId
                 it[userId] = post.userId
@@ -33,7 +33,7 @@ class PostRepositoryImpl(database: Database, private val idGenerateService: IdGe
                 it[text] = post.text
                 it[createdAt] = post.createdAt
                 it[visibility] = post.visibility
-                it[url] = post.url
+                it[url] = postUrl
                 it[repostId] = post.repostId
                 it[replyId] = post.replyId
             }
@@ -44,7 +44,7 @@ class PostRepositoryImpl(database: Database, private val idGenerateService: IdGe
                 post.text,
                 post.createdAt,
                 post.visibility,
-                post.url,
+                postUrl,
                 post.repostId,
                 post.replyId
             )
