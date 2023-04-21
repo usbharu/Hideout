@@ -95,7 +95,7 @@ class ActivityPubUserServiceImpl(
                         ?: throw IllegalActivityPubObjectException("preferredUsername is null"),
                     domain = url.substringAfter(":").substringBeforeLast("/"),
                     screenName = (person.name ?: person.preferredUsername) ?: throw IllegalActivityPubObjectException("preferredUsername is null"),
-                    description = person.summary ?: throw IllegalActivityPubObjectException("summary is null"),
+                    description = person.summary ?: "",
                     inbox = person.inbox ?: throw IllegalActivityPubObjectException("inbox is null"),
                     outbox = person.outbox ?: throw IllegalActivityPubObjectException("outbox is null"),
                     url = url
