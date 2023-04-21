@@ -7,13 +7,13 @@ import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.config.ConfigData
 import dev.usbharu.hideout.domain.model.job.ReceiveFollowJob
 import dev.usbharu.hideout.plugins.*
-import dev.usbharu.hideout.repository.IUserAuthRepository
-import dev.usbharu.hideout.repository.IUserRepository
-import dev.usbharu.hideout.repository.UserAuthRepository
-import dev.usbharu.hideout.repository.UserRepository
+import dev.usbharu.hideout.repository.*
 import dev.usbharu.hideout.routing.register
+import dev.usbharu.hideout.service.IPostService
 import dev.usbharu.hideout.service.IUserAuthService
+import dev.usbharu.hideout.service.TwitterSnowflakeIdGenerateService
 import dev.usbharu.hideout.service.activitypub.*
+import dev.usbharu.hideout.service.impl.PostService
 import dev.usbharu.hideout.service.impl.UserAuthService
 import dev.usbharu.hideout.service.impl.UserService
 import dev.usbharu.hideout.service.job.JobQueueParentService
@@ -81,6 +81,8 @@ fun Application.parent() {
         single<UserService> { UserService(get()) }
         single<ActivityPubUserService> { ActivityPubUserServiceImpl(get(), get(), get()) }
         single<ActivityPubNoteService> { ActivityPubNoteServiceImpl(get(), get(), get()) }
+        single<IPostService> { PostService(get(), get()) }
+        single<IPostRepository> { PostRepositoryImpl(get(), TwitterSnowflakeIdGenerateService) }
     }
 
 
@@ -94,7 +96,8 @@ fun Application.parent() {
         inject<HttpSignatureVerifyService>().value,
         inject<ActivityPubService>().value,
         inject<UserService>().value,
-        inject<ActivityPubUserService>().value
+        inject<ActivityPubUserService>().value,
+        inject<IPostService>().value
     )
 }
 
