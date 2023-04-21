@@ -27,7 +27,7 @@ class InboxRoutingKtTest {
         }
         application {
             configureSerialization()
-            configureRouting(mock(), mock(), mock(), mock())
+            configureRouting(mock(), mock(), mock(), mock(),mock())
         }
         client.get("/inbox").let {
             Assertions.assertEquals(HttpStatusCode.MethodNotAllowed, it.status)
@@ -50,7 +50,7 @@ class InboxRoutingKtTest {
         application {
             configureStatusPages()
             configureSerialization()
-            configureRouting(httpSignatureVerifyService, activityPubService, userService, activityPubUserService)
+            configureRouting(httpSignatureVerifyService, activityPubService, userService, activityPubUserService,mock())
         }
         client.post("/inbox").let {
             Assertions.assertEquals(HttpStatusCode.BadRequest, it.status)
@@ -64,7 +64,7 @@ class InboxRoutingKtTest {
         }
         application {
             configureSerialization()
-            configureRouting(mock(), mock(), mock(), mock())
+            configureRouting(mock(), mock(), mock(), mock(),mock())
         }
         client.get("/users/test/inbox").let {
             Assertions.assertEquals(HttpStatusCode.MethodNotAllowed, it.status)
@@ -87,7 +87,7 @@ class InboxRoutingKtTest {
         application {
             configureStatusPages()
             configureSerialization()
-            configureRouting(httpSignatureVerifyService, activityPubService, userService, activityPubUserService)
+            configureRouting(httpSignatureVerifyService, activityPubService, userService, activityPubUserService,mock())
         }
         client.post("/users/test/inbox").let {
             Assertions.assertEquals(HttpStatusCode.BadRequest, it.status)

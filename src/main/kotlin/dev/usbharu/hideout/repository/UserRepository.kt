@@ -112,7 +112,9 @@ class UserRepository(private val database: Database) : IUserRepository {
     }
 
     override suspend fun findByUrls(urls: List<String>): List<UserEntity> {
-        TODO("Not yet implemented")
+        return query {
+            Users.select { Users.url inList urls }.map { it.toUserEntity() }
+        }
     }
 
     override suspend fun findFollowersById(id: Long): List<UserEntity> {

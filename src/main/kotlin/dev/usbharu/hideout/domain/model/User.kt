@@ -1,6 +1,7 @@
 package dev.usbharu.hideout.domain.model
 
 import org.jetbrains.exposed.dao.id.LongIdTable
+import org.jetbrains.exposed.sql.ResultRow
 
 data class User(
     val name: String,
@@ -46,4 +47,17 @@ object Users : LongIdTable("users") {
     init {
         uniqueIndex(name, domain)
     }
+}
+
+
+fun ResultRow.toUser(): User {
+    return User(
+        this[Users.name],
+        this[Users.domain],
+        this[Users.screenName],
+        this[Users.description],
+        this[Users.inbox],
+        this[Users.outbox],
+        this[Users.url]
+    )
 }
