@@ -11,6 +11,7 @@ import dev.usbharu.hideout.service.job.JobQueueParentService
 import io.ktor.client.*
 import kjob.core.job.JobProps
 import org.slf4j.LoggerFactory
+import java.time.Instant
 
 class ActivityPubNoteServiceImpl(
     private val httpClient: HttpClient,
@@ -36,9 +37,17 @@ class ActivityPubNoteServiceImpl(
 
     override suspend fun createNoteJob(props: JobProps<DeliverPostJob>) {
         val actor = props[DeliverPostJob.actor]
-        val note = Config.configData.objectMapper.readValue<Note>(props[DeliverPostJob.post])
+        val postEntity = Config.configData.objectMapper.readValue<PostEntity>(props[DeliverPostJob.post])
+        val note = Note(
+            name = "Note",
+            id = postEntity.url,
+            attributedTo = actor,
+            content = postEntity.text,
+            published = Instant.ofEpochMilli(postEntity.createdAt).toString(),
+            to = listOf("https://www.w3.org/ns/activitystreams#Public", actor + "/followers")
+        )
         val inbox = props[DeliverPostJob.inbox]
-        logger.debug("createNoteJob: actor={}, note={}, inbox={}", actor, note, inbox)
+        logger.debug("createNoteJob: actor={}, note={}, inbox={}", actor, postEntity, inbox)
         httpClient.postAp(
             urlString = inbox,
             username = "$actor#pubkey",
