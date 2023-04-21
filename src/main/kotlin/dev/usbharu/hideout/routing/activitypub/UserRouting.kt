@@ -12,7 +12,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Routing.usersAP(activityPubUserService: ActivityPubUserService,userService:UserService) {
+fun Routing.usersAP(activityPubUserService: ActivityPubUserService, userService: UserService) {
     route("/users/{name}") {
         createChild(ContentTypeRouteSelector(ContentType.Application.Activity, ContentType.Application.JsonLd)).handle {
             val name =
@@ -24,7 +24,8 @@ fun Routing.usersAP(activityPubUserService: ActivityPubUserService,userService:U
             )
         }
         get {
-            call.respondText(userService.findByName(call.parameters["name"]!!).toString())
+            val userEntity = userService.findByName(call.parameters["name"]!!)
+            call.respondText(userEntity.toString() + "\n" + userService.findFollowersById(userEntity.id))
         }
     }
 }
