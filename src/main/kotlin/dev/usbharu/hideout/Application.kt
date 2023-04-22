@@ -30,7 +30,7 @@ import kjob.core.kjob
 import org.jetbrains.exposed.sql.Database
 import org.koin.ktor.ext.inject
 
-fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
+fun main(args: Array<String>): Unit = io.ktor.server.cio.EngineMain.main(args)
 
 val Application.property: Application.(propertyName: String) -> String
     get() = {
