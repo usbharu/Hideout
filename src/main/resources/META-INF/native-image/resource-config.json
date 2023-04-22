@@ -1,0 +1,54 @@
+{
+    "resources": {
+        "includes": [
+            {
+                "pattern": "\\QMETA-INF/services/ch.qos.logback.classic.spi.Configurator\\E"
+            },
+            {
+                "pattern": "\\QMETA-INF/services/io.ktor.server.config.ConfigLoader\\E"
+            },
+            {
+                "pattern": "\\QMETA-INF/services/java.sql.Driver\\E"
+            },
+            {
+                "pattern": "\\QMETA-INF/services/kotlin.reflect.jvm.internal.impl.builtins.BuiltInsLoader\\E"
+            },
+            {
+                "pattern": "\\QMETA-INF/services/kotlin.reflect.jvm.internal.impl.resolve.ExternalOverridabilityCondition\\E"
+            },
+            {
+                "pattern": "\\QMETA-INF/services/org.jetbrains.exposed.sql.DatabaseConnectionAutoRegistration\\E"
+            },
+            {
+                "pattern": "\\QMETA-INF/services/org.slf4j.spi.SLF4JServiceProvider\\E"
+            },
+            {
+                "pattern": "\\Qapplication.conf\\E"
+            },
+            {
+                "pattern": "\\Qlogback.xml\\E"
+            },
+            {
+                "pattern": "\\Qorg/fusesource/jansi/internal/native/Windows/x86_64/jansi.dll\\E"
+            },
+            {
+                "pattern": "\\Qorg/fusesource/jansi/jansi.properties\\E"
+            },
+            {
+                "pattern": "\\Qorg/h2/util/data.zip\\E"
+            },
+            {
+                "pattern": "\\Qstatic/assets/index-c7cbea7a.js\\E"
+            },
+            {
+                "pattern": "\\Qstatic/index.html\\E"
+            },
+            {
+                "pattern":"\\Qkotlin/kotlin.kotlin_builtins\\E"
+            }
+        ]
+    },
+    "bundles": [
+
+    ]
+}

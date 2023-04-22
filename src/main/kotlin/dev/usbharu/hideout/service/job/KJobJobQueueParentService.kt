@@ -13,7 +13,7 @@ class KJobJobQueueParentService(private val database: Database) : JobQueueParent
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     val kjob: KJob = kjob(ExposedKJob) {
-        connectionDatabase =  database
+        connectionDatabase = database
         isWorker = false
     }.start()
 
@@ -21,8 +21,8 @@ class KJobJobQueueParentService(private val database: Database) : JobQueueParent
 
     }
 
-    override suspend fun <J : Job> schedule(job: J,block:ScheduleContext<J>.(J)->Unit) {
-        logger.debug("schedule job={}",job.name)
-        kjob.schedule(job,block)
+    override suspend fun <J : Job> schedule(job: J, block: ScheduleContext<J>.(J) -> Unit) {
+        logger.debug("schedule job={}", job.name)
+        kjob.schedule(job, block)
     }
 }
