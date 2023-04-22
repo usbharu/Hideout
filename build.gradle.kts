@@ -8,7 +8,7 @@ val koin_version: String by project
 plugins {
     kotlin("jvm") version "1.8.10"
     id("io.ktor.plugin") version "2.2.4"
-    id("org.graalvm.buildtools.native") version "0.9.11"
+    id("org.graalvm.buildtools.native") version "0.9.21"
 //    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
 }
 
@@ -104,19 +104,22 @@ graalvmNative {
         named("main") {
             fallback.set(false)
             verbose.set(true)
-
+            agent{
+                enabled.set(false)
+            }
 
             buildArgs.add("--initialize-at-build-time=io.ktor,kotlin,kotlinx")
-            buildArgs.add("--trace-class-initialization=ch.qos.logback.classic.Logger")
-            buildArgs.add("--trace-object-instantiation=ch.qos.logback.core.AsyncAppenderBase"+"$"+"Worker")
-            buildArgs.add("--trace-object-instantiation=ch.qos.logback.classic.Logger")
+//            buildArgs.add("--trace-class-initialization=ch.qos.logback.classic.Logger")
+//            buildArgs.add("--trace-object-instantiation=ch.qos.logback.core.AsyncAppenderBase"+"$"+"Worker")
+//            buildArgs.add("--trace-object-instantiation=ch.qos.logback.classic.Logger")
             buildArgs.add("--initialize-at-build-time=org.slf4j.LoggerFactory,ch.qos.logback")
-            buildArgs.add("--trace-object-instantiation=kotlinx.coroutines.channels.ArrayChannel")
+//            buildArgs.add("--trace-object-instantiation=kotlinx.coroutines.channels.ArrayChannel")
             buildArgs.add("--initialize-at-build-time=kotlinx.coroutines.channels.ArrayChannel")
             buildArgs.add("-H:+InstallExitHandlers")
             buildArgs.add("-H:+ReportUnsupportedElementsAtRuntime")
             buildArgs.add("-H:+ReportExceptionStackTraces")
 
+            runtimeArgs.add("-config=$buildDir/resources/main/application-native.conf")
             imageName.set("graal-server")
         }
     }
