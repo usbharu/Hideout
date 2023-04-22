@@ -8,13 +8,14 @@ val koin_version: String by project
 plugins {
     kotlin("jvm") version "1.8.10"
     id("io.ktor.plugin") version "2.2.4"
+    id("org.graalvm.buildtools.native") version "0.9.11"
 //    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
 }
 
 group = "dev.usbharu"
 version = "0.0.1"
 application {
-    mainClass.set("io.ktor.server.netty.EngineMain")
+    mainClass.set("io.ktor.server.cio.EngineMain")
 
     val isDevelopment: Boolean = project.ext.has("development")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
@@ -52,7 +53,7 @@ dependencies {
     implementation("com.h2database:h2:$h2_version")
     implementation("org.xerial:sqlite-jdbc:3.40.1.0")
     implementation("io.ktor:ktor-server-websockets-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
+    implementation("io.ktor:ktor-server-cio-jvm:$ktor_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
 
     implementation("io.insert-koin:koin-core:$koin_version")
@@ -95,5 +96,28 @@ jib {
 ktor {
     docker {
         localImageName.set("hideout")
+    }
+}
+
+graalvmNative {
+    binaries {
+        named("main") {
+            fallback.set(false)
+            verbose.set(true)
+
+
+            buildArgs.add("--initialize-at-build-time=io.ktor,kotlin,kotlinx")
+            buildArgs.add("--trace-class-initialization=ch.qos.logback.classic.Logger")
+            buildArgs.add("--trace-object-instantiation=ch.qos.logback.core.AsyncAppenderBase"+"$"+"Worker")
+            buildArgs.add("--trace-object-instantiation=ch.qos.logback.classic.Logger")
+            buildArgs.add("--initialize-at-build-time=org.slf4j.LoggerFactory,ch.qos.logback")
+            buildArgs.add("--trace-object-instantiation=kotlinx.coroutines.channels.ArrayChannel")
+            buildArgs.add("--initialize-at-build-time=kotlinx.coroutines.channels.ArrayChannel")
+            buildArgs.add("-H:+InstallExitHandlers")
+            buildArgs.add("-H:+ReportUnsupportedElementsAtRuntime")
+            buildArgs.add("-H:+ReportExceptionStackTraces")
+
+            imageName.set("graal-server")
+        }
     }
 }
