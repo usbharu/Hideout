@@ -179,7 +179,7 @@ class UserRepository(private val database: Database) : IUserRepository {
 }
 
 object Users : Table("users") {
-    val id = long("id").uniqueIndex()
+    val id = long("id")
     val name = varchar("name", length = 64)
     val domain = varchar("domain", length = 255)
     val screenName = varchar("screen_name", length = 64)
