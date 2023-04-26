@@ -1,12 +1,11 @@
 package dev.usbharu.hideout.service.activitypub
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import dev.usbharu.hideout.config.Config
+import dev.usbharu.hideout.domain.model.User
 import dev.usbharu.hideout.domain.model.ap.Image
 import dev.usbharu.hideout.domain.model.ap.Key
 import dev.usbharu.hideout.domain.model.ap.Person
-import dev.usbharu.hideout.config.Config
-import dev.usbharu.hideout.domain.model.User
-import dev.usbharu.hideout.domain.model.UserAuthentication
 import dev.usbharu.hideout.exception.UserNotFoundException
 import dev.usbharu.hideout.exception.ap.IllegalActivityPubObjectException
 import dev.usbharu.hideout.service.IUserAuthService
@@ -30,7 +29,6 @@ class ActivityPubUserServiceImpl(
     override suspend fun getPersonByName(name: String): Person {
         // TODO: JOINで書き直し
         val userEntity = userService.findByName(name)
-        val userAuthEntity = userAuthService.findByUserId(userEntity.id)
         val userUrl = "${Config.configData.url}/users/$name"
         return Person(
             type = emptyList(),
@@ -52,7 +50,7 @@ class ActivityPubUserServiceImpl(
                 name = "Public Key",
                 id = "$userUrl#pubkey",
                 owner = userUrl,
-                publicKeyPem = userAuthEntity.publicKey
+                publicKeyPem = userEntity.publicKey
             )
         )
     }
@@ -60,7 +58,6 @@ class ActivityPubUserServiceImpl(
     override suspend fun fetchPerson(url: String): Person {
         return try {
             val userEntity = userService.findByUrl(url)
-            val userAuthEntity = userAuthService.findByUsername(userEntity.name)
             return Person(
                 type = emptyList(),
                 name = userEntity.name,
@@ -81,7 +78,7 @@ class ActivityPubUserServiceImpl(
                     name = "Public Key",
                     id = "$url#pubkey",
                     owner = url,
-                    publicKeyPem = userAuthEntity.publicKey
+                    publicKeyPem = userEntity.publicKey
                 )
             )
 
@@ -90,7 +87,7 @@ class ActivityPubUserServiceImpl(
                 accept(ContentType.Application.Activity)
             }
             val person = Config.configData.objectMapper.readValue<Person>(httpResponse.bodyAsText())
-            val userEntity = userService.create(
+            userService.create(
                 User(
                     id = 0L,
                     name = person.preferredUsername
@@ -101,16 +98,8 @@ class ActivityPubUserServiceImpl(
                     inbox = person.inbox ?: throw IllegalActivityPubObjectException("inbox is null"),
                     outbox = person.outbox ?: throw IllegalActivityPubObjectException("outbox is null"),
                     url = url,
-                    publicKey = "",
+                    publicKey = person.publicKey?.publicKeyPem ?: throw IllegalActivityPubObjectException("publicKey is null"),
                     createdAt = LocalDateTime.now()
-                )
-            )
-            userAuthService.createAccount(
-                UserAuthentication(
-                    userEntity.id,
-                    null,
-                    person.publicKey?.publicKeyPem ?: throw IllegalActivityPubObjectException("publicKey is null"),
-                    null
                 )
             )
             person
