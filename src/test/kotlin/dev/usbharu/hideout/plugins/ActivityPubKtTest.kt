@@ -1,10 +1,9 @@
 package dev.usbharu.hideout.plugins
 
-import dev.usbharu.hideout.domain.model.ap.JsonLd
 import dev.usbharu.hideout.domain.model.User
 import dev.usbharu.hideout.domain.model.UserAuthentication
 import dev.usbharu.hideout.domain.model.UserAuthenticationEntity
-import dev.usbharu.hideout.domain.model.UserEntity
+import dev.usbharu.hideout.domain.model.ap.JsonLd
 import dev.usbharu.hideout.repository.IUserAuthRepository
 import dev.usbharu.hideout.repository.IUserRepository
 import dev.usbharu.hideout.service.impl.UserAuthService
@@ -17,41 +16,55 @@ import org.junit.jupiter.api.Test
 import java.security.KeyPairGenerator
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
+import java.time.LocalDateTime
 
 class ActivityPubKtTest {
     @Test
     fun HttpSignTest(): Unit = runBlocking {
 
         val ktorKeyMap = KtorKeyMap(UserAuthService(object : IUserRepository {
-            override suspend fun create(user: User): UserEntity {
+            override suspend fun create(user: User): User {
                 TODO("Not yet implemented")
             }
 
-            override suspend fun findById(id: Long): UserEntity? {
+            override suspend fun findById(id: Long): User? {
                 TODO("Not yet implemented")
             }
 
-            override suspend fun findByIds(ids: List<Long>): List<UserEntity> {
+            override suspend fun findByIds(ids: List<Long>): List<User> {
                 TODO("Not yet implemented")
             }
 
-            override suspend fun findByName(name: String): UserEntity? {
-                return UserEntity(1, "test", "localhost", "test", "","","","")
+            override suspend fun findByName(name: String): User? {
+                return User(
+                    1,
+                    "test",
+                    "localhost",
+                    "test",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    null,
+                    LocalDateTime.now()
+                )
             }
 
-            override suspend fun findByNameAndDomains(names: List<Pair<String, String>>): List<UserEntity> {
+            override suspend fun findByNameAndDomains(names: List<Pair<String, String>>): List<User> {
                 TODO("Not yet implemented")
             }
 
-            override suspend fun findByUrl(url: String): UserEntity? {
+            override suspend fun findByUrl(url: String): User? {
                 TODO("Not yet implemented")
             }
 
-            override suspend fun findByUrls(urls: List<String>): List<UserEntity> {
+            override suspend fun findByUrls(urls: List<String>): List<User> {
                 TODO("Not yet implemented")
             }
 
-            override suspend fun update(userEntity: UserEntity) {
+            override suspend fun update(userEntity: User) {
                 TODO("Not yet implemented")
             }
 
@@ -63,7 +76,7 @@ class ActivityPubKtTest {
                 TODO("Not yet implemented")
             }
 
-            override suspend fun findAllByLimitAndByOffset(limit: Int, offset: Long): List<UserEntity> {
+            override suspend fun findAllByLimitAndByOffset(limit: Int, offset: Long): List<User> {
                 TODO("Not yet implemented")
             }
 
@@ -75,7 +88,7 @@ class ActivityPubKtTest {
                 TODO("Not yet implemented")
             }
 
-            override suspend fun findFollowersById(id: Long): List<UserEntity> {
+            override suspend fun findFollowersById(id: Long): List<User> {
                 TODO("Not yet implemented")
             }
 

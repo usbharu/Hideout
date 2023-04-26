@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.domain.model
 
+import dev.usbharu.hideout.repository.Users
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
 

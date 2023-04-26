@@ -1,32 +1,31 @@
 package dev.usbharu.hideout.repository
 
 import dev.usbharu.hideout.domain.model.User
-import dev.usbharu.hideout.domain.model.UserEntity
 
 interface IUserRepository {
-    suspend fun create(user: User): UserEntity
+    suspend fun create(user: User): User
 
-    suspend fun findById(id: Long): UserEntity?
+    suspend fun findById(id: Long): User?
 
-    suspend fun findByIds(ids: List<Long>): List<UserEntity>
+    suspend fun findByIds(ids: List<Long>): List<User>
 
-    suspend fun findByName(name: String): UserEntity?
+    suspend fun findByName(name: String): User?
 
-    suspend fun findByNameAndDomains(names: List<Pair<String,String>>): List<UserEntity>
+    suspend fun findByNameAndDomains(names: List<Pair<String,String>>): List<User>
 
-    suspend fun findByUrl(url:String):UserEntity?
+    suspend fun findByUrl(url:String): User?
 
-    suspend fun findByUrls(urls: List<String>): List<UserEntity>
+    suspend fun findByUrls(urls: List<String>): List<User>
 
-    suspend fun update(userEntity: UserEntity)
+    suspend fun update(userEntity: User)
 
     suspend fun delete(id: Long)
 
     suspend fun findAll(): List<User>
 
-    suspend fun findAllByLimitAndByOffset(limit: Int, offset: Long = 0): List<UserEntity>
+    suspend fun findAllByLimitAndByOffset(limit: Int, offset: Long = 0): List<User>
 
     suspend fun createFollower(id: Long, follower: Long)
     suspend fun deleteFollower(id: Long, follower: Long)
-    suspend fun findFollowersById(id: Long): List<UserEntity>
+    suspend fun findFollowersById(id: Long): List<User>
 }

@@ -6,6 +6,9 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 class UserRepository(private val database: Database) : IUserRepository {
     init {
@@ -17,25 +20,14 @@ class UserRepository(private val database: Database) : IUserRepository {
         }
     }
 
-    private fun ResultRow.toUserEntity(): UserEntity {
-        return UserEntity(
-            this[Users.id],
-            this[Users.name],
-            this[Users.domain],
-            this[Users.screenName],
-            this[Users.description],
-            this[Users.inbox],
-            this[Users.outbox],
-            this[Users.url],
-        )
-    }
+    private fun ResultRow.toUserEntity(): User = toUser()
 
     suspend fun <T> query(block: suspend () -> T): T =
         newSuspendedTransaction(Dispatchers.IO) { block() }
 
-    override suspend fun create(user: User): UserEntity {
+    override suspend fun create(user: User): User {
         return query {
-            UserEntity(Users.insert {
+            Users.insert {
                 it[name] = user.name
                 it[domain] = user.domain
                 it[screenName] = user.screenName
@@ -43,7 +35,8 @@ class UserRepository(private val database: Database) : IUserRepository {
                 it[inbox] = user.inbox
                 it[outbox] = user.outbox
                 it[url] = user.url
-            }[Users.id], user)
+            }
+            return@query user
         }
     }
 
@@ -56,7 +49,7 @@ class UserRepository(private val database: Database) : IUserRepository {
         }
     }
 
-    override suspend fun findById(id: Long): UserEntity? {
+    override suspend fun findById(id: Long): User? {
         return query {
             Users.select { Users.id eq id }.map {
                 it.toUserEntity()
@@ -64,7 +57,7 @@ class UserRepository(private val database: Database) : IUserRepository {
         }
     }
 
-    override suspend fun findByIds(ids: List<Long>): List<UserEntity> {
+    override suspend fun findByIds(ids: List<Long>): List<User> {
         return query {
             Users.select { Users.id inList ids }.map {
                 it.toUserEntity()
@@ -72,7 +65,7 @@ class UserRepository(private val database: Database) : IUserRepository {
         }
     }
 
-    override suspend fun findByName(name: String): UserEntity? {
+    override suspend fun findByName(name: String): User? {
         return query {
             Users.select { Users.name eq name }.map {
                 it.toUserEntity()
@@ -80,7 +73,7 @@ class UserRepository(private val database: Database) : IUserRepository {
         }
     }
 
-    override suspend fun findByNameAndDomains(names: List<Pair<String, String>>): List<UserEntity> {
+    override suspend fun findByNameAndDomains(names: List<Pair<String, String>>): List<User> {
         return query {
             val selectAll = Users.selectAll()
             names.forEach { (name, domain) ->
@@ -90,19 +83,19 @@ class UserRepository(private val database: Database) : IUserRepository {
         }
     }
 
-    override suspend fun findByUrl(url: String): UserEntity? {
+    override suspend fun findByUrl(url: String): User? {
         return query {
             Users.select { Users.url eq url }.singleOrNull()?.toUserEntity()
         }
     }
 
-    override suspend fun findByUrls(urls: List<String>): List<UserEntity> {
+    override suspend fun findByUrls(urls: List<String>): List<User> {
         return query {
             Users.select { Users.url inList urls }.map { it.toUserEntity() }
         }
     }
 
-    override suspend fun findFollowersById(id: Long): List<UserEntity> {
+    override suspend fun findFollowersById(id: Long): List<User> {
         return query {
             val followers = Users.alias("FOLLOWERS")
             Users.innerJoin(
@@ -127,22 +120,26 @@ class UserRepository(private val database: Database) : IUserRepository {
                 )
                 .select { Users.id eq id }
                 .map {
-                    UserEntity(
+                    User(
                         id = it[followers[Users.id]],
                         name = it[followers[Users.name]],
                         domain = it[followers[Users.domain]],
                         screenName = it[followers[Users.screenName]],
                         description = it[followers[Users.description]],
+                        password = it[followers[Users.password]],
                         inbox = it[followers[Users.inbox]],
                         outbox = it[followers[Users.outbox]],
                         url = it[followers[Users.url]],
+                        publicKey = it[followers[Users.publicKey]],
+                        privateKey = it[followers[Users.privateKey]],
+                        createdAt = LocalDateTime.ofInstant(Instant.ofEpochMilli(it[followers[Users.createdAt]]), ZoneId.systemDefault())
                     )
                 }
         }
     }
 
 
-    override suspend fun update(userEntity: UserEntity) {
+    override suspend fun update(userEntity: User) {
         return query {
             Users.update({ Users.id eq userEntity.id }) {
                 it[name] = userEntity.name
@@ -174,9 +171,46 @@ class UserRepository(private val database: Database) : IUserRepository {
         }
     }
 
-    override suspend fun findAllByLimitAndByOffset(limit: Int, offset: Long): List<UserEntity> {
+    override suspend fun findAllByLimitAndByOffset(limit: Int, offset: Long): List<User> {
         return query {
             Users.selectAll().limit(limit, offset).map { it.toUserEntity() }
         }
     }
+}
+
+object Users : Table("users") {
+    val id = long("id").uniqueIndex()
+    val name = varchar("name", length = 64)
+    val domain = varchar("domain", length = 255)
+    val screenName = varchar("screen_name", length = 64)
+    val description = varchar("description", length = 600)
+    val password = varchar("password", length = 255).nullable()
+    val inbox = varchar("inbox", length = 255).uniqueIndex()
+    val outbox = varchar("outbox", length = 255).uniqueIndex()
+    val url = varchar("url", length = 255).uniqueIndex()
+    val publicKey = varchar("public_key", length = 10000)
+    val privateKey = varchar("private_key", length = 10000)
+    val createdAt = long("created_at")
+
+    override val primaryKey: PrimaryKey = PrimaryKey(id)
+    init {
+        uniqueIndex(name, domain)
+    }
+}
+
+fun ResultRow.toUser(): User {
+    return User(
+        this[Users.id],
+        this[Users.name],
+        this[Users.domain],
+        this[Users.screenName],
+        this[Users.description],
+        this[Users.password],
+        this[Users.inbox],
+        this[Users.outbox],
+        this[Users.url],
+        this[Users.publicKey],
+        this[Users.privateKey],
+        LocalDateTime.ofInstant(Instant.ofEpochMilli((this[Users.createdAt])), ZoneId.systemDefault())
+    )
 }

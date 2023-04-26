@@ -6,7 +6,7 @@ package dev.usbharu.hideout.service.activitypub
 import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.config.ConfigData
-import dev.usbharu.hideout.domain.model.UserEntity
+import dev.usbharu.hideout.domain.model.User
 import dev.usbharu.hideout.domain.model.ap.*
 import dev.usbharu.hideout.domain.model.job.ReceiveFollowJob
 import dev.usbharu.hideout.service.impl.UserService
@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.*
 import utils.JsonObjectMapper
+import java.time.LocalDateTime
 
 class ActivityPubFollowServiceImplTest {
     @Test
@@ -88,7 +89,7 @@ class ActivityPubFollowServiceImplTest {
         }
         val userService = mock<UserService> {
             onBlocking { findByUrls(any()) } doReturn listOf(
-                UserEntity(
+                User(
                     id = 1L,
                     name = "test",
                     domain = "example.com",
@@ -96,9 +97,11 @@ class ActivityPubFollowServiceImplTest {
                     description = "This user is test user.",
                     inbox = "https://example.com/inbox",
                     outbox = "https://example.com/outbox",
-                    url = "https://example.com"
+                    url = "https://example.com",
+                    publicKey = "",
+                    createdAt = LocalDateTime.now()
                 ),
-                UserEntity(
+                User(
                     id = 2L,
                     name = "follower",
                     domain = "follower.example.com",
@@ -106,7 +109,9 @@ class ActivityPubFollowServiceImplTest {
                     description = "This user is test follower user.",
                     inbox = "https://follower.example.com/inbox",
                     outbox = "https://follower.example.com/outbox",
-                    url = "https://follower.example.com"
+                    url = "https://follower.example.com",
+                    publicKey = "",
+                    createdAt = LocalDateTime.now()
                 )
             )
             onBlocking { addFollowers(any(), any()) } doReturn Unit
