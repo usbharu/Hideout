@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.*
 import utils.JsonObjectMapper
+import java.time.Instant
 import java.time.LocalDateTime
 
 class ActivityPubFollowServiceImplTest {
@@ -99,7 +100,7 @@ class ActivityPubFollowServiceImplTest {
                     outbox = "https://example.com/outbox",
                     url = "https://example.com",
                     publicKey = "",
-                    createdAt = LocalDateTime.now()
+                    createdAt = Instant.now()
                 ),
                 User(
                     id = 2L,
@@ -111,7 +112,7 @@ class ActivityPubFollowServiceImplTest {
                     outbox = "https://follower.example.com/outbox",
                     url = "https://follower.example.com",
                     publicKey = "",
-                    createdAt = LocalDateTime.now()
+                    createdAt = Instant.now()
                 )
             )
             onBlocking { addFollowers(any(), any()) } doReturn Unit

@@ -3,11 +3,14 @@ package dev.usbharu.hideout.plugins
 import dev.usbharu.hideout.domain.model.User
 import dev.usbharu.hideout.domain.model.ap.JsonLd
 import dev.usbharu.hideout.repository.IUserRepository
+import dev.usbharu.hideout.service.impl.toPem
 import io.ktor.client.*
 import io.ktor.client.engine.mock.*
 import io.ktor.client.plugins.logging.*
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
+import java.security.KeyPairGenerator
+import java.time.Instant
 import java.time.LocalDateTime
 
 class ActivityPubKtTest {
@@ -27,7 +30,10 @@ class ActivityPubKtTest {
                 TODO("Not yet implemented")
             }
 
-            override suspend fun findByName(name: String): User? {
+            override suspend fun findByName(name: String): User {
+                val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
+                keyPairGenerator.initialize(1024)
+                val generateKeyPair = keyPairGenerator.generateKeyPair()
                 return User(
                     1,
                     "test",
@@ -39,8 +45,8 @@ class ActivityPubKtTest {
                     "",
                     "",
                     "",
-                    null,
-                    LocalDateTime.now()
+                    generateKeyPair.private.toPem(),
+                    Instant.now()
                 )
             }
 

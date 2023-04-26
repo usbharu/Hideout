@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito.eq
 import org.mockito.kotlin.*
 import utils.JsonObjectMapper
-import java.time.LocalDateTime
+import java.time.Instant
 import kotlin.test.assertEquals
 
 class ActivityPubNoteServiceImplTest {
@@ -38,7 +38,7 @@ class ActivityPubNoteServiceImplTest {
                 "https://follower.example.com",
                 "",
                 publicKey = "",
-                createdAt = LocalDateTime.now()
+                createdAt = Instant.now()
             ),
             User(
                 3L,
@@ -51,7 +51,7 @@ class ActivityPubNoteServiceImplTest {
                 "https://follower2.example.com",
                 "",
                 publicKey = "",
-                createdAt = LocalDateTime.now()
+                createdAt = Instant.now()
             )
         )
         val userService = mock<UserService> {
@@ -66,7 +66,7 @@ class ActivityPubNoteServiceImplTest {
                 "https:.//example.com",
                 "",
                 publicKey = "",
-                createdAt = LocalDateTime.now()
+                createdAt = Instant.now()
             )
             onBlocking { findFollowersById(eq(1L)) } doReturn followers
         }

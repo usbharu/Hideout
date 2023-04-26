@@ -9,6 +9,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.ZoneOffset
 
 class UserRepository(private val database: Database) : IUserRepository {
     init {
@@ -28,13 +29,18 @@ class UserRepository(private val database: Database) : IUserRepository {
     override suspend fun create(user: User): User {
         return query {
             Users.insert {
+                it[id] = user.id
                 it[name] = user.name
                 it[domain] = user.domain
                 it[screenName] = user.screenName
                 it[description] = user.description
+                it[password] = user.password
                 it[inbox] = user.inbox
                 it[outbox] = user.outbox
                 it[url] = user.url
+                it[createdAt] = user.createdAt.toEpochMilli()
+                it[publicKey] = user.publicKey
+                it[privateKey] = user.privateKey
             }
             return@query user
         }
@@ -101,7 +107,7 @@ class UserRepository(private val database: Database) : IUserRepository {
             Users.innerJoin(
                 otherTable = UsersFollowers,
                 onColumn = { Users.id },
-                otherColumn = { UsersFollowers.userId })
+                otherColumn = { userId })
 
                 .innerJoin(
                     otherTable = followers,
@@ -114,9 +120,13 @@ class UserRepository(private val database: Database) : IUserRepository {
                     followers.get(Users.domain),
                     followers.get(Users.screenName),
                     followers.get(Users.description),
+                    followers.get(Users.password),
                     followers.get(Users.inbox),
                     followers.get(Users.outbox),
-                    followers.get(Users.url)
+                    followers.get(Users.url),
+                    followers.get(Users.publicKey),
+                    followers.get(Users.privateKey),
+                    followers.get(Users.createdAt)
                 )
                 .select { Users.id eq id }
                 .map {
@@ -132,7 +142,7 @@ class UserRepository(private val database: Database) : IUserRepository {
                         url = it[followers[Users.url]],
                         publicKey = it[followers[Users.publicKey]],
                         privateKey = it[followers[Users.privateKey]],
-                        createdAt = LocalDateTime.ofInstant(Instant.ofEpochMilli(it[followers[Users.createdAt]]), ZoneId.systemDefault())
+                        createdAt = Instant.ofEpochMilli(it[followers[Users.createdAt]])
                     )
                 }
         }
@@ -189,7 +199,7 @@ object Users : Table("users") {
     val outbox = varchar("outbox", length = 255).uniqueIndex()
     val url = varchar("url", length = 255).uniqueIndex()
     val publicKey = varchar("public_key", length = 10000)
-    val privateKey = varchar("private_key", length = 10000)
+    val privateKey = varchar("private_key", length = 10000).nullable()
     val createdAt = long("created_at")
 
     override val primaryKey: PrimaryKey = PrimaryKey(id)
@@ -211,6 +221,6 @@ fun ResultRow.toUser(): User {
         this[Users.url],
         this[Users.publicKey],
         this[Users.privateKey],
-        LocalDateTime.ofInstant(Instant.ofEpochMilli((this[Users.createdAt])), ZoneId.systemDefault())
+        Instant.ofEpochMilli((this[Users.createdAt]))
     )
 }

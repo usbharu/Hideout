@@ -16,6 +16,7 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import org.slf4j.LoggerFactory
+import java.time.Instant
 import java.time.LocalDateTime
 
 class ActivityPubUserServiceImpl(
@@ -99,7 +100,7 @@ class ActivityPubUserServiceImpl(
                     outbox = person.outbox ?: throw IllegalActivityPubObjectException("outbox is null"),
                     url = url,
                     publicKey = person.publicKey?.publicKeyPem ?: throw IllegalActivityPubObjectException("publicKey is null"),
-                    createdAt = LocalDateTime.now()
+                    createdAt = Instant.now()
                 )
             )
             person
