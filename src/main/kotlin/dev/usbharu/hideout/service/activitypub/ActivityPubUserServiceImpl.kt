@@ -17,6 +17,7 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import org.slf4j.LoggerFactory
+import java.time.LocalDateTime
 
 class ActivityPubUserServiceImpl(
     private val userService: UserService,
@@ -91,6 +92,7 @@ class ActivityPubUserServiceImpl(
             val person = Config.configData.objectMapper.readValue<Person>(httpResponse.bodyAsText())
             val userEntity = userService.create(
                 User(
+                    id = 0L,
                     name = person.preferredUsername
                         ?: throw IllegalActivityPubObjectException("preferredUsername is null"),
                     domain = url.substringAfter(":").substringBeforeLast("/"),
@@ -98,7 +100,9 @@ class ActivityPubUserServiceImpl(
                     description = person.summary ?: "",
                     inbox = person.inbox ?: throw IllegalActivityPubObjectException("inbox is null"),
                     outbox = person.outbox ?: throw IllegalActivityPubObjectException("outbox is null"),
-                    url = url
+                    url = url,
+                    publicKey = "",
+                    createdAt = LocalDateTime.now()
                 )
             )
             userAuthService.createAccount(

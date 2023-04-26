@@ -13,6 +13,7 @@ import io.ktor.util.*
 import java.security.*
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
+import java.time.LocalDateTime
 import java.util.*
 
 class UserAuthService(
@@ -34,13 +35,16 @@ class UserAuthService(
     override suspend fun registerAccount(username: String, hash: String) {
         val url = "${Config.configData.url}/users/$username"
         val registerUser = User(
+            id = 0L,
             name = username,
             domain = Config.configData.domain,
             screenName = username,
             description = "",
             inbox = "$url/inbox",
             outbox = "$url/outbox",
-            url = url
+            url = url,
+            publicKey = "",
+            createdAt = LocalDateTime.now(),
         )
         val createdUser = userRepository.create(registerUser)
 
