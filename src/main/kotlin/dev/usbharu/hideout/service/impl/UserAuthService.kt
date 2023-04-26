@@ -9,6 +9,7 @@ import io.ktor.util.*
 import java.security.*
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
+import java.time.Instant
 import java.time.LocalDateTime
 import java.util.*
 
@@ -40,7 +41,7 @@ class UserAuthService(
             outbox = "$url/outbox",
             url = url,
             publicKey = "",
-            createdAt = LocalDateTime.now(),
+            createdAt = Instant.now(),
         )
         val createdUser = userRepository.create(registerUser)
 
@@ -69,13 +70,13 @@ class UserAuthService(
     }
 }
 
-public fun PublicKey.toPem(): String {
+fun PublicKey.toPem(): String {
     return "-----BEGIN PUBLIC KEY-----\n" +
             Base64.getEncoder().encodeToString(encoded).chunked(64).joinToString("\n") +
             "\n-----END PUBLIC KEY-----\n"
 }
 
-public fun PrivateKey.toPem(): String {
+fun PrivateKey.toPem(): String {
     return "-----BEGIN PRIVATE KEY-----" +
             Base64.getEncoder().encodeToString(encoded).chunked(64).joinToString("\n") +
             "\n-----END PRIVATE KEY-----\n"
