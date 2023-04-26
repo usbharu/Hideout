@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.domain.model
 
+import dev.usbharu.hideout.repository.Users
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.Table
 
