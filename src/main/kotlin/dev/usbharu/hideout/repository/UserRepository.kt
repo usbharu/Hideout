@@ -1,9 +1,6 @@
 package dev.usbharu.hideout.repository
 
-import dev.usbharu.hideout.domain.model.User
-import dev.usbharu.hideout.domain.model.UserEntity
-import dev.usbharu.hideout.domain.model.Users
-import dev.usbharu.hideout.domain.model.UsersFollowers
+import dev.usbharu.hideout.domain.model.*
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -20,21 +17,9 @@ class UserRepository(private val database: Database) : IUserRepository {
         }
     }
 
-    private fun ResultRow.toUser(): User {
-        return User(
-            this[Users.name],
-            this[Users.domain],
-            this[Users.screenName],
-            this[Users.description],
-            this[Users.inbox],
-            this[Users.outbox],
-            this[Users.url]
-        )
-    }
-
     private fun ResultRow.toUserEntity(): UserEntity {
         return UserEntity(
-            this[Users.id].value,
+            this[Users.id],
             this[Users.name],
             this[Users.domain],
             this[Users.screenName],
@@ -58,7 +43,7 @@ class UserRepository(private val database: Database) : IUserRepository {
                 it[inbox] = user.inbox
                 it[outbox] = user.outbox
                 it[url] = user.url
-            }[Users.id].value, user)
+            }[Users.id], user)
         }
     }
 
@@ -143,7 +128,7 @@ class UserRepository(private val database: Database) : IUserRepository {
                 .select { Users.id eq id }
                 .map {
                     UserEntity(
-                        id = it[followers[Users.id]].value,
+                        id = it[followers[Users.id]],
                         name = it[followers[Users.name]],
                         domain = it[followers[Users.domain]],
                         screenName = it[followers[Users.screenName]],
