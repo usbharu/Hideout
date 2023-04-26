@@ -25,7 +25,7 @@ fun Application.configureRouting(
     routing {
         inbox(httpSignatureVerifyService, activityPubService)
         outbox()
-        usersAP(activityPubUserService,userService)
+        usersAP(activityPubUserService, userService)
         webfinger(userService)
 
         route("/api/v1") {

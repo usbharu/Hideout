@@ -18,7 +18,7 @@ open class Object : JsonLd {
 
     companion object {
         @JvmStatic
-        protected fun add(list:List<String>,type:String):List<String> {
+        protected fun add(list: List<String>, type: String): List<String> {
             val toMutableList = list.toMutableList()
             toMutableList.add(type)
             return toMutableList.distinct()
@@ -46,7 +46,7 @@ open class Object : JsonLd {
 
 }
 
-public class TypeSerializer : JsonSerializer<List<String>>() {
+class TypeSerializer : JsonSerializer<List<String>>() {
     override fun serialize(value: List<String>?, gen: JsonGenerator?, serializers: SerializerProvider?) {
         println(value)
         if (value?.size == 1) {

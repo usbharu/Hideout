@@ -63,8 +63,8 @@ val httpSignaturePlugin = createClientPlugin("HttpSign", ::HttpSignaturePluginCo
             println("Digest !!")
 //            UserAuthService.sha256.reset()
             val digest =
-            Base64.getEncoder().encodeToString(UserAuthService.sha256.digest(body.toByteArray(Charsets.UTF_8)))
-            request.headers.append("Digest", "sha-256="+digest)
+                Base64.getEncoder().encodeToString(UserAuthService.sha256.digest(body.toByteArray(Charsets.UTF_8)))
+            request.headers.append("Digest", "sha-256=" + digest)
         }
 
         if (request.headers.contains("Signature")) {
@@ -126,7 +126,7 @@ val httpSignaturePlugin = createClientPlugin("HttpSign", ::HttpSignaturePluginCo
 
                 override fun addHeader(name: String?, value: String?) {
                     val split = value?.split("=").orEmpty()
-                    name?.let { request.header(it, split.get(0)+"=\""+split.get(1).trim('"')+"\"") }
+                    name?.let { request.header(it, split.get(0) + "=\"" + split.get(1).trim('"') + "\"") }
                 }
 
                 override fun method(): String {

@@ -33,7 +33,7 @@ class ActivityPubServiceImpl(
         return ActivityType.values().first { it.name.equals(type.asText(), true) }
     }
 
-    override suspend fun processActivity(json: String, type: ActivityType): ActivityPubResponse? {
+    override suspend fun processActivity(json: String, type: ActivityType): ActivityPubResponse {
         return when (type) {
             ActivityType.Accept -> TODO()
             ActivityType.Add -> TODO()
