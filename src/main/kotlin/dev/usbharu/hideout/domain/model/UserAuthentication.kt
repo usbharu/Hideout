@@ -11,22 +11,7 @@ data class UserAuthentication(
     val publicKey: String,
     val privateKey: String?
 )
-@Deprecated("")
-data class UserAuthenticationEntity(
-    val id: Long,
-    val userId: Long,
-    val hash: String?,
-    val publicKey: String,
-    val privateKey: String?
-) {
-    constructor(id: Long, userAuthentication: UserAuthentication) : this(
-        id,
-        userAuthentication.userId,
-        userAuthentication.hash,
-        userAuthentication.publicKey,
-        userAuthentication.privateKey
-    )
-}
+
 @Deprecated("")
 object UsersAuthentication : LongIdTable("users_auth") {
     val userId = long("user_id").references(Users.id, onUpdate = ReferenceOption.CASCADE)

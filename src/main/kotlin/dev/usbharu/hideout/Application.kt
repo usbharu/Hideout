@@ -58,8 +58,7 @@ fun Application.parent() {
         }
 
         single<IUserRepository> { UserRepository(get()) }
-        single<IUserAuthRepository> { UserAuthRepository(get()) }
-        single<IUserAuthService> { UserAuthService(get(), get()) }
+        single<IUserAuthService> { UserAuthService(get()) }
         single<HttpSignatureVerifyService> { HttpSignatureVerifyServiceImpl(get()) }
         single<JobQueueParentService> {
             val kJobJobQueueService = KJobJobQueueParentService(get())

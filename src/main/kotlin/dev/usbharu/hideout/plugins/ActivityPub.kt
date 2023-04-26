@@ -1,8 +1,8 @@
 package dev.usbharu.hideout.plugins
 
-import dev.usbharu.hideout.domain.model.ap.JsonLd
 import dev.usbharu.hideout.config.Config
-import dev.usbharu.hideout.service.IUserAuthService
+import dev.usbharu.hideout.domain.model.ap.JsonLd
+import dev.usbharu.hideout.repository.IUserRepository
 import dev.usbharu.hideout.service.impl.UserAuthService
 import dev.usbharu.hideout.util.HttpUtil.Activity
 import io.ktor.client.*
@@ -144,14 +144,14 @@ val httpSignaturePlugin = createClientPlugin("HttpSign", ::HttpSignaturePluginCo
     }
 }
 
-class KtorKeyMap(private val userAuthRepository: IUserAuthService) : KeyMap {
+class KtorKeyMap(private val userAuthRepository: IUserRepository) : KeyMap {
     override fun getPublicKey(keyId: String?): PublicKey = runBlocking {
         val username = (keyId ?: throw IllegalArgumentException("keyId is null")).substringBeforeLast("#pubkey")
             .substringAfterLast("/")
         val publicBytes = Base64.getDecoder().decode(
-            userAuthRepository.findByUsername(
+            userAuthRepository.findByName(
                 username
-            ).publicKey?.replace("-----BEGIN PUBLIC KEY-----", "-----END PUBLIC KEY-----")?.replace("", "")
+            )?.publicKey?.replace("-----BEGIN PUBLIC KEY-----", "-----END PUBLIC KEY-----")?.replace("", "")
                 ?.replace("\n", "")
         )
         val x509EncodedKeySpec = X509EncodedKeySpec(publicBytes)
@@ -162,9 +162,9 @@ class KtorKeyMap(private val userAuthRepository: IUserAuthService) : KeyMap {
         val username = (keyId ?: throw IllegalArgumentException("keyId is null")).substringBeforeLast("#pubkey")
             .substringAfterLast("/")
         val publicBytes = Base64.getDecoder().decode(
-            userAuthRepository.findByUsername(
+            userAuthRepository.findByName(
                 username
-            ).privateKey?.replace("-----BEGIN PRIVATE KEY-----", "")?.replace("-----END PRIVATE KEY-----", "")
+            )?.privateKey?.replace("-----BEGIN PRIVATE KEY-----", "")?.replace("-----END PRIVATE KEY-----", "")
                 ?.replace("\n", "")
         )
         val x509EncodedKeySpec = PKCS8EncodedKeySpec(publicBytes)

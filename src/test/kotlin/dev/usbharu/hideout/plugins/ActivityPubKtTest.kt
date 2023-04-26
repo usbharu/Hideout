@@ -1,28 +1,20 @@
 package dev.usbharu.hideout.plugins
 
 import dev.usbharu.hideout.domain.model.User
-import dev.usbharu.hideout.domain.model.UserAuthentication
-import dev.usbharu.hideout.domain.model.UserAuthenticationEntity
 import dev.usbharu.hideout.domain.model.ap.JsonLd
-import dev.usbharu.hideout.repository.IUserAuthRepository
 import dev.usbharu.hideout.repository.IUserRepository
-import dev.usbharu.hideout.service.impl.UserAuthService
-import dev.usbharu.hideout.service.impl.toPem
 import io.ktor.client.*
 import io.ktor.client.engine.mock.*
 import io.ktor.client.plugins.logging.*
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
-import java.security.KeyPairGenerator
-import java.security.interfaces.RSAPrivateKey
-import java.security.interfaces.RSAPublicKey
 import java.time.LocalDateTime
 
 class ActivityPubKtTest {
     @Test
     fun HttpSignTest(): Unit = runBlocking {
 
-        val ktorKeyMap = KtorKeyMap(UserAuthService(object : IUserRepository {
+        val ktorKeyMap = KtorKeyMap(object : IUserRepository {
             override suspend fun create(user: User): User {
                 TODO("Not yet implemented")
             }
@@ -92,33 +84,7 @@ class ActivityPubKtTest {
                 TODO("Not yet implemented")
             }
 
-        }, object : IUserAuthRepository {
-            override suspend fun create(userAuthentication: UserAuthentication): UserAuthenticationEntity {
-                TODO("Not yet implemented")
-            }
-
-            override suspend fun findById(id: Long): UserAuthenticationEntity? {
-                TODO("Not yet implemented")
-            }
-
-            override suspend fun update(userAuthenticationEntity: UserAuthenticationEntity) {
-                TODO("Not yet implemented")
-            }
-
-            override suspend fun delete(id: Long) {
-                TODO("Not yet implemented")
-            }
-
-            override suspend fun findByUserId(id: Long): UserAuthenticationEntity? {
-                val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
-                keyPairGenerator.initialize(1024)
-                val generateKeyPair = keyPairGenerator.generateKeyPair()
-                return UserAuthenticationEntity(
-                    1, 1, "test", (generateKeyPair.public as RSAPublicKey).toPem(),
-                    (generateKeyPair.private as RSAPrivateKey).toPem()
-                )
-            }
-        }))
+        })
 
         val httpClient = HttpClient(MockEngine { httpRequestData ->
             respondOk()
