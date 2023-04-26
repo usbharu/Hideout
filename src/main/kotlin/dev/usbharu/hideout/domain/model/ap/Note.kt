@@ -1,11 +1,12 @@
 package dev.usbharu.hideout.domain.model.ap
 
 open class Note : Object {
-    var id:String? = null
-    var attributedTo:String? = null
-    var content:String? = null
-    var published:String? = null
-    var to:List<String> = emptyList()
+    var id: String? = null
+    var attributedTo: String? = null
+    var content: String? = null
+    var published: String? = null
+    var to: List<String> = emptyList()
+
     protected constructor() : super()
     constructor(
         type: List<String> = emptyList(),
@@ -15,7 +16,7 @@ open class Note : Object {
         content: String?,
         published: String?,
         to: List<String> = emptyList()
-    ) : super(add(type,"Note"), name) {
+    ) : super(add(type, "Note"), name) {
         this.id = id
         this.attributedTo = attributedTo
         this.content = content
