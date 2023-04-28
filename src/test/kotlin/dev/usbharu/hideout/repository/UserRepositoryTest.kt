@@ -16,7 +16,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.Clock
 import java.time.Instant
-import java.time.LocalDateTime
 import java.time.ZoneId
 
 
@@ -45,7 +44,7 @@ class UserRepositoryTest {
     @Test
     fun `findFollowersById フォロワー一覧を取得`() = runTest {
         val userRepository = UserRepository(db)
-        val user = userRepository.create(
+        val user = userRepository.save(
             User(
                 id = 0L,
                 name = "test",
@@ -60,7 +59,7 @@ class UserRepositoryTest {
                 createdAt = Instant.now(Clock.tickMillis(ZoneId.systemDefault()))
             )
         )
-        val follower = userRepository.create(
+        val follower = userRepository.save(
             User(
                 id = 1L,
                 name = "follower",
@@ -75,7 +74,7 @@ class UserRepositoryTest {
                 createdAt = Instant.now(Clock.tickMillis(ZoneId.systemDefault()))
             )
         )
-        val follower2 = userRepository.create(
+        val follower2 = userRepository.save(
             User(
                 id = 3L,
                 name = "follower2",
@@ -101,7 +100,7 @@ class UserRepositoryTest {
     @Test
     fun `createFollower フォロワー追加`() = runTest {
         val userRepository = UserRepository(db)
-        val user = userRepository.create(
+        val user = userRepository.save(
             User(0L,
                 "test",
                 "example.com",
@@ -115,7 +114,7 @@ class UserRepositoryTest {
                 createdAt = Instant.now()
             )
         )
-        val follower = userRepository.create(
+        val follower = userRepository.save(
             User(1L,
                 "follower",
                 "follower.example.com",

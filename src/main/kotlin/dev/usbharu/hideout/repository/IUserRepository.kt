@@ -3,7 +3,7 @@ package dev.usbharu.hideout.repository
 import dev.usbharu.hideout.domain.model.User
 
 interface IUserRepository {
-    suspend fun create(user: User): User
+    suspend fun save(user: User): User
 
     suspend fun findById(id: Long): User?
 
@@ -17,7 +17,8 @@ interface IUserRepository {
 
     suspend fun findByUrls(urls: List<String>): List<User>
 
-    suspend fun update(userEntity: User)
+    @Deprecated("", ReplaceWith("save(userEntity)"))
+    suspend fun update(userEntity: User) = save(userEntity)
 
     suspend fun delete(id: Long)
 

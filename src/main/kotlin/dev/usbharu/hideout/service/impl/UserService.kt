@@ -42,7 +42,7 @@ class UserService(private val userRepository: IUserRepository) {
     }
 
     suspend fun create(user: User): User {
-        return userRepository.create(user)
+        return userRepository.save(user)
     }
 
     suspend fun findFollowersById(id: Long): List<User> {
