@@ -1,16 +1,15 @@
 package dev.usbharu.hideout.routing
 
-import dev.usbharu.hideout.plugins.UserSession
-import dev.usbharu.hideout.service.IUserAuthService
+import dev.usbharu.hideout.domain.model.hideout.dto.UserCreateDto
+import dev.usbharu.hideout.service.impl.UserService
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.server.sessions.*
 
-fun Application.register(userAuthService: IUserAuthService) {
+fun Application.register(userService: UserService) {
 
     routing {
         get("/register") {
@@ -39,13 +38,10 @@ fun Application.register(userAuthService: IUserAuthService) {
             val parameters = call.receiveParameters()
             val password = parameters["password"] ?: return@post call.respondRedirect("/register")
             val username = parameters["username"] ?: return@post call.respondRedirect("/register")
-            if (userAuthService.usernameAlreadyUse(username)) {
+            if (userService.usernameAlreadyUse(username)) {
                 return@post call.respondRedirect("/register")
             }
-
-            val hash = userAuthService.hash(password)
-            userAuthService.registerAccount(username,hash)
-//            call.respondRedirect("/login")
+            userService.createLocalUser(UserCreateDto(username, username, "", password))
             call.respondRedirect("/users/$username")
         }
     }

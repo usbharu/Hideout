@@ -1,10 +1,13 @@
 package dev.usbharu.hideout.service
 
+import java.security.KeyPair
+
 interface IUserAuthService {
     fun hash(password: String): String
 
     suspend fun usernameAlreadyUse(username: String): Boolean
-    suspend fun registerAccount(username: String, hash: String)
+
+    suspend fun generateKeyPair():KeyPair
 
     suspend fun verifyAccount(username: String, password: String): Boolean
 

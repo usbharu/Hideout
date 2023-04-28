@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.routing.activitypub
 
+import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.exception.ParameterNotExistException
 import dev.usbharu.hideout.plugins.respondAp
 import dev.usbharu.hideout.service.activitypub.ActivityPubUserService
@@ -24,7 +25,7 @@ fun Routing.usersAP(activityPubUserService: ActivityPubUserService, userService:
             )
         }
         get {
-            val userEntity = userService.findByName(call.parameters["name"]!!)
+            val userEntity = userService.findByNameLocalUser(call.parameters["name"]!!)
             call.respondText(userEntity.toString() + "\n" + userService.findFollowersById(userEntity.id))
         }
     }

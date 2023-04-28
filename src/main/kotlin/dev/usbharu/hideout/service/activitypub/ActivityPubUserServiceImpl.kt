@@ -28,7 +28,7 @@ class ActivityPubUserServiceImpl(
         private val logger = LoggerFactory.getLogger(this::class.java)
     override suspend fun getPersonByName(name: String): Person {
         // TODO: JOINで書き直し
-        val userEntity = userService.findByName(name)
+        val userEntity = userService.findByNameLocalUser(name)
         val userUrl = "${Config.configData.url}/users/$name"
         return Person(
             type = emptyList(),

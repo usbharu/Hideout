@@ -1,15 +1,11 @@
 package dev.usbharu.hideout.service.impl
 
 import dev.usbharu.hideout.config.Config
-import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.exception.UserNotFoundException
 import dev.usbharu.hideout.repository.IUserRepository
 import dev.usbharu.hideout.service.IUserAuthService
 import io.ktor.util.*
 import java.security.*
-import java.security.interfaces.RSAPrivateKey
-import java.security.interfaces.RSAPublicKey
-import java.time.Instant
 import java.util.*
 
 class UserAuthService(
@@ -27,37 +23,13 @@ class UserAuthService(
         return true
     }
 
-    @Deprecated("")
-    override suspend fun registerAccount(username: String, hash: String) {
-        val url = "${Config.configData.url}/users/$username"
-        val registerUser = User(
-            id = 0L,
-            name = username,
-            domain = Config.configData.domain,
-            screenName = username,
-            description = "",
-            inbox = "$url/inbox",
-            outbox = "$url/outbox",
-            url = url,
-            publicKey = "",
-            createdAt = Instant.now(),
-        )
-        val createdUser = userRepository.save(registerUser)
-
-        val keyPair = generateKeyPair()
-        val privateKey = keyPair.private as RSAPrivateKey
-        val publicKey = keyPair.public as RSAPublicKey
-
-        TODO()
-    }
-
     override suspend fun verifyAccount(username: String, password: String): Boolean {
-        val userEntity = userRepository.findByName(username)
+        val userEntity = userRepository.findByNameAndDomain(username, Config.configData.domain)
             ?: throw UserNotFoundException("$username was not found")
         return userEntity.password == hash(password)
     }
 
-    private fun generateKeyPair(): KeyPair {
+    override suspend fun generateKeyPair(): KeyPair {
         val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
         keyPairGenerator.initialize(1024)
         return keyPairGenerator.generateKeyPair()

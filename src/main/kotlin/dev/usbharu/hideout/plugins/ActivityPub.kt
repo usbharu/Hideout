@@ -149,8 +149,8 @@ class KtorKeyMap(private val userAuthRepository: IUserRepository) : KeyMap {
         val username = (keyId ?: throw IllegalArgumentException("keyId is null")).substringBeforeLast("#pubkey")
             .substringAfterLast("/")
         val publicBytes = Base64.getDecoder().decode(
-            userAuthRepository.findByName(
-                username
+            userAuthRepository.findByNameAndDomain(
+                username,Config.configData.domain
             )?.publicKey?.replace("-----BEGIN PUBLIC KEY-----", "-----END PUBLIC KEY-----")?.replace("", "")
                 ?.replace("\n", "")
         )
@@ -162,8 +162,8 @@ class KtorKeyMap(private val userAuthRepository: IUserRepository) : KeyMap {
         val username = (keyId ?: throw IllegalArgumentException("keyId is null")).substringBeforeLast("#pubkey")
             .substringAfterLast("/")
         val publicBytes = Base64.getDecoder().decode(
-            userAuthRepository.findByName(
-                username
+            userAuthRepository.findByNameAndDomain(
+                username,Config.configData.domain
             )?.privateKey?.replace("-----BEGIN PRIVATE KEY-----", "")?.replace("-----END PRIVATE KEY-----", "")
                 ?.replace("\n", "")
         )
