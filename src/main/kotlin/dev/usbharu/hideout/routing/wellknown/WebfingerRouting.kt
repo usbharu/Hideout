@@ -25,7 +25,7 @@ fun Routing.webfinger(userService:UserService){
                 .substringAfter("acct:")
                 .trimStart('@')
 
-            val userEntity = userService.findByName(accountName)
+            val userEntity = userService.findByNameLocalUser(accountName)
 
             val webFinger = WebFinger(
                 subject = acct,

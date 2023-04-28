@@ -79,7 +79,7 @@ fun Application.parent() {
         }
         single<ActivityPubFollowService> { ActivityPubFollowServiceImpl(get(), get(), get(), get()) }
         single<ActivityPubService> { ActivityPubServiceImpl(get(), get()) }
-        single<UserService> { UserService(get()) }
+        single<UserService> { UserService(get(),get()) }
         single<ActivityPubUserService> { ActivityPubUserServiceImpl(get(), get(), get()) }
         single<ActivityPubNoteService> { ActivityPubNoteServiceImpl(get(), get(), get()) }
         single<IPostService> { PostService(get(), get()) }
@@ -93,7 +93,7 @@ fun Application.parent() {
     configureStaticRouting()
     configureMonitoring()
     configureSerialization()
-    register(inject<IUserAuthService>().value)
+    register(inject<UserService>().value)
     configureRouting(
         inject<HttpSignatureVerifyService>().value,
         inject<ActivityPubService>().value,

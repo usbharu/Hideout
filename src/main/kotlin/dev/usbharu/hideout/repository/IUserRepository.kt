@@ -9,7 +9,11 @@ interface IUserRepository {
 
     suspend fun findByIds(ids: List<Long>): List<User>
 
-    suspend fun findByName(name: String): User?
+    suspend fun findByName(name: String): List<User>
+
+    suspend fun findByNameAndDomain(name: String, domain: String): User?
+
+    suspend fun findByDomain(domain:String): List<User>
 
     suspend fun findByNameAndDomains(names: List<Pair<String,String>>): List<User>
 

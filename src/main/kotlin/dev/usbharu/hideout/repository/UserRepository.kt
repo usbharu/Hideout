@@ -10,7 +10,8 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.Instant
 
-class UserRepository(private val database: Database,private val idGenerateService: IdGenerateService) : IUserRepository {
+class UserRepository(private val database: Database, private val idGenerateService: IdGenerateService) :
+    IUserRepository {
     init {
         transaction(database) {
             SchemaUtils.create(Users)
@@ -85,11 +86,25 @@ class UserRepository(private val database: Database,private val idGenerateServic
         }
     }
 
-    override suspend fun findByName(name: String): User? {
+    override suspend fun findByName(name: String): List<User> {
         return query {
             Users.select { Users.name eq name }.map {
                 it.toUser()
-            }.singleOrNull()
+            }
+        }
+    }
+
+    override suspend fun findByNameAndDomain(name: String, domain: String): User? {
+        return query {
+            Users.select { Users.name eq name and (Users.domain eq domain) }.singleOrNull()?.toUser()
+        }
+    }
+
+    override suspend fun findByDomain(domain: String): List<User> {
+        return query {
+            Users.select { Users.domain eq domain }.map {
+                it.toUser()
+            }
         }
     }
 
