@@ -12,6 +12,7 @@ import dev.usbharu.hideout.repository.*
 import dev.usbharu.hideout.routing.register
 import dev.usbharu.hideout.service.IPostService
 import dev.usbharu.hideout.service.IUserAuthService
+import dev.usbharu.hideout.service.IdGenerateService
 import dev.usbharu.hideout.service.TwitterSnowflakeIdGenerateService
 import dev.usbharu.hideout.service.activitypub.*
 import dev.usbharu.hideout.service.impl.PostService
@@ -57,7 +58,7 @@ fun Application.parent() {
             )
         }
 
-        single<IUserRepository> { UserRepository(get()) }
+        single<IUserRepository> { UserRepository(get(),get()) }
         single<IUserAuthService> { UserAuthService(get()) }
         single<HttpSignatureVerifyService> { HttpSignatureVerifyServiceImpl(get()) }
         single<JobQueueParentService> {
@@ -82,7 +83,8 @@ fun Application.parent() {
         single<ActivityPubUserService> { ActivityPubUserServiceImpl(get(), get(), get()) }
         single<ActivityPubNoteService> { ActivityPubNoteServiceImpl(get(), get(), get()) }
         single<IPostService> { PostService(get(), get()) }
-        single<IPostRepository> { PostRepositoryImpl(get(), TwitterSnowflakeIdGenerateService) }
+        single<IPostRepository> { PostRepositoryImpl(get(), get()) }
+        single<IdGenerateService> {TwitterSnowflakeIdGenerateService}
     }
 
 

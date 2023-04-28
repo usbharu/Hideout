@@ -4,6 +4,7 @@ package dev.usbharu.hideout.repository
 
 import dev.usbharu.hideout.domain.model.User
 import dev.usbharu.hideout.domain.model.UsersFollowers
+import dev.usbharu.hideout.service.IdGenerateService
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.jetbrains.exposed.sql.Database
@@ -43,7 +44,11 @@ class UserRepositoryTest {
 
     @Test
     fun `findFollowersById フォロワー一覧を取得`() = runTest {
-        val userRepository = UserRepository(db)
+        val userRepository = UserRepository(db, object : IdGenerateService {
+            override suspend fun generateId(): Long {
+                TODO("Not yet implemented")
+            }
+        })
         val user = userRepository.save(
             User(
                 id = 0L,
@@ -99,7 +104,11 @@ class UserRepositoryTest {
 
     @Test
     fun `createFollower フォロワー追加`() = runTest {
-        val userRepository = UserRepository(db)
+        val userRepository = UserRepository(db, object : IdGenerateService {
+            override suspend fun generateId(): Long {
+                TODO("Not yet implemented")
+            }
+        })
         val user = userRepository.save(
             User(0L,
                 "test",

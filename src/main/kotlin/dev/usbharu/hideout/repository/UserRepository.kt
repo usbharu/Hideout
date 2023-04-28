@@ -2,6 +2,7 @@ package dev.usbharu.hideout.repository
 
 import dev.usbharu.hideout.domain.model.User
 import dev.usbharu.hideout.domain.model.UsersFollowers
+import dev.usbharu.hideout.service.IdGenerateService
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -9,7 +10,7 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.Instant
 
-class UserRepository(private val database: Database) : IUserRepository {
+class UserRepository(private val database: Database,private val idGenerateService: IdGenerateService) : IUserRepository {
     init {
         transaction(database) {
             SchemaUtils.create(Users)
@@ -184,6 +185,10 @@ class UserRepository(private val database: Database) : IUserRepository {
         return query {
             Users.selectAll().limit(limit, offset).map { it.toUser() }
         }
+    }
+
+    override suspend fun nextId(): Long {
+        return idGenerateService.generateId()
     }
 }
 
