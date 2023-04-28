@@ -81,6 +81,10 @@ class KtorKeyMapTest {
                 TODO("Not yet implemented")
             }
 
+            override suspend fun nextId(): Long {
+                TODO("Not yet implemented")
+            }
+
         })
 
         ktorKeyMap.getPrivateKey("test")

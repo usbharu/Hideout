@@ -29,4 +29,6 @@ interface IUserRepository {
     suspend fun createFollower(id: Long, follower: Long)
     suspend fun deleteFollower(id: Long, follower: Long)
     suspend fun findFollowersById(id: Long): List<User>
+
+    suspend fun nextId():Long
 }
