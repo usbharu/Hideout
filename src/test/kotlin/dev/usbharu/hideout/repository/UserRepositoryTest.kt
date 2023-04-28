@@ -3,7 +3,6 @@
 package dev.usbharu.hideout.repository
 
 import dev.usbharu.hideout.domain.model.User
-import dev.usbharu.hideout.domain.model.UsersFollowers
 import dev.usbharu.hideout.service.IdGenerateService
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
