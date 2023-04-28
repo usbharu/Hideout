@@ -1,6 +1,7 @@
 package dev.usbharu.hideout.service.impl
 
 import dev.usbharu.hideout.config.Config
+import dev.usbharu.hideout.domain.model.hideout.dto.RemoteUserCreateDto
 import dev.usbharu.hideout.domain.model.hideout.dto.UserCreateDto
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.exception.UserNotFoundException
@@ -54,11 +55,6 @@ class UserService(private val userRepository: IUserRepository, private val userA
         return findByNameAndDomain != null
     }
 
-    @Deprecated("")
-    suspend fun create(user: User): User {
-        return userRepository.save(user)
-    }
-
     suspend fun createLocalUser(user: UserCreateDto): User {
         val nextId = userRepository.nextId()
         val HashedPassword = userAuthService.hash(user.password)
@@ -76,6 +72,23 @@ class UserService(private val userRepository: IUserRepository, private val userA
             publicKey = keyPair.public.toPem(),
             privateKey = keyPair.private.toString(),
             Instant.now()
+        )
+        return userRepository.save(userEntity)
+    }
+
+    suspend fun createRemoteUser(user: RemoteUserCreateDto): User {
+        val nextId = userRepository.nextId()
+        val userEntity = User(
+            id = nextId,
+            name = user.name,
+            domain = user.domain,
+            screenName = user.screenName,
+            description = user.description,
+            inbox = user.inbox,
+            outbox = user.outbox,
+            url = user.url,
+            publicKey = user.publicKey,
+            createdAt = Instant.now()
         )
         return userRepository.save(userEntity)
     }
