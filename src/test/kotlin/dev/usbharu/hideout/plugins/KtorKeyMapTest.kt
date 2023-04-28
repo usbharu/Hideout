@@ -57,10 +57,6 @@ class KtorKeyMapTest {
                 TODO("Not yet implemented")
             }
 
-            override suspend fun update(userEntity: User) {
-                TODO("Not yet implemented")
-            }
-
             override suspend fun delete(id: Long) {
                 TODO("Not yet implemented")
             }
