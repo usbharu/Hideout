@@ -1,15 +1,13 @@
 package dev.usbharu.hideout.repository
 
-import dev.usbharu.hideout.domain.model.*
+import dev.usbharu.hideout.domain.model.User
+import dev.usbharu.hideout.domain.model.UsersFollowers
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.ZoneOffset
 
 class UserRepository(private val database: Database) : IUserRepository {
     init {
@@ -21,12 +19,13 @@ class UserRepository(private val database: Database) : IUserRepository {
         }
     }
 
+    @Deprecated("", ReplaceWith("toUser()"))
     private fun ResultRow.toUserEntity(): User = toUser()
 
     suspend fun <T> query(block: suspend () -> T): T =
         newSuspendedTransaction(Dispatchers.IO) { block() }
 
-    override suspend fun create(user: User): User {
+    override suspend fun save(user: User): User {
         return query {
             Users.insert {
                 it[id] = user.id

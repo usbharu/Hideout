@@ -13,7 +13,7 @@ class KtorKeyMapTest {
     @Test
     fun getPrivateKey() {
         val ktorKeyMap = KtorKeyMap(object : IUserRepository {
-            override suspend fun create(user: User): User {
+            override suspend fun save(user: User): User {
                 TODO("Not yet implemented")
             }
 

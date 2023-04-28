@@ -10,7 +10,6 @@ import java.security.*
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.time.Instant
-import java.time.LocalDateTime
 import java.util.*
 
 class UserAuthService(
@@ -43,7 +42,7 @@ class UserAuthService(
             publicKey = "",
             createdAt = Instant.now(),
         )
-        val createdUser = userRepository.create(registerUser)
+        val createdUser = userRepository.save(registerUser)
 
         val keyPair = generateKeyPair()
         val privateKey = keyPair.private as RSAPrivateKey
