@@ -2,6 +2,7 @@ package dev.usbharu.hideout.domain.model.ap
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonDeserializer
@@ -15,7 +16,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 open class JsonLd {
     @JsonProperty("@context")
     @JsonDeserialize(contentUsing = ContextDeserializer::class)
-    @JsonSerialize(using = ContextSerializer::class)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY, using = ContextSerializer::class)
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     var context: List<String> = emptyList()
 
     @JsonCreator
@@ -57,6 +59,12 @@ class ContextDeserializer : JsonDeserializer<String>() {
 }
 
 class ContextSerializer : JsonSerializer<List<String>>() {
+
+
+    override fun isEmpty(value: List<String>?): Boolean {
+        return value.isNullOrEmpty()
+    }
+
     override fun serialize(value: List<String>?, gen: JsonGenerator?, serializers: SerializerProvider?) {
         if (value.isNullOrEmpty()) {
             gen?.writeNull()
