@@ -10,10 +10,11 @@ import dev.usbharu.hideout.service.IUserAuthService
 import java.lang.Integer.min
 import java.time.Instant
 
-class UserService(private val userRepository: IUserRepository, private val userAuthService: IUserAuthService) {
+class UserService(private val userRepository: IUserRepository, private val userAuthService: IUserAuthService) :
+    IUserService {
 
     private val maxLimit = 100
-    suspend fun findAll(limit: Int? = maxLimit, offset: Long? = 0): List<User> {
+    override suspend fun findAll(limit: Int?, offset: Long?): List<User> {
 
         return userRepository.findAllByLimitAndByOffset(
             min(limit ?: maxLimit, maxLimit),
@@ -21,41 +22,41 @@ class UserService(private val userRepository: IUserRepository, private val userA
         )
     }
 
-    suspend fun findById(id: Long): User {
+    override suspend fun findById(id: Long): User {
         return userRepository.findById(id) ?: throw UserNotFoundException("$id was not found.")
     }
 
-    suspend fun findByIds(ids: List<Long>): List<User> {
+    override suspend fun findByIds(ids: List<Long>): List<User> {
         return userRepository.findByIds(ids)
     }
 
-    suspend fun findByName(name: String): List<User> {
+    override suspend fun findByName(name: String): List<User> {
         return userRepository.findByName(name)
     }
 
-    suspend fun findByNameLocalUser(name: String): User {
+    override suspend fun findByNameLocalUser(name: String): User {
         return userRepository.findByNameAndDomain(name, Config.configData.domain)
             ?: throw UserNotFoundException("$name was not found.")
     }
 
-    suspend fun findByNameAndDomains(names: List<Pair<String, String>>): List<User> {
+    override suspend fun findByNameAndDomains(names: List<Pair<String, String>>): List<User> {
         return userRepository.findByNameAndDomains(names)
     }
 
-    suspend fun findByUrl(url: String): User {
+    override suspend fun findByUrl(url: String): User {
         return userRepository.findByUrl(url) ?: throw UserNotFoundException("$url was not found.")
     }
 
-    suspend fun findByUrls(urls: List<String>): List<User> {
+    override suspend fun findByUrls(urls: List<String>): List<User> {
         return userRepository.findByUrls(urls)
     }
 
-    suspend fun usernameAlreadyUse(username: String): Boolean {
+    override suspend fun usernameAlreadyUse(username: String): Boolean {
         val findByNameAndDomain = userRepository.findByNameAndDomain(username, Config.configData.domain)
         return findByNameAndDomain != null
     }
 
-    suspend fun createLocalUser(user: UserCreateDto): User {
+    override suspend fun createLocalUser(user: UserCreateDto): User {
         val nextId = userRepository.nextId()
         val HashedPassword = userAuthService.hash(user.password)
         val keyPair = userAuthService.generateKeyPair()
@@ -76,7 +77,7 @@ class UserService(private val userRepository: IUserRepository, private val userA
         return userRepository.save(userEntity)
     }
 
-    suspend fun createRemoteUser(user: RemoteUserCreateDto): User {
+    override suspend fun createRemoteUser(user: RemoteUserCreateDto): User {
         val nextId = userRepository.nextId()
         val userEntity = User(
             id = nextId,
@@ -93,11 +94,11 @@ class UserService(private val userRepository: IUserRepository, private val userA
         return userRepository.save(userEntity)
     }
 
-    suspend fun findFollowersById(id: Long): List<User> {
+    override suspend fun findFollowersById(id: Long): List<User> {
         return userRepository.findFollowersById(id)
     }
 
-    suspend fun addFollowers(id: Long, follower: Long) {
+    override suspend fun addFollowers(id: Long, follower: Long) {
         return userRepository.createFollower(id, follower)
     }
 

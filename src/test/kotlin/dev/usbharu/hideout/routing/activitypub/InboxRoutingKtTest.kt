@@ -6,6 +6,7 @@ import dev.usbharu.hideout.plugins.configureSerialization
 import dev.usbharu.hideout.plugins.configureStatusPages
 import dev.usbharu.hideout.service.activitypub.ActivityPubService
 import dev.usbharu.hideout.service.activitypub.ActivityPubUserService
+import dev.usbharu.hideout.service.impl.IUserService
 import dev.usbharu.hideout.service.impl.UserService
 import dev.usbharu.hideout.service.signature.HttpSignatureVerifyService
 import io.ktor.client.request.*
@@ -45,7 +46,7 @@ class InboxRoutingKtTest {
         val activityPubService = mock<ActivityPubService>{
             on { parseActivity(any()) } doThrow JsonParseException()
         }
-        val userService = mock<UserService>()
+        val userService = mock<IUserService>()
         val activityPubUserService = mock<ActivityPubUserService>()
         application {
             configureStatusPages()
@@ -82,7 +83,7 @@ class InboxRoutingKtTest {
         val activityPubService = mock<ActivityPubService>{
             on { parseActivity(any()) } doThrow JsonParseException()
         }
-        val userService = mock<UserService>()
+        val userService = mock<IUserService>()
         val activityPubUserService = mock<ActivityPubUserService>()
         application {
             configureStatusPages()

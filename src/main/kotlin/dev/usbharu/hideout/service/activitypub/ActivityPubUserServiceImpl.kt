@@ -8,7 +8,7 @@ import dev.usbharu.hideout.domain.model.ap.Person
 import dev.usbharu.hideout.domain.model.hideout.dto.RemoteUserCreateDto
 import dev.usbharu.hideout.exception.UserNotFoundException
 import dev.usbharu.hideout.exception.ap.IllegalActivityPubObjectException
-import dev.usbharu.hideout.service.impl.UserService
+import dev.usbharu.hideout.service.impl.IUserService
 import dev.usbharu.hideout.util.HttpUtil.Activity
 import io.ktor.client.*
 import io.ktor.client.request.*
@@ -17,7 +17,7 @@ import io.ktor.http.*
 import org.slf4j.LoggerFactory
 
 class ActivityPubUserServiceImpl(
-    private val userService: UserService,
+    private val userService: IUserService,
     private val httpClient: HttpClient
 ) :
     ActivityPubUserService {

@@ -8,7 +8,7 @@ import dev.usbharu.hideout.config.ConfigData
 import dev.usbharu.hideout.domain.model.PostEntity
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.domain.model.job.DeliverPostJob
-import dev.usbharu.hideout.service.impl.UserService
+import dev.usbharu.hideout.service.impl.IUserService
 import dev.usbharu.hideout.service.job.JobQueueParentService
 import io.ktor.client.*
 import io.ktor.client.engine.mock.*
@@ -54,7 +54,7 @@ class ActivityPubNoteServiceImplTest {
                 createdAt = Instant.now()
             )
         )
-        val userService = mock<UserService> {
+        val userService = mock<IUserService> {
             onBlocking { findById(eq(1L)) } doReturn User(
                 1L,
                 "test",

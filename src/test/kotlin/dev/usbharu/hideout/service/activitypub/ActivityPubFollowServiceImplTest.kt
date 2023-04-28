@@ -6,10 +6,10 @@ package dev.usbharu.hideout.service.activitypub
 import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.config.ConfigData
-import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.domain.model.ap.*
+import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.domain.model.job.ReceiveFollowJob
-import dev.usbharu.hideout.service.impl.UserService
+import dev.usbharu.hideout.service.impl.IUserService
 import dev.usbharu.hideout.service.job.JobQueueParentService
 import io.ktor.client.*
 import io.ktor.client.engine.mock.*
@@ -87,7 +87,7 @@ class ActivityPubFollowServiceImplTest {
         val activityPubUserService = mock<ActivityPubUserService> {
             onBlocking { fetchPerson(anyString()) } doReturn person
         }
-        val userService = mock<UserService> {
+        val userService = mock<IUserService> {
             onBlocking { findByUrls(any()) } doReturn listOf(
                 User(
                     id = 1L,

@@ -7,7 +7,7 @@ import dev.usbharu.hideout.domain.model.ap.Create
 import dev.usbharu.hideout.domain.model.ap.Note
 import dev.usbharu.hideout.domain.model.job.DeliverPostJob
 import dev.usbharu.hideout.plugins.postAp
-import dev.usbharu.hideout.service.impl.UserService
+import dev.usbharu.hideout.service.impl.IUserService
 import dev.usbharu.hideout.service.job.JobQueueParentService
 import io.ktor.client.*
 import kjob.core.job.JobProps
@@ -17,7 +17,7 @@ import java.time.Instant
 class ActivityPubNoteServiceImpl(
     private val httpClient: HttpClient,
     private val jobQueueParentService: JobQueueParentService,
-    private val userService: UserService
+    private val userService: IUserService
 ) : ActivityPubNoteService {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
