@@ -2,10 +2,10 @@ package dev.usbharu.hideout.service.activitypub
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.config.Config
-import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.domain.model.ap.Image
 import dev.usbharu.hideout.domain.model.ap.Key
 import dev.usbharu.hideout.domain.model.ap.Person
+import dev.usbharu.hideout.domain.model.hideout.dto.RemoteUserCreateDto
 import dev.usbharu.hideout.exception.UserNotFoundException
 import dev.usbharu.hideout.exception.ap.IllegalActivityPubObjectException
 import dev.usbharu.hideout.service.impl.UserService
@@ -15,7 +15,6 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import org.slf4j.LoggerFactory
-import java.time.Instant
 
 class ActivityPubUserServiceImpl(
     private val userService: UserService,
@@ -85,9 +84,9 @@ class ActivityPubUserServiceImpl(
                 accept(ContentType.Application.Activity)
             }
             val person = Config.configData.objectMapper.readValue<Person>(httpResponse.bodyAsText())
-            userService.create(
-                User(
-                    id = 0L,
+
+            userService.createRemoteUser(
+                RemoteUserCreateDto(
                     name = person.preferredUsername
                         ?: throw IllegalActivityPubObjectException("preferredUsername is null"),
                     domain = url.substringAfter(":").substringBeforeLast("/"),
@@ -97,7 +96,6 @@ class ActivityPubUserServiceImpl(
                     outbox = person.outbox ?: throw IllegalActivityPubObjectException("outbox is null"),
                     url = url,
                     publicKey = person.publicKey?.publicKeyPem ?: throw IllegalActivityPubObjectException("publicKey is null"),
-                    createdAt = Instant.now()
                 )
             )
             person
