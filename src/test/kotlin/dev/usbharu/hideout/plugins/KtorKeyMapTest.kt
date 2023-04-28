@@ -1,12 +1,11 @@
 package dev.usbharu.hideout.plugins
 
-import dev.usbharu.hideout.domain.model.User
+import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.repository.IUserRepository
 import dev.usbharu.hideout.service.impl.toPem
 import org.junit.jupiter.api.Test
 import java.security.KeyPairGenerator
 import java.time.Instant
-import java.time.LocalDateTime
 
 class KtorKeyMapTest {
 

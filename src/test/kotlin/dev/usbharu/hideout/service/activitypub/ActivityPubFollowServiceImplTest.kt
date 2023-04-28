@@ -6,7 +6,7 @@ package dev.usbharu.hideout.service.activitypub
 import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.config.ConfigData
-import dev.usbharu.hideout.domain.model.User
+import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.domain.model.ap.*
 import dev.usbharu.hideout.domain.model.job.ReceiveFollowJob
 import dev.usbharu.hideout.service.impl.UserService
@@ -24,7 +24,6 @@ import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.*
 import utils.JsonObjectMapper
 import java.time.Instant
-import java.time.LocalDateTime
 
 class ActivityPubFollowServiceImplTest {
     @Test

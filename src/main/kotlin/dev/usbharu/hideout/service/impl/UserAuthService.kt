@@ -1,7 +1,7 @@
 package dev.usbharu.hideout.service.impl
 
 import dev.usbharu.hideout.config.Config
-import dev.usbharu.hideout.domain.model.User
+import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.exception.UserNotFoundException
 import dev.usbharu.hideout.repository.IUserRepository
 import dev.usbharu.hideout.service.IUserAuthService
