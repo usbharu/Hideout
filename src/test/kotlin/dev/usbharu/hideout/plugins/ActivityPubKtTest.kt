@@ -1,7 +1,7 @@
 package dev.usbharu.hideout.plugins
 
-import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.domain.model.ap.JsonLd
+import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.repository.IUserRepository
 import dev.usbharu.hideout.service.impl.toPem
 import io.ktor.client.*
@@ -29,7 +29,11 @@ class ActivityPubKtTest {
                 TODO("Not yet implemented")
             }
 
-            override suspend fun findByName(name: String): User {
+            override suspend fun findByName(name: String): List<User> {
+                TODO()
+            }
+
+            override suspend fun findByNameAndDomain(name: String, domain: String): User? {
                 val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
                 keyPairGenerator.initialize(1024)
                 val generateKeyPair = keyPairGenerator.generateKeyPair()
@@ -47,6 +51,10 @@ class ActivityPubKtTest {
                     generateKeyPair.private.toPem(),
                     Instant.now()
                 )
+            }
+
+            override suspend fun findByDomain(domain: String): List<User> {
+                TODO("Not yet implemented")
             }
 
             override suspend fun findByNameAndDomains(names: List<Pair<String, String>>): List<User> {
@@ -82,6 +90,10 @@ class ActivityPubKtTest {
             }
 
             override suspend fun findFollowersById(id: Long): List<User> {
+                TODO("Not yet implemented")
+            }
+
+            override suspend fun nextId(): Long {
                 TODO("Not yet implemented")
             }
 

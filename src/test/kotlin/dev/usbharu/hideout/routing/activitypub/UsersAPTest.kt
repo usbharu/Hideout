@@ -13,6 +13,7 @@ import dev.usbharu.hideout.plugins.configureRouting
 import dev.usbharu.hideout.plugins.configureSerialization
 import dev.usbharu.hideout.service.activitypub.ActivityPubService
 import dev.usbharu.hideout.service.activitypub.ActivityPubUserService
+import dev.usbharu.hideout.service.impl.IUserService
 import dev.usbharu.hideout.service.impl.UserService
 import dev.usbharu.hideout.service.signature.HttpSignatureVerifyService
 import dev.usbharu.hideout.util.HttpUtil.Activity
@@ -62,7 +63,7 @@ class UsersAPTest {
 
         val httpSignatureVerifyService = mock<HttpSignatureVerifyService> {}
         val activityPubService = mock<ActivityPubService> {}
-        val userService = mock<UserService> {}
+        val userService = mock<IUserService> {}
 
         val activityPubUserService = mock<ActivityPubUserService> {
             onBlocking { getPersonByName(anyString()) } doReturn person

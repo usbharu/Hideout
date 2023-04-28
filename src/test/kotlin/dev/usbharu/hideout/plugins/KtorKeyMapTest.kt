@@ -24,7 +24,11 @@ class KtorKeyMapTest {
                 TODO("Not yet implemented")
             }
 
-            override suspend fun findByName(name: String): User {
+            override suspend fun findByName(name: String): List<User> {
+                TODO()
+            }
+
+            override suspend fun findByNameAndDomain(name: String, domain: String): User? {
                 val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
                 keyPairGenerator.initialize(1024)
                 val generateKeyPair = keyPairGenerator.generateKeyPair()
@@ -42,6 +46,11 @@ class KtorKeyMapTest {
                     generateKeyPair.private.toPem(),
                     createdAt = Instant.now()
                 )
+
+            }
+
+            override suspend fun findByDomain(domain: String): List<User> {
+                TODO("Not yet implemented")
             }
 
             override suspend fun findByNameAndDomains(names: List<Pair<String, String>>): List<User> {

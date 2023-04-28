@@ -1,7 +1,7 @@
 package dev.usbharu.hideout.routing
 
 import dev.usbharu.hideout.domain.model.hideout.dto.UserCreateDto
-import dev.usbharu.hideout.service.impl.UserService
+import dev.usbharu.hideout.service.impl.IUserService
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -9,7 +9,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Application.register(userService: UserService) {
+fun Application.register(userService: IUserService) {
 
     routing {
         get("/register") {
