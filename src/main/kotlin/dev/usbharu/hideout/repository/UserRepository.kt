@@ -19,27 +19,41 @@ class UserRepository(private val database: Database) : IUserRepository {
         }
     }
 
-    @Deprecated("", ReplaceWith("toUser()"))
-    private fun ResultRow.toUserEntity(): User = toUser()
-
     suspend fun <T> query(block: suspend () -> T): T =
         newSuspendedTransaction(Dispatchers.IO) { block() }
 
     override suspend fun save(user: User): User {
         return query {
-            Users.insert {
-                it[id] = user.id
-                it[name] = user.name
-                it[domain] = user.domain
-                it[screenName] = user.screenName
-                it[description] = user.description
-                it[password] = user.password
-                it[inbox] = user.inbox
-                it[outbox] = user.outbox
-                it[url] = user.url
-                it[createdAt] = user.createdAt.toEpochMilli()
-                it[publicKey] = user.publicKey
-                it[privateKey] = user.privateKey
+            val singleOrNull = Users.select { Users.id eq user.id }.singleOrNull()
+            if (singleOrNull == null) {
+                Users.insert {
+                    it[id] = user.id
+                    it[name] = user.name
+                    it[domain] = user.domain
+                    it[screenName] = user.screenName
+                    it[description] = user.description
+                    it[password] = user.password
+                    it[inbox] = user.inbox
+                    it[outbox] = user.outbox
+                    it[url] = user.url
+                    it[createdAt] = user.createdAt.toEpochMilli()
+                    it[publicKey] = user.publicKey
+                    it[privateKey] = user.privateKey
+                }
+            } else {
+                Users.update({ Users.id eq user.id }) {
+                    it[name] = user.name
+                    it[domain] = user.domain
+                    it[screenName] = user.screenName
+                    it[description] = user.description
+                    it[password] = user.password
+                    it[inbox] = user.inbox
+                    it[outbox] = user.outbox
+                    it[url] = user.url
+                    it[createdAt] = user.createdAt.toEpochMilli()
+                    it[publicKey] = user.publicKey
+                    it[privateKey] = user.privateKey
+                }
             }
             return@query user
         }
@@ -57,7 +71,7 @@ class UserRepository(private val database: Database) : IUserRepository {
     override suspend fun findById(id: Long): User? {
         return query {
             Users.select { Users.id eq id }.map {
-                it.toUserEntity()
+                it.toUser()
             }.singleOrNull()
         }
     }
@@ -65,7 +79,7 @@ class UserRepository(private val database: Database) : IUserRepository {
     override suspend fun findByIds(ids: List<Long>): List<User> {
         return query {
             Users.select { Users.id inList ids }.map {
-                it.toUserEntity()
+                it.toUser()
             }
         }
     }
@@ -73,7 +87,7 @@ class UserRepository(private val database: Database) : IUserRepository {
     override suspend fun findByName(name: String): User? {
         return query {
             Users.select { Users.name eq name }.map {
-                it.toUserEntity()
+                it.toUser()
             }.singleOrNull()
         }
     }
@@ -84,19 +98,19 @@ class UserRepository(private val database: Database) : IUserRepository {
             names.forEach { (name, domain) ->
                 selectAll.orWhere { Users.name eq name and (Users.domain eq domain) }
             }
-            selectAll.map { it.toUserEntity() }
+            selectAll.map { it.toUser() }
         }
     }
 
     override suspend fun findByUrl(url: String): User? {
         return query {
-            Users.select { Users.url eq url }.singleOrNull()?.toUserEntity()
+            Users.select { Users.url eq url }.singleOrNull()?.toUser()
         }
     }
 
     override suspend fun findByUrls(urls: List<String>): List<User> {
         return query {
-            Users.select { Users.url inList urls }.map { it.toUserEntity() }
+            Users.select { Users.url inList urls }.map { it.toUser() }
         }
     }
 
@@ -148,20 +162,6 @@ class UserRepository(private val database: Database) : IUserRepository {
     }
 
 
-    override suspend fun update(userEntity: User) {
-        return query {
-            Users.update({ Users.id eq userEntity.id }) {
-                it[name] = userEntity.name
-                it[domain] = userEntity.domain
-                it[screenName] = userEntity.screenName
-                it[description] = userEntity.description
-                it[inbox] = userEntity.inbox
-                it[outbox] = userEntity.outbox
-                it[url] = userEntity.url
-            }
-        }
-    }
-
     override suspend fun delete(id: Long) {
         query {
             Users.deleteWhere { Users.id.eq(id) }
@@ -182,7 +182,7 @@ class UserRepository(private val database: Database) : IUserRepository {
 
     override suspend fun findAllByLimitAndByOffset(limit: Int, offset: Long): List<User> {
         return query {
-            Users.selectAll().limit(limit, offset).map { it.toUserEntity() }
+            Users.selectAll().limit(limit, offset).map { it.toUser() }
         }
     }
 }
@@ -202,6 +202,7 @@ object Users : Table("users") {
     val createdAt = long("created_at")
 
     override val primaryKey: PrimaryKey = PrimaryKey(id)
+
     init {
         uniqueIndex(name, domain)
     }
