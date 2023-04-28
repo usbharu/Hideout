@@ -39,10 +39,10 @@ class UserServiceTest{
             assertEquals("XXXXXXXXXXXXX", firstValue.description)
             assertEquals("hashedPassword", firstValue.password)
             assertEquals(110001L, firstValue.id)
-            assertEquals("https://example.com/users/110001", firstValue.url)
+            assertEquals("https://example.com/users/test", firstValue.url)
             assertEquals("example.com", firstValue.domain)
-            assertEquals("https://example.com/users/110001/inbox", firstValue.inbox)
-            assertEquals("https://example.com/users/110001/outbox", firstValue.outbox)
+            assertEquals("https://example.com/users/test/inbox", firstValue.inbox)
+            assertEquals("https://example.com/users/test/outbox", firstValue.outbox)
             assertEquals(generateKeyPair.public.toPem(),firstValue.publicKey)
             assertEquals(generateKeyPair.private.toPem(),firstValue.privateKey)
         }

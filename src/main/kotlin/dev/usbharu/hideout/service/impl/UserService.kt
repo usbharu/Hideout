@@ -67,9 +67,9 @@ class UserService(private val userRepository: IUserRepository, private val userA
             screenName = user.screenName,
             description = user.description,
             password = HashedPassword,
-            inbox = "${Config.configData.url}/users/$nextId/inbox",
-            outbox = "${Config.configData.url}/users/$nextId/outbox",
-            url = "${Config.configData.url}/users/$nextId",
+            inbox = "${Config.configData.url}/users/${user.name}/inbox",
+            outbox = "${Config.configData.url}/users/${user.name}/outbox",
+            url = "${Config.configData.url}/users/${user.name}",
             publicKey = keyPair.public.toPem(),
             privateKey = keyPair.private.toPem(),
             Instant.now()
