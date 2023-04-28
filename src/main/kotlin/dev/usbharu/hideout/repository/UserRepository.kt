@@ -1,9 +1,10 @@
 package dev.usbharu.hideout.repository
 
 import dev.usbharu.hideout.domain.model.User
-import dev.usbharu.hideout.domain.model.UsersFollowers
+import dev.usbharu.hideout.repository.UsersFollowers
 import dev.usbharu.hideout.service.IdGenerateService
 import kotlinx.coroutines.Dispatchers
+import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
@@ -228,4 +229,13 @@ fun ResultRow.toUser(): User {
         this[Users.privateKey],
         Instant.ofEpochMilli((this[Users.createdAt]))
     )
+}
+
+object UsersFollowers : LongIdTable("users_followers") {
+    val userId = long("user_id").references(Users.id).index()
+    val followerId = long("follower_id").references(Users.id)
+
+    init {
+        uniqueIndex(userId, followerId)
+    }
 }
