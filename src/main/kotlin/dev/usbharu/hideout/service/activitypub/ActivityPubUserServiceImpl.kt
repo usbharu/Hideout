@@ -8,7 +8,6 @@ import dev.usbharu.hideout.domain.model.ap.Key
 import dev.usbharu.hideout.domain.model.ap.Person
 import dev.usbharu.hideout.exception.UserNotFoundException
 import dev.usbharu.hideout.exception.ap.IllegalActivityPubObjectException
-import dev.usbharu.hideout.service.IUserAuthService
 import dev.usbharu.hideout.service.impl.UserService
 import dev.usbharu.hideout.util.HttpUtil.Activity
 import io.ktor.client.*
@@ -20,7 +19,6 @@ import java.time.Instant
 
 class ActivityPubUserServiceImpl(
     private val userService: UserService,
-    private val userAuthService: IUserAuthService,
     private val httpClient: HttpClient
 ) :
     ActivityPubUserService {
