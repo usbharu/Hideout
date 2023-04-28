@@ -71,7 +71,7 @@ class UserService(private val userRepository: IUserRepository, private val userA
             outbox = "${Config.configData.url}/users/$nextId/outbox",
             url = "${Config.configData.url}/users/$nextId",
             publicKey = keyPair.public.toPem(),
-            privateKey = keyPair.private.toString(),
+            privateKey = keyPair.private.toPem(),
             Instant.now()
         )
         return userRepository.save(userEntity)
