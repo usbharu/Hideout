@@ -6,7 +6,7 @@ package dev.usbharu.hideout.service.activitypub
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.config.ConfigData
 import dev.usbharu.hideout.domain.model.PostEntity
-import dev.usbharu.hideout.domain.model.User
+import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.domain.model.job.DeliverPostJob
 import dev.usbharu.hideout.service.impl.UserService
 import dev.usbharu.hideout.service.job.JobQueueParentService

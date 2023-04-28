@@ -1,6 +1,6 @@
 package dev.usbharu.hideout.repository
 
-import dev.usbharu.hideout.domain.model.User
+import dev.usbharu.hideout.domain.model.hideout.entity.User
 
 interface IUserRepository {
     suspend fun save(user: User): User

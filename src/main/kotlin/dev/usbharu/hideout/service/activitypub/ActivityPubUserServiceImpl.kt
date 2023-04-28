@@ -2,7 +2,7 @@ package dev.usbharu.hideout.service.activitypub
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.config.Config
-import dev.usbharu.hideout.domain.model.User
+import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.domain.model.ap.Image
 import dev.usbharu.hideout.domain.model.ap.Key
 import dev.usbharu.hideout.domain.model.ap.Person
@@ -17,7 +17,6 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import org.slf4j.LoggerFactory
 import java.time.Instant
-import java.time.LocalDateTime
 
 class ActivityPubUserServiceImpl(
     private val userService: UserService,

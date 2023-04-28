@@ -1,7 +1,6 @@
 package dev.usbharu.hideout.repository
 
-import dev.usbharu.hideout.domain.model.User
-import dev.usbharu.hideout.repository.UsersFollowers
+import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.service.IdGenerateService
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.dao.id.LongIdTable

@@ -1,6 +1,6 @@
 package dev.usbharu.hideout.service.impl
 
-import dev.usbharu.hideout.domain.model.User
+import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.exception.UserNotFoundException
 import dev.usbharu.hideout.repository.IUserRepository
 import java.lang.Integer.min

@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.domain.model
+package dev.usbharu.hideout.domain.model.hideout.entity
 
 import java.time.Instant
 
