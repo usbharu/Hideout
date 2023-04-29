@@ -47,7 +47,7 @@ suspend fun HttpClient.postAp(urlString: String, username: String, jsonLd: JsonL
 suspend fun HttpClient.getAp(urlString: String,username: String):HttpResponse {
     return this.get(urlString){
         header("Accept",ContentType.Application.Activity)
-        header("Signature","keyId=\"$username\",algorithm=\"rsa-sha256\",headers=\"(request-target) digest date\"")
+        header("Signature","keyId=\"$username\",algorithm=\"rsa-sha256\",headers=\"(request-target) date\"")
     }
 }
 
