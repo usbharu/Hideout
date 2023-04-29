@@ -22,7 +22,6 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.server.config.*
 import io.ktor.server.testing.*
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.doReturn
@@ -99,7 +98,7 @@ class UsersAPTest {
     }
 
     @Test()
-    @Disabled
+//    @Disabled
     fun `ユーザのURLにAcceptヘッダーをActivityとJson-LDにしてアクセスしたときPersonが返ってくる`() = testApplication {
         environment {
             config = ApplicationConfig("empty.conf")
@@ -166,10 +165,10 @@ class UsersAPTest {
     }
 
     @Test
-    @Disabled
+//    @Disabled
     fun contentType_Test() {
         val listOf = listOf(ContentType.Application.JsonLd, ContentType.Application.Activity)
-        assertTrue(listOf.any { contentType -> contentType.match("application/ld+json; profile=\"\\\"https://www.w3.org/ns/activitystreams\\\",application/activity+json\"") })
+        assertTrue(listOf.find { contentType -> contentType.match("application/ld+json; profile=\"\\\"https://www.w3.org/ns/activitystreams\\\",application/activity+json\"") }.let { true })
         assertTrue(ContentType.Application.JsonLd.match("application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\""))
     }
 }
