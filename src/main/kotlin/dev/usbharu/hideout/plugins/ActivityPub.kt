@@ -152,7 +152,7 @@ val httpSignaturePlugin = createClientPlugin("HttpSign", ::HttpSignaturePluginCo
 
             val signatureHeader = request.headers.getAll("Signature").orEmpty()
             request.headers.remove("Signature")
-            signatureHeader.map { it.replace("; ",",").replace(";",",") }.forEach { request.header("Signature", it) }
+            signatureHeader.map { it.replace("; ",",").replace(";",",") }.joinToString().let { request.header("Signature", it)}
         }
 
     }
