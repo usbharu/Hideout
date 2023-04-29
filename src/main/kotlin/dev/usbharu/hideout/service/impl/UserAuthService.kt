@@ -44,11 +44,11 @@ class UserAuthService(
 fun PublicKey.toPem(): String {
     return "-----BEGIN PUBLIC KEY-----\n" +
             Base64.getEncoder().encodeToString(encoded).chunked(64).joinToString("\n") +
-            "\n-----END PUBLIC KEY-----\n"
+            "\n-----END PUBLIC KEY-----"
 }
 
 fun PrivateKey.toPem(): String {
-    return "-----BEGIN PRIVATE KEY-----" +
+    return "-----BEGIN PRIVATE KEY-----\n" +
             Base64.getEncoder().encodeToString(encoded).chunked(64).joinToString("\n") +
-            "\n-----END PRIVATE KEY-----\n"
+            "\n-----END PRIVATE KEY-----"
 }
