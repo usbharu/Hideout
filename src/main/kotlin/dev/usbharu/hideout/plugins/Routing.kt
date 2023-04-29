@@ -31,6 +31,5 @@ fun Application.configureRouting(
         route("/api/v1") {
             statuses(postService)
         }
-
     }
 }

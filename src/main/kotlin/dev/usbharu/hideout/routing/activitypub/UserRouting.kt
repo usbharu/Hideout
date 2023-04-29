@@ -34,16 +34,14 @@ fun Routing.usersAP(activityPubUserService: ActivityPubUserService, userService:
 
 class ContentTypeRouteSelector(private vararg val contentType: ContentType) : RouteSelector() {
     override fun evaluate(context: RoutingResolveContext, segmentIndex: Int): RouteSelectorEvaluation {
-
         context.call.application.log.debug("Accept: ${context.call.request.accept()}")
         val requestContentType = context.call.request.accept() ?: return RouteSelectorEvaluation.FailedParameter
         return if (requestContentType.split(",")
-                .find { contentType.find { contentType -> contentType.match(it) } != null } != null
+            .find { contentType.find { contentType -> contentType.match(it) } != null } != null
         ) {
             RouteSelectorEvaluation.Constant
         } else {
             RouteSelectorEvaluation.FailedParameter
         }
     }
-
 }

@@ -9,7 +9,7 @@ open class Accept : Object {
         name: String,
         `object`: Object?,
         actor: String?
-    ) : super(add(type, "Accept"), name,actor) {
+    ) : super(add(type, "Accept"), name, actor) {
         this.`object` = `object`
     }
 
@@ -29,9 +29,5 @@ open class Accept : Object {
         return result
     }
 
-    override fun toString(): String {
-        return "Accept(`object`=$`object`, actor=$actor) ${super.toString()}"
-    }
-
-
+    override fun toString(): String = "Accept(`object`=$`object`, actor=$actor) ${super.toString()}"
 }

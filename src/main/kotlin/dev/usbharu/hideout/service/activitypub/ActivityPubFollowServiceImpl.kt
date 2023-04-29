@@ -33,7 +33,7 @@ class ActivityPubFollowServiceImpl(
     override suspend fun receiveFollowJob(props: JobProps<ReceiveFollowJob>) {
         val actor = props[ReceiveFollowJob.actor]
         val targetActor = props[ReceiveFollowJob.targetActor]
-        val person = activityPubUserService.fetchPerson(actor,targetActor)
+        val person = activityPubUserService.fetchPerson(actor, targetActor)
         val follow = Config.configData.objectMapper.readValue<Follow>(props[ReceiveFollowJob.follow])
         httpClient.postAp(
             urlString = person.inbox ?: throw IllegalArgumentException("inbox is not found"),

@@ -11,8 +11,8 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Routing.webfinger(userService: IUserService){
-    route("/.well-known/webfinger"){
+fun Routing.webfinger(userService: IUserService) {
+    route("/.well-known/webfinger") {
         get {
             val acct = call.request.queryParameters["resource"]?.decodeURLPart()
                 ?: throw ParameterNotExistException("Parameter(name='resource') does not exist.")

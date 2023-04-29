@@ -17,7 +17,7 @@ import java.security.KeyPairGenerator
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
-class UserServiceTest{
+class UserServiceTest {
     @Test
     fun `createLocalUser ローカルユーザーを作成できる`() = runTest {
         Config.configData = ConfigData(domain = "example.com", url = "https://example.com")
@@ -43,21 +43,19 @@ class UserServiceTest{
             assertEquals("example.com", firstValue.domain)
             assertEquals("https://example.com/users/test/inbox", firstValue.inbox)
             assertEquals("https://example.com/users/test/outbox", firstValue.outbox)
-            assertEquals(generateKeyPair.public.toPem(),firstValue.publicKey)
-            assertEquals(generateKeyPair.private.toPem(),firstValue.privateKey)
+            assertEquals(generateKeyPair.public.toPem(), firstValue.publicKey)
+            assertEquals(generateKeyPair.private.toPem(), firstValue.privateKey)
         }
     }
 
     @Test
     fun `createRemoteUser リモートユーザーを作成できる`() = runTest {
-
         Config.configData = ConfigData(domain = "example.com", url = "https://example.com")
 
-
-        val userRepository = mock<IUserRepository>{
+        val userRepository = mock<IUserRepository> {
             onBlocking { nextId() } doReturn 113345L
         }
-        val userService = UserService(userRepository,mock())
+        val userService = UserService(userRepository, mock())
         val user = RemoteUserCreateDto(
             "test",
             "example.com",
@@ -81,7 +79,7 @@ class UserServiceTest{
             assertEquals("example.com", firstValue.domain)
             assertEquals("https://example.com/inbox", firstValue.inbox)
             assertEquals("https://example.com/outbox", firstValue.outbox)
-            assertEquals("-----BEGIN PUBLIC KEY-----...-----END PUBLIC KEY-----",firstValue.publicKey)
+            assertEquals("-----BEGIN PUBLIC KEY-----...-----END PUBLIC KEY-----", firstValue.publicKey)
             assertNull(firstValue.privateKey)
         }
     }

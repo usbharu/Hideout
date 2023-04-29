@@ -34,15 +34,9 @@ open class JsonLd {
         return context == other.context
     }
 
-    override fun hashCode(): Int {
-        return context.hashCode()
-    }
+    override fun hashCode(): Int = context.hashCode()
 
-    override fun toString(): String {
-        return "JsonLd(context=$context)"
-    }
-
-
+    override fun toString(): String = "JsonLd(context=$context)"
 }
 
 class ContextDeserializer : JsonDeserializer<String>() {
@@ -60,10 +54,7 @@ class ContextDeserializer : JsonDeserializer<String>() {
 
 class ContextSerializer : JsonSerializer<List<String>>() {
 
-
-    override fun isEmpty(value: List<String>?): Boolean {
-        return value.isNullOrEmpty()
-    }
+    override fun isEmpty(value: List<String>?): Boolean = value.isNullOrEmpty()
 
     override fun serialize(value: List<String>?, gen: JsonGenerator?, serializers: SerializerProvider?) {
         if (value.isNullOrEmpty()) {
@@ -80,5 +71,4 @@ class ContextSerializer : JsonSerializer<List<String>>() {
             gen?.writeEndArray()
         }
     }
-
 }

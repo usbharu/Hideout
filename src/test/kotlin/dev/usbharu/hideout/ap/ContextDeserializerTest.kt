@@ -44,7 +44,8 @@ class ContextDeserializerTest {
 }
 
 """
-        val readValue = jacksonObjectMapper().enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY).configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false).readValue<Follow>(s)
+        val readValue = jacksonObjectMapper().enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).readValue<Follow>(s)
         println(readValue)
         println(readValue.actor)
     }

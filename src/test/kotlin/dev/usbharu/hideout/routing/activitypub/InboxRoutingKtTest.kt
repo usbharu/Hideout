@@ -7,7 +7,6 @@ import dev.usbharu.hideout.plugins.configureStatusPages
 import dev.usbharu.hideout.service.activitypub.ActivityPubService
 import dev.usbharu.hideout.service.activitypub.ActivityPubUserService
 import dev.usbharu.hideout.service.impl.IUserService
-import dev.usbharu.hideout.service.impl.UserService
 import dev.usbharu.hideout.service.signature.HttpSignatureVerifyService
 import io.ktor.client.request.*
 import io.ktor.http.*
@@ -28,7 +27,7 @@ class InboxRoutingKtTest {
         }
         application {
             configureSerialization()
-            configureRouting(mock(), mock(), mock(), mock(),mock())
+            configureRouting(mock(), mock(), mock(), mock(), mock())
         }
         client.get("/inbox").let {
             Assertions.assertEquals(HttpStatusCode.MethodNotAllowed, it.status)
@@ -40,10 +39,10 @@ class InboxRoutingKtTest {
         environment {
             config = ApplicationConfig("empty.conf")
         }
-        val httpSignatureVerifyService = mock<HttpSignatureVerifyService>{
+        val httpSignatureVerifyService = mock<HttpSignatureVerifyService> {
             on { verify(any()) } doReturn true
         }
-        val activityPubService = mock<ActivityPubService>{
+        val activityPubService = mock<ActivityPubService> {
             on { parseActivity(any()) } doThrow JsonParseException()
         }
         val userService = mock<IUserService>()
@@ -51,7 +50,13 @@ class InboxRoutingKtTest {
         application {
             configureStatusPages()
             configureSerialization()
-            configureRouting(httpSignatureVerifyService, activityPubService, userService, activityPubUserService,mock())
+            configureRouting(
+                httpSignatureVerifyService,
+                activityPubService,
+                userService,
+                activityPubUserService,
+                mock()
+            )
         }
         client.post("/inbox").let {
             Assertions.assertEquals(HttpStatusCode.BadRequest, it.status)
@@ -65,7 +70,7 @@ class InboxRoutingKtTest {
         }
         application {
             configureSerialization()
-            configureRouting(mock(), mock(), mock(), mock(),mock())
+            configureRouting(mock(), mock(), mock(), mock(), mock())
         }
         client.get("/users/test/inbox").let {
             Assertions.assertEquals(HttpStatusCode.MethodNotAllowed, it.status)
@@ -77,10 +82,10 @@ class InboxRoutingKtTest {
         environment {
             config = ApplicationConfig("empty.conf")
         }
-        val httpSignatureVerifyService = mock<HttpSignatureVerifyService>{
+        val httpSignatureVerifyService = mock<HttpSignatureVerifyService> {
             on { verify(any()) } doReturn true
         }
-        val activityPubService = mock<ActivityPubService>{
+        val activityPubService = mock<ActivityPubService> {
             on { parseActivity(any()) } doThrow JsonParseException()
         }
         val userService = mock<IUserService>()
@@ -88,7 +93,13 @@ class InboxRoutingKtTest {
         application {
             configureStatusPages()
             configureSerialization()
-            configureRouting(httpSignatureVerifyService, activityPubService, userService, activityPubUserService,mock())
+            configureRouting(
+                httpSignatureVerifyService,
+                activityPubService,
+                userService,
+                activityPubUserService,
+                mock()
+            )
         }
         client.post("/users/test/inbox").let {
             Assertions.assertEquals(HttpStatusCode.BadRequest, it.status)

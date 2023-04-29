@@ -15,7 +15,6 @@ import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import org.slf4j.LoggerFactory
 
 class ActivityPubUserServiceImpl(
     private val userService: IUserService,
@@ -23,7 +22,6 @@ class ActivityPubUserServiceImpl(
 ) :
     ActivityPubUserService {
 
-        private val logger = LoggerFactory.getLogger(this::class.java)
     override suspend fun getPersonByName(name: String): Person {
         // TODO: JOINで書き直し
         val userEntity = userService.findByNameLocalUser(name)
@@ -79,11 +77,10 @@ class ActivityPubUserServiceImpl(
                     publicKeyPem = userEntity.publicKey
                 )
             )
-
         } catch (e: UserNotFoundException) {
             val httpResponse = if (targetActor != null) {
-                httpClient.getAp(url,"$targetActor#pubkey")
-            }else {
+                httpClient.getAp(url, "$targetActor#pubkey")
+            } else {
                 httpClient.get(url) {
                     accept(ContentType.Application.Activity)
                 }
@@ -95,16 +92,17 @@ class ActivityPubUserServiceImpl(
                     name = person.preferredUsername
                         ?: throw IllegalActivityPubObjectException("preferredUsername is null"),
                     domain = url.substringAfter("://").substringBeforeLast("/"),
-                    screenName = (person.name ?: person.preferredUsername) ?: throw IllegalActivityPubObjectException("preferredUsername is null"),
-                    description = person.summary ?: "",
+                    screenName = (person.name ?: person.preferredUsername)
+                        ?: throw IllegalActivityPubObjectException("preferredUsername is null"),
+                    description = person.summary.orEmpty(),
                     inbox = person.inbox ?: throw IllegalActivityPubObjectException("inbox is null"),
                     outbox = person.outbox ?: throw IllegalActivityPubObjectException("outbox is null"),
                     url = url,
-                    publicKey = person.publicKey?.publicKeyPem ?: throw IllegalActivityPubObjectException("publicKey is null"),
+                    publicKey = person.publicKey?.publicKeyPem
+                        ?: throw IllegalActivityPubObjectException("publicKey is null"),
                 )
             )
             person
         }
-
     }
 }

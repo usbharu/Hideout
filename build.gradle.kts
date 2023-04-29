@@ -9,6 +9,7 @@ plugins {
     kotlin("jvm") version "1.8.21"
     id("io.ktor.plugin") version "2.3.0"
     id("org.graalvm.buildtools.native") version "0.9.21"
+    id("io.gitlab.arturbosch.detekt") version "1.22.0"
 //    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
 }
 
@@ -88,6 +89,7 @@ dependencies {
 
     testImplementation("org.slf4j:slf4j-simple:2.0.7")
 
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.22.0")
 }
 
 jib {
@@ -128,4 +130,12 @@ graalvmNative {
             imageName.set("graal-server")
         }
     }
+}
+
+detekt {
+    parallel = true
+    config = files("detekt.yml")
+    buildUponDefaultConfig = true
+    basePath = rootDir.absolutePath
+    autoCorrect = true
 }

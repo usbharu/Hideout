@@ -12,14 +12,13 @@ class UserAuthService(
     val userRepository: IUserRepository
 ) : IUserAuthService {
 
-
     override fun hash(password: String): String {
         val digest = sha256.digest(password.toByteArray(Charsets.UTF_8))
         return hex(digest)
     }
 
     override suspend fun usernameAlreadyUse(username: String): Boolean {
-        userRepository.findByName(username) ?: return false
+        userRepository.findByName(username)
         return true
     }
 
@@ -31,24 +30,25 @@ class UserAuthService(
 
     override suspend fun generateKeyPair(): KeyPair {
         val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
-        keyPairGenerator.initialize(2048)
+        keyPairGenerator.initialize(keySize)
         return keyPairGenerator.generateKeyPair()
     }
 
-
     companion object {
         val sha256: MessageDigest = MessageDigest.getInstance("SHA-256")
+        const val keySize = 2048
+        const val pemSize = 64
     }
 }
 
 fun PublicKey.toPem(): String {
     return "-----BEGIN PUBLIC KEY-----\n" +
-            Base64.getEncoder().encodeToString(encoded).chunked(64).joinToString("\n") +
-            "\n-----END PUBLIC KEY-----\n"
+        Base64.getEncoder().encodeToString(encoded).chunked(UserAuthService.pemSize).joinToString("\n") +
+        "\n-----END PUBLIC KEY-----\n"
 }
 
 fun PrivateKey.toPem(): String {
     return "-----BEGIN PRIVATE KEY-----\n" +
-            Base64.getEncoder().encodeToString(encoded).chunked(64).joinToString("\n") +
-            "\n-----END PRIVATE KEY-----\n"
+        Base64.getEncoder().encodeToString(encoded).chunked(UserAuthService.pemSize).joinToString("\n") +
+        "\n-----END PRIVATE KEY-----\n"
 }
