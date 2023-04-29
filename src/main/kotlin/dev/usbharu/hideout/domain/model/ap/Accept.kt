@@ -2,7 +2,6 @@ package dev.usbharu.hideout.domain.model.ap
 
 open class Accept : Object {
     var `object`: Object? = null
-    var actor: String? = null
 
     protected constructor() : super()
     constructor(
@@ -10,9 +9,8 @@ open class Accept : Object {
         name: String,
         `object`: Object?,
         actor: String?
-    ) : super(add(type, "Accept"), name) {
+    ) : super(add(type, "Accept"), name,actor) {
         this.`object` = `object`
-        this.actor = actor
     }
 
     override fun equals(other: Any?): Boolean {
