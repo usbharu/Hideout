@@ -170,9 +170,11 @@ class UsersAPTest {
     @Test
 //    @Disabled
     fun contentType_Test() {
+
+        assertTrue(ContentType.Application.Activity.match("application/activity+json"))
         val listOf = listOf(ContentType.Application.JsonLd, ContentType.Application.Activity)
         assertTrue(listOf.find { contentType ->
-            contentType.match("application/ld+json; profile=\"\\\"https://www.w3.org/ns/activitystreams\\\",application/activity+json\"")
+            contentType.match("application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\"")
         }.let { it != null })
         assertTrue(ContentType.Application.JsonLd.match("application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\""))
     }

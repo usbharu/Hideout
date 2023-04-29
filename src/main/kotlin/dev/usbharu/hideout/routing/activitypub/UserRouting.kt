@@ -34,10 +34,10 @@ class ContentTypeRouteSelector(private vararg val contentType: ContentType) : Ro
     override fun evaluate(context: RoutingResolveContext, segmentIndex: Int): RouteSelectorEvaluation {
 
         context.call.application.log.debug("Accept: ${context.call.request.accept()}")
-        val requestContentType =
-            ContentType.parse(context.call.request.accept() ?: return RouteSelectorEvaluation.FailedParameter)
-
-        return if (contentType.find { contentType: ContentType -> contentType.match(requestContentType) } != null) {
+        val requestContentType = context.call.request.accept() ?: return RouteSelectorEvaluation.FailedParameter
+        return if (requestContentType.split(",")
+                .find { contentType.find { contentType -> contentType.match(it) } != null } != null
+        ) {
             RouteSelectorEvaluation.Constant
         } else {
             RouteSelectorEvaluation.FailedParameter
