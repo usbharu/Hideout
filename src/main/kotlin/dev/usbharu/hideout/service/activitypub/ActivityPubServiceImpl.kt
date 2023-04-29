@@ -10,6 +10,7 @@ import dev.usbharu.hideout.domain.model.job.ReceiveFollowJob
 import dev.usbharu.hideout.exception.JsonParseException
 import kjob.core.dsl.JobContextWithProps
 import kjob.core.job.JobProps
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 class ActivityPubServiceImpl(
@@ -17,7 +18,7 @@ class ActivityPubServiceImpl(
     private val activityPubNoteService: ActivityPubNoteService
 ) : ActivityPubService {
 
-    val logger = LoggerFactory.getLogger(this::class.java)
+    val logger: Logger = LoggerFactory.getLogger(this::class.java)
     override fun parseActivity(json: String): ActivityType {
         val readTree = Config.configData.objectMapper.readTree(json)
         logger.debug("readTree: {}", readTree)
@@ -33,6 +34,7 @@ class ActivityPubServiceImpl(
         return ActivityType.values().first { it.name.equals(type.asText(), true) }
     }
 
+    @Suppress("CyclomaticComplexMethod", "NotImplementedDeclaration")
     override suspend fun processActivity(json: String, type: ActivityType): ActivityPubResponse {
         return when (type) {
             ActivityType.Accept -> TODO()
@@ -80,6 +82,4 @@ class ActivityPubServiceImpl(
             DeliverPostJob -> activityPubNoteService.createNoteJob(job.props as JobProps<DeliverPostJob>)
         }
     }
-
-
 }

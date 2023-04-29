@@ -42,9 +42,9 @@ val Application.property: Application.(propertyName: String) -> String
         environment.config.property(it).getString()
     }
 
-@Suppress("unused") // application.conf references the main function. This annotation prevents the IDE from marking it as unused.
+// application.conf references the main function. This annotation prevents the IDE from marking it as unused.
+@Suppress("unused")
 fun Application.parent() {
-
     Config.configData = ConfigData(
         url = property("hideout.url"),
         objectMapper = jacksonObjectMapper().enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
@@ -62,12 +62,12 @@ fun Application.parent() {
             )
         }
 
-        single<IUserRepository> { UserRepository(get(),get()) }
+        single<IUserRepository> { UserRepository(get(), get()) }
         single<IUserAuthService> { UserAuthService(get()) }
         single<HttpSignatureVerifyService> { HttpSignatureVerifyServiceImpl(get()) }
         single<JobQueueParentService> {
             val kJobJobQueueService = KJobJobQueueParentService(get())
-            kJobJobQueueService.init(listOf())
+            kJobJobQueueService.init(emptyList())
             kJobJobQueueService
         }
         single<HttpClient> {
@@ -83,14 +83,13 @@ fun Application.parent() {
         }
         single<ActivityPubFollowService> { ActivityPubFollowServiceImpl(get(), get(), get(), get()) }
         single<ActivityPubService> { ActivityPubServiceImpl(get(), get()) }
-        single<IUserService> { UserService(get(),get()) }
+        single<IUserService> { UserService(get(), get()) }
         single<ActivityPubUserService> { ActivityPubUserServiceImpl(get(), get()) }
         single<ActivityPubNoteService> { ActivityPubNoteServiceImpl(get(), get(), get()) }
         single<IPostService> { PostService(get(), get()) }
         single<IPostRepository> { PostRepositoryImpl(get(), get()) }
-        single<IdGenerateService> {TwitterSnowflakeIdGenerateService}
+        single<IdGenerateService> { TwitterSnowflakeIdGenerateService }
     }
-
 
     configureKoin(module)
     configureHTTP()
@@ -120,7 +119,7 @@ fun Application.worker() {
             activityPubService.processActivity(this, it)
         }
     }
-    kJob.register(DeliverPostJob){
+    kJob.register(DeliverPostJob) {
         execute {
             activityPubService.processActivity(this, it)
         }

@@ -10,26 +10,15 @@ open class Object : JsonLd {
     private var type: List<String> = emptyList()
     var name: String? = null
     var actor: String? = null
-    var id:String? = null
+    var id: String? = null
 
     protected constructor()
-    constructor(type: List<String>, name: String? = null,actor:String? = null,id:String? = null) : super() {
+    constructor(type: List<String>, name: String? = null, actor: String? = null, id: String? = null) : super() {
         this.type = type
         this.name = name
         this.actor = actor
         this.id = id
     }
-
-    companion object {
-        @JvmStatic
-        protected fun add(list: List<String>, type: String): List<String> {
-            val toMutableList = list.toMutableList()
-            toMutableList.add(type)
-            return toMutableList.distinct()
-        }
-    }
-
-
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -49,11 +38,16 @@ open class Object : JsonLd {
         return result
     }
 
-    override fun toString(): String {
-        return "Object(type=$type, name=$name, actor=$actor) ${super.toString()}"
+    override fun toString(): String = "Object(type=$type, name=$name, actor=$actor) ${super.toString()}"
+
+    companion object {
+        @JvmStatic
+        protected fun add(list: List<String>, type: String): List<String> {
+            val toMutableList = list.toMutableList()
+            toMutableList.add(type)
+            return toMutableList.distinct()
+        }
     }
-
-
 }
 
 class TypeSerializer : JsonSerializer<List<String>>() {
@@ -69,5 +63,4 @@ class TypeSerializer : JsonSerializer<List<String>>() {
             gen?.writeEndArray()
         }
     }
-
 }

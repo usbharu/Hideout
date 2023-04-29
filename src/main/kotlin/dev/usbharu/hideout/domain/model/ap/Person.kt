@@ -10,6 +10,8 @@ open class Person : Object {
     var publicKey: Key? = null
 
     protected constructor() : super()
+
+    @Suppress("LongParameterList")
     constructor(
         type: List<String> = emptyList(),
         name: String,
@@ -21,7 +23,7 @@ open class Person : Object {
         url: String?,
         icon: Image?,
         publicKey: Key?
-    ) : super(add(type, "Person"), name,id = id) {
+    ) : super(add(type, "Person"), name, id = id) {
         this.preferredUsername = preferredUsername
         this.summary = summary
         this.inbox = inbox
@@ -56,6 +58,4 @@ open class Person : Object {
         result = 31 * result + (publicKey?.hashCode() ?: 0)
         return result
     }
-
-
 }

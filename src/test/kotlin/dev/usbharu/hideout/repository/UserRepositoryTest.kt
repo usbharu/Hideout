@@ -109,7 +109,8 @@ class UserRepositoryTest {
             }
         })
         val user = userRepository.save(
-            User(0L,
+            User(
+                0L,
                 "test",
                 "example.com",
                 "testUser",
@@ -123,7 +124,8 @@ class UserRepositoryTest {
             )
         )
         val follower = userRepository.save(
-            User(1L,
+            User(
+                1L,
                 "follower",
                 "follower.example.com",
                 "followerUser",

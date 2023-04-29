@@ -11,7 +11,7 @@ open class Key : Object {
         id: String?,
         owner: String?,
         publicKeyPem: String?
-    ) : super(add(type, "Key"), name,id) {
+    ) : super(add(type, "Key"), name, id) {
         this.owner = owner
         this.publicKeyPem = publicKeyPem
     }
@@ -33,6 +33,4 @@ open class Key : Object {
         result = 31 * result + (publicKeyPem?.hashCode() ?: 0)
         return result
     }
-
-
 }

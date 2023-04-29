@@ -17,9 +17,7 @@ class KJobJobQueueParentService(private val database: Database) : JobQueueParent
         isWorker = false
     }.start()
 
-    override fun init(jobDefines: List<Job>) {
-
-    }
+    override fun init(jobDefines: List<Job>) = Unit
 
     override suspend fun <J : Job> schedule(job: J, block: ScheduleContext<J>.(J) -> Unit) {
         logger.debug("schedule job={}", job.name)
