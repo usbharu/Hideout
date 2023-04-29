@@ -89,7 +89,7 @@ class ActivityPubUserServiceImpl(
                 RemoteUserCreateDto(
                     name = person.preferredUsername
                         ?: throw IllegalActivityPubObjectException("preferredUsername is null"),
-                    domain = url.substringAfter("://").substringBefore("/"),
+                    domain = url.substringAfter("://").substringBeforeLast("/"),
                     screenName = (person.name ?: person.preferredUsername) ?: throw IllegalActivityPubObjectException("preferredUsername is null"),
                     description = person.summary ?: "",
                     inbox = person.inbox ?: throw IllegalActivityPubObjectException("inbox is null"),

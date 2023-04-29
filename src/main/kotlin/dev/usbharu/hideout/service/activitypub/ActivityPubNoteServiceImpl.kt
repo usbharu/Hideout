@@ -45,7 +45,7 @@ class ActivityPubNoteServiceImpl(
             attributedTo = actor,
             content = postEntity.text,
             published = Instant.ofEpochMilli(postEntity.createdAt).toString(),
-            to = listOf("https://www.w3.org/ns/activitystreams#Public", actor + "/followers")
+            to = listOf("https://www.w3.org/ns/activitystreams#Public", actor + "/follower")
         )
         val inbox = props[DeliverPostJob.inbox]
         logger.debug("createNoteJob: actor={}, note={}, inbox={}", actor, postEntity, inbox)
