@@ -56,7 +56,7 @@ class ActivityPubNoteServiceImpl(
                 name = "Create Note",
                 `object` = note,
                 actor = note.attributedTo,
-                id = "${Config.configData.url}/create/${postEntity.id}"
+                id = "${Config.configData.url}/create/note/${postEntity.id}"
             )
         )
     }
