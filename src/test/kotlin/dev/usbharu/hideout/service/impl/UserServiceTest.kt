@@ -50,9 +50,7 @@ class UserServiceTest {
 
     @Test
     fun `createRemoteUser リモートユーザーを作成できる`() = runTest {
-
         Config.configData = ConfigData(domain = "example.com", url = "https://example.com")
-
 
         val userRepository = mock<IUserRepository> {
             onBlocking { nextId() } doReturn 113345L

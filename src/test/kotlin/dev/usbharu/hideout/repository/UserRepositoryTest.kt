@@ -18,7 +18,6 @@ import java.time.Clock
 import java.time.Instant
 import java.time.ZoneId
 
-
 class UserRepositoryTest {
 
     lateinit var db: Database
@@ -35,7 +34,6 @@ class UserRepositoryTest {
     @AfterEach
     fun tearDown() {
         transaction(db) {
-
             SchemaUtils.drop(UsersFollowers)
             SchemaUtils.drop(Users)
         }
@@ -43,11 +41,14 @@ class UserRepositoryTest {
 
     @Test
     fun `findFollowersById フォロワー一覧を取得`() = runTest {
-        val userRepository = UserRepository(db, object : IdGenerateService {
-            override suspend fun generateId(): Long {
-                TODO("Not yet implemented")
+        val userRepository = UserRepository(
+            db,
+            object : IdGenerateService {
+                override suspend fun generateId(): Long {
+                    TODO("Not yet implemented")
+                }
             }
-        })
+        )
         val user = userRepository.save(
             User(
                 id = 0L,
@@ -98,16 +99,18 @@ class UserRepositoryTest {
         userRepository.findFollowersById(user.id).let {
             assertIterableEquals(listOf(follower, follower2), it)
         }
-
     }
 
     @Test
     fun `createFollower フォロワー追加`() = runTest {
-        val userRepository = UserRepository(db, object : IdGenerateService {
-            override suspend fun generateId(): Long {
-                TODO("Not yet implemented")
+        val userRepository = UserRepository(
+            db,
+            object : IdGenerateService {
+                override suspend fun generateId(): Long {
+                    TODO("Not yet implemented")
+                }
             }
-        })
+        )
         val user = userRepository.save(
             User(
                 0L,
@@ -140,11 +143,9 @@ class UserRepositoryTest {
         )
         userRepository.createFollower(user.id, follower.id)
         transaction {
-
             val followerIds =
                 UsersFollowers.select { UsersFollowers.userId eq user.id }.map { it[UsersFollowers.followerId] }
             assertIterableEquals(listOf(follower.id), followerIds)
         }
-
     }
 }

@@ -1,6 +1,6 @@
 package dev.usbharu.hideout.service
 
-//import kotlinx.coroutines.NonCancellable.message
+// import kotlinx.coroutines.NonCancellable.message
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -16,17 +16,13 @@ class TwitterSnowflakeIdGenerateServiceTest {
         val mutex = Mutex()
         val mutableListOf = mutableListOf<Long>()
         coroutineScope {
-
             repeat(500000) {
-
                 launch(Dispatchers.IO) {
                     val id = TwitterSnowflakeIdGenerateService.generateId()
                     mutex.withLock {
                         mutableListOf.add(id)
-
                     }
                 }
-
             }
         }
 
