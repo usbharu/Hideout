@@ -6,8 +6,8 @@ val h2_version: String by project
 val koin_version: String by project
 
 plugins {
-    kotlin("jvm") version "1.8.10"
-    id("io.ktor.plugin") version "2.2.4"
+    kotlin("jvm") version "1.8.21"
+    id("io.ktor.plugin") version "2.3.0"
     id("org.graalvm.buildtools.native") version "0.9.21"
 //    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
 }
@@ -23,6 +23,11 @@ application {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>().configureEach {
+    compilerOptions.languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_8)
+    compilerOptions.apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_8)
 }
 
 repositories {
