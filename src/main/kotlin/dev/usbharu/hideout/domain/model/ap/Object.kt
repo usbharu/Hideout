@@ -15,6 +15,7 @@ open class Object : JsonLd {
     constructor(type: List<String>, name: String? = null,actor:String? = null) : super() {
         this.type = type
         this.name = name
+        this.actor = actor
     }
 
     companion object {
