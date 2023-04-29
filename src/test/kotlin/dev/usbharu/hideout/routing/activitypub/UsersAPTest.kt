@@ -9,6 +9,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.domain.model.ap.Image
 import dev.usbharu.hideout.domain.model.ap.Key
 import dev.usbharu.hideout.domain.model.ap.Person
+import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.plugins.configureRouting
 import dev.usbharu.hideout.plugins.configureSerialization
 import dev.usbharu.hideout.service.activitypub.ActivityPubService
@@ -25,7 +26,9 @@ import io.ktor.server.testing.*
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
+import java.time.Instant
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -168,7 +171,47 @@ class UsersAPTest {
 //    @Disabled
     fun contentType_Test() {
         val listOf = listOf(ContentType.Application.JsonLd, ContentType.Application.Activity)
-        assertTrue(listOf.find { contentType -> contentType.match("application/ld+json; profile=\"\\\"https://www.w3.org/ns/activitystreams\\\",application/activity+json\"") }.let { true })
+        assertTrue(listOf.find { contentType ->
+            contentType.match("application/ld+json; profile=\"\\\"https://www.w3.org/ns/activitystreams\\\",application/activity+json\"")
+        }.let { it != null })
         assertTrue(ContentType.Application.JsonLd.match("application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\""))
+    }
+
+    @Test
+    fun ユーザーのURLにAcceptヘッダーをhtmlにしてアクセスしたときはただの文字を返す() = testApplication {
+        environment {
+            config = ApplicationConfig("empty.conf")
+        }
+        val userService = mock<IUserService> {
+            onBlocking { findByNameLocalUser(eq("test")) } doReturn User(
+                1L,
+                "test",
+                "example.com",
+                "test",
+                "",
+                "hashedPassword",
+                "https://example.com/inbox",
+                "https://example.com/outbox",
+                "https://example.com",
+                "-----BEGIN PUBLIC KEY-----...-----END PUBLIC KEY-----",
+                "-----BEGIN PRIVATE KEY-----...-----END PRIVATE KEY-----",
+                Instant.now()
+            )
+        }
+        application {
+            configureRouting(
+                mock(),
+                mock(),
+                userService,
+                mock(),
+                mock()
+            )
+        }
+        client.get("/users/test") {
+            accept(ContentType.Text.Html)
+        }.let {
+            assertEquals(HttpStatusCode.OK, it.status)
+            assertTrue(it.contentType()?.match(ContentType.Text.Plain) == true)
+        }
     }
 }
