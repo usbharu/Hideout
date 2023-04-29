@@ -35,8 +35,11 @@ class ContentTypeRouteSelector(private vararg val contentType: ContentType) : Ro
 
         val requestContentType =
             ContentType.parse(context.call.request.accept() ?: return RouteSelectorEvaluation.FailedParameter)
-        context.call.application.log.debug("Content-Type: {}", contentType)
-        return if (contentType.any { contentType -> contentType.match(requestContentType) }) {
+        context.call.application.log.debug("Content-Type: {}", requestContentType)
+        return if (contentType.any { contentType ->
+            context.call.application.log.debug(contentType.toString())
+                contentType.match(requestContentType)
+            }) {
             RouteSelectorEvaluation.Constant
         } else {
             RouteSelectorEvaluation.FailedParameter
