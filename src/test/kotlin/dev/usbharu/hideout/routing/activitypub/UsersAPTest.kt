@@ -32,7 +32,6 @@ import java.time.Instant
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-
 class UsersAPTest {
 
     @Test()
@@ -100,8 +99,8 @@ class UsersAPTest {
         }
     }
 
+    //    @Disabled
     @Test()
-//    @Disabled
     fun `ユーザのURLにAcceptヘッダーをActivityとJson-LDにしてアクセスしたときPersonが返ってくる`() = testApplication {
         environment {
             config = ApplicationConfig("empty.conf")
@@ -167,16 +166,21 @@ class UsersAPTest {
         }
     }
 
+    //    @Disabled
     @Test
-//    @Disabled
     fun contentType_Test() {
-
         assertTrue(ContentType.Application.Activity.match("application/activity+json"))
         val listOf = listOf(ContentType.Application.JsonLd, ContentType.Application.Activity)
-        assertTrue(listOf.find { contentType ->
-            contentType.match("application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\"")
-        }.let { it != null })
-        assertTrue(ContentType.Application.JsonLd.match("application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\""))
+        assertTrue(
+            listOf.find { contentType ->
+                contentType.match("application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\"")
+            }.let { it != null }
+        )
+        assertTrue(
+            ContentType.Application.JsonLd.match(
+                "application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\""
+            )
+        )
     }
 
     @Test

@@ -46,7 +46,6 @@ class KtorKeyMapTest {
                     generateKeyPair.private.toPem(),
                     createdAt = Instant.now()
                 )
-
             }
 
             override suspend fun findByDomain(domain: String): List<User> {
@@ -92,7 +91,6 @@ class KtorKeyMapTest {
             override suspend fun nextId(): Long {
                 TODO("Not yet implemented")
             }
-
         })
 
         ktorKeyMap.getPrivateKey("test")

@@ -15,7 +15,6 @@ import java.time.Instant
 class ActivityPubKtTest {
     @Test
     fun HttpSignTest(): Unit = runBlocking {
-
         val ktorKeyMap = KtorKeyMap(object : IUserRepository {
             override suspend fun save(user: User): User {
                 TODO("Not yet implemented")
@@ -96,12 +95,13 @@ class ActivityPubKtTest {
             override suspend fun nextId(): Long {
                 TODO("Not yet implemented")
             }
-
         })
 
-        val httpClient = HttpClient(MockEngine { httpRequestData ->
-            respondOk()
-        }) {
+        val httpClient = HttpClient(
+            MockEngine { httpRequestData ->
+                respondOk()
+            }
+        ) {
             install(httpSignaturePlugin) {
                 keyMap = ktorKeyMap
             }
@@ -112,7 +112,5 @@ class ActivityPubKtTest {
         }
 
         httpClient.postAp("https://localhost", "test", JsonLd(emptyList()))
-
-
     }
 }

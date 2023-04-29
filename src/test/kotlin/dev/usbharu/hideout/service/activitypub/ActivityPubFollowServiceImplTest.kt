@@ -122,28 +122,30 @@ class ActivityPubFollowServiceImplTest {
                 mock(),
                 activityPubUserService,
                 userService,
-                HttpClient(MockEngine { httpRequestData ->
-                    assertEquals(person.inbox, httpRequestData.url.toString())
-                    val accept = Accept(
-                        type = emptyList(),
-                        name = "Follow",
-                        `object` = Follow(
+                HttpClient(
+                    MockEngine { httpRequestData ->
+                        assertEquals(person.inbox, httpRequestData.url.toString())
+                        val accept = Accept(
                             type = emptyList(),
                             name = "Follow",
-                            `object` = "https://example.com",
-                            actor = "https://follower.example.com"
-                        ),
-                        actor = "https://example.com"
-                    )
-                    accept.context += "https://www.w3.org/ns/activitystreams"
-                    assertEquals(
-                        accept,
-                        Config.configData.objectMapper.readValue<Accept>(
-                            httpRequestData.body.toByteArray().decodeToString()
+                            `object` = Follow(
+                                type = emptyList(),
+                                name = "Follow",
+                                `object` = "https://example.com",
+                                actor = "https://follower.example.com"
+                            ),
+                            actor = "https://example.com"
                         )
-                    )
-                    respondOk()
-                })
+                        accept.context += "https://www.w3.org/ns/activitystreams"
+                        assertEquals(
+                            accept,
+                            Config.configData.objectMapper.readValue<Accept>(
+                                httpRequestData.body.toByteArray().decodeToString()
+                            )
+                        )
+                        respondOk()
+                    }
+                )
             )
         activityPubFollowService.receiveFollowJob(
             JobProps(
