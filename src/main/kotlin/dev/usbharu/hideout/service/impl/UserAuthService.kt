@@ -31,7 +31,7 @@ class UserAuthService(
 
     override suspend fun generateKeyPair(): KeyPair {
         val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
-        keyPairGenerator.initialize(1024)
+        keyPairGenerator.initialize(2048)
         return keyPairGenerator.generateKeyPair()
     }
 
@@ -44,11 +44,11 @@ class UserAuthService(
 fun PublicKey.toPem(): String {
     return "-----BEGIN PUBLIC KEY-----\n" +
             Base64.getEncoder().encodeToString(encoded).chunked(64).joinToString("\n") +
-            "\n-----END PUBLIC KEY-----"
+            "\n-----END PUBLIC KEY-----\n"
 }
 
 fun PrivateKey.toPem(): String {
     return "-----BEGIN PRIVATE KEY-----\n" +
             Base64.getEncoder().encodeToString(encoded).chunked(64).joinToString("\n") +
-            "\n-----END PRIVATE KEY-----"
+            "\n-----END PRIVATE KEY-----\n"
 }
