@@ -1,10 +1,21 @@
 package dev.usbharu.hideout.domain.model.ap
 
 open class Create : Object {
-    var `object` : Object? = null
+    var `object`: Object? = null
 
     protected constructor() : super()
-    constructor(type: List<String> = emptyList(), name: String, `object`: Object?) : super(add(type,"Create"), name) {
+    constructor(
+        type: List<String> = emptyList(),
+        name: String? = null,
+        `object`: Object?,
+        actor: String? = null,
+        id: String? = null
+    ) : super(
+        add(type, "Create"),
+        name,
+        actor,
+        id
+    ) {
         this.`object` = `object`
     }
 

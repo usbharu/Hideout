@@ -1,17 +1,16 @@
 package dev.usbharu.hideout.domain.model.ap
 
 open class Accept : Object {
-    public var `object`: Object? = null
-    public var actor:String? = null
+    var `object`: Object? = null
+
     protected constructor() : super()
     constructor(
         type: List<String> = emptyList(),
         name: String,
         `object`: Object?,
         actor: String?
-    ) : super(add(type,"Accept"), name) {
+    ) : super(add(type, "Accept"), name,actor) {
         this.`object` = `object`
-        this.actor = actor
     }
 
     override fun equals(other: Any?): Boolean {

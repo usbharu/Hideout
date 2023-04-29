@@ -2,9 +2,8 @@
 
 package dev.usbharu.hideout.repository
 
-import dev.usbharu.hideout.domain.model.User
-import dev.usbharu.hideout.domain.model.Users
-import dev.usbharu.hideout.domain.model.UsersFollowers
+import dev.usbharu.hideout.domain.model.hideout.entity.User
+import dev.usbharu.hideout.service.IdGenerateService
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.jetbrains.exposed.sql.Database
@@ -15,6 +14,9 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertIterableEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.time.Clock
+import java.time.Instant
+import java.time.ZoneId
 
 
 class UserRepositoryTest {
@@ -41,38 +43,54 @@ class UserRepositoryTest {
 
     @Test
     fun `findFollowersById フォロワー一覧を取得`() = runTest {
-        val userRepository = UserRepository(db)
-        val user = userRepository.create(
+        val userRepository = UserRepository(db, object : IdGenerateService {
+            override suspend fun generateId(): Long {
+                TODO("Not yet implemented")
+            }
+        })
+        val user = userRepository.save(
             User(
-                "test",
-                "example.com",
-                "testUser",
-                "This user is test user.",
-                "https://example.com/inbox",
-                "https://example.com/outbox",
-                "https://example.com"
+                id = 0L,
+                name = "test",
+                domain = "example.com",
+                screenName = "testUser",
+                description = "This user is test user.",
+                password = "https://example.com/inbox",
+                inbox = "",
+                outbox = "https://example.com/outbox",
+                url = "https://example.com",
+                publicKey = "",
+                createdAt = Instant.now(Clock.tickMillis(ZoneId.systemDefault()))
             )
         )
-        val follower = userRepository.create(
+        val follower = userRepository.save(
             User(
-                "follower",
-                "follower.example.com",
-                "followerUser",
-                "This user is follower user.",
-                "https://follower.example.com/inbox",
-                "https://follower.example.com/outbox",
-                "https://follower.example.com"
+                id = 1L,
+                name = "follower",
+                domain = "follower.example.com",
+                screenName = "followerUser",
+                description = "This user is follower user.",
+                password = "",
+                inbox = "https://follower.example.com/inbox",
+                outbox = "https://follower.example.com/outbox",
+                url = "https://follower.example.com",
+                publicKey = "",
+                createdAt = Instant.now(Clock.tickMillis(ZoneId.systemDefault()))
             )
         )
-        val follower2 = userRepository.create(
+        val follower2 = userRepository.save(
             User(
-                "follower2",
-                "follower2.example.com",
-                "followerUser2",
-                "This user is follower user 2.",
-                "https://follower2.example.com/inbox",
-                "https://follower2.example.com/outbox",
-                "https://follower2.example.com"
+                id = 3L,
+                name = "follower2",
+                domain = "follower2.example.com",
+                screenName = "followerUser2",
+                description = "This user is follower user 2.",
+                password = "",
+                inbox = "https://follower2.example.com/inbox",
+                outbox = "https://follower2.example.com/outbox",
+                url = "https://follower2.example.com",
+                publicKey = "",
+                createdAt = Instant.now(Clock.tickMillis(ZoneId.systemDefault()))
             )
         )
         userRepository.createFollower(user.id, follower.id)
@@ -85,27 +103,37 @@ class UserRepositoryTest {
 
     @Test
     fun `createFollower フォロワー追加`() = runTest {
-        val userRepository = UserRepository(db)
-        val user = userRepository.create(
-            User(
+        val userRepository = UserRepository(db, object : IdGenerateService {
+            override suspend fun generateId(): Long {
+                TODO("Not yet implemented")
+            }
+        })
+        val user = userRepository.save(
+            User(0L,
                 "test",
                 "example.com",
                 "testUser",
                 "This user is test user.",
                 "https://example.com/inbox",
+                "",
                 "https://example.com/outbox",
-                "https://example.com"
+                "https://example.com",
+                publicKey = "",
+                createdAt = Instant.now()
             )
         )
-        val follower = userRepository.create(
-            User(
+        val follower = userRepository.save(
+            User(1L,
                 "follower",
                 "follower.example.com",
                 "followerUser",
                 "This user is follower user.",
+                "",
                 "https://follower.example.com/inbox",
                 "https://follower.example.com/outbox",
-                "https://follower.example.com"
+                "https://follower.example.com",
+                publicKey = "",
+                createdAt = Instant.now()
             )
         )
         userRepository.createFollower(user.id, follower.id)

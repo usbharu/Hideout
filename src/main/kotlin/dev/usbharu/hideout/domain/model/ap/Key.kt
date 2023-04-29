@@ -1,9 +1,9 @@
 package dev.usbharu.hideout.domain.model.ap
 
 open class Key : Object {
-    var id:String? = null
-    var owner:String? = null
-    var publicKeyPem:String? = null
+    var owner: String? = null
+    var publicKeyPem: String? = null
+
     protected constructor() : super()
     constructor(
         type: List<String>,
@@ -11,8 +11,7 @@ open class Key : Object {
         id: String?,
         owner: String?,
         publicKeyPem: String?
-    ) : super(add(type,"Key"), name) {
-        this.id = id
+    ) : super(add(type, "Key"), name,id) {
         this.owner = owner
         this.publicKeyPem = publicKeyPem
     }

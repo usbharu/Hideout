@@ -9,44 +9,54 @@ open class Object : JsonLd {
     @JsonSerialize(using = TypeSerializer::class)
     private var type: List<String> = emptyList()
     var name: String? = null
+    var actor: String? = null
+    var id:String? = null
 
     protected constructor()
-    constructor(type: List<String>, name: String) : super() {
+    constructor(type: List<String>, name: String? = null,actor:String? = null,id:String? = null) : super() {
         this.type = type
         this.name = name
+        this.actor = actor
+        this.id = id
     }
 
     companion object {
         @JvmStatic
-        protected fun add(list:List<String>,type:String):List<String> {
+        protected fun add(list: List<String>, type: String): List<String> {
             val toMutableList = list.toMutableList()
             toMutableList.add(type)
             return toMutableList.distinct()
         }
     }
 
+
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is Object) return false
+        if (!super.equals(other)) return false
 
         if (type != other.type) return false
-        return name == other.name
+        if (name != other.name) return false
+        return actor == other.actor
     }
 
     override fun hashCode(): Int {
-        var result = type.hashCode()
+        var result = super.hashCode()
+        result = 31 * result + type.hashCode()
         result = 31 * result + (name?.hashCode() ?: 0)
+        result = 31 * result + (actor?.hashCode() ?: 0)
         return result
     }
 
     override fun toString(): String {
-        return "Object(type=$type, name=$name) ${super.toString()}"
+        return "Object(type=$type, name=$name, actor=$actor) ${super.toString()}"
     }
 
 
 }
 
-public class TypeSerializer : JsonSerializer<List<String>>() {
+class TypeSerializer : JsonSerializer<List<String>>() {
     override fun serialize(value: List<String>?, gen: JsonGenerator?, serializers: SerializerProvider?) {
         println(value)
         if (value?.size == 1) {

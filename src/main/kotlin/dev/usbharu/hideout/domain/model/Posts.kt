@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.domain.model
 
+import dev.usbharu.hideout.repository.Users
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.Table
 
@@ -28,7 +29,7 @@ data class Post(
 
 data class PostEntity(
     val id: Long,
-    val userId:Long,
+    val userId: Long,
     val overview: String? = null,
     val text: String,
     val createdAt: Long,
@@ -38,7 +39,7 @@ data class PostEntity(
     val replyId: Long? = null
 )
 
-fun ResultRow.toPost():PostEntity{
+fun ResultRow.toPost(): PostEntity {
     return PostEntity(
         id = this[Posts.id],
         userId = this[Posts.userId],

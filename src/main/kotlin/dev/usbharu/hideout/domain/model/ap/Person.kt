@@ -1,14 +1,14 @@
 package dev.usbharu.hideout.domain.model.ap
 
 open class Person : Object {
-    private var id:String? = null
-    var preferredUsername:String? = null
-    var summary:String? = null
-    var inbox:String? = null
-    var outbox:String? = null
-    private var url:String? = null
+    var preferredUsername: String? = null
+    var summary: String? = null
+    var inbox: String? = null
+    var outbox: String? = null
+    private var url: String? = null
     private var icon: Image? = null
     var publicKey: Key? = null
+
     protected constructor() : super()
     constructor(
         type: List<String> = emptyList(),
@@ -21,15 +21,14 @@ open class Person : Object {
         url: String?,
         icon: Image?,
         publicKey: Key?
-    ) : super(add(type,"Person"), name) {
-        this.id = id
+    ) : super(add(type, "Person"), name,id = id) {
         this.preferredUsername = preferredUsername
         this.summary = summary
         this.inbox = inbox
         this.outbox = outbox
         this.url = url
         this.icon = icon
-        this.publicKey =  publicKey
+        this.publicKey = publicKey
     }
 
     override fun equals(other: Any?): Boolean {

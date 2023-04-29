@@ -2,6 +2,7 @@ package dev.usbharu.hideout.domain.model.ap
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonDeserializer
@@ -15,11 +16,12 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 open class JsonLd {
     @JsonProperty("@context")
     @JsonDeserialize(contentUsing = ContextDeserializer::class)
-    @JsonSerialize(using = ContextSerializer::class)
-    var context:List<String> = emptyList()
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY, using = ContextSerializer::class)
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    var context: List<String> = emptyList()
 
     @JsonCreator
-    constructor(context:List<String>){
+    constructor(context: List<String>) {
         this.context = context
     }
 
@@ -43,9 +45,12 @@ open class JsonLd {
 
 }
 
-public class ContextDeserializer : JsonDeserializer<String>() {
-    override fun deserialize(p0: com.fasterxml.jackson.core.JsonParser?, p1: com.fasterxml.jackson.databind.DeserializationContext?): String {
-        val readTree : JsonNode  = p0?.codec?.readTree(p0) ?: return ""
+class ContextDeserializer : JsonDeserializer<String>() {
+    override fun deserialize(
+        p0: com.fasterxml.jackson.core.JsonParser?,
+        p1: com.fasterxml.jackson.databind.DeserializationContext?
+    ): String {
+        val readTree: JsonNode = p0?.codec?.readTree(p0) ?: return ""
         if (readTree.isObject) {
             return ""
         }
@@ -53,17 +58,23 @@ public class ContextDeserializer : JsonDeserializer<String>() {
     }
 }
 
-public class ContextSerializer : JsonSerializer<List<String>>() {
+class ContextSerializer : JsonSerializer<List<String>>() {
+
+
+    override fun isEmpty(value: List<String>?): Boolean {
+        return value.isNullOrEmpty()
+    }
+
     override fun serialize(value: List<String>?, gen: JsonGenerator?, serializers: SerializerProvider?) {
         if (value.isNullOrEmpty()) {
             gen?.writeNull()
             return
         }
-        if (value?.size == 1) {
+        if (value.size == 1) {
             gen?.writeString(value[0])
         } else {
             gen?.writeStartArray()
-            value?.forEach {
+            value.forEach {
                 gen?.writeString(it)
             }
             gen?.writeEndArray()
