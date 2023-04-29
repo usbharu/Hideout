@@ -9,10 +9,25 @@ style:
     active: true
 
   MultilineLambdaItParameter:
-    active: true
+    active: false
 
   UseEmptyCounterpart:
     active: true
+
+  ExpressionBodySyntax:
+    active: true
+
+  WildcardImport:
+    active: false
+
+  ReturnCount:
+    active: false
+
+  MagicNumber:
+    ignorePropertyDeclaration: true
+
+  ForbiddenComment:
+    active: false
 
 complexity:
   CognitiveComplexMethod:
@@ -23,12 +38,15 @@ complexity:
 
   ComplexInterface:
     active: true
+    threshold: 30
 
   LabeledExpression:
-    active: true
+    active: false
 
   NamedArguments:
     active: true
+    ignoreArgumentsMatchingNames: true
+    threshold: 5
 
   NestedBlockDepth:
     active: true
@@ -40,7 +58,16 @@ complexity:
     active: true
 
   StringLiteralDuplication:
-    active: true
+    active: false
+
+  LongParameterList:
+    constructorThreshold: 10
+
+  TooManyFunctions:
+    ignoreDeprecated: true
+    ignoreOverridden: true
+    ignorePrivate: true
+
 
 exceptions:
   ExceptionRaisedInUnexpectedLocation:
@@ -71,6 +98,9 @@ formatting:
   Indentation:
     indentSize: 4
 
+  NoWildcardImports:
+    active: false
+
 naming:
   FunctionMaxLength:
     active: true
@@ -80,6 +110,15 @@ naming:
 
   LambdaParameterNaming:
     active: true
+
+  ConstructorParameterNaming:
+    excludes:
+      - "**/domain/model/ap/*"
+    ignoreOverridden: true
+
+  VariableNaming:
+    excludes:
+      - "**/domain/model/ap/*"
 
 performance:
   UnnecessaryPartOfBinaryExpression:

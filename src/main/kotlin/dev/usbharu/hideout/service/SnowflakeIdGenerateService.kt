@@ -5,7 +5,8 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.time.Instant
 
-open class SnowflakeIdGenerateService(private val baseTime:Long) : IdGenerateService {
+@Suppress("MagicNumber")
+open class SnowflakeIdGenerateService(private val baseTime: Long) : IdGenerateService {
     var lastTimeStamp: Long = -1
     var sequenceId: Int = 0
     val mutex = Mutex()
@@ -13,22 +14,15 @@ open class SnowflakeIdGenerateService(private val baseTime:Long) : IdGenerateSer
     @Throws(IllegalStateException::class)
     override suspend fun generateId(): Long {
         return mutex.withLock {
-
             var timestamp = getTime()
             if (timestamp < lastTimeStamp) {
-                while (timestamp <= lastTimeStamp) {
-                    delay(1L)
-                    timestamp = getTime()
-                }
+                timestamp = wait(timestamp)
                 //            throw IllegalStateException(" $lastTimeStamp $timestamp ${lastTimeStamp-timestamp}  ")
             }
             if (timestamp == lastTimeStamp) {
                 sequenceId++
                 if (sequenceId >= 4096) {
-                    while (timestamp <= lastTimeStamp) {
-                        delay(1L)
-                        timestamp = getTime()
-                    }
+                    timestamp = wait(timestamp)
                     sequenceId = 0
                 }
             } else {
@@ -37,11 +31,16 @@ open class SnowflakeIdGenerateService(private val baseTime:Long) : IdGenerateSer
             lastTimeStamp = timestamp
             return@withLock (timestamp - baseTime).shl(22).or(1L.shl(12)).or(sequenceId.toLong())
         }
-
-
     }
 
-    private fun getTime(): Long {
-        return Instant.now().toEpochMilli()
+    private suspend fun wait(timestamp: Long): Long {
+        var timestamp1 = timestamp
+        while (timestamp1 <= lastTimeStamp) {
+            delay(1L)
+            timestamp1 = getTime()
+        }
+        return timestamp1
     }
+
+    private fun getTime(): Long = Instant.now().toEpochMilli()
 }

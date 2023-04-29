@@ -2,6 +2,7 @@ package dev.usbharu.hideout.repository
 
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 
+@Suppress("TooManyFunctions")
 interface IUserRepository {
     suspend fun save(user: User): User
 
@@ -13,11 +14,11 @@ interface IUserRepository {
 
     suspend fun findByNameAndDomain(name: String, domain: String): User?
 
-    suspend fun findByDomain(domain:String): List<User>
+    suspend fun findByDomain(domain: String): List<User>
 
-    suspend fun findByNameAndDomains(names: List<Pair<String,String>>): List<User>
+    suspend fun findByNameAndDomains(names: List<Pair<String, String>>): List<User>
 
-    suspend fun findByUrl(url:String): User?
+    suspend fun findByUrl(url: String): User?
 
     suspend fun findByUrls(urls: List<String>): List<User>
 
@@ -34,5 +35,5 @@ interface IUserRepository {
     suspend fun deleteFollower(id: Long, follower: Long)
     suspend fun findFollowersById(id: Long): List<User>
 
-    suspend fun nextId():Long
+    suspend fun nextId(): Long
 }

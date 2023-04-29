@@ -56,7 +56,6 @@ class ExposedJobRepository(
 
     suspend fun <T> query(block: suspend () -> T): T = newSuspendedTransaction(Dispatchers.IO) { block() }
 
-
     override suspend fun completeProgress(id: String): Boolean {
         val now = Instant.now(clock).toEpochMilli()
         return query {
@@ -86,12 +85,17 @@ class ExposedJobRepository(
     override suspend fun get(id: String): ScheduledJob? {
         val single = query { jobs.select(jobs.id eq id.toLong()).singleOrNull() } ?: return null
         return single.toScheduledJob()
-
     }
 
     override suspend fun reset(id: String, oldKjobId: UUID?): Boolean {
         return query {
-            jobs.update({ jobs.id eq id.toLong() and if (oldKjobId == null) jobs.kjobId.isNull() else jobs.kjobId eq oldKjobId.toString() }) {
+            jobs.update({
+                jobs.id eq id.toLong() and if (oldKjobId == null) {
+                    jobs.kjobId.isNull()
+                } else {
+                    jobs.kjobId eq oldKjobId.toString()
+                }
+            }) {
                 it[jobs.status] = JobStatus.CREATED.name
                 it[jobs.statusMessage] = null
                 it[jobs.kjobId] = null
@@ -107,7 +111,18 @@ class ExposedJobRepository(
     override suspend fun save(jobSettings: JobSettings, runAt: Instant?): ScheduledJob {
         val now = Instant.now(clock)
         val scheduledJob =
-            ScheduledJob("", JobStatus.CREATED, runAt, null, 0, null, now, now, jobSettings, JobProgress(0))
+            ScheduledJob(
+                id = "",
+                status = JobStatus.CREATED,
+                runAt = runAt,
+                statusMessage = null,
+                retries = 0,
+                kjobId = null,
+                createdAt = now,
+                updatedAt = now,
+                settings = jobSettings,
+                progress = JobProgress(0)
+            )
         val id = query {
             jobs.insert {
                 it[jobs.status] = scheduledJob.status.name
@@ -168,7 +183,13 @@ class ExposedJobRepository(
         retries: Int
     ): Boolean {
         return query {
-            jobs.update({ (jobs.id eq id.toLong()) and if (oldKjobId == null) jobs.kjobId.isNull() else jobs.kjobId eq oldKjobId.toString() }) {
+            jobs.update({
+                (jobs.id eq id.toLong()) and if (oldKjobId == null) {
+                    jobs.kjobId.isNull()
+                } else {
+                    jobs.kjobId eq oldKjobId.toString()
+                }
+            }) {
                 it[jobs.status] = status.name
                 it[jobs.retries] = retries
                 it[jobs.updatedAt] = Instant.now(clock).toEpochMilli()
@@ -214,6 +235,7 @@ class ExposedJobRepository(
             return null
         }
 
+        @Suppress("UNCHECKED_CAST")
         fun listSerialize(value: List<*>): JsonElement {
             return if (value.isEmpty()) {
                 buildJsonObject {
@@ -227,7 +249,7 @@ class ExposedJobRepository(
                     is Int -> "i" to (value as List<Int>).map(::JsonPrimitive)
                     is String -> "s" to (value as List<String>).map(::JsonPrimitive)
                     is Boolean -> "b" to (value as List<Boolean>).map(::JsonPrimitive)
-                    else -> error("Cannot serialize unsupported list property value: $value")
+                    else -> error("Cannot serialize unsupported list property value: $item")
                 }
                 buildJsonObject {
                     put("t", t)
@@ -265,6 +287,7 @@ class ExposedJobRepository(
                 retries = single[retries],
                 kjobId = single[kjobId]?.let {
                     try {
+                        @Suppress("SwallowedException")
                         UUID.fromString(it)
                     } catch (e: IllegalArgumentException) {
                         null

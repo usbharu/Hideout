@@ -5,6 +5,6 @@ import kjob.core.dsl.ScheduleContext
 
 interface JobQueueParentService {
 
-    fun init(jobDefines:List<Job>)
+    fun init(jobDefines: List<Job>)
     suspend fun <J : Job> schedule(job: J, block: ScheduleContext<J>.(J) -> Unit = {})
 }

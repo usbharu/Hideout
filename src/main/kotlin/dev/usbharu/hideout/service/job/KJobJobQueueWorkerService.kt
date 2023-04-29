@@ -2,11 +2,11 @@ package dev.usbharu.hideout.service.job
 
 import dev.usbharu.kjob.exposed.ExposedKJob
 import kjob.core.Job
-import kjob.core.dsl.JobContextWithProps
-import kjob.core.dsl.JobRegisterContext
 import kjob.core.dsl.KJobFunctions
 import kjob.core.kjob
 import org.jetbrains.exposed.sql.Database
+import kjob.core.dsl.JobContextWithProps as JCWP
+import kjob.core.dsl.JobRegisterContext as JRC
 
 class KJobJobQueueWorkerService(private val database: Database) : JobQueueWorkerService {
 
@@ -19,10 +19,11 @@ class KJobJobQueueWorkerService(private val database: Database) : JobQueueWorker
         }.start()
     }
 
-    override fun init(defines: List<Pair<Job,JobRegisterContext<Job, JobContextWithProps<Job>>.(Job) -> KJobFunctions<Job, JobContextWithProps<Job>>>>) {
+    override fun init(
+        defines: List<Pair<Job, JRC<Job, JCWP<Job>>.(Job) -> KJobFunctions<Job, JCWP<Job>>>>
+    ) {
         defines.forEach { job ->
             kjob.register(job.first, job.second)
         }
     }
-
 }

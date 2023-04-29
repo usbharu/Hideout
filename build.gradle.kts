@@ -137,4 +137,5 @@ detekt {
     config = files("detekt.yml")
     buildUponDefaultConfig = true
     basePath = rootDir.absolutePath
+    autoCorrect = true
 }

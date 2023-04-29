@@ -3,7 +3,6 @@ package dev.usbharu.hideout.routing.api.v1
 import dev.usbharu.hideout.domain.model.Post
 import dev.usbharu.hideout.domain.model.api.StatusForPost
 import dev.usbharu.hideout.service.IPostService
-import dev.usbharu.hideout.service.impl.PostService
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*

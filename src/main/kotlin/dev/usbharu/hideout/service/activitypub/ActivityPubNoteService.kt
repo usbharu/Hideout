@@ -6,6 +6,6 @@ import kjob.core.job.JobProps
 
 interface ActivityPubNoteService {
 
-    suspend fun createNote(post:PostEntity)
-    suspend fun createNoteJob(props:JobProps<DeliverPostJob>)
+    suspend fun createNote(post: PostEntity)
+    suspend fun createNoteJob(props: JobProps<DeliverPostJob>)
 }

@@ -33,7 +33,7 @@ class ActivityPubKtTest {
                 TODO()
             }
 
-            override suspend fun findByNameAndDomain(name: String, domain: String): User? {
+            override suspend fun findByNameAndDomain(name: String, domain: String): User {
                 val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
                 keyPairGenerator.initialize(1024)
                 val generateKeyPair = keyPairGenerator.generateKeyPair()

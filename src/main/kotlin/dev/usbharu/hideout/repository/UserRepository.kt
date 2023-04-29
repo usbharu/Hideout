@@ -136,13 +136,13 @@ class UserRepository(private val database: Database, private val idGenerateServi
             Users.innerJoin(
                 otherTable = UsersFollowers,
                 onColumn = { Users.id },
-                otherColumn = { userId })
-
+                otherColumn = { userId }
+            )
                 .innerJoin(
                     otherTable = followers,
                     onColumn = { UsersFollowers.followerId },
-                    otherColumn = { followers[Users.id] })
-
+                    otherColumn = { followers[Users.id] }
+                )
                 .slice(
                     followers.get(Users.id),
                     followers.get(Users.name),
@@ -177,7 +177,6 @@ class UserRepository(private val database: Database, private val idGenerateServi
         }
     }
 
-
     override suspend fun delete(id: Long) {
         query {
             Users.deleteWhere { Users.id.eq(id) }
@@ -202,9 +201,7 @@ class UserRepository(private val database: Database, private val idGenerateServi
         }
     }
 
-    override suspend fun nextId(): Long {
-        return idGenerateService.generateId()
-    }
+    override suspend fun nextId(): Long = idGenerateService.generateId()
 }
 
 object Users : Table("users") {
@@ -230,18 +227,18 @@ object Users : Table("users") {
 
 fun ResultRow.toUser(): User {
     return User(
-        this[Users.id],
-        this[Users.name],
-        this[Users.domain],
-        this[Users.screenName],
-        this[Users.description],
-        this[Users.password],
-        this[Users.inbox],
-        this[Users.outbox],
-        this[Users.url],
-        this[Users.publicKey],
-        this[Users.privateKey],
-        Instant.ofEpochMilli((this[Users.createdAt]))
+        id = this[Users.id],
+        name = this[Users.name],
+        domain = this[Users.domain],
+        screenName = this[Users.screenName],
+        description = this[Users.description],
+        password = this[Users.password],
+        inbox = this[Users.inbox],
+        outbox = this[Users.outbox],
+        url = this[Users.url],
+        publicKey = this[Users.publicKey],
+        privateKey = this[Users.privateKey],
+        createdAt = Instant.ofEpochMilli((this[Users.createdAt]))
     )
 }
 
