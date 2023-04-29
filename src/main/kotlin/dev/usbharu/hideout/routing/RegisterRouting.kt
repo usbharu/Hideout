@@ -10,7 +10,6 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Application.register(userService: IUserService) {
-
     routing {
         get("/register") {
             val principal = call.principal<UserIdPrincipal>()

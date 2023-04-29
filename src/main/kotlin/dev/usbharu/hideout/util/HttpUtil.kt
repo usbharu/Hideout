@@ -3,6 +3,18 @@ package dev.usbharu.hideout.util
 import io.ktor.http.*
 
 object HttpUtil {
+    val ContentType.Application.Activity: ContentType
+        get() = ContentType("application", "activity+json")
+
+    val ContentType.Application.JsonLd: ContentType
+        get() {
+            return ContentType(
+                contentType = "application",
+                contentSubtype = "ld+json",
+                parameters = listOf(HeaderValueParam("profile", "https://www.w3.org/ns/activitystreams"))
+            )
+        }
+
     fun isContentTypeOfActivityPub(
         contentType: String,
         subType: String,
@@ -25,15 +37,5 @@ object HttpUtil {
             contentType.parameter("profile").orEmpty()
         )
     }
-
-    val ContentType.Application.Activity: ContentType
-        get() = ContentType("application", "activity+json")
-
-    val ContentType.Application.JsonLd: ContentType
-        get() = ContentType(
-            "application",
-            "ld+json",
-            listOf(HeaderValueParam("profile", "https://www.w3.org/ns/activitystreams"))
-        )
 //    fun
 }

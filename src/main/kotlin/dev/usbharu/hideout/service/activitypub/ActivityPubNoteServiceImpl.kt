@@ -35,7 +35,6 @@ class ActivityPubNoteServiceImpl(
         }
     }
 
-
     override suspend fun createNoteJob(props: JobProps<DeliverPostJob>) {
         val actor = props[DeliverPostJob.actor]
         val postEntity = Config.configData.objectMapper.readValue<PostEntity>(props[DeliverPostJob.post])

@@ -33,9 +33,5 @@ open class Create : Object {
         return result
     }
 
-    override fun toString(): String {
-        return "Create(`object`=$`object`) ${super.toString()}"
-    }
-
-
+    override fun toString(): String = "Create(`object`=$`object`) ${super.toString()}"
 }

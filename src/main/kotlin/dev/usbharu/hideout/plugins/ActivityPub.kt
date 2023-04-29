@@ -61,9 +61,8 @@ val httpSignaturePlugin = createClientPlugin("HttpSign", ::HttpSignaturePluginCo
     format.timeZone = TimeZone.getTimeZone("GMT")
     onRequest { request, body ->
 
-
         request.header("Date", format.format(Date()))
-        request.header("Host", "${request.url.host}")
+        request.header("Host", request.url.host)
         println(request.bodyType)
         println(request.bodyType?.type)
         if (request.bodyType?.type == String::class) {
@@ -72,7 +71,7 @@ val httpSignaturePlugin = createClientPlugin("HttpSign", ::HttpSignaturePluginCo
 //            UserAuthService.sha256.reset()
             val digest =
                 Base64.getEncoder().encodeToString(UserAuthService.sha256.digest(body.toByteArray(Charsets.UTF_8)))
-            request.headers.append("Digest", "sha-256=" + digest)
+            request.headers.append("Digest", "sha-256=$digest")
         }
 
         if (request.headers.contains("Signature")) {
@@ -82,11 +81,21 @@ val httpSignaturePlugin = createClientPlugin("HttpSign", ::HttpSignaturePluginCo
                 s.split(",").forEach { parameters.add(it) }
             }
 
-            val keyId = parameters.find { it.startsWith("keyId") }?.split("=")?.get(1)?.replace("\"", "")
+            val keyId = parameters.find { it.startsWith("keyId") }
+                .orEmpty()
+                .split("=")[1]
+                .replace("\"", "")
             val algorithm =
-                parameters.find { it.startsWith("algorithm") }?.split("=")?.get(1)?.replace("\"", "")
-            val headers = parameters.find { it.startsWith("headers") }?.split("=")?.get(1)?.replace("\"", "")
-                ?.split(" ")?.toMutableList().orEmpty()
+                parameters.find { it.startsWith("algorithm") }
+                    .orEmpty()
+                    .split("=")[1]
+                    .replace("\"", "")
+            val headers = parameters.find { it.startsWith("headers") }
+                .orEmpty()
+                .split("=")[1]
+                .replace("\"", "")
+                .split(" ")
+                .toMutableList()
 
             val algorithmType = when (algorithm) {
                 "rsa-sha256" -> {
@@ -132,32 +141,24 @@ val httpSignaturePlugin = createClientPlugin("HttpSign", ::HttpSignaturePluginCo
             request.headers.remove("Signature")
 
             signer!!.sign(object : HttpMessage, HttpRequest {
-                override fun headerValues(name: String?): MutableList<String> {
-                    return name?.let { request.headers.getAll(it) }?.toMutableList() ?: mutableListOf()
-                }
+                override fun headerValues(name: String?): MutableList<String> =
+                    name?.let { request.headers.getAll(it) }?.toMutableList() ?: mutableListOf()
 
                 override fun addHeader(name: String?, value: String?) {
                     val split = value?.split("=").orEmpty()
                     name?.let { request.header(it, split.get(0) + "=\"" + split.get(1).trim('"') + "\"") }
                 }
 
-                override fun method(): String {
-                    return request.method.value
-                }
+                override fun method(): String = request.method.value
 
-                override fun uri(): URI {
-                    return request.url.build().toURI()
-                }
-
-
+                override fun uri(): URI = request.url.build().toURI()
             })
 
             val signatureHeader = request.headers.getAll("Signature").orEmpty()
             request.headers.remove("Signature")
-            signatureHeader.map { it.replace("; ", ",").replace(";", ",") }.joinToString(",")
+            signatureHeader.joinToString(",") { it.replace("; ", ",").replace(";", ",") }
                 .let { request.header("Signature", it) }
         }
-
     }
 }
 
@@ -167,7 +168,8 @@ class KtorKeyMap(private val userAuthRepository: IUserRepository) : KeyMap {
             .substringAfterLast("/")
         val publicBytes = Base64.getDecoder().decode(
             userAuthRepository.findByNameAndDomain(
-                username, Config.configData.domain
+                username,
+                Config.configData.domain
             )?.publicKey?.replace("-----BEGIN PUBLIC KEY-----", "-----END PUBLIC KEY-----")?.replace("", "")
                 ?.replace("\n", "")
         )
@@ -180,7 +182,8 @@ class KtorKeyMap(private val userAuthRepository: IUserRepository) : KeyMap {
             .substringAfterLast("/")
         val publicBytes = Base64.getDecoder().decode(
             userAuthRepository.findByNameAndDomain(
-                username, Config.configData.domain
+                username,
+                Config.configData.domain
             )?.privateKey?.replace("-----BEGIN PRIVATE KEY-----", "")?.replace("-----END PRIVATE KEY-----", "")
                 ?.replace("\n", "")
         )
@@ -188,7 +191,6 @@ class KtorKeyMap(private val userAuthRepository: IUserRepository) : KeyMap {
         return@runBlocking KeyFactory.getInstance("RSA").generatePrivate(x509EncodedKeySpec)
     }
 
-    override fun getSecretKey(keyId: String?): SecretKey {
-        TODO("Not yet implemented")
-    }
+    @Suppress("NotImplementedDeclaration")
+    override fun getSecretKey(keyId: String?): SecretKey = TODO("Not yet implemented")
 }

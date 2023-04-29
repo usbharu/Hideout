@@ -9,7 +9,7 @@ interface ActivityPubService {
 
     suspend fun processActivity(json: String, type: ActivityType): ActivityPubResponse?
 
-    suspend fun <T : HideoutJob> processActivity(job: JobContextWithProps<T>,hideoutJob: HideoutJob)
+    suspend fun <T : HideoutJob> processActivity(job: JobContextWithProps<T>, hideoutJob: HideoutJob)
 }
 
 enum class ActivityType {

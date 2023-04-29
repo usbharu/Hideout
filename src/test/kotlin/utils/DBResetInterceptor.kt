@@ -4,7 +4,7 @@ import org.jetbrains.exposed.sql.Transaction
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.junit.jupiter.api.extension.*
 
-class DBResetInterceptor : BeforeAllCallback,AfterAllCallback,BeforeEachCallback,AfterEachCallback {
+class DBResetInterceptor : BeforeAllCallback, AfterAllCallback, BeforeEachCallback, AfterEachCallback {
     private lateinit var transactionAll: Transaction
     private lateinit var transactionEach: Transaction
 

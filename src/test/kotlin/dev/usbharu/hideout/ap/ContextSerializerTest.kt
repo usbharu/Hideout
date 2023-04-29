@@ -5,7 +5,7 @@ import dev.usbharu.hideout.domain.model.ap.Accept
 import dev.usbharu.hideout.domain.model.ap.Follow
 import org.junit.jupiter.api.Test
 
-class ContextSerializerTest{
+class ContextSerializerTest {
 
     @Test
     fun serialize() {

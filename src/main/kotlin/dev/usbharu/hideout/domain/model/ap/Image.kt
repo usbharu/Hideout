@@ -28,6 +28,4 @@ open class Image : Object {
         result = 31 * result + (url?.hashCode() ?: 0)
         return result
     }
-
-
 }
