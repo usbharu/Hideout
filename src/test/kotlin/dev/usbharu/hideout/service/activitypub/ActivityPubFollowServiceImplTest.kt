@@ -85,7 +85,7 @@ class ActivityPubFollowServiceImplTest {
 
         )
         val activityPubUserService = mock<ActivityPubUserService> {
-            onBlocking { fetchPerson(anyString()) } doReturn person
+            onBlocking { fetchPerson(anyString(), any()) } doReturn person
         }
         val userService = mock<IUserService> {
             onBlocking { findByUrls(any()) } doReturn listOf(

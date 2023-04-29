@@ -8,6 +8,7 @@ import dev.usbharu.hideout.domain.model.ap.Person
 import dev.usbharu.hideout.domain.model.hideout.dto.RemoteUserCreateDto
 import dev.usbharu.hideout.exception.UserNotFoundException
 import dev.usbharu.hideout.exception.ap.IllegalActivityPubObjectException
+import dev.usbharu.hideout.plugins.getAp
 import dev.usbharu.hideout.service.impl.IUserService
 import dev.usbharu.hideout.util.HttpUtil.Activity
 import io.ktor.client.*
@@ -52,7 +53,7 @@ class ActivityPubUserServiceImpl(
         )
     }
 
-    override suspend fun fetchPerson(url: String): Person {
+    override suspend fun fetchPerson(url: String, targetActor: String?): Person {
         return try {
             val userEntity = userService.findByUrl(url)
             return Person(
@@ -80,8 +81,12 @@ class ActivityPubUserServiceImpl(
             )
 
         } catch (e: UserNotFoundException) {
-            val httpResponse = httpClient.get(url) {
-                accept(ContentType.Application.Activity)
+            val httpResponse = if (targetActor != null) {
+                httpClient.getAp(url,"$targetActor#pubkey")
+            }else {
+                httpClient.get(url) {
+                    accept(ContentType.Application.Activity)
+                }
             }
             val person = Config.configData.objectMapper.readValue<Person>(httpResponse.bodyAsText())
 
