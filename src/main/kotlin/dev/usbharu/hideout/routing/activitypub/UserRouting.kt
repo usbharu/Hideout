@@ -15,6 +15,8 @@ import io.ktor.server.routing.*
 fun Routing.usersAP(activityPubUserService: ActivityPubUserService, userService: IUserService) {
     route("/users/{name}") {
         createChild(ContentTypeRouteSelector(ContentType.Application.Activity, ContentType.Application.JsonLd)).handle {
+            call.application.log.debug("Signature: ${call.request.header("Signature")}")
+            call.application.log.debug("Authorization: ${call.request.header("Authorization")}")
             val name =
                 call.parameters["name"] ?: throw ParameterNotExistException("Parameter(name='name') does not exist.")
             val person = activityPubUserService.getPersonByName(name)
