@@ -31,15 +31,14 @@ fun Routing.usersAP(activityPubUserService: ActivityPubUserService, userService:
 }
 
 class ContentTypeRouteSelector(private vararg val contentType: ContentType) : RouteSelector() {
-        override fun evaluate(context: RoutingResolveContext, segmentIndex: Int): RouteSelectorEvaluation {
+    override fun evaluate(context: RoutingResolveContext, segmentIndex: Int): RouteSelectorEvaluation {
 
+        context.call.application.log.debug("Accept: ${context.call.request.accept()}")
         val requestContentType =
             ContentType.parse(context.call.request.accept() ?: return RouteSelectorEvaluation.FailedParameter)
-        context.call.application.log.debug("Content-Type: {}", requestContentType)
-        return if (contentType.any { contentType ->
-            context.call.application.log.debug(contentType.toString())
-                contentType.match(requestContentType)
-            }) {
+
+        return if (contentType.find { contentType: ContentType -> contentType.match(requestContentType) }
+                .let { true }) {
             RouteSelectorEvaluation.Constant
         } else {
             RouteSelectorEvaluation.FailedParameter
