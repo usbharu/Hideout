@@ -54,7 +54,8 @@ class ActivityPubNoteServiceImpl(
             username = "$actor#pubkey",
             jsonLd = Create(
                 name = "Create Note",
-                `object` = note
+                `object` = note,
+                actor = note.attributedTo
             )
         )
     }
