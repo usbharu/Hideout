@@ -44,10 +44,10 @@ suspend fun HttpClient.postAp(urlString: String, username: String, jsonLd: JsonL
     }
 }
 
-suspend fun HttpClient.getAp(urlString: String,username: String):HttpResponse {
-    return this.get(urlString){
-        header("Accept",ContentType.Application.Activity)
-        header("Signature","keyId=\"$username\",algorithm=\"rsa-sha256\",headers=\"(request-target) host date\"")
+suspend fun HttpClient.getAp(urlString: String, username: String): HttpResponse {
+    return this.get(urlString) {
+        header("Accept", ContentType.Application.Activity)
+        header("Signature", "keyId=\"$username\",algorithm=\"rsa-sha256\",headers=\"(request-target) host date\"")
     }
 }
 
@@ -111,9 +111,11 @@ val httpSignaturePlugin = createClientPlugin("HttpSign", ::HttpSignaturePluginCo
                     "date" -> {
                         "Date"
                     }
+
                     "host" -> {
                         "Host"
                     }
+
                     else -> {
                         it
                     }
@@ -152,7 +154,8 @@ val httpSignaturePlugin = createClientPlugin("HttpSign", ::HttpSignaturePluginCo
 
             val signatureHeader = request.headers.getAll("Signature").orEmpty()
             request.headers.remove("Signature")
-            signatureHeader.map { it.replace("; ",",").replace(";",",") }.joinToString().let { request.header("Signature", it)}
+            signatureHeader.map { it.replace("; ", ",").replace(";", ",") }.joinToString(",")
+                .let { request.header("Signature", it) }
         }
 
     }
@@ -164,7 +167,7 @@ class KtorKeyMap(private val userAuthRepository: IUserRepository) : KeyMap {
             .substringAfterLast("/")
         val publicBytes = Base64.getDecoder().decode(
             userAuthRepository.findByNameAndDomain(
-                username,Config.configData.domain
+                username, Config.configData.domain
             )?.publicKey?.replace("-----BEGIN PUBLIC KEY-----", "-----END PUBLIC KEY-----")?.replace("", "")
                 ?.replace("\n", "")
         )
@@ -177,7 +180,7 @@ class KtorKeyMap(private val userAuthRepository: IUserRepository) : KeyMap {
             .substringAfterLast("/")
         val publicBytes = Base64.getDecoder().decode(
             userAuthRepository.findByNameAndDomain(
-                username,Config.configData.domain
+                username, Config.configData.domain
             )?.privateKey?.replace("-----BEGIN PRIVATE KEY-----", "")?.replace("-----END PRIVATE KEY-----", "")
                 ?.replace("\n", "")
         )
