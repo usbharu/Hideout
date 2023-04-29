@@ -1,0 +1,99 @@
+style:
+  ClassOrdering:
+    active: true
+
+  MandatoryBracesIfStatements:
+    active: true
+
+  MandatoryBracesLoops:
+    active: true
+
+  MultilineLambdaItParameter:
+    active: true
+
+  UseEmptyCounterpart:
+    active: true
+
+complexity:
+  CognitiveComplexMethod:
+    active: true
+
+  ComplexCondition:
+    active: true
+
+  ComplexInterface:
+    active: true
+
+  LabeledExpression:
+    active: true
+
+  NamedArguments:
+    active: true
+
+  NestedBlockDepth:
+    active: true
+
+  NestedScopeFunctions:
+    active: true
+
+  ReplaceSafeCallChainWithRun:
+    active: true
+
+  StringLiteralDuplication:
+    active: true
+
+exceptions:
+  ExceptionRaisedInUnexpectedLocation:
+    active: true
+
+  NotImplementedDeclaration:
+    active: true
+
+  ObjectExtendsThrowable:
+    active: true
+
+  ThrowingExceptionInMain:
+    active: true
+
+  ThrowingExceptionsWithoutMessageOrCause:
+    active: true
+
+  ThrowingNewInstanceOfSameException:
+    active: true
+
+  TooGenericExceptionCaught:
+    active: true
+
+  TooGenericExceptionThrown:
+    active: true
+
+formatting:
+  Indentation:
+    indentSize: 4
+
+naming:
+  FunctionMaxLength:
+    active: true
+
+  FunctionMinLength:
+    active: true
+
+  LambdaParameterNaming:
+    active: true
+
+performance:
+  UnnecessaryPartOfBinaryExpression:
+    active: true
+
+  UnnecessaryTemporaryInstantiation:
+    active: true
+
+potential-bugs:
+  CastToNullableType:
+    active: true
+
+  DontDowncastCollectionTypes:
+    active: true
+
+  ElseCaseInsteadOfExhaustiveWhen:
+    active: true
