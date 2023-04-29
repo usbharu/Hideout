@@ -47,7 +47,7 @@ suspend fun HttpClient.postAp(urlString: String, username: String, jsonLd: JsonL
 suspend fun HttpClient.getAp(urlString: String,username: String):HttpResponse {
     return this.get(urlString){
         header("Accept",ContentType.Application.Activity)
-        header("Signature","keyId=\"$username\",algorithm=\"rsa-sha256\",headers=\"(request-target) date\"")
+        header("Signature","keyId=\"$username\",algorithm=\"rsa-sha256\",headers=\"(request-target) host date\"")
     }
 }
 
@@ -63,6 +63,7 @@ val httpSignaturePlugin = createClientPlugin("HttpSign", ::HttpSignaturePluginCo
 
 
         request.header("Date", format.format(Date()))
+        request.header("Host",request.url.host+request.url.port.toString())
         println(request.bodyType)
         println(request.bodyType?.type)
         if (request.bodyType?.type == String::class) {
@@ -110,7 +111,9 @@ val httpSignaturePlugin = createClientPlugin("HttpSign", ::HttpSignaturePluginCo
                     "date" -> {
                         "Date"
                     }
-
+                    "host" -> {
+                        "Host"
+                    }
                     else -> {
                         it
                     }
