@@ -44,6 +44,13 @@ suspend fun HttpClient.postAp(urlString: String, username: String, jsonLd: JsonL
     }
 }
 
+suspend fun HttpClient.getAp(urlString: String,username: String):HttpResponse {
+    return this.get(urlString){
+        header("Accept",ContentType.Application.Activity)
+        header("Signature","keyId=\"$username\",algorithm=\"#rsa-sha\",headers=\"(request-target) digest date\"")
+    }
+}
+
 class HttpSignaturePluginConfig {
     lateinit var keyMap: KeyMap
 }
