@@ -8,11 +8,13 @@ open class Create : Object {
         type: List<String> = emptyList(),
         name: String? = null,
         `object`: Object?,
-        actor: String? = null
+        actor: String? = null,
+        id: String? = null
     ) : super(
         add(type, "Create"),
         name,
-        actor
+        actor,
+        id
     ) {
         this.`object` = `object`
     }
