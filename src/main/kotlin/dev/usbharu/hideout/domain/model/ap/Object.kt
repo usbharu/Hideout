@@ -10,12 +10,14 @@ open class Object : JsonLd {
     private var type: List<String> = emptyList()
     var name: String? = null
     var actor: String? = null
+    var id:String? = null
 
     protected constructor()
-    constructor(type: List<String>, name: String? = null,actor:String? = null) : super() {
+    constructor(type: List<String>, name: String? = null,actor:String? = null,id:String? = null) : super() {
         this.type = type
         this.name = name
         this.actor = actor
+        this.id = id
     }
 
     companion object {

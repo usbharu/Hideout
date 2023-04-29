@@ -1,7 +1,6 @@
 package dev.usbharu.hideout.domain.model.ap
 
 open class Person : Object {
-    private var id: String? = null
     var preferredUsername: String? = null
     var summary: String? = null
     var inbox: String? = null
@@ -22,8 +21,7 @@ open class Person : Object {
         url: String?,
         icon: Image?,
         publicKey: Key?
-    ) : super(add(type, "Person"), name) {
-        this.id = id
+    ) : super(add(type, "Person"), name,id = id) {
         this.preferredUsername = preferredUsername
         this.summary = summary
         this.inbox = inbox
