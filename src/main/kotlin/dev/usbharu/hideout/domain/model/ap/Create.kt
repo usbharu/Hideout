@@ -4,7 +4,16 @@ open class Create : Object {
     var `object`: Object? = null
 
     protected constructor() : super()
-    constructor(type: List<String> = emptyList(), name: String, `object`: Object?) : super(add(type, "Create"), name) {
+    constructor(
+        type: List<String> = emptyList(),
+        name: String? = null,
+        `object`: Object?,
+        actor: String? = null
+    ) : super(
+        add(type, "Create"),
+        name,
+        actor
+    ) {
         this.`object` = `object`
     }
 
