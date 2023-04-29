@@ -59,9 +59,9 @@ dependencies {
     implementation("io.insert-koin:koin-core:$koin_version")
     implementation("io.insert-koin:koin-ktor:$koin_version")
     implementation("io.insert-koin:koin-logger-slf4j:$koin_version")
-    implementation("io.ktor:ktor-client-logging-jvm:2.2.4")
-    implementation("io.ktor:ktor-server-host-common-jvm:2.2.4")
-    implementation("io.ktor:ktor-server-status-pages-jvm:2.2.4")
+    implementation("io.ktor:ktor-client-logging-jvm:$ktor_version")
+    implementation("io.ktor:ktor-server-host-common-jvm:$ktor_version")
+    implementation("io.ktor:ktor-server-status-pages-jvm:$ktor_version")
 
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
@@ -79,7 +79,7 @@ dependencies {
 
 
     implementation("org.drewcarlson:kjob-core:0.6.0")
-    testImplementation("io.ktor:ktor-server-test-host-jvm:2.2.4")
+    testImplementation("io.ktor:ktor-server-test-host-jvm:$ktor_version")
 
     testImplementation("org.slf4j:slf4j-simple:2.0.7")
 
