@@ -63,7 +63,7 @@ val httpSignaturePlugin = createClientPlugin("HttpSign", ::HttpSignaturePluginCo
 
 
         request.header("Date", format.format(Date()))
-        request.header("Host",request.url.host+request.url.port.toString())
+        request.header("Host", "${request.url.host}")
         println(request.bodyType)
         println(request.bodyType?.type)
         if (request.bodyType?.type == String::class) {
