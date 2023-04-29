@@ -50,8 +50,9 @@ class ActivityPubFollowServiceImplTest {
             val follow = scheduleContext.props.props[ReceiveFollowJob.follow.name]
             assertEquals("https://follower.example.com", actor)
             assertEquals("https://example.com", targetActor)
+            //language=JSON
             assertEquals(
-                """{"type":"Follow","name":"Follow","object":"https://example.com","actor":"https://follower.example.com","@context":null}""",
+                """{"type":"Follow","name":"Follow","actor":"https://follower.example.com","object":"https://example.com","@context":null}""",
                 follow
             )
         }
