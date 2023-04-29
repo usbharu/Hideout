@@ -3,8 +3,6 @@ package dev.usbharu.hideout.plugins
 import dev.usbharu.hideout.service.IUserAuthService
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
-import io.ktor.server.sessions.*
-import kotlin.collections.set
 
 data class UserSession(val username: String) : Principal
 

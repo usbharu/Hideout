@@ -1,10 +1,10 @@
 package dev.usbharu.hideout.plugins
 
 import io.ktor.http.*
+import io.ktor.server.application.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.plugins.defaultheaders.*
 import io.ktor.server.plugins.forwardedheaders.*
-import io.ktor.server.application.*
 
 fun Application.configureHTTP() {
     install(CORS) {

@@ -1,8 +1,8 @@
 package dev.usbharu.hideout.plugins
 
-import dev.usbharu.hideout.domain.model.ap.JsonLd
 import dev.usbharu.hideout.config.Config
-import dev.usbharu.hideout.service.IUserAuthService
+import dev.usbharu.hideout.domain.model.ap.JsonLd
+import dev.usbharu.hideout.repository.IUserRepository
 import dev.usbharu.hideout.service.impl.UserAuthService
 import dev.usbharu.hideout.util.HttpUtil.Activity
 import io.ktor.client.*
@@ -44,6 +44,13 @@ suspend fun HttpClient.postAp(urlString: String, username: String, jsonLd: JsonL
     }
 }
 
+suspend fun HttpClient.getAp(urlString: String, username: String): HttpResponse {
+    return this.get(urlString) {
+        header("Accept", ContentType.Application.Activity)
+        header("Signature", "keyId=\"$username\",algorithm=\"rsa-sha256\",headers=\"(request-target) host date\"")
+    }
+}
+
 class HttpSignaturePluginConfig {
     lateinit var keyMap: KeyMap
 }
@@ -56,6 +63,7 @@ val httpSignaturePlugin = createClientPlugin("HttpSign", ::HttpSignaturePluginCo
 
 
         request.header("Date", format.format(Date()))
+        request.header("Host", "${request.url.host}")
         println(request.bodyType)
         println(request.bodyType?.type)
         if (request.bodyType?.type == String::class) {
@@ -63,8 +71,8 @@ val httpSignaturePlugin = createClientPlugin("HttpSign", ::HttpSignaturePluginCo
             println("Digest !!")
 //            UserAuthService.sha256.reset()
             val digest =
-            Base64.getEncoder().encodeToString(UserAuthService.sha256.digest(body.toByteArray(Charsets.UTF_8)))
-            request.headers.append("Digest", "sha-256="+digest)
+                Base64.getEncoder().encodeToString(UserAuthService.sha256.digest(body.toByteArray(Charsets.UTF_8)))
+            request.headers.append("Digest", "sha-256=" + digest)
         }
 
         if (request.headers.contains("Signature")) {
@@ -104,6 +112,10 @@ val httpSignaturePlugin = createClientPlugin("HttpSign", ::HttpSignaturePluginCo
                         "Date"
                     }
 
+                    "host" -> {
+                        "Host"
+                    }
+
                     else -> {
                         it
                     }
@@ -126,7 +138,7 @@ val httpSignaturePlugin = createClientPlugin("HttpSign", ::HttpSignaturePluginCo
 
                 override fun addHeader(name: String?, value: String?) {
                     val split = value?.split("=").orEmpty()
-                    name?.let { request.header(it, split.get(0)+"=\""+split.get(1).trim('"')+"\"") }
+                    name?.let { request.header(it, split.get(0) + "=\"" + split.get(1).trim('"') + "\"") }
                 }
 
                 override fun method(): String {
@@ -139,19 +151,24 @@ val httpSignaturePlugin = createClientPlugin("HttpSign", ::HttpSignaturePluginCo
 
 
             })
+
+            val signatureHeader = request.headers.getAll("Signature").orEmpty()
+            request.headers.remove("Signature")
+            signatureHeader.map { it.replace("; ", ",").replace(";", ",") }.joinToString(",")
+                .let { request.header("Signature", it) }
         }
 
     }
 }
 
-class KtorKeyMap(private val userAuthRepository: IUserAuthService) : KeyMap {
+class KtorKeyMap(private val userAuthRepository: IUserRepository) : KeyMap {
     override fun getPublicKey(keyId: String?): PublicKey = runBlocking {
         val username = (keyId ?: throw IllegalArgumentException("keyId is null")).substringBeforeLast("#pubkey")
             .substringAfterLast("/")
         val publicBytes = Base64.getDecoder().decode(
-            userAuthRepository.findByUsername(
-                username
-            ).publicKey?.replace("-----BEGIN PUBLIC KEY-----", "-----END PUBLIC KEY-----")?.replace("", "")
+            userAuthRepository.findByNameAndDomain(
+                username, Config.configData.domain
+            )?.publicKey?.replace("-----BEGIN PUBLIC KEY-----", "-----END PUBLIC KEY-----")?.replace("", "")
                 ?.replace("\n", "")
         )
         val x509EncodedKeySpec = X509EncodedKeySpec(publicBytes)
@@ -162,9 +179,9 @@ class KtorKeyMap(private val userAuthRepository: IUserAuthService) : KeyMap {
         val username = (keyId ?: throw IllegalArgumentException("keyId is null")).substringBeforeLast("#pubkey")
             .substringAfterLast("/")
         val publicBytes = Base64.getDecoder().decode(
-            userAuthRepository.findByUsername(
-                username
-            ).privateKey?.replace("-----BEGIN PRIVATE KEY-----", "")?.replace("-----END PRIVATE KEY-----", "")
+            userAuthRepository.findByNameAndDomain(
+                username, Config.configData.domain
+            )?.privateKey?.replace("-----BEGIN PRIVATE KEY-----", "")?.replace("-----END PRIVATE KEY-----", "")
                 ?.replace("\n", "")
         )
         val x509EncodedKeySpec = PKCS8EncodedKeySpec(publicBytes)

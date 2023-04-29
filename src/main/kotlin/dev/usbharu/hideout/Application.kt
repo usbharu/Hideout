@@ -8,12 +8,17 @@ import dev.usbharu.hideout.config.ConfigData
 import dev.usbharu.hideout.domain.model.job.DeliverPostJob
 import dev.usbharu.hideout.domain.model.job.ReceiveFollowJob
 import dev.usbharu.hideout.plugins.*
-import dev.usbharu.hideout.repository.*
+import dev.usbharu.hideout.repository.IPostRepository
+import dev.usbharu.hideout.repository.IUserRepository
+import dev.usbharu.hideout.repository.PostRepositoryImpl
+import dev.usbharu.hideout.repository.UserRepository
 import dev.usbharu.hideout.routing.register
 import dev.usbharu.hideout.service.IPostService
 import dev.usbharu.hideout.service.IUserAuthService
+import dev.usbharu.hideout.service.IdGenerateService
 import dev.usbharu.hideout.service.TwitterSnowflakeIdGenerateService
 import dev.usbharu.hideout.service.activitypub.*
+import dev.usbharu.hideout.service.impl.IUserService
 import dev.usbharu.hideout.service.impl.PostService
 import dev.usbharu.hideout.service.impl.UserAuthService
 import dev.usbharu.hideout.service.impl.UserService
@@ -57,9 +62,8 @@ fun Application.parent() {
             )
         }
 
-        single<IUserRepository> { UserRepository(get()) }
-        single<IUserAuthRepository> { UserAuthRepository(get()) }
-        single<IUserAuthService> { UserAuthService(get(), get()) }
+        single<IUserRepository> { UserRepository(get(),get()) }
+        single<IUserAuthService> { UserAuthService(get()) }
         single<HttpSignatureVerifyService> { HttpSignatureVerifyServiceImpl(get()) }
         single<JobQueueParentService> {
             val kJobJobQueueService = KJobJobQueueParentService(get())
@@ -79,11 +83,12 @@ fun Application.parent() {
         }
         single<ActivityPubFollowService> { ActivityPubFollowServiceImpl(get(), get(), get(), get()) }
         single<ActivityPubService> { ActivityPubServiceImpl(get(), get()) }
-        single<UserService> { UserService(get()) }
-        single<ActivityPubUserService> { ActivityPubUserServiceImpl(get(), get(), get()) }
+        single<IUserService> { UserService(get(),get()) }
+        single<ActivityPubUserService> { ActivityPubUserServiceImpl(get(), get()) }
         single<ActivityPubNoteService> { ActivityPubNoteServiceImpl(get(), get(), get()) }
         single<IPostService> { PostService(get(), get()) }
-        single<IPostRepository> { PostRepositoryImpl(get(), TwitterSnowflakeIdGenerateService) }
+        single<IPostRepository> { PostRepositoryImpl(get(), get()) }
+        single<IdGenerateService> {TwitterSnowflakeIdGenerateService}
     }
 
 
@@ -92,11 +97,11 @@ fun Application.parent() {
     configureStaticRouting()
     configureMonitoring()
     configureSerialization()
-    register(inject<IUserAuthService>().value)
+    register(inject<IUserService>().value)
     configureRouting(
         inject<HttpSignatureVerifyService>().value,
         inject<ActivityPubService>().value,
-        inject<UserService>().value,
+        inject<IUserService>().value,
         inject<ActivityPubUserService>().value,
         inject<IPostService>().value
     )
