@@ -97,6 +97,7 @@ fun Application.parent() {
     configureMonitoring()
     configureSerialization()
     register(inject<IUserService>().value)
+    configureSecurity(inject<IUserAuthService>().value)
     configureRouting(
         inject<HttpSignatureVerifyService>().value,
         inject<ActivityPubService>().value,
