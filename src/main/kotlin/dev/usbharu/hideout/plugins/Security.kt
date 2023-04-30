@@ -7,7 +7,10 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import dev.usbharu.hideout.domain.model.hideout.form.UserLogin
 import dev.usbharu.hideout.property
+import dev.usbharu.hideout.repository.IMetaRepository
 import dev.usbharu.hideout.service.IUserAuthService
+import dev.usbharu.hideout.util.JsonWebKeyUtil
+import dev.usbharu.hideout.util.RsaUtil
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -15,19 +18,27 @@ import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import kotlinx.coroutines.runBlocking
 import java.security.KeyFactory
 import java.security.interfaces.RSAPrivateKey
-import java.security.interfaces.RSAPublicKey
 import java.security.spec.PKCS8EncodedKeySpec
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 const val TOKEN_AUTH = "jwt-auth"
 
-fun Application.configureSecurity(userAuthService: IUserAuthService) {
+fun Application.configureSecurity(userAuthService: IUserAuthService, metaRepository: IMetaRepository) {
 
-    val privateKeyString = property("jwt.privateKey")
-    val issuer = property("jwt.issuer")
+    val privateKeyString = runBlocking {
+        requireNotNull(metaRepository.get()).jwt.privateKey
+    }
+    val publicKey = runBlocking {
+        val publicKey = requireNotNull(metaRepository.get()).jwt.publicKey
+        println(publicKey)
+        RsaUtil.decodeRsaPublicKey(Base64.getDecoder().decode(publicKey))
+    }
+    println(privateKeyString)
+    val issuer = property("hideout.url")
 //    val audience = property("jwt.audience")
     val myRealm = property("jwt.realm")
     val jwkProvider = JwkProviderBuilder(issuer)
@@ -57,8 +68,6 @@ fun Application.configureSecurity(userAuthService: IUserAuthService) {
             if (check.not()) {
                 return@post call.respond(HttpStatusCode.Unauthorized)
             }
-
-            val publicKey = jwkProvider.get("6f8856ed-9189-488f-9011-0ff4b6c08edc").publicKey
             val keySpecPKCS8 = PKCS8EncodedKeySpec(Base64.getDecoder().decode(privateKeyString))
             val privateKey = KeyFactory.getInstance("RSA").generatePrivate(keySpecPKCS8)
             val token = JWT.create()
@@ -66,22 +75,16 @@ fun Application.configureSecurity(userAuthService: IUserAuthService) {
 //                .withIssuer(issuer)
                 .withClaim("username", user.username)
                 .withExpiresAt(Date(System.currentTimeMillis() + 60000))
-                .sign(Algorithm.RSA256(publicKey as RSAPublicKey, privateKey as RSAPrivateKey))
+                .sign(Algorithm.RSA256(publicKey, privateKey as RSAPrivateKey))
             return@post call.respond(hashSetOf("token" to token))
         }
 
-        get("/.well-known/jwks.json"){
+        get("/.well-known/jwks.json") {
             //language=JSON
-            call.respondText(contentType = ContentType.Application.Json,text = """{
-  "keys": [
-    {
-      "kty": "RSA",
-      "e": "AQAB",
-      "kid": "6f8856ed-9189-488f-9011-0ff4b6c08edc",
-      "n":"tfJaLrzXILUg1U3N1KV8yJr92GHn5OtYZR7qWk1Mc4cy4JGjklYup7weMjBD9f3bBVoIsiUVX6xNcYIr0Ie0AQ"
-    }
-  ]
-}""")
+            call.respondText(
+                contentType = ContentType.Application.Json,
+                text = JsonWebKeyUtil.publicKeyToJwk(requireNotNull(metaRepository.get()).jwt.publicKey)
+            )
         }
     }
 }
