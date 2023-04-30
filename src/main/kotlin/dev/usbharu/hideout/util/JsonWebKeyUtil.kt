@@ -17,7 +17,7 @@ object JsonWebKeyUtil {
     fun publicKeyToJwk(publicKey: RSAPublicKey): String {
         val e = encodeBase64UInt(publicKey.publicExponent)
         val n = encodeBase64UInt(publicKey.modulus)
-        return """{"e":"$e","n":"$n","use":"sig","kty":"RSA"}"""
+        return """{"keys":[{"e":"$e","n":"$n","use":"sig","kty":"RSA"}]}"""
     }
 
     private fun encodeBase64UInt(bigInteger: BigInteger, minLength: Int = -1): String {
