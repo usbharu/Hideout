@@ -8,15 +8,9 @@ import dev.usbharu.hideout.config.ConfigData
 import dev.usbharu.hideout.domain.model.job.DeliverPostJob
 import dev.usbharu.hideout.domain.model.job.ReceiveFollowJob
 import dev.usbharu.hideout.plugins.*
-import dev.usbharu.hideout.repository.IPostRepository
-import dev.usbharu.hideout.repository.IUserRepository
-import dev.usbharu.hideout.repository.PostRepositoryImpl
-import dev.usbharu.hideout.repository.UserRepository
+import dev.usbharu.hideout.repository.*
 import dev.usbharu.hideout.routing.register
-import dev.usbharu.hideout.service.IPostService
-import dev.usbharu.hideout.service.IUserAuthService
-import dev.usbharu.hideout.service.IdGenerateService
-import dev.usbharu.hideout.service.TwitterSnowflakeIdGenerateService
+import dev.usbharu.hideout.service.*
 import dev.usbharu.hideout.service.activitypub.*
 import dev.usbharu.hideout.service.impl.IUserService
 import dev.usbharu.hideout.service.impl.PostService
@@ -32,6 +26,7 @@ import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.server.application.*
 import kjob.core.kjob
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.Database
 import org.koin.ktor.ext.inject
 
@@ -89,15 +84,19 @@ fun Application.parent() {
         single<IPostService> { PostService(get(), get()) }
         single<IPostRepository> { PostRepositoryImpl(get(), get()) }
         single<IdGenerateService> { TwitterSnowflakeIdGenerateService }
+        single<IMetaRepository>{ MetaRepositoryImpl(get()) }
+        single<IServerInitialiseService> { ServerInitialiseServiceImpl(get()) }
     }
-
     configureKoin(module)
+    runBlocking {
+        inject<IServerInitialiseService>().value.init()
+    }
     configureHTTP()
     configureStaticRouting()
     configureMonitoring()
     configureSerialization()
     register(inject<IUserService>().value)
-    configureSecurity(inject<IUserAuthService>().value)
+    configureSecurity(inject<IUserAuthService>().value,inject<IMetaRepository>().value)
     configureRouting(
         inject<HttpSignatureVerifyService>().value,
         inject<ActivityPubService>().value,
