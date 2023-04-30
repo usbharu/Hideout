@@ -8,16 +8,16 @@ import java.util.*
 
 object JsonWebKeyUtil {
 
-    fun publicKeyToJwk(publicKey: String): String {
+    fun publicKeyToJwk(publicKey: String,kid:String): String {
         val x509EncodedKeySpec = X509EncodedKeySpec(Base64.getDecoder().decode(publicKey))
         val generatePublic = KeyFactory.getInstance("RSA").generatePublic(x509EncodedKeySpec)
-        return publicKeyToJwk(generatePublic as RSAPublicKey)
+        return publicKeyToJwk(generatePublic as RSAPublicKey,kid)
     }
 
-    fun publicKeyToJwk(publicKey: RSAPublicKey): String {
+    fun publicKeyToJwk(publicKey: RSAPublicKey,kid:String): String {
         val e = encodeBase64UInt(publicKey.publicExponent)
         val n = encodeBase64UInt(publicKey.modulus)
-        return """{"keys":[{"e":"$e","n":"$n","use":"sig","kty":"RSA"}]}"""
+        return """{"keys":[{"e":"$e","n":"$n","use":"sig","kid":"$kid","kty":"RSA"}]}"""
     }
 
     private fun encodeBase64UInt(bigInteger: BigInteger, minLength: Int = -1): String {

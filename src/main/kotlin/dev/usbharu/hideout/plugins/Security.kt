@@ -5,6 +5,7 @@ package dev.usbharu.hideout.plugins
 import com.auth0.jwk.JwkProviderBuilder
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.domain.model.hideout.form.UserLogin
 import dev.usbharu.hideout.property
 import dev.usbharu.hideout.repository.IMetaRepository
@@ -71,8 +72,9 @@ fun Application.configureSecurity(userAuthService: IUserAuthService, metaReposit
             val keySpecPKCS8 = PKCS8EncodedKeySpec(Base64.getDecoder().decode(privateKeyString))
             val privateKey = KeyFactory.getInstance("RSA").generatePrivate(keySpecPKCS8)
             val token = JWT.create()
-//                .withAudience(audience)
-//                .withIssuer(issuer)
+                .withAudience("${Config.configData.url}/users/${user.username}")
+                .withIssuer(issuer)
+                .withKeyId(metaRepository.get()?.jwt?.kid.toString())
                 .withClaim("username", user.username)
                 .withExpiresAt(Date(System.currentTimeMillis() + 60000))
                 .sign(Algorithm.RSA256(publicKey, privateKey as RSAPrivateKey))
@@ -81,9 +83,10 @@ fun Application.configureSecurity(userAuthService: IUserAuthService, metaReposit
 
         get("/.well-known/jwks.json") {
             //language=JSON
+            val meta = requireNotNull(metaRepository.get())
             call.respondText(
                 contentType = ContentType.Application.Json,
-                text = JsonWebKeyUtil.publicKeyToJwk(requireNotNull(metaRepository.get()).jwt.publicKey)
+                text = JsonWebKeyUtil.publicKeyToJwk(meta.jwt.publicKey,meta.jwt.kid.toString())
             )
         }
     }
