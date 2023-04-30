@@ -43,8 +43,8 @@ class ServerInitialiseServiceImpl(private val metaRepository: IMetaRepository) :
         val generateKeyPair = keyPairGenerator.generateKeyPair()
         val jwt = Jwt(
             UUID.randomUUID(),
-            Base64.getEncoder().encodeToString(generateKeyPair.public.encoded),
-            Base64.getEncoder().encodeToString(generateKeyPair.private.encoded)
+            Base64.getEncoder().encodeToString(generateKeyPair.private.encoded),
+            Base64.getEncoder().encodeToString(generateKeyPair.public.encoded)
         )
         val meta = Meta(implementationVersion, jwt)
         metaRepository.save(meta)
