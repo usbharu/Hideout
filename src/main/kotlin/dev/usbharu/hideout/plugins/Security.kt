@@ -107,14 +107,14 @@ fun Application.configureSecurity(
         post("/refresh-token") {
             val refreshToken = call.receive<RefreshToken>()
             val findByToken = refreshTokenRepository.findByToken(refreshToken.refreshToken)
-                ?: return@post call.respond(HttpStatusCode.Forbidden)
+                ?: return@post call.respondText("token not found",status = HttpStatusCode.Forbidden)
 
             if (findByToken.createdAt.isAfter(Instant.now())) {
-                return@post call.respond(HttpStatusCode.Forbidden)
+                return@post call.respondText("created_at", status =  HttpStatusCode.Forbidden)
             }
 
-            if (findByToken.expiresAt.isAfter(Instant.now())) {
-                return@post call.respond(HttpStatusCode.Forbidden)
+            if (findByToken.expiresAt.isBefore(Instant.now())) {
+                return@post call.respondText( "expires_at", status =  HttpStatusCode.Forbidden)
             }
 
             val user = userRepository.findById(findByToken.userId)

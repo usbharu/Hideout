@@ -101,7 +101,8 @@ fun Application.parent() {
         inject<IUserAuthService>().value,
         inject<IMetaRepository>().value,
         inject<IJwtRefreshTokenRepository>().value,
-        inject<IUserRepository>().value
+        inject<IUserRepository>().value,
+        inject<IdGenerateService>().value
     )
     configureRouting(
         inject<HttpSignatureVerifyService>().value,
