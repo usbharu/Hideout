@@ -10,6 +10,7 @@ export default defineConfig({
             '/api': 'http://localhost:8080',
             '/login': 'http://localhost:8080',
             '/auth-check': 'http://localhost:8080',
+            '/refresh-token': 'http://localhost:8080',
         }
     },
     root: './src/main/web',

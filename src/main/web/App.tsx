@@ -18,13 +18,24 @@ export const App: Component = () => {
                 headers: {
                     'Content-Type': 'application/json'
                 }
-            }).then(res => res.text())
-                .then(res => fetch("/auth-check", {
-                    method: "GET",
+            }).then(res => res.json())
+                // .then(res => fetch("/auth-check", {
+                //     method: "GET",
+                //     headers: {
+                //         'Authorization': 'Bearer ' + res.token
+                //     }
+                // }))
+                // .then(res => res.json())
+                .then(res => {
+                console.log(res.token);
+                fetch("/refresh-token", {
+                    method: "POST",
                     headers: {
-                        'Authorization': 'Bearer ' + res
-                    }
-                })).then(res => console.log(res))
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({refreshToken: res.refreshToken}),
+                }).then(res=> res.json()).then(res => console.log(res.token))
+            })
         }
 
         }>
