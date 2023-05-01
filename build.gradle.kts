@@ -41,6 +41,10 @@ tasks.withType<ShadowJar> {
     }
 }
 
+tasks.clean {
+    delete += listOf("$rootDir/src/main/resources/static")
+}
+
 repositories {
     mavenCentral()
 }
