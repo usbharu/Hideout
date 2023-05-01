@@ -51,6 +51,7 @@ fun Application.configureSecurity(userAuthService: IUserAuthService, metaReposit
             realm = myRealm
             verifier(jwkProvider, issuer) {
                 acceptLeeway(3)
+
             }
             validate { jwtCredential ->
                 if (jwtCredential.payload.getClaim("username").asString().isNotEmpty()) {
@@ -58,6 +59,9 @@ fun Application.configureSecurity(userAuthService: IUserAuthService, metaReposit
                 } else {
                     null
                 }
+            }
+            challenge { defaultScheme, realm ->
+                call.respondRedirect("/login")
             }
         }
     }
@@ -78,7 +82,7 @@ fun Application.configureSecurity(userAuthService: IUserAuthService, metaReposit
                 .withClaim("username", user.username)
                 .withExpiresAt(Date(System.currentTimeMillis() + 60000))
                 .sign(Algorithm.RSA256(publicKey, privateKey as RSAPrivateKey))
-            return@post call.respond(hashSetOf("token" to token))
+            return@post call.respond(token)
         }
 
         get("/.well-known/jwks.json") {
