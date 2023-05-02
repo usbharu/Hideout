@@ -1,16 +1,22 @@
 package dev.usbharu.hideout.repository
 
 import dev.usbharu.hideout.domain.model.hideout.entity.JwtRefreshToken
+import dev.usbharu.hideout.service.IdGenerateService
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.Instant
 
-class JwtRefreshTokenRepositoryImpl(private val database: Database) : IJwtRefreshTokenRepository {
+class JwtRefreshTokenRepositoryImpl(
+    private val database: Database,
+    private val idGenerateService: IdGenerateService
+) :
+    IJwtRefreshTokenRepository {
 
     init {
-        transaction(database){
+        transaction(database) {
             SchemaUtils.create(JwtRefreshTokens)
             SchemaUtils.createMissingTablesAndColumns(JwtRefreshTokens)
         }
@@ -18,6 +24,8 @@ class JwtRefreshTokenRepositoryImpl(private val database: Database) : IJwtRefres
 
     suspend fun <T> query(block: suspend () -> T): T =
         newSuspendedTransaction(Dispatchers.IO) { block() }
+
+    override suspend fun generateId(): Long = idGenerateService.generateId()
 
     override suspend fun save(token: JwtRefreshToken) {
         query {
@@ -49,6 +57,42 @@ class JwtRefreshTokenRepositoryImpl(private val database: Database) : IJwtRefres
     override suspend fun findByToken(token: String): JwtRefreshToken? {
         return query {
             JwtRefreshTokens.select { JwtRefreshTokens.refreshToken.eq(token) }.singleOrNull()?.toJwtRefreshToken()
+        }
+    }
+
+    override suspend fun findByUserId(userId: Long): JwtRefreshToken? {
+        return query {
+            JwtRefreshTokens.select { JwtRefreshTokens.userId.eq(userId) }.singleOrNull()?.toJwtRefreshToken()
+        }
+    }
+
+    override suspend fun delete(token: JwtRefreshToken) {
+        return query {
+            JwtRefreshTokens.deleteWhere { JwtRefreshTokens.id eq token.id }
+        }
+    }
+
+    override suspend fun deleteById(id: Long) {
+        return query {
+            JwtRefreshTokens.deleteWhere { JwtRefreshTokens.id eq id }
+        }
+    }
+
+    override suspend fun deleteByToken(token: String) {
+        return query {
+            JwtRefreshTokens.deleteWhere { JwtRefreshTokens.refreshToken eq token }
+        }
+    }
+
+    override suspend fun deleteByUserId(userId: Long) {
+        return query {
+            JwtRefreshTokens.deleteWhere { JwtRefreshTokens.userId eq userId }
+        }
+    }
+
+    override suspend fun deleteAll() {
+        return query {
+            JwtRefreshTokens.deleteAll()
         }
     }
 }

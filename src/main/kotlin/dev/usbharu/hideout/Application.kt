@@ -86,7 +86,9 @@ fun Application.parent() {
         single<IdGenerateService> { TwitterSnowflakeIdGenerateService }
         single<IMetaRepository> { MetaRepositoryImpl(get()) }
         single<IServerInitialiseService> { ServerInitialiseServiceImpl(get()) }
-        single<IJwtRefreshTokenRepository> { JwtRefreshTokenRepositoryImpl(get()) }
+        single<IJwtRefreshTokenRepository> { JwtRefreshTokenRepositoryImpl(get(),get()) }
+        single<IMetaService> { MetaServiceImpl(get()) }
+        single<IJwtService> { JwtServiceImpl(get(),get(),get()) }
     }
     configureKoin(module)
     runBlocking {
@@ -99,10 +101,9 @@ fun Application.parent() {
     register(inject<IUserService>().value)
     configureSecurity(
         inject<IUserAuthService>().value,
-        inject<IMetaRepository>().value,
-        inject<IJwtRefreshTokenRepository>().value,
+        inject<IMetaService>().value,
         inject<IUserRepository>().value,
-        inject<IdGenerateService>().value
+        inject<IJwtService>().value
     )
     configureRouting(
         inject<HttpSignatureVerifyService>().value,
