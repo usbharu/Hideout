@@ -12,8 +12,12 @@ object RsaUtil {
         return KeyFactory.getInstance("RSA").generatePublic(x509EncodedKeySpec) as RSAPublicKey
     }
 
+    fun decodeRsaPublicKey(encoded: String): RSAPublicKey = decodeRsaPublicKey(Base64Util.decode(encoded))
+
     fun decodeRsaPrivateKey(byteArray: ByteArray):RSAPrivateKey{
         val pkcS8EncodedKeySpec = PKCS8EncodedKeySpec(byteArray)
         return KeyFactory.getInstance("RSA").generatePrivate(pkcS8EncodedKeySpec) as RSAPrivateKey
     }
+
+    fun decodeRsaPrivateKey(encoded: String):RSAPrivateKey  = decodeRsaPrivateKey(Base64Util.decode(encoded))
 }
