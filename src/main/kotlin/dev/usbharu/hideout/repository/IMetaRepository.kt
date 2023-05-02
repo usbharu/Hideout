@@ -6,5 +6,5 @@ interface IMetaRepository {
 
     suspend fun save(meta: Meta)
 
-    suspend fun get():Meta?
+    suspend fun get(): Meta?
 }

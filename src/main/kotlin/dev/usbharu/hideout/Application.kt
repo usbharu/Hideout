@@ -38,7 +38,7 @@ val Application.property: Application.(propertyName: String) -> String
     }
 
 // application.conf references the main function. This annotation prevents the IDE from marking it as unused.
-@Suppress("unused")
+@Suppress("unused", "LongMethod")
 fun Application.parent() {
     Config.configData = ConfigData(
         url = property("hideout.url"),
@@ -86,9 +86,9 @@ fun Application.parent() {
         single<IdGenerateService> { TwitterSnowflakeIdGenerateService }
         single<IMetaRepository> { MetaRepositoryImpl(get()) }
         single<IServerInitialiseService> { ServerInitialiseServiceImpl(get()) }
-        single<IJwtRefreshTokenRepository> { JwtRefreshTokenRepositoryImpl(get(),get()) }
+        single<IJwtRefreshTokenRepository> { JwtRefreshTokenRepositoryImpl(get(), get()) }
         single<IMetaService> { MetaServiceImpl(get()) }
-        single<IJwtService> { JwtServiceImpl(get(),get(),get()) }
+        single<IJwtService> { JwtServiceImpl(get(), get(), get()) }
     }
     configureKoin(module)
     runBlocking {

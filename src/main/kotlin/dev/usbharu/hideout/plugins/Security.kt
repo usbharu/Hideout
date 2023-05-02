@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit
 
 const val TOKEN_AUTH = "jwt-auth"
 
+@Suppress("MagicNumber")
 fun Application.configureSecurity(
     userAuthService: IUserAuthService,
     metaService: IMetaService,
@@ -39,7 +40,6 @@ fun Application.configureSecurity(
         jwt(TOKEN_AUTH) {
             verifier(jwkProvider, issuer) {
                 acceptLeeway(3)
-
             }
             validate { jwtCredential ->
                 if (jwtCredential.payload.getClaim("username").asString().isNotEmpty()) {
