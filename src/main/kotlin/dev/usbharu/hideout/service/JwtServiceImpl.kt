@@ -18,6 +18,7 @@ import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.*
 
+@Suppress("InjectDispatcher")
 class JwtServiceImpl(
     private val metaService: IMetaService,
     private val refreshTokenRepository: IJwtRefreshTokenRepository,
@@ -42,6 +43,7 @@ class JwtServiceImpl(
         }
     }
 
+    @Suppress("MagicNumber")
     override suspend fun createToken(user: User): JwtToken {
         val now = Instant.now()
         val token = JWT.create()

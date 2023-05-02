@@ -16,6 +16,7 @@ class MetaRepositoryImpl(private val database: Database) : IMetaRepository {
         }
     }
 
+    @Suppress("InjectDispatcher")
     suspend fun <T> query(block: suspend () -> T): T =
         newSuspendedTransaction(Dispatchers.IO) { block() }
 
@@ -29,7 +30,7 @@ class MetaRepositoryImpl(private val database: Database) : IMetaRepository {
                     it[this.jwtPrivateKey] = meta.jwt.privateKey
                     it[this.jwtPublicKey] = meta.jwt.publicKey
                 }
-            }else {
+            } else {
                 Meta.update({ Meta.id eq 1 }) {
                     it[this.version] = meta.version
                     it[kid] = UUID.randomUUID().toString()

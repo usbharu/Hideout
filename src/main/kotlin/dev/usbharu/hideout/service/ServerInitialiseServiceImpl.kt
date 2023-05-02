@@ -4,16 +4,16 @@ import dev.usbharu.hideout.domain.model.hideout.entity.Jwt
 import dev.usbharu.hideout.domain.model.hideout.entity.Meta
 import dev.usbharu.hideout.repository.IMetaRepository
 import dev.usbharu.hideout.util.ServerUtil
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.security.KeyPairGenerator
 import java.util.*
 
 class ServerInitialiseServiceImpl(private val metaRepository: IMetaRepository) : IServerInitialiseService {
 
-    val logger = LoggerFactory.getLogger(ServerInitialiseServiceImpl::class.java)
+    val logger: Logger = LoggerFactory.getLogger(ServerInitialiseServiceImpl::class.java)
 
     override suspend fun init() {
-
         val savedMeta = metaRepository.get()
         val implementationVersion = ServerUtil.getImplementationVersion()
         if (wasInitialised(savedMeta).not()) {
@@ -27,7 +27,6 @@ class ServerInitialiseServiceImpl(private val metaRepository: IMetaRepository) :
             logger.info("Version changed!! (${savedMeta.version} -> $implementationVersion)")
             updateVersion(savedMeta, implementationVersion)
         }
-
     }
 
     private fun wasInitialised(meta: Meta?): Boolean {
