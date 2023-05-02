@@ -290,7 +290,7 @@ class ExposedJobRepository(
                     try {
                         @Suppress("SwallowedException")
                         UUID.fromString(it)
-                    } catch (e: IllegalArgumentException) {
+                    } catch (ignored: IllegalArgumentException) {
                         null
                     }
                 },
