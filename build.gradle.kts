@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 val ktor_version: String by project
 val kotlin_version: String by project
 val logback_version: String by project
@@ -31,6 +33,18 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>().con
     compilerOptions.apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_8)
 }
 
+tasks.withType<ShadowJar> {
+    manifest {
+        attributes(
+            "Implementation-Version" to project.version.toString()
+        )
+    }
+}
+
+tasks.clean {
+    delete += listOf("$rootDir/src/main/resources/static")
+}
+
 repositories {
     mavenCentral()
 }
@@ -45,7 +59,8 @@ kotlin {
 
 dependencies {
     implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-auth-jvm:$ktor_version")
+    implementation("io.ktor:ktor-server-auth:$ktor_version")
+    implementation("io.ktor:ktor-server-auth-jwt:$ktor_version")
     implementation("io.ktor:ktor-server-sessions-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-auto-head-response-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-cors-jvm:$ktor_version")

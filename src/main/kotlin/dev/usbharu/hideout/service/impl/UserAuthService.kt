@@ -1,7 +1,6 @@
 package dev.usbharu.hideout.service.impl
 
 import dev.usbharu.hideout.config.Config
-import dev.usbharu.hideout.exception.UserNotFoundException
 import dev.usbharu.hideout.repository.IUserRepository
 import dev.usbharu.hideout.service.IUserAuthService
 import io.ktor.util.*
@@ -24,7 +23,7 @@ class UserAuthService(
 
     override suspend fun verifyAccount(username: String, password: String): Boolean {
         val userEntity = userRepository.findByNameAndDomain(username, Config.configData.domain)
-            ?: throw UserNotFoundException("$username was not found")
+            ?: return false
         return userEntity.password == hash(password)
     }
 

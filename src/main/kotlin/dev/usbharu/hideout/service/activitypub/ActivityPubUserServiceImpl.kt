@@ -77,7 +77,7 @@ class ActivityPubUserServiceImpl(
                     publicKeyPem = userEntity.publicKey
                 )
             )
-        } catch (e: UserNotFoundException) {
+        } catch (ignore: UserNotFoundException) {
             val httpResponse = if (targetActor != null) {
                 httpClient.getAp(url, "$targetActor#pubkey")
             } else {
