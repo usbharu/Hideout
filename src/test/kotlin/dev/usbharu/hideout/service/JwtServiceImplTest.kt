@@ -42,7 +42,8 @@ class JwtServiceImplTest {
         val metaService = mock<IMetaService> {
             onBlocking { getJwtMeta() } doReturn Jwt(
                 kid,
-                Base64Util.encode(generateKeyPair.private.encoded), Base64Util.encode(generateKeyPair.public.encoded)
+                Base64Util.encode(generateKeyPair.private.encoded),
+                Base64Util.encode(generateKeyPair.public.encoded)
             )
         }
         val refreshTokenRepository = mock<IJwtRefreshTokenRepository> {
@@ -119,7 +120,8 @@ class JwtServiceImplTest {
         val metaService = mock<IMetaService> {
             onBlocking { getJwtMeta() } doReturn Jwt(
                 kid,
-                Base64Util.encode(generateKeyPair.private.encoded), Base64Util.encode(generateKeyPair.public.encoded)
+                Base64Util.encode(generateKeyPair.private.encoded),
+                Base64Util.encode(generateKeyPair.public.encoded)
             )
         }
         val jwtService = JwtServiceImpl(metaService, refreshTokenRepository, userService)
