@@ -1,13 +1,10 @@
-@file:Suppress("UnusedPrivateMember")
-
 package dev.usbharu.hideout.plugins
 
-import com.auth0.jwk.JwkProviderBuilder
+import com.auth0.jwk.JwkProvider
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.domain.model.hideout.form.RefreshToken
 import dev.usbharu.hideout.domain.model.hideout.form.UserLogin
 import dev.usbharu.hideout.exception.UserNotFoundException
-import dev.usbharu.hideout.property
 import dev.usbharu.hideout.repository.IUserRepository
 import dev.usbharu.hideout.service.IJwtService
 import dev.usbharu.hideout.service.IMetaService
@@ -20,7 +17,6 @@ import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import java.util.concurrent.TimeUnit
 
 const val TOKEN_AUTH = "jwt-auth"
 
@@ -29,13 +25,10 @@ fun Application.configureSecurity(
     userAuthService: IUserAuthService,
     metaService: IMetaService,
     userRepository: IUserRepository,
-    jwtService: IJwtService
+    jwtService: IJwtService,
+    jwkProvider: JwkProvider
 ) {
-    val issuer = property("hideout.url")
-    val jwkProvider = JwkProviderBuilder(issuer)
-        .cached(10, 24, TimeUnit.HOURS)
-        .rateLimited(10, 1, TimeUnit.MINUTES)
-        .build()
+    val issuer = Config.configData.url
     install(Authentication) {
         jwt(TOKEN_AUTH) {
             verifier(jwkProvider, issuer) {
@@ -77,6 +70,13 @@ fun Application.configureSecurity(
                 contentType = ContentType.Application.Json,
                 text = JsonWebKeyUtil.publicKeyToJwk(jwt.publicKey, jwt.kid.toString())
             )
+        }
+        authenticate(TOKEN_AUTH) {
+            get("/auth-check") {
+                val principal = call.principal<JWTPrincipal>()
+                val username = principal!!.payload.getClaim("username")
+                call.respondText("Hello $username")
+            }
         }
     }
 }

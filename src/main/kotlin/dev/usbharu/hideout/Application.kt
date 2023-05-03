@@ -1,5 +1,7 @@
 package dev.usbharu.hideout
 
+import com.auth0.jwk.JwkProvider
+import com.auth0.jwk.JwkProviderBuilder
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -29,6 +31,7 @@ import kjob.core.kjob
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.Database
 import org.koin.ktor.ext.inject
+import java.util.concurrent.TimeUnit
 
 fun main(args: Array<String>): Unit = io.ktor.server.cio.EngineMain.main(args)
 
@@ -89,6 +92,14 @@ fun Application.parent() {
         single<IJwtRefreshTokenRepository> { JwtRefreshTokenRepositoryImpl(get(), get()) }
         single<IMetaService> { MetaServiceImpl(get()) }
         single<IJwtService> { JwtServiceImpl(get(), get(), get()) }
+        single<JwkProvider> {
+            JwkProviderBuilder(Config.configData.url).cached(
+                10,
+                24,
+                TimeUnit.HOURS
+            )
+                .rateLimited(10, 1, TimeUnit.MINUTES).build()
+        }
     }
     configureKoin(module)
     runBlocking {
@@ -103,7 +114,8 @@ fun Application.parent() {
         inject<IUserAuthService>().value,
         inject<IMetaService>().value,
         inject<IUserRepository>().value,
-        inject<IJwtService>().value
+        inject<IJwtService>().value,
+        inject<JwkProvider>().value,
     )
     configureRouting(
         inject<HttpSignatureVerifyService>().value,
