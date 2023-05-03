@@ -211,7 +211,6 @@ class SecurityKtTest {
 
         Config.configData = ConfigData(url = "https://localhost", objectMapper = jacksonObjectMapper())
 
-
         val now = Instant.now()
         val kid = UUID.randomUUID()
         val token = JWT.create()
@@ -230,7 +229,6 @@ class SecurityKtTest {
                 )
             )
         }
-
 
         val readValue = Config.configData.objectMapper.readerFor(Map::class.java)
             .readValue<MutableMap<String, Any>?>(
@@ -273,7 +271,6 @@ class SecurityKtTest {
 
         Config.configData = ConfigData(url = "https://localhost", objectMapper = jacksonObjectMapper())
 
-
         val now = Instant.now()
         val kid = UUID.randomUUID()
         val token = JWT.create()
@@ -292,7 +289,6 @@ class SecurityKtTest {
                 )
             )
         }
-
 
         val readValue = Config.configData.objectMapper.readerFor(Map::class.java)
             .readValue<MutableMap<String, Any>?>(
@@ -333,7 +329,6 @@ class SecurityKtTest {
 
         Config.configData = ConfigData(url = "https://localhost", objectMapper = jacksonObjectMapper())
 
-
         val now = Instant.now()
         val kid = UUID.randomUUID()
         val token = JWT.create()
@@ -352,7 +347,6 @@ class SecurityKtTest {
                 )
             )
         }
-
 
         val readValue = Config.configData.objectMapper.readerFor(Map::class.java)
             .readValue<MutableMap<String, Any>?>(
@@ -393,7 +387,6 @@ class SecurityKtTest {
 
         Config.configData = ConfigData(url = "https://localhost", objectMapper = jacksonObjectMapper())
 
-
         val now = Instant.now()
         val kid = UUID.randomUUID()
         val token = JWT.create()
@@ -412,7 +405,6 @@ class SecurityKtTest {
                 )
             )
         }
-
 
         val readValue = Config.configData.objectMapper.readerFor(Map::class.java)
             .readValue<MutableMap<String, Any>?>(
@@ -453,7 +445,6 @@ class SecurityKtTest {
 
         Config.configData = ConfigData(url = "https://localhost", objectMapper = jacksonObjectMapper())
 
-
         val now = Instant.now()
         val kid = UUID.randomUUID()
         val token = JWT.create()
@@ -471,7 +462,6 @@ class SecurityKtTest {
                 )
             )
         }
-
 
         val readValue = Config.configData.objectMapper.readerFor(Map::class.java)
             .readValue<MutableMap<String, Any>?>(
