@@ -35,7 +35,7 @@ fun Application.configureSecurity(
                 acceptLeeway(3)
             }
             validate { jwtCredential ->
-                if (jwtCredential.payload.getClaim("username").asString().isNotEmpty()) {
+                if (jwtCredential.payload.getClaim("username")?.asString().isNullOrBlank().not()) {
                     JWTPrincipal(jwtCredential.payload)
                 } else {
                     null
