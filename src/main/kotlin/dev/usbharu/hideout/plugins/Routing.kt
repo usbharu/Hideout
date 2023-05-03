@@ -4,7 +4,6 @@ import dev.usbharu.hideout.routing.activitypub.inbox
 import dev.usbharu.hideout.routing.activitypub.outbox
 import dev.usbharu.hideout.routing.activitypub.usersAP
 import dev.usbharu.hideout.routing.api.v1.statuses
-import dev.usbharu.hideout.routing.authTestRouting
 import dev.usbharu.hideout.routing.wellknown.webfinger
 import dev.usbharu.hideout.service.IPostService
 import dev.usbharu.hideout.service.activitypub.ActivityPubService
@@ -32,7 +31,5 @@ fun Application.configureRouting(
         route("/api/v1") {
             statuses(postService)
         }
-
-        authTestRouting()
     }
 }
