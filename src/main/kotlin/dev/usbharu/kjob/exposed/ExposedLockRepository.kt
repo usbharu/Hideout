@@ -33,6 +33,7 @@ class ExposedLockRepository(
         }
     }
 
+    @Suppress("InjectDispatcher")
     suspend fun <T> query(block: suspend () -> T): T = newSuspendedTransaction(Dispatchers.IO) { block() }
 
     override suspend fun exists(id: UUID): Boolean {

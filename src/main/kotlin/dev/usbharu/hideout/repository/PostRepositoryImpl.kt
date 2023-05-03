@@ -20,6 +20,7 @@ class PostRepositoryImpl(database: Database, private val idGenerateService: IdGe
         }
     }
 
+    @Suppress("InjectDispatcher")
     suspend fun <T> query(block: suspend () -> T): T =
         newSuspendedTransaction(Dispatchers.IO) { block() }
 

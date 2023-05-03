@@ -1,5 +1,7 @@
 package dev.usbharu.hideout
 
+import com.auth0.jwk.JwkProvider
+import com.auth0.jwk.JwkProviderBuilder
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -8,15 +10,9 @@ import dev.usbharu.hideout.config.ConfigData
 import dev.usbharu.hideout.domain.model.job.DeliverPostJob
 import dev.usbharu.hideout.domain.model.job.ReceiveFollowJob
 import dev.usbharu.hideout.plugins.*
-import dev.usbharu.hideout.repository.IPostRepository
-import dev.usbharu.hideout.repository.IUserRepository
-import dev.usbharu.hideout.repository.PostRepositoryImpl
-import dev.usbharu.hideout.repository.UserRepository
+import dev.usbharu.hideout.repository.*
 import dev.usbharu.hideout.routing.register
-import dev.usbharu.hideout.service.IPostService
-import dev.usbharu.hideout.service.IUserAuthService
-import dev.usbharu.hideout.service.IdGenerateService
-import dev.usbharu.hideout.service.TwitterSnowflakeIdGenerateService
+import dev.usbharu.hideout.service.*
 import dev.usbharu.hideout.service.activitypub.*
 import dev.usbharu.hideout.service.impl.IUserService
 import dev.usbharu.hideout.service.impl.PostService
@@ -32,8 +28,10 @@ import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.server.application.*
 import kjob.core.kjob
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.Database
 import org.koin.ktor.ext.inject
+import java.util.concurrent.TimeUnit
 
 fun main(args: Array<String>): Unit = io.ktor.server.cio.EngineMain.main(args)
 
@@ -43,7 +41,7 @@ val Application.property: Application.(propertyName: String) -> String
     }
 
 // application.conf references the main function. This annotation prevents the IDE from marking it as unused.
-@Suppress("unused")
+@Suppress("unused", "LongMethod")
 fun Application.parent() {
     Config.configData = ConfigData(
         url = property("hideout.url"),
@@ -89,14 +87,36 @@ fun Application.parent() {
         single<IPostService> { PostService(get(), get()) }
         single<IPostRepository> { PostRepositoryImpl(get(), get()) }
         single<IdGenerateService> { TwitterSnowflakeIdGenerateService }
+        single<IMetaRepository> { MetaRepositoryImpl(get()) }
+        single<IServerInitialiseService> { ServerInitialiseServiceImpl(get()) }
+        single<IJwtRefreshTokenRepository> { JwtRefreshTokenRepositoryImpl(get(), get()) }
+        single<IMetaService> { MetaServiceImpl(get()) }
+        single<IJwtService> { JwtServiceImpl(get(), get(), get()) }
+        single<JwkProvider> {
+            JwkProviderBuilder(Config.configData.url).cached(
+                10,
+                24,
+                TimeUnit.HOURS
+            )
+                .rateLimited(10, 1, TimeUnit.MINUTES).build()
+        }
     }
-
     configureKoin(module)
+    runBlocking {
+        inject<IServerInitialiseService>().value.init()
+    }
     configureHTTP()
     configureStaticRouting()
     configureMonitoring()
     configureSerialization()
     register(inject<IUserService>().value)
+    configureSecurity(
+        inject<IUserAuthService>().value,
+        inject<IMetaService>().value,
+        inject<IUserRepository>().value,
+        inject<IJwtService>().value,
+        inject<JwkProvider>().value,
+    )
     configureRouting(
         inject<HttpSignatureVerifyService>().value,
         inject<ActivityPubService>().value,

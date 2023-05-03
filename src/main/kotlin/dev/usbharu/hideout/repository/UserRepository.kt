@@ -21,6 +21,7 @@ class UserRepository(private val database: Database, private val idGenerateServi
         }
     }
 
+    @Suppress("InjectDispatcher")
     suspend fun <T> query(block: suspend () -> T): T =
         newSuspendedTransaction(Dispatchers.IO) { block() }
 

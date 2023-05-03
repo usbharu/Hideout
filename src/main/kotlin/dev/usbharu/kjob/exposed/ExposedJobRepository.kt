@@ -54,6 +54,7 @@ class ExposedJobRepository(
         }
     }
 
+    @Suppress("InjectDispatcher")
     suspend fun <T> query(block: suspend () -> T): T = newSuspendedTransaction(Dispatchers.IO) { block() }
 
     override suspend fun completeProgress(id: String): Boolean {
@@ -204,7 +205,7 @@ class ExposedJobRepository(
         this ?: return emptyMap()
         return json.parseToJsonElement(this).jsonObject.mapValues { (_, el) ->
             if (el is JsonObject) {
-                val t = el["t"]?.jsonPrimitive?.content ?: error("Cannot get jsonPrimitive")
+                val t = el["t"]?.run { jsonPrimitive.content } ?: error("Cannot get jsonPrimitive")
                 val value = el["v"]?.jsonArray ?: error("Cannot get jsonArray")
                 when (t) {
                     "s" -> value.map { it.jsonPrimitive.content }
@@ -289,7 +290,7 @@ class ExposedJobRepository(
                     try {
                         @Suppress("SwallowedException")
                         UUID.fromString(it)
-                    } catch (e: IllegalArgumentException) {
+                    } catch (ignored: IllegalArgumentException) {
                         null
                     }
                 },
