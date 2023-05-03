@@ -47,7 +47,7 @@ class JwtServiceImpl(
     override suspend fun createToken(user: User): JwtToken {
         val now = Instant.now()
         val token = JWT.create()
-            .withAudience("${Config.configData.url}/users/${user.id}")
+            .withAudience("${Config.configData.url}/users/${user.name}")
             .withIssuer(Config.configData.url)
             .withKeyId(keyId.await().toString())
             .withClaim("username", user.name)
