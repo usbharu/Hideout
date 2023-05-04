@@ -14,11 +14,13 @@ import dev.usbharu.hideout.util.RsaUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import org.koin.core.annotation.Single
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.*
 
 @Suppress("InjectDispatcher")
+@Single
 class JwtServiceImpl(
     private val metaService: IMetaService,
     private val refreshTokenRepository: IJwtRefreshTokenRepository,

@@ -5,9 +5,9 @@ import org.koin.core.module.Module
 import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
 
-fun Application.configureKoin(module: Module) {
+fun Application.configureKoin(vararg module: Module) {
     install(Koin) {
         slf4jLogger()
-        modules(module)
+        modules(*module)
     }
 }
