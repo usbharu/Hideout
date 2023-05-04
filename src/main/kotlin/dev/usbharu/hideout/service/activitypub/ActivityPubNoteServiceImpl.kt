@@ -11,9 +11,11 @@ import dev.usbharu.hideout.service.impl.IUserService
 import dev.usbharu.hideout.service.job.JobQueueParentService
 import io.ktor.client.*
 import kjob.core.job.JobProps
+import org.koin.core.annotation.Single
 import org.slf4j.LoggerFactory
 import java.time.Instant
 
+@Single
 class ActivityPubNoteServiceImpl(
     private val httpClient: HttpClient,
     private val jobQueueParentService: JobQueueParentService,

@@ -10,18 +10,15 @@ import dev.usbharu.hideout.config.ConfigData
 import dev.usbharu.hideout.domain.model.job.DeliverPostJob
 import dev.usbharu.hideout.domain.model.job.ReceiveFollowJob
 import dev.usbharu.hideout.plugins.*
-import dev.usbharu.hideout.repository.*
+import dev.usbharu.hideout.repository.IUserRepository
 import dev.usbharu.hideout.routing.register
 import dev.usbharu.hideout.service.*
-import dev.usbharu.hideout.service.activitypub.*
+import dev.usbharu.hideout.service.activitypub.ActivityPubService
+import dev.usbharu.hideout.service.activitypub.ActivityPubUserService
 import dev.usbharu.hideout.service.impl.IUserService
-import dev.usbharu.hideout.service.impl.PostService
-import dev.usbharu.hideout.service.impl.UserAuthService
-import dev.usbharu.hideout.service.impl.UserService
 import dev.usbharu.hideout.service.job.JobQueueParentService
 import dev.usbharu.hideout.service.job.KJobJobQueueParentService
 import dev.usbharu.hideout.service.signature.HttpSignatureVerifyService
-import dev.usbharu.hideout.service.signature.HttpSignatureVerifyServiceImpl
 import dev.usbharu.kjob.exposed.ExposedKJob
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
@@ -30,6 +27,7 @@ import io.ktor.server.application.*
 import kjob.core.kjob
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.Database
+import org.koin.ksp.generated.module
 import org.koin.ktor.ext.inject
 import java.util.concurrent.TimeUnit
 
@@ -59,10 +57,6 @@ fun Application.parent() {
                 password = property("hideout.database.password")
             )
         }
-
-        single<IUserRepository> { UserRepository(get(), get()) }
-        single<IUserAuthService> { UserAuthService(get()) }
-        single<HttpSignatureVerifyService> { HttpSignatureVerifyServiceImpl(get()) }
         single<JobQueueParentService> {
             val kJobJobQueueService = KJobJobQueueParentService(get())
             kJobJobQueueService.init(emptyList())
@@ -79,19 +73,7 @@ fun Application.parent() {
                 }
             }
         }
-        single<ActivityPubFollowService> { ActivityPubFollowServiceImpl(get(), get(), get(), get()) }
-        single<ActivityPubService> { ActivityPubServiceImpl(get(), get()) }
-        single<IUserService> { UserService(get(), get()) }
-        single<ActivityPubUserService> { ActivityPubUserServiceImpl(get(), get()) }
-        single<ActivityPubNoteService> { ActivityPubNoteServiceImpl(get(), get(), get()) }
-        single<IPostService> { PostService(get(), get()) }
-        single<IPostRepository> { PostRepositoryImpl(get(), get()) }
         single<IdGenerateService> { TwitterSnowflakeIdGenerateService }
-        single<IMetaRepository> { MetaRepositoryImpl(get()) }
-        single<IServerInitialiseService> { ServerInitialiseServiceImpl(get()) }
-        single<IJwtRefreshTokenRepository> { JwtRefreshTokenRepositoryImpl(get(), get()) }
-        single<IMetaService> { MetaServiceImpl(get()) }
-        single<IJwtService> { JwtServiceImpl(get(), get(), get()) }
         single<JwkProvider> {
             JwkProviderBuilder(Config.configData.url).cached(
                 10,
@@ -101,7 +83,7 @@ fun Application.parent() {
                 .rateLimited(10, 1, TimeUnit.MINUTES).build()
         }
     }
-    configureKoin(module)
+    configureKoin(module, HideoutModule().module)
     runBlocking {
         inject<IServerInitialiseService>().value.init()
     }
