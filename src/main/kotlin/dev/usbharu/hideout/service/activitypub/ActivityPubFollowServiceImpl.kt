@@ -13,7 +13,9 @@ import dev.usbharu.hideout.service.job.JobQueueParentService
 import io.ktor.client.*
 import io.ktor.http.*
 import kjob.core.job.JobProps
+import org.koin.core.annotation.Single
 
+@Single
 class ActivityPubFollowServiceImpl(
     private val jobQueueParentService: JobQueueParentService,
     private val activityPubUserService: ActivityPubUserService,

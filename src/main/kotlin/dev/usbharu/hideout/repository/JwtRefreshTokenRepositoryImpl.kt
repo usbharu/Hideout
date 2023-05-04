@@ -7,8 +7,10 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.koin.core.annotation.Single
 import java.time.Instant
 
+@Single
 class JwtRefreshTokenRepositoryImpl(
     private val database: Database,
     private val idGenerateService: IdGenerateService

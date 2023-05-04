@@ -4,9 +4,11 @@ import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.repository.IUserRepository
 import dev.usbharu.hideout.service.IUserAuthService
 import io.ktor.util.*
+import org.koin.core.annotation.Single
 import java.security.*
 import java.util.*
 
+@Single
 class UserAuthService(
     val userRepository: IUserRepository
 ) : IUserAuthService {
