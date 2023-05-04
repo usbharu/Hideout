@@ -7,9 +7,11 @@ import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.exception.UserNotFoundException
 import dev.usbharu.hideout.repository.IUserRepository
 import dev.usbharu.hideout.service.IUserAuthService
+import org.koin.core.annotation.Single
 import java.lang.Integer.min
 import java.time.Instant
 
+@Single
 class UserService(private val userRepository: IUserRepository, private val userAuthService: IUserAuthService) :
     IUserService {
 

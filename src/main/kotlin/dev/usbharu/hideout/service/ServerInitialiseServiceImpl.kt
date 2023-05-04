@@ -4,11 +4,13 @@ import dev.usbharu.hideout.domain.model.hideout.entity.Jwt
 import dev.usbharu.hideout.domain.model.hideout.entity.Meta
 import dev.usbharu.hideout.repository.IMetaRepository
 import dev.usbharu.hideout.util.ServerUtil
+import org.koin.core.annotation.Single
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.security.KeyPairGenerator
 import java.util.*
 
+@Single
 class ServerInitialiseServiceImpl(private val metaRepository: IMetaRepository) : IServerInitialiseService {
 
     val logger: Logger = LoggerFactory.getLogger(ServerInitialiseServiceImpl::class.java)

@@ -15,7 +15,9 @@ import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import org.koin.core.annotation.Single
 
+@Single
 class ActivityPubUserServiceImpl(
     private val userService: IUserService,
     private val httpClient: HttpClient

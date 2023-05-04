@@ -4,8 +4,10 @@ import dev.usbharu.hideout.domain.model.Post
 import dev.usbharu.hideout.repository.IPostRepository
 import dev.usbharu.hideout.service.IPostService
 import dev.usbharu.hideout.service.activitypub.ActivityPubNoteService
+import org.koin.core.annotation.Single
 import org.slf4j.LoggerFactory
 
+@Single
 class PostService(
     private val postRepository: IPostRepository,
     private val activityPubNoteService: ActivityPubNoteService

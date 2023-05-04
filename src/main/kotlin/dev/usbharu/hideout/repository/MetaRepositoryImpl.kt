@@ -5,8 +5,10 @@ import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.koin.core.annotation.Single
 import java.util.*
 
+@Single
 class MetaRepositoryImpl(private val database: Database) : IMetaRepository {
 
     init {
