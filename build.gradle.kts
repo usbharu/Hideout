@@ -12,6 +12,7 @@ plugins {
     id("io.ktor.plugin") version "2.3.0"
     id("org.graalvm.buildtools.native") version "0.9.21"
     id("io.gitlab.arturbosch.detekt") version "1.22.0"
+    id("com.google.devtools.ksp") version "1.8.21-1.0.11"
 //    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
 }
 
@@ -57,6 +58,10 @@ kotlin {
     }
 }
 
+sourceSets.main {
+    java.srcDirs("build/generated/ksp/main/kotlin")
+}
+
 dependencies {
     implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-auth:$ktor_version")
@@ -80,6 +85,10 @@ dependencies {
     implementation("io.insert-koin:koin-core:$koin_version")
     implementation("io.insert-koin:koin-ktor:$koin_version")
     implementation("io.insert-koin:koin-logger-slf4j:$koin_version")
+    implementation("io.insert-koin:koin-annotations:1.2.0")
+    ksp("io.insert-koin:koin-ksp-compiler:1.2.0")
+
+
     implementation("io.ktor:ktor-client-logging-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-host-common-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-status-pages-jvm:$ktor_version")
