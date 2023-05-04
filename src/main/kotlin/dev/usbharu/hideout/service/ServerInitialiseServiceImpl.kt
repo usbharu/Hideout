@@ -16,19 +16,22 @@ class ServerInitialiseServiceImpl(private val metaRepository: IMetaRepository) :
     val logger: Logger = LoggerFactory.getLogger(ServerInitialiseServiceImpl::class.java)
 
     override suspend fun init() {
-        val savedMeta = metaRepository.get()
-        val implementationVersion = ServerUtil.getImplementationVersion()
-        if (wasInitialised(savedMeta).not()) {
-            logger.info("Start Initialise")
-            initialise(implementationVersion)
-            logger.info("Finish Initialise")
-            return
+        metaRepository.transaction {
+
+            val savedMeta = metaRepository.get()
+            val implementationVersion = ServerUtil.getImplementationVersion()
+            if (wasInitialised(savedMeta).not()) {
+                logger.info("Start Initialise")
+                initialise(implementationVersion)
+                logger.info("Finish Initialise")
+                return@transaction
+            }
+            if (isVersionChanged(savedMeta!!)) {
+                logger.info("Version changed!! (${savedMeta.version} -> $implementationVersion)")
+                updateVersion(savedMeta, implementationVersion)
+            }
         }
 
-        if (isVersionChanged(savedMeta!!)) {
-            logger.info("Version changed!! (${savedMeta.version} -> $implementationVersion)")
-            updateVersion(savedMeta, implementationVersion)
-        }
     }
 
     private fun wasInitialised(meta: Meta?): Boolean {

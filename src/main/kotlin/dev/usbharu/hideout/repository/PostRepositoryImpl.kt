@@ -23,48 +23,40 @@ class PostRepositoryImpl(database: Database, private val idGenerateService: IdGe
     }
 
     @Suppress("InjectDispatcher")
-    suspend fun <T> query(block: suspend () -> T): T =
+    override suspend fun <T> transaction(block: suspend () -> T): T =
         newSuspendedTransaction(Dispatchers.IO) { block() }
 
     override suspend fun insert(post: Post): PostEntity {
-        return query {
-            val generateId = idGenerateService.generateId()
-            val name = Users.select { Users.id eq post.userId }.single().toUser().name
-            val postUrl = Config.configData.url + "/users/$name/posts/$generateId"
-            Posts.insert {
-                it[id] = generateId
-                it[userId] = post.userId
-                it[overview] = post.overview
-                it[text] = post.text
-                it[createdAt] = post.createdAt
-                it[visibility] = post.visibility
-                it[url] = postUrl
-                it[repostId] = post.repostId
-                it[replyId] = post.replyId
-            }
-            return@query PostEntity(
-                id = generateId,
-                userId = post.userId,
-                overview = post.overview,
-                text = post.text,
-                createdAt = post.createdAt,
-                visibility = post.visibility,
-                url = postUrl,
-                repostId = post.repostId,
-                replyId = post.replyId
-            )
+        val generateId = idGenerateService.generateId()
+        val name = Users.select { Users.id eq post.userId }.single().toUser().name
+        val postUrl = Config.configData.url + "/users/$name/posts/$generateId"
+        Posts.insert {
+            it[id] = generateId
+            it[userId] = post.userId
+            it[overview] = post.overview
+            it[text] = post.text
+            it[createdAt] = post.createdAt
+            it[visibility] = post.visibility
+            it[url] = postUrl
+            it[repostId] = post.repostId
+            it[replyId] = post.replyId
         }
+        return PostEntity(
+            id = generateId,
+            userId = post.userId,
+            overview = post.overview,
+            text = post.text,
+            createdAt = post.createdAt,
+            visibility = post.visibility,
+            url = postUrl,
+            repostId = post.repostId,
+            replyId = post.replyId
+        )
     }
 
-    override suspend fun findOneById(id: Long): PostEntity {
-        return query {
-            Posts.select { Posts.id eq id }.single().toPost()
-        }
-    }
+    override suspend fun findOneById(id: Long): PostEntity = Posts.select { Posts.id eq id }.single().toPost()
 
     override suspend fun delete(id: Long) {
-        return query {
-            Posts.deleteWhere { Posts.id eq id }
-        }
+        Posts.deleteWhere { Posts.id eq id }
     }
 }

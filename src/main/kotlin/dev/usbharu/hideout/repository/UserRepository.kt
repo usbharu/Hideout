@@ -1,6 +1,19 @@
 package dev.usbharu.hideout.repository
 
 import dev.usbharu.hideout.domain.model.hideout.entity.User
+import dev.usbharu.hideout.repository.Users.createdAt
+import dev.usbharu.hideout.repository.Users.description
+import dev.usbharu.hideout.repository.Users.domain
+import dev.usbharu.hideout.repository.Users.id
+import dev.usbharu.hideout.repository.Users.inbox
+import dev.usbharu.hideout.repository.Users.name
+import dev.usbharu.hideout.repository.Users.outbox
+import dev.usbharu.hideout.repository.Users.password
+import dev.usbharu.hideout.repository.Users.privateKey
+import dev.usbharu.hideout.repository.Users.publicKey
+import dev.usbharu.hideout.repository.Users.screenName
+import dev.usbharu.hideout.repository.Users.url
+import dev.usbharu.hideout.repository.UsersFollowers.followerId
 import dev.usbharu.hideout.service.IdGenerateService
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.dao.id.LongIdTable
@@ -24,185 +37,148 @@ class UserRepository(private val database: Database, private val idGenerateServi
     }
 
     @Suppress("InjectDispatcher")
-    suspend fun <T> query(block: suspend () -> T): T =
+    override suspend fun <T> transaction(block: suspend () -> T): T =
         newSuspendedTransaction(Dispatchers.IO) { block() }
 
     override suspend fun save(user: User): User {
-        return query {
-            val singleOrNull = Users.select { Users.id eq user.id }.singleOrNull()
-            if (singleOrNull == null) {
-                Users.insert {
-                    it[id] = user.id
-                    it[name] = user.name
-                    it[domain] = user.domain
-                    it[screenName] = user.screenName
-                    it[description] = user.description
-                    it[password] = user.password
-                    it[inbox] = user.inbox
-                    it[outbox] = user.outbox
-                    it[url] = user.url
-                    it[createdAt] = user.createdAt.toEpochMilli()
-                    it[publicKey] = user.publicKey
-                    it[privateKey] = user.privateKey
-                }
-            } else {
-                Users.update({ Users.id eq user.id }) {
-                    it[name] = user.name
-                    it[domain] = user.domain
-                    it[screenName] = user.screenName
-                    it[description] = user.description
-                    it[password] = user.password
-                    it[inbox] = user.inbox
-                    it[outbox] = user.outbox
-                    it[url] = user.url
-                    it[createdAt] = user.createdAt.toEpochMilli()
-                    it[publicKey] = user.publicKey
-                    it[privateKey] = user.privateKey
-                }
+        val singleOrNull = Users.select { id eq user.id }.singleOrNull()
+        if (singleOrNull == null) {
+            Users.insert {
+                it[id] = user.id
+                it[name] = user.name
+                it[domain] = user.domain
+                it[screenName] = user.screenName
+                it[description] = user.description
+                it[password] = user.password
+                it[inbox] = user.inbox
+                it[outbox] = user.outbox
+                it[url] = user.url
+                it[createdAt] = user.createdAt.toEpochMilli()
+                it[publicKey] = user.publicKey
+                it[privateKey] = user.privateKey
             }
-            return@query user
+        } else {
+            Users.update({ id eq user.id }) {
+                it[name] = user.name
+                it[domain] = user.domain
+                it[screenName] = user.screenName
+                it[description] = user.description
+                it[password] = user.password
+                it[inbox] = user.inbox
+                it[outbox] = user.outbox
+                it[url] = user.url
+                it[createdAt] = user.createdAt.toEpochMilli()
+                it[publicKey] = user.publicKey
+                it[privateKey] = user.privateKey
+            }
         }
+        return user
     }
 
     override suspend fun createFollower(id: Long, follower: Long) {
-        return query {
-            UsersFollowers.insert {
-                it[userId] = id
-                it[followerId] = follower
-            }
+        UsersFollowers.insert {
+            it[userId] = id
+            it[followerId] = follower
         }
     }
 
     override suspend fun findById(id: Long): User? {
-        return query {
-            Users.select { Users.id eq id }.map {
-                it.toUser()
-            }.singleOrNull()
-        }
+        return Users.select { Users.id eq id }.map {
+            it.toUser()
+        }.singleOrNull()
     }
 
     override suspend fun findByIds(ids: List<Long>): List<User> {
-        return query {
-            Users.select { Users.id inList ids }.map {
-                it.toUser()
-            }
+        return Users.select { id inList ids }.map {
+            it.toUser()
         }
     }
 
     override suspend fun findByName(name: String): List<User> {
-        return query {
-            Users.select { Users.name eq name }.map {
-                it.toUser()
-            }
+        return Users.select { Users.name eq name }.map {
+            it.toUser()
         }
     }
 
-    override suspend fun findByNameAndDomain(name: String, domain: String): User? {
-        return query {
-            Users.select { Users.name eq name and (Users.domain eq domain) }.singleOrNull()?.toUser()
-        }
-    }
+    override suspend fun findByNameAndDomain(name: String, domain: String): User? =
+        Users.select { Users.name eq name and (Users.domain eq domain) }.singleOrNull()?.toUser()
 
     override suspend fun findByDomain(domain: String): List<User> {
-        return query {
-            Users.select { Users.domain eq domain }.map {
-                it.toUser()
-            }
+        return Users.select { Users.domain eq domain }.map {
+            it.toUser()
         }
     }
 
     override suspend fun findByNameAndDomains(names: List<Pair<String, String>>): List<User> {
-        return query {
-            val selectAll = Users.selectAll()
-            names.forEach { (name, domain) ->
-                selectAll.orWhere { Users.name eq name and (Users.domain eq domain) }
-            }
-            selectAll.map { it.toUser() }
+        val selectAll = Users.selectAll()
+        names.forEach { (name, domain) ->
+            selectAll.orWhere { Users.name eq name and (Users.domain eq domain) }
         }
+        return selectAll.map { it.toUser() }
     }
 
-    override suspend fun findByUrl(url: String): User? {
-        return query {
-            Users.select { Users.url eq url }.singleOrNull()?.toUser()
-        }
-    }
+    override suspend fun findByUrl(url: String): User? = Users.select { Users.url eq url }.singleOrNull()?.toUser()
 
-    override suspend fun findByUrls(urls: List<String>): List<User> {
-        return query {
-            Users.select { Users.url inList urls }.map { it.toUser() }
-        }
-    }
+    override suspend fun findByUrls(urls: List<String>): List<User> =
+        Users.select { url inList urls }.map { it.toUser() }
 
     override suspend fun findFollowersById(id: Long): List<User> {
-        return query {
-            val followers = Users.alias("FOLLOWERS")
-            Users.innerJoin(
-                otherTable = UsersFollowers,
-                onColumn = { Users.id },
-                otherColumn = { userId }
+        val followers = Users.alias("FOLLOWERS")
+        return Users.innerJoin(
+            otherTable = UsersFollowers,
+            onColumn = { Users.id },
+            otherColumn = { userId }
+        )
+            .innerJoin(
+                otherTable = followers,
+                onColumn = { followerId },
+                otherColumn = { followers[Users.id] }
             )
-                .innerJoin(
-                    otherTable = followers,
-                    onColumn = { UsersFollowers.followerId },
-                    otherColumn = { followers[Users.id] }
+            .slice(
+                followers.get(Users.id),
+                followers.get(name),
+                followers.get(domain),
+                followers.get(screenName),
+                followers.get(description),
+                followers.get(password),
+                followers.get(inbox),
+                followers.get(outbox),
+                followers.get(url),
+                followers.get(publicKey),
+                followers.get(privateKey),
+                followers.get(createdAt)
+            )
+            .select { Users.id eq id }
+            .map {
+                User(
+                    id = it[followers[Users.id]],
+                    name = it[followers[name]],
+                    domain = it[followers[domain]],
+                    screenName = it[followers[screenName]],
+                    description = it[followers[description]],
+                    password = it[followers[password]],
+                    inbox = it[followers[inbox]],
+                    outbox = it[followers[outbox]],
+                    url = it[followers[url]],
+                    publicKey = it[followers[publicKey]],
+                    privateKey = it[followers[privateKey]],
+                    createdAt = Instant.ofEpochMilli(it[followers[createdAt]])
                 )
-                .slice(
-                    followers.get(Users.id),
-                    followers.get(Users.name),
-                    followers.get(Users.domain),
-                    followers.get(Users.screenName),
-                    followers.get(Users.description),
-                    followers.get(Users.password),
-                    followers.get(Users.inbox),
-                    followers.get(Users.outbox),
-                    followers.get(Users.url),
-                    followers.get(Users.publicKey),
-                    followers.get(Users.privateKey),
-                    followers.get(Users.createdAt)
-                )
-                .select { Users.id eq id }
-                .map {
-                    User(
-                        id = it[followers[Users.id]],
-                        name = it[followers[Users.name]],
-                        domain = it[followers[Users.domain]],
-                        screenName = it[followers[Users.screenName]],
-                        description = it[followers[Users.description]],
-                        password = it[followers[Users.password]],
-                        inbox = it[followers[Users.inbox]],
-                        outbox = it[followers[Users.outbox]],
-                        url = it[followers[Users.url]],
-                        publicKey = it[followers[Users.publicKey]],
-                        privateKey = it[followers[Users.privateKey]],
-                        createdAt = Instant.ofEpochMilli(it[followers[Users.createdAt]])
-                    )
-                }
-        }
+            }
     }
 
     override suspend fun delete(id: Long) {
-        query {
-            Users.deleteWhere { Users.id.eq(id) }
-        }
+        Users.deleteWhere { Users.id.eq(id) }
     }
 
     override suspend fun deleteFollower(id: Long, follower: Long) {
-        query {
-            UsersFollowers.deleteWhere { (userId eq id).and(followerId eq follower) }
-        }
+        UsersFollowers.deleteWhere { (userId eq id).and(followerId eq follower) }
     }
 
-    override suspend fun findAll(): List<User> {
-        return query {
-            Users.selectAll().map { it.toUser() }
-        }
-    }
+    override suspend fun findAll(): List<User> = Users.selectAll().map { it.toUser() }
 
-    override suspend fun findAllByLimitAndByOffset(limit: Int, offset: Long): List<User> {
-        return query {
-            Users.selectAll().limit(limit, offset).map { it.toUser() }
-        }
-    }
+    override suspend fun findAllByLimitAndByOffset(limit: Int, offset: Long): List<User> =
+        Users.selectAll().limit(limit, offset).map { it.toUser() }
 
     override suspend fun nextId(): Long = idGenerateService.generateId()
 }

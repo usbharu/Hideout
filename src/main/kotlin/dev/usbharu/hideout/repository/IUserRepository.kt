@@ -36,4 +36,6 @@ interface IUserRepository {
     suspend fun findFollowersById(id: Long): List<User>
 
     suspend fun nextId(): Long
+    @Suppress("InjectDispatcher")
+    suspend fun <T> transaction(block: suspend () -> T): T
 }

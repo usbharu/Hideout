@@ -7,4 +7,6 @@ interface IPostRepository {
     suspend fun insert(post: Post): PostEntity
     suspend fun findOneById(id: Long): PostEntity
     suspend fun delete(id: Long)
+    @Suppress("InjectDispatcher")
+    suspend fun <T> transaction(block: suspend () -> T): T
 }

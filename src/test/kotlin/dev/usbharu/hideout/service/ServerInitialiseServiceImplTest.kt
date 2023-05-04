@@ -19,38 +19,48 @@ class ServerInitialiseServiceImplTest {
         val metaRepository = mock<IMetaRepository> {
             onBlocking { get() } doReturn null
             onBlocking { save(any()) } doReturn Unit
+            onBlocking {
+                transaction(any<suspend () -> Unit>())
+            } doSuspendableAnswer {
+                (it.arguments[0] as suspend () -> Unit).invoke()
+            }
         }
         val serverInitialiseServiceImpl = ServerInitialiseServiceImpl(metaRepository)
 
         serverInitialiseServiceImpl.init()
-        verify(metaRepository,times(1)).save(any())
+        verify(metaRepository, times(1)).save(any())
     }
 
     @Test
     fun `init メタデータが存在して同じバージョンのときは何もしない`() = runTest {
-        val meta = Meta(ServerUtil.getImplementationVersion(), Jwt(UUID.randomUUID(),"aaafafd","afafasdf"))
+        val meta = Meta(ServerUtil.getImplementationVersion(), Jwt(UUID.randomUUID(), "aaafafd", "afafasdf"))
         val metaRepository = mock<IMetaRepository> {
             onBlocking { get() } doReturn meta
         }
         val serverInitialiseServiceImpl = ServerInitialiseServiceImpl(metaRepository)
         serverInitialiseServiceImpl.init()
-        verify(metaRepository,times(0)).save(any())
+        verify(metaRepository, times(0)).save(any())
     }
 
     @Test
     fun `init メタデータが存在して違うバージョンのときはバージョンを変更する`() = runTest {
-        val meta = Meta("1.0.0", Jwt(UUID.randomUUID(),"aaafafd","afafasdf"))
+        val meta = Meta("1.0.0", Jwt(UUID.randomUUID(), "aaafafd", "afafasdf"))
         val metaRepository = mock<IMetaRepository> {
             onBlocking { get() } doReturn meta
             onBlocking { save(any()) } doReturn Unit
+            onBlocking {
+                transaction(any<suspend () -> Unit>())
+            } doSuspendableAnswer {
+                (it.arguments[0] as suspend () -> Unit).invoke()
+            }
         }
 
         val serverInitialiseServiceImpl = ServerInitialiseServiceImpl(metaRepository)
         serverInitialiseServiceImpl.init()
-        verify(metaRepository,times(1)).save(any())
+        verify(metaRepository, times(1)).save(any())
         argumentCaptor<Meta> {
-            verify(metaRepository,times(1)).save(capture())
-            assertEquals(ServerUtil.getImplementationVersion(),firstValue.version)
+            verify(metaRepository, times(1)).save(capture())
+            assertEquals(ServerUtil.getImplementationVersion(), firstValue.version)
         }
     }
 }
