@@ -2,9 +2,9 @@ package dev.usbharu.hideout.service.activitypub
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.config.Config
-import dev.usbharu.hideout.domain.model.PostEntity
 import dev.usbharu.hideout.domain.model.ap.Create
 import dev.usbharu.hideout.domain.model.ap.Note
+import dev.usbharu.hideout.domain.model.hideout.entity.Post
 import dev.usbharu.hideout.domain.model.job.DeliverPostJob
 import dev.usbharu.hideout.plugins.postAp
 import dev.usbharu.hideout.service.impl.IUserService
@@ -24,7 +24,7 @@ class ActivityPubNoteServiceImpl(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    override suspend fun createNote(post: PostEntity) {
+    override suspend fun createNote(post: Post) {
         val followers = userService.findFollowersById(post.userId)
         val userEntity = userService.findById(post.userId)
         val note = Config.configData.objectMapper.writeValueAsString(post)
@@ -39,7 +39,7 @@ class ActivityPubNoteServiceImpl(
 
     override suspend fun createNoteJob(props: JobProps<DeliverPostJob>) {
         val actor = props[DeliverPostJob.actor]
-        val postEntity = Config.configData.objectMapper.readValue<PostEntity>(props[DeliverPostJob.post])
+        val postEntity = Config.configData.objectMapper.readValue<Post>(props[DeliverPostJob.post])
         val note = Note(
             name = "Note",
             id = postEntity.url,

@@ -5,7 +5,7 @@ package dev.usbharu.hideout.service.activitypub
 
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.config.ConfigData
-import dev.usbharu.hideout.domain.model.PostEntity
+import dev.usbharu.hideout.domain.model.hideout.entity.Post
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.domain.model.job.DeliverPostJob
 import dev.usbharu.hideout.service.impl.IUserService
@@ -72,7 +72,7 @@ class ActivityPubNoteServiceImplTest {
         }
         val jobQueueParentService = mock<JobQueueParentService>()
         val activityPubNoteService = ActivityPubNoteServiceImpl(mock(), jobQueueParentService, userService)
-        val postEntity = PostEntity(
+        val postEntity = Post(
             1L,
             1L,
             null,

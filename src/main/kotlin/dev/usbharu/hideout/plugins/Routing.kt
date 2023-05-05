@@ -3,7 +3,7 @@ package dev.usbharu.hideout.plugins
 import dev.usbharu.hideout.routing.activitypub.inbox
 import dev.usbharu.hideout.routing.activitypub.outbox
 import dev.usbharu.hideout.routing.activitypub.usersAP
-import dev.usbharu.hideout.routing.api.v1.statuses
+import dev.usbharu.hideout.routing.api.mastodon.v1.statuses
 import dev.usbharu.hideout.routing.wellknown.webfinger
 import dev.usbharu.hideout.service.IPostService
 import dev.usbharu.hideout.service.activitypub.ActivityPubService
