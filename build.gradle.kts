@@ -163,3 +163,11 @@ detekt {
     basePath = rootDir.absolutePath
     autoCorrect = true
 }
+
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+    exclude("**/org/koin/ksp/generated/**")
+}
+
+tasks.withType<io.gitlab.arturbosch.detekt.DetektCreateBaselineTask>().configureEach {
+    exclude("**/org/koin/ksp/generated/**")
+}

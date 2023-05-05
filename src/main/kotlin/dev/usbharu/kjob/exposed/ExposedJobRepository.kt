@@ -279,35 +279,34 @@ class ExposedJobRepository(
 
     private fun ResultRow.toScheduledJob(): ScheduledJob {
         val single = this
-        jobs.run {
-            return ScheduledJob(
-                id = single[this.id].value.toString(),
-                status = JobStatus.valueOf(single[status]),
-                runAt = single[runAt]?.let { Instant.ofEpochMilli(it) },
-                statusMessage = single[statusMessage],
-                retries = single[retries],
-                kjobId = single[kjobId]?.let {
-                    try {
-                        @Suppress("SwallowedException")
-                        UUID.fromString(it)
-                    } catch (ignored: IllegalArgumentException) {
-                        null
-                    }
-                },
-                createdAt = Instant.ofEpochMilli(single[createdAt]),
-                updatedAt = Instant.ofEpochMilli(single[updatedAt]),
-                settings = JobSettings(
-                    id = single[jobId],
-                    name = single[name],
-                    properties = single[properties].parseJsonMap()
-                ),
-                progress = JobProgress(
-                    step = single[step].toLong(),
-                    max = single[max]?.toLong(),
-                    startedAt = single[startedAt]?.let { Instant.ofEpochMilli(it) },
-                    completedAt = single[completedAt]?.let { Instant.ofEpochMilli(it) }
-                )
+
+        return ScheduledJob(
+            id = single[jobs.id].value.toString(),
+            status = JobStatus.valueOf(single[jobs.status]),
+            runAt = single[jobs.runAt]?.let { Instant.ofEpochMilli(it) },
+            statusMessage = single[jobs.statusMessage],
+            retries = single[jobs.retries],
+            kjobId = single[jobs.kjobId]?.let {
+                try {
+                    @Suppress("SwallowedException")
+                    UUID.fromString(it)
+                } catch (ignored: IllegalArgumentException) {
+                    null
+                }
+            },
+            createdAt = Instant.ofEpochMilli(single[jobs.createdAt]),
+            updatedAt = Instant.ofEpochMilli(single[jobs.updatedAt]),
+            settings = JobSettings(
+                id = single[jobs.jobId],
+                name = single[jobs.name],
+                properties = single[jobs.properties].parseJsonMap()
+            ),
+            progress = JobProgress(
+                step = single[jobs.step].toLong(),
+                max = single[jobs.max]?.toLong(),
+                startedAt = single[jobs.startedAt]?.let { Instant.ofEpochMilli(it) },
+                completedAt = single[jobs.completedAt]?.let { Instant.ofEpochMilli(it) }
             )
-        }
+        )
     }
 }
