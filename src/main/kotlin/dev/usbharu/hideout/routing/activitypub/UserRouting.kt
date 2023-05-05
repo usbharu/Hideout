@@ -37,7 +37,7 @@ class ContentTypeRouteSelector(private vararg val contentType: ContentType) : Ro
         context.call.application.log.debug("Accept: ${context.call.request.accept()}")
         val requestContentType = context.call.request.accept() ?: return RouteSelectorEvaluation.FailedParameter
         return if (requestContentType.split(",")
-            .find { contentType.find { contentType -> contentType.match(it) } != null } != null
+            .any { contentType.any { contentType -> contentType.match(it) } }
         ) {
             RouteSelectorEvaluation.Constant
         } else {

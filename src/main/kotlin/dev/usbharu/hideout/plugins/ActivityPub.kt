@@ -75,7 +75,7 @@ val httpSignaturePlugin = createClientPlugin("HttpSign", ::HttpSignaturePluginCo
         }
 
         if (request.headers.contains("Signature")) {
-            val all = request.headers.getAll("Signature")!!
+            val all = request.headers.getAll("Signature").orEmpty()
             val parameters = mutableListOf<String>()
             for (s in all) {
                 s.split(",").forEach { parameters.add(it) }
@@ -170,8 +170,12 @@ class KtorKeyMap(private val userAuthRepository: IUserRepository) : KeyMap {
             userAuthRepository.findByNameAndDomain(
                 username,
                 Config.configData.domain
-            )?.publicKey?.replace("-----BEGIN PUBLIC KEY-----", "-----END PUBLIC KEY-----")?.replace("", "")
-                ?.replace("\n", "")
+            )?.run {
+                publicKey
+                    .replace("-----BEGIN PUBLIC KEY-----", "")
+                    .replace("-----END PUBLIC KEY-----", "")
+                    .replace("\n", "")
+            }
         )
         val x509EncodedKeySpec = X509EncodedKeySpec(publicBytes)
         return@runBlocking KeyFactory.getInstance("RSA").generatePublic(x509EncodedKeySpec)
@@ -184,8 +188,11 @@ class KtorKeyMap(private val userAuthRepository: IUserRepository) : KeyMap {
             userAuthRepository.findByNameAndDomain(
                 username,
                 Config.configData.domain
-            )?.privateKey?.replace("-----BEGIN PRIVATE KEY-----", "")?.replace("-----END PRIVATE KEY-----", "")
-                ?.replace("\n", "")
+            )?.privateKey?.run {
+                replace("-----BEGIN PRIVATE KEY-----", "")
+                    .replace("-----END PRIVATE KEY-----", "")
+                    .replace("\n", "")
+            }
         )
         val x509EncodedKeySpec = PKCS8EncodedKeySpec(publicBytes)
         return@runBlocking KeyFactory.getInstance("RSA").generatePrivate(x509EncodedKeySpec)
