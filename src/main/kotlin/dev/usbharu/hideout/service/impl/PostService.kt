@@ -25,21 +25,23 @@ class PostService(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    override suspend fun create(post: Post) {
+    override suspend fun create(post: Post): Post {
         logger.debug("create post={}", post)
         val postEntity = postRepository.save(post)
         activityPubNoteService.createNote(postEntity)
+        return post
     }
 
-    override suspend fun create(post: PostCreateDto) {
+    override suspend fun create(post: PostCreateDto): Post {
         logger.debug("create post={}", post)
-        val user = userService.findByNameLocalUser(post.username)
+        val user = userService.findById(post.userId)
         val id = postRepository.generateId()
         val postEntity = Post(
             id, user.id, null, post.text,
             Instant.now().toEpochMilli(), Visibility.PUBLIC, "${user.url}/posts/$id", null, null
         )
         postRepository.save(postEntity)
+        return postEntity
     }
 
     override suspend fun findAll(
