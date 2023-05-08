@@ -35,11 +35,14 @@ fun Application.configureSecurity(
                 acceptLeeway(3)
             }
             validate { jwtCredential ->
-                if (jwtCredential.payload.getClaim("username")?.asString().isNullOrBlank().not()) {
-                    JWTPrincipal(jwtCredential.payload)
-                } else {
-                    null
+                val uid = jwtCredential.payload.getClaim("uid")
+                if (uid.isMissing) {
+                    return@validate null
                 }
+                if (uid.asLong() ==  null) {
+                    return@validate null
+                }
+                return@validate JWTPrincipal(jwtCredential.payload)
             }
         }
     }
@@ -74,7 +77,7 @@ fun Application.configureSecurity(
         authenticate(TOKEN_AUTH) {
             get("/auth-check") {
                 val principal = call.principal<JWTPrincipal>()
-                val username = principal!!.payload.getClaim("username")
+                val username = principal!!.payload.getClaim("uid")
                 call.respondText("Hello $username")
             }
         }

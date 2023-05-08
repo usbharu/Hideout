@@ -217,7 +217,7 @@ class SecurityKtTest {
             .withAudience("${Config.configData.url}/users/test")
             .withIssuer(Config.configData.url)
             .withKeyId(kid.toString())
-            .withClaim("username", "test")
+            .withClaim("uid", 123456L)
             .withExpiresAt(now.plus(30, ChronoUnit.MINUTES))
             .sign(Algorithm.RSA256(rsaPublicKey, keyPair.private as RSAPrivateKey))
         val metaService = mock<IMetaService> {
@@ -255,7 +255,7 @@ class SecurityKtTest {
             header("Authorization", "Bearer $token")
         }.apply {
             assertEquals(HttpStatusCode.OK, call.response.status)
-            assertEquals("Hello \"test\"", call.response.bodyAsText())
+            assertEquals("Hello 123456", call.response.bodyAsText())
         }
     }
 
@@ -277,7 +277,7 @@ class SecurityKtTest {
             .withAudience("${Config.configData.url}/users/test")
             .withIssuer(Config.configData.url)
             .withKeyId(kid.toString())
-            .withClaim("username", "test")
+            .withClaim("uid", 123345L)
             .withExpiresAt(now.minus(30, ChronoUnit.MINUTES))
             .sign(Algorithm.RSA256(rsaPublicKey, keyPair.private as RSAPrivateKey))
         val metaService = mock<IMetaService> {
@@ -335,7 +335,7 @@ class SecurityKtTest {
             .withAudience("${Config.configData.url}/users/test")
             .withIssuer("https://example.com")
             .withKeyId(kid.toString())
-            .withClaim("username", "test")
+            .withClaim("uid", 12345L)
             .withExpiresAt(now.plus(30, ChronoUnit.MINUTES))
             .sign(Algorithm.RSA256(rsaPublicKey, keyPair.private as RSAPrivateKey))
         val metaService = mock<IMetaService> {
@@ -393,7 +393,7 @@ class SecurityKtTest {
             .withAudience("${Config.configData.url}/users/test")
             .withIssuer(Config.configData.url)
             .withKeyId(kid.toString())
-            .withClaim("username", "")
+            .withClaim("uid", null as Long?)
             .withExpiresAt(now.plus(30, ChronoUnit.MINUTES))
             .sign(Algorithm.RSA256(rsaPublicKey, keyPair.private as RSAPrivateKey))
         val metaService = mock<IMetaService> {
