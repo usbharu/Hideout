@@ -7,6 +7,7 @@ import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.config.ConfigData
 import dev.usbharu.hideout.domain.model.hideout.entity.Post
 import dev.usbharu.hideout.domain.model.hideout.entity.User
+import dev.usbharu.hideout.domain.model.hideout.entity.Visibility
 import dev.usbharu.hideout.domain.model.job.DeliverPostJob
 import dev.usbharu.hideout.service.impl.IUserService
 import dev.usbharu.hideout.service.job.JobQueueParentService
@@ -78,7 +79,7 @@ class ActivityPubNoteServiceImplTest {
             null,
             "test text",
             1L,
-            1,
+            Visibility.PUBLIC,
             "https://example.com"
         )
         activityPubNoteService.createNote(postEntity)
@@ -99,8 +100,14 @@ class ActivityPubNoteServiceImplTest {
             JobProps(
                 data = mapOf<String, Any>(
                     DeliverPostJob.actor.name to "https://follower.example.com",
-                    DeliverPostJob.post.name to "{\"id\":1,\"userId\":1,\"inReplyToId\":null,\"text\":\"test text\"," +
-                        "\"createdAt\":1,\"updatedAt\":1,\"url\":\"https://example.com\"}",
+                    DeliverPostJob.post.name to """{
+  "id": 1,
+  "userId": 1,
+  "text": "test text",
+  "createdAt": 132525324,
+  "visibility": 0,
+  "url": "https://example.com"
+}""",
                     DeliverPostJob.inbox.name to "https://follower.example.com/inbox"
                 ),
                 json = Json

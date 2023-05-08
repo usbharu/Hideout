@@ -2,6 +2,7 @@ package dev.usbharu.hideout.service.impl
 
 import dev.usbharu.hideout.domain.model.hideout.dto.PostCreateDto
 import dev.usbharu.hideout.domain.model.hideout.entity.Post
+import dev.usbharu.hideout.domain.model.hideout.entity.Visibility
 import dev.usbharu.hideout.repository.IPostRepository
 import dev.usbharu.hideout.repository.Posts
 import dev.usbharu.hideout.repository.UsersFollowers
@@ -36,7 +37,7 @@ class PostService(
         val id = postRepository.generateId()
         val postEntity = Post(
             id, user.id, null, post.text,
-            Instant.now().toEpochMilli(), 0, "${user.url}/posts/$id", null, null
+            Instant.now().toEpochMilli(), Visibility.PUBLIC, "${user.url}/posts/$id", null, null
         )
         postRepository.save(postEntity)
     }
@@ -51,7 +52,7 @@ class PostService(
     ): List<Post> {
         return transaction {
             val select = Posts.select {
-                Posts.visibility.eq(0)
+                Posts.visibility.eq(Visibility.PUBLIC.ordinal)
             }
             if (userId != null) {
                 select.orWhere {
