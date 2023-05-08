@@ -5,8 +5,8 @@ import dev.usbharu.hideout.domain.model.hideout.entity.Post
 import java.time.Instant
 
 interface IPostService {
-    suspend fun create(post: Post)
-    suspend fun create(post: PostCreateDto)
+    suspend fun create(post: Post): Post
+    suspend fun create(post: PostCreateDto): Post
     suspend fun findAll(
         since: Instant? = null,
         until: Instant? = null,
