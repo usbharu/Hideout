@@ -39,7 +39,7 @@ fun Application.configureSecurity(
                 if (uid.isMissing) {
                     return@validate null
                 }
-                if (uid.asLong() ==  null) {
+                if (uid.asLong() == null) {
                     return@validate null
                 }
                 return@validate JWTPrincipal(jwtCredential.payload)
