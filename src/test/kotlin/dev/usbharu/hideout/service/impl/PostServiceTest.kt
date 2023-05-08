@@ -3,6 +3,7 @@
 package dev.usbharu.hideout.service.impl
 
 import dev.usbharu.hideout.domain.model.hideout.entity.Post
+import dev.usbharu.hideout.domain.model.hideout.entity.Visibility
 import dev.usbharu.hideout.repository.Posts
 import dev.usbharu.hideout.repository.UsersFollowers
 import dev.usbharu.hideout.service.TwitterSnowflakeIdGenerateService
@@ -44,7 +45,7 @@ class PostServiceTest {
     fun `findAll 公開投稿を取得できる`() = runTest {
         val postService = PostService(mock(), mock(), mock())
 
-        suspend fun createPost(userId: Long, text: String, visibility: Int = 0): Post {
+        suspend fun createPost(userId: Long, text: String, visibility: Visibility = Visibility.PUBLIC): Post {
             return Post(
                 TwitterSnowflakeIdGenerateService.generateId(),
                 userId,
@@ -67,13 +68,13 @@ class PostServiceTest {
             createPost(userA, "hello4"),
             createPost(userA, "hello5"),
             createPost(userA, "hello6"),
-            createPost(userB, "good bay", 1),
-            createPost(userB, "good bay1", 1),
-            createPost(userB, "good bay2", 1),
-            createPost(userB, "good bay3", 1),
-            createPost(userB, "good bay4", 1),
-            createPost(userB, "good bay5", 1),
-            createPost(userB, "good bay6", 1),
+            createPost(userB, "good bay ", Visibility.FOLLOWERS),
+            createPost(userB, "good bay1", Visibility.FOLLOWERS),
+            createPost(userB, "good bay2", Visibility.FOLLOWERS),
+            createPost(userB, "good bay3", Visibility.FOLLOWERS),
+            createPost(userB, "good bay4", Visibility.FOLLOWERS),
+            createPost(userB, "good bay5", Visibility.FOLLOWERS),
+            createPost(userB, "good bay6", Visibility.FOLLOWERS),
         )
 
         transaction {
@@ -83,14 +84,14 @@ class PostServiceTest {
                 this[Posts.overview] = it.overview
                 this[Posts.text] = it.text
                 this[Posts.createdAt] = it.createdAt
-                this[Posts.visibility] = it.visibility
+                this[Posts.visibility] = it.visibility.ordinal
                 this[Posts.url] = it.url
                 this[Posts.replyId] = it.replyId
                 this[Posts.repostId] = it.repostId
             }
         }
 
-        val expect = posts.filter { it.visibility == 0 }
+        val expect = posts.filter { it.visibility == Visibility.PUBLIC }
 
         val actual = postService.findAll()
         assertContentEquals(expect, actual)
@@ -100,7 +101,7 @@ class PostServiceTest {
     fun `findAll フォロー限定投稿を見れる`() = runTest {
         val postService = PostService(mock(), mock(), mock())
 
-        suspend fun createPost(userId: Long, text: String, visibility: Int = 0): Post {
+        suspend fun createPost(userId: Long, text: String, visibility: Visibility = Visibility.PUBLIC): Post {
             return Post(
                 TwitterSnowflakeIdGenerateService.generateId(),
                 userId,
@@ -123,13 +124,13 @@ class PostServiceTest {
             createPost(userA, "hello4"),
             createPost(userA, "hello5"),
             createPost(userA, "hello6"),
-            createPost(userB, "good bay", 1),
-            createPost(userB, "good bay1", 1),
-            createPost(userB, "good bay2", 1),
-            createPost(userB, "good bay3", 1),
-            createPost(userB, "good bay4", 1),
-            createPost(userB, "good bay5", 1),
-            createPost(userB, "good bay6", 1),
+            createPost(userB, "good bay ", Visibility.FOLLOWERS),
+            createPost(userB, "good bay1", Visibility.FOLLOWERS),
+            createPost(userB, "good bay2", Visibility.FOLLOWERS),
+            createPost(userB, "good bay3", Visibility.FOLLOWERS),
+            createPost(userB, "good bay4", Visibility.FOLLOWERS),
+            createPost(userB, "good bay5", Visibility.FOLLOWERS),
+            createPost(userB, "good bay6", Visibility.FOLLOWERS),
         )
 
         transaction(db) {
@@ -143,7 +144,7 @@ class PostServiceTest {
                 this[Posts.overview] = it.overview
                 this[Posts.text] = it.text
                 this[Posts.createdAt] = it.createdAt
-                this[Posts.visibility] = it.visibility
+                this[Posts.visibility] = it.visibility.ordinal
                 this[Posts.url] = it.url
                 this[Posts.replyId] = it.replyId
                 this[Posts.repostId] = it.repostId

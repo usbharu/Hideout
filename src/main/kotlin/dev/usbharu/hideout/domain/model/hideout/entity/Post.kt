@@ -6,7 +6,7 @@ data class Post(
     val overview:String? = null,
     val text:String,
     val createdAt:Long,
-    val visibility: Int,
+    val visibility: Visibility,
     val url:String,
     val repostId:Long? = null,
     val replyId:Long? = null
