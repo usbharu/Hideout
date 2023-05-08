@@ -25,7 +25,6 @@ class PostRepositoryImpl(database: Database, private val idGenerateService: IdGe
     suspend fun <T> query(block: suspend () -> T): T =
         newSuspendedTransaction(Dispatchers.IO) { block() }
 
-
     override suspend fun save(post: Post): Post {
         return query {
             Posts.insert {
