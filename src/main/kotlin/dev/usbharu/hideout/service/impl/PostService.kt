@@ -9,6 +9,10 @@ import dev.usbharu.hideout.repository.UsersFollowers
 import dev.usbharu.hideout.repository.toPost
 import dev.usbharu.hideout.service.IPostService
 import dev.usbharu.hideout.service.activitypub.ActivityPubNoteService
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.inSubQuery
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.orIfNotNull
 import org.jetbrains.exposed.sql.orWhere
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -69,6 +73,23 @@ class PostService(
 
     override suspend fun findById(id: String): Post {
         TODO("Not yet implemented")
+    }
+
+    override suspend fun findByIdForUser(id: Long, userId: Long?): Post? {
+        return transaction {
+            val select = Posts.select(
+                Posts.id.eq(id).and(
+                    Posts.visibility.eq(Visibility.PUBLIC.ordinal).orIfNotNull(
+                        userId?.let {
+                            Posts.userId.inSubQuery(
+                                UsersFollowers.slice(UsersFollowers.userId).select(UsersFollowers.followerId.eq(userId))
+                            )
+                        }
+                    )
+                )
+            )
+            select.singleOrNull()?.toPost()
+        }
     }
 
     override suspend fun delete(id: String) {
