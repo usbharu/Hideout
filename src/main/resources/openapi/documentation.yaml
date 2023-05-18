@@ -1,0 +1,365 @@
+openapi: "3.0.3"
+info:
+  title: "hideout API"
+  description: "hideout API"
+  version: "1.0.0"
+servers:
+  - url: "https://hideout"
+paths:
+  /.well-known/jwks.json:
+    get:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "string"
+  /auth-check:
+    get:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: ""
+  /login:
+    post:
+      description: ""
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: "#/components/schemas/UserLogin"
+        required: true
+      responses:
+        "401":
+          description: "Unauthorized"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/JwtToken"
+  /refresh-token:
+    post:
+      description: ""
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: "#/components/schemas/RefreshToken"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/JwtToken"
+  /.well-known/webfinger:
+    get:
+      description: ""
+      parameters:
+        - name: "resource"
+          in: "query"
+          required: false
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/WebFinger"
+  /api/internal/v1/posts:
+    get:
+      description: ""
+      parameters:
+        - name: "since"
+          in: "query"
+          required: false
+          schema:
+            type: "string"
+        - name: "until"
+          in: "query"
+          required: false
+          schema:
+            type: "string"
+        - name: "minId"
+          in: "query"
+          required: false
+          schema:
+            type: "number"
+        - name: "maxId"
+          in: "query"
+          required: false
+          schema:
+            type: "number"
+        - name: "limit"
+          in: "query"
+          required: false
+          schema:
+            type: "integer"
+    post:
+      description: ""
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: "#/components/schemas/Post"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+  /inbox:
+    get:
+      description: ""
+      responses:
+        "405":
+          description: "Method Not Allowed"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+    post:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "501":
+          description: "Not Implemented"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+  /outbox:
+    get:
+      description: ""
+      responses:
+        "501":
+          description: "Not Implemented"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+    post:
+      description: ""
+      responses:
+        "501":
+          description: "Not Implemented"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+  /users/{name}:
+    get:
+      description: ""
+      parameters:
+        - name: "name"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+  /users/{name}/inbox:
+    get:
+      description: ""
+      parameters:
+        - name: "name"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "405":
+          description: "Method Not Allowed"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+    post:
+      description: ""
+      parameters:
+        - name: "name"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "501":
+          description: "Not Implemented"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+  /users/{name}/outbox:
+    get:
+      description: ""
+      parameters:
+        - name: "name"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "501":
+          description: "Not Implemented"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+    post:
+      description: ""
+      parameters:
+        - name: "name"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "501":
+          description: "Not Implemented"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+  /:
+    get:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            text/html:
+              schema:
+                type: "string"
+  /register:
+    get:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            text/html:
+              schema:
+                type: "string"
+    post:
+      description: ""
+      parameters:
+        - name: "password"
+          in: "query"
+          required: false
+          schema:
+            type: "string"
+        - name: "username"
+          in: "query"
+          required: false
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "OK <br> Redirect"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: ""
+                Example#2:
+                  value: "/register"
+                Example#3:
+                  value: "/register"
+                Example#4:
+                  value: "/register"
+components:
+  schemas:
+    UserLogin:
+      type: "object"
+      properties:
+        username:
+          type: "string"
+        password:
+          type: "string"
+    JwtToken:
+      type: "object"
+      properties:
+        token:
+          type: "string"
+        refreshToken:
+          type: "string"
+    RefreshToken:
+      type: "object"
+      properties:
+        refreshToken:
+          type: "string"
+    Link:
+      type: "object"
+      properties:
+        rel:
+          type: "string"
+        type:
+          type: "string"
+        href:
+          type: "string"
+    WebFinger:
+      type: "object"
+      properties:
+        subject:
+          type: "string"
+        links:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Link"
+    Post:
+      type: "object"
+      properties:
+        text:
+          type: "string"
+        overview:
+          type: "string"
+        visibility:
+          type: "string"
+          enum:
+            - "PUBLIC"
+            - "UNLISTED"
+            - "FOLLOWERS"
+            - "DIRECT"
+        repostId:
+          type: "integer"
+          format: "int64"
+        replyId:
+          type: "integer"
+          format: "int64"

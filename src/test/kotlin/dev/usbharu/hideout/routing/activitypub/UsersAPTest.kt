@@ -10,18 +10,16 @@ import dev.usbharu.hideout.domain.model.ap.Image
 import dev.usbharu.hideout.domain.model.ap.Key
 import dev.usbharu.hideout.domain.model.ap.Person
 import dev.usbharu.hideout.domain.model.hideout.entity.User
-import dev.usbharu.hideout.plugins.configureRouting
 import dev.usbharu.hideout.plugins.configureSerialization
-import dev.usbharu.hideout.service.activitypub.ActivityPubService
 import dev.usbharu.hideout.service.activitypub.ActivityPubUserService
 import dev.usbharu.hideout.service.impl.IUserService
-import dev.usbharu.hideout.service.signature.HttpSignatureVerifyService
 import dev.usbharu.hideout.util.HttpUtil.Activity
 import dev.usbharu.hideout.util.HttpUtil.JsonLd
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.server.config.*
+import io.ktor.server.routing.*
 import io.ktor.server.testing.*
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyString
@@ -64,8 +62,6 @@ class UsersAPTest {
         )
         person.context = listOf("https://www.w3.org/ns/activitystreams")
 
-        val httpSignatureVerifyService = mock<HttpSignatureVerifyService> {}
-        val activityPubService = mock<ActivityPubService> {}
         val userService = mock<IUserService> {}
 
         val activityPubUserService = mock<ActivityPubUserService> {
@@ -74,13 +70,9 @@ class UsersAPTest {
 
         application {
             configureSerialization()
-            configureRouting(
-                httpSignatureVerifyService,
-                activityPubService,
-                userService,
-                activityPubUserService,
-                mock()
-            )
+            routing {
+                usersAP(activityPubUserService, userService)
+            }
         }
         client.get("/users/test") {
             accept(ContentType.Application.Activity)
@@ -130,8 +122,6 @@ class UsersAPTest {
         )
         person.context = listOf("https://www.w3.org/ns/activitystreams")
 
-        val httpSignatureVerifyService = mock<HttpSignatureVerifyService> {}
-        val activityPubService = mock<ActivityPubService> {}
         val userService = mock<IUserService> {}
 
         val activityPubUserService = mock<ActivityPubUserService> {
@@ -140,13 +130,9 @@ class UsersAPTest {
 
         application {
             configureSerialization()
-            configureRouting(
-                httpSignatureVerifyService,
-                activityPubService,
-                userService,
-                activityPubUserService,
-                mock()
-            )
+            routing {
+                usersAP(activityPubUserService, userService)
+            }
         }
         client.get("/users/test") {
             accept(ContentType.Application.JsonLd)
@@ -205,13 +191,9 @@ class UsersAPTest {
             )
         }
         application {
-            configureRouting(
-                mock(),
-                mock(),
-                userService,
-                mock(),
-                mock()
-            )
+            routing {
+                usersAP(mock(), userService)
+            }
         }
         client.get("/users/test") {
             accept(ContentType.Text.Html)

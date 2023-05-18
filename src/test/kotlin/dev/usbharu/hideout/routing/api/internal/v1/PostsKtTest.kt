@@ -78,7 +78,7 @@ class PostsKtTest {
         }
         argumentCaptor<PostCreateDto> {
             verify(postService).create(capture())
-            assertEquals(PostCreateDto("test", 1234), firstValue)
+            assertEquals(PostCreateDto("test", userId = 1234), firstValue)
         }
     }
 }
