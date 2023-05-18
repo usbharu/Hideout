@@ -35,6 +35,10 @@ class UserService(private val userRepository: IUserRepository, private val userA
             ?: throw UserNotFoundException("$name was not found.")
     }
 
+    override suspend fun findByNameAndDomain(name: String, domain: String?): User {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun findByNameAndDomains(names: List<Pair<String, String>>): List<User> =
         userRepository.findByNameAndDomains(names)
 
@@ -87,6 +91,21 @@ class UserService(private val userRepository: IUserRepository, private val userA
     }
 
     override suspend fun findFollowersById(id: Long): List<User> = userRepository.findFollowersById(id)
+    override suspend fun findFollowersByNameAndDomain(name: String, domain: String?): List<User> {
+        TODO("Not yet implemented")
+    }
 
-    override suspend fun addFollowers(id: Long, follower: Long) = userRepository.createFollower(id, follower)
+    override suspend fun findFollowingById(id: Long): List<User> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun findFollowingByNameAndDomain(name: String, domain: String?): List<User> {
+        TODO("Not yet implemented")
+    }
+
+    //TODO APのフォロー処理を作る
+    override suspend fun addFollowers(id: Long, follower: Long): Boolean {
+        userRepository.createFollower(id, follower)
+        return false
+    }
 }
