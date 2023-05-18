@@ -92,6 +92,31 @@ class PostService(
         }
     }
 
+    override suspend fun findByUserIdForUser(
+        userId: Long,
+        since: Instant?,
+        until: Instant?,
+        minId: Long?,
+        maxId: Long?,
+        limit: Int?,
+        forUserId: Long?
+    ): List<Post> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun findByUserNameAndDomainForUser(
+        userName: String,
+        domain: String,
+        since: Instant?,
+        until: Instant?,
+        minId: Long?,
+        maxId: Long?,
+        limit: Int?,
+        forUserId: Long?
+    ): List<Post> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun delete(id: String) {
         TODO("Not yet implemented")
     }
