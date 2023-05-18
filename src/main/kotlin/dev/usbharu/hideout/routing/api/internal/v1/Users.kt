@@ -38,6 +38,19 @@ fun Route.users(userService: IUserService) {
         }
         route("/{name}") {
 
+            authenticate(TOKEN_AUTH, optional = true) {
+                get {
+                    val userParameter = (call.parameters["name"]
+                        ?: throw ParameterNotExistException("Parameter(name='userName@domain') does not exist."))
+                    if (userParameter.toLongOrNull() != null) {
+                        return@get call.respond(userService.findById(userParameter.toLong()))
+                    } else {
+                        val acct = AcctUtil.parse(userParameter)
+                        return@get call.respond(userService.findByNameAndDomain(acct.username, acct.domain))
+                    }
+                }
+            }
+
             route("/followers") {
                 get {
                     val userParameter = call.parameters["name"]
