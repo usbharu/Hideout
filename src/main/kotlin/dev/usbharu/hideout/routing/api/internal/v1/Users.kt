@@ -18,7 +18,7 @@ import io.ktor.server.routing.*
 fun Route.users(userService: IUserService) {
     route("/users") {
         get {
-            call.respond(userService.findAll())
+            call.respond(userService.findAllForUser())
         }
         post {
             val userCreate = call.receive<UserCreate>()
@@ -34,7 +34,7 @@ fun Route.users(userService: IUserService) {
                 )
             )
             call.response.header("Location", "${Config.configData.url}/api/internal/v1/users/${user.name}")
-            call.respond(HttpStatusCode.OK)
+            call.respond(HttpStatusCode.Created)
         }
         route("/{name}") {
 

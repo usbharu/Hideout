@@ -2,11 +2,14 @@ package dev.usbharu.hideout.service.impl
 
 import dev.usbharu.hideout.domain.model.hideout.dto.RemoteUserCreateDto
 import dev.usbharu.hideout.domain.model.hideout.dto.UserCreateDto
+import dev.usbharu.hideout.domain.model.hideout.dto.UserResponse
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 
 @Suppress("TooManyFunctions")
 interface IUserService {
     suspend fun findAll(limit: Int? = 100, offset: Long? = 0): List<User>
+
+    suspend fun findAllForUser(limit: Int? = 100, offset: Long? = 0): List<UserResponse>
 
     suspend fun findById(id: Long): User
 
