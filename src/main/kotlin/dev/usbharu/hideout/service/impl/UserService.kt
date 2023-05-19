@@ -3,6 +3,7 @@ package dev.usbharu.hideout.service.impl
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.domain.model.hideout.dto.RemoteUserCreateDto
 import dev.usbharu.hideout.domain.model.hideout.dto.UserCreateDto
+import dev.usbharu.hideout.domain.model.hideout.dto.UserResponse
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.exception.UserNotFoundException
 import dev.usbharu.hideout.repository.IUserRepository
@@ -21,6 +22,10 @@ class UserService(private val userRepository: IUserRepository, private val userA
             min(limit ?: maxLimit, maxLimit),
             offset ?: 0
         )
+    }
+
+    override suspend fun findAllForUser(limit: Int?, offset: Long?): List<UserResponse> {
+        TODO("Not yet implemented")
     }
 
     override suspend fun findById(id: Long): User =

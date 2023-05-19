@@ -46,7 +46,7 @@ fun Route.posts(postService: IPostService) {
                 val minId = call.request.queryParameters["minId"]?.toLong()
                 val maxId = call.request.queryParameters["maxId"]?.toLong()
                 val limit = call.request.queryParameters["limit"]?.toInt()
-                call.respond(postService.findAll(since, until, minId, maxId, limit, userId))
+                call.respond(HttpStatusCode.OK, postService.findAll(since, until, minId, maxId, limit, userId))
             }
             get("/{id}") {
                 val userId = call.principal<JWTPrincipal>()?.payload?.getClaim("uid")?.asLong()
@@ -84,7 +84,6 @@ fun Route.posts(postService: IPostService) {
                     ?: throw ParameterNotExistException("Parameter(name='postsId' does not exist.")
                 val post = (postService.findByIdForUser(id, userId)
                     ?: throw PostNotFoundException("$id was not found or is not authorized."))
-                call.response.header("Content-Location", post.url)
                 call.respond(post)
             }
         }
