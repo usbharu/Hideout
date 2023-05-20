@@ -25,7 +25,7 @@ class ServerInitialiseServiceImpl(private val metaRepository: IMetaRepository) :
             return
         }
 
-        if (isVersionChanged(savedMeta!!)) {
+        if (isVersionChanged(requireNotNull(savedMeta))) {
             logger.info("Version changed!! (${savedMeta.version} -> $implementationVersion)")
             updateVersion(savedMeta, implementationVersion)
         }

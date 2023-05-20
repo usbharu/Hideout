@@ -26,7 +26,9 @@ fun Routing.usersAP(activityPubUserService: ActivityPubUserService, userService:
             )
         }
         get {
-            val userEntity = userService.findByNameLocalUser(call.parameters["name"]!!)
+            val userEntity = userService.findByNameLocalUser(
+                call.parameters["name"] ?: throw ParameterNotExistException("Parameter(name='name') does not exist.")
+            )
             call.respondText(userEntity.toString() + "\n" + userService.findFollowersById(userEntity.id))
         }
     }

@@ -8,10 +8,14 @@ open class Key : Object {
     constructor(
         type: List<String>,
         name: String,
-        id: String?,
+        id: String,
         owner: String?,
         publicKeyPem: String?
-    ) : super(add(type, "Key"), name, id) {
+    ) : super(
+        type = add(list = type, type = "Key"),
+        name = name,
+        id = id
+    ) {
         this.owner = owner
         this.publicKeyPem = publicKeyPem
     }
@@ -21,16 +25,16 @@ open class Key : Object {
         if (other !is Key) return false
         if (!super.equals(other)) return false
 
-        if (id != other.id) return false
         if (owner != other.owner) return false
         return publicKeyPem == other.publicKeyPem
     }
 
     override fun hashCode(): Int {
         var result = super.hashCode()
-        result = 31 * result + (id?.hashCode() ?: 0)
         result = 31 * result + (owner?.hashCode() ?: 0)
         result = 31 * result + (publicKeyPem?.hashCode() ?: 0)
         return result
     }
+
+    override fun toString(): String = "Key(owner=$owner, publicKeyPem=$publicKeyPem) ${super.toString()}"
 }

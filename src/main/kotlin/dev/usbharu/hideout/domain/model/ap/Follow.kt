@@ -9,7 +9,11 @@ open class Follow : Object {
         name: String,
         `object`: String?,
         actor: String?
-    ) : super(add(type, "Follow"), name, actor) {
+    ) : super(
+        type = add(type, "Follow"),
+        name = name,
+        actor = actor
+    ) {
         this.`object` = `object`
     }
 }

@@ -27,7 +27,8 @@ open class Object : JsonLd {
 
         if (type != other.type) return false
         if (name != other.name) return false
-        return actor == other.actor
+        if (actor != other.actor) return false
+        return id == other.id
     }
 
     override fun hashCode(): Int {
@@ -35,10 +36,11 @@ open class Object : JsonLd {
         result = 31 * result + type.hashCode()
         result = 31 * result + (name?.hashCode() ?: 0)
         result = 31 * result + (actor?.hashCode() ?: 0)
+        result = 31 * result + (id?.hashCode() ?: 0)
         return result
     }
 
-    override fun toString(): String = "Object(type=$type, name=$name, actor=$actor) ${super.toString()}"
+    override fun toString(): String = "Object(type=$type, name=$name, actor=$actor, id=$id) ${super.toString()}"
 
     companion object {
         @JvmStatic
