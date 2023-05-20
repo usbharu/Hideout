@@ -1,5 +1,7 @@
 build:
   maxIssues: 20
+  weights:
+    Indentation: 0
 
 style:
   ClassOrdering:
@@ -30,6 +32,15 @@ style:
     ignorePropertyDeclaration: true
 
   ForbiddenComment:
+    active: false
+
+  ThrowsCount:
+    active: false
+
+  UseCheckOrError:
+    active: false
+
+  UseRequire:
     active: false
 
 complexity:

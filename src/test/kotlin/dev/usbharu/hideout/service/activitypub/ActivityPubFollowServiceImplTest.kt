@@ -115,7 +115,7 @@ class ActivityPubFollowServiceImplTest {
                     createdAt = Instant.now()
                 )
             )
-            onBlocking { addFollowers(any(), any()) } doReturn Unit
+            onBlocking { addFollowers(any(), any()) } doReturn false
         }
         val activityPubFollowService =
             ActivityPubFollowServiceImpl(

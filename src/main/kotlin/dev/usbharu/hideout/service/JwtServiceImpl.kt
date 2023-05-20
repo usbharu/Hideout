@@ -52,7 +52,7 @@ class JwtServiceImpl(
             .withAudience("${Config.configData.url}/users/${user.name}")
             .withIssuer(Config.configData.url)
             .withKeyId(keyId.await().toString())
-            .withClaim("username", user.name)
+            .withClaim("uid", user.id)
             .withExpiresAt(now.plus(30, ChronoUnit.MINUTES))
             .sign(Algorithm.RSA256(publicKey.await(), privateKey.await()))
 
