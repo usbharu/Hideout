@@ -17,21 +17,22 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
+@Suppress("LongMethod")
 fun Route.posts(postService: IPostService) {
     route("/posts") {
         authenticate(TOKEN_AUTH) {
             post {
-                val principal = call.principal<JWTPrincipal>() ?: throw RuntimeException("no principal")
+                val principal = call.principal<JWTPrincipal>() ?: throw IllegalStateException("no principal")
                 val userId = principal.payload.getClaim("uid").asLong()
 
                 val receive = call.receive<Post>()
                 val postCreateDto = PostCreateDto(
-                    receive.text,
-                    receive.overview,
-                    receive.visibility,
-                    receive.repostId,
-                    receive.replyId,
-                    userId
+                    text = receive.text,
+                    overview = receive.overview,
+                    visibility = receive.visibility,
+                    repostId = receive.repostId,
+                    repolyId = receive.replyId,
+                    userId = userId
                 )
                 val create = postService.create(postCreateDto)
                 call.response.header("Location", create.url)

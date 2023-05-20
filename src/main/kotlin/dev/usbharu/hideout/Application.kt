@@ -100,12 +100,12 @@ fun Application.parent() {
         inject<JwkProvider>().value,
     )
     configureRouting(
-        inject<HttpSignatureVerifyService>().value,
-        inject<ActivityPubService>().value,
-        inject<IUserService>().value,
-        inject<ActivityPubUserService>().value,
-        inject<IPostService>().value,
-        inject<IUserApiService>().value,
+        httpSignatureVerifyService = inject<HttpSignatureVerifyService>().value,
+        activityPubService = inject<ActivityPubService>().value,
+        userService = inject<IUserService>().value,
+        activityPubUserService = inject<ActivityPubUserService>().value,
+        postService = inject<IPostService>().value,
+        userApiService = inject<IUserApiService>().value,
     )
 }
 

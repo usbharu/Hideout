@@ -32,6 +32,15 @@ style:
   ForbiddenComment:
     active: false
 
+  ThrowsCount:
+    active: false
+
+  UseCheckOrError:
+    active: false
+
+  UseRequire:
+    active: false
+
 complexity:
   CognitiveComplexMethod:
     active: true
