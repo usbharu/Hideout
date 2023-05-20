@@ -5,6 +5,7 @@ import dev.usbharu.hideout.domain.model.hideout.dto.UserCreateDto
 import dev.usbharu.hideout.domain.model.hideout.form.UserCreate
 import dev.usbharu.hideout.exception.ParameterNotExistException
 import dev.usbharu.hideout.plugins.TOKEN_AUTH
+import dev.usbharu.hideout.service.IUserApiService
 import dev.usbharu.hideout.service.impl.IUserService
 import dev.usbharu.hideout.util.AcctUtil
 import io.ktor.http.*
@@ -15,10 +16,10 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.users(userService: IUserService) {
+fun Route.users(userService: IUserService, userApiService: IUserApiService) {
     route("/users") {
         get {
-            call.respond(userService.findAllForUser())
+            call.respond(userApiService.findAll())
         }
         post {
             val userCreate = call.receive<UserCreate>()
@@ -43,10 +44,10 @@ fun Route.users(userService: IUserService) {
                     val userParameter = (call.parameters["name"]
                         ?: throw ParameterNotExistException("Parameter(name='userName@domain') does not exist."))
                     if (userParameter.toLongOrNull() != null) {
-                        return@get call.respond(userService.findById(userParameter.toLong()))
+                        return@get call.respond(userApiService.findById(userParameter.toLong()))
                     } else {
                         val acct = AcctUtil.parse(userParameter)
-                        return@get call.respond(userService.findByNameAndDomain(acct.username, acct.domain))
+                        return@get call.respond(userApiService.findByAcct(acct))
                     }
                 }
             }
@@ -56,10 +57,10 @@ fun Route.users(userService: IUserService) {
                     val userParameter = call.parameters["name"]
                         ?: throw ParameterNotExistException("Parameter(name='userName@domain') does not exist.")
                     if (userParameter.toLongOrNull() != null) {
-                        return@get call.respond(userService.findFollowersById(userParameter.toLong()))
+                        return@get call.respond(userApiService.findFollowers(userParameter.toLong()))
                     }
                     val acct = AcctUtil.parse(userParameter)
-                    return@get call.respond(userService.findFollowersByNameAndDomain(acct.username, acct.domain))
+                    return@get call.respond(userApiService.findFollowersByAcct(acct))
                 }
                 authenticate(TOKEN_AUTH) {
 
@@ -76,7 +77,7 @@ fun Route.users(userService: IUserService) {
                             }
                         }
                         val acct = AcctUtil.parse(userParameter)
-                        val targetUser = userService.findByNameAndDomain(acct.username, acct.domain)
+                        val targetUser = userApiService.findByAcct(acct)
                         if (userService.addFollowers(targetUser.id, userId)) {
                             return@post call.respond(HttpStatusCode.OK)
                         } else {
@@ -90,10 +91,10 @@ fun Route.users(userService: IUserService) {
                     val userParameter = (call.parameters["name"]
                         ?: throw ParameterNotExistException("Parameter(name='userName@domain') does not exist."))
                     if (userParameter.toLongOrNull() != null) {
-                        return@get call.respond(userService.findFollowingById(userParameter.toLong()))
+                        return@get call.respond(userApiService.findFollowings(userParameter.toLong()))
                     }
                     val acct = AcctUtil.parse(userParameter)
-                    return@get call.respond(userService.findFollowingByNameAndDomain(acct.username, acct.domain))
+                    return@get call.respond(userApiService.findFollowingsByAcct(acct))
                 }
             }
         }

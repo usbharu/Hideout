@@ -112,6 +112,15 @@ paths:
           required: false
           schema:
             type: "integer"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/Post"
     post:
       description: ""
       requestBody:
@@ -127,6 +136,61 @@ paths:
             '*/*':
               schema:
                 type: "object"
+  /api/internal/v1/posts/{id}:
+    get:
+      description: ""
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: "number"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Post"
+  /api/internal/v1/users/{name}/posts:
+    get:
+      description: ""
+      parameters:
+        - name: "name"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/Post"
+  /api/internal/v1/users/{name}/posts/{id}:
+    get:
+      description: ""
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: "number"
+        - name: "name"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Post"
   /inbox:
     get:
       description: ""
@@ -346,10 +410,19 @@ components:
     Post:
       type: "object"
       properties:
-        text:
-          type: "string"
+        id:
+          type: "integer"
+          format: "int64"
+        userId:
+          type: "integer"
+          format: "int64"
         overview:
           type: "string"
+        text:
+          type: "string"
+        createdAt:
+          type: "integer"
+          format: "int64"
         visibility:
           type: "string"
           enum:
@@ -357,6 +430,8 @@ components:
             - "UNLISTED"
             - "FOLLOWERS"
             - "DIRECT"
+        url:
+          type: "string"
         repostId:
           type: "integer"
           format: "int64"

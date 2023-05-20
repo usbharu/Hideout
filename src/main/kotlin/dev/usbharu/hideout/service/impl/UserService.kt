@@ -24,7 +24,7 @@ class UserService(private val userRepository: IUserRepository, private val userA
         )
     }
 
-    override suspend fun findAllForUser(limit: Int?, offset: Long?): List<UserResponse> {
+    suspend fun findAllForUser(limit: Int?, offset: Long?): List<UserResponse> {
         TODO("Not yet implemented")
     }
 
