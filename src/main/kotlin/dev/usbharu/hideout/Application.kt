@@ -104,7 +104,8 @@ fun Application.parent() {
         inject<ActivityPubService>().value,
         inject<IUserService>().value,
         inject<ActivityPubUserService>().value,
-        inject<IPostService>().value
+        inject<IPostService>().value,
+        inject<IUserApiService>().value,
     )
 }
 
