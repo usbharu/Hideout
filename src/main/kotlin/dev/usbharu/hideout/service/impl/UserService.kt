@@ -41,7 +41,8 @@ class UserService(private val userRepository: IUserRepository, private val userA
     }
 
     override suspend fun findByNameAndDomain(name: String, domain: String?): User {
-        TODO("Not yet implemented")
+        return userRepository.findByNameAndDomain(name, domain ?: Config.configData.domain)
+            ?: throw UserNotFoundException("$name was not found.")
     }
 
     override suspend fun findByNameAndDomains(names: List<Pair<String, String>>): List<User> =
