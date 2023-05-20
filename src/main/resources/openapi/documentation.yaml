@@ -152,6 +152,112 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/Post"
+  /api/internal/v1/users:
+    get:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/UserResponse"
+    post:
+      description: ""
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: "#/components/schemas/UserCreate"
+        required: true
+      responses:
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+        "201":
+          description: "Created"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+  /api/internal/v1/users/{name}:
+    get:
+      description: ""
+      parameters:
+        - name: "name"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+  /api/internal/v1/users/{name}/followers:
+    get:
+      description: ""
+      parameters:
+        - name: "name"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  type: "object"
+    post:
+      description: ""
+      parameters:
+        - name: "name"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+        "202":
+          description: "Accepted"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+  /api/internal/v1/users/{name}/following:
+    get:
+      description: ""
+      parameters:
+        - name: "name"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  type: "object"
   /api/internal/v1/users/{name}/posts:
     get:
       description: ""
@@ -438,3 +544,29 @@ components:
         replyId:
           type: "integer"
           format: "int64"
+    UserResponse:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        name:
+          type: "string"
+        domain:
+          type: "string"
+        screenName:
+          type: "string"
+        description:
+          type: "string"
+        url:
+          type: "string"
+        createdAt:
+          type: "integer"
+          format: "int64"
+    UserCreate:
+      type: "object"
+      properties:
+        username:
+          type: "string"
+        password:
+          type: "string"
