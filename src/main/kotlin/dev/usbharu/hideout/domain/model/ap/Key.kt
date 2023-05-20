@@ -20,7 +20,6 @@ open class Key : Object {
         this.publicKeyPem = publicKeyPem
     }
 
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is Key) return false

@@ -38,11 +38,12 @@ fun Route.users(userService: IUserService, userApiService: IUserApiService) {
             call.respond(HttpStatusCode.Created)
         }
         route("/{name}") {
-
             authenticate(TOKEN_AUTH, optional = true) {
                 get {
-                    val userParameter = (call.parameters["name"]
-                        ?: throw ParameterNotExistException("Parameter(name='userName@domain') does not exist."))
+                    val userParameter = (
+                            call.parameters["name"]
+                                ?: throw ParameterNotExistException("Parameter(name='userName@domain') does not exist.")
+                            )
                     if (userParameter.toLongOrNull() != null) {
                         return@get call.respond(userApiService.findById(userParameter.toLong()))
                     } else {
@@ -63,7 +64,6 @@ fun Route.users(userService: IUserService, userApiService: IUserApiService) {
                     return@get call.respond(userApiService.findFollowersByAcct(acct))
                 }
                 authenticate(TOKEN_AUTH) {
-
                     post {
                         val userId = call.principal<JWTPrincipal>()?.payload?.getClaim("uid")?.asLong()
                             ?: throw IllegalStateException("no principal")
@@ -88,8 +88,10 @@ fun Route.users(userService: IUserService, userApiService: IUserApiService) {
             }
             route("/following") {
                 get {
-                    val userParameter = (call.parameters["name"]
-                        ?: throw ParameterNotExistException("Parameter(name='userName@domain') does not exist."))
+                    val userParameter = (
+                            call.parameters["name"]
+                                ?: throw ParameterNotExistException("Parameter(name='userName@domain') does not exist.")
+                            )
                     if (userParameter.toLongOrNull() != null) {
                         return@get call.respond(userApiService.findFollowings(userParameter.toLong()))
                     }
@@ -98,6 +100,5 @@ fun Route.users(userService: IUserService, userApiService: IUserApiService) {
                 }
             }
         }
-
     }
 }
