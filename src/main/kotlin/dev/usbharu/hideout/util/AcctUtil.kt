@@ -26,7 +26,8 @@ object AcctUtil {
                     val userName = substring.substringBefore("@")
                     val domain = substring.substringAfter("@")
                     Acct(
-                        userName, domain.ifBlank { null }
+                        userName,
+                        domain.ifBlank { null }
                     )
                 } else {
                     throw IllegalArgumentException("Invalid acct.(@ are in the wrong position)")

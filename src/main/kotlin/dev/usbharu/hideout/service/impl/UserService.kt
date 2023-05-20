@@ -109,7 +109,7 @@ class UserService(private val userRepository: IUserRepository, private val userA
         TODO("Not yet implemented")
     }
 
-    //TODO APのフォロー処理を作る
+    // TODO APのフォロー処理を作る
     override suspend fun addFollowers(id: Long, follower: Long): Boolean {
         userRepository.createFollower(id, follower)
         return false

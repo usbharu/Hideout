@@ -52,8 +52,10 @@ fun Route.posts(postService: IPostService) {
                 val userId = call.principal<JWTPrincipal>()?.payload?.getClaim("uid")?.asLong()
                 val id = call.parameters["id"]?.toLong()
                     ?: throw ParameterNotExistException("Parameter(id='postsId') does not exist.")
-                val post = (postService.findByIdForUser(id, userId)
-                    ?: throw PostNotFoundException("$id was not found or is not authorized."))
+                val post = (
+                        postService.findByIdForUser(id, userId)
+                            ?: throw PostNotFoundException("$id was not found or is not authorized.")
+                        )
                 call.respond(post)
             }
         }
@@ -76,14 +78,15 @@ fun Route.posts(postService: IPostService) {
                     postService.findByUserIdForUser(targetUserId, forUserId = userId)
                 }
                 call.respond(posts)
-
             }
             get("/{id}") {
                 val userId = call.principal<JWTPrincipal>()?.payload?.getClaim("uid")?.asLong()
                 val id = call.parameters["id"]?.toLong()
                     ?: throw ParameterNotExistException("Parameter(name='postsId' does not exist.")
-                val post = (postService.findByIdForUser(id, userId)
-                    ?: throw PostNotFoundException("$id was not found or is not authorized."))
+                val post = (
+                        postService.findByIdForUser(id, userId)
+                            ?: throw PostNotFoundException("$id was not found or is not authorized.")
+                        )
                 call.respond(post)
             }
         }
