@@ -1,5 +1,7 @@
 build:
   maxIssues: 20
+  weights:
+    Indentation: 0
 
 style:
   ClassOrdering:
