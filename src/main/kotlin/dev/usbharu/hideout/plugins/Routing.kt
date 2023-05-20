@@ -4,9 +4,11 @@ import dev.usbharu.hideout.routing.activitypub.inbox
 import dev.usbharu.hideout.routing.activitypub.outbox
 import dev.usbharu.hideout.routing.activitypub.usersAP
 import dev.usbharu.hideout.routing.api.internal.v1.posts
+import dev.usbharu.hideout.routing.api.internal.v1.users
 import dev.usbharu.hideout.routing.api.mastodon.v1.statuses
 import dev.usbharu.hideout.routing.wellknown.webfinger
 import dev.usbharu.hideout.service.IPostService
+import dev.usbharu.hideout.service.IUserApiService
 import dev.usbharu.hideout.service.activitypub.ActivityPubService
 import dev.usbharu.hideout.service.activitypub.ActivityPubUserService
 import dev.usbharu.hideout.service.impl.IUserService
@@ -20,7 +22,8 @@ fun Application.configureRouting(
     activityPubService: ActivityPubService,
     userService: IUserService,
     activityPubUserService: ActivityPubUserService,
-    postService: IPostService
+    postService: IPostService,
+    userApiService: IUserApiService
 ) {
     install(AutoHeadResponse)
     routing {
@@ -34,6 +37,7 @@ fun Application.configureRouting(
         }
         route("/api/internal/v1") {
             posts(postService)
+            users(userService, userApiService)
         }
     }
 }
