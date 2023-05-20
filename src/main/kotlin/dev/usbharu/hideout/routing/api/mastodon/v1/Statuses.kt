@@ -3,6 +3,7 @@ package dev.usbharu.hideout.routing.api.mastodon.v1
 import dev.usbharu.hideout.service.IPostService
 import io.ktor.server.routing.*
 
+@Suppress("UnusedPrivateMember")
 fun Route.statuses(postService: IPostService) {
 //    route("/statuses") {
 //        post {

@@ -76,8 +76,8 @@ fun Application.configureSecurity(
         }
         authenticate(TOKEN_AUTH) {
             get("/auth-check") {
-                val principal = call.principal<JWTPrincipal>()
-                val username = principal!!.payload.getClaim("uid")
+                val principal = call.principal<JWTPrincipal>() ?: throw IllegalStateException("no principal")
+                val username = principal.payload.getClaim("uid")
                 call.respondText("Hello $username")
             }
         }

@@ -5,6 +5,7 @@ import dev.usbharu.hideout.domain.model.hideout.dto.PostCreateDto
 import dev.usbharu.hideout.domain.model.hideout.entity.Post
 import java.time.Instant
 
+@Suppress("LongParameterList")
 interface IPostService {
     suspend fun create(post: Post): Post
     suspend fun create(post: PostCreateDto): Post

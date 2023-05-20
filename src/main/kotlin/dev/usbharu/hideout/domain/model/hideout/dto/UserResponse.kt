@@ -14,13 +14,13 @@ data class UserResponse(
     companion object {
         fun from(user: User): UserResponse {
             return UserResponse(
-                user.id,
-                user.name,
-                user.domain,
-                user.screenName,
-                user.description,
-                user.url,
-                user.createdAt.toEpochMilli()
+                id = user.id,
+                name = user.name,
+                domain = user.domain,
+                screenName = user.screenName,
+                description = user.description,
+                url = user.url,
+                createdAt = user.createdAt.toEpochMilli()
             )
         }
     }

@@ -36,7 +36,5 @@ open class Key : Object {
         return result
     }
 
-    override fun toString(): String {
-        return "Key(owner=$owner, publicKeyPem=$publicKeyPem) ${super.toString()}"
-    }
+    override fun toString(): String = "Key(owner=$owner, publicKeyPem=$publicKeyPem) ${super.toString()}"
 }

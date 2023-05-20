@@ -41,8 +41,15 @@ class PostService(
         val user = userService.findById(post.userId)
         val id = postRepository.generateId()
         val postEntity = Post(
-            id, user.id, null, post.text,
-            Instant.now().toEpochMilli(), Visibility.PUBLIC, "${user.url}/posts/$id", null, null
+            id = id,
+            userId = user.id,
+            overview = null,
+            text = post.text,
+            createdAt = Instant.now().toEpochMilli(),
+            visibility = Visibility.PUBLIC,
+            url = "${user.url}/posts/$id",
+            repostId = null,
+            replyId = null
         )
         postRepository.save(postEntity)
         return postEntity

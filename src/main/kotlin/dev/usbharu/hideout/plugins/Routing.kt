@@ -17,6 +17,7 @@ import io.ktor.server.application.*
 import io.ktor.server.plugins.autohead.*
 import io.ktor.server.routing.*
 
+@Suppress("LongParameterList")
 fun Application.configureRouting(
     httpSignatureVerifyService: HttpSignatureVerifyService,
     activityPubService: ActivityPubService,
