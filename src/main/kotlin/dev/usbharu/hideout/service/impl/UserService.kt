@@ -105,8 +105,13 @@ class UserService(private val userRepository: IUserRepository, private val userA
     }
 
     // TODO APのフォロー処理を作る
-    override suspend fun addFollowers(id: Long, follower: Long): Boolean {
+    override suspend fun follow(id: Long, follower: Long): Boolean {
         userRepository.createFollower(id, follower)
+        return false
+    }
+
+    override suspend fun unfollow(id: Long, follower: Long): Boolean {
+        userRepository.deleteFollower(id, follower)
         return false
     }
 }

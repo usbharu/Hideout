@@ -45,5 +45,7 @@ interface IUserService {
      * @param follower
      * @return リクエストが成功したか
      */
-    suspend fun addFollowers(id: Long, follower: Long): Boolean
+    suspend fun follow(id: Long, follower: Long): Boolean
+
+    suspend fun unfollow(id: Long, follower: Long): Boolean
 }

@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 
 open class Object : JsonLd {
     @JsonSerialize(using = TypeSerializer::class)
-    private var type: List<String> = emptyList()
+    var type: List<String> = emptyList()
     var name: String? = null
     var actor: String? = null
     var id: String? = null

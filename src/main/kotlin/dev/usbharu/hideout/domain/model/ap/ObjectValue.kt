@@ -1,25 +1,22 @@
 package dev.usbharu.hideout.domain.model.ap
 
-open class Follow : Object {
+class ObjectValue : Object {
+
     var `object`: String? = null
 
-    protected constructor() : super()
-    constructor(
-        type: List<String> = emptyList(),
-        name: String?,
-        `object`: String?,
-        actor: String?
-    ) : super(
-        type = add(type, "Follow"),
-        name = name,
-        actor = actor
+    protected constructor()
+    constructor(type: List<String>, name: String?, actor: String?, id: String?, `object`: String?) : super(
+        type,
+        name,
+        actor,
+        id
     ) {
         this.`object` = `object`
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is Follow) return false
+        if (other !is ObjectValue) return false
         if (!super.equals(other)) return false
 
         return `object` == other.`object`
@@ -32,7 +29,7 @@ open class Follow : Object {
     }
 
     override fun toString(): String {
-        return "Follow(`object`=$`object`) ${super.toString()}"
+        return "ObjectValue(`object`=$`object`) ${super.toString()}"
     }
 
 
