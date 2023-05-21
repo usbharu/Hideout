@@ -1,6 +1,7 @@
 package dev.usbharu.hideout.service.activitypub
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.domain.model.ActivityPubResponse
 import dev.usbharu.hideout.domain.model.ap.Follow
@@ -17,7 +18,8 @@ import org.slf4j.LoggerFactory
 @Single
 class ActivityPubServiceImpl(
     private val activityPubFollowService: ActivityPubFollowService,
-    private val activityPubNoteService: ActivityPubNoteService
+    private val activityPubNoteService: ActivityPubNoteService,
+    private val activityPubUndoService: ActivityPubUndoService
 ) : ActivityPubService {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -70,7 +72,7 @@ class ActivityPubServiceImpl(
             ActivityType.TentativeReject -> TODO()
             ActivityType.TentativeAccept -> TODO()
             ActivityType.Travel -> TODO()
-            ActivityType.Undo -> TODO()
+            ActivityType.Undo -> activityPubUndoService.receiveUndo(Config.configData.objectMapper.readValue(json))
             ActivityType.Update -> TODO()
             ActivityType.View -> TODO()
             ActivityType.Other -> TODO()

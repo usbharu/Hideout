@@ -1,42 +1,45 @@
 package dev.usbharu.hideout.domain.model.ap
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import java.time.Instant
 
-open class Accept : Object {
+class Undo : Object {
+
     @JsonDeserialize(using = ObjectDeserializer::class)
     var `object`: Object? = null
+    var published: String? = null
 
     protected constructor()
     constructor(
         type: List<String> = emptyList(),
         name: String,
-        `object`: Object?,
-        actor: String?
-    ) : super(
-        type = add(type, "Accept"),
-        name = name,
-        actor = actor
-    ) {
+        actor: String,
+        id: String?,
+        `object`: Object,
+        published: Instant
+    ) : super(add(type, "Undo"), name, actor, id) {
         this.`object` = `object`
-    }
-
-
-    override fun toString(): String {
-        return "Accept(`object`=$`object`) ${super.toString()}"
+        this.published = published.toString()
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is Accept) return false
+        if (other !is Undo) return false
         if (!super.equals(other)) return false
 
-        return `object` == other.`object`
+        if (`object` != other.`object`) return false
+        return published == other.published
     }
 
     override fun hashCode(): Int {
         var result = super.hashCode()
         result = 31 * result + (`object`?.hashCode() ?: 0)
+        result = 31 * result + (published?.hashCode() ?: 0)
         return result
+    }
+
+    override fun toString(): String {
+        return "Undo(`object`=$`object`, published=$published) ${super.toString()}"
     }
 
 
