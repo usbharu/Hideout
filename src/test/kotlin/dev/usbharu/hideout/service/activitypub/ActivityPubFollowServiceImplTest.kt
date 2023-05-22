@@ -115,7 +115,7 @@ class ActivityPubFollowServiceImplTest {
                     createdAt = Instant.now()
                 )
             )
-            onBlocking { addFollowers(any(), any()) } doReturn false
+            onBlocking { follow(any(), any()) } doReturn false
         }
         val activityPubFollowService =
             ActivityPubFollowServiceImpl(
@@ -137,10 +137,12 @@ class ActivityPubFollowServiceImplTest {
                             actor = "https://example.com"
                         )
                         accept.context += "https://www.w3.org/ns/activitystreams"
+                        val content = httpRequestData.body.toByteArray().decodeToString()
+                        println(content)
                         assertEquals(
                             accept,
                             Config.configData.objectMapper.readValue<Accept>(
-                                httpRequestData.body.toByteArray().decodeToString()
+                                content
                             )
                         )
                         respondOk()
