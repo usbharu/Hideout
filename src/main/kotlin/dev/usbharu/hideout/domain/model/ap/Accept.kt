@@ -20,10 +20,7 @@ open class Accept : Object {
         this.`object` = `object`
     }
 
-
-    override fun toString(): String {
-        return "Accept(`object`=$`object`) ${super.toString()}"
-    }
+    override fun toString(): String = "Accept(`object`=$`object`) ${super.toString()}"
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -38,6 +35,4 @@ open class Accept : Object {
         result = 31 * result + (`object`?.hashCode() ?: 0)
         return result
     }
-
-
 }

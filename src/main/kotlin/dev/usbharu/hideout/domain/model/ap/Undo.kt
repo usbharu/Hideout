@@ -3,13 +3,13 @@ package dev.usbharu.hideout.domain.model.ap
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import java.time.Instant
 
-class Undo : Object {
+open class Undo : Object {
 
     @JsonDeserialize(using = ObjectDeserializer::class)
     var `object`: Object? = null
     var published: String? = null
 
-    protected constructor()
+    protected constructor() : super()
     constructor(
         type: List<String> = emptyList(),
         name: String,
@@ -38,9 +38,5 @@ class Undo : Object {
         return result
     }
 
-    override fun toString(): String {
-        return "Undo(`object`=$`object`, published=$published) ${super.toString()}"
-    }
-
-
+    override fun toString(): String = "Undo(`object`=$`object`, published=$published) ${super.toString()}"
 }

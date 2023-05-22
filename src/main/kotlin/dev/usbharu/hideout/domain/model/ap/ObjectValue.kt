@@ -1,10 +1,10 @@
 package dev.usbharu.hideout.domain.model.ap
 
-class ObjectValue : Object {
+open class ObjectValue : Object {
 
     var `object`: String? = null
 
-    protected constructor()
+    protected constructor() : super()
     constructor(type: List<String>, name: String?, actor: String?, id: String?, `object`: String?) : super(
         type,
         name,
@@ -28,9 +28,5 @@ class ObjectValue : Object {
         return result
     }
 
-    override fun toString(): String {
-        return "ObjectValue(`object`=$`object`) ${super.toString()}"
-    }
-
-
+    override fun toString(): String = "ObjectValue(`object`=$`object`) ${super.toString()}"
 }

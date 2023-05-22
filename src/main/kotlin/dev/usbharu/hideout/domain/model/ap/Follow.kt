@@ -31,9 +31,5 @@ open class Follow : Object {
         return result
     }
 
-    override fun toString(): String {
-        return "Follow(`object`=$`object`) ${super.toString()}"
-    }
-
-
+    override fun toString(): String = "Follow(`object`=$`object`) ${super.toString()}"
 }
