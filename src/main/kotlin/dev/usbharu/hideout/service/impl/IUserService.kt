@@ -39,13 +39,21 @@ interface IUserService {
     suspend fun findFollowingByNameAndDomain(name: String, domain: String?): List<User>
 
     /**
-     * フォロワーを追加する
+     * フォローリクエストを送信する
      *
      * @param id
-     * @param follower
+     * @param followerId
      * @return リクエストが成功したか
      */
-    suspend fun follow(id: Long, follower: Long): Boolean
+    suspend fun followRequest(id: Long, followerId: Long): Boolean
 
-    suspend fun unfollow(id: Long, follower: Long): Boolean
+    /**
+     * フォローする
+     *
+     * @param id
+     * @param followerId
+     */
+    suspend fun follow(id: Long, followerId: Long)
+
+    suspend fun unfollow(id: Long, followerId: Long): Boolean
 }

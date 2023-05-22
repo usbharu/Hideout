@@ -432,7 +432,7 @@ class UsersTest {
             )
         }
         val userService = mock<IUserService> {
-            onBlocking { follow(eq(1235), eq(1234)) } doReturn true
+            onBlocking { followRequest(eq(1235), eq(1234)) } doReturn true
         }
         application {
             configureSerialization()
@@ -482,7 +482,7 @@ class UsersTest {
             )
         }
         val userService = mock<IUserService> {
-            onBlocking { follow(eq(1235), eq(1234)) } doReturn false
+            onBlocking { followRequest(eq(1235), eq(1234)) } doReturn false
         }
         application {
             configureSerialization()
@@ -532,7 +532,7 @@ class UsersTest {
             )
         }
         val userService = mock<IUserService> {
-            onBlocking { follow(eq(1235), eq(1234)) } doReturn false
+            onBlocking { followRequest(eq(1235), eq(1234)) } doReturn false
         }
         application {
             configureSerialization()

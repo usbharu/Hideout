@@ -26,7 +26,7 @@ class ActivityPubServiceImpl(
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
     override fun parseActivity(json: String): ActivityType {
         val readTree = configData.objectMapper.readTree(json)
-        logger.debug("readTree: {}", readTree)
+        logger.trace("readTree: {}", readTree)
         if (readTree.isObject.not()) {
             throw JsonParseException("Json is not object.")
         }
@@ -41,16 +41,9 @@ class ActivityPubServiceImpl(
 
     @Suppress("CyclomaticComplexMethod", "NotImplementedDeclaration")
     override suspend fun processActivity(json: String, type: ActivityType): ActivityPubResponse {
+        logger.debug("proccess activity: {}", type)
         return when (type) {
             ActivityType.Accept -> activityPubAcceptService.receiveAccept(configData.objectMapper.readValue(json))
-            ActivityType.Add -> TODO()
-            ActivityType.Announce -> TODO()
-            ActivityType.Arrive -> TODO()
-            ActivityType.Block -> TODO()
-            ActivityType.Create -> TODO()
-            ActivityType.Delete -> TODO()
-            ActivityType.Dislike -> TODO()
-            ActivityType.Flag -> TODO()
             ActivityType.Follow -> activityPubReceiveFollowService.receiveFollow(
                 configData.objectMapper.readValue(
                     json,
@@ -58,25 +51,11 @@ class ActivityPubServiceImpl(
                 )
             )
 
-            ActivityType.Ignore -> TODO()
-            ActivityType.Invite -> TODO()
-            ActivityType.Join -> TODO()
-            ActivityType.Leave -> TODO()
-            ActivityType.Like -> TODO()
-            ActivityType.Listen -> TODO()
-            ActivityType.Move -> TODO()
-            ActivityType.Offer -> TODO()
-            ActivityType.Question -> TODO()
-            ActivityType.Reject -> TODO()
-            ActivityType.Read -> TODO()
-            ActivityType.Remove -> TODO()
-            ActivityType.TentativeReject -> TODO()
-            ActivityType.TentativeAccept -> TODO()
-            ActivityType.Travel -> TODO()
             ActivityType.Undo -> activityPubUndoService.receiveUndo(configData.objectMapper.readValue(json))
-            ActivityType.Update -> TODO()
-            ActivityType.View -> TODO()
-            ActivityType.Other -> TODO()
+
+            else -> {
+                throw IllegalArgumentException("$type is not supported.")
+            }
         }
     }
 

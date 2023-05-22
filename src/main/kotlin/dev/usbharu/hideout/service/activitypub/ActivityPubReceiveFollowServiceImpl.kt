@@ -49,6 +49,6 @@ class ActivityPubReceiveFollowServiceImpl(
         val users =
             userService.findByUrls(listOf(targetActor, follow.actor ?: throw IllegalArgumentException("actor is null")))
 
-        userService.follow(users.first { it.url == targetActor }.id, users.first { it.url == follow.actor }.id)
+        userService.followRequest(users.first { it.url == targetActor }.id, users.first { it.url == follow.actor }.id)
     }
 }

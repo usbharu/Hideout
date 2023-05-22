@@ -20,6 +20,8 @@ class UserRepository(private val database: Database, private val idGenerateServi
             SchemaUtils.create(UsersFollowers)
             SchemaUtils.createMissingTablesAndColumns(Users)
             SchemaUtils.createMissingTablesAndColumns(UsersFollowers)
+            SchemaUtils.create(FollowRequests)
+            SchemaUtils.createMissingTablesAndColumns(FollowRequests)
         }
     }
 
@@ -180,6 +182,28 @@ class UserRepository(private val database: Database, private val idGenerateServi
         }
     }
 
+    override suspend fun addFollowRequest(id: Long, follower: Long) {
+        query {
+            FollowRequests.insert {
+                it[userId] = id
+                it[followerId] = follower
+            }
+        }
+    }
+
+    override suspend fun deleteFollowRequest(id: Long, follower: Long) {
+        query {
+            FollowRequests.deleteWhere { userId.eq(id) and followerId.eq(follower) }
+        }
+    }
+
+    override suspend fun findFollowRequestsById(id: Long, follower: Long): Boolean {
+        return query {
+            FollowRequests.select { (FollowRequests.userId eq id) and (FollowRequests.followerId eq follower) }
+                .singleOrNull() != null
+        }
+    }
+
     override suspend fun delete(id: Long) {
         query {
             Users.deleteWhere { Users.id.eq(id) }
@@ -247,6 +271,15 @@ fun ResultRow.toUser(): User {
 
 object UsersFollowers : LongIdTable("users_followers") {
     val userId = long("user_id").references(Users.id).index()
+    val followerId = long("follower_id").references(Users.id)
+
+    init {
+        uniqueIndex(userId, followerId)
+    }
+}
+
+object FollowRequests : LongIdTable("follow_requests") {
+    val userId = long("user_id").references(Users.id)
     val followerId = long("follower_id").references(Users.id)
 
     init {

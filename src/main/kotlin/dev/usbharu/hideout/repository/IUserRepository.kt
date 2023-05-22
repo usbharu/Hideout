@@ -35,5 +35,9 @@ interface IUserRepository {
     suspend fun deleteFollower(id: Long, follower: Long)
     suspend fun findFollowersById(id: Long): List<User>
 
+    suspend fun addFollowRequest(id: Long, follower: Long)
+    suspend fun deleteFollowRequest(id: Long, follower: Long)
+    suspend fun findFollowRequestsById(id: Long, follower: Long): Boolean
+
     suspend fun nextId(): Long
 }
