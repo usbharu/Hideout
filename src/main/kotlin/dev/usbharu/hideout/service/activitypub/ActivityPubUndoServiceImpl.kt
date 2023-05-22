@@ -14,7 +14,6 @@ class ActivityPubUndoServiceImpl(
     private val activityPubUserService: ActivityPubUserService
 ) : ActivityPubUndoService {
     override suspend fun receiveUndo(undo: Undo): ActivityPubResponse {
-
         if (undo.actor == null) {
             return ActivityPubStringResponse(HttpStatusCode.BadRequest, "actor is null")
         }
