@@ -116,7 +116,7 @@ class ActivityPubReceiveFollowServiceImplTest {
                     createdAt = Instant.now()
                 )
             )
-            onBlocking { follow(any(), any()) } doReturn false
+            onBlocking { followRequest(any(), any()) } doReturn false
         }
         val activityPubFollowService =
             ActivityPubReceiveFollowServiceImpl(

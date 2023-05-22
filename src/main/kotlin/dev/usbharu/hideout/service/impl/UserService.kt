@@ -111,23 +111,31 @@ class UserService(
     }
 
     // TODO APのフォロー処理を作る
-    override suspend fun follow(id: Long, followerId: Long): Boolean {
+    override suspend fun followRequest(id: Long, followerId: Long): Boolean {
         val user = userRepository.findById(id) ?: throw UserNotFoundException("$id was not found.")
         val follower = userRepository.findById(followerId) ?: throw UserNotFoundException("$followerId was not found.")
-        if (follower.domain != Config.configData.domain) {
-            throw IllegalArgumentException("follower is not local user.")
-        }
         return if (user.domain == Config.configData.domain) {
-            userRepository.createFollower(id, followerId)
+            follow(id, followerId)
             true
         } else {
-            activityPubSendFollowService.sendFollow(SendFollowDto(follower, user))
+            if (userRepository.findFollowRequestsById(id, followerId)) {
+                // do-nothing
+            } else {
+                activityPubSendFollowService.sendFollow(SendFollowDto(follower, user))
+            }
             false
         }
     }
 
-    override suspend fun unfollow(id: Long, follower: Long): Boolean {
-        userRepository.deleteFollower(id, follower)
+    override suspend fun follow(id: Long, followerId: Long) {
+        userRepository.createFollower(id, followerId)
+        if (userRepository.findFollowRequestsById(id, followerId)) {
+            userRepository.deleteFollowRequest(id, followerId)
+        }
+    }
+
+    override suspend fun unfollow(id: Long, followerId: Long): Boolean {
+        userRepository.deleteFollower(id, followerId)
         return false
     }
 }
