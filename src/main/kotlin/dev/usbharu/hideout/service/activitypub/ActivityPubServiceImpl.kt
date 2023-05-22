@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory
 
 @Single
 class ActivityPubServiceImpl(
-    private val activityPubFollowService: ActivityPubFollowService,
+    private val activityPubReceiveFollowService: ActivityPubReceiveFollowService,
     private val activityPubNoteService: ActivityPubNoteService,
     private val activityPubUndoService: ActivityPubUndoService
 ) : ActivityPubService {
@@ -50,7 +50,7 @@ class ActivityPubServiceImpl(
             ActivityType.Delete -> TODO()
             ActivityType.Dislike -> TODO()
             ActivityType.Flag -> TODO()
-            ActivityType.Follow -> activityPubFollowService.receiveFollow(
+            ActivityType.Follow -> activityPubReceiveFollowService.receiveFollow(
                 Config.configData.objectMapper.readValue(
                     json,
                     Follow::class.java
@@ -82,7 +82,7 @@ class ActivityPubServiceImpl(
     override suspend fun <T : HideoutJob> processActivity(job: JobContextWithProps<T>, hideoutJob: HideoutJob) {
         logger.debug("processActivity: ${hideoutJob.name}")
         when (hideoutJob) {
-            ReceiveFollowJob -> activityPubFollowService.receiveFollowJob(job.props as JobProps<ReceiveFollowJob>)
+            ReceiveFollowJob -> activityPubReceiveFollowService.receiveFollowJob(job.props as JobProps<ReceiveFollowJob>)
             DeliverPostJob -> activityPubNoteService.createNoteJob(job.props as JobProps<DeliverPostJob>)
         }
     }
