@@ -2,7 +2,7 @@ package dev.usbharu.hideout.service.activitypub
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.module.kotlin.readValue
-import dev.usbharu.hideout.config.Config
+import dev.usbharu.hideout.config.Config.configData
 import dev.usbharu.hideout.domain.model.ActivityPubResponse
 import dev.usbharu.hideout.domain.model.ap.Follow
 import dev.usbharu.hideout.domain.model.job.DeliverPostJob
@@ -17,14 +17,15 @@ import org.slf4j.LoggerFactory
 
 @Single
 class ActivityPubServiceImpl(
-    private val activityPubFollowService: ActivityPubFollowService,
+    private val activityPubReceiveFollowService: ActivityPubReceiveFollowService,
     private val activityPubNoteService: ActivityPubNoteService,
-    private val activityPubUndoService: ActivityPubUndoService
+    private val activityPubUndoService: ActivityPubUndoService,
+    private val activityPubAcceptService: ActivityPubAcceptService
 ) : ActivityPubService {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
     override fun parseActivity(json: String): ActivityType {
-        val readTree = Config.configData.objectMapper.readTree(json)
+        val readTree = configData.objectMapper.readTree(json)
         logger.debug("readTree: {}", readTree)
         if (readTree.isObject.not()) {
             throw JsonParseException("Json is not object.")
@@ -41,7 +42,7 @@ class ActivityPubServiceImpl(
     @Suppress("CyclomaticComplexMethod", "NotImplementedDeclaration")
     override suspend fun processActivity(json: String, type: ActivityType): ActivityPubResponse {
         return when (type) {
-            ActivityType.Accept -> TODO()
+            ActivityType.Accept -> activityPubAcceptService.receiveAccept(configData.objectMapper.readValue(json))
             ActivityType.Add -> TODO()
             ActivityType.Announce -> TODO()
             ActivityType.Arrive -> TODO()
@@ -50,8 +51,8 @@ class ActivityPubServiceImpl(
             ActivityType.Delete -> TODO()
             ActivityType.Dislike -> TODO()
             ActivityType.Flag -> TODO()
-            ActivityType.Follow -> activityPubFollowService.receiveFollow(
-                Config.configData.objectMapper.readValue(
+            ActivityType.Follow -> activityPubReceiveFollowService.receiveFollow(
+                configData.objectMapper.readValue(
                     json,
                     Follow::class.java
                 )
@@ -72,7 +73,7 @@ class ActivityPubServiceImpl(
             ActivityType.TentativeReject -> TODO()
             ActivityType.TentativeAccept -> TODO()
             ActivityType.Travel -> TODO()
-            ActivityType.Undo -> activityPubUndoService.receiveUndo(Config.configData.objectMapper.readValue(json))
+            ActivityType.Undo -> activityPubUndoService.receiveUndo(configData.objectMapper.readValue(json))
             ActivityType.Update -> TODO()
             ActivityType.View -> TODO()
             ActivityType.Other -> TODO()
@@ -82,7 +83,7 @@ class ActivityPubServiceImpl(
     override suspend fun <T : HideoutJob> processActivity(job: JobContextWithProps<T>, hideoutJob: HideoutJob) {
         logger.debug("processActivity: ${hideoutJob.name}")
         when (hideoutJob) {
-            ReceiveFollowJob -> activityPubFollowService.receiveFollowJob(job.props as JobProps<ReceiveFollowJob>)
+            ReceiveFollowJob -> activityPubReceiveFollowService.receiveFollowJob(job.props as JobProps<ReceiveFollowJob>)
             DeliverPostJob -> activityPubNoteService.createNoteJob(job.props as JobProps<DeliverPostJob>)
         }
     }
