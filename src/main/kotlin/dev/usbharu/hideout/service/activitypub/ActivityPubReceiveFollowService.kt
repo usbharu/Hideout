@@ -5,7 +5,7 @@ import dev.usbharu.hideout.domain.model.ap.Follow
 import dev.usbharu.hideout.domain.model.job.ReceiveFollowJob
 import kjob.core.job.JobProps
 
-interface ActivityPubFollowService {
+interface ActivityPubReceiveFollowService {
     suspend fun receiveFollow(follow: Follow): ActivityPubResponse
     suspend fun receiveFollowJob(props: JobProps<ReceiveFollowJob>)
 }

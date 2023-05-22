@@ -25,13 +25,14 @@ import org.mockito.kotlin.*
 import utils.JsonObjectMapper
 import java.time.Instant
 
-class ActivityPubFollowServiceImplTest {
+class ActivityPubReceiveFollowServiceImplTest {
     @Test
     fun `receiveFollow フォロー受付処理`() = runTest {
         val jobQueueParentService = mock<JobQueueParentService> {
             onBlocking { schedule(eq(ReceiveFollowJob), any()) } doReturn Unit
         }
-        val activityPubFollowService = ActivityPubFollowServiceImpl(jobQueueParentService, mock(), mock(), mock())
+        val activityPubFollowService =
+            ActivityPubReceiveFollowServiceImpl(jobQueueParentService, mock(), mock(), mock())
         activityPubFollowService.receiveFollow(
             Follow(
                 emptyList(),
@@ -118,7 +119,7 @@ class ActivityPubFollowServiceImplTest {
             onBlocking { follow(any(), any()) } doReturn false
         }
         val activityPubFollowService =
-            ActivityPubFollowServiceImpl(
+            ActivityPubReceiveFollowServiceImpl(
                 mock(),
                 activityPubUserService,
                 userService,
