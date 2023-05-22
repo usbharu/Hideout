@@ -16,12 +16,12 @@ import kjob.core.job.JobProps
 import org.koin.core.annotation.Single
 
 @Single
-class ActivityPubFollowServiceImpl(
+class ActivityPubReceiveFollowServiceImpl(
     private val jobQueueParentService: JobQueueParentService,
     private val activityPubUserService: ActivityPubUserService,
     private val userService: IUserService,
     private val httpClient: HttpClient
-) : ActivityPubFollowService {
+) : ActivityPubReceiveFollowService {
     override suspend fun receiveFollow(follow: Follow): ActivityPubResponse {
         // TODO: Verify HTTP  Signature
         jobQueueParentService.schedule(ReceiveFollowJob) {

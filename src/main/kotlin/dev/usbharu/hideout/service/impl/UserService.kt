@@ -2,17 +2,23 @@ package dev.usbharu.hideout.service.impl
 
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.domain.model.hideout.dto.RemoteUserCreateDto
+import dev.usbharu.hideout.domain.model.hideout.dto.SendFollowDto
 import dev.usbharu.hideout.domain.model.hideout.dto.UserCreateDto
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.exception.UserNotFoundException
 import dev.usbharu.hideout.repository.IUserRepository
 import dev.usbharu.hideout.service.IUserAuthService
+import dev.usbharu.hideout.service.activitypub.ActivityPubSendFollowService
 import org.koin.core.annotation.Single
 import java.lang.Integer.min
 import java.time.Instant
 
 @Single
-class UserService(private val userRepository: IUserRepository, private val userAuthService: IUserAuthService) :
+class UserService(
+    private val userRepository: IUserRepository,
+    private val userAuthService: IUserAuthService,
+    private val activityPubSendFollowService: ActivityPubSendFollowService
+) :
     IUserService {
 
     private val maxLimit = 100
@@ -105,9 +111,19 @@ class UserService(private val userRepository: IUserRepository, private val userA
     }
 
     // TODO APのフォロー処理を作る
-    override suspend fun follow(id: Long, follower: Long): Boolean {
-        userRepository.createFollower(id, follower)
-        return false
+    override suspend fun follow(id: Long, followerId: Long): Boolean {
+        val user = userRepository.findById(id) ?: throw UserNotFoundException("$id was not found.")
+        val follower = userRepository.findById(followerId) ?: throw UserNotFoundException("$followerId was not found.")
+        if (follower.domain != Config.configData.domain) {
+            throw IllegalArgumentException("follower is not local user.")
+        }
+        return if (user.domain == Config.configData.domain) {
+            userRepository.createFollower(id, followerId)
+            true
+        } else {
+            activityPubSendFollowService.sendFollow(SendFollowDto(follower, user))
+            false
+        }
     }
 
     override suspend fun unfollow(id: Long, follower: Long): Boolean {
