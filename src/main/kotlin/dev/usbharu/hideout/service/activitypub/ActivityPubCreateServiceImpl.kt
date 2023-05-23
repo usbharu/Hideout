@@ -20,6 +20,6 @@ class ActivityPubCreateServiceImpl(
 
         val note = value as Note
         activityPubNoteService.fetchNote(note)
-        return ActivityPubStringResponse(HttpStatusCode.Created, "Created")
+        return ActivityPubStringResponse(HttpStatusCode.OK, "Created")
     }
 }
