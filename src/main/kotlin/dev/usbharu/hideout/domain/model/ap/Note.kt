@@ -5,6 +5,9 @@ open class Note : Object {
     var content: String? = null
     var published: String? = null
     var to: List<String> = emptyList()
+    var cc: List<String> = emptyList()
+    var sensitive: Boolean = false
+    var inReplyTo: String? = null
 
     protected constructor() : super()
     constructor(
@@ -14,7 +17,10 @@ open class Note : Object {
         attributedTo: String?,
         content: String?,
         published: String?,
-        to: List<String> = emptyList()
+        to: List<String> = emptyList(),
+        cc: List<String> = emptyList(),
+        sensitive: Boolean = false,
+        inReplyTo: String? = null
     ) : super(
         type = add(type, "Note"),
         name = name,
@@ -24,6 +30,9 @@ open class Note : Object {
         this.content = content
         this.published = published
         this.to = to
+        this.cc = cc
+        this.sensitive = sensitive
+        this.inReplyTo = inReplyTo
     }
 
     override fun equals(other: Any?): Boolean {

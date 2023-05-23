@@ -28,6 +28,7 @@ class UserRepositoryTest {
         transaction(db) {
             SchemaUtils.create(Users)
             SchemaUtils.create(UsersFollowers)
+            SchemaUtils.create(FollowRequests)
         }
     }
 
@@ -35,6 +36,7 @@ class UserRepositoryTest {
     fun tearDown() {
         transaction(db) {
             SchemaUtils.drop(UsersFollowers)
+            SchemaUtils.drop(FollowRequests)
             SchemaUtils.drop(Users)
         }
     }
@@ -96,9 +98,7 @@ class UserRepositoryTest {
         )
         userRepository.createFollower(user.id, follower.id)
         userRepository.createFollower(user.id, follower2.id)
-        userRepository.findFollowersById(user.id).let {
-            assertIterableEquals(listOf(follower, follower2), it)
-        }
+        assertIterableEquals(listOf(follower, follower2), userRepository.findFollowersById(user.id))
     }
 
     @Test

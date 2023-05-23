@@ -9,5 +9,7 @@ data class Post(
     val visibility: Visibility,
     val url: String,
     val repostId: Long? = null,
-    val replyId: Long? = null
+    val replyId: Long? = null,
+    val sensitive: Boolean = false,
+    val apId: String = url
 )

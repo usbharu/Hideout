@@ -1,7 +1,12 @@
 package dev.usbharu.hideout.domain.model.ap
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+
 open class Create : Object {
+    @JsonDeserialize(using = ObjectDeserializer::class)
     var `object`: Object? = null
+    var to: List<String> = emptyList()
+    var cc: List<String> = emptyList()
 
     protected constructor() : super()
     constructor(
@@ -9,14 +14,18 @@ open class Create : Object {
         name: String? = null,
         `object`: Object?,
         actor: String? = null,
-        id: String? = null
+        id: String? = null,
+        to: List<String> = emptyList(),
+        cc: List<String> = emptyList()
     ) : super(
-        add(type, "Create"),
-        name,
-        actor,
-        id
+        type = add(type, "Create"),
+        name = name,
+        actor = actor,
+        id = id
     ) {
         this.`object` = `object`
+        this.to = to
+        this.cc = cc
     }
 
     override fun equals(other: Any?): Boolean {
