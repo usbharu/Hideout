@@ -53,7 +53,7 @@ class ActivityPubNoteServiceImpl(
             attributedTo = actor,
             content = postEntity.text,
             published = Instant.ofEpochMilli(postEntity.createdAt).toString(),
-            to = listOf("https://www.w3.org/ns/activitystreams#Public", actor + "/follower")
+            to = listOf(public, actor + "/follower")
         )
         val inbox = props[DeliverPostJob.inbox]
         logger.debug("createNoteJob: actor={}, note={}, inbox={}", actor, postEntity, inbox)
@@ -80,9 +80,9 @@ class ActivityPubNoteServiceImpl(
                 attributedTo = user.url,
                 content = post.text,
                 published = Instant.ofEpochMilli(post.createdAt).toString(),
-                to = listOf("https://www.w3.org/ns/activitystreams#Public", user.url + "/follower"),
+                to = listOf(public, user.url + "/follower"),
                 sensitive = post.sensitive,
-                cc = listOf("https://www.w3.org/ns/activitystreams#Public", user.url + "/follower"),
+                cc = listOf(public, user.url + "/follower"),
                 inReplyTo = reply?.url
             )
         }
@@ -106,9 +106,9 @@ class ActivityPubNoteServiceImpl(
             userService.findByUrl(person.url ?: throw IllegalActivityPubObjectException("person.url is null"))
 
         val visibility =
-            if (note.to.contains("https://www.w3.org/ns/activitystreams#Public") && note.cc.contains("https://www.w3.org/ns/activitystreams#Public")) {
+            if (note.to.contains(public) && note.cc.contains(public)) {
                 Visibility.PUBLIC
-            } else if (note.to.find { it.endsWith("/followers") } != null && note.cc.contains("https://www.w3.org/ns/activitystreams#Public")) {
+            } else if (note.to.find { it.endsWith("/followers") } != null && note.cc.contains(public)) {
                 Visibility.UNLISTED
             } else if (note.to.find { it.endsWith("/followers") } != null) {
                 Visibility.FOLLOWERS
@@ -141,4 +141,8 @@ class ActivityPubNoteServiceImpl(
 
     override suspend fun fetchNote(note: Note, targetActor: String?): Note =
         note(note, targetActor, note.id ?: throw IllegalArgumentException("note.id is null"))
+
+    companion object {
+        val public: String = "https://www.w3.org/ns/activitystreams#Public"
+    }
 }
