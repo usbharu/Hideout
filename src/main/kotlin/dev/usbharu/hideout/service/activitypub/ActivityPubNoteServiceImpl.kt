@@ -100,7 +100,8 @@ class ActivityPubNoteServiceImpl(
         url: String
     ): Note {
         val person = activityPubUserService.fetchPerson(
-            note.attributedTo ?: throw IllegalActivityPubObjectException("note.attributedTo is null"), targetActor
+            note.attributedTo ?: throw IllegalActivityPubObjectException("note.attributedTo is null"),
+            targetActor
         )
         val user =
             userService.findByUrl(person.url ?: throw IllegalActivityPubObjectException("person.url is null"))
