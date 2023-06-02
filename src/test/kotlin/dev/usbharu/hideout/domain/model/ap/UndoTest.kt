@@ -30,7 +30,8 @@ class UndoTest {
 
     @Test
     fun Undoをデシリアライズ出来る() {
-        @Language("JSON") val json = """
+        @Language("JSON")
+        val json = """
           {
   "@context": [
     "https://www.w3.org/ns/activitystreams",

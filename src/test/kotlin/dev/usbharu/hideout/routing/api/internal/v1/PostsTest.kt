@@ -158,8 +158,12 @@ class PostsTest {
             config = ApplicationConfig("empty.conf")
         }
         val post = Post(
-            12345, 1234, text = "aaa", visibility = Visibility.PUBLIC,
-            createdAt = Instant.now().toEpochMilli(), url = "https://example.com/posts/1"
+            12345,
+            1234,
+            text = "aaa",
+            visibility = Visibility.PUBLIC,
+            createdAt = Instant.now().toEpochMilli(),
+            url = "https://example.com/posts/1"
         )
         val postService = mock<IPostService> {
             onBlocking { findByIdForUser(any(), anyOrNull()) } doReturn post
@@ -185,8 +189,12 @@ class PostsTest {
             config = ApplicationConfig("empty.conf")
         }
         val post = Post(
-            12345, 1234, text = "aaa", visibility = Visibility.FOLLOWERS,
-            createdAt = Instant.now().toEpochMilli(), url = "https://example.com/posts/1"
+            12345,
+            1234,
+            text = "aaa",
+            visibility = Visibility.FOLLOWERS,
+            createdAt = Instant.now().toEpochMilli(),
+            url = "https://example.com/posts/1"
         )
         val postService = mock<IPostService> {
             onBlocking { findByIdForUser(any(), isNotNull()) } doReturn post
@@ -247,7 +255,6 @@ class PostsTest {
         }
         application {
             authentication {
-
                 bearer(TOKEN_AUTH) {
                     authenticate {
                         println("aaaaaaaaaaaa")

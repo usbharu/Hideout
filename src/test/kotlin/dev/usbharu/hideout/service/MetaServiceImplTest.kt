@@ -37,7 +37,6 @@ class MetaServiceImplTest {
 
     @Test
     fun `updateMeta メタデータを保存できる`() = runTest {
-
         val meta = Meta("1.0.1", Jwt(UUID.randomUUID(), "sdfsdjk", "adafda"))
         val metaRepository = mock<IMetaRepository> {
             onBlocking { save(any()) } doReturn Unit

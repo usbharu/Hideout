@@ -92,6 +92,18 @@ class ActivityPubKtTest {
                 TODO("Not yet implemented")
             }
 
+            override suspend fun addFollowRequest(id: Long, follower: Long) {
+                TODO("Not yet implemented")
+            }
+
+            override suspend fun deleteFollowRequest(id: Long, follower: Long) {
+                TODO("Not yet implemented")
+            }
+
+            override suspend fun findFollowRequestsById(id: Long, follower: Long): Boolean {
+                TODO("Not yet implemented")
+            }
+
             override suspend fun nextId(): Long {
                 TODO("Not yet implemented")
             }
