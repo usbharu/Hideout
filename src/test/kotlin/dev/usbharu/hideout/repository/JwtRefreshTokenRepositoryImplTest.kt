@@ -41,11 +41,14 @@ class JwtRefreshTokenRepositoryImplTest {
 
     @Test
     fun `save 存在しない場合はinsertする`() = runTest {
-        val repository = JwtRefreshTokenRepositoryImpl(db, object : IdGenerateService {
-            override suspend fun generateId(): Long {
-                TODO("Not yet implemented")
+        val repository = JwtRefreshTokenRepositoryImpl(
+            db,
+            object : IdGenerateService {
+                override suspend fun generateId(): Long {
+                    TODO("Not yet implemented")
+                }
             }
-        })
+        )
         val now = Instant.now(Clock.tickMillis(ZoneId.systemDefault()))
         val expiresAt = now.plus(10, ChronoUnit.MINUTES)
 
@@ -57,11 +60,14 @@ class JwtRefreshTokenRepositoryImplTest {
 
     @Test
     fun `save 存在する場合はupdateする`() = runTest {
-        val repository = JwtRefreshTokenRepositoryImpl(db, object : IdGenerateService {
-            override suspend fun generateId(): Long {
-                TODO("Not yet implemented")
+        val repository = JwtRefreshTokenRepositoryImpl(
+            db,
+            object : IdGenerateService {
+                override suspend fun generateId(): Long {
+                    TODO("Not yet implemented")
+                }
             }
-        })
+        )
         transaction {
             JwtRefreshTokens.insert {
                 it[id] = 1L
