@@ -17,6 +17,8 @@ data class User(
     val createdAt: Instant
 ) {
     override fun toString(): String {
-        return "User(id=$id, name='$name', domain='$domain', screenName='$screenName', description='$description', password=****, inbox='$inbox', outbox='$outbox', url='$url', publicKey='$publicKey', privateKey=****, createdAt=$createdAt)"
+        return "User(id=$id, name='$name', domain='$domain', screenName='$screenName', description='$description'," +
+                " password=****, inbox='$inbox', outbox='$outbox', url='$url', publicKey='$publicKey'," +
+                " privateKey=****, createdAt=$createdAt)"
     }
 }
