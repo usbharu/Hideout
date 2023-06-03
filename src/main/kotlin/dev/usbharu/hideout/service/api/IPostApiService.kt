@@ -1,11 +1,10 @@
 package dev.usbharu.hideout.service.api
 
-import dev.usbharu.hideout.domain.model.hideout.dto.PostCreateDto
 import dev.usbharu.hideout.domain.model.hideout.entity.Post
 import java.time.Instant
 
 interface IPostApiService {
-    suspend fun createPost(postCreateDto: PostCreateDto): Post
+    suspend fun createPost(postForm: dev.usbharu.hideout.domain.model.hideout.form.Post, userId: Long): Post
     suspend fun getById(id: Long, userId: Long?): Post
     suspend fun getAll(since: Instant? = null,
                        until: Instant? = null,
