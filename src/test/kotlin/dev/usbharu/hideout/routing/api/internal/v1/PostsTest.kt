@@ -4,7 +4,6 @@ import com.auth0.jwt.interfaces.Claim
 import com.auth0.jwt.interfaces.Payload
 import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.config.Config
-import dev.usbharu.hideout.domain.model.hideout.dto.PostCreateDto
 import dev.usbharu.hideout.domain.model.hideout.entity.Post
 import dev.usbharu.hideout.domain.model.hideout.entity.Visibility
 import dev.usbharu.hideout.plugins.TOKEN_AUTH
@@ -240,11 +239,12 @@ class PostsTest {
             on { getClaim(eq("uid")) } doReturn claim
         }
         val postService = mock<IPostApiService> {
-            onBlocking { createPost(any<PostCreateDto>()) } doAnswer {
-                val argument = it.getArgument<PostCreateDto>(0)
+            onBlocking { createPost(any(), any()) } doAnswer {
+                val argument = it.getArgument<dev.usbharu.hideout.domain.model.hideout.form.Post>(0)
+                val userId = it.getArgument<Long>(1)
                 Post(
                         123L,
-                        argument.userId,
+                        userId,
                         null,
                         argument.text,
                         Instant.now().toEpochMilli(),
@@ -279,9 +279,9 @@ class PostsTest {
             assertEquals(HttpStatusCode.OK, status)
             assertEquals("https://example.com", headers["Location"])
         }
-        argumentCaptor<PostCreateDto> {
-            verify(postService).createPost(capture())
-            assertEquals(PostCreateDto("test", userId = 1234), firstValue)
+        argumentCaptor<dev.usbharu.hideout.domain.model.hideout.form.Post> {
+            verify(postService).createPost(capture(), any())
+            assertEquals(dev.usbharu.hideout.domain.model.hideout.form.Post("test"), firstValue)
         }
     }
 
