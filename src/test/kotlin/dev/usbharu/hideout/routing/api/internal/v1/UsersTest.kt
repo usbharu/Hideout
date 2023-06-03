@@ -290,7 +290,8 @@ class UsersTest {
                 "test User",
                 "https://example.com/test",
                 Instant.now().toEpochMilli()
-            ), UserResponse(
+            ),
+            UserResponse(
                 1236,
                 "follower2",
                 "example.com",
@@ -334,7 +335,8 @@ class UsersTest {
                 "test User",
                 "https://example.com/test",
                 Instant.now().toEpochMilli()
-            ), UserResponse(
+            ),
+            UserResponse(
                 1236,
                 "follower2",
                 "example.com",
@@ -378,7 +380,8 @@ class UsersTest {
                 "test User",
                 "https://example.com/test",
                 Instant.now().toEpochMilli()
-            ), UserResponse(
+            ),
+            UserResponse(
                 1236,
                 "follower2",
                 "example.com",
@@ -572,7 +575,8 @@ class UsersTest {
                 "test User",
                 "https://example.com/test",
                 Instant.now().toEpochMilli()
-            ), UserResponse(
+            ),
+            UserResponse(
                 1236,
                 "follower2",
                 "example.com",
@@ -616,7 +620,8 @@ class UsersTest {
                 "test User",
                 "https://example.com/test",
                 Instant.now().toEpochMilli()
-            ), UserResponse(
+            ),
+            UserResponse(
                 1236,
                 "follower2",
                 "example.com",
@@ -660,7 +665,8 @@ class UsersTest {
                 "test User",
                 "https://example.com/test",
                 Instant.now().toEpochMilli()
-            ), UserResponse(
+            ),
+            UserResponse(
                 1236,
                 "follower2",
                 "example.com",

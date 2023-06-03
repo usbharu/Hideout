@@ -72,7 +72,8 @@ class ActivityPubNoteServiceImplTest {
             onBlocking { findFollowersById(eq(1L)) } doReturn followers
         }
         val jobQueueParentService = mock<JobQueueParentService>()
-        val activityPubNoteService = ActivityPubNoteServiceImpl(mock(), jobQueueParentService, userService)
+        val activityPubNoteService =
+            ActivityPubNoteServiceImpl(mock(), jobQueueParentService, userService, mock(), mock())
         val postEntity = Post(
             1L,
             1L,
@@ -95,7 +96,7 @@ class ActivityPubNoteServiceImplTest {
                 respondOk()
             }
         )
-        val activityPubNoteService = ActivityPubNoteServiceImpl(httpClient, mock(), mock())
+        val activityPubNoteService = ActivityPubNoteServiceImpl(httpClient, mock(), mock(), mock(), mock())
         activityPubNoteService.createNoteJob(
             JobProps(
                 data = mapOf<String, Any>(

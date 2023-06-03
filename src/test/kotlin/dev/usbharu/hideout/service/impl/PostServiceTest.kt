@@ -53,7 +53,7 @@ class PostServiceTest {
                 text,
                 Instant.now().toEpochMilli(),
                 visibility,
-                "https://example.com"
+                "https://example.com${(userId.toString() + text).hashCode()}"
             )
         }
 
@@ -88,6 +88,8 @@ class PostServiceTest {
                 this[Posts.url] = it.url
                 this[Posts.replyId] = it.replyId
                 this[Posts.repostId] = it.repostId
+                this[Posts.sensitive] = it.sensitive
+                this[Posts.apId] = it.apId
             }
         }
 
@@ -109,7 +111,7 @@ class PostServiceTest {
                 text,
                 Instant.now().toEpochMilli(),
                 visibility,
-                "https://example.com"
+                "https://example.com${(userId.toString() + text).hashCode()}"
             )
         }
 
@@ -148,6 +150,8 @@ class PostServiceTest {
                 this[Posts.url] = it.url
                 this[Posts.replyId] = it.replyId
                 this[Posts.repostId] = it.repostId
+                this[Posts.sensitive] = it.sensitive
+                this[Posts.apId] = it.apId
             }
             UsersFollowers.insert {
                 it[id] = 100L

@@ -9,6 +9,7 @@ import io.ktor.http.*
 import org.koin.core.annotation.Single
 
 @Single
+@Suppress("UnsafeCallOnNullableType")
 class ActivityPubUndoServiceImpl(
     private val userService: IUserService,
     private val activityPubUserService: ActivityPubUserService

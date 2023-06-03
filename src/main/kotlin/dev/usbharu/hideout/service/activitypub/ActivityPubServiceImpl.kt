@@ -20,7 +20,8 @@ class ActivityPubServiceImpl(
     private val activityPubReceiveFollowService: ActivityPubReceiveFollowService,
     private val activityPubNoteService: ActivityPubNoteService,
     private val activityPubUndoService: ActivityPubUndoService,
-    private val activityPubAcceptService: ActivityPubAcceptService
+    private val activityPubAcceptService: ActivityPubAcceptService,
+    private val activityPubCreateService: ActivityPubCreateService
 ) : ActivityPubService {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -32,9 +33,9 @@ class ActivityPubServiceImpl(
         }
         val type = readTree["type"]
         if (type.isArray) {
-            return type.mapNotNull { jsonNode: JsonNode ->
+            return type.firstNotNullOf { jsonNode: JsonNode ->
                 ActivityType.values().firstOrNull { it.name.equals(jsonNode.asText(), true) }
-            }.first()
+            }
         }
         return ActivityType.values().first { it.name.equals(type.asText(), true) }
     }
@@ -51,6 +52,7 @@ class ActivityPubServiceImpl(
                 )
             )
 
+            ActivityType.Create -> activityPubCreateService.receiveCreate(configData.objectMapper.readValue(json))
             ActivityType.Undo -> activityPubUndoService.receiveUndo(configData.objectMapper.readValue(json))
 
             else -> {
@@ -62,7 +64,10 @@ class ActivityPubServiceImpl(
     override suspend fun <T : HideoutJob> processActivity(job: JobContextWithProps<T>, hideoutJob: HideoutJob) {
         logger.debug("processActivity: ${hideoutJob.name}")
         when (hideoutJob) {
-            ReceiveFollowJob -> activityPubReceiveFollowService.receiveFollowJob(job.props as JobProps<ReceiveFollowJob>)
+            ReceiveFollowJob -> activityPubReceiveFollowService.receiveFollowJob(
+                job.props as JobProps<ReceiveFollowJob>
+            )
+
             DeliverPostJob -> activityPubNoteService.createNoteJob(job.props as JobProps<DeliverPostJob>)
         }
     }

@@ -5,7 +5,7 @@ open class Person : Object {
     var summary: String? = null
     var inbox: String? = null
     var outbox: String? = null
-    private var url: String? = null
+    var url: String? = null
     private var icon: Image? = null
     var publicKey: Key? = null
 
