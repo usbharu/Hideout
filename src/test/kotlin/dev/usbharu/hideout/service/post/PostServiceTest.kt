@@ -1,13 +1,12 @@
 @file:OptIn(ExperimentalCoroutinesApi::class)
 
-package dev.usbharu.hideout.service.impl
+package dev.usbharu.hideout.service.post
 
 import dev.usbharu.hideout.domain.model.hideout.entity.Post
 import dev.usbharu.hideout.domain.model.hideout.entity.Visibility
 import dev.usbharu.hideout.repository.Posts
 import dev.usbharu.hideout.repository.UsersFollowers
 import dev.usbharu.hideout.service.core.TwitterSnowflakeIdGenerateService
-import dev.usbharu.hideout.service.post.PostService
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.jetbrains.exposed.sql.Database

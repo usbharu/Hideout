@@ -1,12 +1,11 @@
 @file:OptIn(ExperimentalCoroutinesApi::class)
 
-package dev.usbharu.hideout.service
+package dev.usbharu.hideout.service.core
 
 import dev.usbharu.hideout.domain.model.hideout.entity.Jwt
 import dev.usbharu.hideout.domain.model.hideout.entity.Meta
 import dev.usbharu.hideout.exception.NotInitException
 import dev.usbharu.hideout.repository.IMetaRepository
-import dev.usbharu.hideout.service.core.MetaServiceImpl
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test

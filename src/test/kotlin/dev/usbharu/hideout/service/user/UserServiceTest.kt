@@ -1,15 +1,12 @@
 @file:OptIn(ExperimentalCoroutinesApi::class)
 
-package dev.usbharu.hideout.service.impl
+package dev.usbharu.hideout.service.user
 
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.config.ConfigData
 import dev.usbharu.hideout.domain.model.hideout.dto.RemoteUserCreateDto
 import dev.usbharu.hideout.domain.model.hideout.dto.UserCreateDto
 import dev.usbharu.hideout.repository.IUserRepository
-import dev.usbharu.hideout.service.user.IUserAuthService
-import dev.usbharu.hideout.service.user.UserService
-import dev.usbharu.hideout.service.user.toPem
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
