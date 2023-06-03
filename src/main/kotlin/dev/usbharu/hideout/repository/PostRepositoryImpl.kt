@@ -89,6 +89,12 @@ class PostRepositoryImpl(database: Database, private val idGenerateService: IdGe
     override suspend fun findByUserId(idOrNull: Long, since: Instant?, until: Instant?, minId: Long?, maxId: Long?, limit: Int?, userId: Long?): List<Post> {
         TODO("Not yet implemented")
     }
+
+    override suspend fun findByApId(id: String): Post? {
+        return query {
+            Posts.select { Posts.apId eq id }.singleOrNull()?.toPost()
+        }
+    }
 }
 
 object Posts : Table() {

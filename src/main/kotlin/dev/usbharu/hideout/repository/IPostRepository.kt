@@ -20,4 +20,5 @@ interface IPostRepository {
                                         userId: Long?): List<Post>
 
     suspend fun findByUserId(idOrNull: Long, since: Instant?, until: Instant?, minId: Long?, maxId: Long?, limit: Int?, userId: Long?): List<Post>
+    suspend fun findByApId(id: String): Post?
 }
