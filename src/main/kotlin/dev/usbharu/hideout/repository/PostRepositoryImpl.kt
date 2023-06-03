@@ -9,6 +9,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.core.annotation.Single
+import java.time.Instant
 
 @Single
 class PostRepositoryImpl(database: Database, private val idGenerateService: IdGenerateService) : IPostRepository {
@@ -28,27 +29,41 @@ class PostRepositoryImpl(database: Database, private val idGenerateService: IdGe
 
     override suspend fun save(post: Post): Post {
         return query {
-            Posts.insert {
-                it[id] = post.id
-                it[userId] = post.userId
-                it[overview] = post.overview
-                it[text] = post.text
-                it[createdAt] = post.createdAt
-                it[visibility] = post.visibility.ordinal
-                it[url] = post.url
-                it[repostId] = post.repostId
-                it[replyId] = post.replyId
-                it[sensitive] = post.sensitive
-                it[apId] = post.apId
+            val singleOrNull = Posts.select { Posts.id eq post.id }.singleOrNull()
+            if (singleOrNull == null) {
+                Posts.insert {
+                    it[id] = post.id
+                    it[userId] = post.userId
+                    it[overview] = post.overview
+                    it[text] = post.text
+                    it[createdAt] = post.createdAt
+                    it[visibility] = post.visibility.ordinal
+                    it[url] = post.url
+                    it[repostId] = post.repostId
+                    it[replyId] = post.replyId
+                    it[sensitive] = post.sensitive
+                    it[apId] = post.apId
+                }
+            } else {
+                Posts.update({ Posts.id eq post.id }) {
+                    it[userId] = post.userId
+                    it[overview] = post.overview
+                    it[text] = post.text
+                    it[createdAt] = post.createdAt
+                    it[visibility] = post.visibility.ordinal
+                    it[url] = post.url
+                    it[repostId] = post.repostId
+                    it[replyId] = post.replyId
+                    it[sensitive] = post.sensitive
+                    it[apId] = post.apId
+                }
             }
             return@query post
         }
     }
 
-    override suspend fun findOneById(id: Long): Post? {
-        return query {
-            Posts.select { Posts.id eq id }.singleOrNull()?.toPost()
-        }
+    override suspend fun findOneById(id: Long, userId: Long?): Post? {
+        TODO("Not yet implemented")
     }
 
     override suspend fun findByUrl(url: String): Post? {
@@ -60,6 +75,48 @@ class PostRepositoryImpl(database: Database, private val idGenerateService: IdGe
     override suspend fun delete(id: Long) {
         return query {
             Posts.deleteWhere { Posts.id eq id }
+        }
+    }
+
+    override suspend fun findAll(
+            since: Instant?,
+            until: Instant?,
+            minId: Long?,
+            maxId: Long?,
+            limit: Int?,
+            userId: Long?
+    ): List<Post> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun findByUserNameAndDomain(
+            username: String,
+            s: String,
+            since: Instant?,
+            until: Instant?,
+            minId: Long?,
+            maxId: Long?,
+            limit: Int?,
+            userId: Long?
+    ): List<Post> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun findByUserId(
+            idOrNull: Long,
+            since: Instant?,
+            until: Instant?,
+            minId: Long?,
+            maxId: Long?,
+            limit: Int?,
+            userId: Long?
+    ): List<Post> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun findByApId(id: String): Post? {
+        return query {
+            Posts.select { Posts.apId eq id }.singleOrNull()?.toPost()
         }
     }
 }
@@ -81,16 +138,16 @@ object Posts : Table() {
 
 fun ResultRow.toPost(): Post {
     return Post(
-        id = this[Posts.id],
-        userId = this[Posts.userId],
-        overview = this[Posts.overview],
-        text = this[Posts.text],
-        createdAt = this[Posts.createdAt],
-        visibility = Visibility.values().first { visibility -> visibility.ordinal == this[Posts.visibility] },
-        url = this[Posts.url],
-        repostId = this[Posts.repostId],
-        replyId = this[Posts.replyId],
-        sensitive = this[Posts.sensitive],
-        apId = this[Posts.apId]
+            id = this[Posts.id],
+            userId = this[Posts.userId],
+            overview = this[Posts.overview],
+            text = this[Posts.text],
+            createdAt = this[Posts.createdAt],
+            visibility = Visibility.values().first { visibility -> visibility.ordinal == this[Posts.visibility] },
+            url = this[Posts.url],
+            repostId = this[Posts.repostId],
+            replyId = this[Posts.replyId],
+            sensitive = this[Posts.sensitive],
+            apId = this[Posts.apId]
     )
 }
