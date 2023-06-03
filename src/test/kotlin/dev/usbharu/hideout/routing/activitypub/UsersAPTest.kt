@@ -12,7 +12,7 @@ import dev.usbharu.hideout.domain.model.ap.Person
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.plugins.configureSerialization
 import dev.usbharu.hideout.service.activitypub.ActivityPubUserService
-import dev.usbharu.hideout.service.impl.IUserService
+import dev.usbharu.hideout.service.user.IUserService
 import dev.usbharu.hideout.util.HttpUtil.Activity
 import dev.usbharu.hideout.util.HttpUtil.JsonLd
 import io.ktor.client.request.*

@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.service
+package dev.usbharu.hideout.service.core
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex

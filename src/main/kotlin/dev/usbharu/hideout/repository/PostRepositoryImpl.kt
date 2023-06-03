@@ -2,7 +2,7 @@ package dev.usbharu.hideout.repository
 
 import dev.usbharu.hideout.domain.model.hideout.entity.Post
 import dev.usbharu.hideout.domain.model.hideout.entity.Visibility
-import dev.usbharu.hideout.service.IdGenerateService
+import dev.usbharu.hideout.service.core.IdGenerateService
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq

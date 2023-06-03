@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.service.impl
+package dev.usbharu.hideout.service.user
 
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.domain.model.hideout.dto.RemoteUserCreateDto
@@ -7,7 +7,6 @@ import dev.usbharu.hideout.domain.model.hideout.dto.UserCreateDto
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.exception.UserNotFoundException
 import dev.usbharu.hideout.repository.IUserRepository
-import dev.usbharu.hideout.service.IUserAuthService
 import dev.usbharu.hideout.service.activitypub.ActivityPubSendFollowService
 import org.koin.core.annotation.Single
 import java.lang.Integer.min

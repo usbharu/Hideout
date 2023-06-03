@@ -1,7 +1,7 @@
 package dev.usbharu.hideout.repository
 
 import dev.usbharu.hideout.domain.model.hideout.entity.JwtRefreshToken
-import dev.usbharu.hideout.service.IdGenerateService
+import dev.usbharu.hideout.service.core.IdGenerateService
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -71,7 +71,7 @@ class JwtRefreshTokenRepositoryImpl(
 
     override suspend fun delete(token: JwtRefreshToken) {
         return query {
-            JwtRefreshTokens.deleteWhere { JwtRefreshTokens.id eq token.id }
+            JwtRefreshTokens.deleteWhere { id eq token.id }
         }
     }
 
@@ -83,7 +83,7 @@ class JwtRefreshTokenRepositoryImpl(
 
     override suspend fun deleteByToken(token: String) {
         return query {
-            JwtRefreshTokens.deleteWhere { JwtRefreshTokens.refreshToken eq token }
+            JwtRefreshTokens.deleteWhere { refreshToken eq token }
         }
     }
 

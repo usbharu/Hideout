@@ -1,7 +1,7 @@
 package dev.usbharu.hideout.routing
 
 import dev.usbharu.hideout.domain.model.hideout.dto.UserCreateDto
-import dev.usbharu.hideout.service.impl.IUserService
+import dev.usbharu.hideout.service.user.IUserService
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*

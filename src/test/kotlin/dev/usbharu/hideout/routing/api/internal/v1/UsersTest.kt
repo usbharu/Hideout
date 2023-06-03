@@ -10,8 +10,8 @@ import dev.usbharu.hideout.domain.model.hideout.form.UserCreate
 import dev.usbharu.hideout.plugins.TOKEN_AUTH
 import dev.usbharu.hideout.plugins.configureSecurity
 import dev.usbharu.hideout.plugins.configureSerialization
-import dev.usbharu.hideout.service.IUserApiService
-import dev.usbharu.hideout.service.impl.IUserService
+import dev.usbharu.hideout.service.api.IUserApiService
+import dev.usbharu.hideout.service.user.IUserService
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*

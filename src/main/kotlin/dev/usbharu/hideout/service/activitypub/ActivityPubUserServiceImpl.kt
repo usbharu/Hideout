@@ -9,7 +9,7 @@ import dev.usbharu.hideout.domain.model.hideout.dto.RemoteUserCreateDto
 import dev.usbharu.hideout.exception.UserNotFoundException
 import dev.usbharu.hideout.exception.ap.IllegalActivityPubObjectException
 import dev.usbharu.hideout.plugins.getAp
-import dev.usbharu.hideout.service.impl.IUserService
+import dev.usbharu.hideout.service.user.IUserService
 import dev.usbharu.hideout.util.HttpUtil.Activity
 import io.ktor.client.*
 import io.ktor.client.request.*

@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.service
+package dev.usbharu.hideout.service.post
 
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.domain.model.hideout.dto.PostCreateDto

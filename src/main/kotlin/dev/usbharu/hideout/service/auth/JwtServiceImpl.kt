@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.service
+package dev.usbharu.hideout.service.auth
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
@@ -9,7 +9,8 @@ import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.domain.model.hideout.form.RefreshToken
 import dev.usbharu.hideout.exception.InvalidRefreshTokenException
 import dev.usbharu.hideout.repository.IJwtRefreshTokenRepository
-import dev.usbharu.hideout.service.impl.IUserService
+import dev.usbharu.hideout.service.core.IMetaService
+import dev.usbharu.hideout.service.user.IUserService
 import dev.usbharu.hideout.util.RsaUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

@@ -11,8 +11,8 @@ import dev.usbharu.hideout.exception.ap.IllegalActivityPubObjectException
 import dev.usbharu.hideout.plugins.getAp
 import dev.usbharu.hideout.plugins.postAp
 import dev.usbharu.hideout.repository.IPostRepository
-import dev.usbharu.hideout.service.impl.IUserService
 import dev.usbharu.hideout.service.job.JobQueueParentService
+import dev.usbharu.hideout.service.user.IUserService
 import io.ktor.client.*
 import io.ktor.client.call.*
 import kjob.core.job.JobProps

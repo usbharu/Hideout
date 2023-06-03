@@ -1,6 +1,6 @@
 package dev.usbharu.hideout.routing.api.mastodon.v1
 
-import dev.usbharu.hideout.service.IPostService
+import dev.usbharu.hideout.service.post.IPostService
 import io.ktor.server.routing.*
 
 @Suppress("UnusedPrivateMember")

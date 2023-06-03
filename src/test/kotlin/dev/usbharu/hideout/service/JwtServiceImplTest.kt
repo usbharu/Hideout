@@ -13,7 +13,9 @@ import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.domain.model.hideout.form.RefreshToken
 import dev.usbharu.hideout.exception.InvalidRefreshTokenException
 import dev.usbharu.hideout.repository.IJwtRefreshTokenRepository
-import dev.usbharu.hideout.service.impl.IUserService
+import dev.usbharu.hideout.service.auth.JwtServiceImpl
+import dev.usbharu.hideout.service.core.IMetaService
+import dev.usbharu.hideout.service.user.IUserService
 import dev.usbharu.hideout.util.Base64Util
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest

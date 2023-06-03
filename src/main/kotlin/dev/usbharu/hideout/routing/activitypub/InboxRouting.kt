@@ -4,7 +4,7 @@ import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.domain.model.ActivityPubObjectResponse
 import dev.usbharu.hideout.domain.model.ActivityPubStringResponse
 import dev.usbharu.hideout.exception.HttpSignatureVerifyException
-import dev.usbharu.hideout.service.signature.HttpSignatureVerifyService
+import dev.usbharu.hideout.service.auth.HttpSignatureVerifyService
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*

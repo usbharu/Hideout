@@ -5,7 +5,7 @@ import dev.usbharu.hideout.domain.model.ActivityPubStringResponse
 import dev.usbharu.hideout.domain.model.ap.Accept
 import dev.usbharu.hideout.domain.model.ap.Follow
 import dev.usbharu.hideout.exception.ap.IllegalActivityPubObjectException
-import dev.usbharu.hideout.service.impl.IUserService
+import dev.usbharu.hideout.service.user.IUserService
 import io.ktor.http.*
 import org.koin.core.annotation.Single
 

@@ -9,8 +9,8 @@ import dev.usbharu.hideout.domain.model.hideout.entity.Post
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.domain.model.hideout.entity.Visibility
 import dev.usbharu.hideout.domain.model.job.DeliverPostJob
-import dev.usbharu.hideout.service.impl.IUserService
 import dev.usbharu.hideout.service.job.JobQueueParentService
+import dev.usbharu.hideout.service.user.IUserService
 import io.ktor.client.*
 import io.ktor.client.engine.mock.*
 import kjob.core.job.JobProps

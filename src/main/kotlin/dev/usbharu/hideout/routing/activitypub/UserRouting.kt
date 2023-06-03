@@ -3,7 +3,7 @@ package dev.usbharu.hideout.routing.activitypub
 import dev.usbharu.hideout.exception.ParameterNotExistException
 import dev.usbharu.hideout.plugins.respondAp
 import dev.usbharu.hideout.service.activitypub.ActivityPubUserService
-import dev.usbharu.hideout.service.impl.IUserService
+import dev.usbharu.hideout.service.user.IUserService
 import dev.usbharu.hideout.util.HttpUtil.Activity
 import dev.usbharu.hideout.util.HttpUtil.JsonLd
 import io.ktor.http.*

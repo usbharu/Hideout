@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.service
+package dev.usbharu.hideout.service.user
 
 import java.security.KeyPair
 

@@ -3,7 +3,7 @@ package dev.usbharu.hideout.plugins
 import dev.usbharu.hideout.domain.model.ap.JsonLd
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.repository.IUserRepository
-import dev.usbharu.hideout.service.impl.toPem
+import dev.usbharu.hideout.service.user.toPem
 import io.ktor.client.*
 import io.ktor.client.engine.mock.*
 import io.ktor.client.plugins.logging.*

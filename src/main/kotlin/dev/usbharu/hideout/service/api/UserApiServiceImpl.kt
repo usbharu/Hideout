@@ -1,9 +1,9 @@
-package dev.usbharu.hideout.service
+package dev.usbharu.hideout.service.api
 
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.domain.model.Acct
 import dev.usbharu.hideout.domain.model.hideout.dto.UserResponse
-import dev.usbharu.hideout.service.impl.IUserService
+import dev.usbharu.hideout.service.user.IUserService
 import org.koin.core.annotation.Single
 
 @Single

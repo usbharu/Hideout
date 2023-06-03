@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.service
+package dev.usbharu.hideout.service.api
 
 import dev.usbharu.hideout.domain.model.Acct
 import dev.usbharu.hideout.domain.model.hideout.dto.UserResponse
