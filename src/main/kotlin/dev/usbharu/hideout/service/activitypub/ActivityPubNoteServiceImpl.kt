@@ -152,6 +152,6 @@ class ActivityPubNoteServiceImpl(
             note(note, targetActor, note.id ?: throw IllegalArgumentException("note.id is null"))
 
     companion object {
-        val public: String = "https://www.w3.org/ns/activitystreams#Public"
+        const val public: String = "https://www.w3.org/ns/activitystreams#Public"
     }
 }
