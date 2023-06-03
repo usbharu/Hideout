@@ -30,7 +30,7 @@ class ContentTypeRouteSelectorTest {
             }
         }
 
-        client.get("/test"){
+        client.get("/test") {
             accept(ContentType.Text.Html)
         }.apply {
             assertEquals("NG", bodyAsText())
@@ -60,7 +60,7 @@ class ContentTypeRouteSelectorTest {
             }
         }
 
-        client.get("/test"){
+        client.get("/test") {
             accept(ContentType.Text.Html)
         }.apply {
             assertEquals("NG", bodyAsText())
@@ -85,7 +85,7 @@ class ContentTypeRouteSelectorTest {
             }
         }
 
-        client.get("/test"){
+        client.get("/test") {
             accept(ContentType.Text.Html)
         }.apply {
             assertEquals("NG", bodyAsText())
@@ -114,18 +114,18 @@ class ContentTypeRouteSelectorTest {
             }
         }
 
-        client.get("/test"){
+        client.get("/test") {
             accept(ContentType.Text.Html)
         }.apply {
             assertEquals("OK", bodyAsText())
         }
 
-        client.get("/test"){
+        client.get("/test") {
             accept(ContentType.Application.Json)
         }.apply {
             assertEquals("OK", bodyAsText())
         }
-        client.get("/test"){
+        client.get("/test") {
             accept(ContentType.Application.Xml)
         }.apply {
             assertEquals("NG", bodyAsText())

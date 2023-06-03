@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.JsonNode
-import dev.usbharu.hideout.service.activitypub.ActivityType
+import dev.usbharu.hideout.service.activitypub.ActivityVocabulary
 
 class ObjectDeserializer : JsonDeserializer<Object>() {
     override fun deserialize(p: JsonParser?, ctxt: DeserializationContext?): Object {
@@ -22,19 +22,23 @@ class ObjectDeserializer : JsonDeserializer<Object>() {
             val type = treeNode["type"]
             val activityType = if (type.isArray) {
                 type.firstNotNullOf { jsonNode: JsonNode ->
-                    ActivityType.values().firstOrNull { it.name.equals(jsonNode.asText(), true) }
+                    ActivityVocabulary.values().firstOrNull { it.name.equals(jsonNode.asText(), true) }
                 }
             } else if (type.isValueNode) {
-                ActivityType.values().first { it.name.equals(type.asText(), true) }
+                ActivityVocabulary.values().first { it.name.equals(type.asText(), true) }
             } else {
                 TODO()
             }
 
             return when (activityType) {
-                ActivityType.Follow -> {
+                ActivityVocabulary.Follow -> {
                     val readValue = p.codec.treeToValue(treeNode, Follow::class.java)
                     println(readValue)
                     readValue
+                }
+
+                ActivityVocabulary.Note -> {
+                    p.codec.treeToValue(treeNode, Note::class.java)
                 }
 
                 else -> {
