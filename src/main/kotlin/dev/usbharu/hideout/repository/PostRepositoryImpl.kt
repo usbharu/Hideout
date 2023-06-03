@@ -25,7 +25,7 @@ class PostRepositoryImpl(database: Database, private val idGenerateService: IdGe
 
     @Suppress("InjectDispatcher")
     suspend fun <T> query(block: suspend () -> T): T =
-            newSuspendedTransaction(Dispatchers.IO) { block() }
+        newSuspendedTransaction(Dispatchers.IO) { block() }
 
     override suspend fun save(post: Post): Post {
         return query {
@@ -78,15 +78,39 @@ class PostRepositoryImpl(database: Database, private val idGenerateService: IdGe
         }
     }
 
-    override suspend fun findAll(since: Instant?, until: Instant?, minId: Long?, maxId: Long?, limit: Int?, userId: Long?): List<Post> {
+    override suspend fun findAll(
+            since: Instant?,
+            until: Instant?,
+            minId: Long?,
+            maxId: Long?,
+            limit: Int?,
+            userId: Long?
+    ): List<Post> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun findByUserNameAndDomain(username: String, s: String, since: Instant?, until: Instant?, minId: Long?, maxId: Long?, limit: Int?, userId: Long?): List<Post> {
+    override suspend fun findByUserNameAndDomain(
+            username: String,
+            s: String,
+            since: Instant?,
+            until: Instant?,
+            minId: Long?,
+            maxId: Long?,
+            limit: Int?,
+            userId: Long?
+    ): List<Post> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun findByUserId(idOrNull: Long, since: Instant?, until: Instant?, minId: Long?, maxId: Long?, limit: Int?, userId: Long?): List<Post> {
+    override suspend fun findByUserId(
+            idOrNull: Long,
+            since: Instant?,
+            until: Instant?,
+            minId: Long?,
+            maxId: Long?,
+            limit: Int?,
+            userId: Long?
+    ): List<Post> {
         TODO("Not yet implemented")
     }
 

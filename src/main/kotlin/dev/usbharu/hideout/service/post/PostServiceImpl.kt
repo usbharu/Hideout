@@ -10,7 +10,11 @@ import org.koin.core.annotation.Single
 import java.time.Instant
 
 @Single
-class PostServiceImpl(private val postRepository: IPostRepository, private val userRepository: IUserRepository, private val activityPubNoteService: ActivityPubNoteService) : IPostService {
+class PostServiceImpl(
+        private val postRepository: IPostRepository,
+        private val userRepository: IUserRepository,
+        private val activityPubNoteService: ActivityPubNoteService
+) : IPostService {
     override suspend fun createLocal(post: PostCreateDto): Post {
         val user = userRepository.findById(post.userId) ?: throw UserNotFoundException("${post.userId} was not found")
         val id = postRepository.generateId()
@@ -29,7 +33,5 @@ class PostServiceImpl(private val postRepository: IPostRepository, private val u
         return internalCreate(createPost)
     }
 
-    private suspend fun internalCreate(post: Post): Post {
-        return postRepository.save(post)
-    }
+    private suspend fun internalCreate(post: Post): Post = postRepository.save(post)
 }
