@@ -1,9 +1,7 @@
 package dev.usbharu.hideout.routing.api.internal.v1
 
-import dev.usbharu.hideout.domain.model.hideout.dto.PostCreateDto
 import dev.usbharu.hideout.domain.model.hideout.form.Post
 import dev.usbharu.hideout.exception.ParameterNotExistException
-import dev.usbharu.hideout.exception.PostNotFoundException
 import dev.usbharu.hideout.plugins.TOKEN_AUTH
 import dev.usbharu.hideout.service.api.IPostApiService
 import dev.usbharu.hideout.util.InstantParseUtil
@@ -24,15 +22,7 @@ fun Route.posts(postApiService: IPostApiService) {
                 val userId = principal.payload.getClaim("uid").asLong()
 
                 val receive = call.receive<Post>()
-                val postCreateDto = PostCreateDto(
-                        text = receive.text,
-                        overview = receive.overview,
-                        visibility = receive.visibility,
-                        repostId = receive.repostId,
-                        repolyId = receive.replyId,
-                        userId = userId
-                )
-                val create = postApiService.createPost(postCreateDto)
+                val create = postApiService.createPost(receive, userId)
                 call.response.header("Location", create.url)
                 call.respond(HttpStatusCode.OK)
             }
