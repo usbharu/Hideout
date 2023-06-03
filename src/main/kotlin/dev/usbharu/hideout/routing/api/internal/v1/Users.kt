@@ -5,8 +5,8 @@ import dev.usbharu.hideout.domain.model.hideout.dto.UserCreateDto
 import dev.usbharu.hideout.domain.model.hideout.form.UserCreate
 import dev.usbharu.hideout.exception.ParameterNotExistException
 import dev.usbharu.hideout.plugins.TOKEN_AUTH
-import dev.usbharu.hideout.service.IUserApiService
-import dev.usbharu.hideout.service.impl.IUserService
+import dev.usbharu.hideout.service.api.IUserApiService
+import dev.usbharu.hideout.service.user.IUserService
 import dev.usbharu.hideout.util.AcctUtil
 import io.ktor.http.*
 import io.ktor.server.application.*

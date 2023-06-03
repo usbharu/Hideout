@@ -1,8 +1,7 @@
-package dev.usbharu.hideout.service.impl
+package dev.usbharu.hideout.service.user
 
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.repository.IUserRepository
-import dev.usbharu.hideout.service.IUserAuthService
 import io.ktor.util.*
 import org.koin.core.annotation.Single
 import java.security.*

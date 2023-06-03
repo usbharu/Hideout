@@ -15,9 +15,9 @@ import dev.usbharu.hideout.domain.model.hideout.form.RefreshToken
 import dev.usbharu.hideout.domain.model.hideout.form.UserLogin
 import dev.usbharu.hideout.exception.InvalidRefreshTokenException
 import dev.usbharu.hideout.repository.IUserRepository
-import dev.usbharu.hideout.service.IJwtService
-import dev.usbharu.hideout.service.IMetaService
-import dev.usbharu.hideout.service.IUserAuthService
+import dev.usbharu.hideout.service.auth.IJwtService
+import dev.usbharu.hideout.service.core.IMetaService
+import dev.usbharu.hideout.service.user.IUserAuthService
 import dev.usbharu.hideout.util.Base64Util
 import dev.usbharu.hideout.util.JsonWebKeyUtil
 import io.ktor.client.request.*

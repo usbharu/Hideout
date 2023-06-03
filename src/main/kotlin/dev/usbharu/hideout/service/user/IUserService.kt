@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.service.impl
+package dev.usbharu.hideout.service.user
 
 import dev.usbharu.hideout.domain.model.hideout.dto.RemoteUserCreateDto
 import dev.usbharu.hideout.domain.model.hideout.dto.UserCreateDto

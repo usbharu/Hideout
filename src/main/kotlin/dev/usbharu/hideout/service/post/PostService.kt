@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.service.impl
+package dev.usbharu.hideout.service.post
 
 import dev.usbharu.hideout.domain.model.hideout.dto.PostCreateDto
 import dev.usbharu.hideout.domain.model.hideout.entity.Post
@@ -7,8 +7,8 @@ import dev.usbharu.hideout.repository.IPostRepository
 import dev.usbharu.hideout.repository.Posts
 import dev.usbharu.hideout.repository.UsersFollowers
 import dev.usbharu.hideout.repository.toPost
-import dev.usbharu.hideout.service.IPostService
 import dev.usbharu.hideout.service.activitypub.ActivityPubNoteService
+import dev.usbharu.hideout.service.user.IUserService
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.inSubQuery
 import org.jetbrains.exposed.sql.and

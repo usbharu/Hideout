@@ -4,7 +4,7 @@ import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.domain.model.wellknown.WebFinger
 import dev.usbharu.hideout.exception.IllegalParameterException
 import dev.usbharu.hideout.exception.ParameterNotExistException
-import dev.usbharu.hideout.service.impl.IUserService
+import dev.usbharu.hideout.service.user.IUserService
 import dev.usbharu.hideout.util.HttpUtil.Activity
 import io.ktor.http.*
 import io.ktor.server.application.*

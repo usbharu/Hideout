@@ -8,8 +8,8 @@ import dev.usbharu.hideout.domain.model.ap.Accept
 import dev.usbharu.hideout.domain.model.ap.Follow
 import dev.usbharu.hideout.domain.model.job.ReceiveFollowJob
 import dev.usbharu.hideout.plugins.postAp
-import dev.usbharu.hideout.service.impl.IUserService
 import dev.usbharu.hideout.service.job.JobQueueParentService
+import dev.usbharu.hideout.service.user.IUserService
 import io.ktor.client.*
 import io.ktor.http.*
 import kjob.core.job.JobProps

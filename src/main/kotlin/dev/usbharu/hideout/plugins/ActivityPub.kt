@@ -3,7 +3,7 @@ package dev.usbharu.hideout.plugins
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.domain.model.ap.JsonLd
 import dev.usbharu.hideout.repository.IUserRepository
-import dev.usbharu.hideout.service.impl.UserAuthService
+import dev.usbharu.hideout.service.user.UserAuthService
 import dev.usbharu.hideout.util.HttpUtil.Activity
 import io.ktor.client.*
 import io.ktor.client.plugins.api.*

@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.service.signature
+package dev.usbharu.hideout.service.auth
 
 import dev.usbharu.hideout.plugins.KtorKeyMap
 import dev.usbharu.hideout.repository.IUserRepository

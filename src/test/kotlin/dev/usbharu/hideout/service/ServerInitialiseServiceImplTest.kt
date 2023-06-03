@@ -5,6 +5,7 @@ package dev.usbharu.hideout.service
 import dev.usbharu.hideout.domain.model.hideout.entity.Jwt
 import dev.usbharu.hideout.domain.model.hideout.entity.Meta
 import dev.usbharu.hideout.repository.IMetaRepository
+import dev.usbharu.hideout.service.core.ServerInitialiseServiceImpl
 import dev.usbharu.hideout.util.ServerUtil
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest

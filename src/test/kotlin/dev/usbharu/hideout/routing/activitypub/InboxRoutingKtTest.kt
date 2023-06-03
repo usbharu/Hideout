@@ -5,8 +5,8 @@ import dev.usbharu.hideout.plugins.configureSerialization
 import dev.usbharu.hideout.plugins.configureStatusPages
 import dev.usbharu.hideout.service.activitypub.ActivityPubService
 import dev.usbharu.hideout.service.activitypub.ActivityPubUserService
-import dev.usbharu.hideout.service.impl.IUserService
-import dev.usbharu.hideout.service.signature.HttpSignatureVerifyService
+import dev.usbharu.hideout.service.auth.HttpSignatureVerifyService
+import dev.usbharu.hideout.service.user.IUserService
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.server.config.*

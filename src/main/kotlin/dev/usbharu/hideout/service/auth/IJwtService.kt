@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.service
+package dev.usbharu.hideout.service.auth
 
 import dev.usbharu.hideout.domain.model.hideout.dto.JwtToken
 import dev.usbharu.hideout.domain.model.hideout.entity.User

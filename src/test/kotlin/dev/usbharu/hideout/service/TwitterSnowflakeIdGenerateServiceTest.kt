@@ -1,6 +1,7 @@
 package dev.usbharu.hideout.service
 
 // import kotlinx.coroutines.NonCancellable.message
+import dev.usbharu.hideout.service.core.TwitterSnowflakeIdGenerateService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch

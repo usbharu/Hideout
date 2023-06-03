@@ -6,7 +6,7 @@ import dev.usbharu.hideout.domain.model.hideout.form.Post
 import dev.usbharu.hideout.exception.ParameterNotExistException
 import dev.usbharu.hideout.exception.PostNotFoundException
 import dev.usbharu.hideout.plugins.TOKEN_AUTH
-import dev.usbharu.hideout.service.IPostService
+import dev.usbharu.hideout.service.post.IPostService
 import dev.usbharu.hideout.util.AcctUtil
 import dev.usbharu.hideout.util.InstantParseUtil
 import io.ktor.http.*

@@ -10,7 +10,7 @@ import dev.usbharu.hideout.domain.model.hideout.entity.Visibility
 import dev.usbharu.hideout.plugins.TOKEN_AUTH
 import dev.usbharu.hideout.plugins.configureSecurity
 import dev.usbharu.hideout.plugins.configureSerialization
-import dev.usbharu.hideout.service.IPostService
+import dev.usbharu.hideout.service.post.IPostService
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
