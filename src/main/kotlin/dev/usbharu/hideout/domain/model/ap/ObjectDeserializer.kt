@@ -42,7 +42,7 @@ class ObjectDeserializer : JsonDeserializer<Object>() {
                 }
 
                 else -> {
-                    TODO()
+                    TODO("$activityType is not implementation")
                 }
             }
         } else {
