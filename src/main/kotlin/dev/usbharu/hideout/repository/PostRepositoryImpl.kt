@@ -63,7 +63,9 @@ class PostRepositoryImpl(database: Database, private val idGenerateService: IdGe
     }
 
     override suspend fun findOneById(id: Long, userId: Long?): Post? {
-        TODO("Not yet implemented")
+        return query {
+            Posts.select { Posts.id eq id }.singleOrNull()?.toPost()
+        }
     }
 
     override suspend fun findByUrl(url: String): Post? {

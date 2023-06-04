@@ -14,7 +14,7 @@ import dev.usbharu.hideout.repository.IPostRepository
 import dev.usbharu.hideout.service.job.JobQueueParentService
 import dev.usbharu.hideout.service.user.IUserService
 import io.ktor.client.*
-import io.ktor.client.call.*
+import io.ktor.client.statement.*
 import kjob.core.job.JobProps
 import org.koin.core.annotation.Single
 import org.slf4j.LoggerFactory
@@ -75,10 +75,9 @@ class ActivityPubNoteServiceImpl(
             return postToNote(post)
         }
         val response = httpClient.getAp(
-                url,
-                "$targetActor#pubkey"
+                url, targetActor?.let { "$targetActor#pubkey" }
         )
-        val note = response.body<Note>()
+        val note = Config.configData.objectMapper.readValue<Note>(response.bodyAsText())
         return note(note, targetActor, url)
     }
 

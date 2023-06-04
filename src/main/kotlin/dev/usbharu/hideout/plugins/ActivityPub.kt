@@ -44,10 +44,12 @@ suspend fun HttpClient.postAp(urlString: String, username: String, jsonLd: JsonL
     }
 }
 
-suspend fun HttpClient.getAp(urlString: String, username: String): HttpResponse {
+suspend fun HttpClient.getAp(urlString: String, username: String?): HttpResponse {
     return this.get(urlString) {
         header("Accept", ContentType.Application.Activity)
-        header("Signature", "keyId=\"$username\",algorithm=\"rsa-sha256\",headers=\"(request-target) host date\"")
+        username?.let {
+            header("Signature", "keyId=\"$username\",algorithm=\"rsa-sha256\",headers=\"(request-target) host date\"")
+        }
     }
 }
 

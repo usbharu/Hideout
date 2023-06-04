@@ -16,12 +16,14 @@ import org.koin.core.annotation.Single
 class ActivityPubLikeServiceImpl(private val reactionService: IReactionService,
                                  private val activityPubUserService: ActivityPubUserService,
                                  private val userService: IUserService,
-                                 private val postService: IPostRepository) : ActivityPubLikeService {
+                                 private val postService: IPostRepository,
+                                 private val activityPubNoteService: ActivityPubNoteService) : ActivityPubLikeService {
     override suspend fun receiveLike(like: Like): ActivityPubResponse {
         val actor = like.actor ?: throw IllegalActivityPubObjectException("actor is null")
         val content = like.content ?: throw IllegalActivityPubObjectException("content is null")
         like.`object` ?: throw IllegalActivityPubObjectException("object is null")
         val person = activityPubUserService.fetchPerson(actor)
+        activityPubNoteService.fetchNote(like.`object`!!)
 
         val user = userService.findByUrl(person.url
                 ?: throw IllegalActivityPubObjectException("actor is not found"))
