@@ -78,6 +78,7 @@ fun Application.parent() {
                 install(httpSignaturePlugin) {
                     keyMap = KtorKeyMap(get())
                 }
+                expectSuccess = true
             }
         }
         single<IdGenerateService> { TwitterSnowflakeIdGenerateService }

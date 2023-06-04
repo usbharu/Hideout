@@ -33,18 +33,24 @@ class ReactionRepositoryImpl(private val database: Database, private val idGener
                     it[id] = reaction.id
                     it[emojiId] = reaction.emojiId
                     it[postId] = reaction.postId
-                    it[userId] = reaction.postId
+                    it[userId] = reaction.userId
                 }
             } else {
                 Reactions.update({ Reactions.id eq reaction.id }) {
                     it[emojiId] = reaction.emojiId
                     it[postId] = reaction.postId
-                    it[userId] = reaction.postId
+                    it[userId] = reaction.userId
 
                 }
             }
         }
         return reaction
+    }
+
+    override suspend fun reactionAlreadyExist(postId: Long, userId: Long, emojiId: Long): Boolean {
+        return query {
+            Reactions.select { Reactions.postId.eq(postId).and(Reactions.userId.eq(userId)).and(Reactions.emojiId.eq(emojiId)) }.empty().not()
+        }
     }
 }
 
@@ -61,4 +67,8 @@ object Reactions : LongIdTable("reactions") {
     val emojiId = long("emoji_id")
     val postId = long("post_id").references(Posts.id)
     val userId = long("user_id").references(Users.id)
+
+    init {
+        uniqueIndex(emojiId, postId, userId)
+    }
 }
