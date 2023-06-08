@@ -63,7 +63,9 @@ class PostRepositoryImpl(database: Database, private val idGenerateService: IdGe
     }
 
     override suspend fun findOneById(id: Long, userId: Long?): Post? {
-        TODO("Not yet implemented")
+        return query {
+            Posts.select { Posts.id eq id }.singleOrNull()?.toPost()
+        }
     }
 
     override suspend fun findByUrl(url: String): Post? {
@@ -79,37 +81,37 @@ class PostRepositoryImpl(database: Database, private val idGenerateService: IdGe
     }
 
     override suspend fun findAll(
-            since: Instant?,
-            until: Instant?,
-            minId: Long?,
-            maxId: Long?,
-            limit: Int?,
-            userId: Long?
+        since: Instant?,
+        until: Instant?,
+        minId: Long?,
+        maxId: Long?,
+        limit: Int?,
+        userId: Long?
     ): List<Post> {
         TODO("Not yet implemented")
     }
 
     override suspend fun findByUserNameAndDomain(
-            username: String,
-            s: String,
-            since: Instant?,
-            until: Instant?,
-            minId: Long?,
-            maxId: Long?,
-            limit: Int?,
-            userId: Long?
+        username: String,
+        s: String,
+        since: Instant?,
+        until: Instant?,
+        minId: Long?,
+        maxId: Long?,
+        limit: Int?,
+        userId: Long?
     ): List<Post> {
         TODO("Not yet implemented")
     }
 
     override suspend fun findByUserId(
-            idOrNull: Long,
-            since: Instant?,
-            until: Instant?,
-            minId: Long?,
-            maxId: Long?,
-            limit: Int?,
-            userId: Long?
+        idOrNull: Long,
+        since: Instant?,
+        until: Instant?,
+        minId: Long?,
+        maxId: Long?,
+        limit: Int?,
+        userId: Long?
     ): List<Post> {
         TODO("Not yet implemented")
     }
@@ -138,16 +140,16 @@ object Posts : Table() {
 
 fun ResultRow.toPost(): Post {
     return Post(
-            id = this[Posts.id],
-            userId = this[Posts.userId],
-            overview = this[Posts.overview],
-            text = this[Posts.text],
-            createdAt = this[Posts.createdAt],
-            visibility = Visibility.values().first { visibility -> visibility.ordinal == this[Posts.visibility] },
-            url = this[Posts.url],
-            repostId = this[Posts.repostId],
-            replyId = this[Posts.replyId],
-            sensitive = this[Posts.sensitive],
-            apId = this[Posts.apId]
+        id = this[Posts.id],
+        userId = this[Posts.userId],
+        overview = this[Posts.overview],
+        text = this[Posts.text],
+        createdAt = this[Posts.createdAt],
+        visibility = Visibility.values().first { visibility -> visibility.ordinal == this[Posts.visibility] },
+        url = this[Posts.url],
+        repostId = this[Posts.repostId],
+        replyId = this[Posts.replyId],
+        sensitive = this[Posts.sensitive],
+        apId = this[Posts.apId]
     )
 }

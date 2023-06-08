@@ -78,6 +78,7 @@ fun Application.parent() {
                 install(httpSignaturePlugin) {
                     keyMap = KtorKeyMap(get())
                 }
+                expectSuccess = true
             }
         }
         single<IdGenerateService> { TwitterSnowflakeIdGenerateService }
@@ -107,12 +108,12 @@ fun Application.parent() {
         inject<JwkProvider>().value,
     )
     configureRouting(
-            httpSignatureVerifyService = inject<HttpSignatureVerifyService>().value,
-            activityPubService = inject<ActivityPubService>().value,
-            userService = inject<IUserService>().value,
-            activityPubUserService = inject<ActivityPubUserService>().value,
-            postService = inject<IPostApiService>().value,
-            userApiService = inject<IUserApiService>().value,
+        httpSignatureVerifyService = inject<HttpSignatureVerifyService>().value,
+        activityPubService = inject<ActivityPubService>().value,
+        userService = inject<IUserService>().value,
+        activityPubUserService = inject<ActivityPubUserService>().value,
+        postService = inject<IPostApiService>().value,
+        userApiService = inject<IUserApiService>().value,
     )
 }
 
