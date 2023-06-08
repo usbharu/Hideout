@@ -10,7 +10,10 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.core.annotation.Single
 
 @Single
-class ReactionRepositoryImpl(private val database: Database, private val idGenerateService: IdGenerateService) : ReactionRepository {
+class ReactionRepositoryImpl(
+    private val database: Database,
+    private val idGenerateService: IdGenerateService
+) : ReactionRepository {
 
     init {
         transaction(database) {
@@ -19,10 +22,9 @@ class ReactionRepositoryImpl(private val database: Database, private val idGener
         }
     }
 
-
     @Suppress("InjectDispatcher")
     suspend fun <T> query(block: suspend () -> T): T =
-            newSuspendedTransaction(Dispatchers.IO) { block() }
+        newSuspendedTransaction(Dispatchers.IO) { block() }
 
     override suspend fun generateId(): Long = idGenerateService.generateId()
 
@@ -40,7 +42,6 @@ class ReactionRepositoryImpl(private val database: Database, private val idGener
                     it[emojiId] = reaction.emojiId
                     it[postId] = reaction.postId
                     it[userId] = reaction.userId
-
                 }
             }
         }
@@ -49,17 +50,21 @@ class ReactionRepositoryImpl(private val database: Database, private val idGener
 
     override suspend fun reactionAlreadyExist(postId: Long, userId: Long, emojiId: Long): Boolean {
         return query {
-            Reactions.select { Reactions.postId.eq(postId).and(Reactions.userId.eq(userId)).and(Reactions.emojiId.eq(emojiId)) }.empty().not()
+            Reactions.select {
+                Reactions.postId.eq(postId).and(Reactions.userId.eq(userId)).and(
+                    Reactions.emojiId.eq(emojiId)
+                )
+            }.empty().not()
         }
     }
 }
 
 fun ResultRow.toReaction(): Reaction {
     return Reaction(
-            this[Reactions.id].value,
-            this[Reactions.emojiId],
-            this[Reactions.postId],
-            this[Reactions.userId]
+        this[Reactions.id].value,
+        this[Reactions.emojiId],
+        this[Reactions.postId],
+        this[Reactions.userId]
     )
 }
 

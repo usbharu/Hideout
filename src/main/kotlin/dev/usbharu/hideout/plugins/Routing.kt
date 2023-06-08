@@ -18,12 +18,12 @@ import io.ktor.server.routing.*
 
 @Suppress("LongParameterList")
 fun Application.configureRouting(
-        httpSignatureVerifyService: HttpSignatureVerifyService,
-        activityPubService: ActivityPubService,
-        userService: IUserService,
-        activityPubUserService: ActivityPubUserService,
-        postService: IPostApiService,
-        userApiService: IUserApiService
+    httpSignatureVerifyService: HttpSignatureVerifyService,
+    activityPubService: ActivityPubService,
+    userService: IUserService,
+    activityPubUserService: ActivityPubUserService,
+    postService: IPostApiService,
+    userApiService: IUserApiService
 ) {
     install(AutoHeadResponse)
     routing {

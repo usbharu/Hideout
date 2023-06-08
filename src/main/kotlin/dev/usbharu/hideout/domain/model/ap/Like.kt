@@ -10,18 +10,20 @@ open class Like : Object {
     var tag: List<Object> = emptyList()
 
     protected constructor() : super()
-    constructor(type: List<String>,
-                name: String?,
-                actor: String?,
-                id: String?,
-                `object`: String?,
-                content: String?,
-                tag: List<Object>
+    constructor(
+        type: List<String>,
+        name: String?,
+        actor: String?,
+        id: String?,
+        `object`: String?,
+        content: String?,
+        tag: List<Object>
     ) : super(
-            type = add(type, "Like"),
-            name = name,
-            actor = actor,
-            id = id) {
+        type = add(type, "Like"),
+        name = name,
+        actor = actor,
+        id = id
+    ) {
         this.`object` = `object`
         this.content = content
         this.tag = tag
@@ -46,6 +48,4 @@ open class Like : Object {
     }
 
     override fun toString(): String = "Like(`object`=$`object`, content=$content, tag=$tag) ${super.toString()}"
-
-
 }

@@ -11,23 +11,23 @@ import java.time.Instant
 
 @Single
 class PostServiceImpl(
-        private val postRepository: IPostRepository,
-        private val userRepository: IUserRepository,
-        private val activityPubNoteService: ActivityPubNoteService
+    private val postRepository: IPostRepository,
+    private val userRepository: IUserRepository,
+    private val activityPubNoteService: ActivityPubNoteService
 ) : IPostService {
     override suspend fun createLocal(post: PostCreateDto): Post {
         val user = userRepository.findById(post.userId) ?: throw UserNotFoundException("${post.userId} was not found")
         val id = postRepository.generateId()
         val createPost = Post(
-                id = id,
-                userId = post.userId,
-                overview = post.overview,
-                text = post.text,
-                createdAt = Instant.now().toEpochMilli(),
-                visibility = post.visibility,
-                url = "${user.url}/posts/$id",
-                repostId = null,
-                replyId = null
+            id = id,
+            userId = post.userId,
+            overview = post.overview,
+            text = post.text,
+            createdAt = Instant.now().toEpochMilli(),
+            visibility = post.visibility,
+            url = "${user.url}/posts/$id",
+            repostId = null,
+            replyId = null
         )
         activityPubNoteService.createNote(createPost)
         return internalCreate(createPost)

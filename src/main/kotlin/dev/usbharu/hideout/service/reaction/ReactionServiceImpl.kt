@@ -9,7 +9,7 @@ class ReactionServiceImpl(private val reactionRepository: ReactionRepository) : 
     override suspend fun receiveReaction(name: String, domain: String, userId: Long, postId: Long) {
         if (reactionRepository.reactionAlreadyExist(postId, userId, 0).not()) {
             reactionRepository.save(
-                    Reaction(reactionRepository.generateId(), 0, postId, userId)
+                Reaction(reactionRepository.generateId(), 0, postId, userId)
             )
         }
     }

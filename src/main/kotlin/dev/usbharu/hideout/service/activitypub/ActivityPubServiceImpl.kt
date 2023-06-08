@@ -17,12 +17,12 @@ import org.slf4j.LoggerFactory
 
 @Single
 class ActivityPubServiceImpl(
-        private val activityPubReceiveFollowService: ActivityPubReceiveFollowService,
-        private val activityPubNoteService: ActivityPubNoteService,
-        private val activityPubUndoService: ActivityPubUndoService,
-        private val activityPubAcceptService: ActivityPubAcceptService,
-        private val activityPubCreateService: ActivityPubCreateService,
-        private val activityPubLikeService: ActivityPubLikeService
+    private val activityPubReceiveFollowService: ActivityPubReceiveFollowService,
+    private val activityPubNoteService: ActivityPubNoteService,
+    private val activityPubUndoService: ActivityPubUndoService,
+    private val activityPubAcceptService: ActivityPubAcceptService,
+    private val activityPubCreateService: ActivityPubCreateService,
+    private val activityPubLikeService: ActivityPubLikeService
 ) : ActivityPubService {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
