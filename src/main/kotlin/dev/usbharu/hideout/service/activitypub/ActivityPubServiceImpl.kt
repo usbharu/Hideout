@@ -21,7 +21,8 @@ class ActivityPubServiceImpl(
     private val activityPubNoteService: ActivityPubNoteService,
     private val activityPubUndoService: ActivityPubUndoService,
     private val activityPubAcceptService: ActivityPubAcceptService,
-    private val activityPubCreateService: ActivityPubCreateService
+    private val activityPubCreateService: ActivityPubCreateService,
+    private val activityPubLikeService: ActivityPubLikeService
 ) : ActivityPubService {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -53,6 +54,7 @@ class ActivityPubServiceImpl(
             )
 
             ActivityType.Create -> activityPubCreateService.receiveCreate(configData.objectMapper.readValue(json))
+            ActivityType.Like -> activityPubLikeService.receiveLike(configData.objectMapper.readValue(json))
             ActivityType.Undo -> activityPubUndoService.receiveUndo(configData.objectMapper.readValue(json))
 
             else -> {

@@ -41,24 +41,24 @@ class PostsTest {
                 createdAt = Instant.now().toEpochMilli(),
                 url = "https://example.com/posts/1"
             ),
-                Post(
-                        id = 123456,
-                        userId = 4322,
-                        text = "test2",
-                        visibility = Visibility.PUBLIC,
-                        createdAt = Instant.now().toEpochMilli(),
-                        url = "https://example.com/posts/2"
-                )
+            Post(
+                id = 123456,
+                userId = 4322,
+                text = "test2",
+                visibility = Visibility.PUBLIC,
+                createdAt = Instant.now().toEpochMilli(),
+                url = "https://example.com/posts/2"
+            )
         )
         val postService = mock<IPostApiService> {
             onBlocking {
                 getAll(
-                        since = anyOrNull(),
-                        until = anyOrNull(),
-                        minId = anyOrNull(),
-                        maxId = anyOrNull(),
-                        limit = anyOrNull(),
-                        userId = isNull()
+                    since = anyOrNull(),
+                    until = anyOrNull(),
+                    minId = anyOrNull(),
+                    maxId = anyOrNull(),
+                    limit = anyOrNull(),
+                    userId = isNull()
                 )
             } doReturn posts
         }
@@ -120,12 +120,12 @@ class PostsTest {
         val postService = mock<IPostApiService> {
             onBlocking {
                 getAll(
-                        since = anyOrNull(),
-                        until = anyOrNull(),
-                        minId = anyOrNull(),
-                        maxId = anyOrNull(),
-                        limit = anyOrNull(),
-                        userId = isNotNull()
+                    since = anyOrNull(),
+                    until = anyOrNull(),
+                    minId = anyOrNull(),
+                    maxId = anyOrNull(),
+                    limit = anyOrNull(),
+                    userId = isNotNull()
                 )
             } doReturn posts
         }
@@ -157,12 +157,12 @@ class PostsTest {
             config = ApplicationConfig("empty.conf")
         }
         val post = Post(
-                12345,
-                1234,
-                text = "aaa",
-                visibility = Visibility.PUBLIC,
-                createdAt = Instant.now().toEpochMilli(),
-                url = "https://example.com/posts/1"
+            12345,
+            1234,
+            text = "aaa",
+            visibility = Visibility.PUBLIC,
+            createdAt = Instant.now().toEpochMilli(),
+            url = "https://example.com/posts/1"
         )
         val postService = mock<IPostApiService> {
             onBlocking { getById(any(), anyOrNull()) } doReturn post
@@ -188,12 +188,12 @@ class PostsTest {
             config = ApplicationConfig("empty.conf")
         }
         val post = Post(
-                12345,
-                1234,
-                text = "aaa",
-                visibility = Visibility.FOLLOWERS,
-                createdAt = Instant.now().toEpochMilli(),
-                url = "https://example.com/posts/1"
+            12345,
+            1234,
+            text = "aaa",
+            visibility = Visibility.FOLLOWERS,
+            createdAt = Instant.now().toEpochMilli(),
+            url = "https://example.com/posts/1"
         )
         val postService = mock<IPostApiService> {
             onBlocking { getById(any(), isNotNull()) } doReturn post
@@ -243,13 +243,13 @@ class PostsTest {
                 val argument = it.getArgument<dev.usbharu.hideout.domain.model.hideout.form.Post>(0)
                 val userId = it.getArgument<Long>(1)
                 Post(
-                        123L,
-                        userId,
-                        null,
-                        argument.text,
-                        Instant.now().toEpochMilli(),
-                        Visibility.PUBLIC,
-                        "https://example.com"
+                    123L,
+                    userId,
+                    null,
+                    argument.text,
+                    Instant.now().toEpochMilli(),
+                    Visibility.PUBLIC,
+                    "https://example.com"
                 )
             }
         }
@@ -299,25 +299,25 @@ class PostsTest {
                 createdAt = Instant.now().toEpochMilli(),
                 url = "https://example.com/posts/1"
             ),
-                Post(
-                        id = 123456,
-                        userId = 1,
-                        text = "test2",
-                        visibility = Visibility.PUBLIC,
-                        createdAt = Instant.now().toEpochMilli(),
-                        url = "https://example.com/posts/2"
-                )
+            Post(
+                id = 123456,
+                userId = 1,
+                text = "test2",
+                visibility = Visibility.PUBLIC,
+                createdAt = Instant.now().toEpochMilli(),
+                url = "https://example.com/posts/2"
+            )
         )
         val postService = mock<IPostApiService> {
             onBlocking {
                 getByUser(
-                        nameOrId = any(),
-                        since = anyOrNull(),
-                        until = anyOrNull(),
-                        minId = anyOrNull(),
-                        maxId = anyOrNull(),
-                        limit = anyOrNull(),
-                        userId = anyOrNull()
+                    nameOrId = any(),
+                    since = anyOrNull(),
+                    until = anyOrNull(),
+                    minId = anyOrNull(),
+                    maxId = anyOrNull(),
+                    limit = anyOrNull(),
+                    userId = anyOrNull()
                 )
             } doReturn posts
         }
@@ -351,25 +351,25 @@ class PostsTest {
                 createdAt = Instant.now().toEpochMilli(),
                 url = "https://example.com/posts/1"
             ),
-                Post(
-                        id = 123456,
-                        userId = 1,
-                        text = "test2",
-                        visibility = Visibility.PUBLIC,
-                        createdAt = Instant.now().toEpochMilli(),
-                        url = "https://example.com/posts/2"
-                )
+            Post(
+                id = 123456,
+                userId = 1,
+                text = "test2",
+                visibility = Visibility.PUBLIC,
+                createdAt = Instant.now().toEpochMilli(),
+                url = "https://example.com/posts/2"
+            )
         )
         val postService = mock<IPostApiService> {
             onBlocking {
                 getByUser(
-                        nameOrId = eq("test1"),
-                        since = anyOrNull(),
-                        until = anyOrNull(),
-                        minId = anyOrNull(),
-                        maxId = anyOrNull(),
-                        limit = anyOrNull(),
-                        userId = anyOrNull()
+                    nameOrId = eq("test1"),
+                    since = anyOrNull(),
+                    until = anyOrNull(),
+                    minId = anyOrNull(),
+                    maxId = anyOrNull(),
+                    limit = anyOrNull(),
+                    userId = anyOrNull()
                 )
             } doReturn posts
         }
@@ -403,25 +403,25 @@ class PostsTest {
                 createdAt = Instant.now().toEpochMilli(),
                 url = "https://example.com/posts/1"
             ),
-                Post(
-                        id = 123456,
-                        userId = 1,
-                        text = "test2",
-                        visibility = Visibility.PUBLIC,
-                        createdAt = Instant.now().toEpochMilli(),
-                        url = "https://example.com/posts/2"
-                )
+            Post(
+                id = 123456,
+                userId = 1,
+                text = "test2",
+                visibility = Visibility.PUBLIC,
+                createdAt = Instant.now().toEpochMilli(),
+                url = "https://example.com/posts/2"
+            )
         )
         val postService = mock<IPostApiService> {
             onBlocking {
                 getByUser(
-                        nameOrId = eq("test1@example.com"),
-                        since = anyOrNull(),
-                        until = anyOrNull(),
-                        minId = anyOrNull(),
-                        maxId = anyOrNull(),
-                        limit = anyOrNull(),
-                        userId = anyOrNull()
+                    nameOrId = eq("test1@example.com"),
+                    since = anyOrNull(),
+                    until = anyOrNull(),
+                    minId = anyOrNull(),
+                    maxId = anyOrNull(),
+                    limit = anyOrNull(),
+                    userId = anyOrNull()
                 )
             } doReturn posts
         }
@@ -455,25 +455,25 @@ class PostsTest {
                 createdAt = Instant.now().toEpochMilli(),
                 url = "https://example.com/posts/1"
             ),
-                Post(
-                        id = 123456,
-                        userId = 1,
-                        text = "test2",
-                        visibility = Visibility.PUBLIC,
-                        createdAt = Instant.now().toEpochMilli(),
-                        url = "https://example.com/posts/2"
-                )
+            Post(
+                id = 123456,
+                userId = 1,
+                text = "test2",
+                visibility = Visibility.PUBLIC,
+                createdAt = Instant.now().toEpochMilli(),
+                url = "https://example.com/posts/2"
+            )
         )
         val postService = mock<IPostApiService> {
             onBlocking {
                 getByUser(
-                        nameOrId = eq("@test1@example.com"),
-                        since = anyOrNull(),
-                        until = anyOrNull(),
-                        minId = anyOrNull(),
-                        maxId = anyOrNull(),
-                        limit = anyOrNull(),
-                        userId = anyOrNull()
+                    nameOrId = eq("@test1@example.com"),
+                    since = anyOrNull(),
+                    until = anyOrNull(),
+                    minId = anyOrNull(),
+                    maxId = anyOrNull(),
+                    limit = anyOrNull(),
+                    userId = anyOrNull()
                 )
             } doReturn posts
         }
@@ -499,12 +499,12 @@ class PostsTest {
             config = ApplicationConfig("empty.conf")
         }
         val post = Post(
-                id = 123456,
-                userId = 1,
-                text = "test2",
-                visibility = Visibility.PUBLIC,
-                createdAt = Instant.now().toEpochMilli(),
-                url = "https://example.com/posts/2"
+            id = 123456,
+            userId = 1,
+            text = "test2",
+            visibility = Visibility.PUBLIC,
+            createdAt = Instant.now().toEpochMilli(),
+            url = "https://example.com/posts/2"
         )
         val postService = mock<IPostApiService> {
             onBlocking { getById(eq(12345L), anyOrNull()) } doReturn post
@@ -531,12 +531,12 @@ class PostsTest {
             config = ApplicationConfig("empty.conf")
         }
         val post = Post(
-                id = 123456,
-                userId = 1,
-                text = "test2",
-                visibility = Visibility.PUBLIC,
-                createdAt = Instant.now().toEpochMilli(),
-                url = "https://example.com/posts/2"
+            id = 123456,
+            userId = 1,
+            text = "test2",
+            visibility = Visibility.PUBLIC,
+            createdAt = Instant.now().toEpochMilli(),
+            url = "https://example.com/posts/2"
         )
         val postService = mock<IPostApiService> {
             onBlocking { getById(eq(12345L), anyOrNull()) } doReturn post
@@ -563,12 +563,12 @@ class PostsTest {
             config = ApplicationConfig("empty.conf")
         }
         val post = Post(
-                id = 123456,
-                userId = 1,
-                text = "test2",
-                visibility = Visibility.PUBLIC,
-                createdAt = Instant.now().toEpochMilli(),
-                url = "https://example.com/posts/2"
+            id = 123456,
+            userId = 1,
+            text = "test2",
+            visibility = Visibility.PUBLIC,
+            createdAt = Instant.now().toEpochMilli(),
+            url = "https://example.com/posts/2"
         )
         val postService = mock<IPostApiService> {
             onBlocking { getById(eq(12345L), anyOrNull()) } doReturn post
@@ -595,12 +595,12 @@ class PostsTest {
             config = ApplicationConfig("empty.conf")
         }
         val post = Post(
-                id = 123456,
-                userId = 1,
-                text = "test2",
-                visibility = Visibility.PUBLIC,
-                createdAt = Instant.now().toEpochMilli(),
-                url = "https://example.com/posts/2"
+            id = 123456,
+            userId = 1,
+            text = "test2",
+            visibility = Visibility.PUBLIC,
+            createdAt = Instant.now().toEpochMilli(),
+            url = "https://example.com/posts/2"
         )
         val postService = mock<IPostApiService> {
             onBlocking { getById(eq(12345L), anyOrNull()) } doReturn post

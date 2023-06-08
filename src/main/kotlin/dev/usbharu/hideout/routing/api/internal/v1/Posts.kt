@@ -51,14 +51,14 @@ fun Route.posts(postApiService: IPostApiService) {
             get {
                 val userId = call.principal<JWTPrincipal>()?.payload?.getClaim("uid")?.asLong()
                 val targetUserName = call.parameters["name"]
-                        ?: throw ParameterNotExistException("Parameter(name='userName@domain') does not exist.")
+                    ?: throw ParameterNotExistException("Parameter(name='userName@domain') does not exist.")
                 val posts = postApiService.getByUser(targetUserName, userId = userId)
                 call.respond(posts)
             }
             get("/{id}") {
                 val userId = call.principal<JWTPrincipal>()?.payload?.getClaim("uid")?.asLong()
                 val id = call.parameters["id"]?.toLong()
-                        ?: throw ParameterNotExistException("Parameter(name='postsId' does not exist.")
+                    ?: throw ParameterNotExistException("Parameter(name='postsId' does not exist.")
                 val post = postApiService.getById(id, userId)
                 call.respond(post)
             }
