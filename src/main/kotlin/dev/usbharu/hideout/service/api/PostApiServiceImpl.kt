@@ -13,58 +13,58 @@ import dev.usbharu.hideout.domain.model.hideout.form.Post as FormPost
 
 @Single
 class PostApiServiceImpl(
-        private val postService: IPostService,
-        private val postRepository: IPostRepository
+    private val postService: IPostService,
+    private val postRepository: IPostRepository
 ) : IPostApiService {
     override suspend fun createPost(postForm: FormPost, userId: Long): Post {
         return postService.createLocal(
-                PostCreateDto(
-                        text = postForm.text,
-                        overview = postForm.overview,
-                        visibility = postForm.visibility,
-                        repostId = postForm.repostId,
-                        repolyId = postForm.replyId,
-                        userId = userId
-                )
+            PostCreateDto(
+                text = postForm.text,
+                overview = postForm.overview,
+                visibility = postForm.visibility,
+                repostId = postForm.repostId,
+                repolyId = postForm.replyId,
+                userId = userId
+            )
         )
     }
 
     override suspend fun getById(id: Long, userId: Long?): Post {
         return postRepository.findOneById(id, userId)
-                ?: throw PostNotFoundException("$id was not found or is not authorized.")
+            ?: throw PostNotFoundException("$id was not found or is not authorized.")
     }
 
     override suspend fun getAll(
-            since: Instant?,
-            until: Instant?,
-            minId: Long?,
-            maxId: Long?,
-            limit: Int?,
-            userId: Long?
+        since: Instant?,
+        until: Instant?,
+        minId: Long?,
+        maxId: Long?,
+        limit: Int?,
+        userId: Long?
     ): List<Post> = postRepository.findAll(since, until, minId, maxId, limit, userId)
 
     override suspend fun getByUser(
-            nameOrId: String,
-            since: Instant?,
-            until: Instant?,
-            minId: Long?,
-            maxId: Long?,
-            limit: Int?,
-            userId: Long?
+        nameOrId: String,
+        since: Instant?,
+        until: Instant?,
+        minId: Long?,
+        maxId: Long?,
+        limit: Int?,
+        userId: Long?
     ): List<Post> {
         val idOrNull = nameOrId.toLongOrNull()
         return if (idOrNull == null) {
             val acct = AcctUtil.parse(nameOrId)
             postRepository.findByUserNameAndDomain(
-                    acct.username,
-                    acct.domain
-                            ?: Config.configData.domain,
-                    since,
-                    until,
-                    minId,
-                    maxId,
-                    limit,
-                    userId
+                username = acct.username,
+                s = acct.domain
+                    ?: Config.configData.domain,
+                since = since,
+                until = until,
+                minId = minId,
+                maxId = maxId,
+                limit = limit,
+                userId = userId
             )
         } else {
             postRepository.findByUserId(idOrNull, since, until, minId, maxId, limit, userId)

@@ -43,9 +43,9 @@ fun Route.users(userService: IUserService, userApiService: IUserApiService) {
                 get {
                     val userParameter = (
                             call.parameters["name"]
-                                    ?: throw ParameterNotExistException(
-                                            "Parameter(name='userName@domain') does not exist."
-                                    )
+                                ?: throw ParameterNotExistException(
+                                    "Parameter(name='userName@domain') does not exist."
+                                )
                             )
                     if (userParameter.toLongOrNull() != null) {
                         return@get call.respond(userApiService.findById(userParameter.toLong()))
@@ -93,9 +93,9 @@ fun Route.users(userService: IUserService, userApiService: IUserApiService) {
                 get {
                     val userParameter = (
                             call.parameters["name"]
-                                    ?: throw ParameterNotExistException(
-                                            "Parameter(name='userName@domain') does not exist."
-                                    )
+                                ?: throw ParameterNotExistException(
+                                    "Parameter(name='userName@domain') does not exist."
+                                )
                             )
                     if (userParameter.toLongOrNull() != null) {
                         return@get call.respond(userApiService.findFollowings(userParameter.toLong()))
