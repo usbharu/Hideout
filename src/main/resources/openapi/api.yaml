@@ -201,6 +201,8 @@ paths:
                   $ref: "#/components/schemas/User"
     post:
       summary: ユーザーをフォローする
+      security:
+        - BearerAuth: [ ]
       parameters:
         - $ref: "#/components/parameters/userName"
       responses:
