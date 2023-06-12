@@ -8,10 +8,57 @@ servers:
 paths:
   /posts:
     get:
-      summary: 権限に応じて投稿を返す
+      summary: 権限に応じて投稿一覧を返す
       security:
         - { }
         - BearerAuth: [ ]
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Post"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        429:
+          $ref: "#/components/responses/TooManyRequests"
+    post:
+      summary: 投稿する
+      security:
+        - BearerAuth: [ ]
+      requestBody:
+        description: 投稿する内容
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Post"
+      responses:
+        200:
+          description: 成功
+          headers:
+            Location:
+              description: 作成した投稿のURL
+              schema:
+                type: string
+                format: uri
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        429:
+          $ref: "#/components/responses/TooManyRequests"
+  /posts/{postId}:
+    get:
+      summary: 権限に応じてIDの投稿を取得
+      security:
+        - { }
+        - BearerAuth: [ ]
+      parameters:
+        - $ref: "#/components/parameters/postId"
       responses:
         200:
           description: 成功
@@ -23,6 +70,57 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         403:
           $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        429:
+          $ref: "#/components/responses/TooManyRequests"
+  /users/{userName}/posts:
+    get:
+      summary: 権限に応じてユーザーの投稿一覧を返す
+      security:
+        - { }
+        - BearerAuth: [ ]
+      parameters:
+        - $ref: "#/components/parameters/userName"
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Post"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        429:
+          $ref: "#/components/responses/TooManyRequests"
+
+  /users/{userName}/posts/{postId}:
+    get:
+      summary: 権限に応じてIDの投稿を取得
+      description: userNameが間違っていても取得できます。
+      security:
+        - { }
+        - BearerAuth: [ ]
+      parameters:
+        - $ref: "#/components/parameters/userName"
+        - $ref: "#/components/parameters/postId"
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Post"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
         429:
           $ref: "#/components/responses/TooManyRequests"
 
@@ -37,6 +135,22 @@ components:
     TooManyRequests:
       description: レートリミット
 
+  parameters:
+    postId:
+      name: postId
+      in: path
+      description: 投稿ID
+      required: true
+      schema:
+        type: integer
+        format: int64
+    userName:
+      name: userName
+      in: path
+      description: ユーザーIDまたはAcctなど @name@domain name@domain name
+      required: true
+      schema:
+        type: string
 
   schemas:
     Post:
