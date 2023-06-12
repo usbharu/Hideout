@@ -53,7 +53,7 @@ paths:
           $ref: "#/components/responses/TooManyRequests"
   /posts/{postId}:
     get:
-      summary: 権限に応じてIDの投稿を取得
+      summary: 権限に応じてIDの投稿を返す
       security:
         - { }
         - BearerAuth: [ ]
@@ -71,7 +71,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
         404:
-          $ref: "#/components/responses/NotFound"
+          $ref: "#/components/responses/NotFoundOrForbidden"
         429:
           $ref: "#/components/responses/TooManyRequests"
   /users/{userName}/posts:
@@ -100,7 +100,7 @@ paths:
 
   /users/{userName}/posts/{postId}:
     get:
-      summary: 権限に応じてIDの投稿を取得
+      summary: 権限に応じてIDの投稿を返す
       description: userNameが間違っていても取得できます。
       security:
         - { }
@@ -120,9 +120,113 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
         404:
-          $ref: "#/components/responses/NotFound"
+          $ref: "#/components/responses/NotFoundOrForbidden"
         429:
           $ref: "#/components/responses/TooManyRequests"
+
+  /users:
+    get:
+      summary: ユーザー一覧を返す
+      security:
+        - { }
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+
+    post:
+      summary: ユーザーを作成する
+      security:
+        - { }
+      requestBody:
+        description: 作成するユーザーの詳細
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        201:
+          description: ユーザーが作成された
+          headers:
+            Location:
+              description: 作成されたユーザーのURL
+              schema:
+                type: string
+                format: url
+        400:
+          description: ユーザー名が既に仕様されている。またはリクエストが異常
+
+  /users/{userName}:
+    get:
+      summary: ユーザーの詳細を返す
+      security:
+        - { }
+        - BearerAuth: [ ]
+      parameters:
+        - $ref: "#/components/parameters/userName"
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+  /users/{userName}/followers:
+    get:
+      summary: ユーザーのフォロワー一覧を返す
+      parameters:
+        - $ref: "#/components/parameters/userName"
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+    post:
+      summary: ユーザーをフォローする
+      parameters:
+        - $ref: "#/components/parameters/userName"
+      responses:
+        200:
+          description: 成功
+        202:
+          description: 受け付けられたが完了していない
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+  /users/{userName}/following:
+    get:
+      summary: ユーザーのフォロイー一覧を返す
+      parameters:
+        - $ref: "#/components/parameters/userName"
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
 
 components:
   responses:
@@ -130,8 +234,10 @@ components:
       description: トークンが無効
     Forbidden:
       description: 権限がない
-    NotFound:
+    NotFoundOrForbidden:
       description: 存在しないか権限がない
+    NotFound:
+      description: 存在しない
     TooManyRequests:
       description: レートリミット
 
@@ -153,6 +259,28 @@ components:
         type: string
 
   schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: number
+          format: int64
+          readOnly: true
+        name:
+          type: string
+        domain:
+          type: string
+          readOnly: true
+        screenName:
+          type: string
+        description:
+          type: string
+        url:
+          type: string
+          readOnly: true
+        createdAt:
+          type: number
+          readOnly: true
     Post:
       type: object
       properties:
