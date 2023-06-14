@@ -37,3 +37,4 @@ out/
 *.db
 /src/main/resources/static/
 /node_modules/
+/src/main/web/generated/

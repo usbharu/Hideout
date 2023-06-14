@@ -20,7 +20,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Post"
+                  $ref: "#/components/schemas/PostResponse"
         401:
           $ref: "#/components/responses/Unauthorized"
         403:
@@ -37,7 +37,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Post"
+              $ref: "#/components/schemas/PostRequest"
       responses:
         200:
           description: 成功
@@ -65,7 +65,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Post"
+                $ref: "#/components/schemas/PostResponse"
         401:
           $ref: "#/components/responses/Unauthorized"
         403:
@@ -90,7 +90,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Post"
+                  $ref: "#/components/schemas/PostResponse"
         401:
           $ref: "#/components/responses/Unauthorized"
         403:
@@ -114,7 +114,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Post"
+                $ref: "#/components/schemas/PostResponse"
         401:
           $ref: "#/components/responses/Unauthorized"
         403:
@@ -137,7 +137,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/User"
+                  $ref: "#/components/schemas/UserResponse"
 
     post:
       summary: ユーザーを作成する
@@ -181,7 +181,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
+                $ref: "#/components/schemas/UserResponse"
         404:
           $ref: "#/components/responses/NotFound"
 
@@ -198,7 +198,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/User"
+                  $ref: "#/components/schemas/UserResponse"
     post:
       summary: ユーザーをフォローする
       security:
@@ -228,7 +228,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/User"
+                  $ref: "#/components/schemas/UserResponse"
 
 components:
   responses:
@@ -261,8 +261,22 @@ components:
         type: string
 
   schemas:
-    User:
+    Visibility:
+      type: string
+      enum:
+        - public
+        - unlisted
+        - followers
+        - direct
+    UserResponse:
       type: object
+      required:
+        - id
+        - name
+        - domain
+        - screenName
+        - description
+        - createdAt
       properties:
         id:
           type: number
@@ -277,14 +291,24 @@ components:
           type: string
         description:
           type: string
+          nullable: true
         url:
           type: string
           readOnly: true
         createdAt:
           type: number
           readOnly: true
-    Post:
+    PostResponse:
       type: object
+      required:
+        - id
+        - userId
+        - text
+        - createdAt
+        - visibility
+        - url
+        - sensitive
+        - apId
       properties:
         id:
           type: integer
@@ -303,12 +327,7 @@ components:
           format: int64
           readOnly: true
         visibility:
-          type: string
-          enum:
-            - public
-            - unlisted
-            - followers
-            - direct
+          $ref: "#/components/schemas/Visibility"
         url:
           type: string
           format: uri
@@ -327,6 +346,24 @@ components:
           type: string
           format: url
           readOnly: true
+
+    PostRequest:
+      type: object
+      properties:
+        overview:
+          type: string
+        text:
+          type: string
+        visibility:
+          $ref: "#/components/schemas/Visibility"
+        repostId:
+          type: integer
+          format: int64
+        replyId:
+          type: integer
+          format: int64
+        sensitive:
+          type: boolean
 
 
   securitySchemes:
