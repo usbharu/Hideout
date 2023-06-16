@@ -1,55 +1,35 @@
-import {Component} from "solid-js";
+import {Component, createResource} from "solid-js";
 import {MainPage} from "../templates/MainPage";
 import {PostForm} from "../organisms/PostForm";
 import {Stack} from "@suid/material";
-import {Post} from "../organisms/Post";
-import {PostResponse} from "../generated";
+import {DefaultApi} from "../generated";
+import {PostDetails} from "../model/PostDetails";
+import {PostList} from "../templates/PostList";
+import {ApiWrapper} from "../lib/ApiWrapper";
+
 
 export const TopPage: Component = () => {
+    const api = new ApiWrapper(new DefaultApi())
+    const [posts] = createResource(api.postsGet);
+
     return (
         <MainPage>
-            <Stack spacing={1}>
+            <Stack spacing={1} alignItems={"stretch"}>
                 <PostForm label={"投稿する"}/>
-                <Post post={{
-                    text: "テスト～",
-                    sensitive: false,
-                    apId: "https://example.com",
-                    id: 1234,
-                    createdAt: Date.now(),
-                    url: "https://example.com",
-                    userId: 1234,
-                    visibility: "public"
-                } as PostResponse}></Post>
-                <Post post={{
-                    text: "テスト 公開範囲",
-                    sensitive: false,
-                    apId: "https://example.com",
-                    id: 1234,
-                    createdAt: 1234567,
-                    url: "https://example.com",
-                    userId: 1234,
-                    visibility: "direct"
-                } as PostResponse}></Post>
-                <Post post={{
-                    text: "テスト～",
-                    sensitive: false,
-                    apId: "https://example.com",
-                    id: 1234,
-                    createdAt: 1234567,
-                    url: "https://example.com",
-                    userId: 1234,
-                    visibility: "unlisted"
-                } as PostResponse}></Post>
-                <Post post={{
-                    text: "テスト～",
-                    sensitive: false,
-                    apId: "https://example.com",
-                    id: 1234,
-                    createdAt: 1234567,
-                    url: "https://example.com",
-                    userId: 1234,
-                    visibility: "followers"
-                } as PostResponse}></Post>
+                <PostList posts={posts()?.map(value => {
+                    return {
+                        ...value,
+                        user: {
+                            id: 1234,
+                            createdAt: Date.now(),
+                            domain: "test-hideout.usbharu.dev",
+                            name: "test",
+                            url: "https://test-hideout.usbharu.dev",
+                            screenName: "test",
+                            description: ""
+                        }
+                    } as PostDetails
+                }) ?? []}/>
             </Stack>
         </MainPage>
     )

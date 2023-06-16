@@ -5,7 +5,7 @@ import {AddPhotoAlternate, Poll, Public} from "@suid/icons-material";
 
 export const PostForm: Component<{ label: string }> = (props) => {
     return (
-        <Paper>
+        <Paper sx={{width: "100%"}}>
             <Stack>
                 <Stack direction={"row"} spacing={2} sx={{padding: 2}}>
                     <Avatar src={""}/>
