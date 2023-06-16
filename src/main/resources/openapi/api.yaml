@@ -276,6 +276,7 @@ components:
         - domain
         - screenName
         - description
+        - url
         - createdAt
       properties:
         id:

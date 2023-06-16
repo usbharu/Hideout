@@ -1,10 +1,11 @@
-import {Component, createSignal, Match, Switch} from "solid-js";
-import {PostResponse} from "../generated";
+import {Component, createSignal} from "solid-js";
 import {Box, Card, CardActions, CardContent, CardHeader, IconButton, Menu, MenuItem, Typography} from "@suid/material";
 import {Avatar} from "../atoms/Avatar";
-import {Favorite, Home, Lock, Mail, MoreVert, Public, Reply, ScreenRotationAlt} from "@suid/icons-material";
+import {Favorite, MoreVert, Reply, ScreenRotationAlt} from "@suid/icons-material";
+import {PostDetails} from "../model/PostDetails";
+import {ShareScopeIndicator} from "../molecules/ShareScopeIndicator";
 
-export const Post: Component<{ post: PostResponse }> = (props) => {
+export const Post: Component<{ post: PostDetails }> = (props) => {
     const [anchorEl, setAnchorEl] = createSignal<null | HTMLElement>(null)
     const open = () => Boolean(anchorEl());
     const handleClose = () => {
@@ -13,7 +14,8 @@ export const Post: Component<{ post: PostResponse }> = (props) => {
 
     return (
         <Card>
-            <CardHeader avatar={<Avatar src={""}/>} title={"test user"} subheader={"test@test"}
+            <CardHeader avatar={<Avatar src={props.post.user.url + "/icon.jpg"}/>} title={props.post.user.screenName}
+                        subheader={`${props.post.user.name}@${props.post.user.domain}`}
                         action={<IconButton onclick={(event) => {
                             setAnchorEl(event.currentTarget)
                         }}><MoreVert/><Menu disableScrollLock anchorEl={anchorEl()} open={open()} onClose={handleClose}><MenuItem
@@ -36,28 +38,7 @@ export const Post: Component<{ post: PostResponse }> = (props) => {
                 <Box sx={{marginLeft: "auto"}}>
                     <Typography>{new Date(props.post.createdAt).toDateString()}</Typography>
                 </Box>
-                <Switch fallback={<Public/>}>
-                    <Match when={props.post.visibility == "public"}>
-                        <IconButton>
-                            <Public/>
-                        </IconButton>
-                    </Match>
-                    <Match when={props.post.visibility == "direct"}>
-                        <IconButton>
-                            <Mail/>
-                        </IconButton>
-                    </Match>
-                    <Match when={props.post.visibility == "followers"}>
-                        <IconButton>
-                            <Lock/>
-                        </IconButton>
-                    </Match>
-                    <Match when={props.post.visibility == "unlisted"}>
-                        <IconButton>
-                            <Home/>
-                        </IconButton>
-                    </Match>
-                </Switch>
+                <ShareScopeIndicator visibility={props.post.visibility}/>
             </CardActions>
         </Card>
     )
