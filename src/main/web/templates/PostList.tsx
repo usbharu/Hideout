@@ -1,9 +1,9 @@
 import {Component, For} from "solid-js";
 import {CircularProgress} from "@suid/material";
 import {Post} from "../organisms/Post";
-import {PostDetails} from "../model/PostDetails";
+import {PostResponse} from "../generated";
 
-export const PostList: Component<{ posts: PostDetails[] }> = (props) => {
+export const PostList: Component<{ posts: PostResponse[] }> = (props) => {
     return (
         <For each={props.posts} fallback={<CircularProgress/>}>
             {

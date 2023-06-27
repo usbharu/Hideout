@@ -2,10 +2,10 @@ import {Component, createSignal} from "solid-js";
 import {Box, Card, CardActions, CardContent, CardHeader, IconButton, Menu, MenuItem, Typography} from "@suid/material";
 import {Avatar} from "../atoms/Avatar";
 import {Favorite, MoreVert, Reply, ScreenRotationAlt} from "@suid/icons-material";
-import {PostDetails} from "../model/PostDetails";
 import {ShareScopeIndicator} from "../molecules/ShareScopeIndicator";
+import {PostResponse} from "../generated";
 
-export const Post: Component<{ post: PostDetails }> = (props) => {
+export const Post: Component<{ post: PostResponse }> = (props) => {
     const [anchorEl, setAnchorEl] = createSignal<null | HTMLElement>(null)
     const open = () => Boolean(anchorEl());
     const handleClose = () => {
