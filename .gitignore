@@ -38,3 +38,4 @@ out/
 /src/main/resources/static/
 /node_modules/
 /src/main/web/generated/
+/stats.html

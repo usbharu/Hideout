@@ -1,21 +1,23 @@
-import {Component, createResource} from "solid-js";
+import {Component} from "solid-js";
 import {MainPage} from "../templates/MainPage";
 import {PostForm} from "../organisms/PostForm";
 import {Stack} from "@suid/material";
-import {DefaultApi} from "../generated";
+import {PostResponse} from "../generated";
 import {PostList} from "../templates/PostList";
-import {ApiWrapper} from "../lib/ApiWrapper";
+import {useApi} from "../lib/ApiProvider";
+import {createStore} from "solid-js/store";
 
 
 export const TopPage: Component = () => {
-    const api = new ApiWrapper(new DefaultApi())
-    const [posts] = createResource(api.postsGet);
+    const api = useApi()
+    const [posts, setPosts] = createStore<PostResponse[]>([])
+    api().postsGet().then((res)=>setPosts(res))
 
     return (
         <MainPage>
             <Stack spacing={1} alignItems={"stretch"}>
                 <PostForm label={"投稿する"}/>
-                <PostList posts={posts() ?? []}/>
+                <PostList posts={posts}/>
             </Stack>
         </MainPage>
     )
