@@ -1,10 +1,13 @@
 import {Component} from "solid-js";
-import {Stack} from "@suid/material";
+import {Button, List, Stack} from "@suid/material";
+import {Home} from "@suid/icons-material";
+import {SidebarButton} from "../atoms/SidebarButton";
 
-export const Sidebar: Component = () => {
+export const Sidebar: Component = (props) => {
     return (
-        <Stack>
-
-        </Stack>
+        <List>
+            <SidebarButton text={"AP"} linkTo={"/"}></SidebarButton>
+            <SidebarButton text={"Home"} linkTo={"/"}><Home/></SidebarButton>
+        </List>
     )
 }
