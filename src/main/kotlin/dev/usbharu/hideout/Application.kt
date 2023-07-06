@@ -95,6 +95,7 @@ fun Application.parent() {
     runBlocking {
         inject<IServerInitialiseService>().value.init()
     }
+    configureCompression()
     configureHTTP()
     configureStaticRouting()
     configureMonitoring()

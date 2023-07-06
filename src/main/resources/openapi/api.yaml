@@ -230,6 +230,46 @@ paths:
                 items:
                   $ref: "#/components/schemas/UserResponse"
 
+  /login:
+    post:
+      summary: ログインする
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserLogin"
+      responses:
+        200:
+          description: ログイン成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JwtToken"
+
+  /refresh-token:
+    post:
+      summary: 期限切れトークンの再発行をする
+      responses:
+        200:
+          description: トークンの再発行に成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JwtToken"
+
+  /auth-check:
+    get:
+      summary: 認証チェック
+      responses:
+        200:
+          description: 認証に成功
+          content:
+            text/plain:
+              schema:
+                type: string
+
+
 components:
   responses:
     Unauthorized:
@@ -359,6 +399,27 @@ components:
         sensitive:
           type: boolean
 
+    JwtToken:
+      type: object
+      properties:
+        token:
+          type: string
+        refreshToken:
+          type: string
+
+    RefreshToken:
+      type: object
+      properties:
+        refreshToken:
+          type: string
+
+    UserLogin:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
 
   securitySchemes:
     BearerAuth:
