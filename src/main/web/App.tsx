@@ -10,7 +10,7 @@ import {LoginPage} from "./pages/LoginPage";
 export const App: Component = () => {
     const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
     const [cookie,setCookie] = createCookieStorage()
-    const [api,setApi] = createSignal(new DefaultApi(new Configuration({basePath:window.location.origin+"/api/internal/v1/",apiKey:cookie.key as string})))
+    const [api,setApi] = createSignal(new DefaultApi(new Configuration({basePath:window.location.origin+"/api/internal/v1",apiKey:cookie.key as string})))
     const theme = createTheme({
         palette: {
             mode: prefersDarkMode() ? 'dark' : 'light',
