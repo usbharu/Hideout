@@ -2,6 +2,7 @@ import {Button, Card, CardContent, CardHeader, Modal, Stack, TextField} from "@s
 import {Component, createSignal} from "solid-js";
 import {createCookieStorage} from "@solid-primitives/storage";
 import {useApi} from "../lib/ApiProvider";
+import {useNavigate} from "@solidjs/router";
 
 export const LoginPage: Component = () => {
     const [username, setUsername] = createSignal("")
@@ -9,12 +10,15 @@ export const LoginPage: Component = () => {
 
     const [cookie, setCookie] = createCookieStorage();
 
+    const navigator = useNavigate();
+
     const api = useApi();
 
     const onSubmit: () => void = () => {
         api().loginPost({password: password(), username: username()}).then(value => {
             setCookie("token", value.token);
             setCookie("refresh-token", value.refreshToken)
+            navigator("/")
         }).catch(reason => {
             console.log(reason);
             setPassword("")
