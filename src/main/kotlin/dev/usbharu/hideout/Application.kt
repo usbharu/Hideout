@@ -49,19 +49,19 @@ val Application.property: Application.(propertyName: String) -> String
 @Suppress("unused", "LongMethod")
 fun Application.parent() {
     Config.configData = ConfigData(
-        url = property("hideout.url"),
-        objectMapper = jacksonObjectMapper().enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-            .setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            url = property("hideout.url"),
+            objectMapper = jacksonObjectMapper().enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+                    .setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
+                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     )
 
     val module = org.koin.dsl.module {
         single<Database> {
             Database.connect(
-                url = property("hideout.database.url"),
-                driver = property("hideout.database.driver"),
-                user = property("hideout.database.username"),
-                password = property("hideout.database.password")
+                    url = property("hideout.database.url"),
+                    driver = property("hideout.database.driver"),
+                    user = property("hideout.database.username"),
+                    password = property("hideout.database.password")
             )
         }
         single<JobQueueParentService> {
@@ -84,11 +84,11 @@ fun Application.parent() {
         single<IdGenerateService> { TwitterSnowflakeIdGenerateService }
         single<JwkProvider> {
             JwkProviderBuilder(Config.configData.url).cached(
-                10,
-                24,
-                TimeUnit.HOURS
+                    10,
+                    24,
+                    TimeUnit.HOURS
             )
-                .rateLimited(10, 1, TimeUnit.MINUTES).build()
+                    .rateLimited(10, 1, TimeUnit.MINUTES).build()
         }
     }
     configureKoin(module, HideoutModule().module)
@@ -102,19 +102,20 @@ fun Application.parent() {
     configureSerialization()
     register(inject<IUserService>().value)
     configureSecurity(
-        inject<IUserAuthService>().value,
-        inject<IMetaService>().value,
-        inject<IUserRepository>().value,
-        inject<IJwtService>().value,
-        inject<JwkProvider>().value,
+            inject<JwkProvider>().value,
+            inject<IMetaService>().value
     )
     configureRouting(
-        httpSignatureVerifyService = inject<HttpSignatureVerifyService>().value,
-        activityPubService = inject<ActivityPubService>().value,
-        userService = inject<IUserService>().value,
-        activityPubUserService = inject<ActivityPubUserService>().value,
-        postService = inject<IPostApiService>().value,
-        userApiService = inject<IUserApiService>().value,
+            httpSignatureVerifyService = inject<HttpSignatureVerifyService>().value,
+            activityPubService = inject<ActivityPubService>().value,
+            userService = inject<IUserService>().value,
+            activityPubUserService = inject<ActivityPubUserService>().value,
+            postService = inject<IPostApiService>().value,
+            userApiService = inject<IUserApiService>().value,
+            userAuthService = inject<IUserAuthService>().value,
+            userRepository = inject<IUserRepository>().value,
+            jwtService = inject<IJwtService>().value,
+            metaService = inject<IMetaService>().value
     )
 }
 

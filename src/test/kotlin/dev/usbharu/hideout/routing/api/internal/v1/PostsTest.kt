@@ -64,7 +64,7 @@ class PostsTest {
         }
         application {
             configureSerialization()
-            configureSecurity(mock(), mock(), mock(), mock(), mock())
+            configureSecurity(mock())
             routing {
                 route("/api/internal/v1") {
                     posts(postService)
@@ -169,7 +169,7 @@ class PostsTest {
         }
         application {
             configureSerialization()
-            configureSecurity(mock(), mock(), mock(), mock(), mock())
+            configureSecurity(mock())
             routing {
                 route("/api/internal/v1") {
                     posts(postService)
@@ -323,7 +323,7 @@ class PostsTest {
         }
         application {
             configureSerialization()
-            configureSecurity(mock(), mock(), mock(), mock(), mock())
+            configureSecurity(mock())
             routing {
                 route("/api/internal/v1") {
                     posts(postService)
@@ -375,7 +375,7 @@ class PostsTest {
         }
         application {
             configureSerialization()
-            configureSecurity(mock(), mock(), mock(), mock(), mock())
+            configureSecurity(mock())
             routing {
                 route("/api/internal/v1") {
                     posts(postService)
@@ -427,7 +427,7 @@ class PostsTest {
         }
         application {
             configureSerialization()
-            configureSecurity(mock(), mock(), mock(), mock(), mock())
+            configureSecurity(mock())
             routing {
                 route("/api/internal/v1") {
                     posts(postService)
@@ -479,7 +479,7 @@ class PostsTest {
         }
         application {
             configureSerialization()
-            configureSecurity(mock(), mock(), mock(), mock(), mock())
+            configureSecurity(mock())
             routing {
                 route("/api/internal/v1") {
                     posts(postService)
@@ -511,7 +511,7 @@ class PostsTest {
         }
         application {
             configureSerialization()
-            configureSecurity(mock(), mock(), mock(), mock(), mock())
+            configureSecurity(mock())
             routing {
                 route("/api/internal/v1") {
                     posts(postService)
@@ -543,7 +543,7 @@ class PostsTest {
         }
         application {
             configureSerialization()
-            configureSecurity(mock(), mock(), mock(), mock(), mock())
+            configureSecurity(mock())
             routing {
                 route("/api/internal/v1") {
                     posts(postService)
@@ -575,7 +575,7 @@ class PostsTest {
         }
         application {
             configureSerialization()
-            configureSecurity(mock(), mock(), mock(), mock(), mock())
+            configureSecurity(mock())
             routing {
                 route("/api/internal/v1") {
                     posts(postService)
@@ -607,7 +607,7 @@ class PostsTest {
         }
         application {
             configureSerialization()
-            configureSecurity(mock(), mock(), mock(), mock(), mock())
+            configureSecurity(mock())
             routing {
                 route("/api/internal/v1") {
                     posts(postService)
