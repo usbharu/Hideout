@@ -58,7 +58,7 @@ class UsersTest {
         }
         application {
             configureSerialization()
-            configureSecurity(mock(), mock(), mock(), mock(), mock())
+            configureSecurity(mock(), mock())
             routing {
                 route("/api/internal/v1") {
                     users(mock(), userService)
@@ -96,7 +96,7 @@ class UsersTest {
         }
         application {
             configureSerialization()
-            configureSecurity(mock(), mock(), mock(), mock(), mock())
+            configureSecurity(mock(), mock())
             routing {
                 route("/api/internal/v1") {
                     users(userService, mock())
@@ -127,7 +127,7 @@ class UsersTest {
         }
         application {
             configureSerialization()
-            configureSecurity(mock(), mock(), mock(), mock(), mock())
+            configureSecurity(mock(), mock())
             routing {
                 route("/api/internal/v1") {
                     users(userService, mock())
@@ -162,7 +162,7 @@ class UsersTest {
         }
         application {
             configureSerialization()
-            configureSecurity(mock(), mock(), mock(), mock(), mock())
+            configureSecurity(mock(), mock())
             routing {
                 route("/api/internal/v1") {
                     users(mock(), userApiService)
@@ -195,7 +195,7 @@ class UsersTest {
         }
         application {
             configureSerialization()
-            configureSecurity(mock(), mock(), mock(), mock(), mock())
+            configureSecurity(mock(), mock())
             routing {
                 route("/api/internal/v1") {
                     users(mock(), userApiService)
@@ -228,7 +228,7 @@ class UsersTest {
         }
         application {
             configureSerialization()
-            configureSecurity(mock(), mock(), mock(), mock(), mock())
+            configureSecurity(mock(), mock())
             routing {
                 route("/api/internal/v1") {
                     users(mock(), userApiService)
@@ -261,7 +261,7 @@ class UsersTest {
         }
         application {
             configureSerialization()
-            configureSecurity(mock(), mock(), mock(), mock(), mock())
+            configureSecurity(mock(), mock())
             routing {
                 route("/api/internal/v1") {
                     users(mock(), userApiService)
@@ -306,7 +306,7 @@ class UsersTest {
         }
         application {
             configureSerialization()
-            configureSecurity(mock(), mock(), mock(), mock(), mock())
+            configureSecurity(mock(), mock())
             routing {
                 route("/api/internal/v1") {
                     users(mock(), userApiService)
@@ -351,7 +351,7 @@ class UsersTest {
         }
         application {
             configureSerialization()
-            configureSecurity(mock(), mock(), mock(), mock(), mock())
+            configureSecurity(mock(), mock())
             routing {
                 route("/api/internal/v1") {
                     users(mock(), userApiService)
@@ -396,7 +396,7 @@ class UsersTest {
         }
         application {
             configureSerialization()
-            configureSecurity(mock(), mock(), mock(), mock(), mock())
+            configureSecurity(mock(), mock())
             routing {
                 route("/api/internal/v1") {
                     users(mock(), userApiService)
@@ -591,7 +591,7 @@ class UsersTest {
         }
         application {
             configureSerialization()
-            configureSecurity(mock(), mock(), mock(), mock(), mock())
+            configureSecurity(mock(), mock())
             routing {
                 route("/api/internal/v1") {
                     users(mock(), userApiService)
@@ -636,7 +636,7 @@ class UsersTest {
         }
         application {
             configureSerialization()
-            configureSecurity(mock(), mock(), mock(), mock(), mock())
+            configureSecurity(mock(), mock())
             routing {
                 route("/api/internal/v1") {
                     users(mock(), userApiService)
@@ -681,7 +681,7 @@ class UsersTest {
         }
         application {
             configureSerialization()
-            configureSecurity(mock(), mock(), mock(), mock(), mock())
+            configureSecurity(mock(), mock())
             routing {
                 route("/api/internal/v1") {
                     users(mock(), userApiService)

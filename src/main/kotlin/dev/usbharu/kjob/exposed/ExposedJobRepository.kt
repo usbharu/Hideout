@@ -73,6 +73,7 @@ class ExposedJobRepository(
         }
     }
 
+    @Suppress("SuspendFunWithFlowReturnType")
     override suspend fun findNext(names: Set<String>, status: Set<JobStatus>, limit: Int): Flow<ScheduledJob> {
         return query {
             jobs.select(

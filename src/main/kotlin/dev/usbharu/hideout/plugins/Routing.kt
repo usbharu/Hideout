@@ -1,8 +1,10 @@
 package dev.usbharu.hideout.plugins
 
+import dev.usbharu.hideout.repository.IUserRepository
 import dev.usbharu.hideout.routing.activitypub.inbox
 import dev.usbharu.hideout.routing.activitypub.outbox
 import dev.usbharu.hideout.routing.activitypub.usersAP
+import dev.usbharu.hideout.routing.api.internal.v1.auth
 import dev.usbharu.hideout.routing.api.internal.v1.posts
 import dev.usbharu.hideout.routing.api.internal.v1.users
 import dev.usbharu.hideout.routing.wellknown.webfinger
@@ -11,6 +13,9 @@ import dev.usbharu.hideout.service.activitypub.ActivityPubUserService
 import dev.usbharu.hideout.service.api.IPostApiService
 import dev.usbharu.hideout.service.api.IUserApiService
 import dev.usbharu.hideout.service.auth.HttpSignatureVerifyService
+import dev.usbharu.hideout.service.auth.IJwtService
+import dev.usbharu.hideout.service.core.IMetaService
+import dev.usbharu.hideout.service.user.IUserAuthService
 import dev.usbharu.hideout.service.user.IUserService
 import io.ktor.server.application.*
 import io.ktor.server.plugins.autohead.*
@@ -23,7 +28,11 @@ fun Application.configureRouting(
     userService: IUserService,
     activityPubUserService: ActivityPubUserService,
     postService: IPostApiService,
-    userApiService: IUserApiService
+    userApiService: IUserApiService,
+    userAuthService: IUserAuthService,
+    userRepository: IUserRepository,
+    jwtService: IJwtService,
+    metaService: IMetaService
 ) {
     install(AutoHeadResponse)
     routing {
@@ -34,6 +43,7 @@ fun Application.configureRouting(
         route("/api/internal/v1") {
             posts(postService)
             users(userService, userApiService)
+            auth(userAuthService, userRepository, jwtService)
         }
     }
 }
