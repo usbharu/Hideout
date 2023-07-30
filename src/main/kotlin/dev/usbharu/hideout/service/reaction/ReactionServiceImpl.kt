@@ -20,7 +20,7 @@ class ReactionServiceImpl(
 
     override suspend fun sendReaction(name: String, userId: Long, postId: Long) {
         if (reactionRepository.reactionAlreadyExist(postId, userId, 0)) {
-            //delete
+            // delete
         } else {
             val reaction = Reaction(reactionRepository.generateId(), 0, postId, userId)
             reactionRepository.save(reaction)

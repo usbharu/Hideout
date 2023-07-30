@@ -8,6 +8,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.config.ConfigData
 import dev.usbharu.hideout.domain.model.job.DeliverPostJob
+import dev.usbharu.hideout.domain.model.job.DeliverReactionJob
 import dev.usbharu.hideout.domain.model.job.ReceiveFollowJob
 import dev.usbharu.hideout.plugins.*
 import dev.usbharu.hideout.repository.IUserRepository
@@ -131,6 +132,12 @@ fun Application.worker() {
         }
     }
     kJob.register(DeliverPostJob) {
+        execute {
+            activityPubService.processActivity(this, it)
+        }
+    }
+
+    kJob.register(DeliverReactionJob) {
         execute {
             activityPubService.processActivity(this, it)
         }
