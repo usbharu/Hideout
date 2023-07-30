@@ -21,4 +21,5 @@ object DeliverReactionJob : HideoutJob("DeliverReactionJob") {
     val postUrl = string("postUrl")
     val actor = string("actor")
     val inbox = string("inbox")
+    val id = string("id")
 }
