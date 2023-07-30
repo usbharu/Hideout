@@ -17,14 +17,14 @@ data class PostResponse(
     companion object {
         fun from(post: Post, user: User): PostResponse {
             return PostResponse(
-                post.id,
-                UserResponse.from(user),
-                post.overview,
-                post.text,
-                post.createdAt,
-                post.visibility,
-                post.url,
-                post.sensitive
+                id = post.id,
+                user = UserResponse.from(user),
+                overview = post.overview,
+                text = post.text,
+                createdAt = post.createdAt,
+                visibility = post.visibility,
+                url = post.url,
+                sensitive = post.sensitive
             )
         }
     }

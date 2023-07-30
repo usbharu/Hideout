@@ -23,16 +23,16 @@ import io.ktor.server.routing.*
 
 @Suppress("LongParameterList")
 fun Application.configureRouting(
-        httpSignatureVerifyService: HttpSignatureVerifyService,
-        activityPubService: ActivityPubService,
-        userService: IUserService,
-        activityPubUserService: ActivityPubUserService,
-        postService: IPostApiService,
-        userApiService: IUserApiService,
-        userAuthService: IUserAuthService,
-        userRepository: IUserRepository,
-        jwtService: IJwtService,
-        metaService: IMetaService
+    httpSignatureVerifyService: HttpSignatureVerifyService,
+    activityPubService: ActivityPubService,
+    userService: IUserService,
+    activityPubUserService: ActivityPubUserService,
+    postService: IPostApiService,
+    userApiService: IUserApiService,
+    userAuthService: IUserAuthService,
+    userRepository: IUserRepository,
+    jwtService: IJwtService,
+    metaService: IMetaService
 ) {
     install(AutoHeadResponse)
     routing {
@@ -43,7 +43,7 @@ fun Application.configureRouting(
         route("/api/internal/v1") {
             posts(postService)
             users(userService, userApiService)
-            auth(userAuthService, userRepository, jwtService, metaService)
+            auth(userAuthService, userRepository, jwtService)
         }
     }
 }
