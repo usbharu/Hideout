@@ -7,9 +7,7 @@ import dev.usbharu.hideout.exception.UserNotFoundException
 import dev.usbharu.hideout.plugins.TOKEN_AUTH
 import dev.usbharu.hideout.repository.IUserRepository
 import dev.usbharu.hideout.service.auth.IJwtService
-import dev.usbharu.hideout.service.core.IMetaService
 import dev.usbharu.hideout.service.user.IUserAuthService
-import dev.usbharu.hideout.util.JsonWebKeyUtil
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -18,10 +16,11 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.auth(userAuthService: IUserAuthService,
-               userRepository: IUserRepository,
-               jwtService: IJwtService,
-               metaService: IMetaService) {
+fun Route.auth(
+    userAuthService: IUserAuthService,
+    userRepository: IUserRepository,
+    jwtService: IJwtService
+) {
     post("/login") {
         val loginUser = call.receive<UserLogin>()
         val check = userAuthService.verifyAccount(loginUser.username, loginUser.password)
@@ -30,7 +29,7 @@ fun Route.auth(userAuthService: IUserAuthService,
         }
 
         val user = userRepository.findByNameAndDomain(loginUser.username, Config.configData.domain)
-                ?: throw UserNotFoundException("${loginUser.username} was not found.")
+            ?: throw UserNotFoundException("${loginUser.username} was not found.")
 
         return@post call.respond(jwtService.createToken(user))
     }

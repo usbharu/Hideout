@@ -15,8 +15,8 @@ const val TOKEN_AUTH = "jwt-auth"
 
 @Suppress("MagicNumber")
 fun Application.configureSecurity(
-        jwkProvider: JwkProvider,
-        metaService: IMetaService
+    jwkProvider: JwkProvider,
+    metaService: IMetaService
 ) {
     val issuer = Config.configData.url
     install(Authentication) {
@@ -42,8 +42,8 @@ fun Application.configureSecurity(
             //language=JSON
             val jwt = metaService.getJwtMeta()
             call.respondText(
-                    contentType = ContentType.Application.Json,
-                    text = JsonWebKeyUtil.publicKeyToJwk(jwt.publicKey, jwt.kid.toString())
+                contentType = ContentType.Application.Json,
+                text = JsonWebKeyUtil.publicKeyToJwk(jwt.publicKey, jwt.kid.toString())
             )
         }
     }
