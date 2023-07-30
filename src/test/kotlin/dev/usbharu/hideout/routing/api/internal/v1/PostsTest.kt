@@ -4,6 +4,8 @@ import com.auth0.jwt.interfaces.Claim
 import com.auth0.jwt.interfaces.Payload
 import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.config.Config
+import dev.usbharu.hideout.domain.model.hideout.dto.PostResponse
+import dev.usbharu.hideout.domain.model.hideout.dto.UserResponse
 import dev.usbharu.hideout.domain.model.hideout.entity.Post
 import dev.usbharu.hideout.domain.model.hideout.entity.Visibility
 import dev.usbharu.hideout.plugins.TOKEN_AUTH
@@ -32,18 +34,27 @@ class PostsTest {
         environment {
             config = ApplicationConfig("empty.conf")
         }
+        val user = UserResponse(
+            id = 54321,
+            name = "user1",
+            domain = "example.com",
+            screenName = "user 1",
+            description = "Test user",
+            url = "https://example.com/users/54321",
+            createdAt = Instant.now().toEpochMilli()
+        )
         val posts = listOf(
-            Post(
+            PostResponse(
                 id = 12345,
-                userId = 4321,
+                user = user,
                 text = "test1",
                 visibility = Visibility.PUBLIC,
                 createdAt = Instant.now().toEpochMilli(),
                 url = "https://example.com/posts/1"
             ),
-            Post(
+            PostResponse(
                 id = 123456,
-                userId = 4322,
+                user = user,
                 text = "test2",
                 visibility = Visibility.PUBLIC,
                 createdAt = Instant.now().toEpochMilli(),
@@ -64,7 +75,7 @@ class PostsTest {
         }
         application {
             configureSerialization()
-            configureSecurity(mock())
+            configureSecurity(mock(), mock())
             routing {
                 route("/api/internal/v1") {
                     posts(postService)
@@ -89,27 +100,35 @@ class PostsTest {
         val payload = mock<Payload> {
             on { getClaim(eq("uid")) } doReturn claim
         }
-
+        val user = UserResponse(
+            id = 54321,
+            name = "user1",
+            domain = "example.com",
+            screenName = "user 1",
+            description = "Test user",
+            url = "https://example.com/users/54321",
+            createdAt = Instant.now().toEpochMilli()
+        )
         val posts = listOf(
-            Post(
+            PostResponse(
                 id = 12345,
-                userId = 4321,
+                user = user,
                 text = "test1",
                 visibility = Visibility.PUBLIC,
                 createdAt = Instant.now().toEpochMilli(),
                 url = "https://example.com/posts/1"
             ),
-            Post(
+            PostResponse(
                 id = 123456,
-                userId = 4322,
+                user = user,
                 text = "test2",
                 visibility = Visibility.PUBLIC,
                 createdAt = Instant.now().toEpochMilli(),
                 url = "https://example.com/posts/2"
             ),
-            Post(
+            PostResponse(
                 id = 1234567,
-                userId = 4333,
+                user = user,
                 text = "Followers only",
                 visibility = Visibility.FOLLOWERS,
                 createdAt = Instant.now().toEpochMilli(),
@@ -156,9 +175,18 @@ class PostsTest {
         environment {
             config = ApplicationConfig("empty.conf")
         }
-        val post = Post(
-            12345,
-            1234,
+        val user = UserResponse(
+            id = 54321,
+            name = "user1",
+            domain = "example.com",
+            screenName = "user 1",
+            description = "Test user",
+            url = "https://example.com/users/54321",
+            createdAt = Instant.now().toEpochMilli()
+        )
+        val post = PostResponse(
+            id = 12345,
+            user = user,
             text = "aaa",
             visibility = Visibility.PUBLIC,
             createdAt = Instant.now().toEpochMilli(),
@@ -169,7 +197,7 @@ class PostsTest {
         }
         application {
             configureSerialization()
-            configureSecurity(mock())
+            configureSecurity(mock(), mock())
             routing {
                 route("/api/internal/v1") {
                     posts(postService)
@@ -187,9 +215,17 @@ class PostsTest {
         environment {
             config = ApplicationConfig("empty.conf")
         }
-        val post = Post(
+        val post = PostResponse(
             12345,
-            1234,
+            UserResponse(
+                id = 54321,
+                name = "user1",
+                domain = "example.com",
+                screenName = "user 1",
+                description = "Test user",
+                url = "https://example.com/users/54321",
+                createdAt = Instant.now().toEpochMilli()
+            ),
             text = "aaa",
             visibility = Visibility.FOLLOWERS,
             createdAt = Instant.now().toEpochMilli(),
@@ -242,14 +278,22 @@ class PostsTest {
             onBlocking { createPost(any(), any()) } doAnswer {
                 val argument = it.getArgument<dev.usbharu.hideout.domain.model.hideout.form.Post>(0)
                 val userId = it.getArgument<Long>(1)
-                Post(
-                    123L,
-                    userId,
-                    null,
-                    argument.text,
-                    Instant.now().toEpochMilli(),
-                    Visibility.PUBLIC,
-                    "https://example.com"
+                PostResponse(
+                    id = 123L,
+                    user = UserResponse(
+                        id = 54321,
+                        name = "user1",
+                        domain = "example.com",
+                        screenName = "user 1",
+                        description = "Test user",
+                        url = "https://example.com/users/54321",
+                        createdAt = Instant.now().toEpochMilli()
+                    ),
+                    overview = null,
+                    text = argument.text,
+                    createdAt = Instant.now().toEpochMilli(),
+                    visibility = Visibility.PUBLIC,
+                    url = "https://example.com"
                 )
             }
         }
@@ -290,18 +334,27 @@ class PostsTest {
         environment {
             config = ApplicationConfig("empty.conf")
         }
+        val user = UserResponse(
+            id = 54321,
+            name = "user1",
+            domain = "example.com",
+            screenName = "user 1",
+            description = "Test user",
+            url = "https://example.com/users/54321",
+            createdAt = Instant.now().toEpochMilli()
+        )
         val posts = listOf(
-            Post(
+            PostResponse(
                 id = 12345,
-                userId = 1,
+                user = user,
                 text = "test1",
                 visibility = Visibility.PUBLIC,
                 createdAt = Instant.now().toEpochMilli(),
                 url = "https://example.com/posts/1"
             ),
-            Post(
+            PostResponse(
                 id = 123456,
-                userId = 1,
+                user = user,
                 text = "test2",
                 visibility = Visibility.PUBLIC,
                 createdAt = Instant.now().toEpochMilli(),
@@ -323,7 +376,7 @@ class PostsTest {
         }
         application {
             configureSerialization()
-            configureSecurity(mock())
+            configureSecurity(mock(), mock())
             routing {
                 route("/api/internal/v1") {
                     posts(postService)
@@ -342,18 +395,27 @@ class PostsTest {
         environment {
             config = ApplicationConfig("empty.conf")
         }
+        val user = UserResponse(
+            id = 54321,
+            name = "user1",
+            domain = "example.com",
+            screenName = "user 1",
+            description = "Test user",
+            url = "https://example.com/users/54321",
+            createdAt = Instant.now().toEpochMilli()
+        )
         val posts = listOf(
-            Post(
+            PostResponse(
                 id = 12345,
-                userId = 1,
+                user = user,
                 text = "test1",
                 visibility = Visibility.PUBLIC,
                 createdAt = Instant.now().toEpochMilli(),
                 url = "https://example.com/posts/1"
             ),
-            Post(
+            PostResponse(
                 id = 123456,
-                userId = 1,
+                user = user,
                 text = "test2",
                 visibility = Visibility.PUBLIC,
                 createdAt = Instant.now().toEpochMilli(),
@@ -375,7 +437,7 @@ class PostsTest {
         }
         application {
             configureSerialization()
-            configureSecurity(mock())
+            configureSecurity(mock(), mock())
             routing {
                 route("/api/internal/v1") {
                     posts(postService)
@@ -394,18 +456,27 @@ class PostsTest {
         environment {
             config = ApplicationConfig("empty.conf")
         }
+        val user = UserResponse(
+            id = 54321,
+            name = "user1",
+            domain = "example.com",
+            screenName = "user 1",
+            description = "Test user",
+            url = "https://example.com/users/54321",
+            createdAt = Instant.now().toEpochMilli()
+        )
         val posts = listOf(
-            Post(
+            PostResponse(
                 id = 12345,
-                userId = 1,
+                user = user,
                 text = "test1",
                 visibility = Visibility.PUBLIC,
                 createdAt = Instant.now().toEpochMilli(),
                 url = "https://example.com/posts/1"
             ),
-            Post(
+            PostResponse(
                 id = 123456,
-                userId = 1,
+                user = user,
                 text = "test2",
                 visibility = Visibility.PUBLIC,
                 createdAt = Instant.now().toEpochMilli(),
@@ -427,7 +498,7 @@ class PostsTest {
         }
         application {
             configureSerialization()
-            configureSecurity(mock())
+            configureSecurity(mock(), mock())
             routing {
                 route("/api/internal/v1") {
                     posts(postService)
@@ -446,18 +517,27 @@ class PostsTest {
         environment {
             config = ApplicationConfig("empty.conf")
         }
+        val user = UserResponse(
+            id = 54321,
+            name = "user1",
+            domain = "example.com",
+            screenName = "user 1",
+            description = "Test user",
+            url = "https://example.com/users/54321",
+            createdAt = Instant.now().toEpochMilli()
+        )
         val posts = listOf(
-            Post(
+            PostResponse(
                 id = 12345,
-                userId = 1,
+                user = user,
                 text = "test1",
                 visibility = Visibility.PUBLIC,
                 createdAt = Instant.now().toEpochMilli(),
                 url = "https://example.com/posts/1"
             ),
-            Post(
+            PostResponse(
                 id = 123456,
-                userId = 1,
+                user = user,
                 text = "test2",
                 visibility = Visibility.PUBLIC,
                 createdAt = Instant.now().toEpochMilli(),
@@ -479,7 +559,7 @@ class PostsTest {
         }
         application {
             configureSerialization()
-            configureSecurity(mock())
+            configureSecurity(mock(), mock())
             routing {
                 route("/api/internal/v1") {
                     posts(postService)
@@ -498,9 +578,17 @@ class PostsTest {
         environment {
             config = ApplicationConfig("empty.conf")
         }
-        val post = Post(
+        val post = PostResponse(
             id = 123456,
-            userId = 1,
+            user = UserResponse(
+                id = 54321,
+                name = "user1",
+                domain = "example.com",
+                screenName = "user 1",
+                description = "Test user",
+                url = "https://example.com/users/54321",
+                createdAt = Instant.now().toEpochMilli()
+            ),
             text = "test2",
             visibility = Visibility.PUBLIC,
             createdAt = Instant.now().toEpochMilli(),
@@ -511,7 +599,7 @@ class PostsTest {
         }
         application {
             configureSerialization()
-            configureSecurity(mock())
+            configureSecurity(mock(), mock())
             routing {
                 route("/api/internal/v1") {
                     posts(postService)
@@ -530,9 +618,17 @@ class PostsTest {
         environment {
             config = ApplicationConfig("empty.conf")
         }
-        val post = Post(
+        val post = PostResponse(
             id = 123456,
-            userId = 1,
+            user = UserResponse(
+                id = 54321,
+                name = "user1",
+                domain = "example.com",
+                screenName = "user 1",
+                description = "Test user",
+                url = "https://example.com/users/54321",
+                createdAt = Instant.now().toEpochMilli()
+            ),
             text = "test2",
             visibility = Visibility.PUBLIC,
             createdAt = Instant.now().toEpochMilli(),
@@ -543,7 +639,7 @@ class PostsTest {
         }
         application {
             configureSerialization()
-            configureSecurity(mock())
+            configureSecurity(mock(), mock())
             routing {
                 route("/api/internal/v1") {
                     posts(postService)
@@ -562,9 +658,17 @@ class PostsTest {
         environment {
             config = ApplicationConfig("empty.conf")
         }
-        val post = Post(
+        val post = PostResponse(
             id = 123456,
-            userId = 1,
+            user = UserResponse(
+                id = 54321,
+                name = "user1",
+                domain = "example.com",
+                screenName = "user 1",
+                description = "Test user",
+                url = "https://example.com/users/54321",
+                createdAt = Instant.now().toEpochMilli()
+            ),
             text = "test2",
             visibility = Visibility.PUBLIC,
             createdAt = Instant.now().toEpochMilli(),
@@ -575,7 +679,7 @@ class PostsTest {
         }
         application {
             configureSerialization()
-            configureSecurity(mock())
+            configureSecurity(mock(), mock())
             routing {
                 route("/api/internal/v1") {
                     posts(postService)
@@ -594,9 +698,17 @@ class PostsTest {
         environment {
             config = ApplicationConfig("empty.conf")
         }
-        val post = Post(
+        val post = PostResponse(
             id = 123456,
-            userId = 1,
+            user = UserResponse(
+                id = 54321,
+                name = "user1",
+                domain = "example.com",
+                screenName = "user 1",
+                description = "Test user",
+                url = "https://example.com/users/54321",
+                createdAt = Instant.now().toEpochMilli()
+            ),
             text = "test2",
             visibility = Visibility.PUBLIC,
             createdAt = Instant.now().toEpochMilli(),
@@ -607,7 +719,7 @@ class PostsTest {
         }
         application {
             configureSerialization()
-            configureSecurity(mock())
+            configureSecurity(mock(), mock())
             routing {
                 route("/api/internal/v1") {
                     posts(postService)
