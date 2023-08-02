@@ -5,10 +5,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.config.Config.configData
 import dev.usbharu.hideout.domain.model.ActivityPubResponse
 import dev.usbharu.hideout.domain.model.ap.Follow
-import dev.usbharu.hideout.domain.model.job.DeliverPostJob
-import dev.usbharu.hideout.domain.model.job.DeliverReactionJob
-import dev.usbharu.hideout.domain.model.job.HideoutJob
-import dev.usbharu.hideout.domain.model.job.ReceiveFollowJob
+import dev.usbharu.hideout.domain.model.job.*
 import dev.usbharu.hideout.exception.JsonParseException
 import kjob.core.dsl.JobContextWithProps
 import kjob.core.job.JobProps
@@ -74,6 +71,9 @@ class ActivityPubServiceImpl(
 
             DeliverPostJob -> activityPubNoteService.createNoteJob(job.props as JobProps<DeliverPostJob>)
             DeliverReactionJob -> activityPubReactionService.reactionJob(job.props as JobProps<DeliverReactionJob>)
+            DeliverRemoveReactionJob -> activityPubReactionService.removeReactionJob(
+                job.props as JobProps<DeliverRemoveReactionJob>
+            )
         }
     }
 }

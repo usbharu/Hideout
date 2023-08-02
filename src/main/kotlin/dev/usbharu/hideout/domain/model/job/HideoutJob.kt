@@ -25,5 +25,8 @@ object DeliverReactionJob : HideoutJob("DeliverReactionJob") {
 }
 
 object DeliverRemoveReactionJob : HideoutJob("DeliverRemoveReactionJob") {
-
+    val id = string("id")
+    val inbox = string("inbox")
+    val actor = string("actor")
+    val like = string("like")
 }
