@@ -25,7 +25,7 @@ import org.mockito.kotlin.*
 import utils.JsonObjectMapper
 import java.time.Instant
 import kotlin.test.assertEquals
-
+@Suppress("LargeClass")
 class UsersTest {
     @Test
     fun `users にGETするとユーザー一覧を取得できる`() = testApplication {

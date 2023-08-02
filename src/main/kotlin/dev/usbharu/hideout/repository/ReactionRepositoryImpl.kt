@@ -57,6 +57,14 @@ class ReactionRepositoryImpl(
             }.empty().not()
         }
     }
+
+    override suspend fun findByPostId(postId: Long): List<Reaction> {
+        return query {
+            Reactions.select {
+                Reactions.postId.eq(postId)
+            }.map { it.toReaction() }
+        }
+    }
 }
 
 fun ResultRow.toReaction(): Reaction {
