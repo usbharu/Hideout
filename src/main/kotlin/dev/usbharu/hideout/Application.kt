@@ -25,6 +25,7 @@ import dev.usbharu.hideout.service.core.IdGenerateService
 import dev.usbharu.hideout.service.core.TwitterSnowflakeIdGenerateService
 import dev.usbharu.hideout.service.job.JobQueueParentService
 import dev.usbharu.hideout.service.job.KJobJobQueueParentService
+import dev.usbharu.hideout.service.reaction.IReactionService
 import dev.usbharu.hideout.service.user.IUserAuthService
 import dev.usbharu.hideout.service.user.IUserService
 import dev.usbharu.kjob.exposed.ExposedKJob
@@ -115,6 +116,7 @@ fun Application.parent() {
         activityPubUserService = inject<ActivityPubUserService>().value,
         postService = inject<IPostApiService>().value,
         userApiService = inject<IUserApiService>().value,
+        reactionService = inject<IReactionService>().value
     )
 }
 

@@ -23,3 +23,7 @@ object DeliverReactionJob : HideoutJob("DeliverReactionJob") {
     val inbox = string("inbox")
     val id = string("id")
 }
+
+object DeliverRemoveReactionJob : HideoutJob("DeliverRemoveReactionJob") {
+
+}

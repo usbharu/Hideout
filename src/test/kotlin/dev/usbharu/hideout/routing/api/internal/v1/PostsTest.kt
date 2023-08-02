@@ -67,7 +67,7 @@ class PostsTest {
             configureSecurity(mock(), mock(), mock(), mock(), mock())
             routing {
                 route("/api/internal/v1") {
-                    posts(postService)
+                    posts(postService, mock())
                 }
             }
         }
@@ -140,7 +140,7 @@ class PostsTest {
             configureSerialization()
             routing {
                 route("/api/internal/v1") {
-                    posts(postService)
+                    posts(postService, mock())
                 }
             }
         }
@@ -172,7 +172,7 @@ class PostsTest {
             configureSecurity(mock(), mock(), mock(), mock(), mock())
             routing {
                 route("/api/internal/v1") {
-                    posts(postService)
+                    posts(postService, mock())
                 }
             }
         }
@@ -215,7 +215,7 @@ class PostsTest {
             }
             routing {
                 route("/api/internal/v1") {
-                    posts(postService)
+                    posts(postService, mock())
                 }
             }
         }
@@ -264,7 +264,7 @@ class PostsTest {
             }
             routing {
                 route("/api/internal/v1") {
-                    posts(postService)
+                    posts(postService, mock())
                 }
             }
             configureSerialization()
@@ -326,7 +326,7 @@ class PostsTest {
             configureSecurity(mock(), mock(), mock(), mock(), mock())
             routing {
                 route("/api/internal/v1") {
-                    posts(postService)
+                    posts(postService, mock())
                 }
             }
         }
@@ -378,7 +378,7 @@ class PostsTest {
             configureSecurity(mock(), mock(), mock(), mock(), mock())
             routing {
                 route("/api/internal/v1") {
-                    posts(postService)
+                    posts(postService, mock())
                 }
             }
         }
@@ -430,7 +430,7 @@ class PostsTest {
             configureSecurity(mock(), mock(), mock(), mock(), mock())
             routing {
                 route("/api/internal/v1") {
-                    posts(postService)
+                    posts(postService, mock())
                 }
             }
         }
@@ -482,7 +482,7 @@ class PostsTest {
             configureSecurity(mock(), mock(), mock(), mock(), mock())
             routing {
                 route("/api/internal/v1") {
-                    posts(postService)
+                    posts(postService, mock())
                 }
             }
         }
@@ -514,7 +514,7 @@ class PostsTest {
             configureSecurity(mock(), mock(), mock(), mock(), mock())
             routing {
                 route("/api/internal/v1") {
-                    posts(postService)
+                    posts(postService, mock())
                 }
             }
         }
@@ -546,7 +546,7 @@ class PostsTest {
             configureSecurity(mock(), mock(), mock(), mock(), mock())
             routing {
                 route("/api/internal/v1") {
-                    posts(postService)
+                    posts(postService, mock())
                 }
             }
         }
@@ -578,7 +578,7 @@ class PostsTest {
             configureSecurity(mock(), mock(), mock(), mock(), mock())
             routing {
                 route("/api/internal/v1") {
-                    posts(postService)
+                    posts(postService, mock())
                 }
             }
         }
@@ -610,7 +610,7 @@ class PostsTest {
             configureSecurity(mock(), mock(), mock(), mock(), mock())
             routing {
                 route("/api/internal/v1") {
-                    posts(postService)
+                    posts(postService, mock())
                 }
             }
         }
