@@ -20,7 +20,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/PostResponse"
+                  $ref: "#/components/schemas/Post"
         401:
           $ref: "#/components/responses/Unauthorized"
         403:
@@ -37,7 +37,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/PostRequest"
+              $ref: "#/components/schemas/Post"
       responses:
         200:
           description: 成功
@@ -65,7 +65,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PostResponse"
+                $ref: "#/components/schemas/Post"
         401:
           $ref: "#/components/responses/Unauthorized"
         403:
@@ -90,7 +90,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/PostResponse"
+                  $ref: "#/components/schemas/Post"
         401:
           $ref: "#/components/responses/Unauthorized"
         403:
@@ -114,7 +114,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PostResponse"
+                $ref: "#/components/schemas/Post"
         401:
           $ref: "#/components/responses/Unauthorized"
         403:
@@ -137,7 +137,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/UserResponse"
+                  $ref: "#/components/schemas/User"
 
     post:
       summary: ユーザーを作成する
@@ -181,7 +181,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserResponse"
+                $ref: "#/components/schemas/User"
         404:
           $ref: "#/components/responses/NotFound"
 
@@ -198,7 +198,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/UserResponse"
+                  $ref: "#/components/schemas/User"
     post:
       summary: ユーザーをフォローする
       security:
@@ -228,47 +228,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/UserResponse"
-
-  /login:
-    post:
-      summary: ログインする
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/UserLogin"
-      responses:
-        200:
-          description: ログイン成功
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/JwtToken"
-
-  /refresh-token:
-    post:
-      summary: 期限切れトークンの再発行をする
-      responses:
-        200:
-          description: トークンの再発行に成功
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/JwtToken"
-
-  /auth-check:
-    get:
-      summary: 認証チェック
-      responses:
-        200:
-          description: 認証に成功
-          content:
-            text/plain:
-              schema:
-                type: string
-
+                  $ref: "#/components/schemas/User"
 
 components:
   responses:
@@ -301,23 +261,8 @@ components:
         type: string
 
   schemas:
-    Visibility:
-      type: string
-      enum:
-        - public
-        - unlisted
-        - followers
-        - direct
-    UserResponse:
+    User:
       type: object
-      required:
-        - id
-        - name
-        - domain
-        - screenName
-        - description
-        - url
-        - createdAt
       properties:
         id:
           type: number
@@ -332,30 +277,23 @@ components:
           type: string
         description:
           type: string
-          nullable: true
         url:
           type: string
           readOnly: true
         createdAt:
           type: number
           readOnly: true
-    PostResponse:
+    Post:
       type: object
-      required:
-        - id
-        - user
-        - text
-        - createdAt
-        - visibility
-        - url
-        - sensitive
       properties:
         id:
           type: integer
           format: int64
           readOnly: true
-        user:
-          $ref: "#/components/schemas/UserResponse"
+        userId:
+          type: integer
+          format: int64
+          readOnly: true
         overview:
           type: string
         text:
@@ -365,7 +303,12 @@ components:
           format: int64
           readOnly: true
         visibility:
-          $ref: "#/components/schemas/Visibility"
+          type: string
+          enum:
+            - public
+            - unlisted
+            - followers
+            - direct
         url:
           type: string
           format: uri
@@ -380,49 +323,13 @@ components:
           readOnly: true
         sensitive:
           type: boolean
+        apId:
+          type: string
+          format: url
+          readOnly: true
 
-    PostRequest:
-      type: object
-      properties:
-        overview:
-          type: string
-        text:
-          type: string
-        visibility:
-          $ref: "#/components/schemas/Visibility"
-        repostId:
-          type: integer
-          format: int64
-        replyId:
-          type: integer
-          format: int64
-        sensitive:
-          type: boolean
-
-    JwtToken:
-      type: object
-      properties:
-        token:
-          type: string
-        refreshToken:
-          type: string
-
-    RefreshToken:
-      type: object
-      properties:
-        refreshToken:
-          type: string
-
-    UserLogin:
-      type: object
-      properties:
-        username:
-          type: string
-        password:
-          type: string
 
   securitySchemes:
     BearerAuth:
       type: http
       scheme: bearer
-      bearerFormat: JWT

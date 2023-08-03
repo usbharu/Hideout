@@ -18,7 +18,7 @@ data class User(
 ) {
     override fun toString(): String {
         return "User(id=$id, name='$name', domain='$domain', screenName='$screenName', description='$description'," +
-            " password=****, inbox='$inbox', outbox='$outbox', url='$url', publicKey='$publicKey'," +
-            " privateKey=****, createdAt=$createdAt)"
+                " password=****, inbox='$inbox', outbox='$outbox', url='$url', publicKey='$publicKey'," +
+                " privateKey=****, createdAt=$createdAt)"
     }
 }

@@ -10,8 +10,6 @@ open class Note : Object {
     var inReplyTo: String? = null
 
     protected constructor() : super()
-
-    @Suppress("LongParameterList")
     constructor(
         type: List<String> = emptyList(),
         name: String,

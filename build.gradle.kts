@@ -80,14 +80,12 @@ dependencies {
     implementation("org.xerial:sqlite-jdbc:3.40.1.0")
     implementation("io.ktor:ktor-server-websockets-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-cio-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-compression:$ktor_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
 
     implementation("io.insert-koin:koin-core:$koin_version")
     implementation("io.insert-koin:koin-ktor:$koin_version")
     implementation("io.insert-koin:koin-logger-slf4j:$koin_version")
     implementation("io.insert-koin:koin-annotations:1.2.0")
-    implementation("io.ktor:ktor-server-compression-jvm:2.3.0")
     ksp("io.insert-koin:koin-ksp-compiler:1.2.0")
 
 

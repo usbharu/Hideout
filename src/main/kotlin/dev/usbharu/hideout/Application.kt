@@ -95,15 +95,17 @@ fun Application.parent() {
     runBlocking {
         inject<IServerInitialiseService>().value.init()
     }
-    configureCompression()
     configureHTTP()
     configureStaticRouting()
     configureMonitoring()
     configureSerialization()
     register(inject<IUserService>().value)
     configureSecurity(
+        inject<IUserAuthService>().value,
+        inject<IMetaService>().value,
+        inject<IUserRepository>().value,
+        inject<IJwtService>().value,
         inject<JwkProvider>().value,
-        inject<IMetaService>().value
     )
     configureRouting(
         httpSignatureVerifyService = inject<HttpSignatureVerifyService>().value,
@@ -112,10 +114,6 @@ fun Application.parent() {
         activityPubUserService = inject<ActivityPubUserService>().value,
         postService = inject<IPostApiService>().value,
         userApiService = inject<IUserApiService>().value,
-        userAuthService = inject<IUserAuthService>().value,
-        userRepository = inject<IUserRepository>().value,
-        jwtService = inject<IJwtService>().value,
-        metaService = inject<IMetaService>().value
     )
 }
 

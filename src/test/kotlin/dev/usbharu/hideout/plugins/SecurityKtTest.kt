@@ -15,7 +15,6 @@ import dev.usbharu.hideout.domain.model.hideout.form.RefreshToken
 import dev.usbharu.hideout.domain.model.hideout.form.UserLogin
 import dev.usbharu.hideout.exception.InvalidRefreshTokenException
 import dev.usbharu.hideout.repository.IUserRepository
-import dev.usbharu.hideout.routing.api.internal.v1.auth
 import dev.usbharu.hideout.service.auth.IJwtService
 import dev.usbharu.hideout.service.core.IMetaService
 import dev.usbharu.hideout.service.user.IUserAuthService
@@ -25,7 +24,6 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.server.config.*
-import io.ktor.server.routing.*
 import io.ktor.server.testing.*
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyString
@@ -72,10 +70,7 @@ class SecurityKtTest {
         val jwkProvider = mock<JwkProvider>()
         application {
             configureSerialization()
-            configureSecurity(jwkProvider, metaService)
-            routing {
-                auth(userAuthService, userRepository, jwtService)
-            }
+            configureSecurity(userAuthService, metaService, userRepository, jwtService, jwkProvider)
         }
 
         client.post("/login") {
@@ -102,10 +97,7 @@ class SecurityKtTest {
         val jwkProvider = mock<JwkProvider>()
         application {
             configureSerialization()
-            configureSecurity(jwkProvider, metaService)
-            routing {
-                auth(userAuthService, userRepository, jwtService)
-            }
+            configureSecurity(userAuthService, metaService, userRepository, jwtService, jwkProvider)
         }
         client.post("/login") {
             contentType(ContentType.Application.Json)
@@ -130,10 +122,7 @@ class SecurityKtTest {
         val jwkProvider = mock<JwkProvider>()
         application {
             configureSerialization()
-            configureSecurity(jwkProvider, metaService)
-            routing {
-                auth(userAuthService, userRepository, jwtService)
-            }
+            configureSecurity(userAuthService, metaService, userRepository, jwtService, jwkProvider)
         }
         client.post("/login") {
             contentType(ContentType.Application.Json)
@@ -151,10 +140,7 @@ class SecurityKtTest {
         Config.configData = ConfigData(url = "http://example.com", objectMapper = jacksonObjectMapper())
         application {
             configureSerialization()
-            configureSecurity(mock(), mock())
-            routing {
-                auth(mock(), mock(), mock())
-            }
+            configureSecurity(mock(), mock(), mock(), mock(), mock())
         }
         client.get("/auth-check").apply {
             assertEquals(HttpStatusCode.Unauthorized, call.response.status)
@@ -169,10 +155,7 @@ class SecurityKtTest {
         Config.configData = ConfigData(url = "http://example.com", objectMapper = jacksonObjectMapper())
         application {
             configureSerialization()
-            configureSecurity(mock(), mock())
-            routing {
-                auth(mock(), mock(), mock())
-            }
+            configureSecurity(mock(), mock(), mock(), mock(), mock())
         }
         client.get("/auth-check") {
             header("Authorization", "Digest dsfjjhogalkjdfmlhaog")
@@ -189,10 +172,7 @@ class SecurityKtTest {
         Config.configData = ConfigData(url = "http://example.com", objectMapper = jacksonObjectMapper())
         application {
             configureSerialization()
-            configureSecurity(mock(), mock())
-            routing {
-                auth(mock(), mock(), mock())
-            }
+            configureSecurity(mock(), mock(), mock(), mock(), mock())
         }
         client.get("/auth-check") {
             header("Authorization", "")
@@ -210,10 +190,7 @@ class SecurityKtTest {
 
         application {
             configureSerialization()
-            configureSecurity(mock(), mock())
-            routing {
-                auth(mock(), mock(), mock())
-            }
+            configureSecurity(mock(), mock(), mock(), mock(), mock())
         }
         client.get("/auth-check") {
             header("Authorization", "Bearer ")
@@ -267,12 +244,11 @@ class SecurityKtTest {
                 )
             )
         }
+        val userRepository = mock<IUserRepository>()
+        val jwtService = mock<IJwtService>()
         application {
             configureSerialization()
-            configureSecurity(jwkProvider, metaService)
-            routing {
-                auth(mock(), mock(), mock())
-            }
+            configureSecurity(mock(), metaService, userRepository, jwtService, jwkProvider)
         }
 
         client.get("/auth-check") {
@@ -328,12 +304,11 @@ class SecurityKtTest {
                 )
             )
         }
+        val userRepository = mock<IUserRepository>()
+        val jwtService = mock<IJwtService>()
         application {
             configureSerialization()
-            configureSecurity(jwkProvider, metaService)
-            routing {
-                auth(mock(), mock(), mock())
-            }
+            configureSecurity(mock(), metaService, userRepository, jwtService, jwkProvider)
         }
         client.get("/auth-check") {
             header("Authorization", "Bearer $token")
@@ -387,12 +362,11 @@ class SecurityKtTest {
                 )
             )
         }
+        val userRepository = mock<IUserRepository>()
+        val jwtService = mock<IJwtService>()
         application {
             configureSerialization()
-            configureSecurity(jwkProvider, metaService)
-            routing {
-                auth(mock(), mock(), mock())
-            }
+            configureSecurity(mock(), metaService, userRepository, jwtService, jwkProvider)
         }
         client.get("/auth-check") {
             header("Authorization", "Bearer $token")
@@ -446,12 +420,11 @@ class SecurityKtTest {
                 )
             )
         }
+        val userRepository = mock<IUserRepository>()
+        val jwtService = mock<IJwtService>()
         application {
             configureSerialization()
-            configureSecurity(jwkProvider, metaService)
-            routing {
-                auth(mock(), mock(), mock())
-            }
+            configureSecurity(mock(), metaService, userRepository, jwtService, jwkProvider)
         }
         client.get("/auth-check") {
             header("Authorization", "Bearer $token")
@@ -504,12 +477,11 @@ class SecurityKtTest {
                 )
             )
         }
+        val userRepository = mock<IUserRepository>()
+        val jwtService = mock<IJwtService>()
         application {
             configureSerialization()
-            configureSecurity(jwkProvider, metaService)
-            routing {
-                auth(mock(), mock(), mock())
-            }
+            configureSecurity(mock(), metaService, userRepository, jwtService, jwkProvider)
         }
         client.get("/auth-check") {
             header("Authorization", "Bearer $token")
@@ -529,10 +501,7 @@ class SecurityKtTest {
         }
         application {
             configureSerialization()
-            configureSecurity(mock(), mock())
-            routing {
-                auth(mock(), mock(), jwtService)
-            }
+            configureSecurity(mock(), mock(), mock(), jwtService, mock())
         }
         client.post("/refresh-token") {
             header("Content-Type", "application/json")
@@ -554,10 +523,7 @@ class SecurityKtTest {
         application {
             configureStatusPages()
             configureSerialization()
-            configureSecurity(mock(), mock())
-            routing {
-                auth(mock(), mock(), jwtService)
-            }
+            configureSecurity(mock(), mock(), mock(), jwtService, mock())
         }
         client.post("/refresh-token") {
             header("Content-Type", "application/json")

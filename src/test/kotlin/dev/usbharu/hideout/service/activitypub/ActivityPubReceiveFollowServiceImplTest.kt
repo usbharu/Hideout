@@ -48,21 +48,13 @@ class ActivityPubReceiveFollowServiceImplTest {
             firstValue.invoke(scheduleContext, ReceiveFollowJob)
             val actor = scheduleContext.props.props[ReceiveFollowJob.actor.name]
             val targetActor = scheduleContext.props.props[ReceiveFollowJob.targetActor.name]
-            val follow = scheduleContext.props.props[ReceiveFollowJob.follow.name] as String
+            val follow = scheduleContext.props.props[ReceiveFollowJob.follow.name]
             assertEquals("https://follower.example.com", actor)
             assertEquals("https://example.com", targetActor)
             //language=JSON
             assertEquals(
-                Json.parseToJsonElement(
-                    """{
-  "type": "Follow",
-  "name": "Follow",
-  "actor": "https://follower.example.com",
-  "object": "https://example.com",
-  "@context": null
-}"""
-                ),
-                Json.parseToJsonElement(follow)
+                """{"type":"Follow","name":"Follow","actor":"https://follower.example.com","object":"https://example.com","@context":null}""",
+                follow
             )
         }
     }
@@ -163,14 +155,7 @@ class ActivityPubReceiveFollowServiceImplTest {
                 data = mapOf<String, Any>(
                     ReceiveFollowJob.actor.name to "https://follower.example.com",
                     ReceiveFollowJob.targetActor.name to "https://example.com",
-                    //language=JSON
-                    ReceiveFollowJob.follow.name to """{
-  "type": "Follow",
-  "name": "Follow",
-  "object": "https://example.com",
-  "actor": "https://follower.example.com",
-  "@context": null
-}"""
+                    ReceiveFollowJob.follow.name to """{"type":"Follow","name":"Follow","object":"https://example.com","actor":"https://follower.example.com","@context":null}"""
                 ),
                 json = Json
             )
