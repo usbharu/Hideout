@@ -35,7 +35,7 @@ class UsersTest {
 
         val users = listOf(
             UserResponse(
-                12345,
+                "12345",
                 "test1",
                 "example.com",
                 "test",
@@ -44,7 +44,7 @@ class UsersTest {
                 Instant.now().toEpochMilli()
             ),
             UserResponse(
-                12343,
+                "12343",
                 "tes2",
                 "example.com",
                 "test",
@@ -149,7 +149,7 @@ class UsersTest {
             config = ApplicationConfig("empty.conf")
         }
         val userResponse = UserResponse(
-            1234,
+            "1234",
             "test1",
             "example.com",
             "test",
@@ -182,7 +182,7 @@ class UsersTest {
             config = ApplicationConfig("empty.conf")
         }
         val userResponse = UserResponse(
-            1234,
+            "1234",
             "test1",
             "example.com",
             "test",
@@ -215,7 +215,7 @@ class UsersTest {
             config = ApplicationConfig("empty.conf")
         }
         val userResponse = UserResponse(
-            1234,
+            "1234",
             "test1",
             "example.com",
             "test",
@@ -248,7 +248,7 @@ class UsersTest {
             config = ApplicationConfig("empty.conf")
         }
         val userResponse = UserResponse(
-            1234,
+            "1234",
             "test1",
             "example.com",
             "test",
@@ -283,7 +283,7 @@ class UsersTest {
 
         val followers = listOf(
             UserResponse(
-                1235,
+                "1235",
                 "follower1",
                 "example.com",
                 "test",
@@ -292,7 +292,7 @@ class UsersTest {
                 Instant.now().toEpochMilli()
             ),
             UserResponse(
-                1236,
+                "1236",
                 "follower2",
                 "example.com",
                 "test",
@@ -328,7 +328,7 @@ class UsersTest {
 
         val followers = listOf(
             UserResponse(
-                1235,
+                "1235",
                 "follower1",
                 "example.com",
                 "test",
@@ -337,7 +337,7 @@ class UsersTest {
                 Instant.now().toEpochMilli()
             ),
             UserResponse(
-                1236,
+                "1236",
                 "follower2",
                 "example.com",
                 "test",
@@ -373,7 +373,7 @@ class UsersTest {
 
         val followers = listOf(
             UserResponse(
-                1235,
+                "1235",
                 "follower1",
                 "example.com",
                 "test",
@@ -382,7 +382,7 @@ class UsersTest {
                 Instant.now().toEpochMilli()
             ),
             UserResponse(
-                1236,
+                "1236",
                 "follower2",
                 "example.com",
                 "test",
@@ -425,7 +425,7 @@ class UsersTest {
 
         val userApiService = mock<IUserApiService> {
             onBlocking { findByAcct(any()) } doReturn UserResponse(
-                1235,
+                "1235",
                 "follower1",
                 "example.com",
                 "test",
@@ -475,7 +475,7 @@ class UsersTest {
 
         val userApiService = mock<IUserApiService> {
             onBlocking { findByAcct(any()) } doReturn UserResponse(
-                1235,
+                "1235",
                 "follower1",
                 "example.com",
                 "test",
@@ -525,7 +525,7 @@ class UsersTest {
 
         val userApiService = mock<IUserApiService> {
             onBlocking { findById(any()) } doReturn UserResponse(
-                1235,
+                "1235",
                 "follower1",
                 "example.com",
                 "test",
@@ -568,7 +568,7 @@ class UsersTest {
 
         val followers = listOf(
             UserResponse(
-                1235,
+                "1235",
                 "follower1",
                 "example.com",
                 "test",
@@ -577,7 +577,7 @@ class UsersTest {
                 Instant.now().toEpochMilli()
             ),
             UserResponse(
-                1236,
+                "1236",
                 "follower2",
                 "example.com",
                 "test",
@@ -613,7 +613,7 @@ class UsersTest {
 
         val followers = listOf(
             UserResponse(
-                1235,
+                "1235",
                 "follower1",
                 "example.com",
                 "test",
@@ -622,7 +622,7 @@ class UsersTest {
                 Instant.now().toEpochMilli()
             ),
             UserResponse(
-                1236,
+                "1236",
                 "follower2",
                 "example.com",
                 "test",
@@ -658,7 +658,7 @@ class UsersTest {
 
         val followers = listOf(
             UserResponse(
-                1235,
+                "1235",
                 "follower1",
                 "example.com",
                 "test",
@@ -667,7 +667,7 @@ class UsersTest {
                 Instant.now().toEpochMilli()
             ),
             UserResponse(
-                1236,
+                "1236",
                 "follower2",
                 "example.com",
                 "test",
