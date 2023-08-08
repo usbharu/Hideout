@@ -98,6 +98,7 @@ fun Application.parent() {
     runBlocking {
         inject<IServerInitialiseService>().value.init()
     }
+    configureCompression()
     configureHTTP()
     configureStaticRouting()
     configureMonitoring()
@@ -117,7 +118,11 @@ fun Application.parent() {
         activityPubUserService = inject<ActivityPubUserService>().value,
         postService = inject<IPostApiService>().value,
         userApiService = inject<IUserApiService>().value,
-        reactionService = inject<IReactionService>().value
+        reactionService = inject<IReactionService>().value,
+        userAuthService = inject<IUserAuthService>().value,
+        userRepository = inject<IUserRepository>().value,
+        jwtService = inject<IJwtService>().value,
+        metaService = inject<IMetaService>().value
     )
 }
 
