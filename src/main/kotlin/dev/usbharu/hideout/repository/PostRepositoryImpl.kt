@@ -88,7 +88,9 @@ class PostRepositoryImpl(database: Database, private val idGenerateService: IdGe
         limit: Int?,
         userId: Long?
     ): List<Post> {
-        TODO("Not yet implemented")
+        return query {
+            Posts.select { Posts.visibility eq Visibility.PUBLIC.ordinal }.map { it.toPost() }
+        }
     }
 
     override suspend fun findByUserNameAndDomain(
