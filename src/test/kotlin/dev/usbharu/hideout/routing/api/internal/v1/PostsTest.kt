@@ -35,7 +35,7 @@ class PostsTest {
             config = ApplicationConfig("empty.conf")
         }
         val user = UserResponse(
-            id = 54321,
+            id = "54321",
             name = "user1",
             domain = "example.com",
             screenName = "user 1",
@@ -45,7 +45,7 @@ class PostsTest {
         )
         val posts = listOf(
             PostResponse(
-                id = 12345,
+                id = "12345",
                 user = user,
                 text = "test1",
                 visibility = Visibility.PUBLIC,
@@ -53,7 +53,7 @@ class PostsTest {
                 url = "https://example.com/posts/1"
             ),
             PostResponse(
-                id = 123456,
+                id = "123456",
                 user = user,
                 text = "test2",
                 visibility = Visibility.PUBLIC,
@@ -101,7 +101,7 @@ class PostsTest {
             on { getClaim(eq("uid")) } doReturn claim
         }
         val user = UserResponse(
-            id = 54321,
+            id = "54321",
             name = "user1",
             domain = "example.com",
             screenName = "user 1",
@@ -111,7 +111,7 @@ class PostsTest {
         )
         val posts = listOf(
             PostResponse(
-                id = 12345,
+                id = "12345",
                 user = user,
                 text = "test1",
                 visibility = Visibility.PUBLIC,
@@ -119,7 +119,7 @@ class PostsTest {
                 url = "https://example.com/posts/1"
             ),
             PostResponse(
-                id = 123456,
+                id = "123456",
                 user = user,
                 text = "test2",
                 visibility = Visibility.PUBLIC,
@@ -127,7 +127,7 @@ class PostsTest {
                 url = "https://example.com/posts/2"
             ),
             PostResponse(
-                id = 1234567,
+                id = "1234567",
                 user = user,
                 text = "Followers only",
                 visibility = Visibility.FOLLOWERS,
@@ -176,7 +176,7 @@ class PostsTest {
             config = ApplicationConfig("empty.conf")
         }
         val user = UserResponse(
-            id = 54321,
+            id = "54321",
             name = "user1",
             domain = "example.com",
             screenName = "user 1",
@@ -185,7 +185,7 @@ class PostsTest {
             createdAt = Instant.now().toEpochMilli()
         )
         val post = PostResponse(
-            id = 12345,
+            id = "12345",
             user = user,
             text = "aaa",
             visibility = Visibility.PUBLIC,
@@ -216,9 +216,9 @@ class PostsTest {
             config = ApplicationConfig("empty.conf")
         }
         val post = PostResponse(
-            12345,
+            "12345",
             UserResponse(
-                id = 54321,
+                id = "54321",
                 name = "user1",
                 domain = "example.com",
                 screenName = "user 1",
@@ -279,9 +279,9 @@ class PostsTest {
                 val argument = it.getArgument<dev.usbharu.hideout.domain.model.hideout.form.Post>(0)
                 val userId = it.getArgument<Long>(1)
                 PostResponse(
-                    id = 123L,
+                    id = "123",
                     user = UserResponse(
-                        id = 54321,
+                        id = "54321",
                         name = "user1",
                         domain = "example.com",
                         screenName = "user 1",
@@ -335,7 +335,7 @@ class PostsTest {
             config = ApplicationConfig("empty.conf")
         }
         val user = UserResponse(
-            id = 54321,
+            id = "54321",
             name = "user1",
             domain = "example.com",
             screenName = "user 1",
@@ -345,7 +345,7 @@ class PostsTest {
         )
         val posts = listOf(
             PostResponse(
-                id = 12345,
+                id = "12345",
                 user = user,
                 text = "test1",
                 visibility = Visibility.PUBLIC,
@@ -353,7 +353,7 @@ class PostsTest {
                 url = "https://example.com/posts/1"
             ),
             PostResponse(
-                id = 123456,
+                id = "123456",
                 user = user,
                 text = "test2",
                 visibility = Visibility.PUBLIC,
@@ -396,7 +396,7 @@ class PostsTest {
             config = ApplicationConfig("empty.conf")
         }
         val user = UserResponse(
-            id = 54321,
+            id = "54321",
             name = "user1",
             domain = "example.com",
             screenName = "user 1",
@@ -406,7 +406,7 @@ class PostsTest {
         )
         val posts = listOf(
             PostResponse(
-                id = 12345,
+                id = "12345",
                 user = user,
                 text = "test1",
                 visibility = Visibility.PUBLIC,
@@ -414,7 +414,7 @@ class PostsTest {
                 url = "https://example.com/posts/1"
             ),
             PostResponse(
-                id = 123456,
+                id = "123456",
                 user = user,
                 text = "test2",
                 visibility = Visibility.PUBLIC,
@@ -457,7 +457,7 @@ class PostsTest {
             config = ApplicationConfig("empty.conf")
         }
         val user = UserResponse(
-            id = 54321,
+            id = "54321",
             name = "user1",
             domain = "example.com",
             screenName = "user 1",
@@ -467,7 +467,7 @@ class PostsTest {
         )
         val posts = listOf(
             PostResponse(
-                id = 12345,
+                id = "12345",
                 user = user,
                 text = "test1",
                 visibility = Visibility.PUBLIC,
@@ -475,7 +475,7 @@ class PostsTest {
                 url = "https://example.com/posts/1"
             ),
             PostResponse(
-                id = 123456,
+                id = "123456",
                 user = user,
                 text = "test2",
                 visibility = Visibility.PUBLIC,
@@ -518,7 +518,7 @@ class PostsTest {
             config = ApplicationConfig("empty.conf")
         }
         val user = UserResponse(
-            id = 54321,
+            id = "54321",
             name = "user1",
             domain = "example.com",
             screenName = "user 1",
@@ -528,7 +528,7 @@ class PostsTest {
         )
         val posts = listOf(
             PostResponse(
-                id = 12345,
+                id = "12345",
                 user = user,
                 text = "test1",
                 visibility = Visibility.PUBLIC,
@@ -536,7 +536,7 @@ class PostsTest {
                 url = "https://example.com/posts/1"
             ),
             PostResponse(
-                id = 123456,
+                id = "123456",
                 user = user,
                 text = "test2",
                 visibility = Visibility.PUBLIC,
@@ -579,9 +579,9 @@ class PostsTest {
             config = ApplicationConfig("empty.conf")
         }
         val post = PostResponse(
-            id = 123456,
+            id = "123456",
             user = UserResponse(
-                id = 54321,
+                id = "54321",
                 name = "user1",
                 domain = "example.com",
                 screenName = "user 1",
@@ -619,9 +619,9 @@ class PostsTest {
             config = ApplicationConfig("empty.conf")
         }
         val post = PostResponse(
-            id = 123456,
+            id = "123456",
             user = UserResponse(
-                id = 54321,
+                id = "54321",
                 name = "user1",
                 domain = "example.com",
                 screenName = "user 1",
@@ -659,9 +659,9 @@ class PostsTest {
             config = ApplicationConfig("empty.conf")
         }
         val post = PostResponse(
-            id = 123456,
+            id = "123456",
             user = UserResponse(
-                id = 54321,
+                id = "54321",
                 name = "user1",
                 domain = "example.com",
                 screenName = "user 1",
@@ -699,9 +699,9 @@ class PostsTest {
             config = ApplicationConfig("empty.conf")
         }
         val post = PostResponse(
-            id = 123456,
+            id = "123456",
             user = UserResponse(
-                id = 54321,
+                id = "54321",
                 name = "user1",
                 domain = "example.com",
                 screenName = "user 1",
