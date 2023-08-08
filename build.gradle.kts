@@ -59,7 +59,7 @@ kotlin {
 }
 
 sourceSets.main {
-    java.srcDirs("build/generated/ksp/main/kotlin")
+    kotlin.srcDirs("$buildDir/generated/ksp/main")
 }
 
 dependencies {

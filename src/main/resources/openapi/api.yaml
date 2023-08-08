@@ -355,8 +355,7 @@ components:
       description: 投稿ID
       required: true
       schema:
-        type: integer
-        format: int64
+        type: string
     userName:
       name: userName
       in: path
@@ -385,8 +384,7 @@ components:
         - createdAt
       properties:
         id:
-          type: number
-          format: int64
+          type: string
           readOnly: true
         name:
           type: string
@@ -402,7 +400,7 @@ components:
           type: string
           readOnly: true
         createdAt:
-          type: number
+          type: integer
           readOnly: true
     PostResponse:
       type: object
@@ -416,8 +414,7 @@ components:
         - sensitive
       properties:
         id:
-          type: integer
-          format: int64
+          type: string
           readOnly: true
         user:
           $ref: "#/components/schemas/UserResponse"
@@ -436,12 +433,10 @@ components:
           format: uri
           readOnly: true
         repostId:
-          type: integer
-          format: int64
+          type: string
           readOnly: true
         replyId:
-          type: integer
-          format: int64
+          type: string
           readOnly: true
         sensitive:
           type: boolean
@@ -456,11 +451,9 @@ components:
         visibility:
           $ref: "#/components/schemas/Visibility"
         repostId:
-          type: integer
-          format: int64
+          type: string
         replyId:
-          type: integer
-          format: int64
+          type: string
         sensitive:
           type: boolean
 
