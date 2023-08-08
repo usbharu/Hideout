@@ -13,9 +13,9 @@ import dev.usbharu.hideout.service.activitypub.ActivityPubUserService
 import dev.usbharu.hideout.service.api.IPostApiService
 import dev.usbharu.hideout.service.api.IUserApiService
 import dev.usbharu.hideout.service.auth.HttpSignatureVerifyService
-import dev.usbharu.hideout.service.reaction.IReactionService
 import dev.usbharu.hideout.service.auth.IJwtService
 import dev.usbharu.hideout.service.core.IMetaService
+import dev.usbharu.hideout.service.reaction.IReactionService
 import dev.usbharu.hideout.service.user.IUserAuthService
 import dev.usbharu.hideout.service.user.IUserService
 import io.ktor.server.application.*

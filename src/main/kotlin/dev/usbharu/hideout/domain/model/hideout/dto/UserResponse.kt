@@ -3,7 +3,7 @@ package dev.usbharu.hideout.domain.model.hideout.dto
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 
 data class UserResponse(
-    val id: Long,
+    val id: String,
     val name: String,
     val domain: String,
     val screenName: String,
@@ -14,7 +14,7 @@ data class UserResponse(
     companion object {
         fun from(user: User): UserResponse {
             return UserResponse(
-                id = user.id,
+                id = user.id.toString(),
                 name = user.name,
                 domain = user.domain,
                 screenName = user.screenName,
