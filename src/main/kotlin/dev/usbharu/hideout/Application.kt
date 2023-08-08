@@ -105,11 +105,9 @@ fun Application.parent() {
     configureSerialization()
     register(inject<IUserService>().value)
     configureSecurity(
-        inject<IUserAuthService>().value,
-        inject<IMetaService>().value,
-        inject<IUserRepository>().value,
-        inject<IJwtService>().value,
+
         inject<JwkProvider>().value,
+        inject<IMetaService>().value
     )
     configureRouting(
         httpSignatureVerifyService = inject<HttpSignatureVerifyService>().value,
