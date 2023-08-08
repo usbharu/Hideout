@@ -4,12 +4,20 @@ import {Avatar} from "../atoms/Avatar";
 import {Favorite, MoreVert, Reply, ScreenRotationAlt} from "@suid/icons-material";
 import {ShareScopeIndicator} from "../molecules/ShareScopeIndicator";
 import {PostResponse} from "../generated";
+import {useApi} from "../lib/ApiProvider";
 
 export const Post: Component<{ post: PostResponse }> = (props) => {
+
+    const api = useApi()
+
     const [anchorEl, setAnchorEl] = createSignal<null | HTMLElement>(null)
     const open = () => Boolean(anchorEl());
     const handleClose = () => {
         setAnchorEl(null);
+    }
+
+    const handleFavorite = () => {
+        api().postsPostIdReactionsPost({reaction: "❤"}, props.post.id)
     }
 
     return (
@@ -32,7 +40,7 @@ export const Post: Component<{ post: PostResponse }> = (props) => {
                 <IconButton>
                     <ScreenRotationAlt/>
                 </IconButton>
-                <IconButton>
+                <IconButton onclick={handleFavorite}>
                     <Favorite/>
                 </IconButton>
                 <Box sx={{marginLeft: "auto"}}>

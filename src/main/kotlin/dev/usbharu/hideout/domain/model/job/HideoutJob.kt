@@ -15,3 +15,18 @@ object DeliverPostJob : HideoutJob("DeliverPostJob") {
     val actor = string("actor")
     val inbox = string("inbox")
 }
+
+object DeliverReactionJob : HideoutJob("DeliverReactionJob") {
+    val reaction = string("reaction")
+    val postUrl = string("postUrl")
+    val actor = string("actor")
+    val inbox = string("inbox")
+    val id = string("id")
+}
+
+object DeliverRemoveReactionJob : HideoutJob("DeliverRemoveReactionJob") {
+    val id = string("id")
+    val inbox = string("inbox")
+    val actor = string("actor")
+    val like = string("like")
+}

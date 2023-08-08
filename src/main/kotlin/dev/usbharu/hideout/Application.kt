@@ -8,6 +8,8 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.config.ConfigData
 import dev.usbharu.hideout.domain.model.job.DeliverPostJob
+import dev.usbharu.hideout.domain.model.job.DeliverReactionJob
+import dev.usbharu.hideout.domain.model.job.DeliverRemoveReactionJob
 import dev.usbharu.hideout.domain.model.job.ReceiveFollowJob
 import dev.usbharu.hideout.plugins.*
 import dev.usbharu.hideout.repository.IUserRepository
@@ -24,6 +26,7 @@ import dev.usbharu.hideout.service.core.IdGenerateService
 import dev.usbharu.hideout.service.core.TwitterSnowflakeIdGenerateService
 import dev.usbharu.hideout.service.job.JobQueueParentService
 import dev.usbharu.hideout.service.job.KJobJobQueueParentService
+import dev.usbharu.hideout.service.reaction.IReactionService
 import dev.usbharu.hideout.service.user.IUserAuthService
 import dev.usbharu.hideout.service.user.IUserService
 import dev.usbharu.kjob.exposed.ExposedKJob
@@ -102,6 +105,7 @@ fun Application.parent() {
     configureSerialization()
     register(inject<IUserService>().value)
     configureSecurity(
+
         inject<JwkProvider>().value,
         inject<IMetaService>().value
     )
@@ -112,6 +116,7 @@ fun Application.parent() {
         activityPubUserService = inject<ActivityPubUserService>().value,
         postService = inject<IPostApiService>().value,
         userApiService = inject<IUserApiService>().value,
+        reactionService = inject<IReactionService>().value,
         userAuthService = inject<IUserAuthService>().value,
         userRepository = inject<IUserRepository>().value,
         jwtService = inject<IJwtService>().value,
@@ -133,6 +138,18 @@ fun Application.worker() {
         }
     }
     kJob.register(DeliverPostJob) {
+        execute {
+            activityPubService.processActivity(this, it)
+        }
+    }
+
+    kJob.register(DeliverReactionJob) {
+        execute {
+            activityPubService.processActivity(this, it)
+        }
+    }
+
+    kJob.register(DeliverRemoveReactionJob) {
         execute {
             activityPubService.processActivity(this, it)
         }

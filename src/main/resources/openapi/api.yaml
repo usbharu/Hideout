@@ -74,6 +74,71 @@ paths:
           $ref: "#/components/responses/NotFoundOrForbidden"
         429:
           $ref: "#/components/responses/TooManyRequests"
+  /posts/{postId}/reactions:
+    get:
+      summary: リアクションを数件返す
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - $ref: "#/components/parameters/postId"
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReactionResponse"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFoundOrForbidden"
+        429:
+          $ref: "#/components/responses/TooManyRequests"
+
+    post:
+      summary: リアクションを付ける
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - $ref: "#/components/parameters/postId"
+      requestBody:
+        description: 付けるリアクション
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Reaction"
+      responses:
+        200:
+          description: 成功
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFoundOrForbidden"
+        429:
+          $ref: "#/components/responses/TooManyRequests"
+    delete:
+      summary: リアクションを削除する
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - $ref: "#/components/parameters/postId"
+      responses:
+        200:
+          description: 成功
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFoundOrForbidden"
+        429:
+          $ref: "#/components/responses/TooManyRequests"
+
   /users/{userName}/posts:
     get:
       summary: 権限に応じてユーザーの投稿一覧を返す
@@ -290,8 +355,7 @@ components:
       description: 投稿ID
       required: true
       schema:
-        type: integer
-        format: int64
+        type: string
     userName:
       name: userName
       in: path
@@ -320,8 +384,7 @@ components:
         - createdAt
       properties:
         id:
-          type: number
-          format: int64
+          type: string
           readOnly: true
         name:
           type: string
@@ -337,7 +400,7 @@ components:
           type: string
           readOnly: true
         createdAt:
-          type: number
+          type: integer
           readOnly: true
     PostResponse:
       type: object
@@ -351,8 +414,7 @@ components:
         - sensitive
       properties:
         id:
-          type: integer
-          format: int64
+          type: string
           readOnly: true
         user:
           $ref: "#/components/schemas/UserResponse"
@@ -371,12 +433,10 @@ components:
           format: uri
           readOnly: true
         repostId:
-          type: integer
-          format: int64
+          type: string
           readOnly: true
         replyId:
-          type: integer
-          format: int64
+          type: string
           readOnly: true
         sensitive:
           type: boolean
@@ -391,11 +451,9 @@ components:
         visibility:
           $ref: "#/components/schemas/Visibility"
         repostId:
-          type: integer
-          format: int64
+          type: string
         replyId:
-          type: integer
-          format: int64
+          type: string
         sensitive:
           type: boolean
 
@@ -419,6 +477,36 @@ components:
         username:
           type: string
         password:
+          type: string
+
+    Reaction:
+      type: object
+      properties:
+        reaction:
+          type: string
+
+    ReactionResponse:
+      type: object
+      properties:
+        reaction:
+          type: string
+        isUnicodeEmoji:
+          type: boolean
+        iconUrl:
+          type: string
+        accounts:
+          type: array
+          items:
+            $ref: "#/components/schemas/Account"
+
+    Account:
+      type: object
+      properties:
+        screenName:
+          type: string
+        iconUrl:
+          type: string
+        url:
           type: string
 
   securitySchemes:

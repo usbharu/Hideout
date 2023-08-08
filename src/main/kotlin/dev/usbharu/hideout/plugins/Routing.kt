@@ -15,6 +15,7 @@ import dev.usbharu.hideout.service.api.IUserApiService
 import dev.usbharu.hideout.service.auth.HttpSignatureVerifyService
 import dev.usbharu.hideout.service.auth.IJwtService
 import dev.usbharu.hideout.service.core.IMetaService
+import dev.usbharu.hideout.service.reaction.IReactionService
 import dev.usbharu.hideout.service.user.IUserAuthService
 import dev.usbharu.hideout.service.user.IUserService
 import io.ktor.server.application.*
@@ -29,6 +30,7 @@ fun Application.configureRouting(
     activityPubUserService: ActivityPubUserService,
     postService: IPostApiService,
     userApiService: IUserApiService,
+    reactionService: IReactionService,
     userAuthService: IUserAuthService,
     userRepository: IUserRepository,
     jwtService: IJwtService,
@@ -41,7 +43,7 @@ fun Application.configureRouting(
         usersAP(activityPubUserService, userService)
         webfinger(userService)
         route("/api/internal/v1") {
-            posts(postService)
+            posts(postService, reactionService)
             users(userService, userApiService)
             auth(userAuthService, userRepository, jwtService)
         }
