@@ -81,7 +81,7 @@ fun Route.users(userService: IUserService, userApiService: IUserApiService) {
                         }
                         val acct = AcctUtil.parse(userParameter)
                         val targetUser = userApiService.findByAcct(acct)
-                        if (userService.followRequest(targetUser.id, userId)) {
+                        if (userService.followRequest(targetUser.id.toLong(), userId)) {
                             return@post call.respond(HttpStatusCode.OK)
                         } else {
                             return@post call.respond(HttpStatusCode.Accepted)

@@ -11,13 +11,13 @@ open class Like : Object {
 
     protected constructor() : super()
     constructor(
-        type: List<String>,
+        type: List<String> = emptyList(),
         name: String?,
         actor: String?,
         id: String?,
         `object`: String?,
         content: String?,
-        tag: List<Object>
+        tag: List<Object> = emptyList()
     ) : super(
         type = add(type, "Like"),
         name = name,

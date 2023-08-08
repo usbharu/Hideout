@@ -1,9 +1,11 @@
 package dev.usbharu.hideout.routing.api.internal.v1
 
 import dev.usbharu.hideout.domain.model.hideout.form.Post
+import dev.usbharu.hideout.domain.model.hideout.form.Reaction
 import dev.usbharu.hideout.exception.ParameterNotExistException
 import dev.usbharu.hideout.plugins.TOKEN_AUTH
 import dev.usbharu.hideout.service.api.IPostApiService
+import dev.usbharu.hideout.service.reaction.IReactionService
 import dev.usbharu.hideout.util.InstantParseUtil
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -14,7 +16,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 @Suppress("LongMethod")
-fun Route.posts(postApiService: IPostApiService) {
+fun Route.posts(postApiService: IPostApiService, reactionService: IReactionService) {
     route("/posts") {
         authenticate(TOKEN_AUTH) {
             post {
@@ -25,6 +27,39 @@ fun Route.posts(postApiService: IPostApiService) {
                 val create = postApiService.createPost(receive, userId)
                 call.response.header("Location", create.url)
                 call.respond(HttpStatusCode.OK)
+            }
+            route("/{id}/reactions") {
+                get {
+                    val principal = call.principal<JWTPrincipal>() ?: throw IllegalStateException("no principal")
+                    val userId = principal.payload.getClaim("uid").asLong()
+                    val postId = (
+                        call.parameters["id"]?.toLong()
+                            ?: throw ParameterNotExistException("Parameter(id='postsId') does not exist.")
+                        )
+                    call.respond(reactionService.findByPostIdForUser(postId, userId))
+                }
+                post {
+                    val jwtPrincipal = call.principal<JWTPrincipal>() ?: throw IllegalStateException("no principal")
+                    val userId = jwtPrincipal.payload.getClaim("uid").asLong()
+                    val postId = call.parameters["id"]?.toLong()
+                        ?: throw ParameterNotExistException("Parameter(id='postsId') does not exist.")
+                    val reaction = try {
+                        call.receive<Reaction>()
+                    } catch (e: ContentTransformationException) {
+                        Reaction(null)
+                    }
+
+                    reactionService.sendReaction(reaction.reaction ?: "❤", userId, postId)
+                    call.respond(HttpStatusCode.NoContent)
+                }
+                delete {
+                    val jwtPrincipal = call.principal<JWTPrincipal>() ?: throw IllegalStateException("no principal")
+                    val userId = jwtPrincipal.payload.getClaim("uid").asLong()
+                    val postId = call.parameters["id"]?.toLong()
+                        ?: throw ParameterNotExistException("Parameter(id='postsId') does not exist.")
+                    reactionService.removeReaction(userId, postId)
+                    call.respond(HttpStatusCode.NoContent)
+                }
             }
         }
         authenticate(TOKEN_AUTH, optional = true) {

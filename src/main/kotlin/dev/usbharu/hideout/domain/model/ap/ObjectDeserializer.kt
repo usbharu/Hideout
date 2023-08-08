@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import dev.usbharu.hideout.service.activitypub.ExtendedActivityVocabulary
 
 class ObjectDeserializer : JsonDeserializer<Object>() {
-    @Suppress("LongMethod")
+    @Suppress("LongMethod", "CyclomaticComplexMethod")
     override fun deserialize(p: JsonParser?, ctxt: DeserializationContext?): Object {
         requireNotNull(p)
         val treeNode: JsonNode = requireNotNull(p.codec?.readTree(p))

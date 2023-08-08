@@ -5,6 +5,7 @@ import dev.usbharu.hideout.service.core.IdGenerateService
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.core.annotation.Single
@@ -55,6 +56,50 @@ class ReactionRepositoryImpl(
                     Reactions.emojiId.eq(emojiId)
                 )
             }.empty().not()
+        }
+    }
+
+    override suspend fun findByPostId(postId: Long): List<Reaction> {
+        return query {
+            Reactions.select {
+                Reactions.postId.eq(postId)
+            }.map { it.toReaction() }
+        }
+    }
+
+    override suspend fun delete(reaction: Reaction): Reaction {
+        query {
+            Reactions.deleteWhere {
+                id.eq(reaction.id)
+                    .and(postId.eq(reaction.postId))
+                    .and(userId.eq(reaction.postId))
+                    .and(emojiId.eq(reaction.emojiId))
+            }
+        }
+        return reaction
+    }
+
+    override suspend fun deleteById(id: Long) {
+        query {
+            Reactions.deleteWhere { Reactions.id.eq(id) }
+        }
+    }
+
+    override suspend fun deleteByPostId(postId: Long) {
+        query {
+            Reactions.deleteWhere { Reactions.postId.eq(postId) }
+        }
+    }
+
+    override suspend fun deleteByUserId(userId: Long) {
+        query {
+            Reactions.deleteWhere { Reactions.userId.eq(userId) }
+        }
+    }
+
+    override suspend fun deleteByPostIdAndUserId(postId: Long, userId: Long) {
+        query {
+            Reactions.deleteWhere { Reactions.postId.eq(postId).and(Reactions.userId.eq(userId)) }
         }
     }
 }
