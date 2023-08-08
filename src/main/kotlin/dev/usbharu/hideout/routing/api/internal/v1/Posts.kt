@@ -50,6 +50,7 @@ fun Route.posts(postApiService: IPostApiService, reactionService: IReactionServi
                     }
 
                     reactionService.sendReaction(reaction.reaction ?: "❤", userId, postId)
+                    call.respond(HttpStatusCode.NoContent)
                 }
                 delete {
                     val jwtPrincipal = call.principal<JWTPrincipal>() ?: throw IllegalStateException("no principal")
@@ -57,6 +58,7 @@ fun Route.posts(postApiService: IPostApiService, reactionService: IReactionServi
                     val postId = call.parameters["id"]?.toLong()
                         ?: throw ParameterNotExistException("Parameter(id='postsId') does not exist.")
                     reactionService.removeReaction(userId, postId)
+                    call.respond(HttpStatusCode.NoContent)
                 }
             }
         }
