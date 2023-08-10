@@ -9,7 +9,6 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.core.annotation.Single
-import java.time.Instant
 
 @Single
 class PostRepositoryImpl(database: Database, private val idGenerateService: IdGenerateService) : IPostRepository {
@@ -78,44 +77,6 @@ class PostRepositoryImpl(database: Database, private val idGenerateService: IdGe
         return query {
             Posts.deleteWhere { Posts.id eq id }
         }
-    }
-
-    override suspend fun findAll(
-        since: Instant?,
-        until: Instant?,
-        minId: Long?,
-        maxId: Long?,
-        limit: Int?,
-        userId: Long?
-    ): List<Post> {
-        return query {
-            Posts.select { Posts.visibility eq Visibility.PUBLIC.ordinal }.map { it.toPost() }
-        }
-    }
-
-    override suspend fun findByUserNameAndDomain(
-        username: String,
-        s: String,
-        since: Instant?,
-        until: Instant?,
-        minId: Long?,
-        maxId: Long?,
-        limit: Int?,
-        userId: Long?
-    ): List<Post> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun findByUserId(
-        idOrNull: Long,
-        since: Instant?,
-        until: Instant?,
-        minId: Long?,
-        maxId: Long?,
-        limit: Int?,
-        userId: Long?
-    ): List<Post> {
-        TODO("Not yet implemented")
     }
 
     override suspend fun findByApId(id: String): Post? {

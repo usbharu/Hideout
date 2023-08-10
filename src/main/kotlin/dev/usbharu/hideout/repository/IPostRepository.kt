@@ -10,6 +10,5 @@ interface IPostRepository {
     suspend fun findByUrl(url: String): Post?
     suspend fun delete(id: Long)
 
-
     suspend fun findByApId(id: String): Post?
 }
