@@ -11,6 +11,7 @@ import dev.usbharu.hideout.exception.ap.IllegalActivityPubObjectException
 import dev.usbharu.hideout.plugins.getAp
 import dev.usbharu.hideout.plugins.postAp
 import dev.usbharu.hideout.query.FollowerQueryService
+import dev.usbharu.hideout.query.PostQueryService
 import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.repository.IPostRepository
 import dev.usbharu.hideout.service.job.JobQueueParentService
@@ -28,7 +29,8 @@ class ActivityPubNoteServiceImpl(
     private val postRepository: IPostRepository,
     private val activityPubUserService: ActivityPubUserService,
     private val userQueryService: UserQueryService,
-    private val followerQueryService: FollowerQueryService
+    private val followerQueryService: FollowerQueryService,
+    private val postQueryService: PostQueryService
 ) : ActivityPubNoteService {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -72,7 +74,7 @@ class ActivityPubNoteServiceImpl(
     }
 
     override suspend fun fetchNote(url: String, targetActor: String?): Note {
-        val post = postRepository.findByUrl(url)
+        val post = postQueryService.findByUrl(url)
         if (post != null) {
             return postToNote(post)
         }
@@ -86,7 +88,7 @@ class ActivityPubNoteServiceImpl(
 
     private suspend fun postToNote(post: Post): Note {
         val user = userQueryService.findById(post.userId)
-        val reply = post.replyId?.let { postRepository.findOneById(it) }
+        val reply = post.replyId?.let { postQueryService.findById(it) }
         return Note(
             name = "Post",
             id = post.apId,
@@ -100,15 +102,22 @@ class ActivityPubNoteServiceImpl(
         )
     }
 
-    private suspend fun ActivityPubNoteServiceImpl.note(
+    private suspend fun note(
         note: Note,
         targetActor: String?,
         url: String
     ): Note {
-        val findByApId = postRepository.findByApId(url)
-        if (findByApId != null) {
-            return postToNote(findByApId)
+        val findByApId = try {
+            postQueryService.findByApId(url)
+        } catch (_: NoSuchElementException) {
+            return internalNote(note, targetActor, url)
+        } catch (_: IllegalArgumentException) {
+            return internalNote(note, targetActor, url)
         }
+        return postToNote(findByApId)
+    }
+
+    private suspend fun internalNote(note: Note, targetActor: String?, url: String): Note {
         val person = activityPubUserService.fetchPerson(
             note.attributedTo ?: throw IllegalActivityPubObjectException("note.attributedTo is null"),
             targetActor
@@ -129,7 +138,7 @@ class ActivityPubNoteServiceImpl(
 
         val reply = note.inReplyTo?.let {
             fetchNote(it, targetActor)
-            postRepository.findByUrl(it)
+            postQueryService.findByUrl(it)
         }
 
         postRepository.save(
