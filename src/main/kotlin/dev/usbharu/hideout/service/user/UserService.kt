@@ -31,22 +31,10 @@ class UserService(
     override suspend fun findById(id: Long): User =
         userRepository.findById(id) ?: throw UserNotFoundException("$id was not found.")
 
-    override suspend fun findByIds(ids: List<Long>): List<User> = userRepository.findByIds(ids)
-
-    override suspend fun findByName(name: String): List<User> = userRepository.findByName(name)
-
     override suspend fun findByNameLocalUser(name: String): User {
         return userRepository.findByNameAndDomain(name, Config.configData.domain)
             ?: throw UserNotFoundException("$name was not found.")
     }
-
-    override suspend fun findByNameAndDomain(name: String, domain: String?): User {
-        return userRepository.findByNameAndDomain(name, domain ?: Config.configData.domain)
-            ?: throw UserNotFoundException("$name was not found.")
-    }
-
-    override suspend fun findByNameAndDomains(names: List<Pair<String, String>>): List<User> =
-        userRepository.findByNameAndDomains(names)
 
     override suspend fun findByUrl(url: String): User =
         userRepository.findByUrl(url) ?: throw UserNotFoundException("$url was not found.")
@@ -97,17 +85,6 @@ class UserService(
     }
 
     override suspend fun findFollowersById(id: Long): List<User> = userRepository.findFollowersById(id)
-    override suspend fun findFollowersByNameAndDomain(name: String, domain: String?): List<User> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun findFollowingById(id: Long): List<User> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun findFollowingByNameAndDomain(name: String, domain: String?): List<User> {
-        TODO("Not yet implemented")
-    }
 
     // TODO APのフォロー処理を作る
     override suspend fun followRequest(id: Long, followerId: Long): Boolean {
