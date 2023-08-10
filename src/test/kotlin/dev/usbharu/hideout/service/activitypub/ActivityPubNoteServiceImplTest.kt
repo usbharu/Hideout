@@ -82,7 +82,8 @@ class ActivityPubNoteServiceImplTest {
                 mock(),
                 mock(),
                 userQueryService,
-                followerQueryService
+                followerQueryService,
+                mock()
             )
         val postEntity = Post(
             1L,
@@ -106,7 +107,15 @@ class ActivityPubNoteServiceImplTest {
                 respondOk()
             }
         )
-        val activityPubNoteService = ActivityPubNoteServiceImpl(httpClient, mock(), mock(), mock(), mock(), mock())
+        val activityPubNoteService = ActivityPubNoteServiceImpl(
+            httpClient,
+            mock(),
+            mock(),
+            mock(),
+            mock(),
+            mock(),
+            mock()
+        )
         activityPubNoteService.createNoteJob(
             JobProps(
                 data = mapOf<String, Any>(

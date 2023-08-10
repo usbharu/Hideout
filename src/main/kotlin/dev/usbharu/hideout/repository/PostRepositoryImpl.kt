@@ -61,27 +61,15 @@ class PostRepositoryImpl(database: Database, private val idGenerateService: IdGe
         }
     }
 
-    override suspend fun findOneById(id: Long, userId: Long?): Post? {
+    override suspend fun findById(id: Long): Post {
         return query {
-            Posts.select { Posts.id eq id }.singleOrNull()?.toPost()
-        }
-    }
-
-    override suspend fun findByUrl(url: String): Post? {
-        return query {
-            Posts.select { Posts.url eq url }.singleOrNull()?.toPost()
+            Posts.select { Posts.id eq id }.single().toPost()
         }
     }
 
     override suspend fun delete(id: Long) {
         return query {
             Posts.deleteWhere { Posts.id eq id }
-        }
-    }
-
-    override suspend fun findByApId(id: String): Post? {
-        return query {
-            Posts.select { Posts.apId eq id }.singleOrNull()?.toPost()
         }
     }
 }
