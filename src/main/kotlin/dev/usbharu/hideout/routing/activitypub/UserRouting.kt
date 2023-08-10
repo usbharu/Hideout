@@ -1,9 +1,11 @@
 package dev.usbharu.hideout.routing.activitypub
 
+import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.exception.ParameterNotExistException
 import dev.usbharu.hideout.plugins.respondAp
+import dev.usbharu.hideout.query.FollowerQueryService
+import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.service.activitypub.ActivityPubUserService
-import dev.usbharu.hideout.service.user.IUserService
 import dev.usbharu.hideout.util.HttpUtil.Activity
 import dev.usbharu.hideout.util.HttpUtil.JsonLd
 import io.ktor.http.*
@@ -12,7 +14,11 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Routing.usersAP(activityPubUserService: ActivityPubUserService, userService: IUserService) {
+fun Routing.usersAP(
+    activityPubUserService: ActivityPubUserService,
+    userQueryService: UserQueryService,
+    followerQueryService: FollowerQueryService
+) {
     route("/users/{name}") {
         createChild(ContentTypeRouteSelector(ContentType.Application.Activity, ContentType.Application.JsonLd)).handle {
             call.application.log.debug("Signature: ${call.request.header("Signature")}")
@@ -26,10 +32,11 @@ fun Routing.usersAP(activityPubUserService: ActivityPubUserService, userService:
             )
         }
         get {
-            val userEntity = userService.findByNameLocalUser(
-                call.parameters["name"] ?: throw ParameterNotExistException("Parameter(name='name') does not exist.")
+            val userEntity = userQueryService.findByNameAndDomain(
+                call.parameters["name"] ?: throw ParameterNotExistException("Parameter(name='name') does not exist."),
+                Config.configData.domain
             )
-            call.respondText(userEntity.toString() + "\n" + userService.findFollowersById(userEntity.id))
+            call.respondText(userEntity.toString() + "\n" + followerQueryService.findFollowersById(userEntity.id))
         }
     }
 }

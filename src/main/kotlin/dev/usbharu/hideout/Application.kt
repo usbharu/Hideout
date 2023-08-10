@@ -12,6 +12,8 @@ import dev.usbharu.hideout.domain.model.job.DeliverReactionJob
 import dev.usbharu.hideout.domain.model.job.DeliverRemoveReactionJob
 import dev.usbharu.hideout.domain.model.job.ReceiveFollowJob
 import dev.usbharu.hideout.plugins.*
+import dev.usbharu.hideout.query.FollowerQueryService
+import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.repository.IUserRepository
 import dev.usbharu.hideout.routing.register
 import dev.usbharu.hideout.service.activitypub.ActivityPubService
@@ -120,7 +122,8 @@ fun Application.parent() {
         userAuthService = inject<IUserAuthService>().value,
         userRepository = inject<IUserRepository>().value,
         jwtService = inject<IJwtService>().value,
-        metaService = inject<IMetaService>().value
+        userQueryService = inject<UserQueryService>().value,
+        followerQueryService = inject<FollowerQueryService>().value
     )
 }
 
