@@ -8,6 +8,7 @@ import dev.usbharu.hideout.domain.model.ap.Accept
 import dev.usbharu.hideout.domain.model.ap.Follow
 import dev.usbharu.hideout.domain.model.job.ReceiveFollowJob
 import dev.usbharu.hideout.plugins.postAp
+import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.service.job.JobQueueParentService
 import dev.usbharu.hideout.service.user.IUserService
 import io.ktor.client.*
@@ -20,7 +21,8 @@ class ActivityPubReceiveFollowServiceImpl(
     private val jobQueueParentService: JobQueueParentService,
     private val activityPubUserService: ActivityPubUserService,
     private val userService: IUserService,
-    private val httpClient: HttpClient
+    private val httpClient: HttpClient,
+    private val userQueryService: UserQueryService
 ) : ActivityPubReceiveFollowService {
     override suspend fun receiveFollow(follow: Follow): ActivityPubResponse {
         // TODO: Verify HTTP  Signature
@@ -46,9 +48,11 @@ class ActivityPubReceiveFollowServiceImpl(
                 actor = targetActor
             )
         )
-        val users =
-            userService.findByUrls(listOf(targetActor, follow.actor ?: throw IllegalArgumentException("actor is null")))
 
-        userService.followRequest(users.first { it.url == targetActor }.id, users.first { it.url == follow.actor }.id)
+        val targetEntity = userQueryService.findByUrl(targetActor)
+        val followActorEntity =
+            userQueryService.findByUrl(follow.actor ?: throw java.lang.IllegalArgumentException("Actor is null"))
+
+        userService.followRequest(targetEntity.id, followActorEntity.id)
     }
 }

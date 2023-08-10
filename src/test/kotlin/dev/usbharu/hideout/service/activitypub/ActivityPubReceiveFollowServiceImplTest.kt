@@ -9,6 +9,7 @@ import dev.usbharu.hideout.config.ConfigData
 import dev.usbharu.hideout.domain.model.ap.*
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.domain.model.job.ReceiveFollowJob
+import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.service.job.JobQueueParentService
 import dev.usbharu.hideout.service.user.IUserService
 import io.ktor.client.*
@@ -32,7 +33,7 @@ class ActivityPubReceiveFollowServiceImplTest {
             onBlocking { schedule(eq(ReceiveFollowJob), any()) } doReturn Unit
         }
         val activityPubFollowService =
-            ActivityPubReceiveFollowServiceImpl(jobQueueParentService, mock(), mock(), mock())
+            ActivityPubReceiveFollowServiceImpl(jobQueueParentService, mock(), mock(), mock(), mock())
         activityPubFollowService.receiveFollow(
             Follow(
                 emptyList(),
@@ -97,8 +98,8 @@ class ActivityPubReceiveFollowServiceImplTest {
         val activityPubUserService = mock<ActivityPubUserService> {
             onBlocking { fetchPerson(anyString(), any()) } doReturn person
         }
-        val userService = mock<IUserService> {
-            onBlocking { findByUrls(any()) } doReturn listOf(
+        val userQueryService = mock<UserQueryService> {
+            onBlocking { findByUrl(eq("https://example.com")) } doReturn
                 User(
                     id = 1L,
                     name = "test",
@@ -110,7 +111,8 @@ class ActivityPubReceiveFollowServiceImplTest {
                     url = "https://example.com",
                     publicKey = "",
                     createdAt = Instant.now()
-                ),
+                )
+            onBlocking { findByUrl(eq("https://follower.example.com")) } doReturn
                 User(
                     id = 2L,
                     name = "follower",
@@ -123,7 +125,9 @@ class ActivityPubReceiveFollowServiceImplTest {
                     publicKey = "",
                     createdAt = Instant.now()
                 )
-            )
+        }
+
+        val userService = mock<IUserService> {
             onBlocking { followRequest(any(), any()) } doReturn false
         }
         val activityPubFollowService =
@@ -156,7 +160,8 @@ class ActivityPubReceiveFollowServiceImplTest {
                         )
                         respondOk()
                     }
-                )
+                ),
+                userQueryService
             )
         activityPubFollowService.receiveFollowJob(
             JobProps(
