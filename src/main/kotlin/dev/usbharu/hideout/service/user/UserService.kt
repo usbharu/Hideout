@@ -19,8 +19,6 @@ class UserService(
 ) :
     IUserService {
 
-    override suspend fun findByUrls(urls: List<String>): List<User> = userRepository.findByUrls(urls)
-
     override suspend fun usernameAlreadyUse(username: String): Boolean {
         val findByNameAndDomain = userRepository.findByNameAndDomain(username, Config.configData.domain)
         return findByNameAndDomain != null
@@ -63,8 +61,6 @@ class UserService(
         )
         return userRepository.save(userEntity)
     }
-
-    override suspend fun findFollowersById(id: Long): List<User> = userRepository.findFollowersById(id)
 
     // TODO APのフォロー処理を作る
     override suspend fun followRequest(id: Long, followerId: Long): Boolean {

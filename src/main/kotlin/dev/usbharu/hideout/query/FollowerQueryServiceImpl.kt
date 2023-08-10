@@ -5,8 +5,10 @@ import dev.usbharu.hideout.repository.Users
 import dev.usbharu.hideout.repository.UsersFollowers
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.koin.core.annotation.Single
 import java.time.Instant
 
+@Single
 class FollowerQueryServiceImpl : FollowerQueryService {
     override suspend fun findFollowersById(id: Long): List<User> {
         val followers = Users.alias("FOLLOWERS")
