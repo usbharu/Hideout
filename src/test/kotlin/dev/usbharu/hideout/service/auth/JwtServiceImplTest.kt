@@ -12,9 +12,9 @@ import dev.usbharu.hideout.domain.model.hideout.entity.JwtRefreshToken
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.domain.model.hideout.form.RefreshToken
 import dev.usbharu.hideout.exception.InvalidRefreshTokenException
+import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.repository.IJwtRefreshTokenRepository
 import dev.usbharu.hideout.service.core.IMetaService
-import dev.usbharu.hideout.service.user.IUserService
 import dev.usbharu.hideout.util.Base64Util
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -102,7 +102,7 @@ class JwtServiceImplTest {
             )
             onBlocking { generateId() } doReturn 2L
         }
-        val userService = mock<IUserService> {
+        val userService = mock<UserQueryService> {
             onBlocking { findById(1L) } doReturn User(
                 id = 1L,
                 name = "test",

@@ -9,7 +9,6 @@ import dev.usbharu.hideout.exception.UserNotFoundException
 import dev.usbharu.hideout.repository.IUserRepository
 import dev.usbharu.hideout.service.activitypub.ActivityPubSendFollowService
 import org.koin.core.annotation.Single
-import java.lang.Integer.min
 import java.time.Instant
 
 @Single
@@ -19,17 +18,6 @@ class UserService(
     private val activityPubSendFollowService: ActivityPubSendFollowService
 ) :
     IUserService {
-
-    private val maxLimit = 100
-    override suspend fun findAll(limit: Int?, offset: Long?): List<User> {
-        return userRepository.findAllByLimitAndByOffset(
-            min(limit ?: maxLimit, maxLimit),
-            offset ?: 0
-        )
-    }
-
-    override suspend fun findById(id: Long): User =
-        userRepository.findById(id) ?: throw UserNotFoundException("$id was not found.")
 
     override suspend fun findByNameLocalUser(name: String): User {
         return userRepository.findByNameAndDomain(name, Config.configData.domain)

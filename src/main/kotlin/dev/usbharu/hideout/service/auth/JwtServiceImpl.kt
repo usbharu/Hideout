@@ -8,9 +8,9 @@ import dev.usbharu.hideout.domain.model.hideout.entity.JwtRefreshToken
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.domain.model.hideout.form.RefreshToken
 import dev.usbharu.hideout.exception.InvalidRefreshTokenException
+import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.repository.IJwtRefreshTokenRepository
 import dev.usbharu.hideout.service.core.IMetaService
-import dev.usbharu.hideout.service.user.IUserService
 import dev.usbharu.hideout.util.RsaUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +25,7 @@ import java.util.*
 class JwtServiceImpl(
     private val metaService: IMetaService,
     private val refreshTokenRepository: IJwtRefreshTokenRepository,
-    private val userService: IUserService
+    private val userQueryService: UserQueryService
 ) : IJwtService {
 
     private val privateKey by lazy {
@@ -72,7 +72,7 @@ class JwtServiceImpl(
         val token = refreshTokenRepository.findByToken(refreshToken.refreshToken)
             ?: throw InvalidRefreshTokenException("Invalid Refresh Token")
 
-        val user = userService.findById(token.userId)
+        val user = userQueryService.findById(token.userId)
 
         val now = Instant.now()
         if (token.createdAt.isAfter(now)) {
