@@ -3,6 +3,7 @@ package dev.usbharu.hideout.service.reaction
 import dev.usbharu.hideout.domain.model.hideout.dto.Account
 import dev.usbharu.hideout.domain.model.hideout.dto.ReactionResponse
 import dev.usbharu.hideout.domain.model.hideout.entity.Reaction
+import dev.usbharu.hideout.query.ReactionQueryService
 import dev.usbharu.hideout.repository.ReactionRepository
 import dev.usbharu.hideout.repository.Reactions
 import dev.usbharu.hideout.repository.Users
@@ -16,10 +17,11 @@ import org.koin.core.annotation.Single
 @Single
 class ReactionServiceImpl(
     private val reactionRepository: ReactionRepository,
-    private val activityPubReactionService: ActivityPubReactionService
+    private val activityPubReactionService: ActivityPubReactionService,
+    private val reactionQueryService: ReactionQueryService
 ) : IReactionService {
     override suspend fun receiveReaction(name: String, domain: String, userId: Long, postId: Long) {
-        if (reactionRepository.reactionAlreadyExist(postId, userId, 0).not()) {
+        if (reactionQueryService.reactionAlreadyExist(postId, userId, 0).not()) {
             reactionRepository.save(
                 Reaction(reactionRepository.generateId(), 0, postId, userId)
             )
@@ -27,9 +29,9 @@ class ReactionServiceImpl(
     }
 
     override suspend fun sendReaction(name: String, userId: Long, postId: Long) {
-        if (reactionRepository.reactionAlreadyExist(postId, userId, 0)) {
+        if (reactionQueryService.reactionAlreadyExist(postId, userId, 0)) {
             // delete
-            reactionRepository.deleteByPostIdAndUserId(postId, userId)
+            reactionQueryService.deleteByPostIdAndUserId(postId, userId)
         } else {
             val reaction = Reaction(reactionRepository.generateId(), 0, postId, userId)
             reactionRepository.save(reaction)
@@ -38,7 +40,7 @@ class ReactionServiceImpl(
     }
 
     override suspend fun removeReaction(userId: Long, postId: Long) {
-        reactionRepository.deleteByPostIdAndUserId(postId, userId)
+        reactionQueryService.deleteByPostIdAndUserId(postId, userId)
     }
 
     override suspend fun findByPostIdForUser(postId: Long, userId: Long): List<ReactionResponse> {
