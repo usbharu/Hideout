@@ -79,24 +79,6 @@ class ReactionRepositoryImpl(
         return reaction
     }
 
-    override suspend fun deleteById(id: Long) {
-        query {
-            Reactions.deleteWhere { Reactions.id.eq(id) }
-        }
-    }
-
-    override suspend fun deleteByPostId(postId: Long) {
-        query {
-            Reactions.deleteWhere { Reactions.postId.eq(postId) }
-        }
-    }
-
-    override suspend fun deleteByUserId(userId: Long) {
-        query {
-            Reactions.deleteWhere { Reactions.userId.eq(userId) }
-        }
-    }
-
     override suspend fun deleteByPostIdAndUserId(postId: Long, userId: Long) {
         query {
             Reactions.deleteWhere { Reactions.postId.eq(postId).and(Reactions.userId.eq(userId)) }
