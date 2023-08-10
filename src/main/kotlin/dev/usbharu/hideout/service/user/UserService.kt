@@ -19,14 +19,6 @@ class UserService(
 ) :
     IUserService {
 
-    override suspend fun findByNameLocalUser(name: String): User {
-        return userRepository.findByNameAndDomain(name, Config.configData.domain)
-            ?: throw UserNotFoundException("$name was not found.")
-    }
-
-    override suspend fun findByUrl(url: String): User =
-        userRepository.findByUrl(url) ?: throw UserNotFoundException("$url was not found.")
-
     override suspend fun findByUrls(urls: List<String>): List<User> = userRepository.findByUrls(urls)
 
     override suspend fun usernameAlreadyUse(username: String): Boolean {
