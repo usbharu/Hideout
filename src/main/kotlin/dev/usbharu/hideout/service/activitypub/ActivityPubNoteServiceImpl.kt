@@ -10,9 +10,10 @@ import dev.usbharu.hideout.domain.model.job.DeliverPostJob
 import dev.usbharu.hideout.exception.ap.IllegalActivityPubObjectException
 import dev.usbharu.hideout.plugins.getAp
 import dev.usbharu.hideout.plugins.postAp
+import dev.usbharu.hideout.query.FollowerQueryService
+import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.repository.IPostRepository
 import dev.usbharu.hideout.service.job.JobQueueParentService
-import dev.usbharu.hideout.service.user.IUserService
 import io.ktor.client.*
 import io.ktor.client.statement.*
 import kjob.core.job.JobProps
@@ -24,16 +25,17 @@ import java.time.Instant
 class ActivityPubNoteServiceImpl(
     private val httpClient: HttpClient,
     private val jobQueueParentService: JobQueueParentService,
-    private val userService: IUserService,
     private val postRepository: IPostRepository,
-    private val activityPubUserService: ActivityPubUserService
+    private val activityPubUserService: ActivityPubUserService,
+    private val userQueryService: UserQueryService,
+    private val followerQueryService: FollowerQueryService
 ) : ActivityPubNoteService {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override suspend fun createNote(post: Post) {
-        val followers = userService.findFollowersById(post.userId)
-        val userEntity = userService.findById(post.userId)
+        val followers = followerQueryService.findFollowersById(post.userId)
+        val userEntity = userQueryService.findById(post.userId)
         val note = Config.configData.objectMapper.writeValueAsString(post)
         followers.forEach { followerEntity ->
             jobQueueParentService.schedule(DeliverPostJob) {
@@ -83,7 +85,7 @@ class ActivityPubNoteServiceImpl(
     }
 
     private suspend fun postToNote(post: Post): Note {
-        val user = userService.findById(post.userId)
+        val user = userQueryService.findById(post.userId)
         val reply = post.replyId?.let { postRepository.findOneById(it) }
         return Note(
             name = "Post",
@@ -112,7 +114,7 @@ class ActivityPubNoteServiceImpl(
             targetActor
         )
         val user =
-            userService.findByUrl(person.url ?: throw IllegalActivityPubObjectException("person.url is null"))
+            userQueryService.findByUrl(person.url ?: throw IllegalActivityPubObjectException("person.url is null"))
 
         val visibility =
             if (note.to.contains(public) && note.cc.contains(public)) {
