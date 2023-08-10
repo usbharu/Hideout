@@ -2,11 +2,9 @@ package dev.usbharu.hideout.repository
 
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.service.core.IdGenerateService
-import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.core.annotation.Single
 import java.time.Instant
@@ -25,72 +23,66 @@ class UserRepository(private val database: Database, private val idGenerateServi
         }
     }
 
-    @Suppress("InjectDispatcher")
-    suspend fun <T> query(block: suspend () -> T): T =
-        newSuspendedTransaction(Dispatchers.IO) { block() }
-
     override suspend fun save(user: User): User {
-        return query {
-            val singleOrNull = Users.select { Users.id eq user.id }.singleOrNull()
-            if (singleOrNull == null) {
-                Users.insert {
-                    it[id] = user.id
-                    it[name] = user.name
-                    it[domain] = user.domain
-                    it[screenName] = user.screenName
-                    it[description] = user.description
-                    it[password] = user.password
-                    it[inbox] = user.inbox
-                    it[outbox] = user.outbox
-                    it[url] = user.url
-                    it[createdAt] = user.createdAt.toEpochMilli()
-                    it[publicKey] = user.publicKey
-                    it[privateKey] = user.privateKey
-                }
-            } else {
-                Users.update({ Users.id eq user.id }) {
-                    it[name] = user.name
-                    it[domain] = user.domain
-                    it[screenName] = user.screenName
-                    it[description] = user.description
-                    it[password] = user.password
-                    it[inbox] = user.inbox
-                    it[outbox] = user.outbox
-                    it[url] = user.url
-                    it[createdAt] = user.createdAt.toEpochMilli()
-                    it[publicKey] = user.publicKey
-                    it[privateKey] = user.privateKey
-                }
+        val singleOrNull = Users.select { Users.id eq user.id }.singleOrNull()
+        if (singleOrNull == null) {
+            Users.insert {
+                it[id] = user.id
+                it[name] = user.name
+                it[domain] = user.domain
+                it[screenName] = user.screenName
+                it[description] = user.description
+                it[password] = user.password
+                it[inbox] = user.inbox
+                it[outbox] = user.outbox
+                it[url] = user.url
+                it[createdAt] = user.createdAt.toEpochMilli()
+                it[publicKey] = user.publicKey
+                it[privateKey] = user.privateKey
             }
-            return@query user
+        } else {
+            Users.update({ Users.id eq user.id }) {
+                it[name] = user.name
+                it[domain] = user.domain
+                it[screenName] = user.screenName
+                it[description] = user.description
+                it[password] = user.password
+                it[inbox] = user.inbox
+                it[outbox] = user.outbox
+                it[url] = user.url
+                it[createdAt] = user.createdAt.toEpochMilli()
+                it[publicKey] = user.publicKey
+                it[privateKey] = user.privateKey
+            }
         }
+        return user
+
     }
 
     override suspend fun findById(id: Long): User? {
-        return query {
-            Users.select { Users.id eq id }.map {
-                it.toUser()
-            }.singleOrNull()
-        }
+        return Users.select { Users.id eq id }.map {
+            it.toUser()
+        }.singleOrNull()
+
     }
 
     override suspend fun deleteFollowRequest(id: Long, follower: Long) {
-        query {
-            FollowRequests.deleteWhere { userId.eq(id) and followerId.eq(follower) }
-        }
+
+        FollowRequests.deleteWhere { userId.eq(id) and followerId.eq(follower) }
+
     }
 
     override suspend fun findFollowRequestsById(id: Long, follower: Long): Boolean {
-        return query {
-            FollowRequests.select { (FollowRequests.userId eq id) and (FollowRequests.followerId eq follower) }
-                .singleOrNull() != null
-        }
+
+        return FollowRequests.select { (FollowRequests.userId eq id) and (FollowRequests.followerId eq follower) }
+            .singleOrNull() != null
+
     }
 
     override suspend fun delete(id: Long) {
-        query {
-            Users.deleteWhere { Users.id.eq(id) }
-        }
+
+        Users.deleteWhere { Users.id.eq(id) }
+
     }
 
     override suspend fun nextId(): Long = idGenerateService.generateId()
