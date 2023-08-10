@@ -5,12 +5,16 @@ import dev.usbharu.hideout.domain.model.ActivityPubStringResponse
 import dev.usbharu.hideout.domain.model.ap.Accept
 import dev.usbharu.hideout.domain.model.ap.Follow
 import dev.usbharu.hideout.exception.ap.IllegalActivityPubObjectException
+import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.service.user.IUserService
 import io.ktor.http.*
 import org.koin.core.annotation.Single
 
 @Single
-class ActivityPubAcceptServiceImpl(private val userService: IUserService) : ActivityPubAcceptService {
+class ActivityPubAcceptServiceImpl(
+    private val userService: IUserService,
+    private val userQueryService: UserQueryService
+) : ActivityPubAcceptService {
     override suspend fun receiveAccept(accept: Accept): ActivityPubResponse {
         val value = accept.`object` ?: throw IllegalActivityPubObjectException("object is null")
         if (value.type.contains("Follow").not()) {
@@ -20,8 +24,8 @@ class ActivityPubAcceptServiceImpl(private val userService: IUserService) : Acti
         val follow = value as Follow
         val userUrl = follow.`object` ?: throw IllegalActivityPubObjectException("object is null")
         val followerUrl = follow.actor ?: throw IllegalActivityPubObjectException("actor is null")
-        val user = userService.findByUrl(userUrl)
-        val follower = userService.findByUrl(followerUrl)
+        val user = userQueryService.findByUrl(userUrl)
+        val follower = userQueryService.findByUrl(followerUrl)
         userService.follow(user.id, follower.id)
         return ActivityPubStringResponse(HttpStatusCode.OK, "accepted")
     }
