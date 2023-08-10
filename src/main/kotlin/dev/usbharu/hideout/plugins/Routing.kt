@@ -47,7 +47,7 @@ fun Application.configureRouting(
         route("/api/internal/v1") {
             posts(postService, reactionService)
             users(userService, userApiService)
-            auth(userAuthService, userRepository, jwtService)
+            auth(userAuthService, jwtService, userQueryService)
         }
     }
 }

@@ -6,6 +6,8 @@ import dev.usbharu.hideout.domain.model.hideout.dto.SendFollowDto
 import dev.usbharu.hideout.domain.model.hideout.dto.UserCreateDto
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.exception.UserNotFoundException
+import dev.usbharu.hideout.query.FollowerQueryService
+import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.repository.IUserRepository
 import dev.usbharu.hideout.service.activitypub.ActivityPubSendFollowService
 import org.koin.core.annotation.Single
@@ -15,12 +17,14 @@ import java.time.Instant
 class UserService(
     private val userRepository: IUserRepository,
     private val userAuthService: IUserAuthService,
-    private val activityPubSendFollowService: ActivityPubSendFollowService
+    private val activityPubSendFollowService: ActivityPubSendFollowService,
+    private val userQueryService: UserQueryService,
+    private val followerQueryService: FollowerQueryService
 ) :
     IUserService {
 
     override suspend fun usernameAlreadyUse(username: String): Boolean {
-        val findByNameAndDomain = userRepository.findByNameAndDomain(username, Config.configData.domain)
+        val findByNameAndDomain = userQueryService.findByNameAndDomain(username, Config.configData.domain)
         return findByNameAndDomain != null
     }
 
@@ -80,14 +84,14 @@ class UserService(
     }
 
     override suspend fun follow(id: Long, followerId: Long) {
-        userRepository.createFollower(id, followerId)
+        followerQueryService.appendFollower(id, followerId)
         if (userRepository.findFollowRequestsById(id, followerId)) {
             userRepository.deleteFollowRequest(id, followerId)
         }
     }
 
     override suspend fun unfollow(id: Long, followerId: Long): Boolean {
-        userRepository.deleteFollower(id, followerId)
+        followerQueryService.removeFollower(id, followerId)
         return false
     }
 }

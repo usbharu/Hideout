@@ -2,7 +2,7 @@ package dev.usbharu.hideout.plugins
 
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.domain.model.ap.JsonLd
-import dev.usbharu.hideout.repository.IUserRepository
+import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.service.user.UserAuthService
 import dev.usbharu.hideout.util.HttpUtil.Activity
 import io.ktor.client.*
@@ -164,15 +164,15 @@ val httpSignaturePlugin = createClientPlugin("HttpSign", ::HttpSignaturePluginCo
     }
 }
 
-class KtorKeyMap(private val userAuthRepository: IUserRepository) : KeyMap {
+class KtorKeyMap(private val userQueryService: UserQueryService) : KeyMap {
     override fun getPublicKey(keyId: String?): PublicKey = runBlocking {
         val username = (keyId ?: throw IllegalArgumentException("keyId is null")).substringBeforeLast("#pubkey")
             .substringAfterLast("/")
         val publicBytes = Base64.getDecoder().decode(
-            userAuthRepository.findByNameAndDomain(
+            userQueryService.findByNameAndDomain(
                 username,
                 Config.configData.domain
-            )?.run {
+            ).run {
                 publicKey
                     .replace("-----BEGIN PUBLIC KEY-----", "")
                     .replace("-----END PUBLIC KEY-----", "")
@@ -187,10 +187,10 @@ class KtorKeyMap(private val userAuthRepository: IUserRepository) : KeyMap {
         val username = (keyId ?: throw IllegalArgumentException("keyId is null")).substringBeforeLast("#pubkey")
             .substringAfterLast("/")
         val publicBytes = Base64.getDecoder().decode(
-            userAuthRepository.findByNameAndDomain(
+            userQueryService.findByNameAndDomain(
                 username,
                 Config.configData.domain
-            )?.privateKey?.run {
+            ).privateKey?.run {
                 replace("-----BEGIN PRIVATE KEY-----", "")
                     .replace("-----END PRIVATE KEY-----", "")
                     .replace("\n", "")

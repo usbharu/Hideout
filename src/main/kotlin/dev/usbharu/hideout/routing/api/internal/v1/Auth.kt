@@ -3,9 +3,8 @@ package dev.usbharu.hideout.routing.api.internal.v1
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.domain.model.hideout.form.RefreshToken
 import dev.usbharu.hideout.domain.model.hideout.form.UserLogin
-import dev.usbharu.hideout.exception.UserNotFoundException
 import dev.usbharu.hideout.plugins.TOKEN_AUTH
-import dev.usbharu.hideout.repository.IUserRepository
+import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.service.auth.IJwtService
 import dev.usbharu.hideout.service.user.IUserAuthService
 import io.ktor.http.*
@@ -18,8 +17,8 @@ import io.ktor.server.routing.*
 
 fun Route.auth(
     userAuthService: IUserAuthService,
-    userRepository: IUserRepository,
-    jwtService: IJwtService
+    jwtService: IJwtService,
+    userQueryService: UserQueryService
 ) {
     post("/login") {
         val loginUser = call.receive<UserLogin>()
@@ -28,8 +27,7 @@ fun Route.auth(
             return@post call.respond(HttpStatusCode.Unauthorized)
         }
 
-        val user = userRepository.findByNameAndDomain(loginUser.username, Config.configData.domain)
-            ?: throw UserNotFoundException("${loginUser.username} was not found.")
+        val user = userQueryService.findByNameAndDomain(loginUser.username, Config.configData.domain)
 
         return@post call.respond(jwtService.createToken(user))
     }
