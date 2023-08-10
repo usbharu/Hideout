@@ -14,7 +14,7 @@ import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.domain.model.hideout.form.RefreshToken
 import dev.usbharu.hideout.domain.model.hideout.form.UserLogin
 import dev.usbharu.hideout.exception.InvalidRefreshTokenException
-import dev.usbharu.hideout.repository.IUserRepository
+import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.routing.api.internal.v1.auth
 import dev.usbharu.hideout.service.auth.IJwtService
 import dev.usbharu.hideout.service.core.IMetaService
@@ -49,7 +49,7 @@ class SecurityKtTest {
             onBlocking { verifyAccount(eq("testUser"), eq("password")) } doReturn true
         }
         val metaService = mock<IMetaService>()
-        val userRepository = mock<IUserRepository> {
+        val userQueryService = mock<UserQueryService> {
             onBlocking { findByNameAndDomain(eq("testUser"), eq("example.com")) } doReturn User(
                 id = 1L,
                 name = "testUser",
@@ -74,7 +74,7 @@ class SecurityKtTest {
             configureSerialization()
             configureSecurity(jwkProvider, metaService)
             routing {
-                auth(userAuthService, userRepository, jwtService)
+                auth(userAuthService, jwtService, userQueryService)
             }
         }
 
@@ -97,14 +97,14 @@ class SecurityKtTest {
             onBlocking { verifyAccount(anyString(), anyString()) }.doReturn(false)
         }
         val metaService = mock<IMetaService>()
-        val userRepository = mock<IUserRepository>()
+        val userQueryService = mock<UserQueryService>()
         val jwtService = mock<IJwtService>()
         val jwkProvider = mock<JwkProvider>()
         application {
             configureSerialization()
             configureSecurity(jwkProvider, metaService)
             routing {
-                auth(userAuthService, userRepository, jwtService)
+                auth(userAuthService, jwtService, userQueryService)
             }
         }
         client.post("/login") {
@@ -125,14 +125,14 @@ class SecurityKtTest {
             onBlocking { verifyAccount(anyString(), eq("InvalidPassword")) } doReturn false
         }
         val metaService = mock<IMetaService>()
-        val userRepository = mock<IUserRepository>()
+        val userQueryService = mock<UserQueryService>()
         val jwtService = mock<IJwtService>()
         val jwkProvider = mock<JwkProvider>()
         application {
             configureSerialization()
             configureSecurity(jwkProvider, metaService)
             routing {
-                auth(userAuthService, userRepository, jwtService)
+                auth(userAuthService, jwtService, userQueryService)
             }
         }
         client.post("/login") {
@@ -531,7 +531,7 @@ class SecurityKtTest {
             configureSerialization()
             configureSecurity(mock(), mock())
             routing {
-                auth(mock(), mock(), jwtService)
+                auth(mock(), jwtService, mock())
             }
         }
         client.post("/refresh-token") {
@@ -556,7 +556,7 @@ class SecurityKtTest {
             configureSerialization()
             configureSecurity(mock(), mock())
             routing {
-                auth(mock(), mock(), jwtService)
+                auth(mock(), jwtService, mock())
             }
         }
         client.post("/refresh-token") {
