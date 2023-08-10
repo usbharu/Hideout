@@ -7,15 +7,11 @@ import dev.usbharu.hideout.domain.model.hideout.entity.User
 @Suppress("TooManyFunctions")
 interface IUserService {
 
-    suspend fun findByUrls(urls: List<String>): List<User>
-
     suspend fun usernameAlreadyUse(username: String): Boolean
 
     suspend fun createLocalUser(user: UserCreateDto): User
 
     suspend fun createRemoteUser(user: RemoteUserCreateDto): User
-
-    suspend fun findFollowersById(id: Long): List<User>
 
     /**
      * フォローリクエストを送信する
