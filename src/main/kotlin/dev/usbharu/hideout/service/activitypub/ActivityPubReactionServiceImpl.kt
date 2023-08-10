@@ -9,9 +9,10 @@ import dev.usbharu.hideout.domain.model.job.DeliverReactionJob
 import dev.usbharu.hideout.domain.model.job.DeliverRemoveReactionJob
 import dev.usbharu.hideout.exception.PostNotFoundException
 import dev.usbharu.hideout.plugins.postAp
+import dev.usbharu.hideout.query.FollowerQueryService
+import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.repository.IPostRepository
 import dev.usbharu.hideout.service.job.JobQueueParentService
-import dev.usbharu.hideout.service.user.IUserService
 import io.ktor.client.*
 import kjob.core.job.JobProps
 import org.koin.core.annotation.Single
@@ -19,14 +20,15 @@ import java.time.Instant
 
 @Single
 class ActivityPubReactionServiceImpl(
-    private val userService: IUserService,
     private val jobQueueParentService: JobQueueParentService,
     private val iPostRepository: IPostRepository,
-    private val httpClient: HttpClient
+    private val httpClient: HttpClient,
+    private val userQueryService: UserQueryService,
+    private val followerQueryService: FollowerQueryService
 ) : ActivityPubReactionService {
     override suspend fun reaction(like: Reaction) {
-        val followers = userService.findFollowersById(like.userId)
-        val user = userService.findById(like.userId)
+        val followers = followerQueryService.findFollowersById(like.userId)
+        val user = userQueryService.findById(like.userId)
         val post =
             iPostRepository.findOneById(like.postId) ?: throw PostNotFoundException("${like.postId} was not found.")
         followers.forEach { follower ->
@@ -41,8 +43,8 @@ class ActivityPubReactionServiceImpl(
     }
 
     override suspend fun removeReaction(like: Reaction) {
-        val followers = userService.findFollowersById(like.userId)
-        val user = userService.findById(like.userId)
+        val followers = followerQueryService.findFollowersById(like.userId)
+        val user = userQueryService.findById(like.userId)
         val post =
             iPostRepository.findOneById(like.postId) ?: throw PostNotFoundException("${like.postId} was not found.")
         followers.forEach { follower ->

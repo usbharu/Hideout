@@ -7,8 +7,6 @@ import dev.usbharu.hideout.domain.model.hideout.entity.User
 @Suppress("TooManyFunctions")
 interface IUserService {
 
-    suspend fun findById(id: Long): User
-
     suspend fun findByNameLocalUser(name: String): User
 
     suspend fun findByUrl(url: String): User
