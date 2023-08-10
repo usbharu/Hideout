@@ -9,6 +9,7 @@ import dev.usbharu.hideout.domain.model.hideout.dto.RemoteUserCreateDto
 import dev.usbharu.hideout.exception.UserNotFoundException
 import dev.usbharu.hideout.exception.ap.IllegalActivityPubObjectException
 import dev.usbharu.hideout.plugins.getAp
+import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.service.user.IUserService
 import dev.usbharu.hideout.util.HttpUtil.Activity
 import io.ktor.client.*
@@ -20,13 +21,14 @@ import org.koin.core.annotation.Single
 @Single
 class ActivityPubUserServiceImpl(
     private val userService: IUserService,
-    private val httpClient: HttpClient
+    private val httpClient: HttpClient,
+    private val userQueryService: UserQueryService
 ) :
     ActivityPubUserService {
 
     override suspend fun getPersonByName(name: String): Person {
         // TODO: JOINで書き直し
-        val userEntity = userService.findByNameLocalUser(name)
+        val userEntity = userQueryService.findByNameAndDomain(name, Config.configData.domain)
         val userUrl = "${Config.configData.url}/users/$name"
         return Person(
             type = emptyList(),
@@ -55,7 +57,7 @@ class ActivityPubUserServiceImpl(
 
     override suspend fun fetchPerson(url: String, targetActor: String?): Person {
         return try {
-            val userEntity = userService.findByUrl(url)
+            val userEntity = userQueryService.findByUrl(url)
             return Person(
                 type = emptyList(),
                 name = userEntity.name,

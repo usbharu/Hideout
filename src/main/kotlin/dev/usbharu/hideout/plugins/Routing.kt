@@ -1,5 +1,7 @@
 package dev.usbharu.hideout.plugins
 
+import dev.usbharu.hideout.query.FollowerQueryService
+import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.repository.IUserRepository
 import dev.usbharu.hideout.routing.activitypub.inbox
 import dev.usbharu.hideout.routing.activitypub.outbox
@@ -14,7 +16,6 @@ import dev.usbharu.hideout.service.api.IPostApiService
 import dev.usbharu.hideout.service.api.IUserApiService
 import dev.usbharu.hideout.service.auth.HttpSignatureVerifyService
 import dev.usbharu.hideout.service.auth.IJwtService
-import dev.usbharu.hideout.service.core.IMetaService
 import dev.usbharu.hideout.service.reaction.IReactionService
 import dev.usbharu.hideout.service.user.IUserAuthService
 import dev.usbharu.hideout.service.user.IUserService
@@ -34,14 +35,15 @@ fun Application.configureRouting(
     userAuthService: IUserAuthService,
     userRepository: IUserRepository,
     jwtService: IJwtService,
-    metaService: IMetaService
+    userQueryService: UserQueryService,
+    followerQueryService: FollowerQueryService
 ) {
     install(AutoHeadResponse)
     routing {
         inbox(httpSignatureVerifyService, activityPubService)
         outbox()
-        usersAP(activityPubUserService, userService)
-        webfinger(userService)
+        usersAP(activityPubUserService, userQueryService, followerQueryService)
+        webfinger(userQueryService)
         route("/api/internal/v1") {
             posts(postService, reactionService)
             users(userService, userApiService)
