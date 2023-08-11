@@ -5,7 +5,6 @@ import dev.usbharu.hideout.domain.model.hideout.form.Reaction
 import dev.usbharu.hideout.exception.ParameterNotExistException
 import dev.usbharu.hideout.plugins.TOKEN_AUTH
 import dev.usbharu.hideout.service.api.IPostApiService
-import dev.usbharu.hideout.service.reaction.IReactionService
 import dev.usbharu.hideout.util.InstantParseUtil
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -16,7 +15,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 @Suppress("LongMethod")
-fun Route.posts(postApiService: IPostApiService, reactionService: IReactionService) {
+fun Route.posts(postApiService: IPostApiService) {
     route("/posts") {
         authenticate(TOKEN_AUTH) {
             post {
@@ -36,7 +35,7 @@ fun Route.posts(postApiService: IPostApiService, reactionService: IReactionServi
                         call.parameters["id"]?.toLong()
                             ?: throw ParameterNotExistException("Parameter(id='postsId') does not exist.")
                         )
-                    call.respond(reactionService.findByPostIdForUser(postId, userId))
+                    call.respond(postApiService.getReactionByPostId(postId, userId))
                 }
                 post {
                     val jwtPrincipal = call.principal<JWTPrincipal>() ?: throw IllegalStateException("no principal")
@@ -45,11 +44,11 @@ fun Route.posts(postApiService: IPostApiService, reactionService: IReactionServi
                         ?: throw ParameterNotExistException("Parameter(id='postsId') does not exist.")
                     val reaction = try {
                         call.receive<Reaction>()
-                    } catch (e: ContentTransformationException) {
+                    } catch (_: ContentTransformationException) {
                         Reaction(null)
                     }
 
-                    reactionService.sendReaction(reaction.reaction ?: "❤", userId, postId)
+                    postApiService.appendReaction(reaction.reaction ?: "❤", userId, postId)
                     call.respond(HttpStatusCode.NoContent)
                 }
                 delete {
@@ -57,7 +56,7 @@ fun Route.posts(postApiService: IPostApiService, reactionService: IReactionServi
                     val userId = jwtPrincipal.payload.getClaim("uid").asLong()
                     val postId = call.parameters["id"]?.toLong()
                         ?: throw ParameterNotExistException("Parameter(id='postsId') does not exist.")
-                    reactionService.removeReaction(userId, postId)
+                    postApiService.removeReaction(userId, postId)
                     call.respond(HttpStatusCode.NoContent)
                 }
             }

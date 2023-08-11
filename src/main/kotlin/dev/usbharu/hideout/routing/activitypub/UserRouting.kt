@@ -33,11 +33,8 @@ fun Routing.usersAP(
             )
         }
         get {
-
-
             // TODO: 暫定処置なので治す
             newSuspendedTransaction {
-
                 val userEntity = userQueryService.findByNameAndDomain(
                     call.parameters["name"]
                         ?: throw ParameterNotExistException("Parameter(name='name') does not exist."),

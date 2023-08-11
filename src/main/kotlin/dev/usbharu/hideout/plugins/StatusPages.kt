@@ -12,7 +12,7 @@ fun Application.configureStatusPages() {
             call.respondText(text = "400: $cause", status = HttpStatusCode.BadRequest)
         }
         exception<InvalidUsernameOrPasswordException> { call, _ ->
-            call.respond(401)
+            call.respond(HttpStatusCode.Unauthorized)
         }
         exception<Throwable> { call, cause ->
             call.respondText(text = "500: ${cause.stackTraceToString()}", status = HttpStatusCode.InternalServerError)

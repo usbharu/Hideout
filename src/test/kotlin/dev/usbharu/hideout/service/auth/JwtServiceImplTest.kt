@@ -155,7 +155,19 @@ class JwtServiceImplTest {
         val refreshTokenRepository = mock<JwtRefreshTokenQueryService> {
             onBlocking { findByToken("InvalidRefreshToken") } doThrow NoSuchElementException()
         }
-        val jwtService = JwtServiceImpl(mock(), mock(), mock(), refreshTokenRepository)
+        val kid = UUID.randomUUID()
+        val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
+        keyPairGenerator.initialize(2048)
+        val generateKeyPair = keyPairGenerator.generateKeyPair()
+
+        val metaService = mock<IMetaService> {
+            onBlocking { getJwtMeta() } doReturn Jwt(
+                kid,
+                Base64Util.encode(generateKeyPair.private.encoded),
+                Base64Util.encode(generateKeyPair.public.encoded)
+            )
+        }
+        val jwtService = JwtServiceImpl(metaService, mock(), mock(), refreshTokenRepository)
         assertThrows<InvalidRefreshTokenException> { jwtService.refreshToken(RefreshToken("InvalidRefreshToken")) }
     }
 
@@ -170,7 +182,19 @@ class JwtServiceImplTest {
                 expiresAt = Instant.now().plus(10, ChronoUnit.MINUTES).plus(14, ChronoUnit.DAYS)
             )
         }
-        val jwtService = JwtServiceImpl(mock(), mock(), mock(), refreshTokenRepository)
+        val kid = UUID.randomUUID()
+        val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
+        keyPairGenerator.initialize(2048)
+        val generateKeyPair = keyPairGenerator.generateKeyPair()
+
+        val metaService = mock<IMetaService> {
+            onBlocking { getJwtMeta() } doReturn Jwt(
+                kid,
+                Base64Util.encode(generateKeyPair.private.encoded),
+                Base64Util.encode(generateKeyPair.public.encoded)
+            )
+        }
+        val jwtService = JwtServiceImpl(metaService, mock(), mock(), refreshTokenRepository)
         assertThrows<InvalidRefreshTokenException> { jwtService.refreshToken(RefreshToken("refreshToken")) }
     }
 
@@ -185,7 +209,19 @@ class JwtServiceImplTest {
                 expiresAt = Instant.now().minus(16, ChronoUnit.DAYS)
             )
         }
-        val jwtService = JwtServiceImpl(mock(), mock(), mock(), refreshTokenRepository)
+        val kid = UUID.randomUUID()
+        val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
+        keyPairGenerator.initialize(2048)
+        val generateKeyPair = keyPairGenerator.generateKeyPair()
+
+        val metaService = mock<IMetaService> {
+            onBlocking { getJwtMeta() } doReturn Jwt(
+                kid,
+                Base64Util.encode(generateKeyPair.private.encoded),
+                Base64Util.encode(generateKeyPair.public.encoded)
+            )
+        }
+        val jwtService = JwtServiceImpl(metaService, mock(), mock(), refreshTokenRepository)
         assertThrows<InvalidRefreshTokenException> { jwtService.refreshToken(RefreshToken("refreshToken")) }
     }
 }

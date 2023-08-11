@@ -6,7 +6,6 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.domain.model.hideout.dto.PostResponse
 import dev.usbharu.hideout.domain.model.hideout.dto.UserResponse
-import dev.usbharu.hideout.domain.model.hideout.entity.Post
 import dev.usbharu.hideout.domain.model.hideout.entity.Visibility
 import dev.usbharu.hideout.plugins.TOKEN_AUTH
 import dev.usbharu.hideout.plugins.configureSecurity
@@ -78,7 +77,7 @@ class PostsTest {
             configureSecurity(mock(), mock())
             routing {
                 route("/api/internal/v1") {
-                    posts(postService, mock())
+                    posts(postService)
                 }
             }
         }
@@ -159,7 +158,7 @@ class PostsTest {
             configureSerialization()
             routing {
                 route("/api/internal/v1") {
-                    posts(postService, mock())
+                    posts(postService)
                 }
             }
         }
@@ -200,7 +199,7 @@ class PostsTest {
             configureSecurity(mock(), mock())
             routing {
                 route("/api/internal/v1") {
-                    posts(postService, mock())
+                    posts(postService)
                 }
             }
         }
@@ -251,7 +250,7 @@ class PostsTest {
             }
             routing {
                 route("/api/internal/v1") {
-                    posts(postService, mock())
+                    posts(postService)
                 }
             }
         }
@@ -308,7 +307,7 @@ class PostsTest {
             }
             routing {
                 route("/api/internal/v1") {
-                    posts(postService, mock())
+                    posts(postService)
                 }
             }
             configureSerialization()
@@ -379,7 +378,7 @@ class PostsTest {
             configureSecurity(mock(), mock())
             routing {
                 route("/api/internal/v1") {
-                    posts(postService, mock())
+                    posts(postService)
                 }
             }
         }
@@ -440,7 +439,7 @@ class PostsTest {
             configureSecurity(mock(), mock())
             routing {
                 route("/api/internal/v1") {
-                    posts(postService, mock())
+                    posts(postService)
                 }
             }
         }
@@ -501,7 +500,7 @@ class PostsTest {
             configureSecurity(mock(), mock())
             routing {
                 route("/api/internal/v1") {
-                    posts(postService, mock())
+                    posts(postService)
                 }
             }
         }
@@ -562,7 +561,7 @@ class PostsTest {
             configureSecurity(mock(), mock())
             routing {
                 route("/api/internal/v1") {
-                    posts(postService, mock())
+                    posts(postService)
                 }
             }
         }
@@ -602,7 +601,7 @@ class PostsTest {
             configureSecurity(mock(), mock())
             routing {
                 route("/api/internal/v1") {
-                    posts(postService, mock())
+                    posts(postService)
                 }
             }
         }
@@ -642,7 +641,7 @@ class PostsTest {
             configureSecurity(mock(), mock())
             routing {
                 route("/api/internal/v1") {
-                    posts(postService, mock())
+                    posts(postService)
                 }
             }
         }
@@ -682,7 +681,7 @@ class PostsTest {
             configureSecurity(mock(), mock())
             routing {
                 route("/api/internal/v1") {
-                    posts(postService, mock())
+                    posts(postService)
                 }
             }
         }
@@ -722,7 +721,7 @@ class PostsTest {
             configureSecurity(mock(), mock())
             routing {
                 route("/api/internal/v1") {
-                    posts(postService, mock())
+                    posts(postService)
                 }
             }
         }

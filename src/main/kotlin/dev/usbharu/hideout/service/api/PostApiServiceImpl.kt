@@ -3,11 +3,13 @@ package dev.usbharu.hideout.service.api
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.domain.model.hideout.dto.PostCreateDto
 import dev.usbharu.hideout.domain.model.hideout.dto.PostResponse
+import dev.usbharu.hideout.domain.model.hideout.dto.ReactionResponse
 import dev.usbharu.hideout.query.PostResponseQueryService
+import dev.usbharu.hideout.query.ReactionQueryService
 import dev.usbharu.hideout.repository.IUserRepository
 import dev.usbharu.hideout.service.post.IPostService
+import dev.usbharu.hideout.service.reaction.IReactionService
 import dev.usbharu.hideout.util.AcctUtil
-import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.koin.core.annotation.Single
 import java.time.Instant
@@ -17,7 +19,9 @@ import dev.usbharu.hideout.domain.model.hideout.form.Post as FormPost
 class PostApiServiceImpl(
     private val postService: IPostService,
     private val userRepository: IUserRepository,
-    private val postResponseQueryService: PostResponseQueryService
+    private val postResponseQueryService: PostResponseQueryService,
+    private val reactionQueryService: ReactionQueryService,
+    private val reactionService: IReactionService
 ) : IPostApiService {
     override suspend fun createPost(postForm: FormPost, userId: Long): PostResponse {
         return newSuspendedTransaction {
@@ -35,10 +39,6 @@ class PostApiServiceImpl(
             PostResponse.from(createdPost, creator!!)
         }
     }
-
-    @Suppress("InjectDispatcher")
-    suspend fun <T> query(block: suspend () -> T): T =
-        newSuspendedTransaction(Dispatchers.IO) { block() }
 
     override suspend fun getById(id: Long, userId: Long?): PostResponse = postResponseQueryService.findById(id, userId)
 
@@ -75,6 +75,21 @@ class PostApiServiceImpl(
             postResponseQueryService.findByUserNameAndUserDomain(acct.username, acct.domain ?: Config.configData.domain)
         } else {
             postResponseQueryService.findByUserId(idOrNull)
+        }
+    }
+
+    override suspend fun getReactionByPostId(postId: Long, userId: Long?): List<ReactionResponse> =
+        newSuspendedTransaction { reactionQueryService.findByPostIdWithUsers(postId, userId) }
+
+    override suspend fun appendReaction(reaction: String, userId: Long, postId: Long) {
+        newSuspendedTransaction {
+            reactionService.sendReaction(reaction, userId, postId)
+        }
+    }
+
+    override suspend fun removeReaction(userId: Long, postId: Long) {
+        newSuspendedTransaction {
+            reactionService.removeReaction(userId, postId)
         }
     }
 }
