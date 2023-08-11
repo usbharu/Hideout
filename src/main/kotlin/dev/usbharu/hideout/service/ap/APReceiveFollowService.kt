@@ -11,7 +11,7 @@ import dev.usbharu.hideout.plugins.postAp
 import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.service.core.Transaction
 import dev.usbharu.hideout.service.job.JobQueueParentService
-import dev.usbharu.hideout.service.user.IUserService
+import dev.usbharu.hideout.service.user.UserService
 import io.ktor.client.*
 import io.ktor.http.*
 import kjob.core.job.JobProps
@@ -26,7 +26,7 @@ interface APReceiveFollowService {
 class APReceiveFollowServiceImpl(
     private val jobQueueParentService: JobQueueParentService,
     private val apUserService: APUserService,
-    private val userService: IUserService,
+    private val userService: UserService,
     private val httpClient: HttpClient,
     private val userQueryService: UserQueryService,
     private val transaction: Transaction

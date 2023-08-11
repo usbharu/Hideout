@@ -7,7 +7,7 @@ import dev.usbharu.hideout.exception.ap.IllegalActivityPubObjectException
 import dev.usbharu.hideout.query.PostQueryService
 import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.service.core.Transaction
-import dev.usbharu.hideout.service.reaction.IReactionService
+import dev.usbharu.hideout.service.reaction.ReactionService
 import io.ktor.http.*
 import org.koin.core.annotation.Single
 
@@ -17,7 +17,7 @@ interface APLikeService {
 
 @Single
 class APLikeServiceImpl(
-    private val reactionService: IReactionService,
+    private val reactionService: ReactionService,
     private val apUserService: APUserService,
     private val apNoteService: APNoteService,
     private val userQueryService: UserQueryService,

@@ -4,7 +4,7 @@ import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.domain.model.ap.JsonLd
 import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.service.core.Transaction
-import dev.usbharu.hideout.service.user.UserAuthService
+import dev.usbharu.hideout.service.user.UserAuthServiceImpl
 import dev.usbharu.hideout.util.HttpUtil.Activity
 import io.ktor.client.*
 import io.ktor.client.plugins.api.*
@@ -73,7 +73,7 @@ val httpSignaturePlugin = createClientPlugin("HttpSign", ::HttpSignaturePluginCo
             println("Digest !!")
 //            UserAuthService.sha256.reset()
             val digest =
-                Base64.getEncoder().encodeToString(UserAuthService.sha256.digest(body.toByteArray(Charsets.UTF_8)))
+                Base64.getEncoder().encodeToString(UserAuthServiceImpl.sha256.digest(body.toByteArray(Charsets.UTF_8)))
             request.headers.append("Digest", "sha-256=$digest")
         }
 

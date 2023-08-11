@@ -2,7 +2,7 @@ package dev.usbharu.hideout.repository
 
 import dev.usbharu.hideout.domain.model.hideout.entity.Meta
 
-interface IMetaRepository {
+interface MetaRepository {
 
     suspend fun save(meta: Meta)
 

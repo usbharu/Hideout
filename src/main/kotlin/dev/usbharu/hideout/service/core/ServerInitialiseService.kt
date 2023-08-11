@@ -1,5 +1,5 @@
 package dev.usbharu.hideout.service.core
 
-interface IServerInitialiseService {
+interface ServerInitialiseService {
     suspend fun init()
 }

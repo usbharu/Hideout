@@ -3,18 +3,18 @@ package dev.usbharu.hideout.service.post
 import dev.usbharu.hideout.domain.model.hideout.dto.PostCreateDto
 import dev.usbharu.hideout.domain.model.hideout.entity.Post
 import dev.usbharu.hideout.exception.UserNotFoundException
-import dev.usbharu.hideout.repository.IPostRepository
-import dev.usbharu.hideout.repository.IUserRepository
+import dev.usbharu.hideout.repository.PostRepository
+import dev.usbharu.hideout.repository.UserRepository
 import dev.usbharu.hideout.service.ap.APNoteService
 import org.koin.core.annotation.Single
 import java.time.Instant
 
 @Single
 class PostServiceImpl(
-    private val postRepository: IPostRepository,
-    private val userRepository: IUserRepository,
+    private val postRepository: PostRepository,
+    private val userRepository: UserRepository,
     private val apNoteService: APNoteService
-) : IPostService {
+) : PostService {
     override suspend fun createLocal(post: PostCreateDto): Post {
         val user = userRepository.findById(post.userId) ?: throw UserNotFoundException("${post.userId} was not found")
         val id = postRepository.generateId()

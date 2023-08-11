@@ -5,9 +5,9 @@ import dev.usbharu.hideout.domain.model.hideout.dto.JwtToken
 import dev.usbharu.hideout.domain.model.hideout.form.RefreshToken
 import dev.usbharu.hideout.exception.InvalidUsernameOrPasswordException
 import dev.usbharu.hideout.query.UserQueryService
-import dev.usbharu.hideout.service.auth.IJwtService
+import dev.usbharu.hideout.service.auth.JwtService
 import dev.usbharu.hideout.service.core.Transaction
-import dev.usbharu.hideout.service.user.UserAuthService
+import dev.usbharu.hideout.service.user.UserAuthServiceImpl
 import org.koin.core.annotation.Single
 
 interface UserAuthApiService {
@@ -17,9 +17,9 @@ interface UserAuthApiService {
 
 @Single
 class UserAuthApiServiceImpl(
-    private val userAuthService: UserAuthService,
+    private val userAuthService: UserAuthServiceImpl,
     private val userQueryService: UserQueryService,
-    private val jwtService: IJwtService,
+    private val jwtService: JwtService,
     private val transaction: Transaction
 ) : UserAuthApiService {
     override suspend fun login(username: String, password: String): JwtToken {

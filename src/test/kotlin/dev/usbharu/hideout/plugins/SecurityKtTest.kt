@@ -18,9 +18,9 @@ import dev.usbharu.hideout.exception.InvalidUsernameOrPasswordException
 import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.routing.api.internal.v1.auth
 import dev.usbharu.hideout.service.api.UserAuthApiService
-import dev.usbharu.hideout.service.auth.IJwtService
-import dev.usbharu.hideout.service.core.IMetaService
-import dev.usbharu.hideout.service.user.IUserAuthService
+import dev.usbharu.hideout.service.auth.JwtService
+import dev.usbharu.hideout.service.core.MetaService
+import dev.usbharu.hideout.service.user.UserAuthService
 import dev.usbharu.hideout.util.Base64Util
 import dev.usbharu.hideout.util.JsonWebKeyUtil
 import io.ktor.client.request.*
@@ -51,7 +51,7 @@ class SecurityKtTest {
         val userAuthService = mock<UserAuthApiService> {
             onBlocking { login(eq("testUser"), eq("password")) } doReturn jwtToken
         }
-        val metaService = mock<IMetaService>()
+        val metaService = mock<MetaService>()
         val userQueryService = mock<UserQueryService> {
             onBlocking { findByNameAndDomain(eq("testUser"), eq("example.com")) } doReturn User(
                 id = 1L,
@@ -93,12 +93,12 @@ class SecurityKtTest {
                 config = ApplicationConfig("empty.conf")
             }
             Config.configData = ConfigData(url = "http://example.com", objectMapper = jacksonObjectMapper())
-            mock<IUserAuthService> {
+            mock<UserAuthService> {
                 onBlocking { verifyAccount(anyString(), anyString()) }.doReturn(false)
             }
-            val metaService = mock<IMetaService>()
+            val metaService = mock<MetaService>()
             mock<UserQueryService>()
-            mock<IJwtService>()
+            mock<JwtService>()
             val jwkProvider = mock<JwkProvider>()
             val userAuthApiService = mock<UserAuthApiService> {
                 onBlocking { login(anyString(), anyString()) } doThrow InvalidUsernameOrPasswordException()
@@ -126,7 +126,7 @@ class SecurityKtTest {
             config = ApplicationConfig("empty.conf")
         }
         Config.configData = ConfigData(url = "http://example.com", objectMapper = jacksonObjectMapper())
-        val metaService = mock<IMetaService>()
+        val metaService = mock<MetaService>()
         val jwkProvider = mock<JwkProvider>()
         val userAuthApiService = mock<UserAuthApiService> {
             onBlocking { login(anyString(), eq("InvalidPassword")) } doThrow InvalidUsernameOrPasswordException()
@@ -247,7 +247,7 @@ class SecurityKtTest {
             .withClaim("uid", 123456L)
             .withExpiresAt(now.plus(30, ChronoUnit.MINUTES))
             .sign(Algorithm.RSA256(rsaPublicKey, keyPair.private as RSAPrivateKey))
-        val metaService = mock<IMetaService> {
+        val metaService = mock<MetaService> {
             onBlocking { getJwtMeta() }.doReturn(
                 Jwt(
                     kid,
@@ -308,7 +308,7 @@ class SecurityKtTest {
             .withClaim("uid", 123345L)
             .withExpiresAt(now.minus(30, ChronoUnit.MINUTES))
             .sign(Algorithm.RSA256(rsaPublicKey, keyPair.private as RSAPrivateKey))
-        val metaService = mock<IMetaService> {
+        val metaService = mock<MetaService> {
             onBlocking { getJwtMeta() }.doReturn(
                 Jwt(
                     kid,
@@ -367,7 +367,7 @@ class SecurityKtTest {
             .withClaim("uid", 12345L)
             .withExpiresAt(now.plus(30, ChronoUnit.MINUTES))
             .sign(Algorithm.RSA256(rsaPublicKey, keyPair.private as RSAPrivateKey))
-        val metaService = mock<IMetaService> {
+        val metaService = mock<MetaService> {
             onBlocking { getJwtMeta() }.doReturn(
                 Jwt(
                     kid,
@@ -426,7 +426,7 @@ class SecurityKtTest {
             .withClaim("uid", null as Long?)
             .withExpiresAt(now.plus(30, ChronoUnit.MINUTES))
             .sign(Algorithm.RSA256(rsaPublicKey, keyPair.private as RSAPrivateKey))
-        val metaService = mock<IMetaService> {
+        val metaService = mock<MetaService> {
             onBlocking { getJwtMeta() }.doReturn(
                 Jwt(
                     kid,
@@ -484,7 +484,7 @@ class SecurityKtTest {
             .withKeyId(kid.toString())
             .withExpiresAt(now.plus(30, ChronoUnit.MINUTES))
             .sign(Algorithm.RSA256(rsaPublicKey, keyPair.private as RSAPrivateKey))
-        val metaService = mock<IMetaService> {
+        val metaService = mock<MetaService> {
             onBlocking { getJwtMeta() }.doReturn(
                 Jwt(
                     kid,
