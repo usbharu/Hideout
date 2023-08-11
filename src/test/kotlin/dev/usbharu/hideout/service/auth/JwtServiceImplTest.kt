@@ -12,6 +12,7 @@ import dev.usbharu.hideout.domain.model.hideout.entity.JwtRefreshToken
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.domain.model.hideout.form.RefreshToken
 import dev.usbharu.hideout.exception.InvalidRefreshTokenException
+import dev.usbharu.hideout.query.JwtRefreshTokenQueryService
 import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.repository.IJwtRefreshTokenRepository
 import dev.usbharu.hideout.service.core.IMetaService
@@ -21,6 +22,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.mock
 import java.security.KeyPairGenerator
 import java.security.interfaces.RSAPrivateKey
@@ -50,7 +52,7 @@ class JwtServiceImplTest {
         val refreshTokenRepository = mock<IJwtRefreshTokenRepository> {
             onBlocking { generateId() } doReturn 1L
         }
-        val jwtService = JwtServiceImpl(metaService, refreshTokenRepository, mock())
+        val jwtService = JwtServiceImpl(metaService, refreshTokenRepository, mock(), mock())
         val token = jwtService.createToken(
             User(
                 id = 1L,
@@ -93,6 +95,10 @@ class JwtServiceImplTest {
         val generateKeyPair = keyPairGenerator.generateKeyPair()
 
         val refreshTokenRepository = mock<IJwtRefreshTokenRepository> {
+            onBlocking { generateId() } doReturn 2L
+        }
+
+        val jwtRefreshTokenQueryService = mock<JwtRefreshTokenQueryService> {
             onBlocking { findByToken("refreshToken") } doReturn JwtRefreshToken(
                 id = 1L,
                 userId = 1L,
@@ -100,7 +106,6 @@ class JwtServiceImplTest {
                 createdAt = Instant.now().minus(60, ChronoUnit.MINUTES),
                 expiresAt = Instant.now().plus(14, ChronoUnit.DAYS).minus(60, ChronoUnit.MINUTES)
             )
-            onBlocking { generateId() } doReturn 2L
         }
         val userService = mock<UserQueryService> {
             onBlocking { findById(1L) } doReturn User(
@@ -125,7 +130,7 @@ class JwtServiceImplTest {
                 Base64Util.encode(generateKeyPair.public.encoded)
             )
         }
-        val jwtService = JwtServiceImpl(metaService, refreshTokenRepository, userService)
+        val jwtService = JwtServiceImpl(metaService, refreshTokenRepository, userService, jwtRefreshTokenQueryService)
         val refreshToken = jwtService.refreshToken(RefreshToken("refreshToken"))
         assertNotEquals("", refreshToken.token)
         assertNotEquals("", refreshToken.refreshToken)
@@ -147,16 +152,16 @@ class JwtServiceImplTest {
 
     @Test
     fun `refreshToken 無効なリフレッシュトークンは失敗する`() = runTest {
-        val refreshTokenRepository = mock<IJwtRefreshTokenRepository> {
-            onBlocking { findByToken("InvalidRefreshToken") } doReturn null
+        val refreshTokenRepository = mock<JwtRefreshTokenQueryService> {
+            onBlocking { findByToken("InvalidRefreshToken") } doThrow NoSuchElementException()
         }
-        val jwtService = JwtServiceImpl(mock(), refreshTokenRepository, mock())
+        val jwtService = JwtServiceImpl(mock(), mock(), mock(), refreshTokenRepository)
         assertThrows<InvalidRefreshTokenException> { jwtService.refreshToken(RefreshToken("InvalidRefreshToken")) }
     }
 
     @Test
     fun `refreshToken 未来に作成されたリフレッシュトークンは失敗する`() = runTest {
-        val refreshTokenRepository = mock<IJwtRefreshTokenRepository> {
+        val refreshTokenRepository = mock<JwtRefreshTokenQueryService> {
             onBlocking { findByToken("refreshToken") } doReturn JwtRefreshToken(
                 id = 1L,
                 userId = 1L,
@@ -165,13 +170,13 @@ class JwtServiceImplTest {
                 expiresAt = Instant.now().plus(10, ChronoUnit.MINUTES).plus(14, ChronoUnit.DAYS)
             )
         }
-        val jwtService = JwtServiceImpl(mock(), refreshTokenRepository, mock())
+        val jwtService = JwtServiceImpl(mock(), mock(), mock(), refreshTokenRepository)
         assertThrows<InvalidRefreshTokenException> { jwtService.refreshToken(RefreshToken("refreshToken")) }
     }
 
     @Test
     fun `refreshToken 期限切れのリフレッシュトークンでは失敗する`() = runTest {
-        val refreshTokenRepository = mock<IJwtRefreshTokenRepository> {
+        val refreshTokenRepository = mock<JwtRefreshTokenQueryService> {
             onBlocking { findByToken("refreshToken") } doReturn JwtRefreshToken(
                 id = 1L,
                 userId = 1L,
@@ -180,7 +185,7 @@ class JwtServiceImplTest {
                 expiresAt = Instant.now().minus(16, ChronoUnit.DAYS)
             )
         }
-        val jwtService = JwtServiceImpl(mock(), refreshTokenRepository, mock())
+        val jwtService = JwtServiceImpl(mock(), mock(), mock(), refreshTokenRepository)
         assertThrows<InvalidRefreshTokenException> { jwtService.refreshToken(RefreshToken("refreshToken")) }
     }
 }

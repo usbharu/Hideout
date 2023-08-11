@@ -8,6 +8,7 @@ import dev.usbharu.hideout.domain.model.hideout.entity.JwtRefreshToken
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.domain.model.hideout.form.RefreshToken
 import dev.usbharu.hideout.exception.InvalidRefreshTokenException
+import dev.usbharu.hideout.query.JwtRefreshTokenQueryService
 import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.repository.IJwtRefreshTokenRepository
 import dev.usbharu.hideout.service.core.IMetaService
@@ -25,7 +26,8 @@ import java.util.*
 class JwtServiceImpl(
     private val metaService: IMetaService,
     private val refreshTokenRepository: IJwtRefreshTokenRepository,
-    private val userQueryService: UserQueryService
+    private val userQueryService: UserQueryService,
+    private val refreshTokenQueryService: JwtRefreshTokenQueryService
 ) : IJwtService {
 
     private val privateKey by lazy {
@@ -69,8 +71,11 @@ class JwtServiceImpl(
     }
 
     override suspend fun refreshToken(refreshToken: RefreshToken): JwtToken {
-        val token = refreshTokenRepository.findByToken(refreshToken.refreshToken)
-            ?: throw InvalidRefreshTokenException("Invalid Refresh Token")
+        val token = try {
+            refreshTokenQueryService.findByToken(refreshToken.refreshToken)
+        } catch (_: NoSuchElementException) {
+            throw InvalidRefreshTokenException("Invalid Refresh Token")
+        }
 
         val user = userQueryService.findById(token.userId)
 
@@ -87,14 +92,14 @@ class JwtServiceImpl(
     }
 
     override suspend fun revokeToken(refreshToken: RefreshToken) {
-        refreshTokenRepository.deleteByToken(refreshToken.refreshToken)
+        refreshTokenQueryService.deleteByToken(refreshToken.refreshToken)
     }
 
     override suspend fun revokeToken(user: User) {
-        refreshTokenRepository.deleteByUserId(user.id)
+        refreshTokenQueryService.deleteByUserId(user.id)
     }
 
     override suspend fun revokeAll() {
-        refreshTokenRepository.deleteAll()
+        refreshTokenQueryService.deleteAll()
     }
 }
