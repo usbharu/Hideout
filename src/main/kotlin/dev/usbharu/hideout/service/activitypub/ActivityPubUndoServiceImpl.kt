@@ -5,6 +5,7 @@ import dev.usbharu.hideout.domain.model.ActivityPubStringResponse
 import dev.usbharu.hideout.domain.model.ap.Follow
 import dev.usbharu.hideout.domain.model.ap.Undo
 import dev.usbharu.hideout.query.UserQueryService
+import dev.usbharu.hideout.service.core.Transaction
 import dev.usbharu.hideout.service.user.IUserService
 import io.ktor.http.*
 import org.koin.core.annotation.Single
@@ -14,7 +15,8 @@ import org.koin.core.annotation.Single
 class ActivityPubUndoServiceImpl(
     private val userService: IUserService,
     private val activityPubUserService: ActivityPubUserService,
-    private val userQueryService: UserQueryService
+    private val userQueryService: UserQueryService,
+    private val transaction: Transaction
 ) : ActivityPubUndoService {
     override suspend fun receiveUndo(undo: Undo): ActivityPubResponse {
         if (undo.actor == null) {
@@ -33,11 +35,12 @@ class ActivityPubUndoServiceImpl(
                 if (follow.`object` == null) {
                     return ActivityPubStringResponse(HttpStatusCode.BadRequest, "object.object is null")
                 }
-
-                activityPubUserService.fetchPerson(undo.actor!!, follow.`object`)
-                val follower = userQueryService.findByUrl(undo.actor!!)
-                val target = userQueryService.findByUrl(follow.`object`!!)
-                userService.unfollow(target.id, follower.id)
+                transaction.transaction {
+                    activityPubUserService.fetchPerson(undo.actor!!, follow.`object`)
+                    val follower = userQueryService.findByUrl(undo.actor!!)
+                    val target = userQueryService.findByUrl(follow.`object`!!)
+                    userService.unfollow(target.id, follower.id)
+                }
             }
 
             else -> {}

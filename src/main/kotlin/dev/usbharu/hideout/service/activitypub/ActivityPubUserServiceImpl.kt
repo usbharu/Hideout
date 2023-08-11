@@ -6,10 +6,10 @@ import dev.usbharu.hideout.domain.model.ap.Image
 import dev.usbharu.hideout.domain.model.ap.Key
 import dev.usbharu.hideout.domain.model.ap.Person
 import dev.usbharu.hideout.domain.model.hideout.dto.RemoteUserCreateDto
-import dev.usbharu.hideout.exception.UserNotFoundException
 import dev.usbharu.hideout.exception.ap.IllegalActivityPubObjectException
 import dev.usbharu.hideout.plugins.getAp
 import dev.usbharu.hideout.query.UserQueryService
+import dev.usbharu.hideout.service.core.Transaction
 import dev.usbharu.hideout.service.user.IUserService
 import dev.usbharu.hideout.util.HttpUtil.Activity
 import io.ktor.client.*
@@ -22,13 +22,16 @@ import org.koin.core.annotation.Single
 class ActivityPubUserServiceImpl(
     private val userService: IUserService,
     private val httpClient: HttpClient,
-    private val userQueryService: UserQueryService
+    private val userQueryService: UserQueryService,
+    private val transaction: Transaction
 ) :
     ActivityPubUserService {
 
     override suspend fun getPersonByName(name: String): Person {
+        val userEntity = transaction.transaction {
+            userQueryService.findByNameAndDomain(name, Config.configData.domain)
+        }
         // TODO: JOINで書き直し
-        val userEntity = userQueryService.findByNameAndDomain(name, Config.configData.domain)
         val userUrl = "${Config.configData.url}/users/$name"
         return Person(
             type = emptyList(),
@@ -81,7 +84,7 @@ class ActivityPubUserServiceImpl(
                     publicKeyPem = userEntity.publicKey
                 )
             )
-        } catch (ignore: UserNotFoundException) {
+        } catch (ignore: NoSuchElementException) {
             val httpResponse = if (targetActor != null) {
                 httpClient.getAp(url, "$targetActor#pubkey")
             } else {
@@ -108,5 +111,6 @@ class ActivityPubUserServiceImpl(
             )
             person
         }
+
     }
 }
