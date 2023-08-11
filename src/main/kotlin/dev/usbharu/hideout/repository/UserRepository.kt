@@ -56,33 +56,25 @@ class UserRepository(private val database: Database, private val idGenerateServi
             }
         }
         return user
-
     }
 
     override suspend fun findById(id: Long): User? {
         return Users.select { Users.id eq id }.map {
             it.toUser()
         }.singleOrNull()
-
     }
 
     override suspend fun deleteFollowRequest(id: Long, follower: Long) {
-
         FollowRequests.deleteWhere { userId.eq(id) and followerId.eq(follower) }
-
     }
 
     override suspend fun findFollowRequestsById(id: Long, follower: Long): Boolean {
-
         return FollowRequests.select { (FollowRequests.userId eq id) and (FollowRequests.followerId eq follower) }
             .singleOrNull() != null
-
     }
 
     override suspend fun delete(id: Long) {
-
         Users.deleteWhere { Users.id.eq(id) }
-
     }
 
     override suspend fun nextId(): Long = idGenerateService.generateId()
