@@ -8,13 +8,12 @@ import dev.usbharu.hideout.domain.model.hideout.entity.JwtRefreshToken
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.domain.model.hideout.form.RefreshToken
 import dev.usbharu.hideout.exception.InvalidRefreshTokenException
+import dev.usbharu.hideout.query.JwtRefreshTokenQueryService
+import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.repository.IJwtRefreshTokenRepository
 import dev.usbharu.hideout.service.core.IMetaService
-import dev.usbharu.hideout.service.user.IUserService
 import dev.usbharu.hideout.util.RsaUtil
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import org.koin.core.annotation.Single
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -25,26 +24,19 @@ import java.util.*
 class JwtServiceImpl(
     private val metaService: IMetaService,
     private val refreshTokenRepository: IJwtRefreshTokenRepository,
-    private val userService: IUserService
+    private val userQueryService: UserQueryService,
+    private val refreshTokenQueryService: JwtRefreshTokenQueryService
 ) : IJwtService {
 
-    private val privateKey by lazy {
-        CoroutineScope(Dispatchers.IO).async {
-            RsaUtil.decodeRsaPrivateKey(metaService.getJwtMeta().privateKey)
-        }
+    private val privateKey = runBlocking {
+        RsaUtil.decodeRsaPrivateKey(metaService.getJwtMeta().privateKey)
     }
 
-    private val publicKey by lazy {
-        CoroutineScope(Dispatchers.IO).async {
-            RsaUtil.decodeRsaPublicKey(metaService.getJwtMeta().publicKey)
-        }
+    private val publicKey = runBlocking {
+        RsaUtil.decodeRsaPublicKey(metaService.getJwtMeta().publicKey)
     }
 
-    private val keyId by lazy {
-        CoroutineScope(Dispatchers.IO).async {
-            metaService.getJwtMeta().kid
-        }
-    }
+    private val keyId = runBlocking { metaService.getJwtMeta().kid }
 
     @Suppress("MagicNumber")
     override suspend fun createToken(user: User): JwtToken {
@@ -52,10 +44,10 @@ class JwtServiceImpl(
         val token = JWT.create()
             .withAudience("${Config.configData.url}/users/${user.name}")
             .withIssuer(Config.configData.url)
-            .withKeyId(keyId.await().toString())
+            .withKeyId(keyId.toString())
             .withClaim("uid", user.id)
             .withExpiresAt(now.plus(30, ChronoUnit.MINUTES))
-            .sign(Algorithm.RSA256(publicKey.await(), privateKey.await()))
+            .sign(Algorithm.RSA256(publicKey, privateKey))
 
         val jwtRefreshToken = JwtRefreshToken(
             id = refreshTokenRepository.generateId(),
@@ -69,10 +61,13 @@ class JwtServiceImpl(
     }
 
     override suspend fun refreshToken(refreshToken: RefreshToken): JwtToken {
-        val token = refreshTokenRepository.findByToken(refreshToken.refreshToken)
-            ?: throw InvalidRefreshTokenException("Invalid Refresh Token")
+        val token = try {
+            refreshTokenQueryService.findByToken(refreshToken.refreshToken)
+        } catch (_: NoSuchElementException) {
+            throw InvalidRefreshTokenException("Invalid Refresh Token")
+        }
 
-        val user = userService.findById(token.userId)
+        val user = userQueryService.findById(token.userId)
 
         val now = Instant.now()
         if (token.createdAt.isAfter(now)) {
@@ -87,14 +82,14 @@ class JwtServiceImpl(
     }
 
     override suspend fun revokeToken(refreshToken: RefreshToken) {
-        refreshTokenRepository.deleteByToken(refreshToken.refreshToken)
+        refreshTokenQueryService.deleteByToken(refreshToken.refreshToken)
     }
 
     override suspend fun revokeToken(user: User) {
-        refreshTokenRepository.deleteByUserId(user.id)
+        refreshTokenQueryService.deleteByUserId(user.id)
     }
 
     override suspend fun revokeAll() {
-        refreshTokenRepository.deleteAll()
+        refreshTokenQueryService.deleteAll()
     }
 }

@@ -1,7 +1,7 @@
 package dev.usbharu.hideout.service.user
 
 import dev.usbharu.hideout.config.Config
-import dev.usbharu.hideout.repository.IUserRepository
+import dev.usbharu.hideout.query.UserQueryService
 import io.ktor.util.*
 import org.koin.core.annotation.Single
 import java.security.*
@@ -9,7 +9,7 @@ import java.util.*
 
 @Single
 class UserAuthService(
-    val userRepository: IUserRepository
+    val userQueryService: UserQueryService
 ) : IUserAuthService {
 
     override fun hash(password: String): String {
@@ -18,13 +18,12 @@ class UserAuthService(
     }
 
     override suspend fun usernameAlreadyUse(username: String): Boolean {
-        userRepository.findByName(username)
+        userQueryService.findByName(username)
         return true
     }
 
     override suspend fun verifyAccount(username: String, password: String): Boolean {
-        val userEntity = userRepository.findByNameAndDomain(username, Config.configData.domain)
-            ?: return false
+        val userEntity = userQueryService.findByNameAndDomain(username, Config.configData.domain)
         return userEntity.password == hash(password)
     }
 
