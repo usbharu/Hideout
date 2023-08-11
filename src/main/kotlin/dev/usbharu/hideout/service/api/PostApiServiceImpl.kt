@@ -52,12 +52,12 @@ class PostApiServiceImpl(
         userId: Long?
     ): List<PostResponse> = transaction.transaction {
         postResponseQueryService.findAll(
-            since?.toEpochMilli(),
-            until?.toEpochMilli(),
-            minId,
-            maxId,
-            limit,
-            userId
+            since = since?.toEpochMilli(),
+            until = until?.toEpochMilli(),
+            minId = minId,
+            maxId = maxId,
+            limit = limit,
+            userId = userId
         )
     }
 
