@@ -2,11 +2,9 @@ package dev.usbharu.hideout.repository
 
 import dev.usbharu.hideout.domain.model.hideout.entity.Reaction
 import dev.usbharu.hideout.service.core.IdGenerateService
-import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.core.annotation.Single
 
@@ -23,66 +21,34 @@ class ReactionRepositoryImpl(
         }
     }
 
-    @Suppress("InjectDispatcher")
-    suspend fun <T> query(block: suspend () -> T): T =
-        newSuspendedTransaction(Dispatchers.IO) { block() }
-
     override suspend fun generateId(): Long = idGenerateService.generateId()
 
     override suspend fun save(reaction: Reaction): Reaction {
-        query {
-            if (Reactions.select { Reactions.id eq reaction.id }.empty()) {
-                Reactions.insert {
-                    it[id] = reaction.id
-                    it[emojiId] = reaction.emojiId
-                    it[postId] = reaction.postId
-                    it[userId] = reaction.userId
-                }
-            } else {
-                Reactions.update({ Reactions.id eq reaction.id }) {
-                    it[emojiId] = reaction.emojiId
-                    it[postId] = reaction.postId
-                    it[userId] = reaction.userId
-                }
+        if (Reactions.select { Reactions.id eq reaction.id }.empty()) {
+            Reactions.insert {
+                it[id] = reaction.id
+                it[emojiId] = reaction.emojiId
+                it[postId] = reaction.postId
+                it[userId] = reaction.userId
+            }
+        } else {
+            Reactions.update({ Reactions.id eq reaction.id }) {
+                it[emojiId] = reaction.emojiId
+                it[postId] = reaction.postId
+                it[userId] = reaction.userId
             }
         }
         return reaction
-    }
-
-    override suspend fun reactionAlreadyExist(postId: Long, userId: Long, emojiId: Long): Boolean {
-        return query {
-            Reactions.select {
-                Reactions.postId.eq(postId).and(Reactions.userId.eq(userId)).and(
-                    Reactions.emojiId.eq(emojiId)
-                )
-            }.empty().not()
-        }
-    }
-
-    override suspend fun findByPostId(postId: Long): List<Reaction> {
-        return query {
-            Reactions.select {
-                Reactions.postId.eq(postId)
-            }.map { it.toReaction() }
-        }
     }
 
     override suspend fun delete(reaction: Reaction): Reaction {
-        query {
-            Reactions.deleteWhere {
-                id.eq(reaction.id)
-                    .and(postId.eq(reaction.postId))
-                    .and(userId.eq(reaction.postId))
-                    .and(emojiId.eq(reaction.emojiId))
-            }
+        Reactions.deleteWhere {
+            id.eq(reaction.id)
+                .and(postId.eq(reaction.postId))
+                .and(userId.eq(reaction.postId))
+                .and(emojiId.eq(reaction.emojiId))
         }
         return reaction
-    }
-
-    override suspend fun deleteByPostIdAndUserId(postId: Long, userId: Long) {
-        query {
-            Reactions.deleteWhere { Reactions.postId.eq(postId).and(Reactions.userId.eq(userId)) }
-        }
     }
 }
 

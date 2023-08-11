@@ -51,7 +51,6 @@ class PostRepositoryImpl(database: Database, private val idGenerateService: IdGe
             }
         }
         return post
-
     }
 
     override suspend fun findById(id: Long): Post = Posts.select { Posts.id eq id }.single().toPost()
