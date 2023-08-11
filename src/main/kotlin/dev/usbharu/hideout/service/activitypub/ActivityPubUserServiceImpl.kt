@@ -111,6 +111,5 @@ class ActivityPubUserServiceImpl(
             )
             person
         }
-
     }
 }
