@@ -7,7 +7,7 @@ import org.koin.core.annotation.Single
 import java.util.*
 
 @Single
-class MetaRepositoryImpl(private val database: Database) : IMetaRepository {
+class MetaRepositoryImpl(private val database: Database) : MetaRepository {
 
     init {
         transaction(database) {

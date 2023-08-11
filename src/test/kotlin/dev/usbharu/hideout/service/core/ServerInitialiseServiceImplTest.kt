@@ -4,7 +4,7 @@ package dev.usbharu.hideout.service.core
 
 import dev.usbharu.hideout.domain.model.hideout.entity.Jwt
 import dev.usbharu.hideout.domain.model.hideout.entity.Meta
-import dev.usbharu.hideout.repository.IMetaRepository
+import dev.usbharu.hideout.repository.MetaRepository
 import dev.usbharu.hideout.util.ServerUtil
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -17,7 +17,7 @@ import kotlin.test.assertEquals
 class ServerInitialiseServiceImplTest {
     @Test
     fun `init メタデータが無いときに初期化を実行する`() = runTest {
-        val metaRepository = mock<IMetaRepository> {
+        val metaRepository = mock<MetaRepository> {
             onBlocking { get() } doReturn null
             onBlocking { save(any()) } doReturn Unit
         }
@@ -30,7 +30,7 @@ class ServerInitialiseServiceImplTest {
     @Test
     fun `init メタデータが存在して同じバージョンのときは何もしない`() = runTest {
         val meta = Meta(ServerUtil.getImplementationVersion(), Jwt(UUID.randomUUID(), "aaafafd", "afafasdf"))
-        val metaRepository = mock<IMetaRepository> {
+        val metaRepository = mock<MetaRepository> {
             onBlocking { get() } doReturn meta
         }
         val serverInitialiseServiceImpl = ServerInitialiseServiceImpl(metaRepository, TestTransaction)
@@ -41,7 +41,7 @@ class ServerInitialiseServiceImplTest {
     @Test
     fun `init メタデータが存在して違うバージョンのときはバージョンを変更する`() = runTest {
         val meta = Meta("1.0.0", Jwt(UUID.randomUUID(), "aaafafd", "afafasdf"))
-        val metaRepository = mock<IMetaRepository> {
+        val metaRepository = mock<MetaRepository> {
             onBlocking { get() } doReturn meta
             onBlocking { save(any()) } doReturn Unit
         }

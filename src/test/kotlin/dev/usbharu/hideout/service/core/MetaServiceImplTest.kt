@@ -5,7 +5,7 @@ package dev.usbharu.hideout.service.core
 import dev.usbharu.hideout.domain.model.hideout.entity.Jwt
 import dev.usbharu.hideout.domain.model.hideout.entity.Meta
 import dev.usbharu.hideout.exception.NotInitException
-import dev.usbharu.hideout.repository.IMetaRepository
+import dev.usbharu.hideout.repository.MetaRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
@@ -19,7 +19,7 @@ class MetaServiceImplTest {
     @Test
     fun `getMeta メタデータを取得できる`() = runTest {
         val meta = Meta("1.0.0", Jwt(UUID.randomUUID(), "sdfsdjk", "adafda"))
-        val metaRepository = mock<IMetaRepository> {
+        val metaRepository = mock<MetaRepository> {
             onBlocking { get() } doReturn meta
         }
         val metaService = MetaServiceImpl(metaRepository, TestTransaction)
@@ -29,7 +29,7 @@ class MetaServiceImplTest {
 
     @Test
     fun `getMeta メタデータが無いときはNotInitExceptionがthrowされる`() = runTest {
-        val metaRepository = mock<IMetaRepository> {
+        val metaRepository = mock<MetaRepository> {
             onBlocking { get() } doReturn null
         }
         val metaService = MetaServiceImpl(metaRepository, TestTransaction)
@@ -39,7 +39,7 @@ class MetaServiceImplTest {
     @Test
     fun `updateMeta メタデータを保存できる`() = runTest {
         val meta = Meta("1.0.1", Jwt(UUID.randomUUID(), "sdfsdjk", "adafda"))
-        val metaRepository = mock<IMetaRepository> {
+        val metaRepository = mock<MetaRepository> {
             onBlocking { save(any()) } doReturn Unit
         }
         val metaServiceImpl = MetaServiceImpl(metaRepository, TestTransaction)
@@ -53,7 +53,7 @@ class MetaServiceImplTest {
     @Test
     fun `getJwtMeta Jwtメタデータを取得できる`() = runTest {
         val meta = Meta("1.0.0", Jwt(UUID.randomUUID(), "sdfsdjk", "adafda"))
-        val metaRepository = mock<IMetaRepository> {
+        val metaRepository = mock<MetaRepository> {
             onBlocking { get() } doReturn meta
         }
         val metaService = MetaServiceImpl(metaRepository, TestTransaction)
@@ -63,7 +63,7 @@ class MetaServiceImplTest {
 
     @Test
     fun `getJwtMeta メタデータが無いときはNotInitExceptionがthrowされる`() = runTest {
-        val metaRepository = mock<IMetaRepository> {
+        val metaRepository = mock<MetaRepository> {
             onBlocking { get() } doReturn null
         }
         val metaService = MetaServiceImpl(metaRepository, TestTransaction)

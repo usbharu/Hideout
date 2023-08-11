@@ -2,7 +2,7 @@ package dev.usbharu.hideout.plugins
 
 import com.auth0.jwk.JwkProvider
 import dev.usbharu.hideout.config.Config
-import dev.usbharu.hideout.service.core.IMetaService
+import dev.usbharu.hideout.service.core.MetaService
 import dev.usbharu.hideout.util.JsonWebKeyUtil
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -16,7 +16,7 @@ const val TOKEN_AUTH = "jwt-auth"
 @Suppress("MagicNumber")
 fun Application.configureSecurity(
     jwkProvider: JwkProvider,
-    metaService: IMetaService
+    metaService: MetaService
 ) {
     val issuer = Config.configData.url
     install(Authentication) {

@@ -5,8 +5,8 @@ import dev.usbharu.hideout.domain.model.hideout.dto.UserCreateDto
 import dev.usbharu.hideout.domain.model.hideout.form.UserCreate
 import dev.usbharu.hideout.exception.ParameterNotExistException
 import dev.usbharu.hideout.plugins.TOKEN_AUTH
-import dev.usbharu.hideout.service.api.IUserApiService
-import dev.usbharu.hideout.service.user.IUserService
+import dev.usbharu.hideout.service.api.UserApiService
+import dev.usbharu.hideout.service.user.UserService
 import dev.usbharu.hideout.util.AcctUtil
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -17,7 +17,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 @Suppress("LongMethod", "CognitiveComplexMethod")
-fun Route.users(userService: IUserService, userApiService: IUserApiService) {
+fun Route.users(userService: UserService, userApiService: UserApiService) {
     route("/users") {
         get {
             call.respond(userApiService.findAll())

@@ -4,7 +4,7 @@ import dev.usbharu.hideout.domain.model.hideout.form.Post
 import dev.usbharu.hideout.domain.model.hideout.form.Reaction
 import dev.usbharu.hideout.exception.ParameterNotExistException
 import dev.usbharu.hideout.plugins.TOKEN_AUTH
-import dev.usbharu.hideout.service.api.IPostApiService
+import dev.usbharu.hideout.service.api.PostApiService
 import dev.usbharu.hideout.util.InstantParseUtil
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -15,7 +15,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 @Suppress("LongMethod")
-fun Route.posts(postApiService: IPostApiService) {
+fun Route.posts(postApiService: PostApiService) {
     route("/posts") {
         authenticate(TOKEN_AUTH) {
             post {

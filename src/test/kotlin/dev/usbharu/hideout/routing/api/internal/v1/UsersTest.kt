@@ -10,8 +10,8 @@ import dev.usbharu.hideout.domain.model.hideout.form.UserCreate
 import dev.usbharu.hideout.plugins.TOKEN_AUTH
 import dev.usbharu.hideout.plugins.configureSecurity
 import dev.usbharu.hideout.plugins.configureSerialization
-import dev.usbharu.hideout.service.api.IUserApiService
-import dev.usbharu.hideout.service.user.IUserService
+import dev.usbharu.hideout.service.api.UserApiService
+import dev.usbharu.hideout.service.user.UserService
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -53,7 +53,7 @@ class UsersTest {
                 Instant.now().toEpochMilli()
             ),
         )
-        val userService = mock<IUserApiService> {
+        val userService = mock<UserApiService> {
             onBlocking { findAll(anyOrNull(), anyOrNull()) } doReturn users
         }
         application {
@@ -77,7 +77,7 @@ class UsersTest {
             config = ApplicationConfig("empty.conf")
         }
         val userCreateDto = UserCreate("test", "XXXXXXX")
-        val userService = mock<IUserService> {
+        val userService = mock<UserService> {
             onBlocking { usernameAlreadyUse(any()) } doReturn false
             onBlocking { createLocalUser(any()) } doReturn User(
                 id = 12345,
@@ -122,7 +122,7 @@ class UsersTest {
             config = ApplicationConfig("empty.conf")
         }
         val userCreateDto = UserCreate("test", "XXXXXXX")
-        val userService = mock<IUserService> {
+        val userService = mock<UserService> {
             onBlocking { usernameAlreadyUse(any()) } doReturn true
         }
         application {
@@ -157,7 +157,7 @@ class UsersTest {
             "https://example.com/test",
             Instant.now().toEpochMilli()
         )
-        val userApiService = mock<IUserApiService> {
+        val userApiService = mock<UserApiService> {
             onBlocking { findByAcct(any()) } doReturn userResponse
         }
         application {
@@ -190,7 +190,7 @@ class UsersTest {
             "https://example.com/test",
             Instant.now().toEpochMilli()
         )
-        val userApiService = mock<IUserApiService> {
+        val userApiService = mock<UserApiService> {
             onBlocking { findById(any()) } doReturn userResponse
         }
         application {
@@ -223,7 +223,7 @@ class UsersTest {
             "https://example.com/test",
             Instant.now().toEpochMilli()
         )
-        val userApiService = mock<IUserApiService> {
+        val userApiService = mock<UserApiService> {
             onBlocking { findByAcct(any()) } doReturn userResponse
         }
         application {
@@ -256,7 +256,7 @@ class UsersTest {
             "https://example.com/test",
             Instant.now().toEpochMilli()
         )
-        val userApiService = mock<IUserApiService> {
+        val userApiService = mock<UserApiService> {
             onBlocking { findByAcct(any()) } doReturn userResponse
         }
         application {
@@ -301,7 +301,7 @@ class UsersTest {
                 Instant.now().toEpochMilli()
             )
         )
-        val userApiService = mock<IUserApiService> {
+        val userApiService = mock<UserApiService> {
             onBlocking { findFollowersByAcct(any()) } doReturn followers
         }
         application {
@@ -346,7 +346,7 @@ class UsersTest {
                 Instant.now().toEpochMilli()
             )
         )
-        val userApiService = mock<IUserApiService> {
+        val userApiService = mock<UserApiService> {
             onBlocking { findFollowersByAcct(any()) } doReturn followers
         }
         application {
@@ -391,7 +391,7 @@ class UsersTest {
                 Instant.now().toEpochMilli()
             )
         )
-        val userApiService = mock<IUserApiService> {
+        val userApiService = mock<UserApiService> {
             onBlocking { findFollowers(any()) } doReturn followers
         }
         application {
@@ -423,7 +423,7 @@ class UsersTest {
             on { getClaim(eq("uid")) } doReturn claim
         }
 
-        val userApiService = mock<IUserApiService> {
+        val userApiService = mock<UserApiService> {
             onBlocking { findByAcct(any()) } doReturn UserResponse(
                 "1235",
                 "follower1",
@@ -434,7 +434,7 @@ class UsersTest {
                 Instant.now().toEpochMilli()
             )
         }
-        val userService = mock<IUserService> {
+        val userService = mock<UserService> {
             onBlocking { followRequest(eq(1235), eq(1234)) } doReturn true
         }
         application {
@@ -473,7 +473,7 @@ class UsersTest {
             on { getClaim(eq("uid")) } doReturn claim
         }
 
-        val userApiService = mock<IUserApiService> {
+        val userApiService = mock<UserApiService> {
             onBlocking { findByAcct(any()) } doReturn UserResponse(
                 "1235",
                 "follower1",
@@ -484,7 +484,7 @@ class UsersTest {
                 Instant.now().toEpochMilli()
             )
         }
-        val userService = mock<IUserService> {
+        val userService = mock<UserService> {
             onBlocking { followRequest(eq(1235), eq(1234)) } doReturn false
         }
         application {
@@ -523,7 +523,7 @@ class UsersTest {
             on { getClaim(eq("uid")) } doReturn claim
         }
 
-        val userApiService = mock<IUserApiService> {
+        val userApiService = mock<UserApiService> {
             onBlocking { findById(any()) } doReturn UserResponse(
                 "1235",
                 "follower1",
@@ -534,7 +534,7 @@ class UsersTest {
                 Instant.now().toEpochMilli()
             )
         }
-        val userService = mock<IUserService> {
+        val userService = mock<UserService> {
             onBlocking { followRequest(eq(1235), eq(1234)) } doReturn false
         }
         application {
@@ -586,7 +586,7 @@ class UsersTest {
                 Instant.now().toEpochMilli()
             )
         )
-        val userApiService = mock<IUserApiService> {
+        val userApiService = mock<UserApiService> {
             onBlocking { findFollowingsByAcct(any()) } doReturn followers
         }
         application {
@@ -631,7 +631,7 @@ class UsersTest {
                 Instant.now().toEpochMilli()
             )
         )
-        val userApiService = mock<IUserApiService> {
+        val userApiService = mock<UserApiService> {
             onBlocking { findFollowingsByAcct(any()) } doReturn followers
         }
         application {
@@ -676,7 +676,7 @@ class UsersTest {
                 Instant.now().toEpochMilli()
             )
         )
-        val userApiService = mock<IUserApiService> {
+        val userApiService = mock<UserApiService> {
             onBlocking { findFollowings(any()) } doReturn followers
         }
         application {

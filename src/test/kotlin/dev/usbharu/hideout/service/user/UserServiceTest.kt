@@ -6,7 +6,7 @@ import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.config.ConfigData
 import dev.usbharu.hideout.domain.model.hideout.dto.RemoteUserCreateDto
 import dev.usbharu.hideout.domain.model.hideout.dto.UserCreateDto
-import dev.usbharu.hideout.repository.IUserRepository
+import dev.usbharu.hideout.repository.UserRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
@@ -20,15 +20,15 @@ class UserServiceTest {
     @Test
     fun `createLocalUser ローカルユーザーを作成できる`() = runTest {
         Config.configData = ConfigData(domain = "example.com", url = "https://example.com")
-        val userRepository = mock<IUserRepository> {
+        val userRepository = mock<UserRepository> {
             onBlocking { nextId() } doReturn 110001L
         }
         val generateKeyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair()
-        val userAuthService = mock<IUserAuthService> {
+        val userAuthService = mock<UserAuthService> {
             onBlocking { hash(anyString()) } doReturn "hashedPassword"
             onBlocking { generateKeyPair() } doReturn generateKeyPair
         }
-        val userService = UserService(userRepository, userAuthService, mock(), mock(), mock())
+        val userService = UserServiceImpl(userRepository, userAuthService, mock(), mock(), mock())
         userService.createLocalUser(UserCreateDto("test", "testUser", "XXXXXXXXXXXXX", "test"))
         verify(userRepository, times(1)).save(any())
         argumentCaptor<dev.usbharu.hideout.domain.model.hideout.entity.User> {
@@ -51,10 +51,10 @@ class UserServiceTest {
     fun `createRemoteUser リモートユーザーを作成できる`() = runTest {
         Config.configData = ConfigData(domain = "example.com", url = "https://example.com")
 
-        val userRepository = mock<IUserRepository> {
+        val userRepository = mock<UserRepository> {
             onBlocking { nextId() } doReturn 113345L
         }
-        val userService = UserService(userRepository, mock(), mock(), mock(), mock())
+        val userService = UserServiceImpl(userRepository, mock(), mock(), mock(), mock())
         val user = RemoteUserCreateDto(
             "test",
             "example.com",

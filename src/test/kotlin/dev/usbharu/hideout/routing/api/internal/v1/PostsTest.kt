@@ -10,7 +10,7 @@ import dev.usbharu.hideout.domain.model.hideout.entity.Visibility
 import dev.usbharu.hideout.plugins.TOKEN_AUTH
 import dev.usbharu.hideout.plugins.configureSecurity
 import dev.usbharu.hideout.plugins.configureSerialization
-import dev.usbharu.hideout.service.api.IPostApiService
+import dev.usbharu.hideout.service.api.PostApiService
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -60,7 +60,7 @@ class PostsTest {
                 url = "https://example.com/posts/2"
             )
         )
-        val postService = mock<IPostApiService> {
+        val postService = mock<PostApiService> {
             onBlocking {
                 getAll(
                     since = anyOrNull(),
@@ -135,7 +135,7 @@ class PostsTest {
             )
         )
 
-        val postService = mock<IPostApiService> {
+        val postService = mock<PostApiService> {
             onBlocking {
                 getAll(
                     since = anyOrNull(),
@@ -191,7 +191,7 @@ class PostsTest {
             createdAt = Instant.now().toEpochMilli(),
             url = "https://example.com/posts/1"
         )
-        val postService = mock<IPostApiService> {
+        val postService = mock<PostApiService> {
             onBlocking { getById(any(), anyOrNull()) } doReturn post
         }
         application {
@@ -230,7 +230,7 @@ class PostsTest {
             createdAt = Instant.now().toEpochMilli(),
             url = "https://example.com/posts/1"
         )
-        val postService = mock<IPostApiService> {
+        val postService = mock<PostApiService> {
             onBlocking { getById(any(), isNotNull()) } doReturn post
         }
         val claim = mock<Claim> {
@@ -273,7 +273,7 @@ class PostsTest {
         val payload = mock<Payload> {
             on { getClaim(eq("uid")) } doReturn claim
         }
-        val postService = mock<IPostApiService> {
+        val postService = mock<PostApiService> {
             onBlocking { createPost(any(), any()) } doAnswer {
                 val argument = it.getArgument<dev.usbharu.hideout.domain.model.hideout.form.Post>(0)
                 val userId = it.getArgument<Long>(1)
@@ -360,7 +360,7 @@ class PostsTest {
                 url = "https://example.com/posts/2"
             )
         )
-        val postService = mock<IPostApiService> {
+        val postService = mock<PostApiService> {
             onBlocking {
                 getByUser(
                     nameOrId = any(),
@@ -421,7 +421,7 @@ class PostsTest {
                 url = "https://example.com/posts/2"
             )
         )
-        val postService = mock<IPostApiService> {
+        val postService = mock<PostApiService> {
             onBlocking {
                 getByUser(
                     nameOrId = eq("test1"),
@@ -482,7 +482,7 @@ class PostsTest {
                 url = "https://example.com/posts/2"
             )
         )
-        val postService = mock<IPostApiService> {
+        val postService = mock<PostApiService> {
             onBlocking {
                 getByUser(
                     nameOrId = eq("test1@example.com"),
@@ -543,7 +543,7 @@ class PostsTest {
                 url = "https://example.com/posts/2"
             )
         )
-        val postService = mock<IPostApiService> {
+        val postService = mock<PostApiService> {
             onBlocking {
                 getByUser(
                     nameOrId = eq("@test1@example.com"),
@@ -593,7 +593,7 @@ class PostsTest {
             createdAt = Instant.now().toEpochMilli(),
             url = "https://example.com/posts/2"
         )
-        val postService = mock<IPostApiService> {
+        val postService = mock<PostApiService> {
             onBlocking { getById(eq(12345L), anyOrNull()) } doReturn post
         }
         application {
@@ -633,7 +633,7 @@ class PostsTest {
             createdAt = Instant.now().toEpochMilli(),
             url = "https://example.com/posts/2"
         )
-        val postService = mock<IPostApiService> {
+        val postService = mock<PostApiService> {
             onBlocking { getById(eq(12345L), anyOrNull()) } doReturn post
         }
         application {
@@ -673,7 +673,7 @@ class PostsTest {
             createdAt = Instant.now().toEpochMilli(),
             url = "https://example.com/posts/2"
         )
-        val postService = mock<IPostApiService> {
+        val postService = mock<PostApiService> {
             onBlocking { getById(eq(12345L), anyOrNull()) } doReturn post
         }
         application {
@@ -713,7 +713,7 @@ class PostsTest {
             createdAt = Instant.now().toEpochMilli(),
             url = "https://example.com/posts/2"
         )
-        val postService = mock<IPostApiService> {
+        val postService = mock<PostApiService> {
             onBlocking { getById(eq(12345L), anyOrNull()) } doReturn post
         }
         application {
