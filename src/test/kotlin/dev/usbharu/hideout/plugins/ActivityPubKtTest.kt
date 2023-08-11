@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.mock
+import utils.TestTransaction
 import java.security.KeyPairGenerator
 import java.time.Instant
 
@@ -40,7 +41,7 @@ class ActivityPubKtTest {
             }
         }
         runBlocking {
-            val ktorKeyMap = KtorKeyMap(userQueryService)
+            val ktorKeyMap = KtorKeyMap(userQueryService, TestTransaction)
 
             val httpClient = HttpClient(
                 MockEngine { httpRequestData ->
