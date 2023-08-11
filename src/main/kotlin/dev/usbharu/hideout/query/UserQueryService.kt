@@ -9,4 +9,5 @@ interface UserQueryService {
     suspend fun findByNameAndDomain(name: String, domain: String): User
     suspend fun findByUrl(url: String): User
     suspend fun findByIds(ids: List<Long>): List<User>
+    suspend fun existByNameAndDomain(name: String, domain: String): Boolean
 }

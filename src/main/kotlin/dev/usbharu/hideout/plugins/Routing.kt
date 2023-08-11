@@ -2,7 +2,6 @@ package dev.usbharu.hideout.plugins
 
 import dev.usbharu.hideout.query.FollowerQueryService
 import dev.usbharu.hideout.query.UserQueryService
-import dev.usbharu.hideout.repository.IUserRepository
 import dev.usbharu.hideout.routing.activitypub.inbox
 import dev.usbharu.hideout.routing.activitypub.outbox
 import dev.usbharu.hideout.routing.activitypub.usersAP
@@ -14,10 +13,9 @@ import dev.usbharu.hideout.service.activitypub.ActivityPubService
 import dev.usbharu.hideout.service.activitypub.ActivityPubUserService
 import dev.usbharu.hideout.service.api.IPostApiService
 import dev.usbharu.hideout.service.api.IUserApiService
+import dev.usbharu.hideout.service.api.UserAuthApiService
 import dev.usbharu.hideout.service.auth.HttpSignatureVerifyService
-import dev.usbharu.hideout.service.auth.IJwtService
 import dev.usbharu.hideout.service.reaction.IReactionService
-import dev.usbharu.hideout.service.user.IUserAuthService
 import dev.usbharu.hideout.service.user.IUserService
 import io.ktor.server.application.*
 import io.ktor.server.plugins.autohead.*
@@ -32,11 +30,9 @@ fun Application.configureRouting(
     postService: IPostApiService,
     userApiService: IUserApiService,
     reactionService: IReactionService,
-    userAuthService: IUserAuthService,
-    userRepository: IUserRepository,
-    jwtService: IJwtService,
     userQueryService: UserQueryService,
-    followerQueryService: FollowerQueryService
+    followerQueryService: FollowerQueryService,
+    userAuthApiService: UserAuthApiService
 ) {
     install(AutoHeadResponse)
     routing {
@@ -47,7 +43,7 @@ fun Application.configureRouting(
         route("/api/internal/v1") {
             posts(postService, reactionService)
             users(userService, userApiService)
-            auth(userAuthService, jwtService, userQueryService)
+            auth(userAuthApiService)
         }
     }
 }

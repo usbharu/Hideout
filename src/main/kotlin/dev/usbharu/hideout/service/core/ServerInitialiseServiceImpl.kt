@@ -4,6 +4,7 @@ import dev.usbharu.hideout.domain.model.hideout.entity.Jwt
 import dev.usbharu.hideout.domain.model.hideout.entity.Meta
 import dev.usbharu.hideout.repository.IMetaRepository
 import dev.usbharu.hideout.util.ServerUtil
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.koin.core.annotation.Single
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -16,18 +17,20 @@ class ServerInitialiseServiceImpl(private val metaRepository: IMetaRepository) :
     val logger: Logger = LoggerFactory.getLogger(ServerInitialiseServiceImpl::class.java)
 
     override suspend fun init() {
-        val savedMeta = metaRepository.get()
-        val implementationVersion = ServerUtil.getImplementationVersion()
-        if (wasInitialised(savedMeta).not()) {
-            logger.info("Start Initialise")
-            initialise(implementationVersion)
-            logger.info("Finish Initialise")
-            return
-        }
+        newSuspendedTransaction {
+            val savedMeta = metaRepository.get()
+            val implementationVersion = ServerUtil.getImplementationVersion()
+            if (wasInitialised(savedMeta).not()) {
+                logger.info("Start Initialise")
+                initialise(implementationVersion)
+                logger.info("Finish Initialise")
+                return@newSuspendedTransaction
+            }
 
-        if (isVersionChanged(requireNotNull(savedMeta))) {
-            logger.info("Version changed!! (${savedMeta.version} -> $implementationVersion)")
-            updateVersion(savedMeta, implementationVersion)
+            if (isVersionChanged(requireNotNull(savedMeta))) {
+                logger.info("Version changed!! (${savedMeta.version} -> $implementationVersion)")
+                updateVersion(savedMeta, implementationVersion)
+            }
         }
     }
 

@@ -13,9 +13,7 @@ import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.repository.IJwtRefreshTokenRepository
 import dev.usbharu.hideout.service.core.IMetaService
 import dev.usbharu.hideout.util.RsaUtil
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import org.koin.core.annotation.Single
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -30,23 +28,16 @@ class JwtServiceImpl(
     private val refreshTokenQueryService: JwtRefreshTokenQueryService
 ) : IJwtService {
 
-    private val privateKey by lazy {
-        CoroutineScope(Dispatchers.IO).async {
-            RsaUtil.decodeRsaPrivateKey(metaService.getJwtMeta().privateKey)
-        }
+    private val privateKey = runBlocking {
+        RsaUtil.decodeRsaPrivateKey(metaService.getJwtMeta().privateKey)
     }
 
-    private val publicKey by lazy {
-        CoroutineScope(Dispatchers.IO).async {
-            RsaUtil.decodeRsaPublicKey(metaService.getJwtMeta().publicKey)
-        }
+    private val publicKey = runBlocking {
+        RsaUtil.decodeRsaPublicKey(metaService.getJwtMeta().publicKey)
     }
 
-    private val keyId by lazy {
-        CoroutineScope(Dispatchers.IO).async {
-            metaService.getJwtMeta().kid
-        }
-    }
+    private val keyId = runBlocking { metaService.getJwtMeta().kid }
+
 
     @Suppress("MagicNumber")
     override suspend fun createToken(user: User): JwtToken {
@@ -54,10 +45,10 @@ class JwtServiceImpl(
         val token = JWT.create()
             .withAudience("${Config.configData.url}/users/${user.name}")
             .withIssuer(Config.configData.url)
-            .withKeyId(keyId.await().toString())
+            .withKeyId(keyId.toString())
             .withClaim("uid", user.id)
             .withExpiresAt(now.plus(30, ChronoUnit.MINUTES))
-            .sign(Algorithm.RSA256(publicKey.await(), privateKey.await()))
+            .sign(Algorithm.RSA256(publicKey, privateKey))
 
         val jwtRefreshToken = JwtRefreshToken(
             id = refreshTokenRepository.generateId(),
