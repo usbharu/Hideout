@@ -13,6 +13,7 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 fun Routing.usersAP(
     activityPubUserService: ActivityPubUserService,
@@ -32,11 +33,18 @@ fun Routing.usersAP(
             )
         }
         get {
-            val userEntity = userQueryService.findByNameAndDomain(
-                call.parameters["name"] ?: throw ParameterNotExistException("Parameter(name='name') does not exist."),
-                Config.configData.domain
-            )
-            call.respondText(userEntity.toString() + "\n" + followerQueryService.findFollowersById(userEntity.id))
+
+
+            // TODO: 暫定処置なので治す
+            newSuspendedTransaction {
+
+                val userEntity = userQueryService.findByNameAndDomain(
+                    call.parameters["name"]
+                        ?: throw ParameterNotExistException("Parameter(name='name') does not exist."),
+                    Config.configData.domain
+                )
+                call.respondText(userEntity.toString() + "\n" + followerQueryService.findFollowersById(userEntity.id))
+            }
         }
     }
 }
@@ -46,7 +54,7 @@ class ContentTypeRouteSelector(private vararg val contentType: ContentType) : Ro
         context.call.application.log.debug("Accept: ${context.call.request.accept()}")
         val requestContentType = context.call.request.accept() ?: return RouteSelectorEvaluation.FailedParameter
         return if (requestContentType.split(",")
-            .any { contentType.any { contentType -> contentType.match(it) } }
+                .any { contentType.any { contentType -> contentType.match(it) } }
         ) {
             RouteSelectorEvaluation.Constant
         } else {

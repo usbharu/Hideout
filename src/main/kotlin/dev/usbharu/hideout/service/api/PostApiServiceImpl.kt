@@ -20,18 +20,20 @@ class PostApiServiceImpl(
     private val postResponseQueryService: PostResponseQueryService
 ) : IPostApiService {
     override suspend fun createPost(postForm: FormPost, userId: Long): PostResponse {
-        val createdPost = postService.createLocal(
-            PostCreateDto(
-                text = postForm.text,
-                overview = postForm.overview,
-                visibility = postForm.visibility,
-                repostId = postForm.repostId,
-                repolyId = postForm.replyId,
-                userId = userId
+        return newSuspendedTransaction {
+            val createdPost = postService.createLocal(
+                PostCreateDto(
+                    text = postForm.text,
+                    overview = postForm.overview,
+                    visibility = postForm.visibility,
+                    repostId = postForm.repostId,
+                    repolyId = postForm.replyId,
+                    userId = userId
+                )
             )
-        )
-        val creator = userRepository.findById(userId)
-        return PostResponse.from(createdPost, creator!!)
+            val creator = userRepository.findById(userId)
+            PostResponse.from(createdPost, creator!!)
+        }
     }
 
     @Suppress("InjectDispatcher")
@@ -47,8 +49,16 @@ class PostApiServiceImpl(
         maxId: Long?,
         limit: Int?,
         userId: Long?
-    ): List<PostResponse> =
-        postResponseQueryService.findAll(since?.toEpochMilli(), until?.toEpochMilli(), minId, maxId, limit, userId)
+    ): List<PostResponse> = newSuspendedTransaction {
+        postResponseQueryService.findAll(
+            since?.toEpochMilli(),
+            until?.toEpochMilli(),
+            minId,
+            maxId,
+            limit,
+            userId
+        )
+    }
 
     override suspend fun getByUser(
         nameOrId: String,

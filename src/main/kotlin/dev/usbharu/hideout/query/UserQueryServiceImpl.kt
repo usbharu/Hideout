@@ -24,4 +24,8 @@ class UserQueryServiceImpl : UserQueryService {
 
     override suspend fun findByIds(ids: List<Long>): List<User> =
         Users.select { Users.id inList ids }.map { it.toUser() }
+
+    override suspend fun existByNameAndDomain(name: String, domain: String): Boolean {
+        return Users.select { Users.name eq name and (Users.domain eq domain) }.empty().not()
+    }
 }
