@@ -28,7 +28,7 @@ class UserServiceTest {
             onBlocking { hash(anyString()) } doReturn "hashedPassword"
             onBlocking { generateKeyPair() } doReturn generateKeyPair
         }
-        val userService = UserService(userRepository, userAuthService, mock())
+        val userService = UserService(userRepository, userAuthService, mock(), mock(), mock())
         userService.createLocalUser(UserCreateDto("test", "testUser", "XXXXXXXXXXXXX", "test"))
         verify(userRepository, times(1)).save(any())
         argumentCaptor<dev.usbharu.hideout.domain.model.hideout.entity.User> {
@@ -54,7 +54,7 @@ class UserServiceTest {
         val userRepository = mock<IUserRepository> {
             onBlocking { nextId() } doReturn 113345L
         }
-        val userService = UserService(userRepository, mock(), mock())
+        val userService = UserService(userRepository, mock(), mock(), mock(), mock())
         val user = RemoteUserCreateDto(
             "test",
             "example.com",

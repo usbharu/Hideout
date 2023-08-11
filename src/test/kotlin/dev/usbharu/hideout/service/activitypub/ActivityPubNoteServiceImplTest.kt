@@ -9,8 +9,9 @@ import dev.usbharu.hideout.domain.model.hideout.entity.Post
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.domain.model.hideout.entity.Visibility
 import dev.usbharu.hideout.domain.model.job.DeliverPostJob
+import dev.usbharu.hideout.query.FollowerQueryService
+import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.service.job.JobQueueParentService
-import dev.usbharu.hideout.service.user.IUserService
 import io.ktor.client.*
 import io.ktor.client.engine.mock.*
 import kjob.core.job.JobProps
@@ -55,7 +56,7 @@ class ActivityPubNoteServiceImplTest {
                 createdAt = Instant.now()
             )
         )
-        val userService = mock<IUserService> {
+        val userQueryService = mock<UserQueryService> {
             onBlocking { findById(eq(1L)) } doReturn User(
                 1L,
                 "test",
@@ -69,11 +70,21 @@ class ActivityPubNoteServiceImplTest {
                 publicKey = "",
                 createdAt = Instant.now()
             )
+        }
+        val followerQueryService = mock<FollowerQueryService> {
             onBlocking { findFollowersById(eq(1L)) } doReturn followers
         }
         val jobQueueParentService = mock<JobQueueParentService>()
         val activityPubNoteService =
-            ActivityPubNoteServiceImpl(mock(), jobQueueParentService, userService, mock(), mock())
+            ActivityPubNoteServiceImpl(
+                mock(),
+                jobQueueParentService,
+                mock(),
+                mock(),
+                userQueryService,
+                followerQueryService,
+                mock()
+            )
         val postEntity = Post(
             1L,
             1L,
@@ -96,7 +107,15 @@ class ActivityPubNoteServiceImplTest {
                 respondOk()
             }
         )
-        val activityPubNoteService = ActivityPubNoteServiceImpl(httpClient, mock(), mock(), mock(), mock())
+        val activityPubNoteService = ActivityPubNoteServiceImpl(
+            httpClient,
+            mock(),
+            mock(),
+            mock(),
+            mock(),
+            mock(),
+            mock()
+        )
         activityPubNoteService.createNoteJob(
             JobProps(
                 data = mapOf<String, Any>(

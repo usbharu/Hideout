@@ -10,6 +10,8 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.transactions.TransactionManager
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -37,6 +39,7 @@ class JwtRefreshTokenRepositoryImplTest {
         transaction(db) {
             SchemaUtils.drop(JwtRefreshTokens)
         }
+        TransactionManager.closeAndUnregister(db)
     }
 
     @Test
@@ -53,9 +56,11 @@ class JwtRefreshTokenRepositoryImplTest {
         val expiresAt = now.plus(10, ChronoUnit.MINUTES)
 
         val expect = JwtRefreshToken(1L, 2L, "refreshToken", now, expiresAt)
-        repository.save(expect)
-        val actual = repository.findById(1L)
-        assertEquals(expect, actual)
+        newSuspendedTransaction {
+            repository.save(expect)
+            val actual = repository.findById(1L)
+            assertEquals(expect, actual)
+        }
     }
 
     @Test
@@ -68,7 +73,7 @@ class JwtRefreshTokenRepositoryImplTest {
                 }
             }
         )
-        transaction {
+        newSuspendedTransaction {
             JwtRefreshTokens.insert {
                 it[id] = 1L
                 it[userId] = 2L
@@ -76,17 +81,17 @@ class JwtRefreshTokenRepositoryImplTest {
                 it[createdAt] = Instant.now().toEpochMilli()
                 it[expiresAt] = Instant.now().plus(10, ChronoUnit.MINUTES).toEpochMilli()
             }
+            repository.save(
+                JwtRefreshToken(
+                    id = 1L,
+                    userId = 2L,
+                    refreshToken = "refreshToken2",
+                    createdAt = Instant.now(),
+                    expiresAt = Instant.now().plus(10, ChronoUnit.MINUTES)
+                )
+            )
         }
 
-        repository.save(
-            JwtRefreshToken(
-                id = 1L,
-                userId = 2L,
-                refreshToken = "refreshToken2",
-                createdAt = Instant.now(),
-                expiresAt = Instant.now().plus(10, ChronoUnit.MINUTES)
-            )
-        )
         transaction {
             val toJwtRefreshToken = JwtRefreshTokens.select { JwtRefreshTokens.id.eq(1L) }.single().toJwtRefreshToken()
             assertEquals("refreshToken2", toJwtRefreshToken.refreshToken)

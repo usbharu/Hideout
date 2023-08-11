@@ -202,6 +202,7 @@ class ExposedJobRepository(
         }
     }
 
+    @Suppress("CyclomaticComplexMethod")
     private fun String?.parseJsonMap(): Map<String, Any> {
         this ?: return emptyMap()
         return json.parseToJsonElement(this).jsonObject.mapValues { (_, el) ->
@@ -232,6 +233,7 @@ class ExposedJobRepository(
         }
     }
 
+    @Suppress("CyclomaticComplexMethod")
     private fun Map<String, Any>.stringify(): String? {
         if (isEmpty()) {
             return null

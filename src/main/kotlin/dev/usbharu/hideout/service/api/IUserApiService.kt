@@ -12,8 +12,6 @@ interface IUserApiService {
 
     suspend fun findByAcct(acct: Acct): UserResponse
 
-    suspend fun findByAccts(accts: List<Acct>): List<UserResponse>
-
     suspend fun findFollowers(userId: Long): List<UserResponse>
 
     suspend fun findFollowings(userId: Long): List<UserResponse>
@@ -21,4 +19,6 @@ interface IUserApiService {
     suspend fun findFollowersByAcct(acct: Acct): List<UserResponse>
 
     suspend fun findFollowingsByAcct(acct: Acct): List<UserResponse>
+
+    suspend fun createUser(username: String, password: String): UserResponse
 }

@@ -11,8 +11,8 @@ import dev.usbharu.hideout.domain.model.ap.Key
 import dev.usbharu.hideout.domain.model.ap.Person
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.plugins.configureSerialization
+import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.service.activitypub.ActivityPubUserService
-import dev.usbharu.hideout.service.user.IUserService
 import dev.usbharu.hideout.util.HttpUtil.Activity
 import dev.usbharu.hideout.util.HttpUtil.JsonLd
 import io.ktor.client.request.*
@@ -26,6 +26,7 @@ import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
+import utils.TestTransaction
 import java.time.Instant
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -62,8 +63,6 @@ class UsersAPTest {
         )
         person.context = listOf("https://www.w3.org/ns/activitystreams")
 
-        val userService = mock<IUserService> {}
-
         val activityPubUserService = mock<ActivityPubUserService> {
             onBlocking { getPersonByName(anyString()) } doReturn person
         }
@@ -71,7 +70,7 @@ class UsersAPTest {
         application {
             configureSerialization()
             routing {
-                usersAP(activityPubUserService, userService)
+                usersAP(activityPubUserService, mock(), mock(), TestTransaction)
             }
         }
         client.get("/users/test") {
@@ -122,8 +121,6 @@ class UsersAPTest {
         )
         person.context = listOf("https://www.w3.org/ns/activitystreams")
 
-        val userService = mock<IUserService> {}
-
         val activityPubUserService = mock<ActivityPubUserService> {
             onBlocking { getPersonByName(anyString()) } doReturn person
         }
@@ -131,7 +128,7 @@ class UsersAPTest {
         application {
             configureSerialization()
             routing {
-                usersAP(activityPubUserService, userService)
+                usersAP(activityPubUserService, mock(), mock(), TestTransaction)
             }
         }
         client.get("/users/test") {
@@ -174,8 +171,8 @@ class UsersAPTest {
         environment {
             config = ApplicationConfig("empty.conf")
         }
-        val userService = mock<IUserService> {
-            onBlocking { findByNameLocalUser(eq("test")) } doReturn User(
+        val userService = mock<UserQueryService> {
+            onBlocking { findByNameAndDomain(eq("test"), anyString()) } doReturn User(
                 1L,
                 "test",
                 "example.com",
@@ -192,7 +189,7 @@ class UsersAPTest {
         }
         application {
             routing {
-                usersAP(mock(), userService)
+                usersAP(mock(), userService, mock(), TestTransaction)
             }
         }
         client.get("/users/test") {

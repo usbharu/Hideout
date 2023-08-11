@@ -1,6 +1,7 @@
 package dev.usbharu.hideout.service.api
 
 import dev.usbharu.hideout.domain.model.hideout.dto.PostResponse
+import dev.usbharu.hideout.domain.model.hideout.dto.ReactionResponse
 import java.time.Instant
 
 @Suppress("LongParameterList")
@@ -25,4 +26,8 @@ interface IPostApiService {
         limit: Int? = null,
         userId: Long? = null
     ): List<PostResponse>
+
+    suspend fun getReactionByPostId(postId: Long, userId: Long? = null): List<ReactionResponse>
+    suspend fun appendReaction(reaction: String, userId: Long, postId: Long)
+    suspend fun removeReaction(userId: Long, postId: Long)
 }

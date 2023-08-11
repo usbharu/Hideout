@@ -12,22 +12,19 @@ import dev.usbharu.hideout.domain.model.job.DeliverReactionJob
 import dev.usbharu.hideout.domain.model.job.DeliverRemoveReactionJob
 import dev.usbharu.hideout.domain.model.job.ReceiveFollowJob
 import dev.usbharu.hideout.plugins.*
-import dev.usbharu.hideout.repository.IUserRepository
+import dev.usbharu.hideout.query.FollowerQueryService
+import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.routing.register
 import dev.usbharu.hideout.service.activitypub.ActivityPubService
 import dev.usbharu.hideout.service.activitypub.ActivityPubUserService
 import dev.usbharu.hideout.service.api.IPostApiService
 import dev.usbharu.hideout.service.api.IUserApiService
+import dev.usbharu.hideout.service.api.UserAuthApiService
+import dev.usbharu.hideout.service.api.WebFingerApiService
 import dev.usbharu.hideout.service.auth.HttpSignatureVerifyService
-import dev.usbharu.hideout.service.auth.IJwtService
-import dev.usbharu.hideout.service.core.IMetaService
-import dev.usbharu.hideout.service.core.IServerInitialiseService
-import dev.usbharu.hideout.service.core.IdGenerateService
-import dev.usbharu.hideout.service.core.TwitterSnowflakeIdGenerateService
+import dev.usbharu.hideout.service.core.*
 import dev.usbharu.hideout.service.job.JobQueueParentService
 import dev.usbharu.hideout.service.job.KJobJobQueueParentService
-import dev.usbharu.hideout.service.reaction.IReactionService
-import dev.usbharu.hideout.service.user.IUserAuthService
 import dev.usbharu.hideout.service.user.IUserService
 import dev.usbharu.kjob.exposed.ExposedKJob
 import io.ktor.client.*
@@ -79,7 +76,7 @@ fun Application.parent() {
                     level = LogLevel.INFO
                 }
                 install(httpSignaturePlugin) {
-                    keyMap = KtorKeyMap(get())
+                    keyMap = KtorKeyMap(get(), get())
                 }
                 expectSuccess = true
             }
@@ -95,6 +92,7 @@ fun Application.parent() {
         }
     }
     configureKoin(module, HideoutModule().module)
+    configureStatusPages()
     runBlocking {
         inject<IServerInitialiseService>().value.init()
     }
@@ -103,7 +101,7 @@ fun Application.parent() {
     configureStaticRouting()
     configureMonitoring()
     configureSerialization()
-    register(inject<IUserService>().value)
+    register(inject<IUserApiService>().value)
     configureSecurity(
 
         inject<JwkProvider>().value,
@@ -116,11 +114,11 @@ fun Application.parent() {
         activityPubUserService = inject<ActivityPubUserService>().value,
         postService = inject<IPostApiService>().value,
         userApiService = inject<IUserApiService>().value,
-        reactionService = inject<IReactionService>().value,
-        userAuthService = inject<IUserAuthService>().value,
-        userRepository = inject<IUserRepository>().value,
-        jwtService = inject<IJwtService>().value,
-        metaService = inject<IMetaService>().value
+        userQueryService = inject<UserQueryService>().value,
+        followerQueryService = inject<FollowerQueryService>().value,
+        userAuthApiService = inject<UserAuthApiService>().value,
+        webFingerApiService = inject<WebFingerApiService>().value,
+        transaction = inject<Transaction>().value
     )
 }
 

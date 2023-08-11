@@ -7,10 +7,12 @@ import dev.usbharu.hideout.repository.IMetaRepository
 import org.koin.core.annotation.Single
 
 @Single
-class MetaServiceImpl(private val metaRepository: IMetaRepository) : IMetaService {
-    override suspend fun getMeta(): Meta = metaRepository.get() ?: throw NotInitException("Meta is null")
+class MetaServiceImpl(private val metaRepository: IMetaRepository, private val transaction: Transaction) :
+    IMetaService {
+    override suspend fun getMeta(): Meta =
+        transaction.transaction { metaRepository.get() ?: throw NotInitException("Meta is null") }
 
-    override suspend fun updateMeta(meta: Meta) {
+    override suspend fun updateMeta(meta: Meta) = transaction.transaction {
         metaRepository.save(meta)
     }
 
