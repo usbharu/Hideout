@@ -21,13 +21,9 @@ import dev.usbharu.hideout.service.api.IPostApiService
 import dev.usbharu.hideout.service.api.IUserApiService
 import dev.usbharu.hideout.service.api.UserAuthApiService
 import dev.usbharu.hideout.service.auth.HttpSignatureVerifyService
-import dev.usbharu.hideout.service.core.IMetaService
-import dev.usbharu.hideout.service.core.IServerInitialiseService
-import dev.usbharu.hideout.service.core.IdGenerateService
-import dev.usbharu.hideout.service.core.TwitterSnowflakeIdGenerateService
+import dev.usbharu.hideout.service.core.*
 import dev.usbharu.hideout.service.job.JobQueueParentService
 import dev.usbharu.hideout.service.job.KJobJobQueueParentService
-import dev.usbharu.hideout.service.reaction.IReactionService
 import dev.usbharu.hideout.service.user.IUserService
 import dev.usbharu.kjob.exposed.ExposedKJob
 import io.ktor.client.*
@@ -117,10 +113,10 @@ fun Application.parent() {
         activityPubUserService = inject<ActivityPubUserService>().value,
         postService = inject<IPostApiService>().value,
         userApiService = inject<IUserApiService>().value,
-        reactionService = inject<IReactionService>().value,
         userQueryService = inject<UserQueryService>().value,
         followerQueryService = inject<FollowerQueryService>().value,
-        userAuthApiService = inject<UserAuthApiService>().value
+        userAuthApiService = inject<UserAuthApiService>().value,
+        transaction = inject<Transaction>().value
     )
 }
 

@@ -6,18 +6,19 @@ import dev.usbharu.hideout.domain.model.hideout.form.RefreshToken
 import dev.usbharu.hideout.exception.InvalidUsernameOrPasswordException
 import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.service.auth.IJwtService
+import dev.usbharu.hideout.service.core.Transaction
 import dev.usbharu.hideout.service.user.UserAuthService
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.koin.core.annotation.Single
 
 @Single
 class UserAuthApiServiceImpl(
     private val userAuthService: UserAuthService,
     private val userQueryService: UserQueryService,
-    private val jwtService: IJwtService
+    private val jwtService: IJwtService,
+    private val transaction: Transaction
 ) : UserAuthApiService {
     override suspend fun login(username: String, password: String): JwtToken {
-        return newSuspendedTransaction {
+        return transaction.transaction {
             if (userAuthService.verifyAccount(username, password).not()) {
                 throw InvalidUsernameOrPasswordException()
             }
@@ -27,7 +28,7 @@ class UserAuthApiServiceImpl(
     }
 
     override suspend fun refreshToken(refreshToken: RefreshToken): JwtToken {
-        return newSuspendedTransaction {
+        return transaction.transaction {
             jwtService.refreshToken(refreshToken)
         }
     }

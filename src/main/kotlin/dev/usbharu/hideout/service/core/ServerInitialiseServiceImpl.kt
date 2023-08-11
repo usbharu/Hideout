@@ -4,7 +4,6 @@ import dev.usbharu.hideout.domain.model.hideout.entity.Jwt
 import dev.usbharu.hideout.domain.model.hideout.entity.Meta
 import dev.usbharu.hideout.repository.IMetaRepository
 import dev.usbharu.hideout.util.ServerUtil
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.koin.core.annotation.Single
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -12,19 +11,23 @@ import java.security.KeyPairGenerator
 import java.util.*
 
 @Single
-class ServerInitialiseServiceImpl(private val metaRepository: IMetaRepository) : IServerInitialiseService {
+class ServerInitialiseServiceImpl(
+    private val metaRepository: IMetaRepository,
+    private val transaction: Transaction
+) :
+    IServerInitialiseService {
 
     val logger: Logger = LoggerFactory.getLogger(ServerInitialiseServiceImpl::class.java)
 
     override suspend fun init() {
-        newSuspendedTransaction {
+        transaction.transaction {
             val savedMeta = metaRepository.get()
             val implementationVersion = ServerUtil.getImplementationVersion()
             if (wasInitialised(savedMeta).not()) {
                 logger.info("Start Initialise")
                 initialise(implementationVersion)
                 logger.info("Finish Initialise")
-                return@newSuspendedTransaction
+                return@transaction
             }
 
             if (isVersionChanged(requireNotNull(savedMeta))) {

@@ -26,6 +26,7 @@ import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
+import utils.TestTransaction
 import java.time.Instant
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -69,7 +70,7 @@ class UsersAPTest {
         application {
             configureSerialization()
             routing {
-                usersAP(activityPubUserService, mock(), mock())
+                usersAP(activityPubUserService, mock(), mock(), TestTransaction)
             }
         }
         client.get("/users/test") {
@@ -127,7 +128,7 @@ class UsersAPTest {
         application {
             configureSerialization()
             routing {
-                usersAP(activityPubUserService, mock(), mock())
+                usersAP(activityPubUserService, mock(), mock(), TestTransaction)
             }
         }
         client.get("/users/test") {
@@ -188,7 +189,7 @@ class UsersAPTest {
         }
         application {
             routing {
-                usersAP(mock(), userService, mock())
+                usersAP(mock(), userService, mock(), TestTransaction)
             }
         }
         client.get("/users/test") {

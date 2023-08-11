@@ -7,10 +7,10 @@ import dev.usbharu.hideout.domain.model.hideout.dto.ReactionResponse
 import dev.usbharu.hideout.query.PostResponseQueryService
 import dev.usbharu.hideout.query.ReactionQueryService
 import dev.usbharu.hideout.repository.IUserRepository
+import dev.usbharu.hideout.service.core.Transaction
 import dev.usbharu.hideout.service.post.IPostService
 import dev.usbharu.hideout.service.reaction.IReactionService
 import dev.usbharu.hideout.util.AcctUtil
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.koin.core.annotation.Single
 import java.time.Instant
 import dev.usbharu.hideout.domain.model.hideout.form.Post as FormPost
@@ -21,10 +21,11 @@ class PostApiServiceImpl(
     private val userRepository: IUserRepository,
     private val postResponseQueryService: PostResponseQueryService,
     private val reactionQueryService: ReactionQueryService,
-    private val reactionService: IReactionService
+    private val reactionService: IReactionService,
+    private val transaction: Transaction
 ) : IPostApiService {
     override suspend fun createPost(postForm: FormPost, userId: Long): PostResponse {
-        return newSuspendedTransaction {
+        return transaction.transaction {
             val createdPost = postService.createLocal(
                 PostCreateDto(
                     text = postForm.text,
@@ -49,7 +50,7 @@ class PostApiServiceImpl(
         maxId: Long?,
         limit: Int?,
         userId: Long?
-    ): List<PostResponse> = newSuspendedTransaction {
+    ): List<PostResponse> = transaction.transaction {
         postResponseQueryService.findAll(
             since?.toEpochMilli(),
             until?.toEpochMilli(),
@@ -79,16 +80,16 @@ class PostApiServiceImpl(
     }
 
     override suspend fun getReactionByPostId(postId: Long, userId: Long?): List<ReactionResponse> =
-        newSuspendedTransaction { reactionQueryService.findByPostIdWithUsers(postId, userId) }
+        transaction.transaction { reactionQueryService.findByPostIdWithUsers(postId, userId) }
 
     override suspend fun appendReaction(reaction: String, userId: Long, postId: Long) {
-        newSuspendedTransaction {
+        transaction.transaction {
             reactionService.sendReaction(reaction, userId, postId)
         }
     }
 
     override suspend fun removeReaction(userId: Long, postId: Long) {
-        newSuspendedTransaction {
+        transaction.transaction {
             reactionService.removeReaction(userId, postId)
         }
     }
