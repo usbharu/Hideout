@@ -4,14 +4,14 @@ import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.domain.model.wellknown.WebFinger
 import dev.usbharu.hideout.exception.IllegalParameterException
 import dev.usbharu.hideout.exception.ParameterNotExistException
-import dev.usbharu.hideout.query.UserQueryService
+import dev.usbharu.hideout.service.api.WebFingerApiService
 import dev.usbharu.hideout.util.HttpUtil.Activity
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Routing.webfinger(userQueryService: UserQueryService) {
+fun Routing.webfinger(webFingerApiService: WebFingerApiService) {
     route("/.well-known/webfinger") {
         get {
             val acct = call.request.queryParameters["resource"]?.decodeURLPart()
@@ -25,7 +25,7 @@ fun Routing.webfinger(userQueryService: UserQueryService) {
                 .substringAfter("acct:")
                 .trimStart('@')
 
-            val userEntity = userQueryService.findByNameAndDomain(accountName, Config.configData.domain)
+            val userEntity = webFingerApiService.findByNameAndDomain(accountName, Config.configData.domain)
 
             val webFinger = WebFinger(
                 subject = acct,

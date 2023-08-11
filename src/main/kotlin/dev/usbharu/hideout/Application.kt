@@ -20,6 +20,7 @@ import dev.usbharu.hideout.service.activitypub.ActivityPubUserService
 import dev.usbharu.hideout.service.api.IPostApiService
 import dev.usbharu.hideout.service.api.IUserApiService
 import dev.usbharu.hideout.service.api.UserAuthApiService
+import dev.usbharu.hideout.service.api.WebFingerApiService
 import dev.usbharu.hideout.service.auth.HttpSignatureVerifyService
 import dev.usbharu.hideout.service.core.*
 import dev.usbharu.hideout.service.job.JobQueueParentService
@@ -75,7 +76,7 @@ fun Application.parent() {
                     level = LogLevel.INFO
                 }
                 install(httpSignaturePlugin) {
-                    keyMap = KtorKeyMap(get())
+                    keyMap = KtorKeyMap(get(), get())
                 }
                 expectSuccess = true
             }
@@ -116,6 +117,7 @@ fun Application.parent() {
         userQueryService = inject<UserQueryService>().value,
         followerQueryService = inject<FollowerQueryService>().value,
         userAuthApiService = inject<UserAuthApiService>().value,
+        webFingerApiService = inject<WebFingerApiService>().value,
         transaction = inject<Transaction>().value
     )
 }

@@ -14,6 +14,7 @@ import dev.usbharu.hideout.service.activitypub.ActivityPubUserService
 import dev.usbharu.hideout.service.api.IPostApiService
 import dev.usbharu.hideout.service.api.IUserApiService
 import dev.usbharu.hideout.service.api.UserAuthApiService
+import dev.usbharu.hideout.service.api.WebFingerApiService
 import dev.usbharu.hideout.service.auth.HttpSignatureVerifyService
 import dev.usbharu.hideout.service.core.Transaction
 import dev.usbharu.hideout.service.user.IUserService
@@ -32,6 +33,7 @@ fun Application.configureRouting(
     userQueryService: UserQueryService,
     followerQueryService: FollowerQueryService,
     userAuthApiService: UserAuthApiService,
+    webFingerApiService: WebFingerApiService,
     transaction: Transaction
 ) {
     install(AutoHeadResponse)
@@ -39,7 +41,7 @@ fun Application.configureRouting(
         inbox(httpSignatureVerifyService, activityPubService)
         outbox()
         usersAP(activityPubUserService, userQueryService, followerQueryService, transaction)
-        webfinger(userQueryService)
+        webfinger(webFingerApiService)
         route("/api/internal/v1") {
             posts(postService)
             users(userService, userApiService)
