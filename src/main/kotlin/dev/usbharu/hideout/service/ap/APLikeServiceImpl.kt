@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.service.activitypub
+package dev.usbharu.hideout.service.ap
 
 import dev.usbharu.hideout.domain.model.ActivityPubResponse
 import dev.usbharu.hideout.domain.model.ActivityPubStringResponse
@@ -12,21 +12,21 @@ import io.ktor.http.*
 import org.koin.core.annotation.Single
 
 @Single
-class ActivityPubLikeServiceImpl(
+class APLikeServiceImpl(
     private val reactionService: IReactionService,
-    private val activityPubUserService: ActivityPubUserService,
-    private val activityPubNoteService: ActivityPubNoteService,
+    private val apUserService: APUserService,
+    private val apNoteService: APNoteService,
     private val userQueryService: UserQueryService,
     private val postQueryService: PostQueryService,
     private val transaction: Transaction
-) : ActivityPubLikeService {
+) : APLikeService {
     override suspend fun receiveLike(like: Like): ActivityPubResponse {
         val actor = like.actor ?: throw IllegalActivityPubObjectException("actor is null")
         val content = like.content ?: throw IllegalActivityPubObjectException("content is null")
         like.`object` ?: throw IllegalActivityPubObjectException("object is null")
         transaction.transaction {
-            val person = activityPubUserService.fetchPerson(actor)
-            activityPubNoteService.fetchNote(like.`object`!!)
+            val person = apUserService.fetchPerson(actor)
+            apNoteService.fetchNote(like.`object`!!)
 
             val user = userQueryService.findByUrl(
                 person.url

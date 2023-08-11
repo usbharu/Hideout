@@ -1,8 +1,8 @@
-package dev.usbharu.hideout.service.activitypub
+package dev.usbharu.hideout.service.ap
 
 import dev.usbharu.hideout.domain.model.ap.Person
 
-interface ActivityPubUserService {
+interface APUserService {
     suspend fun getPersonByName(name: String): Person
 
     /**

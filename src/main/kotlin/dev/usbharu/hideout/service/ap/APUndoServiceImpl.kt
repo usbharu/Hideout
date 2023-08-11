@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.service.activitypub
+package dev.usbharu.hideout.service.ap
 
 import dev.usbharu.hideout.domain.model.ActivityPubResponse
 import dev.usbharu.hideout.domain.model.ActivityPubStringResponse
@@ -12,12 +12,12 @@ import org.koin.core.annotation.Single
 
 @Single
 @Suppress("UnsafeCallOnNullableType")
-class ActivityPubUndoServiceImpl(
+class APUndoServiceImpl(
     private val userService: IUserService,
-    private val activityPubUserService: ActivityPubUserService,
+    private val apUserService: APUserService,
     private val userQueryService: UserQueryService,
     private val transaction: Transaction
-) : ActivityPubUndoService {
+) : APUndoService {
     override suspend fun receiveUndo(undo: Undo): ActivityPubResponse {
         if (undo.actor == null) {
             return ActivityPubStringResponse(HttpStatusCode.BadRequest, "actor is null")
@@ -36,7 +36,7 @@ class ActivityPubUndoServiceImpl(
                     return ActivityPubStringResponse(HttpStatusCode.BadRequest, "object.object is null")
                 }
                 transaction.transaction {
-                    activityPubUserService.fetchPerson(undo.actor!!, follow.`object`)
+                    apUserService.fetchPerson(undo.actor!!, follow.`object`)
                     val follower = userQueryService.findByUrl(undo.actor!!)
                     val target = userQueryService.findByUrl(follow.`object`!!)
                     userService.unfollow(target.id, follower.id)

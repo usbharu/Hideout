@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.service.activitypub
+package dev.usbharu.hideout.service.ap
 
 import dev.usbharu.hideout.domain.model.ActivityPubResponse
 import dev.usbharu.hideout.domain.model.ActivityPubStringResponse
@@ -10,10 +10,10 @@ import io.ktor.http.*
 import org.koin.core.annotation.Single
 
 @Single
-class ActivityPubCreateServiceImpl(
-    private val activityPubNoteService: ActivityPubNoteService,
+class APCreateServiceImpl(
+    private val apNoteService: APNoteService,
     private val transaction: Transaction
-) : ActivityPubCreateService {
+) : APCreateService {
     override suspend fun receiveCreate(create: Create): ActivityPubResponse {
         val value = create.`object` ?: throw IllegalActivityPubObjectException("object is null")
         if (value.type.contains("Note").not()) {
@@ -22,7 +22,7 @@ class ActivityPubCreateServiceImpl(
 
         return transaction.transaction {
             val note = value as Note
-            activityPubNoteService.fetchNote(note)
+            apNoteService.fetchNote(note)
             ActivityPubStringResponse(HttpStatusCode.OK, "Created")
         }
     }

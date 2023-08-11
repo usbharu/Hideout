@@ -9,8 +9,8 @@ import dev.usbharu.hideout.routing.api.internal.v1.auth
 import dev.usbharu.hideout.routing.api.internal.v1.posts
 import dev.usbharu.hideout.routing.api.internal.v1.users
 import dev.usbharu.hideout.routing.wellknown.webfinger
-import dev.usbharu.hideout.service.activitypub.ActivityPubService
-import dev.usbharu.hideout.service.activitypub.ActivityPubUserService
+import dev.usbharu.hideout.service.ap.APService
+import dev.usbharu.hideout.service.ap.APUserService
 import dev.usbharu.hideout.service.api.IPostApiService
 import dev.usbharu.hideout.service.api.IUserApiService
 import dev.usbharu.hideout.service.api.UserAuthApiService
@@ -25,9 +25,9 @@ import io.ktor.server.routing.*
 @Suppress("LongParameterList")
 fun Application.configureRouting(
     httpSignatureVerifyService: HttpSignatureVerifyService,
-    activityPubService: ActivityPubService,
+    apService: APService,
     userService: IUserService,
-    activityPubUserService: ActivityPubUserService,
+    apUserService: APUserService,
     postService: IPostApiService,
     userApiService: IUserApiService,
     userQueryService: UserQueryService,
@@ -38,9 +38,9 @@ fun Application.configureRouting(
 ) {
     install(AutoHeadResponse)
     routing {
-        inbox(httpSignatureVerifyService, activityPubService)
+        inbox(httpSignatureVerifyService, apService)
         outbox()
-        usersAP(activityPubUserService, userQueryService, followerQueryService, transaction)
+        usersAP(apUserService, userQueryService, followerQueryService, transaction)
         webfinger(webFingerApiService)
         route("/api/internal/v1") {
             posts(postService)

@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.service.activitypub
+package dev.usbharu.hideout.service.ap
 
 import dev.usbharu.hideout.domain.model.ap.Follow
 import dev.usbharu.hideout.domain.model.hideout.dto.SendFollowDto
@@ -7,7 +7,7 @@ import io.ktor.client.*
 import org.koin.core.annotation.Single
 
 @Single
-class ActivityPubSendFollowServiceImpl(private val httpClient: HttpClient) : ActivityPubSendFollowService {
+class APSendFollowServiceImpl(private val httpClient: HttpClient) : APSendFollowService {
     override suspend fun sendFollow(sendFollowDto: SendFollowDto) {
         val follow = Follow(
             name = "Follow",

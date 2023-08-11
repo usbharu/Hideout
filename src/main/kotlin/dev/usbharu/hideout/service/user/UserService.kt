@@ -9,7 +9,7 @@ import dev.usbharu.hideout.exception.UserNotFoundException
 import dev.usbharu.hideout.query.FollowerQueryService
 import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.repository.IUserRepository
-import dev.usbharu.hideout.service.activitypub.ActivityPubSendFollowService
+import dev.usbharu.hideout.service.ap.APSendFollowService
 import org.koin.core.annotation.Single
 import java.time.Instant
 
@@ -17,7 +17,7 @@ import java.time.Instant
 class UserService(
     private val userRepository: IUserRepository,
     private val userAuthService: IUserAuthService,
-    private val activityPubSendFollowService: ActivityPubSendFollowService,
+    private val apSendFollowService: APSendFollowService,
     private val userQueryService: UserQueryService,
     private val followerQueryService: FollowerQueryService
 ) :
@@ -77,7 +77,7 @@ class UserService(
             if (userRepository.findFollowRequestsById(id, followerId)) {
                 // do-nothing
             } else {
-                activityPubSendFollowService.sendFollow(SendFollowDto(follower, user))
+                apSendFollowService.sendFollow(SendFollowDto(follower, user))
             }
             false
         }

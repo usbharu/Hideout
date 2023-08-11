@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.service.activitypub
+package dev.usbharu.hideout.service.ap
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -14,15 +14,15 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 @Single
-class ActivityPubServiceImpl(
-    private val activityPubReceiveFollowService: ActivityPubReceiveFollowService,
-    private val activityPubNoteService: ActivityPubNoteService,
-    private val activityPubUndoService: ActivityPubUndoService,
-    private val activityPubAcceptService: ActivityPubAcceptService,
-    private val activityPubCreateService: ActivityPubCreateService,
-    private val activityPubLikeService: ActivityPubLikeService,
-    private val activityPubReactionService: ActivityPubReactionService
-) : ActivityPubService {
+class APServiceImpl(
+    private val apReceiveFollowService: APReceiveFollowService,
+    private val apNoteService: APNoteService,
+    private val apUndoService: APUndoService,
+    private val apAcceptService: APAcceptService,
+    private val apCreateService: APCreateService,
+    private val apLikeService: APLikeService,
+    private val apReactionService: APReactionService
+) : APService {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
     override fun parseActivity(json: String): ActivityType {
@@ -44,17 +44,17 @@ class ActivityPubServiceImpl(
     override suspend fun processActivity(json: String, type: ActivityType): ActivityPubResponse {
         logger.debug("proccess activity: {}", type)
         return when (type) {
-            ActivityType.Accept -> activityPubAcceptService.receiveAccept(configData.objectMapper.readValue(json))
-            ActivityType.Follow -> activityPubReceiveFollowService.receiveFollow(
+            ActivityType.Accept -> apAcceptService.receiveAccept(configData.objectMapper.readValue(json))
+            ActivityType.Follow -> apReceiveFollowService.receiveFollow(
                 configData.objectMapper.readValue(
                     json,
                     Follow::class.java
                 )
             )
 
-            ActivityType.Create -> activityPubCreateService.receiveCreate(configData.objectMapper.readValue(json))
-            ActivityType.Like -> activityPubLikeService.receiveLike(configData.objectMapper.readValue(json))
-            ActivityType.Undo -> activityPubUndoService.receiveUndo(configData.objectMapper.readValue(json))
+            ActivityType.Create -> apCreateService.receiveCreate(configData.objectMapper.readValue(json))
+            ActivityType.Like -> apLikeService.receiveLike(configData.objectMapper.readValue(json))
+            ActivityType.Undo -> apUndoService.receiveUndo(configData.objectMapper.readValue(json))
 
             else -> {
                 throw IllegalArgumentException("$type is not supported.")
@@ -65,13 +65,13 @@ class ActivityPubServiceImpl(
     override suspend fun <T : HideoutJob> processActivity(job: JobContextWithProps<T>, hideoutJob: HideoutJob) {
         logger.debug("processActivity: ${hideoutJob.name}")
         when (hideoutJob) {
-            ReceiveFollowJob -> activityPubReceiveFollowService.receiveFollowJob(
+            ReceiveFollowJob -> apReceiveFollowService.receiveFollowJob(
                 job.props as JobProps<ReceiveFollowJob>
             )
 
-            DeliverPostJob -> activityPubNoteService.createNoteJob(job.props as JobProps<DeliverPostJob>)
-            DeliverReactionJob -> activityPubReactionService.reactionJob(job.props as JobProps<DeliverReactionJob>)
-            DeliverRemoveReactionJob -> activityPubReactionService.removeReactionJob(
+            DeliverPostJob -> apNoteService.createNoteJob(job.props as JobProps<DeliverPostJob>)
+            DeliverReactionJob -> apReactionService.reactionJob(job.props as JobProps<DeliverReactionJob>)
+            DeliverRemoveReactionJob -> apReactionService.removeReactionJob(
                 job.props as JobProps<DeliverRemoveReactionJob>
             )
         }

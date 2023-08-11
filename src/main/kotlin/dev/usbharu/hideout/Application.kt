@@ -15,8 +15,8 @@ import dev.usbharu.hideout.plugins.*
 import dev.usbharu.hideout.query.FollowerQueryService
 import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.routing.register
-import dev.usbharu.hideout.service.activitypub.ActivityPubService
-import dev.usbharu.hideout.service.activitypub.ActivityPubUserService
+import dev.usbharu.hideout.service.ap.APService
+import dev.usbharu.hideout.service.ap.APUserService
 import dev.usbharu.hideout.service.api.IPostApiService
 import dev.usbharu.hideout.service.api.IUserApiService
 import dev.usbharu.hideout.service.api.UserAuthApiService
@@ -109,9 +109,9 @@ fun Application.parent() {
     )
     configureRouting(
         httpSignatureVerifyService = inject<HttpSignatureVerifyService>().value,
-        activityPubService = inject<ActivityPubService>().value,
+        apService = inject<APService>().value,
         userService = inject<IUserService>().value,
-        activityPubUserService = inject<ActivityPubUserService>().value,
+        apUserService = inject<APUserService>().value,
         postService = inject<IPostApiService>().value,
         userApiService = inject<IUserApiService>().value,
         userQueryService = inject<UserQueryService>().value,
@@ -128,28 +128,28 @@ fun Application.worker() {
         connectionDatabase = inject<Database>().value
     }.start()
 
-    val activityPubService = inject<ActivityPubService>().value
+    val apService = inject<APService>().value
 
     kJob.register(ReceiveFollowJob) {
         execute {
-            activityPubService.processActivity(this, it)
+            apService.processActivity(this, it)
         }
     }
     kJob.register(DeliverPostJob) {
         execute {
-            activityPubService.processActivity(this, it)
+            apService.processActivity(this, it)
         }
     }
 
     kJob.register(DeliverReactionJob) {
         execute {
-            activityPubService.processActivity(this, it)
+            apService.processActivity(this, it)
         }
     }
 
     kJob.register(DeliverRemoveReactionJob) {
         execute {
-            activityPubService.processActivity(this, it)
+            apService.processActivity(this, it)
         }
     }
 }

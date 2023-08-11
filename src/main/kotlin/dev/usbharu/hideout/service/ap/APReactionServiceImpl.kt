@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.service.activitypub
+package dev.usbharu.hideout.service.ap
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.config.Config
@@ -19,14 +19,14 @@ import org.koin.core.annotation.Single
 import java.time.Instant
 
 @Single
-class ActivityPubReactionServiceImpl(
+class APReactionServiceImpl(
     private val jobQueueParentService: JobQueueParentService,
     private val iPostRepository: IPostRepository,
     private val httpClient: HttpClient,
     private val userQueryService: UserQueryService,
     private val followerQueryService: FollowerQueryService,
     private val postQueryService: PostQueryService
-) : ActivityPubReactionService {
+) : APReactionService {
     override suspend fun reaction(like: Reaction) {
         val followers = followerQueryService.findFollowersById(like.userId)
         val user = userQueryService.findById(like.userId)

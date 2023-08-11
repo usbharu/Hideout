@@ -5,7 +5,7 @@ import dev.usbharu.hideout.exception.ParameterNotExistException
 import dev.usbharu.hideout.plugins.respondAp
 import dev.usbharu.hideout.query.FollowerQueryService
 import dev.usbharu.hideout.query.UserQueryService
-import dev.usbharu.hideout.service.activitypub.ActivityPubUserService
+import dev.usbharu.hideout.service.ap.APUserService
 import dev.usbharu.hideout.service.core.Transaction
 import dev.usbharu.hideout.util.HttpUtil.Activity
 import dev.usbharu.hideout.util.HttpUtil.JsonLd
@@ -16,7 +16,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Routing.usersAP(
-    activityPubUserService: ActivityPubUserService,
+    apUserService: APUserService,
     userQueryService: UserQueryService,
     followerQueryService: FollowerQueryService,
     transaction: Transaction
@@ -27,7 +27,7 @@ fun Routing.usersAP(
             call.application.log.debug("Authorization: ${call.request.header("Authorization")}")
             val name =
                 call.parameters["name"] ?: throw ParameterNotExistException("Parameter(name='name') does not exist.")
-            val person = activityPubUserService.getPersonByName(name)
+            val person = apUserService.getPersonByName(name)
             return@handle call.respondAp(
                 person,
                 HttpStatusCode.OK

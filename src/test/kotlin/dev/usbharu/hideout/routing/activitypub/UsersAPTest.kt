@@ -12,7 +12,7 @@ import dev.usbharu.hideout.domain.model.ap.Person
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.plugins.configureSerialization
 import dev.usbharu.hideout.query.UserQueryService
-import dev.usbharu.hideout.service.activitypub.ActivityPubUserService
+import dev.usbharu.hideout.service.ap.APUserService
 import dev.usbharu.hideout.util.HttpUtil.Activity
 import dev.usbharu.hideout.util.HttpUtil.JsonLd
 import io.ktor.client.request.*
@@ -63,14 +63,14 @@ class UsersAPTest {
         )
         person.context = listOf("https://www.w3.org/ns/activitystreams")
 
-        val activityPubUserService = mock<ActivityPubUserService> {
+        val apUserService = mock<APUserService> {
             onBlocking { getPersonByName(anyString()) } doReturn person
         }
 
         application {
             configureSerialization()
             routing {
-                usersAP(activityPubUserService, mock(), mock(), TestTransaction)
+                usersAP(apUserService, mock(), mock(), TestTransaction)
             }
         }
         client.get("/users/test") {
@@ -121,14 +121,14 @@ class UsersAPTest {
         )
         person.context = listOf("https://www.w3.org/ns/activitystreams")
 
-        val activityPubUserService = mock<ActivityPubUserService> {
+        val apUserService = mock<APUserService> {
             onBlocking { getPersonByName(anyString()) } doReturn person
         }
 
         application {
             configureSerialization()
             routing {
-                usersAP(activityPubUserService, mock(), mock(), TestTransaction)
+                usersAP(apUserService, mock(), mock(), TestTransaction)
             }
         }
         client.get("/users/test") {

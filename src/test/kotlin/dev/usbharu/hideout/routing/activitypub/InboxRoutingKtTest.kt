@@ -3,8 +3,8 @@ package dev.usbharu.hideout.routing.activitypub
 import dev.usbharu.hideout.exception.JsonParseException
 import dev.usbharu.hideout.plugins.configureSerialization
 import dev.usbharu.hideout.plugins.configureStatusPages
-import dev.usbharu.hideout.service.activitypub.ActivityPubService
-import dev.usbharu.hideout.service.activitypub.ActivityPubUserService
+import dev.usbharu.hideout.service.ap.APService
+import dev.usbharu.hideout.service.ap.APUserService
 import dev.usbharu.hideout.service.auth.HttpSignatureVerifyService
 import dev.usbharu.hideout.service.user.IUserService
 import io.ktor.client.request.*
@@ -44,16 +44,16 @@ class InboxRoutingKtTest {
         val httpSignatureVerifyService = mock<HttpSignatureVerifyService> {
             on { verify(any()) } doReturn true
         }
-        val activityPubService = mock<ActivityPubService> {
+        val apService = mock<APService> {
             on { parseActivity(any()) } doThrow JsonParseException()
         }
         mock<IUserService>()
-        mock<ActivityPubUserService>()
+        mock<APUserService>()
         application {
             configureStatusPages()
             configureSerialization()
             routing {
-                inbox(httpSignatureVerifyService, activityPubService)
+                inbox(httpSignatureVerifyService, apService)
             }
         }
         client.post("/inbox").let {
@@ -85,16 +85,16 @@ class InboxRoutingKtTest {
         val httpSignatureVerifyService = mock<HttpSignatureVerifyService> {
             on { verify(any()) } doReturn true
         }
-        val activityPubService = mock<ActivityPubService> {
+        val apService = mock<APService> {
             on { parseActivity(any()) } doThrow JsonParseException()
         }
         mock<IUserService>()
-        mock<ActivityPubUserService>()
+        mock<APUserService>()
         application {
             configureStatusPages()
             configureSerialization()
             routing {
-                inbox(httpSignatureVerifyService, activityPubService)
+                inbox(httpSignatureVerifyService, apService)
             }
         }
         client.post("/users/test/inbox").let {

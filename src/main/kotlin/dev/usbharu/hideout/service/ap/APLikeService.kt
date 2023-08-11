@@ -1,8 +1,8 @@
-package dev.usbharu.hideout.service.activitypub
+package dev.usbharu.hideout.service.ap
 
 import dev.usbharu.hideout.domain.model.ActivityPubResponse
 import dev.usbharu.hideout.domain.model.ap.Like
 
-interface ActivityPubLikeService {
+interface APLikeService {
     suspend fun receiveLike(like: Like): ActivityPubResponse
 }
