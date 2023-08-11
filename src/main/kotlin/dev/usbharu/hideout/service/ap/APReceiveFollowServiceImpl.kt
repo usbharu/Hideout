@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.service.activitypub
+package dev.usbharu.hideout.service.ap
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.config.Config
@@ -18,14 +18,14 @@ import kjob.core.job.JobProps
 import org.koin.core.annotation.Single
 
 @Single
-class ActivityPubReceiveFollowServiceImpl(
+class APReceiveFollowServiceImpl(
     private val jobQueueParentService: JobQueueParentService,
-    private val activityPubUserService: ActivityPubUserService,
+    private val apUserService: APUserService,
     private val userService: IUserService,
     private val httpClient: HttpClient,
     private val userQueryService: UserQueryService,
     private val transaction: Transaction
-) : ActivityPubReceiveFollowService {
+) : APReceiveFollowService {
     override suspend fun receiveFollow(follow: Follow): ActivityPubResponse {
         // TODO: Verify HTTP  Signature
         jobQueueParentService.schedule(ReceiveFollowJob) {
@@ -40,7 +40,7 @@ class ActivityPubReceiveFollowServiceImpl(
         transaction.transaction {
             val actor = props[ReceiveFollowJob.actor]
             val targetActor = props[ReceiveFollowJob.targetActor]
-            val person = activityPubUserService.fetchPerson(actor, targetActor)
+            val person = apUserService.fetchPerson(actor, targetActor)
             val follow = Config.configData.objectMapper.readValue<Follow>(props[ReceiveFollowJob.follow])
             httpClient.postAp(
                 urlString = person.inbox ?: throw IllegalArgumentException("inbox is not found"),

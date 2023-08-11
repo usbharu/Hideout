@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.service.activitypub
+package dev.usbharu.hideout.service.ap
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.config.Config
@@ -23,15 +23,15 @@ import org.slf4j.LoggerFactory
 import java.time.Instant
 
 @Single
-class ActivityPubNoteServiceImpl(
+class APNoteServiceImpl(
     private val httpClient: HttpClient,
     private val jobQueueParentService: JobQueueParentService,
     private val postRepository: IPostRepository,
-    private val activityPubUserService: ActivityPubUserService,
+    private val apUserService: APUserService,
     private val userQueryService: UserQueryService,
     private val followerQueryService: FollowerQueryService,
     private val postQueryService: PostQueryService
-) : ActivityPubNoteService {
+) : APNoteService {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -75,9 +75,12 @@ class ActivityPubNoteServiceImpl(
 
     override suspend fun fetchNote(url: String, targetActor: String?): Note {
         val post = postQueryService.findByUrl(url)
-        if (post != null) {
+        try {
             return postToNote(post)
+        } catch (_: NoSuchElementException) {
+        } catch (_: IllegalArgumentException) {
         }
+
         val response = httpClient.getAp(
             url,
             targetActor?.let { "$targetActor#pubkey" }
@@ -118,7 +121,7 @@ class ActivityPubNoteServiceImpl(
     }
 
     private suspend fun internalNote(note: Note, targetActor: String?, url: String): Note {
-        val person = activityPubUserService.fetchPerson(
+        val person = apUserService.fetchPerson(
             note.attributedTo ?: throw IllegalActivityPubObjectException("note.attributedTo is null"),
             targetActor
         )

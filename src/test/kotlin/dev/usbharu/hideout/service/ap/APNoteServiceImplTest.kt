@@ -1,7 +1,7 @@
 @file:OptIn(ExperimentalCoroutinesApi::class)
 @file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 
-package dev.usbharu.hideout.service.activitypub
+package dev.usbharu.hideout.service.ap
 
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.config.ConfigData
@@ -25,7 +25,7 @@ import utils.JsonObjectMapper
 import java.time.Instant
 import kotlin.test.assertEquals
 
-class ActivityPubNoteServiceImplTest {
+class APNoteServiceImplTest {
     @Test
     fun `createPost 新しい投稿`() = runTest {
         val followers = listOf<User>(
@@ -76,7 +76,7 @@ class ActivityPubNoteServiceImplTest {
         }
         val jobQueueParentService = mock<JobQueueParentService>()
         val activityPubNoteService =
-            ActivityPubNoteServiceImpl(
+            APNoteServiceImpl(
                 mock(),
                 jobQueueParentService,
                 mock(),
@@ -107,7 +107,7 @@ class ActivityPubNoteServiceImplTest {
                 respondOk()
             }
         )
-        val activityPubNoteService = ActivityPubNoteServiceImpl(
+        val activityPubNoteService = APNoteServiceImpl(
             httpClient,
             mock(),
             mock(),

@@ -1,11 +1,11 @@
-package dev.usbharu.hideout.service.activitypub
+package dev.usbharu.hideout.service.ap
 
 import dev.usbharu.hideout.domain.model.ap.Note
 import dev.usbharu.hideout.domain.model.hideout.entity.Post
 import dev.usbharu.hideout.domain.model.job.DeliverPostJob
 import kjob.core.job.JobProps
 
-interface ActivityPubNoteService {
+interface APNoteService {
 
     suspend fun createNote(post: Post)
     suspend fun createNoteJob(props: JobProps<DeliverPostJob>)

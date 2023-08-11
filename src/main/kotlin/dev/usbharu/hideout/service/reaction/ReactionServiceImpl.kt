@@ -3,13 +3,13 @@ package dev.usbharu.hideout.service.reaction
 import dev.usbharu.hideout.domain.model.hideout.entity.Reaction
 import dev.usbharu.hideout.query.ReactionQueryService
 import dev.usbharu.hideout.repository.ReactionRepository
-import dev.usbharu.hideout.service.activitypub.ActivityPubReactionService
+import dev.usbharu.hideout.service.ap.APReactionService
 import org.koin.core.annotation.Single
 
 @Single
 class ReactionServiceImpl(
     private val reactionRepository: ReactionRepository,
-    private val activityPubReactionService: ActivityPubReactionService,
+    private val apReactionService: APReactionService,
     private val reactionQueryService: ReactionQueryService
 ) : IReactionService {
     override suspend fun receiveReaction(name: String, domain: String, userId: Long, postId: Long) {
@@ -27,7 +27,7 @@ class ReactionServiceImpl(
         } else {
             val reaction = Reaction(reactionRepository.generateId(), 0, postId, userId)
             reactionRepository.save(reaction)
-            activityPubReactionService.reaction(reaction)
+            apReactionService.reaction(reaction)
         }
     }
 

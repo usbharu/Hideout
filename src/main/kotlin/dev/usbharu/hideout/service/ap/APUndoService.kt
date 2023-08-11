@@ -1,8 +1,8 @@
-package dev.usbharu.hideout.service.activitypub
+package dev.usbharu.hideout.service.ap
 
 import dev.usbharu.hideout.domain.model.ActivityPubResponse
 import dev.usbharu.hideout.domain.model.ap.Undo
 
-interface ActivityPubUndoService {
+interface APUndoService {
     suspend fun receiveUndo(undo: Undo): ActivityPubResponse
 }

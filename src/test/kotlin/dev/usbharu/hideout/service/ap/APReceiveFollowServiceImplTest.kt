@@ -1,7 +1,7 @@
 @file:OptIn(ExperimentalCoroutinesApi::class)
 @file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 
-package dev.usbharu.hideout.service.activitypub
+package dev.usbharu.hideout.service.ap
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.config.Config
@@ -27,14 +27,14 @@ import utils.JsonObjectMapper
 import utils.TestTransaction
 import java.time.Instant
 
-class ActivityPubReceiveFollowServiceImplTest {
+class APReceiveFollowServiceImplTest {
     @Test
     fun `receiveFollow フォロー受付処理`() = runTest {
         val jobQueueParentService = mock<JobQueueParentService> {
             onBlocking { schedule(eq(ReceiveFollowJob), any()) } doReturn Unit
         }
         val activityPubFollowService =
-            ActivityPubReceiveFollowServiceImpl(jobQueueParentService, mock(), mock(), mock(), mock(), TestTransaction)
+            APReceiveFollowServiceImpl(jobQueueParentService, mock(), mock(), mock(), mock(), TestTransaction)
         activityPubFollowService.receiveFollow(
             Follow(
                 emptyList(),
@@ -96,7 +96,7 @@ class ActivityPubReceiveFollowServiceImplTest {
             )
 
         )
-        val activityPubUserService = mock<ActivityPubUserService> {
+        val apUserService = mock<APUserService> {
             onBlocking { fetchPerson(anyString(), any()) } doReturn person
         }
         val userQueryService = mock<UserQueryService> {
@@ -132,9 +132,9 @@ class ActivityPubReceiveFollowServiceImplTest {
             onBlocking { followRequest(any(), any()) } doReturn false
         }
         val activityPubFollowService =
-            ActivityPubReceiveFollowServiceImpl(
+            APReceiveFollowServiceImpl(
                 mock(),
-                activityPubUserService,
+                apUserService,
                 userService,
                 HttpClient(
                     MockEngine { httpRequestData ->

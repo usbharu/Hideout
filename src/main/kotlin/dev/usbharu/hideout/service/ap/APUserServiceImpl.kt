@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.service.activitypub
+package dev.usbharu.hideout.service.ap
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.config.Config
@@ -19,13 +19,13 @@ import io.ktor.http.*
 import org.koin.core.annotation.Single
 
 @Single
-class ActivityPubUserServiceImpl(
+class APUserServiceImpl(
     private val userService: IUserService,
     private val httpClient: HttpClient,
     private val userQueryService: UserQueryService,
     private val transaction: Transaction
 ) :
-    ActivityPubUserService {
+    APUserService {
 
     override suspend fun getPersonByName(name: String): Person {
         val userEntity = transaction.transaction {
