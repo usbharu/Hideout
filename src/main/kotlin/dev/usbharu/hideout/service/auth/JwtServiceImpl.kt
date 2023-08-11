@@ -38,7 +38,6 @@ class JwtServiceImpl(
 
     private val keyId = runBlocking { metaService.getJwtMeta().kid }
 
-
     @Suppress("MagicNumber")
     override suspend fun createToken(user: User): JwtToken {
         val now = Instant.now()

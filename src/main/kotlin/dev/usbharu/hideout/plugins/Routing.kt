@@ -41,7 +41,7 @@ fun Application.configureRouting(
         usersAP(activityPubUserService, userQueryService, followerQueryService)
         webfinger(userQueryService)
         route("/api/internal/v1") {
-            posts(postService, reactionService)
+            posts(postService)
             users(userService, userApiService)
             auth(userAuthApiService)
         }
