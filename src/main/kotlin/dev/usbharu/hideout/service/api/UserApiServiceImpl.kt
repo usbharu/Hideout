@@ -7,8 +7,8 @@ import dev.usbharu.hideout.domain.model.hideout.dto.UserResponse
 import dev.usbharu.hideout.exception.UsernameAlreadyExistException
 import dev.usbharu.hideout.query.FollowerQueryService
 import dev.usbharu.hideout.query.UserQueryService
+import dev.usbharu.hideout.service.core.Transaction
 import dev.usbharu.hideout.service.user.IUserService
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.koin.core.annotation.Single
 import kotlin.math.min
 
@@ -16,7 +16,8 @@ import kotlin.math.min
 class UserApiServiceImpl(
     private val userQueryService: UserQueryService,
     private val followerQueryService: FollowerQueryService,
-    private val userService: IUserService
+    private val userService: IUserService,
+    private val transaction: Transaction
 ) : IUserApiService {
     override suspend fun findAll(limit: Int?, offset: Long): List<UserResponse> =
         userQueryService.findAll(min(limit ?: 100, 100), offset).map { UserResponse.from(it) }
@@ -44,7 +45,7 @@ class UserApiServiceImpl(
             .map { UserResponse.from(it) }
 
     override suspend fun createUser(username: String, password: String): UserResponse {
-        return newSuspendedTransaction {
+        return transaction.transaction {
             if (userQueryService.existByNameAndDomain(username, Config.configData.domain)) {
                 throw UsernameAlreadyExistException()
             }

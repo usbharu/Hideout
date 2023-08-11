@@ -11,6 +11,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.*
+import utils.TestTransaction
 import java.util.*
 import kotlin.test.assertEquals
 
@@ -21,7 +22,7 @@ class MetaServiceImplTest {
         val metaRepository = mock<IMetaRepository> {
             onBlocking { get() } doReturn meta
         }
-        val metaService = MetaServiceImpl(metaRepository)
+        val metaService = MetaServiceImpl(metaRepository, TestTransaction)
         val actual = metaService.getMeta()
         assertEquals(meta, actual)
     }
@@ -31,7 +32,7 @@ class MetaServiceImplTest {
         val metaRepository = mock<IMetaRepository> {
             onBlocking { get() } doReturn null
         }
-        val metaService = MetaServiceImpl(metaRepository)
+        val metaService = MetaServiceImpl(metaRepository, TestTransaction)
         assertThrows<NotInitException> { metaService.getMeta() }
     }
 
@@ -41,7 +42,7 @@ class MetaServiceImplTest {
         val metaRepository = mock<IMetaRepository> {
             onBlocking { save(any()) } doReturn Unit
         }
-        val metaServiceImpl = MetaServiceImpl(metaRepository)
+        val metaServiceImpl = MetaServiceImpl(metaRepository, TestTransaction)
         metaServiceImpl.updateMeta(meta)
         argumentCaptor<Meta> {
             verify(metaRepository).save(capture())
@@ -55,7 +56,7 @@ class MetaServiceImplTest {
         val metaRepository = mock<IMetaRepository> {
             onBlocking { get() } doReturn meta
         }
-        val metaService = MetaServiceImpl(metaRepository)
+        val metaService = MetaServiceImpl(metaRepository, TestTransaction)
         val actual = metaService.getJwtMeta()
         assertEquals(meta.jwt, actual)
     }
@@ -65,11 +66,7 @@ class MetaServiceImplTest {
         val metaRepository = mock<IMetaRepository> {
             onBlocking { get() } doReturn null
         }
-        val metaService = MetaServiceImpl(metaRepository)
-        try {
-//            assertThrows<NotInitException> { metaService.getJwtMeta() }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        val metaService = MetaServiceImpl(metaRepository, TestTransaction)
+        assertThrows<NotInitException> { metaService.getJwtMeta() }
     }
 }

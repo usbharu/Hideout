@@ -15,7 +15,7 @@ import dev.usbharu.hideout.service.api.IPostApiService
 import dev.usbharu.hideout.service.api.IUserApiService
 import dev.usbharu.hideout.service.api.UserAuthApiService
 import dev.usbharu.hideout.service.auth.HttpSignatureVerifyService
-import dev.usbharu.hideout.service.reaction.IReactionService
+import dev.usbharu.hideout.service.core.Transaction
 import dev.usbharu.hideout.service.user.IUserService
 import io.ktor.server.application.*
 import io.ktor.server.plugins.autohead.*
@@ -29,16 +29,16 @@ fun Application.configureRouting(
     activityPubUserService: ActivityPubUserService,
     postService: IPostApiService,
     userApiService: IUserApiService,
-    reactionService: IReactionService,
     userQueryService: UserQueryService,
     followerQueryService: FollowerQueryService,
-    userAuthApiService: UserAuthApiService
+    userAuthApiService: UserAuthApiService,
+    transaction: Transaction
 ) {
     install(AutoHeadResponse)
     routing {
         inbox(httpSignatureVerifyService, activityPubService)
         outbox()
-        usersAP(activityPubUserService, userQueryService, followerQueryService)
+        usersAP(activityPubUserService, userQueryService, followerQueryService, transaction)
         webfinger(userQueryService)
         route("/api/internal/v1") {
             posts(postService)

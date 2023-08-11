@@ -6,6 +6,7 @@ import dev.usbharu.hideout.plugins.respondAp
 import dev.usbharu.hideout.query.FollowerQueryService
 import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.service.activitypub.ActivityPubUserService
+import dev.usbharu.hideout.service.core.Transaction
 import dev.usbharu.hideout.util.HttpUtil.Activity
 import dev.usbharu.hideout.util.HttpUtil.JsonLd
 import io.ktor.http.*
@@ -13,12 +14,12 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 fun Routing.usersAP(
     activityPubUserService: ActivityPubUserService,
     userQueryService: UserQueryService,
-    followerQueryService: FollowerQueryService
+    followerQueryService: FollowerQueryService,
+    transaction: Transaction
 ) {
     route("/users/{name}") {
         createChild(ContentTypeRouteSelector(ContentType.Application.Activity, ContentType.Application.JsonLd)).handle {
@@ -34,7 +35,7 @@ fun Routing.usersAP(
         }
         get {
             // TODO: 暫定処置なので治す
-            newSuspendedTransaction {
+            transaction.transaction {
                 val userEntity = userQueryService.findByNameAndDomain(
                     call.parameters["name"]
                         ?: throw ParameterNotExistException("Parameter(name='name') does not exist."),

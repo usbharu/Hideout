@@ -10,6 +10,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.*
+import utils.TestTransaction
 import java.util.*
 import kotlin.test.assertEquals
 
@@ -20,7 +21,7 @@ class ServerInitialiseServiceImplTest {
             onBlocking { get() } doReturn null
             onBlocking { save(any()) } doReturn Unit
         }
-        val serverInitialiseServiceImpl = ServerInitialiseServiceImpl(metaRepository)
+        val serverInitialiseServiceImpl = ServerInitialiseServiceImpl(metaRepository, TestTransaction)
 
         serverInitialiseServiceImpl.init()
         verify(metaRepository, times(1)).save(any())
@@ -32,7 +33,7 @@ class ServerInitialiseServiceImplTest {
         val metaRepository = mock<IMetaRepository> {
             onBlocking { get() } doReturn meta
         }
-        val serverInitialiseServiceImpl = ServerInitialiseServiceImpl(metaRepository)
+        val serverInitialiseServiceImpl = ServerInitialiseServiceImpl(metaRepository, TestTransaction)
         serverInitialiseServiceImpl.init()
         verify(metaRepository, times(0)).save(any())
     }
@@ -45,7 +46,7 @@ class ServerInitialiseServiceImplTest {
             onBlocking { save(any()) } doReturn Unit
         }
 
-        val serverInitialiseServiceImpl = ServerInitialiseServiceImpl(metaRepository)
+        val serverInitialiseServiceImpl = ServerInitialiseServiceImpl(metaRepository, TestTransaction)
         serverInitialiseServiceImpl.init()
         verify(metaRepository, times(1)).save(any())
         argumentCaptor<Meta> {
