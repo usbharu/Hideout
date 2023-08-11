@@ -13,7 +13,7 @@ import io.ktor.server.routing.*
 
 fun Routing.inbox(
     httpSignatureVerifyService: HttpSignatureVerifyService,
-    activityPubService: dev.usbharu.hideout.service.activitypub.ActivityPubService
+    apService: dev.usbharu.hideout.service.ap.APService
 ) {
     route("/inbox") {
         get {
@@ -25,9 +25,9 @@ fun Routing.inbox(
             }
             val json = call.receiveText()
             call.application.log.trace("Received: $json")
-            val activityTypes = activityPubService.parseActivity(json)
+            val activityTypes = apService.parseActivity(json)
             call.application.log.debug("ActivityTypes: ${activityTypes.name}")
-            val response = activityPubService.processActivity(json, activityTypes)
+            val response = apService.processActivity(json, activityTypes)
             when (response) {
                 is ActivityPubObjectResponse -> call.respond(
                     response.httpStatusCode,
@@ -54,9 +54,9 @@ fun Routing.inbox(
             }
             val json = call.receiveText()
             call.application.log.trace("Received: $json")
-            val activityTypes = activityPubService.parseActivity(json)
+            val activityTypes = apService.parseActivity(json)
             call.application.log.debug("ActivityTypes: ${activityTypes.name}")
-            val response = activityPubService.processActivity(json, activityTypes)
+            val response = apService.processActivity(json, activityTypes)
             when (response) {
                 is ActivityPubObjectResponse -> call.respond(
                     response.httpStatusCode,

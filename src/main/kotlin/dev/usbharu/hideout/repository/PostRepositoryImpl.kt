@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.core.annotation.Single
 
 @Single
-class PostRepositoryImpl(database: Database, private val idGenerateService: IdGenerateService) : IPostRepository {
+class PostRepositoryImpl(database: Database, private val idGenerateService: IdGenerateService) : PostRepository {
 
     init {
         transaction(database) {

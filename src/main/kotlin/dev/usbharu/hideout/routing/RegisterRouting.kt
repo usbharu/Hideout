@@ -1,6 +1,6 @@
 package dev.usbharu.hideout.routing
 
-import dev.usbharu.hideout.service.api.IUserApiService
+import dev.usbharu.hideout.service.api.UserApiService
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -8,7 +8,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Application.register(userApiService: IUserApiService) {
+fun Application.register(userApiService: UserApiService) {
     routing {
         get("/register") {
             val principal = call.principal<UserIdPrincipal>()

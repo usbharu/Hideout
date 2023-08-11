@@ -14,8 +14,8 @@ import dev.usbharu.hideout.domain.model.hideout.form.RefreshToken
 import dev.usbharu.hideout.exception.InvalidRefreshTokenException
 import dev.usbharu.hideout.query.JwtRefreshTokenQueryService
 import dev.usbharu.hideout.query.UserQueryService
-import dev.usbharu.hideout.repository.IJwtRefreshTokenRepository
-import dev.usbharu.hideout.service.core.IMetaService
+import dev.usbharu.hideout.repository.JwtRefreshTokenRepository
+import dev.usbharu.hideout.service.core.MetaService
 import dev.usbharu.hideout.util.Base64Util
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -42,14 +42,14 @@ class JwtServiceImplTest {
         keyPairGenerator.initialize(2048)
         val generateKeyPair = keyPairGenerator.generateKeyPair()
 
-        val metaService = mock<IMetaService> {
+        val metaService = mock<MetaService> {
             onBlocking { getJwtMeta() } doReturn Jwt(
                 kid,
                 Base64Util.encode(generateKeyPair.private.encoded),
                 Base64Util.encode(generateKeyPair.public.encoded)
             )
         }
-        val refreshTokenRepository = mock<IJwtRefreshTokenRepository> {
+        val refreshTokenRepository = mock<JwtRefreshTokenRepository> {
             onBlocking { generateId() } doReturn 1L
         }
         val jwtService = JwtServiceImpl(metaService, refreshTokenRepository, mock(), mock())
@@ -94,7 +94,7 @@ class JwtServiceImplTest {
         keyPairGenerator.initialize(2048)
         val generateKeyPair = keyPairGenerator.generateKeyPair()
 
-        val refreshTokenRepository = mock<IJwtRefreshTokenRepository> {
+        val refreshTokenRepository = mock<JwtRefreshTokenRepository> {
             onBlocking { generateId() } doReturn 2L
         }
 
@@ -123,7 +123,7 @@ class JwtServiceImplTest {
                 createdAt = Instant.now()
             )
         }
-        val metaService = mock<IMetaService> {
+        val metaService = mock<MetaService> {
             onBlocking { getJwtMeta() } doReturn Jwt(
                 kid,
                 Base64Util.encode(generateKeyPair.private.encoded),
@@ -160,7 +160,7 @@ class JwtServiceImplTest {
         keyPairGenerator.initialize(2048)
         val generateKeyPair = keyPairGenerator.generateKeyPair()
 
-        val metaService = mock<IMetaService> {
+        val metaService = mock<MetaService> {
             onBlocking { getJwtMeta() } doReturn Jwt(
                 kid,
                 Base64Util.encode(generateKeyPair.private.encoded),
@@ -187,7 +187,7 @@ class JwtServiceImplTest {
         keyPairGenerator.initialize(2048)
         val generateKeyPair = keyPairGenerator.generateKeyPair()
 
-        val metaService = mock<IMetaService> {
+        val metaService = mock<MetaService> {
             onBlocking { getJwtMeta() } doReturn Jwt(
                 kid,
                 Base64Util.encode(generateKeyPair.private.encoded),
@@ -214,7 +214,7 @@ class JwtServiceImplTest {
         keyPairGenerator.initialize(2048)
         val generateKeyPair = keyPairGenerator.generateKeyPair()
 
-        val metaService = mock<IMetaService> {
+        val metaService = mock<MetaService> {
             onBlocking { getJwtMeta() } doReturn Jwt(
                 kid,
                 Base64Util.encode(generateKeyPair.private.encoded),

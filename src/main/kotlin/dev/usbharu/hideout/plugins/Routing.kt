@@ -9,15 +9,15 @@ import dev.usbharu.hideout.routing.api.internal.v1.auth
 import dev.usbharu.hideout.routing.api.internal.v1.posts
 import dev.usbharu.hideout.routing.api.internal.v1.users
 import dev.usbharu.hideout.routing.wellknown.webfinger
-import dev.usbharu.hideout.service.activitypub.ActivityPubService
-import dev.usbharu.hideout.service.activitypub.ActivityPubUserService
-import dev.usbharu.hideout.service.api.IPostApiService
-import dev.usbharu.hideout.service.api.IUserApiService
+import dev.usbharu.hideout.service.ap.APService
+import dev.usbharu.hideout.service.ap.APUserService
+import dev.usbharu.hideout.service.api.PostApiService
+import dev.usbharu.hideout.service.api.UserApiService
 import dev.usbharu.hideout.service.api.UserAuthApiService
 import dev.usbharu.hideout.service.api.WebFingerApiService
 import dev.usbharu.hideout.service.auth.HttpSignatureVerifyService
 import dev.usbharu.hideout.service.core.Transaction
-import dev.usbharu.hideout.service.user.IUserService
+import dev.usbharu.hideout.service.user.UserService
 import io.ktor.server.application.*
 import io.ktor.server.plugins.autohead.*
 import io.ktor.server.routing.*
@@ -25,11 +25,11 @@ import io.ktor.server.routing.*
 @Suppress("LongParameterList")
 fun Application.configureRouting(
     httpSignatureVerifyService: HttpSignatureVerifyService,
-    activityPubService: ActivityPubService,
-    userService: IUserService,
-    activityPubUserService: ActivityPubUserService,
-    postService: IPostApiService,
-    userApiService: IUserApiService,
+    apService: APService,
+    userService: UserService,
+    apUserService: APUserService,
+    postService: PostApiService,
+    userApiService: UserApiService,
     userQueryService: UserQueryService,
     followerQueryService: FollowerQueryService,
     userAuthApiService: UserAuthApiService,
@@ -38,9 +38,9 @@ fun Application.configureRouting(
 ) {
     install(AutoHeadResponse)
     routing {
-        inbox(httpSignatureVerifyService, activityPubService)
+        inbox(httpSignatureVerifyService, apService)
         outbox()
-        usersAP(activityPubUserService, userQueryService, followerQueryService, transaction)
+        usersAP(apUserService, userQueryService, followerQueryService, transaction)
         webfinger(webFingerApiService)
         route("/api/internal/v1") {
             posts(postService)
