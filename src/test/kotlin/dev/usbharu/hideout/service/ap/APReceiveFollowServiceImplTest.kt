@@ -11,7 +11,7 @@ import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.domain.model.job.ReceiveFollowJob
 import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.service.job.JobQueueParentService
-import dev.usbharu.hideout.service.user.IUserService
+import dev.usbharu.hideout.service.user.UserService
 import io.ktor.client.*
 import io.ktor.client.engine.mock.*
 import kjob.core.dsl.ScheduleContext
@@ -128,7 +128,7 @@ class APReceiveFollowServiceImplTest {
                 )
         }
 
-        val userService = mock<IUserService> {
+        val userService = mock<UserService> {
             onBlocking { followRequest(any(), any()) } doReturn false
         }
         val activityPubFollowService =

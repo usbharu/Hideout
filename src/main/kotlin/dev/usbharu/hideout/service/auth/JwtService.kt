@@ -10,8 +10,8 @@ import dev.usbharu.hideout.domain.model.hideout.form.RefreshToken
 import dev.usbharu.hideout.exception.InvalidRefreshTokenException
 import dev.usbharu.hideout.query.JwtRefreshTokenQueryService
 import dev.usbharu.hideout.query.UserQueryService
-import dev.usbharu.hideout.repository.IJwtRefreshTokenRepository
-import dev.usbharu.hideout.service.core.IMetaService
+import dev.usbharu.hideout.repository.JwtRefreshTokenRepository
+import dev.usbharu.hideout.service.core.MetaService
 import dev.usbharu.hideout.util.RsaUtil
 import kotlinx.coroutines.runBlocking
 import org.koin.core.annotation.Single
@@ -19,7 +19,7 @@ import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.*
 
-interface IJwtService {
+interface JwtService {
     suspend fun createToken(user: User): JwtToken
     suspend fun refreshToken(refreshToken: RefreshToken): JwtToken
 
@@ -31,11 +31,11 @@ interface IJwtService {
 @Suppress("InjectDispatcher")
 @Single
 class JwtServiceImpl(
-    private val metaService: IMetaService,
-    private val refreshTokenRepository: IJwtRefreshTokenRepository,
+    private val metaService: MetaService,
+    private val refreshTokenRepository: JwtRefreshTokenRepository,
     private val userQueryService: UserQueryService,
     private val refreshTokenQueryService: JwtRefreshTokenQueryService
-) : IJwtService {
+) : JwtService {
 
     private val privateKey = runBlocking {
         RsaUtil.decodeRsaPrivateKey(metaService.getJwtMeta().privateKey)

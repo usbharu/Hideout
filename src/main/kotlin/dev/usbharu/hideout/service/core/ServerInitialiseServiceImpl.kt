@@ -2,7 +2,7 @@ package dev.usbharu.hideout.service.core
 
 import dev.usbharu.hideout.domain.model.hideout.entity.Jwt
 import dev.usbharu.hideout.domain.model.hideout.entity.Meta
-import dev.usbharu.hideout.repository.IMetaRepository
+import dev.usbharu.hideout.repository.MetaRepository
 import dev.usbharu.hideout.util.ServerUtil
 import org.koin.core.annotation.Single
 import org.slf4j.Logger
@@ -12,10 +12,10 @@ import java.util.*
 
 @Single
 class ServerInitialiseServiceImpl(
-    private val metaRepository: IMetaRepository,
+    private val metaRepository: MetaRepository,
     private val transaction: Transaction
 ) :
-    IServerInitialiseService {
+    ServerInitialiseService {
 
     val logger: Logger = LoggerFactory.getLogger(ServerInitialiseServiceImpl::class.java)
 

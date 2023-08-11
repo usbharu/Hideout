@@ -8,11 +8,11 @@ import dev.usbharu.hideout.exception.UsernameAlreadyExistException
 import dev.usbharu.hideout.query.FollowerQueryService
 import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.service.core.Transaction
-import dev.usbharu.hideout.service.user.IUserService
+import dev.usbharu.hideout.service.user.UserService
 import org.koin.core.annotation.Single
 import kotlin.math.min
 
-interface IUserApiService {
+interface UserApiService {
     suspend fun findAll(limit: Int? = 100, offset: Long = 0): List<UserResponse>
 
     suspend fun findById(id: Long): UserResponse
@@ -36,9 +36,9 @@ interface IUserApiService {
 class UserApiServiceImpl(
     private val userQueryService: UserQueryService,
     private val followerQueryService: FollowerQueryService,
-    private val userService: IUserService,
+    private val userService: UserService,
     private val transaction: Transaction
-) : IUserApiService {
+) : UserApiService {
     override suspend fun findAll(limit: Int?, offset: Long): List<UserResponse> =
         userQueryService.findAll(min(limit ?: 100, 100), offset).map { UserResponse.from(it) }
 

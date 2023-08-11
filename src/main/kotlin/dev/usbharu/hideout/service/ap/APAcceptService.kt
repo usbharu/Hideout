@@ -6,7 +6,7 @@ import dev.usbharu.hideout.domain.model.ap.Accept
 import dev.usbharu.hideout.domain.model.ap.Follow
 import dev.usbharu.hideout.exception.ap.IllegalActivityPubObjectException
 import dev.usbharu.hideout.query.UserQueryService
-import dev.usbharu.hideout.service.user.IUserService
+import dev.usbharu.hideout.service.user.UserService
 import io.ktor.http.*
 import org.koin.core.annotation.Single
 
@@ -16,7 +16,7 @@ interface APAcceptService {
 
 @Single
 class APAcceptServiceImpl(
-    private val userService: IUserService,
+    private val userService: UserService,
     private val userQueryService: UserQueryService
 ) : APAcceptService {
     override suspend fun receiveAccept(accept: Accept): ActivityPubResponse {

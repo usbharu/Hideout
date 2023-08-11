@@ -7,16 +7,16 @@ import dev.usbharu.hideout.domain.model.hideout.dto.ReactionResponse
 import dev.usbharu.hideout.domain.model.hideout.form.Post
 import dev.usbharu.hideout.query.PostResponseQueryService
 import dev.usbharu.hideout.query.ReactionQueryService
-import dev.usbharu.hideout.repository.IUserRepository
+import dev.usbharu.hideout.repository.UserRepository
 import dev.usbharu.hideout.service.core.Transaction
-import dev.usbharu.hideout.service.post.IPostService
-import dev.usbharu.hideout.service.reaction.IReactionService
+import dev.usbharu.hideout.service.post.PostService
+import dev.usbharu.hideout.service.reaction.ReactionService
 import dev.usbharu.hideout.util.AcctUtil
 import org.koin.core.annotation.Single
 import java.time.Instant
 
 @Suppress("LongParameterList")
-interface IPostApiService {
+interface PostApiService {
     suspend fun createPost(postForm: dev.usbharu.hideout.domain.model.hideout.form.Post, userId: Long): PostResponse
     suspend fun getById(id: Long, userId: Long?): PostResponse
     suspend fun getAll(
@@ -45,13 +45,13 @@ interface IPostApiService {
 
 @Single
 class PostApiServiceImpl(
-    private val postService: IPostService,
-    private val userRepository: IUserRepository,
+    private val postService: PostService,
+    private val userRepository: UserRepository,
     private val postResponseQueryService: PostResponseQueryService,
     private val reactionQueryService: ReactionQueryService,
-    private val reactionService: IReactionService,
+    private val reactionService: ReactionService,
     private val transaction: Transaction
-) : IPostApiService {
+) : PostApiService {
     override suspend fun createPost(postForm: Post, userId: Long): PostResponse {
         return transaction.transaction {
             val createdPost = postService.createLocal(

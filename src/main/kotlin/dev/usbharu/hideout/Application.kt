@@ -17,15 +17,15 @@ import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.routing.register
 import dev.usbharu.hideout.service.ap.APService
 import dev.usbharu.hideout.service.ap.APUserService
-import dev.usbharu.hideout.service.api.IPostApiService
-import dev.usbharu.hideout.service.api.IUserApiService
+import dev.usbharu.hideout.service.api.PostApiService
+import dev.usbharu.hideout.service.api.UserApiService
 import dev.usbharu.hideout.service.api.UserAuthApiService
 import dev.usbharu.hideout.service.api.WebFingerApiService
 import dev.usbharu.hideout.service.auth.HttpSignatureVerifyService
 import dev.usbharu.hideout.service.core.*
 import dev.usbharu.hideout.service.job.JobQueueParentService
 import dev.usbharu.hideout.service.job.KJobJobQueueParentService
-import dev.usbharu.hideout.service.user.IUserService
+import dev.usbharu.hideout.service.user.UserService
 import dev.usbharu.kjob.exposed.ExposedKJob
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
@@ -94,26 +94,26 @@ fun Application.parent() {
     configureKoin(module, HideoutModule().module)
     configureStatusPages()
     runBlocking {
-        inject<IServerInitialiseService>().value.init()
+        inject<ServerInitialiseService>().value.init()
     }
     configureCompression()
     configureHTTP()
     configureStaticRouting()
     configureMonitoring()
     configureSerialization()
-    register(inject<IUserApiService>().value)
+    register(inject<UserApiService>().value)
     configureSecurity(
 
         inject<JwkProvider>().value,
-        inject<IMetaService>().value
+        inject<MetaService>().value
     )
     configureRouting(
         httpSignatureVerifyService = inject<HttpSignatureVerifyService>().value,
         apService = inject<APService>().value,
-        userService = inject<IUserService>().value,
+        userService = inject<UserService>().value,
         apUserService = inject<APUserService>().value,
-        postService = inject<IPostApiService>().value,
-        userApiService = inject<IUserApiService>().value,
+        postService = inject<PostApiService>().value,
+        userApiService = inject<UserApiService>().value,
         userQueryService = inject<UserQueryService>().value,
         followerQueryService = inject<FollowerQueryService>().value,
         userAuthApiService = inject<UserAuthApiService>().value,

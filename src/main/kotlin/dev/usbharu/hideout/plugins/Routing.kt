@@ -11,13 +11,13 @@ import dev.usbharu.hideout.routing.api.internal.v1.users
 import dev.usbharu.hideout.routing.wellknown.webfinger
 import dev.usbharu.hideout.service.ap.APService
 import dev.usbharu.hideout.service.ap.APUserService
-import dev.usbharu.hideout.service.api.IPostApiService
-import dev.usbharu.hideout.service.api.IUserApiService
+import dev.usbharu.hideout.service.api.PostApiService
+import dev.usbharu.hideout.service.api.UserApiService
 import dev.usbharu.hideout.service.api.UserAuthApiService
 import dev.usbharu.hideout.service.api.WebFingerApiService
 import dev.usbharu.hideout.service.auth.HttpSignatureVerifyService
 import dev.usbharu.hideout.service.core.Transaction
-import dev.usbharu.hideout.service.user.IUserService
+import dev.usbharu.hideout.service.user.UserService
 import io.ktor.server.application.*
 import io.ktor.server.plugins.autohead.*
 import io.ktor.server.routing.*
@@ -26,10 +26,10 @@ import io.ktor.server.routing.*
 fun Application.configureRouting(
     httpSignatureVerifyService: HttpSignatureVerifyService,
     apService: APService,
-    userService: IUserService,
+    userService: UserService,
     apUserService: APUserService,
-    postService: IPostApiService,
-    userApiService: IUserApiService,
+    postService: PostApiService,
+    userApiService: UserApiService,
     userQueryService: UserQueryService,
     followerQueryService: FollowerQueryService,
     userAuthApiService: UserAuthApiService,

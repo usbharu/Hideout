@@ -3,12 +3,12 @@ package dev.usbharu.hideout.service.core
 import dev.usbharu.hideout.domain.model.hideout.entity.Jwt
 import dev.usbharu.hideout.domain.model.hideout.entity.Meta
 import dev.usbharu.hideout.exception.NotInitException
-import dev.usbharu.hideout.repository.IMetaRepository
+import dev.usbharu.hideout.repository.MetaRepository
 import org.koin.core.annotation.Single
 
 @Single
-class MetaServiceImpl(private val metaRepository: IMetaRepository, private val transaction: Transaction) :
-    IMetaService {
+class MetaServiceImpl(private val metaRepository: MetaRepository, private val transaction: Transaction) :
+    MetaService {
     override suspend fun getMeta(): Meta =
         transaction.transaction { metaRepository.get() ?: throw NotInitException("Meta is null") }
 

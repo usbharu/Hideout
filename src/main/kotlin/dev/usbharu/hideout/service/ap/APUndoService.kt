@@ -6,7 +6,7 @@ import dev.usbharu.hideout.domain.model.ap.Follow
 import dev.usbharu.hideout.domain.model.ap.Undo
 import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.service.core.Transaction
-import dev.usbharu.hideout.service.user.IUserService
+import dev.usbharu.hideout.service.user.UserService
 import io.ktor.http.*
 import org.koin.core.annotation.Single
 
@@ -17,7 +17,7 @@ interface APUndoService {
 @Single
 @Suppress("UnsafeCallOnNullableType")
 class APUndoServiceImpl(
-    private val userService: IUserService,
+    private val userService: UserService,
     private val apUserService: APUserService,
     private val userQueryService: UserQueryService,
     private val transaction: Transaction

@@ -13,7 +13,7 @@ class JwtRefreshTokenRepositoryImpl(
     private val database: Database,
     private val idGenerateService: IdGenerateService
 ) :
-    IJwtRefreshTokenRepository {
+    JwtRefreshTokenRepository {
 
     init {
         transaction(database) {

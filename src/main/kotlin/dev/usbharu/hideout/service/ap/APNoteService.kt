@@ -13,7 +13,7 @@ import dev.usbharu.hideout.plugins.postAp
 import dev.usbharu.hideout.query.FollowerQueryService
 import dev.usbharu.hideout.query.PostQueryService
 import dev.usbharu.hideout.query.UserQueryService
-import dev.usbharu.hideout.repository.IPostRepository
+import dev.usbharu.hideout.repository.PostRepository
 import dev.usbharu.hideout.service.job.JobQueueParentService
 import io.ktor.client.*
 import io.ktor.client.statement.*
@@ -35,7 +35,7 @@ interface APNoteService {
 class APNoteServiceImpl(
     private val httpClient: HttpClient,
     private val jobQueueParentService: JobQueueParentService,
-    private val postRepository: IPostRepository,
+    private val postRepository: PostRepository,
     private val apUserService: APUserService,
     private val userQueryService: UserQueryService,
     private val followerQueryService: FollowerQueryService,

@@ -6,7 +6,7 @@ import dev.usbharu.hideout.plugins.configureStatusPages
 import dev.usbharu.hideout.service.ap.APService
 import dev.usbharu.hideout.service.ap.APUserService
 import dev.usbharu.hideout.service.auth.HttpSignatureVerifyService
-import dev.usbharu.hideout.service.user.IUserService
+import dev.usbharu.hideout.service.user.UserService
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.server.config.*
@@ -47,7 +47,7 @@ class InboxRoutingKtTest {
         val apService = mock<APService> {
             on { parseActivity(any()) } doThrow JsonParseException()
         }
-        mock<IUserService>()
+        mock<UserService>()
         mock<APUserService>()
         application {
             configureStatusPages()
@@ -88,7 +88,7 @@ class InboxRoutingKtTest {
         val apService = mock<APService> {
             on { parseActivity(any()) } doThrow JsonParseException()
         }
-        mock<IUserService>()
+        mock<UserService>()
         mock<APUserService>()
         application {
             configureStatusPages()
