@@ -18,7 +18,7 @@ export const LoginPage: Component = () => {
         api().loginPost({password: password(), username: username()}).then(value => {
             setCookie("token", value.token);
             setCookie("refresh-token", value.refreshToken)
-            navigator("/")
+            window.location.href = "/"
         }).catch(reason => {
             console.log(reason);
             setPassword("")
