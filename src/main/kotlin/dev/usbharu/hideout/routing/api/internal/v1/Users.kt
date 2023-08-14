@@ -42,11 +42,11 @@ fun Route.users(userService: UserService, userApiService: UserApiService) {
             authenticate(TOKEN_AUTH, optional = true) {
                 get {
                     val userParameter = (
-                        call.parameters["name"]
-                            ?: throw ParameterNotExistException(
-                                "Parameter(name='userName@domain') does not exist."
+                            call.parameters["name"]
+                                ?: throw ParameterNotExistException(
+                                    "Parameter(name='userName@domain') does not exist."
+                                )
                             )
-                        )
                     if (userParameter.toLongOrNull() != null) {
                         return@get call.respond(userApiService.findById(userParameter.toLong()))
                     } else {
@@ -72,19 +72,16 @@ fun Route.users(userService: UserService, userApiService: UserApiService) {
                             ?: throw IllegalStateException("no principal")
                         val userParameter = call.parameters["name"]
                             ?: throw ParameterNotExistException("Parameter(name='userName@domain') does not exist.")
-                        if (userParameter.toLongOrNull() != null) {
-                            if (userService.followRequest(userParameter.toLong(), userId)) {
-                                return@post call.respond(HttpStatusCode.OK)
+                        if (if (userParameter.toLongOrNull() != null) {
+                                userApiService.follow(userParameter.toLong(), userId)
                             } else {
-                                return@post call.respond(HttpStatusCode.Accepted)
+                                val parse = AcctUtil.parse(userParameter)
+                                userApiService.follow(parse, userId)
                             }
-                        }
-                        val acct = AcctUtil.parse(userParameter)
-                        val targetUser = userApiService.findByAcct(acct)
-                        if (userService.followRequest(targetUser.id.toLong(), userId)) {
-                            return@post call.respond(HttpStatusCode.OK)
+                        ) {
+                            call.respond(HttpStatusCode.OK)
                         } else {
-                            return@post call.respond(HttpStatusCode.Accepted)
+                            call.respond(HttpStatusCode.Accepted)
                         }
                     }
                 }
@@ -92,11 +89,11 @@ fun Route.users(userService: UserService, userApiService: UserApiService) {
             route("/following") {
                 get {
                     val userParameter = (
-                        call.parameters["name"]
-                            ?: throw ParameterNotExistException(
-                                "Parameter(name='userName@domain') does not exist."
+                            call.parameters["name"]
+                                ?: throw ParameterNotExistException(
+                                    "Parameter(name='userName@domain') does not exist."
+                                )
                             )
-                        )
                     if (userParameter.toLongOrNull() != null) {
                         return@get call.respond(userApiService.findFollowings(userParameter.toLong()))
                     }

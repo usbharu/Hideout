@@ -10,13 +10,14 @@ fun Application.configureStatusPages() {
     install(StatusPages) {
         exception<IllegalArgumentException> { call, cause ->
             call.respondText(text = "400: $cause", status = HttpStatusCode.BadRequest)
+            call.application.log.warn("Bad Request", cause)
         }
         exception<InvalidUsernameOrPasswordException> { call, _ ->
             call.respond(HttpStatusCode.Unauthorized)
         }
         exception<Throwable> { call, cause ->
             call.respondText(text = "500: ${cause.stackTraceToString()}", status = HttpStatusCode.InternalServerError)
-            cause.printStackTrace()
+            call.application.log.error("Internal Server Error", cause)
         }
     }
 }

@@ -6,6 +6,8 @@ import dev.usbharu.hideout.domain.model.ap.Image
 import dev.usbharu.hideout.domain.model.ap.Key
 import dev.usbharu.hideout.domain.model.ap.Person
 import dev.usbharu.hideout.domain.model.hideout.dto.RemoteUserCreateDto
+import dev.usbharu.hideout.domain.model.hideout.entity.User
+import dev.usbharu.hideout.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.exception.ap.IllegalActivityPubObjectException
 import dev.usbharu.hideout.plugins.getAp
 import dev.usbharu.hideout.query.UserQueryService
@@ -29,6 +31,8 @@ interface APUserService {
      * @return
      */
     suspend fun fetchPerson(url: String, targetActor: String? = null): Person
+
+    suspend fun fetchPersonWithEntity(url: String, targetActor: String? = null): Pair<Person, User>
 }
 
 @Single
@@ -67,11 +71,15 @@ class APUserServiceImpl(
                 id = "$userUrl#pubkey",
                 owner = userUrl,
                 publicKeyPem = userEntity.publicKey
-            )
+            ),
+            endpoints = mapOf("sharedInbox" to "${Config.configData.url}/inbox")
         )
     }
 
-    override suspend fun fetchPerson(url: String, targetActor: String?): Person {
+    override suspend fun fetchPerson(url: String, targetActor: String?): Person =
+        fetchPersonWithEntity(url, targetActor).first
+
+    override suspend fun fetchPersonWithEntity(url: String, targetActor: String?): Pair<Person, User> {
         return try {
             val userEntity = userQueryService.findByUrl(url)
             return Person(
@@ -95,9 +103,10 @@ class APUserServiceImpl(
                     id = "$url#pubkey",
                     owner = url,
                     publicKeyPem = userEntity.publicKey
-                )
-            )
-        } catch (ignore: NoSuchElementException) {
+                ),
+                endpoints = mapOf("sharedInbox" to "${Config.configData.url}/inbox")
+            ) to userEntity
+        } catch (ignore: FailedToGetResourcesException) {
             val httpResponse = if (targetActor != null) {
                 httpClient.getAp(url, "$targetActor#pubkey")
             } else {
@@ -107,7 +116,7 @@ class APUserServiceImpl(
             }
             val person = Config.configData.objectMapper.readValue<Person>(httpResponse.bodyAsText())
 
-            userService.createRemoteUser(
+            person to userService.createRemoteUser(
                 RemoteUserCreateDto(
                     name = person.preferredUsername
                         ?: throw IllegalActivityPubObjectException("preferredUsername is null"),
@@ -122,7 +131,6 @@ class APUserServiceImpl(
                         ?: throw IllegalActivityPubObjectException("publicKey is null"),
                 )
             )
-            person
         }
     }
 }
