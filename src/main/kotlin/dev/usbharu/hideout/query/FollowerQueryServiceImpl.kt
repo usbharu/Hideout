@@ -198,6 +198,12 @@ class FollowerQueryServiceImpl : FollowerQueryService {
     }
 
     override suspend fun removeFollower(user: Long, follower: Long) {
-        UsersFollowers.deleteWhere { Users.id eq user and (followerId eq follower) }
+        UsersFollowers.deleteWhere { userId eq user and (followerId eq follower) }
+    }
+
+    override suspend fun alreadyFollow(userId: Long, followerId: Long): Boolean {
+        return UsersFollowers.select { UsersFollowers.userId eq userId or (UsersFollowers.followerId eq followerId) }
+            .empty()
+            .not()
     }
 }

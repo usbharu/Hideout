@@ -2,6 +2,7 @@ package dev.usbharu.hideout.repository
 
 import dev.usbharu.hideout.domain.model.hideout.entity.Post
 import dev.usbharu.hideout.domain.model.hideout.entity.Visibility
+import dev.usbharu.hideout.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.service.core.IdGenerateService
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -53,7 +54,8 @@ class PostRepositoryImpl(database: Database, private val idGenerateService: IdGe
         return post
     }
 
-    override suspend fun findById(id: Long): Post = Posts.select { Posts.id eq id }.single().toPost()
+    override suspend fun findById(id: Long): Post = Posts.select { Posts.id eq id }.singleOrNull()?.toPost()
+        ?: throw FailedToGetResourcesException("id: $id was not found.")
 
     override suspend fun delete(id: Long) {
         Posts.deleteWhere { Posts.id eq id }
