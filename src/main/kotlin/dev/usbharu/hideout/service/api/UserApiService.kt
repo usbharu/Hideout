@@ -46,7 +46,6 @@ class UserApiServiceImpl(
         userQueryService.findAll(min(limit ?: 100, 100), offset).map { UserResponse.from(it) }
     }
 
-
     override suspend fun findById(id: Long): UserResponse =
         transaction.transaction { UserResponse.from(userQueryService.findById(id)) }
 
@@ -71,7 +70,6 @@ class UserApiServiceImpl(
         followerQueryService.findFollowersById(userId).map { UserResponse.from(it) }
     }
 
-
     override suspend fun findFollowings(userId: Long): List<UserResponse> = transaction.transaction {
         followerQueryService.findFollowingById(userId).map { UserResponse.from(it) }
     }
@@ -85,7 +83,6 @@ class UserApiServiceImpl(
         followerQueryService.findFollowingByNameAndDomain(acct.username, acct.domain ?: Config.configData.domain)
             .map { UserResponse.from(it) }
     }
-
 
     override suspend fun createUser(username: String, password: String): UserResponse {
         return transaction.transaction {
@@ -108,7 +105,8 @@ class UserApiServiceImpl(
                 userQueryService.findByNameAndDomain(
                     targetAcct.username,
                     targetAcct.domain ?: Config.configData.domain
-                ).id, sourceId
+                ).id,
+                sourceId
             )
         }
     }

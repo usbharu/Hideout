@@ -1,7 +1,6 @@
 package dev.usbharu.hideout.util
 
-class CollectionUtil {
-}
+class CollectionUtil
 
 fun <T> Iterable<T>.singleOr(block: (e: RuntimeException) -> Throwable): T {
     return try {
