@@ -4,6 +4,7 @@ import com.auth0.jwt.interfaces.Claim
 import com.auth0.jwt.interfaces.Payload
 import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.config.Config
+import dev.usbharu.hideout.domain.model.Acct
 import dev.usbharu.hideout.domain.model.hideout.dto.UserResponse
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.domain.model.hideout.form.UserCreate
@@ -433,9 +434,7 @@ class UsersTest {
                 "https://example.com/test",
                 Instant.now().toEpochMilli()
             )
-        }
-        val userService = mock<UserService> {
-            onBlocking { followRequest(eq(1235), eq(1234)) } doReturn true
+            onBlocking { follow(any<Acct>(), eq(1234)) } doReturn true
         }
         application {
             configureSerialization()
@@ -448,7 +447,7 @@ class UsersTest {
             }
             routing {
                 route("/api/internal/v1") {
-                    users(userService, userApiService)
+                    users(mock(), userApiService)
                 }
             }
         }
@@ -483,9 +482,7 @@ class UsersTest {
                 "https://example.com/test",
                 Instant.now().toEpochMilli()
             )
-        }
-        val userService = mock<UserService> {
-            onBlocking { followRequest(eq(1235), eq(1234)) } doReturn false
+            onBlocking { follow(any<Acct>(), eq(1234)) } doReturn false
         }
         application {
             configureSerialization()
@@ -498,7 +495,7 @@ class UsersTest {
             }
             routing {
                 route("/api/internal/v1") {
-                    users(userService, userApiService)
+                    users(mock(), userApiService)
                 }
             }
         }
@@ -533,9 +530,7 @@ class UsersTest {
                 "https://example.com/test",
                 Instant.now().toEpochMilli()
             )
-        }
-        val userService = mock<UserService> {
-            onBlocking { followRequest(eq(1235), eq(1234)) } doReturn false
+            onBlocking { follow(eq(1235), eq(1234)) } doReturn false
         }
         application {
             configureSerialization()
@@ -548,7 +543,7 @@ class UsersTest {
             }
             routing {
                 route("/api/internal/v1") {
-                    users(userService, userApiService)
+                    users(mock(), userApiService)
                 }
             }
         }
