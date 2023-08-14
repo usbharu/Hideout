@@ -119,8 +119,12 @@ class APNoteServiceImpl(
         targetActor: String?,
         url: String
     ): Note {
+        if (note.id == null) {
+            return internalNote(note, targetActor, url)
+        }
+
         val findByApId = try {
-            postQueryService.findByApId(url)
+            postQueryService.findByApId(note.id!!)
         } catch (_: NoSuchElementException) {
             return internalNote(note, targetActor, url)
         } catch (_: IllegalArgumentException) {
