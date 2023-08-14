@@ -10,7 +10,6 @@ open class Person : Object {
     var publicKey: Key? = null
     var endpoints: Map<String, String> = emptyMap()
 
-
     protected constructor() : super()
 
     @Suppress("LongParameterList")
@@ -66,5 +65,4 @@ open class Person : Object {
         result = 31 * result + endpoints.hashCode()
         return result
     }
-
 }

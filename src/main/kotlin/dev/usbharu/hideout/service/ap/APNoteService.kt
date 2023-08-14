@@ -137,7 +137,6 @@ class APNoteServiceImpl(
             targetActor
         )
 
-
         val visibility =
             if (note.to.contains(public) && note.cc.contains(public)) {
                 Visibility.PUBLIC
