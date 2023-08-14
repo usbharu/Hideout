@@ -41,7 +41,12 @@ fun Routing.usersAP(
                         ?: throw ParameterNotExistException("Parameter(name='name') does not exist."),
                     Config.configData.domain
                 )
-                call.respondText(userEntity.toString() + "\n" + followerQueryService.findFollowersById(userEntity.id))
+                val personByName = apUserService.getPersonByName(userEntity.name)
+                call.respondText(
+                    userEntity.toString() + "\n" + followerQueryService.findFollowersById(userEntity.id) + "\n" + Config.configData.objectMapper.writeValueAsString(
+                        personByName
+                    )
+                )
             }
         }
     }

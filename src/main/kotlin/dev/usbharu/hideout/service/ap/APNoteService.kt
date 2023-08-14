@@ -7,6 +7,7 @@ import dev.usbharu.hideout.domain.model.ap.Note
 import dev.usbharu.hideout.domain.model.hideout.entity.Post
 import dev.usbharu.hideout.domain.model.hideout.entity.Visibility
 import dev.usbharu.hideout.domain.model.job.DeliverPostJob
+import dev.usbharu.hideout.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.exception.ap.IllegalActivityPubObjectException
 import dev.usbharu.hideout.plugins.getAp
 import dev.usbharu.hideout.plugins.postAp
@@ -83,11 +84,10 @@ class APNoteServiceImpl(
     }
 
     override suspend fun fetchNote(url: String, targetActor: String?): Note {
-        val post = postQueryService.findByUrl(url)
         try {
+            val post = postQueryService.findByUrl(url)
             return postToNote(post)
-        } catch (_: NoSuchElementException) {
-        } catch (_: IllegalArgumentException) {
+        } catch (_: FailedToGetResourcesException) {
         }
 
         val response = httpClient.getAp(
@@ -125,21 +125,18 @@ class APNoteServiceImpl(
 
         val findByApId = try {
             postQueryService.findByApId(note.id!!)
-        } catch (_: NoSuchElementException) {
-            return internalNote(note, targetActor, url)
-        } catch (_: IllegalArgumentException) {
+        } catch (_: FailedToGetResourcesException) {
             return internalNote(note, targetActor, url)
         }
         return postToNote(findByApId)
     }
 
     private suspend fun internalNote(note: Note, targetActor: String?, url: String): Note {
-        val person = apUserService.fetchPerson(
+        val person = apUserService.fetchPersonWithEntity(
             note.attributedTo ?: throw IllegalActivityPubObjectException("note.attributedTo is null"),
             targetActor
         )
-        val user =
-            userQueryService.findByUrl(person.url ?: throw IllegalActivityPubObjectException("person.url is null"))
+
 
         val visibility =
             if (note.to.contains(public) && note.cc.contains(public)) {
@@ -160,7 +157,7 @@ class APNoteServiceImpl(
         postRepository.save(
             Post(
                 id = postRepository.generateId(),
-                userId = user.id,
+                userId = person.second.id,
                 overview = null,
                 text = note.content.orEmpty(),
                 createdAt = Instant.parse(note.published).toEpochMilli(),

@@ -3,9 +3,11 @@ package dev.usbharu.hideout.query
 import dev.usbharu.hideout.domain.model.hideout.dto.Account
 import dev.usbharu.hideout.domain.model.hideout.dto.ReactionResponse
 import dev.usbharu.hideout.domain.model.hideout.entity.Reaction
+import dev.usbharu.hideout.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.repository.Reactions
 import dev.usbharu.hideout.repository.Users
 import dev.usbharu.hideout.repository.toReaction
+import dev.usbharu.hideout.util.singleOr
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.koin.core.annotation.Single
@@ -26,7 +28,12 @@ class ReactionQueryServiceImpl : ReactionQueryService {
                     Reactions.emojiId.eq(emojiId)
                 )
             }
-            .single()
+            .singleOr {
+                FailedToGetResourcesException(
+                    "postId: $postId,userId: $userId,emojiId: $emojiId is duplicate or does not exist.",
+                    it
+                )
+            }
             .toReaction()
     }
 
