@@ -8,6 +8,7 @@ open class Person : Object {
     var url: String? = null
     private var icon: Image? = null
     var publicKey: Key? = null
+    var endpoints: Map<String, String> = emptyMap()
 
     protected constructor() : super()
 
@@ -22,7 +23,8 @@ open class Person : Object {
         outbox: String?,
         url: String?,
         icon: Image?,
-        publicKey: Key?
+        publicKey: Key?,
+        endpoints: Map<String, String> = emptyMap()
     ) : super(add(type, "Person"), name, id = id) {
         this.preferredUsername = preferredUsername
         this.summary = summary
@@ -31,24 +33,28 @@ open class Person : Object {
         this.url = url
         this.icon = icon
         this.publicKey = publicKey
+        this.endpoints = endpoints
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is Person) return false
+        if (!super.equals(other)) return false
 
-        if (id != other.id) return false
         if (preferredUsername != other.preferredUsername) return false
         if (summary != other.summary) return false
         if (inbox != other.inbox) return false
         if (outbox != other.outbox) return false
         if (url != other.url) return false
         if (icon != other.icon) return false
-        return publicKey == other.publicKey
+        if (publicKey != other.publicKey) return false
+        if (endpoints != other.endpoints) return false
+
+        return true
     }
 
     override fun hashCode(): Int {
-        var result = id?.hashCode() ?: 0
+        var result = super.hashCode()
         result = 31 * result + (preferredUsername?.hashCode() ?: 0)
         result = 31 * result + (summary?.hashCode() ?: 0)
         result = 31 * result + (inbox?.hashCode() ?: 0)
@@ -56,6 +62,7 @@ open class Person : Object {
         result = 31 * result + (url?.hashCode() ?: 0)
         result = 31 * result + (icon?.hashCode() ?: 0)
         result = 31 * result + (publicKey?.hashCode() ?: 0)
+        result = 31 * result + endpoints.hashCode()
         return result
     }
 }

@@ -28,10 +28,7 @@ fun Routing.usersAP(
             val name =
                 call.parameters["name"] ?: throw ParameterNotExistException("Parameter(name='name') does not exist.")
             val person = apUserService.getPersonByName(name)
-            return@handle call.respondAp(
-                person,
-                HttpStatusCode.OK
-            )
+            return@handle call.respondAp(person, HttpStatusCode.OK)
         }
         get {
             // TODO: 暫定処置なので治す
@@ -41,7 +38,13 @@ fun Routing.usersAP(
                         ?: throw ParameterNotExistException("Parameter(name='name') does not exist."),
                     Config.configData.domain
                 )
-                call.respondText(userEntity.toString() + "\n" + followerQueryService.findFollowersById(userEntity.id))
+                val personByName = apUserService.getPersonByName(userEntity.name)
+                call.respondText(
+                    userEntity.toString() + "\n" + followerQueryService.findFollowersById(userEntity.id) +
+                            "\n" + Config.configData.objectMapper.writeValueAsString(
+                        personByName
+                    )
+                )
             }
         }
     }
@@ -51,9 +54,7 @@ class ContentTypeRouteSelector(private vararg val contentType: ContentType) : Ro
     override fun evaluate(context: RoutingResolveContext, segmentIndex: Int): RouteSelectorEvaluation {
         context.call.application.log.debug("Accept: ${context.call.request.accept()}")
         val requestContentType = context.call.request.accept() ?: return RouteSelectorEvaluation.FailedParameter
-        return if (requestContentType.split(",")
-                .any { contentType.any { contentType -> contentType.match(it) } }
-        ) {
+        return if (requestContentType.split(",").any { contentType.any { contentType -> contentType.match(it) } }) {
             RouteSelectorEvaluation.Constant
         } else {
             RouteSelectorEvaluation.FailedParameter

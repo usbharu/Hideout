@@ -9,4 +9,5 @@ interface FollowerQueryService {
     suspend fun findFollowingByNameAndDomain(name: String, domain: String): List<User>
     suspend fun appendFollower(user: Long, follower: Long)
     suspend fun removeFollower(user: Long, follower: Long)
+    suspend fun alreadyFollow(userId: Long, followerId: Long): Boolean
 }

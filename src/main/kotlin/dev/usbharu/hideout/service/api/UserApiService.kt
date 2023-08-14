@@ -12,6 +12,7 @@ import dev.usbharu.hideout.service.user.UserService
 import org.koin.core.annotation.Single
 import kotlin.math.min
 
+@Suppress("TooManyFunctions")
 interface UserApiService {
     suspend fun findAll(limit: Int? = 100, offset: Long = 0): List<UserResponse>
 
@@ -30,6 +31,9 @@ interface UserApiService {
     suspend fun findFollowingsByAcct(acct: Acct): List<UserResponse>
 
     suspend fun createUser(username: String, password: String): UserResponse
+
+    suspend fun follow(targetId: Long, sourceId: Long): Boolean
+    suspend fun follow(targetAcct: Acct, sourceId: Long): Boolean
 }
 
 @Single
@@ -39,30 +43,47 @@ class UserApiServiceImpl(
     private val userService: UserService,
     private val transaction: Transaction
 ) : UserApiService {
-    override suspend fun findAll(limit: Int?, offset: Long): List<UserResponse> =
+    override suspend fun findAll(limit: Int?, offset: Long): List<UserResponse> = transaction.transaction {
         userQueryService.findAll(min(limit ?: 100, 100), offset).map { UserResponse.from(it) }
+    }
 
-    override suspend fun findById(id: Long): UserResponse = UserResponse.from(userQueryService.findById(id))
+    override suspend fun findById(id: Long): UserResponse =
+        transaction.transaction { UserResponse.from(userQueryService.findById(id)) }
 
-    override suspend fun findByIds(ids: List<Long>): List<UserResponse> =
-        userQueryService.findByIds(ids).map { UserResponse.from(it) }
+    override suspend fun findByIds(ids: List<Long>): List<UserResponse> {
+        return transaction.transaction {
+            userQueryService.findByIds(ids).map { UserResponse.from(it) }
+        }
+    }
 
-    override suspend fun findByAcct(acct: Acct): UserResponse =
-        UserResponse.from(userQueryService.findByNameAndDomain(acct.username, acct.domain ?: Config.configData.domain))
+    override suspend fun findByAcct(acct: Acct): UserResponse {
+        return transaction.transaction {
+            UserResponse.from(
+                userQueryService.findByNameAndDomain(
+                    acct.username,
+                    acct.domain ?: Config.configData.domain
+                )
+            )
+        }
+    }
 
-    override suspend fun findFollowers(userId: Long): List<UserResponse> =
+    override suspend fun findFollowers(userId: Long): List<UserResponse> = transaction.transaction {
         followerQueryService.findFollowersById(userId).map { UserResponse.from(it) }
+    }
 
-    override suspend fun findFollowings(userId: Long): List<UserResponse> =
+    override suspend fun findFollowings(userId: Long): List<UserResponse> = transaction.transaction {
         followerQueryService.findFollowingById(userId).map { UserResponse.from(it) }
+    }
 
-    override suspend fun findFollowersByAcct(acct: Acct): List<UserResponse> =
+    override suspend fun findFollowersByAcct(acct: Acct): List<UserResponse> = transaction.transaction {
         followerQueryService.findFollowersByNameAndDomain(acct.username, acct.domain ?: Config.configData.domain)
             .map { UserResponse.from(it) }
+    }
 
-    override suspend fun findFollowingsByAcct(acct: Acct): List<UserResponse> =
+    override suspend fun findFollowingsByAcct(acct: Acct): List<UserResponse> = transaction.transaction {
         followerQueryService.findFollowingByNameAndDomain(acct.username, acct.domain ?: Config.configData.domain)
             .map { UserResponse.from(it) }
+    }
 
     override suspend fun createUser(username: String, password: String): UserResponse {
         return transaction.transaction {
@@ -70,6 +91,24 @@ class UserApiServiceImpl(
                 throw UsernameAlreadyExistException()
             }
             UserResponse.from(userService.createLocalUser(UserCreateDto(username, username, "", password)))
+        }
+    }
+
+    override suspend fun follow(targetId: Long, sourceId: Long): Boolean {
+        return transaction.transaction {
+            userService.followRequest(targetId, sourceId)
+        }
+    }
+
+    override suspend fun follow(targetAcct: Acct, sourceId: Long): Boolean {
+        return transaction.transaction {
+            userService.followRequest(
+                userQueryService.findByNameAndDomain(
+                    targetAcct.username,
+                    targetAcct.domain ?: Config.configData.domain
+                ).id,
+                sourceId
+            )
         }
     }
 }
