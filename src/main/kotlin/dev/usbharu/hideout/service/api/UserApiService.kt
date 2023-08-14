@@ -12,6 +12,7 @@ import dev.usbharu.hideout.service.user.UserService
 import org.koin.core.annotation.Single
 import kotlin.math.min
 
+@Suppress("TooManyFunctions")
 interface UserApiService {
     suspend fun findAll(limit: Int? = 100, offset: Long = 0): List<UserResponse>
 
