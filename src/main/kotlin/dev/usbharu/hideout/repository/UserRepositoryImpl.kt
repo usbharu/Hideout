@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.repository
 
+import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.service.core.IdGenerateService
 import org.jetbrains.exposed.dao.id.LongIdTable
@@ -82,16 +83,16 @@ class UserRepositoryImpl(private val database: Database, private val idGenerateS
 
 object Users : Table("users") {
     val id = long("id")
-    val name = varchar("name", length = 64)
-    val domain = varchar("domain", length = 255)
-    val screenName = varchar("screen_name", length = 64)
-    val description = varchar("description", length = 600)
+    val name = varchar("name", length = Config.configData.characterLimit.account.id)
+    val domain = varchar("domain", length = Config.configData.characterLimit.general.domain)
+    val screenName = varchar("screen_name", length = Config.configData.characterLimit.account.name)
+    val description = varchar("description", length = Config.configData.characterLimit.account.description)
     val password = varchar("password", length = 255).nullable()
-    val inbox = varchar("inbox", length = 255).uniqueIndex()
-    val outbox = varchar("outbox", length = 255).uniqueIndex()
-    val url = varchar("url", length = 255).uniqueIndex()
-    val publicKey = varchar("public_key", length = 10000)
-    val privateKey = varchar("private_key", length = 10000).nullable()
+    val inbox = varchar("inbox", length = Config.configData.characterLimit.general.url).uniqueIndex()
+    val outbox = varchar("outbox", length = Config.configData.characterLimit.general.url).uniqueIndex()
+    val url = varchar("url", length = Config.configData.characterLimit.general.url).uniqueIndex()
+    val publicKey = varchar("public_key", length = Config.configData.characterLimit.general.publicKey)
+    val privateKey = varchar("private_key", length = Config.configData.characterLimit.general.privateKey).nullable()
     val createdAt = long("created_at")
 
     override val primaryKey: PrimaryKey = PrimaryKey(id)
