@@ -120,7 +120,8 @@ class APNoteServiceImpl(
         url: String
     ): Note {
         if (note.id == null) {
-            return internalNote(note, targetActor, url)
+            throw IllegalArgumentException("id is null")
+//            return internalNote(note, targetActor, url)
         }
 
         val findByApId = try {

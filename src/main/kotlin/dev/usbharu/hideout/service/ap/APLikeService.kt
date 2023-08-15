@@ -28,18 +28,19 @@ class APLikeServiceImpl(
         val actor = like.actor ?: throw IllegalActivityPubObjectException("actor is null")
         val content = like.content ?: throw IllegalActivityPubObjectException("content is null")
         like.`object` ?: throw IllegalActivityPubObjectException("object is null")
-        transaction.transaction {
-            val person = apUserService.fetchPerson(actor)
+        transaction.transaction(java.sql.Connection.TRANSACTION_SERIALIZABLE) {
+            val person = apUserService.fetchPersonWithEntity(actor)
             apNoteService.fetchNote(like.`object`!!)
 
-            val user = userQueryService.findByUrl(
-                person.url
-                    ?: throw IllegalActivityPubObjectException("actor is not found")
-            )
 
             val post = postQueryService.findByUrl(like.`object`!!)
 
-            reactionService.receiveReaction(content, actor.substringAfter("://").substringBefore("/"), user.id, post.id)
+            reactionService.receiveReaction(
+                content,
+                actor.substringAfter("://").substringBefore("/"),
+                person.second.id,
+                post.id
+            )
         }
         return ActivityPubStringResponse(HttpStatusCode.OK, "")
     }
