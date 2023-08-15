@@ -32,7 +32,7 @@ class UserServiceImpl(
         val nextId = userRepository.nextId()
         val hashedPassword = userAuthService.hash(user.password)
         val keyPair = userAuthService.generateKeyPair()
-        val userEntity = User(
+        val userEntity = User.of(
             id = nextId,
             name = user.name,
             domain = Config.configData.domain,
@@ -51,7 +51,7 @@ class UserServiceImpl(
 
     override suspend fun createRemoteUser(user: RemoteUserCreateDto): User {
         val nextId = userRepository.nextId()
-        val userEntity = User(
+        val userEntity = User.of(
             id = nextId,
             name = user.name,
             domain = user.domain,

@@ -24,19 +24,19 @@ class ActivityPubKtTest {
                 val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
                 keyPairGenerator.initialize(1024)
                 val generateKeyPair = keyPairGenerator.generateKeyPair()
-                User(
-                    1,
-                    "test",
-                    "localhost",
-                    "test",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    generateKeyPair.private.toPem(),
-                    Instant.now()
+                User.of(
+                    id = 1,
+                    name = "test",
+                    domain = "localhost",
+                    screenName = "test",
+                    description = "",
+                    password = "",
+                    inbox = "https://example.com/inbox",
+                    outbox = "https://example.com/outbox",
+                    url = "https://example.com",
+                    publicKey = "",
+                    privateKey = generateKeyPair.private.toPem(),
+                    createdAt = Instant.now()
                 )
             }
         }

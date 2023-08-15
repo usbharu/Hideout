@@ -38,7 +38,7 @@ class FollowerQueryServiceImpl : FollowerQueryService {
             )
             .select { Users.id eq id }
             .map {
-                User(
+                User.of(
                     id = it[followers[Users.id]],
                     name = it[followers[Users.name]],
                     domain = it[followers[Users.domain]],
@@ -83,7 +83,7 @@ class FollowerQueryServiceImpl : FollowerQueryService {
             )
             .select { Users.name eq name and (Users.domain eq domain) }
             .map {
-                User(
+                User.of(
                     id = it[followers[Users.id]],
                     name = it[followers[Users.name]],
                     domain = it[followers[Users.domain]],
@@ -128,7 +128,7 @@ class FollowerQueryServiceImpl : FollowerQueryService {
             )
             .select { followers[Users.id] eq id }
             .map {
-                User(
+                User.of(
                     id = it[followers[Users.id]],
                     name = it[followers[Users.name]],
                     domain = it[followers[Users.domain]],
@@ -173,7 +173,7 @@ class FollowerQueryServiceImpl : FollowerQueryService {
             )
             .select { followers[Users.name] eq name and (followers[Users.domain] eq domain) }
             .map {
-                User(
+                User.of(
                     id = it[followers[Users.id]],
                     name = it[followers[Users.name]],
                     domain = it[followers[Users.domain]],

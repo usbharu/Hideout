@@ -29,7 +29,7 @@ class APNoteServiceImplTest {
     @Test
     fun `createPost 新しい投稿`() = runTest {
         val followers = listOf<User>(
-            User(
+            User.of(
                 2L,
                 "follower",
                 "follower.example.com",
@@ -38,11 +38,11 @@ class APNoteServiceImplTest {
                 "https://follower.example.com/inbox",
                 "https://follower.example.com/outbox",
                 "https://follower.example.com",
-                "",
+                "https://follower.example.com",
                 publicKey = "",
                 createdAt = Instant.now()
             ),
-            User(
+            User.of(
                 3L,
                 "follower2",
                 "follower2.example.com",
@@ -51,23 +51,24 @@ class APNoteServiceImplTest {
                 "https://follower2.example.com/inbox",
                 "https://follower2.example.com/outbox",
                 "https://follower2.example.com",
-                "",
+                "https://follower2.example.com",
                 publicKey = "",
                 createdAt = Instant.now()
             )
         )
         val userQueryService = mock<UserQueryService> {
-            onBlocking { findById(eq(1L)) } doReturn User(
+            onBlocking { findById(eq(1L)) } doReturn User.of(
                 1L,
                 "test",
                 "example.com",
                 "testUser",
                 "test user",
+                "a",
                 "https://example.com/inbox",
                 "https://example.com/outbox",
-                "https:.//example.com",
-                "",
+                "https://example.com",
                 publicKey = "",
+                privateKey = "a",
                 createdAt = Instant.now()
             )
         }

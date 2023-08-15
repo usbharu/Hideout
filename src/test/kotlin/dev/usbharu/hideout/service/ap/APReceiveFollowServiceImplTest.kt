@@ -101,7 +101,7 @@ class APReceiveFollowServiceImplTest {
         }
         val userQueryService = mock<UserQueryService> {
             onBlocking { findByUrl(eq("https://example.com")) } doReturn
-                User(
+                    User.of(
                     id = 1L,
                     name = "test",
                     domain = "example.com",
@@ -114,7 +114,7 @@ class APReceiveFollowServiceImplTest {
                     createdAt = Instant.now()
                 )
             onBlocking { findByUrl(eq("https://follower.example.com")) } doReturn
-                User(
+                    User.of(
                     id = 2L,
                     name = "follower",
                     domain = "follower.example.com",
