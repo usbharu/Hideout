@@ -172,7 +172,7 @@ class UsersAPTest {
             config = ApplicationConfig("empty.conf")
         }
         val userService = mock<UserQueryService> {
-            onBlocking { findByNameAndDomain(eq("test"), anyString()) } doReturn User(
+            onBlocking { findByNameAndDomain(eq("test"), anyString()) } doReturn User.of(
                 1L,
                 "test",
                 "example.com",

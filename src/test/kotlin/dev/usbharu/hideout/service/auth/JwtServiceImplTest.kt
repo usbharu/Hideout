@@ -54,7 +54,7 @@ class JwtServiceImplTest {
         }
         val jwtService = JwtServiceImpl(metaService, refreshTokenRepository, mock(), mock())
         val token = jwtService.createToken(
-            User(
+            User.of(
                 id = 1L,
                 name = "test",
                 domain = "example.com",
@@ -108,7 +108,7 @@ class JwtServiceImplTest {
             )
         }
         val userService = mock<UserQueryService> {
-            onBlocking { findById(1L) } doReturn User(
+            onBlocking { findById(1L) } doReturn User.of(
                 id = 1L,
                 name = "test",
                 domain = "example.com",

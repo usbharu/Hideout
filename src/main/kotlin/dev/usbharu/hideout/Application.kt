@@ -5,6 +5,7 @@ import com.auth0.jwk.JwkProviderBuilder
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import dev.usbharu.hideout.config.CharacterLimit
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.config.ConfigData
 import dev.usbharu.hideout.domain.model.job.DeliverPostJob
@@ -45,6 +46,11 @@ val Application.property: Application.(propertyName: String) -> String
         environment.config.property(it).getString()
     }
 
+val Application.propertyOrNull: Application.(propertyName: String) -> String?
+    get() = {
+        environment.config.propertyOrNull(it)?.getString()
+    }
+
 // application.conf references the main function. This annotation prevents the IDE from marking it as unused.
 @Suppress("unused", "LongMethod")
 fun Application.parent() {
@@ -52,7 +58,15 @@ fun Application.parent() {
         url = property("hideout.url"),
         objectMapper = jacksonObjectMapper().enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
             .setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false),
+        characterLimit = CharacterLimit(
+            general = CharacterLimit.General.of(
+                url = propertyOrNull("hideout.character-limit.general.url")?.toIntOrNull(),
+                domain = propertyOrNull("hideout.character-limit.general.domain")?.toIntOrNull(),
+                publicKey = propertyOrNull("hideout.character-limit.general.publicKey")?.toIntOrNull(),
+                privateKey = propertyOrNull("hideout.character-limit.general.privateKey")?.toIntOrNull()
+            )
+        )
     )
 
     val module = org.koin.dsl.module {

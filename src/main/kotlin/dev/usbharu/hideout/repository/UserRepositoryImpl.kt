@@ -102,7 +102,7 @@ object Users : Table("users") {
 }
 
 fun ResultRow.toUser(): User {
-    return User(
+    return User.of(
         id = this[Users.id],
         name = this[Users.name],
         domain = this[Users.domain],
