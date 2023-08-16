@@ -5,7 +5,6 @@ import dev.usbharu.hideout.domain.model.ActivityPubStringResponse
 import dev.usbharu.hideout.domain.model.ap.Like
 import dev.usbharu.hideout.exception.ap.IllegalActivityPubObjectException
 import dev.usbharu.hideout.query.PostQueryService
-import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.service.core.Transaction
 import dev.usbharu.hideout.service.reaction.ReactionService
 import io.ktor.http.*
@@ -20,7 +19,6 @@ class APLikeServiceImpl(
     private val reactionService: ReactionService,
     private val apUserService: APUserService,
     private val apNoteService: APNoteService,
-    private val userQueryService: UserQueryService,
     private val postQueryService: PostQueryService,
     private val transaction: Transaction
 ) : APLikeService {
@@ -31,7 +29,6 @@ class APLikeServiceImpl(
         transaction.transaction(java.sql.Connection.TRANSACTION_SERIALIZABLE) {
             val person = apUserService.fetchPersonWithEntity(actor)
             apNoteService.fetchNote(like.`object`!!)
-
 
             val post = postQueryService.findByUrl(like.`object`!!)
 

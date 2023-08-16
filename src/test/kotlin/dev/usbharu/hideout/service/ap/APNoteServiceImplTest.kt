@@ -86,7 +86,7 @@ class APNoteServiceImplTest {
                 followerQueryService,
                 mock()
             )
-        val postEntity = Post(
+        val postEntity = Post.of(
             1L,
             1L,
             null,

@@ -155,7 +155,7 @@ class APNoteServiceImpl(
         }
 
         postRepository.save(
-            Post(
+            Post.of(
                 id = postRepository.generateId(),
                 userId = person.second.id,
                 overview = null,

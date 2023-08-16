@@ -78,7 +78,7 @@ object Posts : Table() {
 }
 
 fun ResultRow.toPost(): Post {
-    return Post(
+    return Post.of(
         id = this[Posts.id],
         userId = this[Posts.userId],
         overview = this[Posts.overview],
