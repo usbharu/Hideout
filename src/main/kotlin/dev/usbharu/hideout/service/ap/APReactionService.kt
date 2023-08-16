@@ -11,7 +11,6 @@ import dev.usbharu.hideout.plugins.postAp
 import dev.usbharu.hideout.query.FollowerQueryService
 import dev.usbharu.hideout.query.PostQueryService
 import dev.usbharu.hideout.query.UserQueryService
-import dev.usbharu.hideout.repository.PostRepository
 import dev.usbharu.hideout.service.job.JobQueueParentService
 import io.ktor.client.*
 import kjob.core.job.JobProps
@@ -28,7 +27,6 @@ interface APReactionService {
 @Single
 class APReactionServiceImpl(
     private val jobQueueParentService: JobQueueParentService,
-    private val postRepository: PostRepository,
     private val httpClient: HttpClient,
     private val userQueryService: UserQueryService,
     private val followerQueryService: FollowerQueryService,
