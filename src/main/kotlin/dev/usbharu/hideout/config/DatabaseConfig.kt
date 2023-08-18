@@ -18,8 +18,8 @@ class DatabaseConfig {
         return Database.connect(
             url = dbConfig.url,
             driver = dbConfig.driver,
-            user = dbConfig.user ?: "",
-            password = dbConfig.password ?: ""
+            user = dbConfig.user,
+            password = dbConfig.password
         )
     }
 
@@ -30,6 +30,6 @@ class DatabaseConfig {
 data class DatabaseConnectConfig(
     val url: String,
     val driver: String,
-    val user: String?,
-    val password: String?
+    val user: String,
+    val password: String
 )
