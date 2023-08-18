@@ -214,12 +214,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                password:
-                  type: string
+              $ref: "#/components/schemas/UserCreate"
       responses:
         201:
           description: ユーザーが作成された
@@ -507,6 +502,14 @@ components:
         iconUrl:
           type: string
         url:
+          type: string
+
+    UserCreate:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
           type: string
 
   securitySchemes:
