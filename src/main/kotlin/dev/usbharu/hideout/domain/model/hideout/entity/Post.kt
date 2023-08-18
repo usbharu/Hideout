@@ -16,6 +16,7 @@ data class Post private constructor(
     val apId: String = url
 ) {
     companion object {
+        @Suppress("FunctionMinLength", "LongParameterList")
         fun of(
             id: Long,
             userId: Long,
