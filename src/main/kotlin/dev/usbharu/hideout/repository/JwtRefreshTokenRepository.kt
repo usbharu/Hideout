@@ -1,7 +1,9 @@
 package dev.usbharu.hideout.repository
 
 import dev.usbharu.hideout.domain.model.hideout.entity.JwtRefreshToken
+import org.springframework.stereotype.Repository
 
+@Repository
 interface JwtRefreshTokenRepository {
     suspend fun generateId(): Long
 

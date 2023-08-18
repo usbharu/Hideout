@@ -13,9 +13,11 @@ import dev.usbharu.hideout.service.post.PostService
 import dev.usbharu.hideout.service.reaction.ReactionService
 import dev.usbharu.hideout.util.AcctUtil
 import org.koin.core.annotation.Single
+import org.springframework.stereotype.Service
 import java.time.Instant
 
 @Suppress("LongParameterList")
+@Service
 interface PostApiService {
     suspend fun createPost(postForm: dev.usbharu.hideout.domain.model.hideout.form.Post, userId: Long): PostResponse
     suspend fun getById(id: Long, userId: Long?): PostResponse
@@ -44,6 +46,7 @@ interface PostApiService {
 }
 
 @Single
+@Service
 class PostApiServiceImpl(
     private val postService: PostService,
     private val userRepository: UserRepository,

@@ -15,10 +15,12 @@ import dev.usbharu.hideout.service.core.MetaService
 import dev.usbharu.hideout.util.RsaUtil
 import kotlinx.coroutines.runBlocking
 import org.koin.core.annotation.Single
+import org.springframework.stereotype.Service
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.*
 
+@Service
 interface JwtService {
     suspend fun createToken(user: User): JwtToken
     suspend fun refreshToken(refreshToken: RefreshToken): JwtToken
@@ -30,6 +32,7 @@ interface JwtService {
 
 @Suppress("InjectDispatcher")
 @Single
+@Service
 class JwtServiceImpl(
     private val metaService: MetaService,
     private val refreshTokenRepository: JwtRefreshTokenRepository,

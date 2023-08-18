@@ -8,9 +8,11 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.core.annotation.Single
+import org.springframework.stereotype.Repository
 import java.time.Instant
 
 @Single
+@Repository
 class UserRepositoryImpl(private val database: Database, private val idGenerateService: IdGenerateService) :
     UserRepository {
     init {

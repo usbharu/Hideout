@@ -4,10 +4,12 @@ import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.query.UserQueryService
 import io.ktor.util.*
 import org.koin.core.annotation.Single
+import org.springframework.stereotype.Service
 import java.security.*
 import java.util.*
 
 @Single
+@Service
 class UserAuthServiceImpl(
     val userQueryService: UserQueryService
 ) : UserAuthService {

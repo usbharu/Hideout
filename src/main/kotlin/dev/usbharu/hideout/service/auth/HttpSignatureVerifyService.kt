@@ -5,13 +5,16 @@ import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.service.core.Transaction
 import io.ktor.http.*
 import org.koin.core.annotation.Single
+import org.springframework.stereotype.Service
 import tech.barbero.http.message.signing.SignatureHeaderVerifier
 
+@Service
 interface HttpSignatureVerifyService {
     fun verify(headers: Headers): Boolean
 }
 
 @Single
+@Service
 class HttpSignatureVerifyServiceImpl(
     private val userQueryService: UserQueryService,
     private val transaction: Transaction

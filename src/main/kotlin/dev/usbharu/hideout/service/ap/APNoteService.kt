@@ -21,8 +21,10 @@ import io.ktor.client.statement.*
 import kjob.core.job.JobProps
 import org.koin.core.annotation.Single
 import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Service
 import java.time.Instant
 
+@Service
 interface APNoteService {
 
     suspend fun createNote(post: Post)
@@ -33,6 +35,7 @@ interface APNoteService {
 }
 
 @Single
+@Service
 class APNoteServiceImpl(
     private val httpClient: HttpClient,
     private val jobQueueParentService: JobQueueParentService,

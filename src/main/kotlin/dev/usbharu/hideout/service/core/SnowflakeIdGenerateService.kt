@@ -3,9 +3,11 @@ package dev.usbharu.hideout.service.core
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import org.springframework.stereotype.Service
 import java.time.Instant
 
 @Suppress("MagicNumber")
+@Service
 open class SnowflakeIdGenerateService(private val baseTime: Long) : IdGenerateService {
     var lastTimeStamp: Long = -1
     var sequenceId: Int = 0

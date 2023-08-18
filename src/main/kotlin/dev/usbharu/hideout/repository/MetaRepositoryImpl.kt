@@ -4,9 +4,11 @@ import dev.usbharu.hideout.domain.model.hideout.entity.Jwt
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.core.annotation.Single
+import org.springframework.stereotype.Repository
 import java.util.*
 
 @Single
+@Repository
 class MetaRepositoryImpl(private val database: Database) : MetaRepository {
 
     init {
