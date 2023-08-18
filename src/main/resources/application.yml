@@ -1,0 +1,6 @@
+hideout:
+  database:
+    url: "jdbc:h2:./test;MODE=POSTGRESQL"
+    driver: "org.h2.Driver"
+    username: ""
+    password: ""
