@@ -53,7 +53,7 @@ class SecurityKtTest {
         }
         val metaService = mock<MetaService>()
         val userQueryService = mock<UserQueryService> {
-            onBlocking { findByNameAndDomain(eq("testUser"), eq("example.com")) } doReturn User(
+            onBlocking { findByNameAndDomain(eq("testUser"), eq("example.com")) } doReturn User.of(
                 id = 1L,
                 name = "testUser",
                 domain = "example.com",

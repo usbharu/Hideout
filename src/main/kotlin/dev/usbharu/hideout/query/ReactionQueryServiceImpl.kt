@@ -53,7 +53,7 @@ class ReactionQueryServiceImpl : ReactionQueryService {
         return Reactions
             .leftJoin(Users, onColumn = { Reactions.userId }, otherColumn = { id })
             .select { Reactions.postId.eq(postId) }
-            .groupBy { _: ResultRow -> ReactionResponse("❤", true, "", listOf()) }
+            .groupBy { _: ResultRow -> ReactionResponse("❤", true, "", emptyList()) }
             .map { entry: Map.Entry<ReactionResponse, List<ResultRow>> ->
                 entry.key.copy(accounts = entry.value.map { Account(it[Users.screenName], "", it[Users.url]) })
             }
