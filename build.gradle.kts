@@ -1,4 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val ktor_version: String by project
 val kotlin_version: String by project
@@ -13,13 +14,19 @@ plugins {
     id("org.graalvm.buildtools.native") version "0.9.21"
     id("io.gitlab.arturbosch.detekt") version "1.22.0"
     id("com.google.devtools.ksp") version "1.8.21-1.0.11"
+    id("org.springframework.boot") version "3.1.2"
+    kotlin("plugin.spring") version "1.8.21"
 //    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
+}
+
+apply {
+    plugin("io.spring.dependency-management")
 }
 
 group = "dev.usbharu"
 version = "0.0.1"
 application {
-    mainClass.set("io.ktor.server.cio.EngineMain")
+    mainClass.set("dev.usbharu.hideout.SpringApplicationKt")
 
     val isDevelopment: Boolean = project.ext.has("development")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
@@ -32,6 +39,12 @@ tasks.withType<Test> {
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>().configureEach {
     compilerOptions.languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_8)
     compilerOptions.apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_8)
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        freeCompilerArgs += "-Xjsr305=strict"
+    }
 }
 
 tasks.withType<ShadowJar> {
@@ -53,7 +66,7 @@ repositories {
 kotlin {
     target {
         compilations.all {
-            kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
+            kotlinOptions.jvmTarget = JavaVersion.VERSION_17.toString()
         }
     }
 }
@@ -89,6 +102,9 @@ dependencies {
     implementation("io.insert-koin:koin-annotations:1.2.0")
     implementation("io.ktor:ktor-server-compression-jvm:2.3.0")
     ksp("io.insert-koin:koin-ksp-compiler:1.2.0")
+
+    implementation("org.springframework.boot:spring-boot-starter-web")
+
 
 
     implementation("io.ktor:ktor-client-logging-jvm:$ktor_version")
