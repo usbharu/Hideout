@@ -16,13 +16,16 @@ import io.ktor.client.*
 import io.ktor.http.*
 import kjob.core.job.JobProps
 import org.koin.core.annotation.Single
+import org.springframework.stereotype.Service
 
+@Service
 interface APReceiveFollowService {
     suspend fun receiveFollow(follow: Follow): ActivityPubResponse
     suspend fun receiveFollowJob(props: JobProps<ReceiveFollowJob>)
 }
 
 @Single
+@Service
 class APReceiveFollowServiceImpl(
     private val jobQueueParentService: JobQueueParentService,
     private val apUserService: APUserService,

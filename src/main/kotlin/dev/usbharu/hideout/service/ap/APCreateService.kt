@@ -8,12 +8,16 @@ import dev.usbharu.hideout.exception.ap.IllegalActivityPubObjectException
 import dev.usbharu.hideout.service.core.Transaction
 import io.ktor.http.*
 import org.koin.core.annotation.Single
+import org.springframework.stereotype.Service
 
+
+@Service
 interface APCreateService {
     suspend fun receiveCreate(create: Create): ActivityPubResponse
 }
 
 @Single
+@Service
 class APCreateServiceImpl(
     private val apNoteService: APNoteService,
     private val transaction: Transaction

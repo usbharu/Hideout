@@ -12,8 +12,10 @@ import org.jetbrains.exposed.sql.innerJoin
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.koin.core.annotation.Single
+import org.springframework.stereotype.Repository
 
 @Single
+@Repository
 class PostResponseQueryServiceImpl : PostResponseQueryService {
     override suspend fun findById(id: Long, userId: Long?): PostResponse {
         return Posts

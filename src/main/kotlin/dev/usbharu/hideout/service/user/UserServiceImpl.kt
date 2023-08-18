@@ -11,9 +11,11 @@ import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.repository.UserRepository
 import dev.usbharu.hideout.service.ap.APSendFollowService
 import org.koin.core.annotation.Single
+import org.springframework.stereotype.Service
 import java.time.Instant
 
 @Single
+@Service
 class UserServiceImpl(
     private val userRepository: UserRepository,
     private val userAuthService: UserAuthService,

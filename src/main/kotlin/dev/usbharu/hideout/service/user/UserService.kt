@@ -3,8 +3,10 @@ package dev.usbharu.hideout.service.user
 import dev.usbharu.hideout.domain.model.hideout.dto.RemoteUserCreateDto
 import dev.usbharu.hideout.domain.model.hideout.dto.UserCreateDto
 import dev.usbharu.hideout.domain.model.hideout.entity.User
+import org.springframework.stereotype.Service
 
 @Suppress("TooManyFunctions")
+@Service
 interface UserService {
 
     suspend fun usernameAlreadyUse(username: String): Boolean
