@@ -27,6 +27,7 @@ data class CharacterLimit(
         val privateKey: Int
     ) {
         companion object {
+            @Suppress("FunctionMinLength")
             fun of(url: Int? = null, domain: Int? = null, publicKey: Int? = null, privateKey: Int? = null): General {
                 return General(
                     url ?: 1000,
