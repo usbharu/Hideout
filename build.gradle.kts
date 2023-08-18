@@ -1,5 +1,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 val ktor_version: String by project
 val kotlin_version: String by project
@@ -16,6 +17,7 @@ plugins {
     id("com.google.devtools.ksp") version "1.8.21-1.0.11"
     id("org.springframework.boot") version "3.1.2"
     kotlin("plugin.spring") version "1.8.21"
+    id("org.openapi.generator") version "6.6.0"
 //    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
 }
 
@@ -59,6 +61,35 @@ tasks.clean {
     delete += listOf("$rootDir/src/main/resources/static")
 }
 
+tasks.create<GenerateTask>("openApiGenerateServer", GenerateTask::class) {
+    generatorName.set("kotlin-spring")
+    inputSpec.set("$rootDir/src/main/resources/openapi/api.yaml")
+    outputDir.set("$buildDir/generated/sources/openapi")
+    apiPackage.set("dev.usbharu.hideout.controller")
+    modelPackage.set("dev.usbharu.hideout.domain.model.generated")
+    configOptions.put("interfaceOnly", "true")
+    configOptions.put("useSpringBoot3", "true")
+    additionalProperties.put("useTags", "true")
+    schemaMappings.putAll(
+        mapOf(
+            "ReactionResponse" to "dev.usbharu.hideout.domain.model.hideout.dto.ReactionResponse",
+            "Account" to "dev.usbharu.hideout.domain.model.hideout.dto.Account",
+            "JwtToken" to "dev.usbharu.hideout.domain.model.hideout.dto.JwtToken",
+            "PostRequest" to "dev.usbharu.hideout.domain.model.hideout.form.Post",
+            "PostResponse" to "dev.usbharu.hideout.domain.model.hideout.dto.PostResponse",
+            "Reaction" to "dev.usbharu.hideout.domain.model.hideout.form.Reaction",
+            "RefreshToken" to "dev.usbharu.hideout.domain.model.hideout.form.RefreshToken",
+            "UserLogin" to "dev.usbharu.hideout.domain.model.hideout.form.UserLogin",
+            "UserResponse" to "dev.usbharu.hideout.domain.model.hideout.dto.UserResponse",
+            "UserCreate" to "dev.usbharu.hideout.domain.model.hideout.form.UserCreate",
+            "Visibility" to "dev.usbharu.hideout.domain.model.hideout.entity.Visibility",
+        )
+    )
+
+//    importMappings.putAll(mapOf("ReactionResponse" to "ReactionResponse"))
+//    typeMappings.putAll(mapOf("ReactionResponse" to "ReactionResponse"))
+}
+
 repositories {
     mavenCentral()
 }
@@ -72,7 +103,7 @@ kotlin {
 }
 
 sourceSets.main {
-    kotlin.srcDirs("$buildDir/generated/ksp/main")
+    kotlin.srcDirs("$buildDir/generated/ksp/main", "$buildDir/generated/sources/openapi/src/main/kotlin")
 }
 
 dependencies {
@@ -104,8 +135,10 @@ dependencies {
     ksp("io.insert-koin:koin-ksp-compiler:1.2.0")
 
     implementation("org.springframework.boot:spring-boot-starter-web")
-
-
+    implementation("jakarta.validation:jakarta.validation-api")
+    implementation("jakarta.annotation:jakarta.annotation-api:2.1.0")
+    compileOnly("io.swagger.core.v3:swagger-annotations:2.2.6")
+    implementation("io.swagger.core.v3:swagger-models:2.2.6")
 
     implementation("io.ktor:ktor-client-logging-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-host-common-jvm:$ktor_version")
@@ -113,7 +146,7 @@ dependencies {
 
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
-    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
 
     implementation("io.ktor:ktor-client-core:$ktor_version")
     implementation("io.ktor:ktor-client-cio:$ktor_version")
@@ -153,7 +186,7 @@ graalvmNative {
         named("main") {
             fallback.set(false)
             verbose.set(true)
-            agent{
+            agent {
                 enabled.set(false)
             }
 
