@@ -20,16 +20,16 @@ class KtorKeyMapTest {
                 val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
                 keyPairGenerator.initialize(1024)
                 val generateKeyPair = keyPairGenerator.generateKeyPair()
-                User(
+                User.of(
                     1,
                     "test",
                     "localhost",
                     "test",
                     "",
                     "",
-                    "",
-                    "",
-                    "",
+                    "https://example.com/inbox",
+                    "https://example.com/outbox",
+                    "https://example.com",
                     "",
                     generateKeyPair.private.toPem(),
                     createdAt = Instant.now()

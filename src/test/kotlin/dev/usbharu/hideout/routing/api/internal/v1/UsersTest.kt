@@ -80,7 +80,7 @@ class UsersTest {
         val userCreateDto = UserCreate("test", "XXXXXXX")
         val userService = mock<UserService> {
             onBlocking { usernameAlreadyUse(any()) } doReturn false
-            onBlocking { createLocalUser(any()) } doReturn User(
+            onBlocking { createLocalUser(any()) } doReturn User.of(
                 id = 12345,
                 name = "test",
                 domain = "example.com",

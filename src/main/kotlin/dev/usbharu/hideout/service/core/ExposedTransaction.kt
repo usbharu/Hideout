@@ -6,7 +6,13 @@ import org.koin.core.annotation.Single
 @Single
 class ExposedTransaction : Transaction {
     override suspend fun <T> transaction(block: suspend () -> T): T {
-        return newSuspendedTransaction {
+        return newSuspendedTransaction(transactionIsolation = java.sql.Connection.TRANSACTION_SERIALIZABLE) {
+            block()
+        }
+    }
+
+    override suspend fun <T> transaction(transactionLevel: Int, block: suspend () -> T): T {
+        return newSuspendedTransaction(transactionIsolation = transactionLevel) {
             block()
         }
     }

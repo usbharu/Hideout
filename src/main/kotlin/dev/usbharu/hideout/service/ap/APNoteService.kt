@@ -120,7 +120,8 @@ class APNoteServiceImpl(
         url: String
     ): Note {
         if (note.id == null) {
-            return internalNote(note, targetActor, url)
+            throw IllegalArgumentException("id is null")
+//            return internalNote(note, targetActor, url)
         }
 
         val findByApId = try {
@@ -154,7 +155,7 @@ class APNoteServiceImpl(
         }
 
         postRepository.save(
-            Post(
+            Post.of(
                 id = postRepository.generateId(),
                 userId = person.second.id,
                 overview = null,

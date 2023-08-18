@@ -18,7 +18,7 @@ class PostServiceImpl(
     override suspend fun createLocal(post: PostCreateDto): Post {
         val user = userRepository.findById(post.userId) ?: throw UserNotFoundException("${post.userId} was not found")
         val id = postRepository.generateId()
-        val createPost = Post(
+        val createPost = Post.of(
             id = id,
             userId = post.userId,
             overview = post.overview,

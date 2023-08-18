@@ -9,9 +9,13 @@ import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.koin.core.annotation.Single
+import org.slf4j.LoggerFactory
 
 @Single
 class UserQueryServiceImpl : UserQueryService {
+
+    private val logger = LoggerFactory.getLogger(UserQueryServiceImpl::class.java)
+
     override suspend fun findAll(limit: Int, offset: Long): List<User> =
         Users.selectAll().limit(limit, offset).map { it.toUser() }
 
@@ -28,9 +32,12 @@ class UserQueryServiceImpl : UserQueryService {
             }
             .toUser()
 
-    override suspend fun findByUrl(url: String): User = Users.select { Users.url eq url }
-        .singleOr { FailedToGetResourcesException("url: $url  is duplicate or does not exist.", it) }
-        .toUser()
+    override suspend fun findByUrl(url: String): User {
+        logger.trace("findByUrl url: $url")
+        return Users.select { Users.url eq url }
+            .singleOr { FailedToGetResourcesException("url: $url  is duplicate or does not exist.", it) }
+            .toUser()
+    }
 
     override suspend fun findByIds(ids: List<Long>): List<User> =
         Users.select { Users.id inList ids }.map { it.toUser() }
