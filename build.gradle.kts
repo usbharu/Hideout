@@ -135,10 +135,15 @@ dependencies {
     ksp("io.insert-koin:koin-ksp-compiler:1.2.0")
 
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-authorization-server")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
     implementation("jakarta.validation:jakarta.validation-api")
     implementation("jakarta.annotation:jakarta.annotation-api:2.1.0")
     compileOnly("io.swagger.core.v3:swagger-annotations:2.2.6")
     implementation("io.swagger.core.v3:swagger-models:2.2.6")
+    implementation("org.jetbrains.exposed:exposed-java-time:$exposed_version")
+    implementation("org.jetbrains.exposed:spring-transaction:$exposed_version")
 
     implementation("io.ktor:ktor-client-logging-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-host-common-jvm:$ktor_version")
