@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 import org.springframework.transaction.annotation.TransactionManagementConfigurer
 import javax.sql.DataSource
 
-
 @Configuration
 @EnableTransactionManagement
 class SpringTransactionConfig(val datasource: DataSource) : TransactionManagementConfigurer {

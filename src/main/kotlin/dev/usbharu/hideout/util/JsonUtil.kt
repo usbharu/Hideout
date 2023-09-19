@@ -12,5 +12,4 @@ object JsonUtil {
 
     fun <K, V> jsonToMap(json: String, objectMapper: ObjectMapper = this.objectMapper): Map<K, V> =
         objectMapper.readValue(json)
-
 }

@@ -10,7 +10,6 @@ import io.ktor.http.*
 import org.koin.core.annotation.Single
 import org.springframework.stereotype.Service
 
-
 @Service
 interface APCreateService {
     suspend fun receiveCreate(create: Create): ActivityPubResponse

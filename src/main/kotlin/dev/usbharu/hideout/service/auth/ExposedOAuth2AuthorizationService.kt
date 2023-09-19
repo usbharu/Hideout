@@ -105,7 +105,6 @@ class ExposedOAuth2AuthorizationService(private val registeredClientRepository: 
                 it[deviceCodeMetadata] = deviceCode?.metadata?.let { it1 -> JsonUtil.mapToJson(it1) }
             }
         }
-
     }
 
     override fun remove(authorization: OAuth2Authorization?) {
@@ -176,7 +175,6 @@ class ExposedOAuth2AuthorizationService(private val registeredClientRepository: 
     }
 
     fun ResultRow.toAuthorization(): OAuth2Authorization {
-
         val registeredClientId = this[Authorization.registeredClientId]
 
         val registeredClient = registeredClientRepository.findById(registeredClientId)
@@ -186,7 +184,7 @@ class ExposedOAuth2AuthorizationService(private val registeredClientRepository: 
         val principalName = this[Authorization.principalName]
         val authorizationGrantType = this[Authorization.authorizationGrantType]
         val authorizedScopes = this[Authorization.authorizedScopes]?.split(",").orEmpty().toSet()
-        val attributes = this[Authorization.attributes]?.let { JsonUtil.jsonToMap<String, Any>(it) } ?: emptyMap()
+        val attributes = this[Authorization.attributes]?.let { JsonUtil.jsonToMap<String, Any>(it) }.orEmpty()
 
         builder.id(id).principalName(principalName)
             .authorizationGrantType(AuthorizationGrantType(authorizationGrantType)).authorizedScopes(authorizedScopes)
@@ -218,7 +216,7 @@ class ExposedOAuth2AuthorizationService(private val registeredClientRepository: 
             val accessTokenIssuedAt = this[Authorization.accessTokenIssuedAt]
             val accessTokenExpiresAt = this[Authorization.accessTokenExpiresAt]
             val accessTokenMetadata =
-                this[Authorization.accessTokenMetadata]?.let { JsonUtil.jsonToMap<String, Any>(it) } ?: emptyMap()
+                this[Authorization.accessTokenMetadata]?.let { JsonUtil.jsonToMap<String, Any>(it) }.orEmpty()
             val accessTokenType =
                 if (this[Authorization.accessTokenType].equals(OAuth2AccessToken.TokenType.BEARER.value, true)) {
                     OAuth2AccessToken.TokenType.BEARER
@@ -229,7 +227,11 @@ class ExposedOAuth2AuthorizationService(private val registeredClientRepository: 
             val accessTokenScope = this[Authorization.accessTokenScopes]?.split(",").orEmpty().toSet()
 
             val oAuth2AccessToken = OAuth2AccessToken(
-                accessTokenType, accessTokenValue, accessTokenIssuedAt, accessTokenExpiresAt, accessTokenScope
+                accessTokenType,
+                accessTokenValue,
+                accessTokenIssuedAt,
+                accessTokenExpiresAt,
+                accessTokenScope
             )
 
             builder.token(oAuth2AccessToken) { it.putAll(accessTokenMetadata) }
@@ -240,7 +242,7 @@ class ExposedOAuth2AuthorizationService(private val registeredClientRepository: 
             val oidcTokenIssuedAt = this[Authorization.oidcIdTokenIssuedAt]
             val oidcTokenExpiresAt = this[Authorization.oidcIdTokenExpiresAt]
             val oidcTokenMetadata =
-                this[Authorization.oidcIdTokenMetadata]?.let { JsonUtil.jsonToMap<String, Any>(it) } ?: emptyMap()
+                this[Authorization.oidcIdTokenMetadata]?.let { JsonUtil.jsonToMap<String, Any>(it) }.or
 
             val oidcIdToken = OidcIdToken(
                 oidcIdTokenValue,

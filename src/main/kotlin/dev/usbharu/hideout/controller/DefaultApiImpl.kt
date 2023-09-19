@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.controller
 
+import dev.usbharu.hideout.controller.generated.DefaultApi
 import dev.usbharu.hideout.domain.model.hideout.dto.JwtToken
 import dev.usbharu.hideout.service.api.UserAuthApiService
 import org.springframework.http.HttpStatus
