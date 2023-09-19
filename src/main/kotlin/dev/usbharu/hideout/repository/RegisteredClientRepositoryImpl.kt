@@ -16,6 +16,7 @@ import org.springframework.security.oauth2.server.authorization.settings.Configu
 import org.springframework.security.oauth2.server.authorization.settings.OAuth2TokenFormat
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings
 import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient as SpringRegisteredClient
 
@@ -75,6 +76,7 @@ class RegisteredClientRepositoryImpl(private val database: Database) : Registere
         }.singleOrNull()?.toRegisteredClient()
     }
 
+    @Transactional
     override fun findByClientId(clientId: String?): SpringRegisteredClient? {
         if (clientId == null) {
             return null

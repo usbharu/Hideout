@@ -98,7 +98,11 @@ class SecurityConfig {
 
     @Bean
     fun authorizationServerSettings(): AuthorizationServerSettings {
-        return AuthorizationServerSettings.builder().build()
+        return AuthorizationServerSettings.builder()
+            .authorizationEndpoint("/oauth/authorize")
+            .tokenEndpoint("/oauth/token")
+            .tokenRevocationEndpoint("/oauth/revoke")
+            .build()
     }
 }
 
