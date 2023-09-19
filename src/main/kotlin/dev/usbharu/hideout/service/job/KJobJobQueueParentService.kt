@@ -7,7 +7,9 @@ import kjob.core.dsl.ScheduleContext
 import kjob.core.kjob
 import org.jetbrains.exposed.sql.Database
 import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Service
 
+@Service
 class KJobJobQueueParentService(private val database: Database) : JobQueueParentService {
 
     private val logger = LoggerFactory.getLogger(this::class.java)

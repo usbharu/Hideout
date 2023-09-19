@@ -4,6 +4,7 @@ import io.ktor.server.application.*
 import io.ktor.server.plugins.defaultheaders.*
 import io.ktor.server.plugins.forwardedheaders.*
 
+@Deprecated("Ktor is deprecated")
 fun Application.configureHTTP() {
 //    install(CORS) {
 //        allowMethod(HttpMethod.Options)

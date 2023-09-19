@@ -14,6 +14,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
+@Deprecated("Ktor is deprecated")
 @Suppress("LongMethod")
 fun Route.posts(postApiService: PostApiService) {
     route("/posts") {

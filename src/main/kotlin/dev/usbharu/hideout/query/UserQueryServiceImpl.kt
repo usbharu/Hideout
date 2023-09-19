@@ -10,8 +10,10 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.koin.core.annotation.Single
 import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Repository
 
 @Single
+@Repository
 class UserQueryServiceImpl : UserQueryService {
 
     private val logger = LoggerFactory.getLogger(UserQueryServiceImpl::class.java)

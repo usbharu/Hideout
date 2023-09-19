@@ -4,6 +4,7 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.compression.*
 
+@Deprecated("Ktor is deprecated")
 fun Application.configureCompression() {
     install(Compression) {
         gzip {

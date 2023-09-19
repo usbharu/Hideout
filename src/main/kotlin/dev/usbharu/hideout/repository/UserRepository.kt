@@ -1,8 +1,10 @@
 package dev.usbharu.hideout.repository
 
 import dev.usbharu.hideout.domain.model.hideout.entity.User
+import org.springframework.stereotype.Repository
 
 @Suppress("TooManyFunctions")
+@Repository
 interface UserRepository {
     suspend fun save(user: User): User
 

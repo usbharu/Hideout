@@ -6,6 +6,7 @@ import io.ktor.server.http.content.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
+@Deprecated("Ktor is deprecated")
 fun Application.configureStaticRouting() {
     routing {
         get("/") {

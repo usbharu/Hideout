@@ -39,6 +39,7 @@ import org.koin.ksp.generated.module
 import org.koin.ktor.ext.inject
 import java.util.concurrent.TimeUnit
 
+@Deprecated("Ktor is deprecated")
 fun main(args: Array<String>): Unit = io.ktor.server.cio.EngineMain.main(args)
 
 val Application.property: Application.(propertyName: String) -> String
@@ -52,6 +53,7 @@ val Application.propertyOrNull: Application.(propertyName: String) -> String?
     }
 
 // application.conf references the main function. This annotation prevents the IDE from marking it as unused.
+@Deprecated("Ktor is deprecated")
 @Suppress("unused", "LongMethod")
 fun Application.parent() {
     Config.configData = ConfigData(
@@ -136,6 +138,7 @@ fun Application.parent() {
     )
 }
 
+@Deprecated("Ktor is deprecated")
 @Suppress("unused")
 fun Application.worker() {
     val kJob = kjob(ExposedKJob) {

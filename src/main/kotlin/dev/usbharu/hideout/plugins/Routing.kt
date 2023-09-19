@@ -22,6 +22,7 @@ import io.ktor.server.application.*
 import io.ktor.server.plugins.autohead.*
 import io.ktor.server.routing.*
 
+@Deprecated("Ktor is deprecated")
 @Suppress("LongParameterList")
 fun Application.configureRouting(
     httpSignatureVerifyService: HttpSignatureVerifyService,

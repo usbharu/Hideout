@@ -9,13 +9,16 @@ import dev.usbharu.hideout.service.auth.JwtService
 import dev.usbharu.hideout.service.core.Transaction
 import dev.usbharu.hideout.service.user.UserAuthServiceImpl
 import org.koin.core.annotation.Single
+import org.springframework.stereotype.Service
 
+@Service
 interface UserAuthApiService {
     suspend fun login(username: String, password: String): JwtToken
     suspend fun refreshToken(refreshToken: RefreshToken): JwtToken
 }
 
 @Single
+@Service
 class UserAuthApiServiceImpl(
     private val userAuthService: UserAuthServiceImpl,
     private val userQueryService: UserQueryService,

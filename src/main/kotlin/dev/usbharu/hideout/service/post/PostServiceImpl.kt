@@ -7,8 +7,10 @@ import dev.usbharu.hideout.repository.PostRepository
 import dev.usbharu.hideout.repository.UserRepository
 import dev.usbharu.hideout.service.ap.APNoteService
 import org.koin.core.annotation.Single
+import org.springframework.stereotype.Service
 import java.time.Instant
 
+@Service
 @Single
 class PostServiceImpl(
     private val postRepository: PostRepository,

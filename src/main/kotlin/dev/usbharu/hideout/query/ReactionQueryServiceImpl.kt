@@ -11,8 +11,10 @@ import dev.usbharu.hideout.util.singleOr
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.koin.core.annotation.Single
+import org.springframework.stereotype.Repository
 
 @Single
+@Repository
 class ReactionQueryServiceImpl : ReactionQueryService {
     override suspend fun findByPostId(postId: Long, userId: Long?): List<Reaction> {
         return Reactions.select {
