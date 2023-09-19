@@ -21,7 +21,7 @@ class UserDetailsServiceImpl(private val userQueryService: UserQueryService, pri
             User(
                 findById.name,
                 findById.password,
-                listOf()
+                emptyList()
             )
         }
     }
