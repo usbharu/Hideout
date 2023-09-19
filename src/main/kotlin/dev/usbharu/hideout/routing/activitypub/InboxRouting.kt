@@ -11,6 +11,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
+@Deprecated("Ktor is deprecated")
 fun Routing.inbox(
     httpSignatureVerifyService: HttpSignatureVerifyService,
     apService: dev.usbharu.hideout.service.ap.APService

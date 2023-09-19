@@ -8,6 +8,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
+@Deprecated("Ktor is deprecated")
 fun Application.register(userApiService: UserApiService) {
     routing {
         get("/register") {

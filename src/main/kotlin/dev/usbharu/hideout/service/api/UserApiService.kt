@@ -10,9 +10,11 @@ import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.service.core.Transaction
 import dev.usbharu.hideout.service.user.UserService
 import org.koin.core.annotation.Single
+import org.springframework.stereotype.Service
 import kotlin.math.min
 
 @Suppress("TooManyFunctions")
+@Service
 interface UserApiService {
     suspend fun findAll(limit: Int? = 100, offset: Long = 0): List<UserResponse>
 
@@ -37,6 +39,7 @@ interface UserApiService {
 }
 
 @Single
+@Service
 class UserApiServiceImpl(
     private val userQueryService: UserQueryService,
     private val followerQueryService: FollowerQueryService,

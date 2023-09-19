@@ -11,6 +11,7 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
+@Deprecated("Ktor is deprecated")
 fun Routing.webfinger(webFingerApiService: WebFingerApiService) {
     route("/.well-known/webfinger") {
         get {

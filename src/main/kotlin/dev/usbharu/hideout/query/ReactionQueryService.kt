@@ -2,7 +2,9 @@ package dev.usbharu.hideout.query
 
 import dev.usbharu.hideout.domain.model.hideout.dto.ReactionResponse
 import dev.usbharu.hideout.domain.model.hideout.entity.Reaction
+import org.springframework.stereotype.Repository
 
+@Repository
 interface ReactionQueryService {
     suspend fun findByPostId(postId: Long, userId: Long? = null): List<Reaction>
 

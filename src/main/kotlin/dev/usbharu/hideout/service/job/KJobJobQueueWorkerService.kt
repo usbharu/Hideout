@@ -5,9 +5,11 @@ import kjob.core.Job
 import kjob.core.dsl.KJobFunctions
 import kjob.core.kjob
 import org.jetbrains.exposed.sql.Database
+import org.springframework.stereotype.Service
 import kjob.core.dsl.JobContextWithProps as JCWP
 import kjob.core.dsl.JobRegisterContext as JRC
 
+@Service
 class KJobJobQueueWorkerService(private val database: Database) : JobQueueWorkerService {
 
     val kjob by lazy {

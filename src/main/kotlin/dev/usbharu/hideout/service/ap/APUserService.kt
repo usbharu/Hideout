@@ -19,7 +19,9 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import org.koin.core.annotation.Single
+import org.springframework.stereotype.Service
 
+@Service
 interface APUserService {
     suspend fun getPersonByName(name: String): Person
 
@@ -36,6 +38,7 @@ interface APUserService {
 }
 
 @Single
+@Service
 class APUserServiceImpl(
     private val userService: UserService,
     private val httpClient: HttpClient,
