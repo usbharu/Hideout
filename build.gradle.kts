@@ -47,6 +47,8 @@ tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs += "-Xjsr305=strict"
     }
+    dependsOn("openApiGenerateServer")
+    mustRunAfter("openApiGenerateServer")
 }
 
 tasks.withType<ShadowJar> {
