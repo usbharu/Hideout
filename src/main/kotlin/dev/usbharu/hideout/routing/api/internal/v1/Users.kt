@@ -16,6 +16,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
+@Deprecated("Ktor is deprecated")
 @Suppress("LongMethod", "CognitiveComplexMethod")
 fun Route.users(userService: UserService, userApiService: UserApiService) {
     route("/users") {

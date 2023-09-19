@@ -3,10 +3,12 @@ package dev.usbharu.hideout.config
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 
+@Deprecated("Config is deprecated")
 object Config {
     var configData: ConfigData = ConfigData()
 }
 
+@Deprecated("Config is deprecated")
 data class ConfigData(
     val url: String = "",
     val domain: String = url.substringAfter("://").substringBeforeLast(":"),
@@ -14,12 +16,14 @@ data class ConfigData(
     val characterLimit: CharacterLimit = CharacterLimit()
 )
 
+@Deprecated("Config is deprecated")
 data class CharacterLimit(
     val general: General = General.of(),
     val post: Post = Post(),
     val account: Account = Account(),
     val instance: Instance = Instance()
 ) {
+    @Deprecated("Config is deprecated")
     data class General private constructor(
         val url: Int,
         val domain: Int,
@@ -39,17 +43,20 @@ data class CharacterLimit(
         }
     }
 
+    @Deprecated("Config is deprecated")
     data class Post(
         val text: Int = 3000,
         val overview: Int = 3000
     )
 
+    @Deprecated("Config is deprecated")
     data class Account(
         val id: Int = 300,
         val name: Int = 300,
         val description: Int = 10000
     )
 
+    @Deprecated("Config is deprecated")
     data class Instance(
         val name: Int = 600,
         val description: Int = 10000

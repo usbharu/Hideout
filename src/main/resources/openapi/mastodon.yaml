@@ -1,0 +1,22 @@
+openapi: 3.0.3
+info:
+  title: Hideout Mastodon Compatible API
+  description: Hideout Mastodon Compatible API
+  version: 1.0.0
+servers:
+  - url: 'https://test-hideout.usbharu.dev'
+paths:
+
+components:
+  schemas:
+    Account:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        acct:
+          type: string
+        url:
+          type: string
