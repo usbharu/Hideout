@@ -44,6 +44,9 @@ class SecurityConfig {
             .oauth2ResourceServer {
                 it.jwt(Customizer.withDefaults())
             }
+            .csrf {
+                it.disable()
+            }
         return http.build()
     }
 
@@ -53,9 +56,21 @@ class SecurityConfig {
     fun defaultSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .authorizeHttpRequests {
+                it.requestMatchers(
+                    "/inbox",
+                    "/users/*/inbox",
+                    "/outbox",
+                    "/users/*/outbox"
+                )
+                    .permitAll()
+            }
+            .authorizeHttpRequests {
                 it.anyRequest().authenticated()
             }
             .formLogin(Customizer.withDefaults())
+            .csrf {
+                it.disable()
+            }
         return http.build()
     }
 
