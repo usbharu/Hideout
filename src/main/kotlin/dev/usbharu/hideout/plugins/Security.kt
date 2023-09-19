@@ -13,6 +13,7 @@ import io.ktor.server.routing.*
 
 const val TOKEN_AUTH = "jwt-auth"
 
+@Deprecated("Ktor is deprecated")
 @Suppress("MagicNumber")
 fun Application.configureSecurity(
     jwkProvider: JwkProvider,

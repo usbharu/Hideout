@@ -15,6 +15,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
+@Deprecated("Ktor is deprecated")
 fun Routing.usersAP(
     apUserService: APUserService,
     userQueryService: UserQueryService,
@@ -50,6 +51,7 @@ fun Routing.usersAP(
     }
 }
 
+@Deprecated("Ktor is deprecated")
 class ContentTypeRouteSelector(private vararg val contentType: ContentType) : RouteSelector() {
     override fun evaluate(context: RoutingResolveContext, segmentIndex: Int): RouteSelectorEvaluation {
         context.call.application.log.debug("Accept: ${context.call.request.accept()}")

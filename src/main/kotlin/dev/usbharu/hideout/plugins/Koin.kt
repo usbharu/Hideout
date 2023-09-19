@@ -5,6 +5,7 @@ import org.koin.core.module.Module
 import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
 
+@Deprecated("Ktor is deprecated")
 fun Application.configureKoin(vararg module: Module) {
     install(Koin) {
         slf4jLogger()
