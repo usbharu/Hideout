@@ -87,7 +87,6 @@ class RegisteredClientRepositoryImpl(private val database: Database) : Registere
     }
 }
 
-
 // org/springframework/security/oauth2/server/authorization/client/oauth2-registered-client-schema.sql
 object RegisteredClient : Table("registered_client") {
     val id = varchar("id", 100)
@@ -108,7 +107,6 @@ object RegisteredClient : Table("registered_client") {
 }
 
 fun ResultRow.toRegisteredClient(): SpringRegisteredClient {
-
     fun resolveClientAuthenticationMethods(string: String): ClientAuthenticationMethod {
         return when (string) {
             ClientAuthenticationMethod.CLIENT_SECRET_BASIC.value -> ClientAuthenticationMethod.CLIENT_SECRET_BASIC
@@ -159,7 +157,6 @@ fun ResultRow.toRegisteredClient(): SpringRegisteredClient {
         .postLogoutRedirectUris { it.addAll(postLogoutRedirectUris) }
         .scopes { it.addAll(clientScopes) }
         .clientSettings(ClientSettings.withSettings(JsonUtil.jsonToMap(this[clientSettings])).build())
-
 
     val tokenSettingsMap = JsonUtil.jsonToMap<String, Any>(this[tokenSettings])
     val withSettings = TokenSettings.withSettings(tokenSettingsMap)

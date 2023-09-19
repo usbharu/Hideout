@@ -19,7 +19,9 @@ class UserDetailsServiceImpl(private val userQueryService: UserQueryService, pri
         transaction.transaction {
             val findById = userQueryService.findByNameAndDomain(username, "")
             User(
-                findById.name, findById.password, listOf()
+                findById.name,
+                findById.password,
+                listOf()
             )
         }
     }

@@ -13,7 +13,7 @@ plugins {
     kotlin("jvm") version "1.8.21"
     id("io.ktor.plugin") version "2.3.0"
     id("org.graalvm.buildtools.native") version "0.9.21"
-    id("io.gitlab.arturbosch.detekt") version "1.22.0"
+    id("io.gitlab.arturbosch.detekt") version "1.23.1"
     id("com.google.devtools.ksp") version "1.8.21-1.0.11"
     id("org.springframework.boot") version "3.1.2"
     kotlin("plugin.spring") version "1.8.21"
@@ -65,7 +65,7 @@ tasks.create<GenerateTask>("openApiGenerateServer", GenerateTask::class) {
     generatorName.set("kotlin-spring")
     inputSpec.set("$rootDir/src/main/resources/openapi/api.yaml")
     outputDir.set("$buildDir/generated/sources/openapi")
-    apiPackage.set("dev.usbharu.hideout.controller")
+    apiPackage.set("dev.usbharu.hideout.controller.generated")
     modelPackage.set("dev.usbharu.hideout.domain.model.generated")
     configOptions.put("interfaceOnly", "true")
     configOptions.put("useSpringBoot3", "true")
@@ -149,6 +149,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+    testImplementation("org.springframework.boot:spring-boot-test-autoconfigure")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
 
     implementation("io.ktor:ktor-client-logging-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-host-common-jvm:$ktor_version")
@@ -226,9 +228,17 @@ detekt {
 }
 
 tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
-    exclude("**/org/koin/ksp/generated/**")
+    exclude("**/org/koin/ksp/generated/**", "**/generated/**")
 }
 
 tasks.withType<io.gitlab.arturbosch.detekt.DetektCreateBaselineTask>().configureEach {
-    exclude("**/org/koin/ksp/generated/**")
+    exclude("**/org/koin/ksp/generated/**", "**/generated/**")
+}
+
+configurations.matching { it.name == "detekt" }.all {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "org.jetbrains.kotlin") {
+            useVersion("1.9.0")
+        }
+    }
 }

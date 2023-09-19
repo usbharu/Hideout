@@ -11,7 +11,6 @@ import io.ktor.http.*
 import org.koin.core.annotation.Single
 import org.springframework.stereotype.Service
 
-
 @Service
 interface APUndoService {
     suspend fun receiveUndo(undo: Undo): ActivityPubResponse

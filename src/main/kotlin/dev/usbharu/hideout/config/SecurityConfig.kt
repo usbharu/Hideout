@@ -38,7 +38,8 @@ class SecurityConfig {
         http
             .exceptionHandling {
                 it.defaultAuthenticationEntryPointFor(
-                    LoginUrlAuthenticationEntryPoint("/login"), MediaTypeRequestMatcher(MediaType.TEXT_HTML)
+                    LoginUrlAuthenticationEntryPoint("/login"),
+                    MediaTypeRequestMatcher(MediaType.TEXT_HTML)
                 )
             }
             .oauth2ResourceServer {
@@ -49,7 +50,6 @@ class SecurityConfig {
             }
         return http.build()
     }
-
 
     @Bean
     @Order(2)
@@ -120,7 +120,6 @@ class SecurityConfig {
             .build()
     }
 }
-
 
 @ConfigurationProperties("hideout.security.jwt")
 @ConditionalOnProperty(name = ["hideout.security.jwt.generate"], havingValue = "")
