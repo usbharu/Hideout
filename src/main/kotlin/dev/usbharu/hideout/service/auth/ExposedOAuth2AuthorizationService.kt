@@ -45,7 +45,7 @@ class ExposedOAuth2AuthorizationService(private val registeredClientRepository: 
                 it[accessTokenExpiresAt] = accessToken?.token?.expiresAt
                 it[accessTokenMetadata] = accessToken?.metadata?.let { it1 -> JsonUtil.mapToJson(it1) }
                 it[accessTokenType] = accessToken?.token?.tokenType?.value
-                it[accessTokenScopes] = accessToken?.token?.scopes?.joinToString(",")?.takeIf { it.isEmpty() }
+                it[accessTokenScopes] = accessToken?.run { token.scopes.joinToString(",").takeIf { it.isEmpty() } }
                 it[refreshTokenValue] = refreshToken?.token?.tokenValue
                 it[refreshTokenIssuedAt] = refreshToken?.token?.issuedAt
                 it[refreshTokenExpiresAt] = refreshToken?.token?.expiresAt
@@ -203,7 +203,7 @@ class ExposedOAuth2AuthorizationService(private val registeredClientRepository: 
                 JsonUtil.jsonToMap<String, Any>(
                     it
                 )
-            } ?: emptyMap()
+            }.orEmpty()
             val oAuth2AuthorizationCode =
                 OAuth2AuthorizationCode(authorizationCodeValue, authorizationCodeIssuedAt, authorizationCodeExpiresAt)
             builder.token(oAuth2AuthorizationCode) {
@@ -242,7 +242,7 @@ class ExposedOAuth2AuthorizationService(private val registeredClientRepository: 
             val oidcTokenIssuedAt = this[Authorization.oidcIdTokenIssuedAt]
             val oidcTokenExpiresAt = this[Authorization.oidcIdTokenExpiresAt]
             val oidcTokenMetadata =
-                this[Authorization.oidcIdTokenMetadata]?.let { JsonUtil.jsonToMap<String, Any>(it) }.or
+                this[Authorization.oidcIdTokenMetadata]?.let { JsonUtil.jsonToMap<String, Any>(it) }.orEmpty()
 
             val oidcIdToken = OidcIdToken(
                 oidcIdTokenValue,
@@ -259,7 +259,7 @@ class ExposedOAuth2AuthorizationService(private val registeredClientRepository: 
             val refreshTokenIssuedAt = this[Authorization.refreshTokenIssuedAt]
             val refreshTokenExpiresAt = this[Authorization.refreshTokenExpiresAt]
             val refreshTokenMetadata =
-                this[Authorization.refreshTokenMetadata]?.let { JsonUtil.jsonToMap<String, Any>(it) } ?: emptyMap()
+                this[Authorization.refreshTokenMetadata]?.let { JsonUtil.jsonToMap<String, Any>(it) }.orEmpty()
 
             val oAuth2RefreshToken = OAuth2RefreshToken(refreshTokenValue, refreshTokenIssuedAt, refreshTokenExpiresAt)
 
@@ -271,7 +271,7 @@ class ExposedOAuth2AuthorizationService(private val registeredClientRepository: 
             val userCodeIssuedAt = this[Authorization.userCodeIssuedAt]
             val userCodeExpiresAt = this[Authorization.userCodeExpiresAt]
             val userCodeMetadata =
-                this[Authorization.userCodeMetadata]?.let { JsonUtil.jsonToMap<String, Any>(it) } ?: emptyMap()
+                this[Authorization.userCodeMetadata]?.let { JsonUtil.jsonToMap<String, Any>(it) }.orEmpty()
             val oAuth2UserCode = OAuth2UserCode(userCodeValue, userCodeIssuedAt, userCodeExpiresAt)
             builder.token(oAuth2UserCode) { it.putAll(userCodeMetadata) }
         }
@@ -281,7 +281,7 @@ class ExposedOAuth2AuthorizationService(private val registeredClientRepository: 
             val deviceCodeIssuedAt = this[Authorization.deviceCodeIssuedAt]
             val deviceCodeExpiresAt = this[Authorization.deviceCodeExpiresAt]
             val deviceCodeMetadata =
-                this[Authorization.deviceCodeMetadata]?.let { JsonUtil.jsonToMap<String, Any>(it) } ?: emptyMap()
+                this[Authorization.deviceCodeMetadata]?.let { JsonUtil.jsonToMap<String, Any>(it) }.orEmpty()
 
             val oAuth2DeviceCode = OAuth2DeviceCode(deviceCodeValue, deviceCodeIssuedAt, deviceCodeExpiresAt)
             builder.token(oAuth2DeviceCode) { it.putAll(deviceCodeMetadata) }

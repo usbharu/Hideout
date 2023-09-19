@@ -14,7 +14,11 @@ class ExposedOAuth2AuthorizationConsentService(private val registeredClientRepos
     override fun save(authorizationConsent: AuthorizationConsent?) {
         requireNotNull(authorizationConsent)
         val singleOrNull =
-            OAuth2AuthorizationConsent.select { OAuth2AuthorizationConsent.registeredClientId eq authorizationConsent.registeredClientId and (OAuth2AuthorizationConsent.principalName eq authorizationConsent.principalName) }
+            OAuth2AuthorizationConsent.select {
+                OAuth2AuthorizationConsent.registeredClientId
+                    .eq(authorizationConsent.registeredClientId)
+                    .and(OAuth2AuthorizationConsent.principalName.eq(authorizationConsent.principalName))
+            }
                 .singleOrNull()
         if (singleOrNull == null) {
             OAuth2AuthorizationConsent.insert {
@@ -38,13 +42,16 @@ class ExposedOAuth2AuthorizationConsentService(private val registeredClientRepos
         requireNotNull(registeredClientId)
         requireNotNull(principalName)
 
-        return OAuth2AuthorizationConsent.select { OAuth2AuthorizationConsent.registeredClientId eq registeredClientId and (OAuth2AuthorizationConsent.principalName eq principalName) }
+        return OAuth2AuthorizationConsent.select {
+            (OAuth2AuthorizationConsent.registeredClientId eq registeredClientId)
+                .and(OAuth2AuthorizationConsent.principalName eq principalName)
+        }
             .singleOrNull()?.toAuthorizationConsent()
     }
 
     fun ResultRow.toAuthorizationConsent(): AuthorizationConsent {
         val registeredClientId = this[OAuth2AuthorizationConsent.registeredClientId]
-        val registeredClient = registeredClientRepository.findById(registeredClientId)
+        registeredClientRepository.findById(registeredClientId)
 
         val principalName = this[OAuth2AuthorizationConsent.principalName]
         val builder = AuthorizationConsent.withId(registeredClientId, principalName)
