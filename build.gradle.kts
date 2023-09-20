@@ -17,7 +17,7 @@ plugins {
     id("com.google.devtools.ksp") version "1.8.21-1.0.11"
     id("org.springframework.boot") version "3.1.2"
     kotlin("plugin.spring") version "1.8.21"
-    id("org.openapi.generator") version "6.6.0"
+    id("org.openapi.generator") version "7.0.1"
 //    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
 }
 
@@ -47,8 +47,8 @@ tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs += "-Xjsr305=strict"
     }
-    dependsOn("openApiGenerateServer")
-    mustRunAfter("openApiGenerateServer")
+    dependsOn("openApiGenerateMastodonCompatibleApi")
+    mustRunAfter("openApiGenerateMastodonCompatibleApi")
 }
 
 tasks.withType<ShadowJar> {
@@ -63,34 +63,34 @@ tasks.clean {
     delete += listOf("$rootDir/src/main/resources/static")
 }
 
-tasks.create<GenerateTask>("openApiGenerateServer", GenerateTask::class) {
-    generatorName.set("kotlin-spring")
-    inputSpec.set("$rootDir/src/main/resources/openapi/api.yaml")
-    outputDir.set("$buildDir/generated/sources/openapi")
-    apiPackage.set("dev.usbharu.hideout.controller.generated")
-    modelPackage.set("dev.usbharu.hideout.domain.model.generated")
-    configOptions.put("interfaceOnly", "true")
-    configOptions.put("useSpringBoot3", "true")
-    additionalProperties.put("useTags", "true")
-    schemaMappings.putAll(
-        mapOf(
-            "ReactionResponse" to "dev.usbharu.hideout.domain.model.hideout.dto.ReactionResponse",
-            "Account" to "dev.usbharu.hideout.domain.model.hideout.dto.Account",
-            "JwtToken" to "dev.usbharu.hideout.domain.model.hideout.dto.JwtToken",
-            "PostRequest" to "dev.usbharu.hideout.domain.model.hideout.form.Post",
-            "PostResponse" to "dev.usbharu.hideout.domain.model.hideout.dto.PostResponse",
-            "Reaction" to "dev.usbharu.hideout.domain.model.hideout.form.Reaction",
-            "RefreshToken" to "dev.usbharu.hideout.domain.model.hideout.form.RefreshToken",
-            "UserLogin" to "dev.usbharu.hideout.domain.model.hideout.form.UserLogin",
-            "UserResponse" to "dev.usbharu.hideout.domain.model.hideout.dto.UserResponse",
-            "UserCreate" to "dev.usbharu.hideout.domain.model.hideout.form.UserCreate",
-            "Visibility" to "dev.usbharu.hideout.domain.model.hideout.entity.Visibility",
-        )
-    )
-
-//    importMappings.putAll(mapOf("ReactionResponse" to "ReactionResponse"))
-//    typeMappings.putAll(mapOf("ReactionResponse" to "ReactionResponse"))
-}
+//tasks.create<GenerateTask>("openApiGenerateServer", GenerateTask::class) {
+//    generatorName.set("kotlin-spring")
+//    inputSpec.set("$rootDir/src/main/resources/openapi/api.yaml")
+//    outputDir.set("$buildDir/generated/sources/openapi")
+//    apiPackage.set("dev.usbharu.hideout.controller.generated")
+//    modelPackage.set("dev.usbharu.hideout.domain.model.generated")
+//    configOptions.put("interfaceOnly", "true")
+//    configOptions.put("useSpringBoot3", "true")
+//    additionalProperties.put("useTags", "true")
+//    schemaMappings.putAll(
+//        mapOf(
+//            "ReactionResponse" to "dev.usbharu.hideout.domain.model.hideout.dto.ReactionResponse",
+//            "Account" to "dev.usbharu.hideout.domain.model.hideout.dto.Account",
+//            "JwtToken" to "dev.usbharu.hideout.domain.model.hideout.dto.JwtToken",
+//            "PostRequest" to "dev.usbharu.hideout.domain.model.hideout.form.Post",
+//            "PostResponse" to "dev.usbharu.hideout.domain.model.hideout.dto.PostResponse",
+//            "Reaction" to "dev.usbharu.hideout.domain.model.hideout.form.Reaction",
+//            "RefreshToken" to "dev.usbharu.hideout.domain.model.hideout.form.RefreshToken",
+//            "UserLogin" to "dev.usbharu.hideout.domain.model.hideout.form.UserLogin",
+//            "UserResponse" to "dev.usbharu.hideout.domain.model.hideout.dto.UserResponse",
+//            "UserCreate" to "dev.usbharu.hideout.domain.model.hideout.form.UserCreate",
+//            "Visibility" to "dev.usbharu.hideout.domain.model.hideout.entity.Visibility",
+//        )
+//    )
+//
+////    importMappings.putAll(mapOf("ReactionResponse" to "ReactionResponse"))
+////    typeMappings.putAll(mapOf("ReactionResponse" to "ReactionResponse"))
+//}
 
 tasks.create<GenerateTask>("openApiGenerateMastodonCompatibleApi", GenerateTask::class) {
     generatorName.set("kotlin-spring")

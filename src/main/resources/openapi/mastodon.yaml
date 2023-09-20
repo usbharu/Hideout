@@ -700,12 +700,37 @@ components:
           type: boolean
         configuration:
           $ref: "#/components/schemas/V1InstanceConfiguration"
+        contact_account:
+          $ref: "#/components/schemas/Account"
+        rules:
+          type: array
+          items:
+            $ref: "#/components/schemas/Rule"
+      required:
+        - uri
+        - title
+        - short_description
+        - description
+        - email
+        - version
+        - urls
+        - stats
+        - thumbnail
+        - languages
+        - registrations
+        - approval_required
+        - invites_enabled
+        - configuration
+        - contact_account
+        - rules
 
     V1InstanceUrls:
       type: object
       properties:
         streaming_api:
           type: string
+      required:
+        - streaming_api
 
     V1InstanceStats:
       type: object
@@ -716,6 +741,10 @@ components:
           type: integer
         domain_count:
           type: integer
+      required:
+        - user_count
+        - status_count
+        - domain_count
 
     V1InstanceConfiguration:
       type: object
@@ -728,12 +757,12 @@ components:
           $ref: "#/components/schemas/V1InstanceConfigurationMediaAttachments"
         polls:
           $ref: "#/components/schemas/V1InstanceConfigurationPolls"
-        contact_account:
-          $ref: "#/components/schemas/Account"
-        rules:
-          type: array
-          items:
-            $ref: "#/components/schemas/Rule"
+      required:
+        - accounts
+        - statuses
+        - media_attachments
+        - polls
+
 
     V1InstanceConfigurationAccounts:
       type: object
