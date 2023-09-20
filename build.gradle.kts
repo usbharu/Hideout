@@ -92,6 +92,21 @@ tasks.create<GenerateTask>("openApiGenerateServer", GenerateTask::class) {
 //    typeMappings.putAll(mapOf("ReactionResponse" to "ReactionResponse"))
 }
 
+tasks.create<GenerateTask>("openApiGenerateMastodonCompatibleApi", GenerateTask::class) {
+    generatorName.set("kotlin-spring")
+    inputSpec.set("$rootDir/src/main/resources/openapi/mastodon.yaml")
+    outputDir.set("$buildDir/generated/sources/mastodon")
+    apiPackage.set("dev.usbharu.hideout.controller.mastodon.generated")
+    modelPackage.set("dev.usbharu.hideout.domain.mastodon.model.generated")
+    configOptions.put("interfaceOnly", "true")
+    configOptions.put("useSpringBoot3", "true")
+    configOptions.put("reactive", "true")
+    additionalProperties.put("useTags", "true")
+
+//    importMappings.putAll(mapOf("ReactionResponse" to "ReactionResponse"))
+//    typeMappings.putAll(mapOf("ReactionResponse" to "ReactionResponse"))
+}
+
 repositories {
     mavenCentral()
 }
@@ -105,7 +120,11 @@ kotlin {
 }
 
 sourceSets.main {
-    kotlin.srcDirs("$buildDir/generated/ksp/main", "$buildDir/generated/sources/openapi/src/main/kotlin")
+    kotlin.srcDirs(
+        "$buildDir/generated/ksp/main",
+        "$buildDir/generated/sources/openapi/src/main/kotlin",
+        "$buildDir/generated/sources/mastodon/src/main/kotlin"
+    )
 }
 
 dependencies {
