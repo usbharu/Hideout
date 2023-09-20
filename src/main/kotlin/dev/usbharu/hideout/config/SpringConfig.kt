@@ -7,10 +7,13 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-class DatabaseConfig {
+class SpringConfig {
 
     @Autowired
     lateinit var dbConfig: DatabaseConnectConfig
+
+    @Autowired
+    lateinit var config: ApplicationConfig
 
     @Bean
     fun database(): Database {
@@ -22,6 +25,11 @@ class DatabaseConfig {
         )
     }
 }
+
+@ConfigurationProperties("hideout")
+data class ApplicationConfig(
+    val url: String
+)
 
 @ConfigurationProperties("hideout.database")
 data class DatabaseConnectConfig(
