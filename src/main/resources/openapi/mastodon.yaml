@@ -20,3 +20,558 @@ components:
           type: string
         url:
           type: string
+        display_name:
+          type: string
+        note:
+          type: string
+        avatar:
+          type: string
+        avatar_static:
+          type: string
+        header:
+          type: string
+        header_static:
+          type: string
+        locked:
+          type: boolean
+        fields:
+          type: array
+          items:
+            $ref: "#/components/schemas/Field"
+        emojis:
+          type: array
+          items:
+            $ref: "#/components/schemas/CustomEmoji"
+        bot:
+          type: boolean
+        group:
+          type: boolean
+        discoverable:
+          type: boolean
+          nullable: true
+        noindex:
+          type: boolean
+        moved:
+          type: boolean
+        suspendex:
+          type: boolean
+        limited:
+          type: boolean
+        created_at:
+          type: string
+        last_status_at:
+          type: string
+          nullable: true
+        statuses_count:
+          type: integer
+        followers_count:
+          type: integer
+        following_count:
+          type: integer
+      required:
+        - id
+        - username
+        - acct
+        - url
+        - display_name
+        - note
+        - avatar
+        - avatar_static
+        - header
+        - header_static
+        - locked
+        - fields
+        - emojis
+        - bot
+        - group
+        - discoverable
+        - created_at
+        - last_status_at
+        - statuses_count
+        - followers_count
+        - followers_count
+
+    Field:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+        verified_at:
+          type: string
+          nullable: true
+      required:
+        - name
+        - value
+        - verified_at
+
+    CustomEmoji:
+      type: object
+      properties:
+        shortcode:
+          type: string
+        url:
+          type: string
+        static_url:
+          type: string
+        visible_in_picker:
+          type: boolean
+        category:
+          type: string
+      required:
+        - shortcode
+        - url
+        - static_url
+        - visible_in_picker
+        - category
+
+    Status:
+      type: object
+      properties:
+        id:
+          type: string
+        uri:
+          type: string
+        created_at:
+          type: string
+        account:
+          $ref: "#/components/schemas/Account"
+        content:
+          type: string
+        visibility:
+          type: string
+          enum:
+            - public
+            - unlisted
+            - private
+            - direct
+        sensitive:
+          type: boolean
+        spoiler_text:
+          type: string
+        media_attachments:
+          type: array
+          items:
+            $ref: "#/components/schemas/MediaAttachment"
+        application:
+          $ref: "#/components/schemas/StatusApplication"
+        mentions:
+          type: array
+          items:
+            $ref: "#/components/schemas/StatusMention"
+        tag:
+          type: array
+          items:
+            $ref: "#/components/schemas/StatusTag"
+        emojis:
+          type: array
+          items:
+            $ref: "#/components/schemas/CustomEmoji"
+        reblogs_count:
+          type: integer
+        favourites_count:
+          type: integer
+        replies_count:
+          type: integer
+        url:
+          type: string
+          nullable: true
+        in_reply_to_id:
+          type: string
+          nullable: true
+        in_reply_to_account_id:
+          type: string
+          nullable: true
+        reblog:
+          $ref: "#/components/schemas/Status"
+        poll:
+          $ref: "#/components/schemas/Poll"
+        PreviewCard:
+          $ref: "#/components/schemas/PreviewCard"
+        language:
+          type: string
+          nullable: true
+        text:
+          type: string
+          nullable: true
+        edited_at:
+          type: string
+          nullable: true
+        favourited:
+          type: boolean
+        reblogged:
+          type: boolean
+        muted:
+          type: boolean
+        bookmarked:
+          type: boolean
+        pinned:
+          type: boolean
+        filtered:
+          type: array
+          items:
+            $ref: "#/components/schemas/FilterResult"
+
+
+    MediaAttachment:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum:
+            - unknown
+            - image
+            - gifv
+            - video
+            - audio
+        url:
+          type: string
+        preview_url:
+          type: string
+        remote_url:
+          type: string
+          nullable: true
+        description:
+          type: string
+        blurhash:
+          type: string
+        text_url:
+          type: string
+
+    StatusApplication:
+      type: object
+      properties:
+        name:
+          type: string
+        website:
+          type: string
+          nullable: true
+
+    StatusMention:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        url:
+          type: string
+        acct:
+          type: string
+
+    StatusTag:
+      type: object
+      properties:
+        name:
+          type: string
+        url:
+          type: string
+    Poll:
+      type: object
+      properties:
+        id:
+          type: string
+        expires_at:
+          type: string
+          nullable: true
+        expired:
+          type: boolean
+        multiple:
+          type: boolean
+        votes_count:
+          type: integer
+        voters_count:
+          type: integer
+          nullable: true
+        options:
+          type: array
+          items:
+            $ref: "#/components/schemas/PollOption"
+        emojis:
+          type: array
+          items:
+            $ref: "#/components/schemas/CustomEmoji"
+        voted:
+          type: boolean
+        own_votes:
+          type: array
+          items:
+            type: integer
+
+    PollOption:
+      type: object
+      properties:
+        title:
+          type: string
+        votes_count:
+          type: integer
+          nullable: true
+
+    PreviewCard:
+      type: object
+      properties:
+        url:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+          enum:
+            - link
+            - photo
+            - video
+            - rich
+        author_name:
+          type: string
+        author_url:
+          type: string
+        provider_name:
+          type: string
+        provider_url:
+          type: string
+        html:
+          type: string
+        width:
+          type: integer
+        height:
+          type: integer
+        image:
+          type: string
+          nullable: true
+        embed_url:
+          type: string
+        blurhash:
+          type: string
+          nullable: true
+
+    FilterResult:
+      type: object
+      properties:
+        filter:
+          $ref: "#/components/schemas/FilterResult"
+        keyword_matches:
+          type: array
+          items:
+            type: string
+          nullable: true
+        status_matches:
+          type: string
+          nullable: true
+
+    Filter:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        context:
+          type: string
+          enum:
+            - home
+            - notifications
+            - public
+            - thread
+            - account
+        expires_at:
+          type: string
+          nullable: true
+        filter_action:
+          type: string
+          enum:
+            - warn
+            - hide
+        keywords:
+          type: array
+          items:
+            $ref: "#/components/schemas/FilterKeyword"
+        statuses:
+          type: array
+          items:
+            $ref: "#/components/schemas/FilterStatus"
+
+    FilterKeyword:
+      type: object
+      properties:
+        id:
+          type: string
+        keyword:
+          type: string
+        whole_word:
+          type: boolean
+
+    FilterStatus:
+      type: object
+      properties:
+        id:
+          type: string
+        status_id:
+          type: string
+
+    Instance:
+      type: object
+      properties:
+        domain:
+          type: string
+        title:
+          type: string
+        version:
+          type: string
+        source_url:
+          type: string
+        description:
+          type: string
+        usage:
+          $ref: "#/components/schemas/InstanceUsage"
+        thumbnail:
+          $ref: "#/components/schemas/InstanceThumbnail"
+        languages:
+          type: array
+          items:
+            type: string
+        configuration:
+          $ref: "#/components/schemas/InstanceConfiguration"
+
+
+    InstanceUsage:
+      type: object
+      properties:
+        users:
+          $ref: "#/components/schemas/InstanceUsageUsers"
+
+
+    InstanceUsageUsers:
+      type: object
+      properties:
+        active_month:
+          type: integer
+
+    InstanceThumbnail:
+      type: object
+      properties:
+        blurhash:
+          type: string
+        versions:
+          $ref: "#/components/schemas/InstanceThumbnailVersions"
+
+    InstanceThumbnailVersions:
+      type: object
+      properties:
+        "@1x":
+          type: string
+        "@2x":
+          type: string
+
+    InstanceConfiguration:
+      type: object
+      properties:
+        urls:
+          $ref: "#/components/schemas/InstanceConfigurationUrls"
+        accounts:
+          $ref: "#/components/schemas/InstanceConfigurationAccounts"
+        statuses:
+          $ref: "#/components/schemas/InstanceConfigurationStatuses"
+        media_attachments:
+          $ref: "#/components/schemas/InstanceConfigurationMediaAttachments"
+        polls:
+          $ref: "#/components/schemas/InstanceConfigurationPolls"
+        translation:
+          $ref: "#/components/schemas/InstanceConfigurationTranslation"
+        registrations:
+          $ref: "#/components/schemas/InstanceConfigurationRegistrations"
+        contact:
+          $ref: "#/components/schemas/InstanceConfigurationContact"
+        rules:
+          type: array
+          items:
+            $ref: "#/components/schemas/Rule"
+
+    InstanceConfigurationUrls:
+      type: object
+      properties:
+        streaming_api:
+          type: string
+
+    InstanceConfigurationAccounts:
+      type: object
+      properties:
+        max_featured_tags:
+          type: integer
+
+    InstanceConfigurationStatuses:
+      type: object
+      properties:
+        max_characters:
+          type: integer
+        max_media_attachments:
+          type: integer
+        characters_reserved_per_url:
+          type: integer
+
+    InstanceConfigurationMediaAttachments:
+      type: object
+      properties:
+        supported_mime_types:
+          type: array
+          items:
+            type: string
+        image_size_limit:
+          type: integer
+        image_matrix_limit:
+          type: integer
+        video_size_limit:
+          type: integer
+        video_frame_rate_limit:
+          type: integer
+        video_matrix_limit:
+          type: integer
+
+    InstanceConfigurationPolls:
+      type: object
+      properties:
+        max_options:
+          type: integer
+        max_characters_per_option:
+          type: integer
+        min_expiration:
+          type: integer
+        max_expiration:
+          type: integer
+
+    InstanceConfigurationTranslation:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+
+    InstanceConfigurationRegistrations:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        approval_required:
+          type: boolean
+        message:
+          type: string
+          nullable: true
+
+    InstanceConfigurationContact:
+      type: object
+      properties:
+        email:
+          type: string
+        account:
+          $ref: "#/components/schemas/Account"
+
+    Rule:
+      type: object
+      properties:
+        id:
+          type: string
+        text:
+          type: string
