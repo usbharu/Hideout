@@ -575,3 +575,118 @@ components:
           type: string
         text:
           type: string
+
+    V1Instance:
+      type: object
+      properties:
+        uri:
+          type: string
+        title:
+          type: string
+        short_description:
+          type: string
+        description:
+          type: string
+        email:
+          type: string
+        version:
+          type: string
+        urls:
+          $ref: "#/components/schemas/V1InstanceUrls"
+        stats:
+          $ref: "#/components/schemas/V1InstanceStats"
+        thumbnail:
+          type: string
+          nullable: true
+        languages:
+          type: array
+          items:
+            type: string
+        registrations:
+          type: boolean
+        approval_required:
+          type: boolean
+        invites_enabled:
+          type: boolean
+        configuration:
+          $ref: ""
+
+    V1InstanceUrls:
+      type: object
+      properties:
+        streaming_api:
+          type: string
+
+    V1InstanceStats:
+      type: object
+      properties:
+        user_count:
+          type: integer
+        status_count:
+          type: integer
+        domain_count:
+          type: integer
+
+    V1InstanceConfiguration:
+      type: object
+      properties:
+        accounts:
+          $ref: "#/components/schemas/V1InstanceConfigurationAccounts"
+        statuses:
+          $ref: "#/components/schemas/V1InstanceConfigurationStatuses"
+        media_attachments:
+          $ref: "#/components/schemas/V1InstanceConfigurationMediaAttachments"
+        polls:
+          $ref: "#/components/schemas/V1InstanceConfigurationPolls"
+        contact_account:
+          $ref: "#/components/schemas/Account"
+        rules:
+          type: array
+          items:
+            $ref: "#/components/schemas/Rule"
+
+    V1InstanceConfigurationAccounts:
+      type: object
+      properties:
+        max_featured_tags:
+          type: integer
+
+    V1InstanceConfigurationStatuses:
+      type: object
+      properties:
+        max_characters:
+          type: integer
+        max_media_attachments:
+          type: integer
+        characters_reserved_per_url:
+          type: integer
+
+    V1InstanceConfigurationMediaAttachments:
+      type: object
+      properties:
+        supported_mime_types:
+          type: array
+          items:
+            type: string
+        image_size_limit:
+          type: integer
+        image_matrix_limit:
+          type: integer
+        video_size_limit:
+          type: integer
+        video_frame_rate_limit:
+          type: integer
+        video_matrix_limit:
+          type: integer
+
+    V1InstanceConfigurationPolls:
+      type: object
+      properties:
+        max_options:
+          type: integer
+        max_characters_per_option:
+          type: integer
+        min_expiration:
+          type: integer
+        max_expiration:
+          type: integer
