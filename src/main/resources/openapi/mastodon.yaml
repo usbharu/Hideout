@@ -6,7 +6,97 @@ info:
 servers:
   - url: 'https://test-hideout.usbharu.dev'
 paths:
+  /api/v2/instance:
+    get:
+      security:
+        - { }
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Instance"
 
+  /api/v1/instance/peers:
+    get:
+      security:
+        - { }
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+
+  /api/v1/instance/activity:
+    get:
+      security:
+        - { }
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/V1InstanceActivity"
+
+  /api/v1/instance/rules:
+    get:
+      security:
+        - { }
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Rule"
+
+  /api/v1/instance/domain_blocks:
+    get:
+      security:
+        - { }
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DomainBlock"
+
+  /api/v1/instance/extended_description:
+    get:
+      security:
+        - { }
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExtendedDescription"
+
+  /api/v1/instance:
+    get:
+      security:
+        - { }
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/V1Instance"
 components:
   schemas:
     Account:
@@ -609,7 +699,7 @@ components:
         invites_enabled:
           type: boolean
         configuration:
-          $ref: ""
+          $ref: "#/components/schemas/V1InstanceConfiguration"
 
     V1InstanceUrls:
       type: object
@@ -690,3 +780,38 @@ components:
           type: integer
         max_expiration:
           type: integer
+
+    V1InstanceActivity:
+      type: object
+      properties:
+        week:
+          type: integer
+        statuses:
+          type: integer
+        logins:
+          type: integer
+        registrations:
+          type: integer
+
+    DomainBlock:
+      type: object
+      properties:
+        domain:
+          type: string
+        digest:
+          type: string
+        severity:
+          type: string
+          enum:
+            - silence
+            - suspend
+        comment:
+          type: string
+
+    ExtendedDescription:
+      type: object
+      properties:
+        updated_at:
+          type: string
+        content:
+          type: string
