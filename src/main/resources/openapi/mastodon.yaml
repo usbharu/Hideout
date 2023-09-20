@@ -97,6 +97,27 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/V1Instance"
+
+  /api/v1/statuses:
+    post:
+      security:
+        - OAuth2:
+            - "write:statuses"
+      requestBody:
+        description: 投稿する内容
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StatusesRequest"
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+
 components:
   schemas:
     Account:
@@ -250,7 +271,7 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/StatusMention"
-        tag:
+        tags:
           type: array
           items:
             $ref: "#/components/schemas/StatusTag"
@@ -277,7 +298,7 @@ components:
           $ref: "#/components/schemas/Status"
         poll:
           $ref: "#/components/schemas/Poll"
-        PreviewCard:
+        card:
           $ref: "#/components/schemas/PreviewCard"
         language:
           type: string
@@ -302,7 +323,28 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/FilterResult"
-
+      required:
+        - id
+        - uri
+        - created_at
+        - account
+        - content
+        - visibility
+        - sensitive
+        - spoiler_text
+        - media_attachments
+        - mentions
+        - tags
+        - emojis
+        - reblogs_count
+        - favourites_count
+        - replies_count
+        - url
+        - in_reply_to_id
+        - in_reply_to_account_id
+        - language
+        - text
+        - edited_at
 
     MediaAttachment:
       type: object
@@ -844,3 +886,95 @@ components:
           type: string
         content:
           type: string
+
+    StatusesRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          nullable: true
+        media_ids:
+          type: array
+          items:
+            type: string
+        poll:
+          $ref: "#/components/schemas/StatusesRequestPoll"
+        in_reply_to_id:
+          type: string
+        sensitive:
+          type: boolean
+        spoiler_text:
+          type: string
+        visibility:
+          type: string
+          enum:
+            - public
+            - unlisted
+            - private
+            - direct
+        language:
+          type: string
+        scheduled_at:
+          type: string
+
+    StatusesRequestPoll:
+      type: object
+      properties:
+        options:
+          type: array
+          items:
+            type: string
+        expires_in:
+          type: integer
+        multiple:
+          type: boolean
+        hide_totals:
+          type: boolean
+
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      description: Mastodon Oauth
+      flows:
+        authorizationCode:
+          authorizationUrl: /oauth/authorize
+          tokenUrl: /oauth/token
+          scopes:
+            read:accounts: ""
+            read:blocks: ""
+            read:bookmarks: ""
+            read:favourites: ""
+            read:filters: ""
+            read:follows: ""
+            read:lists: ""
+            read:mutes: ""
+            read:notifications: ""
+            read:search: ""
+            read:statuses: ""
+            write:accounts: ""
+            write:blocks: ""
+            write:bookmarks: ""
+            write:conversations: ""
+            write:favourites: ""
+            write:filters: ""
+            write:follows: ""
+            write:lists: ""
+            write:media: ""
+            write:mutes: ""
+            write:notifications: ""
+            write:reports: ""
+            write:statuses: ""
+            admin:read:accounts: ""
+            admin:read:reports: ""
+            admin:read:domain_allows: ""
+            admin:read:domain_blocks: ""
+            admin:read:ip_blocks: ""
+            admin:read:email_domain_blocks: ""
+            admin:read:canonical_email_blocks: ""
+            admin:write:accounts: ""
+            admin:write:reports: ""
+            admin:write:domain_allows: ""
+            admin:write:domain_blocks: ""
+            admin:write:ip_blocks: ""
+            admin:write:email_domain_blocks: ""
+            admin:write:canonical_email_blocks: ""
