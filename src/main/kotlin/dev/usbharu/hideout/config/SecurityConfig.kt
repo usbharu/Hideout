@@ -6,11 +6,11 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet
 import com.nimbusds.jose.jwk.source.JWKSource
 import com.nimbusds.jose.proc.SecurityContext
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
-import org.springframework.http.MediaType
 import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -21,7 +21,8 @@ import org.springframework.security.oauth2.server.authorization.config.annotatio
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint
-import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector
 import java.security.KeyPairGenerator
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
@@ -37,10 +38,7 @@ class SecurityConfig {
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http)
         http
             .exceptionHandling {
-                it.defaultAuthenticationEntryPointFor(
-                    LoginUrlAuthenticationEntryPoint("/login"),
-                    MediaTypeRequestMatcher(MediaType.TEXT_HTML)
-                )
+                it.authenticationEntryPoint(LoginUrlAuthenticationEntryPoint("/login"))
             }
             .oauth2ResourceServer {
                 it.jwt(Customizer.withDefaults())
@@ -53,23 +51,33 @@ class SecurityConfig {
 
     @Bean
     @Order(2)
-    fun defaultSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
+    fun defaultSecurityFilterChain(http: HttpSecurity, introspector: HandlerMappingIntrospector): SecurityFilterChain {
+        val builder = MvcRequestMatcher.Builder(introspector)
+
+
         http
             .authorizeHttpRequests {
                 it.requestMatchers(
-                    "/inbox",
-                    "/users/*/inbox",
-                    "/outbox",
-                    "/users/*/outbox"
-                )
-                    .permitAll()
+                    builder.pattern("/inbox"),
+                    builder.pattern("/api/v1/apps"),
+                    builder.pattern("/api/v1/instance/**")
+                ).permitAll()
+            }
+            .authorizeHttpRequests {
+                it.requestMatchers(PathRequest.toH2Console()).permitAll()
             }
             .authorizeHttpRequests {
                 it.anyRequest().authenticated()
             }
             .formLogin(Customizer.withDefaults())
             .csrf {
-                it.disable()
+                it.ignoringRequestMatchers(builder.pattern("/api/**"))
+                it.ignoringRequestMatchers(PathRequest.toH2Console())
+            }
+            .headers {
+                it.frameOptions {
+                    it.sameOrigin()
+                }
             }
         return http.build()
     }

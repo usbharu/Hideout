@@ -1,7 +1,10 @@
 package dev.usbharu.hideout.service.auth
 
+import dev.usbharu.hideout.service.core.Transaction
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository
@@ -9,22 +12,38 @@ import org.springframework.stereotype.Service
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsent as AuthorizationConsent
 
 @Service
-class ExposedOAuth2AuthorizationConsentService(private val registeredClientRepository: RegisteredClientRepository) :
+class ExposedOAuth2AuthorizationConsentService(
+    private val registeredClientRepository: RegisteredClientRepository,
+    private val transaction: Transaction,
+    private val database: Database
+) :
     OAuth2AuthorizationConsentService {
-    override fun save(authorizationConsent: AuthorizationConsent?) {
+
+    init {
+        transaction(database) {
+            SchemaUtils.create(OAuth2AuthorizationConsent)
+            SchemaUtils.createMissingTablesAndColumns(OAuth2AuthorizationConsent)
+        }
+    }
+
+
+    override fun save(authorizationConsent: AuthorizationConsent?) = runBlocking {
         requireNotNull(authorizationConsent)
-        val singleOrNull =
-            OAuth2AuthorizationConsent.select {
-                OAuth2AuthorizationConsent.registeredClientId
-                    .eq(authorizationConsent.registeredClientId)
-                    .and(OAuth2AuthorizationConsent.principalName.eq(authorizationConsent.principalName))
-            }
-                .singleOrNull()
-        if (singleOrNull == null) {
-            OAuth2AuthorizationConsent.insert {
-                it[registeredClientId] = authorizationConsent.registeredClientId
-                it[principalName] = authorizationConsent.principalName
-                it[authorities] = authorizationConsent.authorities.joinToString(",")
+        transaction.transaction {
+
+            val singleOrNull =
+                OAuth2AuthorizationConsent.select {
+                    OAuth2AuthorizationConsent.registeredClientId
+                        .eq(authorizationConsent.registeredClientId)
+                        .and(OAuth2AuthorizationConsent.principalName.eq(authorizationConsent.principalName))
+                }
+                    .singleOrNull()
+            if (singleOrNull == null) {
+                OAuth2AuthorizationConsent.insert {
+                    it[registeredClientId] = authorizationConsent.registeredClientId
+                    it[principalName] = authorizationConsent.principalName
+                    it[authorities] = authorizationConsent.authorities.joinToString(",")
+                }
             }
         }
     }
@@ -38,15 +57,17 @@ class ExposedOAuth2AuthorizationConsentService(private val registeredClientRepos
         }
     }
 
-    override fun findById(registeredClientId: String?, principalName: String?): AuthorizationConsent? {
+    override fun findById(registeredClientId: String?, principalName: String?): AuthorizationConsent? = runBlocking {
         requireNotNull(registeredClientId)
         requireNotNull(principalName)
+        transaction.transaction {
 
-        return OAuth2AuthorizationConsent.select {
-            (OAuth2AuthorizationConsent.registeredClientId eq registeredClientId)
-                .and(OAuth2AuthorizationConsent.principalName eq principalName)
+            OAuth2AuthorizationConsent.select {
+                (OAuth2AuthorizationConsent.registeredClientId eq registeredClientId)
+                    .and(OAuth2AuthorizationConsent.principalName eq principalName)
+            }
+                .singleOrNull()?.toAuthorizationConsent()
         }
-            .singleOrNull()?.toAuthorizationConsent()
     }
 
     fun ResultRow.toAuthorizationConsent(): AuthorizationConsent {
