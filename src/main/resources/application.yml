@@ -1,13 +1,28 @@
 hideout:
-  url: "http://localhost:8080"
+  url: "https://test-hideout.usbharu.dev"
   database:
-    url: "jdbc:h2:./test;MODE=POSTGRESQL"
+    url: "jdbc:h2:./test-dev2;MODE=POSTGRESQL"
     driver: "org.h2.Driver"
     user: ""
     password: ""
 spring:
+  jackson:
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
   datasource:
     driver-class-name: org.h2.Driver
-    url: "jdbc:h2:./test;MODE=POSTGRESQL"
+    url: "jdbc:h2:./test-dev2;MODE=POSTGRESQL"
     username: ""
     password: ""
+
+  h2:
+    console:
+      enabled: true
+server:
+
+  tomcat:
+    basedir: tomcat
+    accesslog:
+      enabled: true
+
+  port: 8081
