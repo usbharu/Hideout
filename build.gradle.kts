@@ -15,7 +15,7 @@ plugins {
     id("org.graalvm.buildtools.native") version "0.9.21"
     id("io.gitlab.arturbosch.detekt") version "1.23.1"
     id("com.google.devtools.ksp") version "1.8.21-1.0.11"
-    id("org.springframework.boot") version "3.1.2"
+    id("org.springframework.boot") version "3.1.3"
     kotlin("plugin.spring") version "1.8.21"
     id("org.openapi.generator") version "7.0.1"
 //    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
@@ -153,6 +153,7 @@ dependencies {
     implementation("io.insert-koin:koin-logger-slf4j:$koin_version")
     implementation("io.insert-koin:koin-annotations:1.2.0")
     implementation("io.ktor:ktor-server-compression-jvm:2.3.0")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
     ksp("io.insert-koin:koin-ksp-compiler:1.2.0")
 
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -174,6 +175,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("org.springframework.security:spring-security-oauth2-jose")
 
     implementation("io.ktor:ktor-client-logging-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-host-common-jvm:$ktor_version")

@@ -167,6 +167,21 @@ paths:
               schema:
                 $ref: "#/components/schemas/Application"
 
+  /api/v1/accounts/verify_credentials:
+    get:
+      tags:
+        - account
+      security:
+        - OAuth2:
+            - "read:accounts"
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CredentialAccount"
+
 components:
   schemas:
     Account:
@@ -250,6 +265,128 @@ components:
         - statuses_count
         - followers_count
         - followers_count
+
+    CredentialAccount:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        acct:
+          type: string
+        url:
+          type: string
+        display_name:
+          type: string
+        note:
+          type: string
+        avatar:
+          type: string
+        avatar_static:
+          type: string
+        header:
+          type: string
+        header_static:
+          type: string
+        locked:
+          type: boolean
+        fields:
+          type: array
+          items:
+            $ref: "#/components/schemas/Field"
+        emojis:
+          type: array
+          items:
+            $ref: "#/components/schemas/CustomEmoji"
+        bot:
+          type: boolean
+        group:
+          type: boolean
+        discoverable:
+          type: boolean
+          nullable: true
+        noindex:
+          type: boolean
+        moved:
+          type: boolean
+        suspendex:
+          type: boolean
+        limited:
+          type: boolean
+        created_at:
+          type: string
+        last_status_at:
+          type: string
+          nullable: true
+        statuses_count:
+          type: integer
+        followers_count:
+          type: integer
+        following_count:
+          type: integer
+        source:
+          $ref: "#/components/schemas/CredentialAccountSource"
+        role:
+          $ref: "#/components/schemas/Role"
+      required:
+        - id
+        - username
+        - acct
+        - url
+        - display_name
+        - note
+        - avatar
+        - avatar_static
+        - header
+        - header_static
+        - locked
+        - fields
+        - emojis
+        - bot
+        - group
+        - discoverable
+        - created_at
+        - last_status_at
+        - statuses_count
+        - followers_count
+        - followers_count
+        - source
+
+    CredentialAccountSource:
+      type: object
+      properties:
+        note:
+          type: string
+        fields:
+          type: array
+          items:
+            $ref: "#/components/schemas/Field"
+        privacy:
+          type: string
+          enum:
+            - public
+            - unlisted
+            - private
+            - direct
+        sensitive:
+          type: boolean
+        follow_requests_count:
+          type: integer
+
+    Role:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        color:
+          type: string
+        permissions:
+          type: integer
+        highlighted:
+          type: boolean
 
     Field:
       type: object

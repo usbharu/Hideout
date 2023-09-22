@@ -1,6 +1,18 @@
 package dev.usbharu.hideout.domain.model
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonSubTypes
+import com.fasterxml.jackson.annotation.JsonTypeInfo
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.DeserializationContext
+import com.fasterxml.jackson.databind.JsonDeserializer
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.User
 import java.io.Serial
 
@@ -18,4 +30,54 @@ class UserDetailsImpl(
         @Serial
         private const val serialVersionUID: Long = -899168205656607781L
     }
+
+
+}
+
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonDeserialize(using = UserDetailsDeserializer::class)
+@JsonAutoDetect(
+    fieldVisibility = JsonAutoDetect.Visibility.ANY,
+    getterVisibility = JsonAutoDetect.Visibility.NONE,
+    isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+    creatorVisibility = JsonAutoDetect.Visibility.NONE
+)
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonSubTypes
+abstract class UserDetailsMixin
+
+
+class UserDetailsDeserializer : JsonDeserializer<UserDetailsImpl>() {
+    val SIMPLE_GRANTED_AUTHORITY_SET = object : TypeReference<Set<SimpleGrantedAuthority>>() {}
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): UserDetailsImpl {
+
+        val mapper = p.codec as ObjectMapper
+        val jsonNode: JsonNode = mapper.readTree(p)
+        println(jsonNode)
+        val authorities: Set<GrantedAuthority> = mapper.convertValue(
+            jsonNode["authorities"],
+            SIMPLE_GRANTED_AUTHORITY_SET
+        )
+
+        val password = jsonNode.readText("password")
+        return UserDetailsImpl(
+            jsonNode["id"].longValue(),
+            jsonNode.readText("username"),
+            password,
+            true,
+            true,
+            true,
+            true,
+            authorities.toMutableList(),
+        )
+
+    }
+
+    fun JsonNode.readText(field: String, defaultValue: String = ""): String {
+        return when {
+            has(field) -> get(field).asText(defaultValue)
+            else -> defaultValue
+        }
+    }
+
 }
