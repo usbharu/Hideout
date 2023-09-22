@@ -12,7 +12,6 @@ plugins {
     kotlin("jvm") version "1.8.21"
     id("org.graalvm.buildtools.native") version "0.9.21"
     id("io.gitlab.arturbosch.detekt") version "1.23.1"
-    id("com.google.devtools.ksp") version "1.8.21-1.0.11"
     id("org.springframework.boot") version "3.1.3"
     kotlin("plugin.spring") version "1.8.21"
     id("org.openapi.generator") version "7.0.1"
@@ -94,13 +93,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.6.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 
-    implementation("io.insert-koin:koin-core:$koin_version")
-    implementation("io.insert-koin:koin-ktor:$koin_version")
-    implementation("io.insert-koin:koin-logger-slf4j:$koin_version")
-    implementation("io.insert-koin:koin-annotations:1.2.0")
-
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-    ksp("io.insert-koin:koin-ksp-compiler:1.2.0")
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-security")
