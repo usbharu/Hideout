@@ -26,11 +26,9 @@ class ExposedOAuth2AuthorizationConsentService(
         }
     }
 
-
     override fun save(authorizationConsent: AuthorizationConsent?) = runBlocking {
         requireNotNull(authorizationConsent)
         transaction.transaction {
-
             val singleOrNull =
                 OAuth2AuthorizationConsent.select {
                     OAuth2AuthorizationConsent.registeredClientId
@@ -61,7 +59,6 @@ class ExposedOAuth2AuthorizationConsentService(
         requireNotNull(registeredClientId)
         requireNotNull(principalName)
         transaction.transaction {
-
             OAuth2AuthorizationConsent.select {
                 (OAuth2AuthorizationConsent.registeredClientId eq registeredClientId)
                     .and(OAuth2AuthorizationConsent.principalName eq principalName)

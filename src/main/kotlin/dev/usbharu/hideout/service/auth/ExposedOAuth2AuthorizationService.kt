@@ -151,8 +151,6 @@ class ExposedOAuth2AuthorizationService(
     override fun findByToken(token: String?, tokenType: OAuth2TokenType?): OAuth2Authorization? = runBlocking {
         requireNotNull(token)
         transaction.transaction {
-
-
             when (tokenType?.value) {
                 null -> {
                     Authorization.select {
