@@ -175,7 +175,6 @@ class RegisteredClientRepositoryImpl(private val database: Database) : Registere
 
         return builder.build()
     }
-
 }
 
 // org/springframework/security/oauth2/server/authorization/client/oauth2-registered-client-schema.sql

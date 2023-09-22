@@ -13,7 +13,6 @@ interface AccountApiService {
     suspend fun verifyCredentials(userid: Long): CredentialAccount
 }
 
-
 @Service
 class AccountApiServiceImpl(private val accountService: AccountService, private val transaction: Transaction) :
     AccountApiService {
@@ -59,5 +58,4 @@ class AccountApiServiceImpl(private val accountService: AccountService, private 
             role = Role(0, "Admin", "", 32)
         )
     }
-
 }
