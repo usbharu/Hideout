@@ -8,7 +8,6 @@ import dev.usbharu.hideout.query.PostQueryService
 import dev.usbharu.hideout.service.core.Transaction
 import dev.usbharu.hideout.service.reaction.ReactionService
 import io.ktor.http.*
-import org.koin.core.annotation.Single
 import org.springframework.stereotype.Service
 
 @Service
@@ -16,7 +15,6 @@ interface APLikeService {
     suspend fun receiveLike(like: Like): ActivityPubResponse
 }
 
-@Single
 @Service
 class APLikeServiceImpl(
     private val reactionService: ReactionService,

@@ -6,10 +6,8 @@ import dev.usbharu.hideout.repository.Posts
 import dev.usbharu.hideout.repository.toPost
 import dev.usbharu.hideout.util.singleOr
 import org.jetbrains.exposed.sql.select
-import org.koin.core.annotation.Single
 import org.springframework.stereotype.Repository
 
-@Single
 @Repository
 class PostQueryServiceImpl : PostQueryService {
     override suspend fun findById(id: Long): Post =

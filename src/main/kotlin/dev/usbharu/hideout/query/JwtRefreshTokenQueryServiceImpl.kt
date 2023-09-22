@@ -9,10 +9,8 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.select
-import org.koin.core.annotation.Single
 import org.springframework.stereotype.Repository
 
-@Single
 @Repository
 class JwtRefreshTokenQueryServiceImpl : JwtRefreshTokenQueryService {
     override suspend fun findById(id: Long): JwtRefreshToken =

@@ -4,14 +4,12 @@ import dev.usbharu.hideout.domain.model.hideout.entity.Jwt
 import dev.usbharu.hideout.domain.model.hideout.entity.Meta
 import dev.usbharu.hideout.repository.MetaRepository
 import dev.usbharu.hideout.util.ServerUtil
-import org.koin.core.annotation.Single
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.security.KeyPairGenerator
 import java.util.*
 
-@Single
 @Service
 class ServerInitialiseServiceImpl(
     private val metaRepository: MetaRepository,

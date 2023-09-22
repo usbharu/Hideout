@@ -4,10 +4,8 @@ import dev.usbharu.hideout.domain.model.hideout.entity.Reaction
 import dev.usbharu.hideout.query.ReactionQueryService
 import dev.usbharu.hideout.repository.ReactionRepository
 import dev.usbharu.hideout.service.ap.APReactionService
-import org.koin.core.annotation.Single
 import org.springframework.stereotype.Service
 
-@Single
 @Service
 class ReactionServiceImpl(
     private val reactionRepository: ReactionRepository,

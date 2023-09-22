@@ -14,7 +14,6 @@ import dev.usbharu.hideout.repository.JwtRefreshTokenRepository
 import dev.usbharu.hideout.service.core.MetaService
 import dev.usbharu.hideout.util.RsaUtil
 import kotlinx.coroutines.runBlocking
-import org.koin.core.annotation.Single
 import org.springframework.stereotype.Service
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -31,7 +30,6 @@ interface JwtService {
 }
 
 @Suppress("InjectDispatcher")
-@Single
 @Service
 class JwtServiceImpl(
     private val metaService: MetaService,

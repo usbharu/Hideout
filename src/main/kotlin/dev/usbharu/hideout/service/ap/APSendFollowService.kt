@@ -4,7 +4,6 @@ import dev.usbharu.hideout.domain.model.ap.Follow
 import dev.usbharu.hideout.domain.model.hideout.dto.SendFollowDto
 import dev.usbharu.hideout.plugins.postAp
 import io.ktor.client.*
-import org.koin.core.annotation.Single
 import org.springframework.stereotype.Service
 
 @Service
@@ -12,7 +11,6 @@ interface APSendFollowService {
     suspend fun sendFollow(sendFollowDto: SendFollowDto)
 }
 
-@Single
 @Service
 class APSendFollowServiceImpl(private val httpClient: HttpClient) : APSendFollowService {
     override suspend fun sendFollow(sendFollowDto: SendFollowDto) {

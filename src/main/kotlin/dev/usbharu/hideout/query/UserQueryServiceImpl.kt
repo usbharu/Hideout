@@ -8,11 +8,9 @@ import dev.usbharu.hideout.util.singleOr
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
-import org.koin.core.annotation.Single
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 
-@Single
 @Repository
 class UserQueryServiceImpl : UserQueryService {
 

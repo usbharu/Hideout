@@ -4,10 +4,8 @@ import dev.usbharu.hideout.domain.model.hideout.entity.Jwt
 import dev.usbharu.hideout.domain.model.hideout.entity.Meta
 import dev.usbharu.hideout.exception.NotInitException
 import dev.usbharu.hideout.repository.MetaRepository
-import org.koin.core.annotation.Single
 import org.springframework.stereotype.Service
 
-@Single
 @Service
 class MetaServiceImpl(private val metaRepository: MetaRepository, private val transaction: Transaction) :
     MetaService {

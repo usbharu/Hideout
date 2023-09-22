@@ -5,11 +5,9 @@ import dev.usbharu.hideout.repository.Users
 import dev.usbharu.hideout.repository.UsersFollowers
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.koin.core.annotation.Single
 import org.springframework.stereotype.Repository
 import java.time.Instant
 
-@Single
 @Repository
 class FollowerQueryServiceImpl : FollowerQueryService {
     override suspend fun findFollowersById(id: Long): List<User> {

@@ -10,7 +10,6 @@ import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.service.core.Transaction
 import dev.usbharu.hideout.service.user.UserService
 import io.ktor.http.*
-import org.koin.core.annotation.Single
 import org.springframework.stereotype.Service
 
 @Service
@@ -18,7 +17,6 @@ interface APAcceptService {
     suspend fun receiveAccept(accept: Accept): ActivityPubResponse
 }
 
-@Single
 @Service
 class APAcceptServiceImpl(
     private val userService: UserService,

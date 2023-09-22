@@ -2,13 +2,11 @@ package dev.usbharu.hideout.service.user
 
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.query.UserQueryService
-import org.koin.core.annotation.Single
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import java.security.*
 import java.util.*
 
-@Single
 @Service
 class UserAuthServiceImpl(
     val userQueryService: UserQueryService
