@@ -4,7 +4,7 @@
             <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
-    <root level="DEBUG">
+    <root level="TRACE">
         <appender-ref ref="STDOUT"/>
     </root>
     <logger name="org.eclipse.jetty" level="INFO"/>
@@ -12,4 +12,5 @@
     <logger name="kjob.core.internal.scheduler.JobServiceImpl" level="INFO"/>
     <logger name="Exposed" level="INFO"/>
     <logger name="io.ktor.server.plugins.contentnegotiation" level="INFO"/>
+    <logger name="org.springframework.security" level="trace"/>
 </configuration>

@@ -5,7 +5,9 @@ import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet
 import com.nimbusds.jose.jwk.source.JWKSource
 import com.nimbusds.jose.proc.SecurityContext
+import dev.usbharu.hideout.domain.model.UserDetailsImpl
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -14,26 +16,35 @@ import org.springframework.http.MediaType
 import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.core.Authentication
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.jwt.JwtDecoder
+import org.springframework.security.oauth2.server.authorization.OAuth2TokenType
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings
+import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector
 import java.security.KeyPairGenerator
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.util.*
 
-@EnableWebSecurity
+
+@EnableWebSecurity(debug = true)
 @Configuration
 class SecurityConfig {
 
     @Bean
     @Order(1)
-    fun oauth2SecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
+    fun oauth2SecurityFilterChain(http: HttpSecurity, introspector: HandlerMappingIntrospector): SecurityFilterChain {
+        val builder = MvcRequestMatcher.Builder(introspector)
+
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http)
         http
             .exceptionHandling {
@@ -45,31 +56,46 @@ class SecurityConfig {
             .oauth2ResourceServer {
                 it.jwt(Customizer.withDefaults())
             }
-            .csrf {
-                it.disable()
-            }
         return http.build()
     }
 
     @Bean
     @Order(2)
-    fun defaultSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
+    fun defaultSecurityFilterChain(http: HttpSecurity, introspector: HandlerMappingIntrospector): SecurityFilterChain {
+        val builder = MvcRequestMatcher.Builder(introspector)
+
+        http.authorizeHttpRequests {
+            it.requestMatchers(builder.pattern("/api/v1/**")).hasAnyAuthority("SCOPE_read", "SCOPE_read:accounts")
+        }
         http
             .authorizeHttpRequests {
                 it.requestMatchers(
-                    "/inbox",
-                    "/users/*/inbox",
-                    "/outbox",
-                    "/users/*/outbox"
-                )
-                    .permitAll()
+                    builder.pattern("/inbox"),
+                    builder.pattern("/api/v1/apps"),
+                    builder.pattern("/api/v1/instance/**")
+                ).permitAll()
             }
+        http
+            .authorizeHttpRequests {
+                it.requestMatchers(PathRequest.toH2Console()).permitAll()
+            }
+        http
             .authorizeHttpRequests {
                 it.anyRequest().authenticated()
             }
+        http
+            .oauth2ResourceServer {
+                it.jwt(Customizer.withDefaults())
+            }
             .formLogin(Customizer.withDefaults())
             .csrf {
-                it.disable()
+                it.ignoringRequestMatchers(builder.pattern("/api/**"))
+                it.ignoringRequestMatchers(PathRequest.toH2Console())
+            }
+            .headers {
+                it.frameOptions {
+                    it.sameOrigin()
+                }
             }
         return http.build()
     }
@@ -118,6 +144,18 @@ class SecurityConfig {
             .tokenEndpoint("/oauth/token")
             .tokenRevocationEndpoint("/oauth/revoke")
             .build()
+    }
+
+    @Bean
+    fun jwtTokenCustomizer(): OAuth2TokenCustomizer<JwtEncodingContext> {
+        return OAuth2TokenCustomizer { context: JwtEncodingContext ->
+            if (OAuth2TokenType.ACCESS_TOKEN == context.tokenType) {
+                val userDetailsImpl = context.getPrincipal<Authentication>().principal as UserDetailsImpl
+                context.claims.claim("uid", userDetailsImpl.id.toString())
+
+
+            }
+        }
     }
 }
 
