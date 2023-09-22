@@ -3,12 +3,15 @@ package dev.usbharu.hideout.service.auth
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.readValue
+import dev.usbharu.hideout.domain.model.UserDetailsImpl
+import dev.usbharu.hideout.domain.model.UserDetailsMixin
 import dev.usbharu.hideout.service.core.Transaction
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.javatime.timestamp
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.springframework.security.jackson2.CoreJackson2Module
 import org.springframework.security.jackson2.SecurityJackson2Modules
 import org.springframework.security.oauth2.core.*
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames
@@ -53,7 +56,7 @@ class ExposedOAuth2AuthorizationService(
                     it[registeredClientId] = authorization.registeredClientId
                     it[principalName] = authorization.principalName
                     it[authorizationGrantType] = authorization.authorizationGrantType.value
-                    it[authorizedScopes] = authorization.authorizedScopes.joinToString(",").takeIf { it.isEmpty() }
+                    it[authorizedScopes] = authorization.authorizedScopes.joinToString(",").takeIf { it.isNotEmpty() }
                     it[attributes] = mapToJson(authorization.attributes)
                     it[state] = authorization.getAttribute(OAuth2ParameterNames.STATE)
                     it[authorizationCodeValue] = authorizationCodeToken?.token?.tokenValue
@@ -66,7 +69,8 @@ class ExposedOAuth2AuthorizationService(
                     it[accessTokenExpiresAt] = accessToken?.token?.expiresAt
                     it[accessTokenMetadata] = accessToken?.metadata?.let { it1 -> mapToJson(it1) }
                     it[accessTokenType] = accessToken?.token?.tokenType?.value
-                    it[accessTokenScopes] = accessToken?.run { token.scopes.joinToString(",").takeIf { it.isEmpty() } }
+                    it[accessTokenScopes] =
+                        accessToken?.run { token.scopes.joinToString(",").takeIf { it.isNotEmpty() } }
                     it[refreshTokenValue] = refreshToken?.token?.tokenValue
                     it[refreshTokenIssuedAt] = refreshToken?.token?.issuedAt
                     it[refreshTokenExpiresAt] = refreshToken?.token?.expiresAt
@@ -95,7 +99,7 @@ class ExposedOAuth2AuthorizationService(
                     it[registeredClientId] = authorization.registeredClientId
                     it[principalName] = authorization.principalName
                     it[authorizationGrantType] = authorization.authorizationGrantType.value
-                    it[authorizedScopes] = authorization.authorizedScopes.joinToString(",").takeIf { it.isEmpty() }
+                    it[authorizedScopes] = authorization.authorizedScopes.joinToString(",").takeIf { it.isNotEmpty() }
                     it[attributes] = mapToJson(authorization.attributes)
                     it[state] = authorization.getAttribute(OAuth2ParameterNames.STATE)
                     it[authorizationCodeValue] = authorizationCodeToken?.token?.tokenValue
@@ -108,7 +112,7 @@ class ExposedOAuth2AuthorizationService(
                     it[accessTokenExpiresAt] = accessToken?.token?.expiresAt
                     it[accessTokenMetadata] = accessToken?.metadata?.let { it1 -> mapToJson(it1) }
                     it[accessTokenType] = accessToken?.token?.tokenType?.value
-                    it[accessTokenScopes] = accessToken?.token?.scopes?.joinToString(",")?.takeIf { it.isEmpty() }
+                    it[accessTokenScopes] = accessToken?.token?.scopes?.joinToString(",")?.takeIf { it.isNotEmpty() }
                     it[refreshTokenValue] = refreshToken?.token?.tokenValue
                     it[refreshTokenIssuedAt] = refreshToken?.token?.issuedAt
                     it[refreshTokenExpiresAt] = refreshToken?.token?.expiresAt
@@ -331,6 +335,8 @@ class ExposedOAuth2AuthorizationService(
             this.objectMapper.registerModules(JavaTimeModule())
             this.objectMapper.registerModules(modules)
             this.objectMapper.registerModules(OAuth2AuthorizationServerJackson2Module())
+            this.objectMapper.registerModules(CoreJackson2Module())
+            this.objectMapper.addMixIn(UserDetailsImpl::class.java, UserDetailsMixin::class.java)
         }
     }
 }

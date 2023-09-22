@@ -1,0 +1,63 @@
+package dev.usbharu.hideout.service.api.mastodon
+
+import dev.usbharu.hideout.domain.mastodon.model.generated.Account
+import dev.usbharu.hideout.domain.mastodon.model.generated.CredentialAccount
+import dev.usbharu.hideout.domain.mastodon.model.generated.CredentialAccountSource
+import dev.usbharu.hideout.domain.mastodon.model.generated.Role
+import dev.usbharu.hideout.service.core.Transaction
+import dev.usbharu.hideout.service.mastodon.AccountService
+import org.springframework.stereotype.Service
+
+@Service
+interface AccountApiService {
+    suspend fun verifyCredentials(userid: Long): CredentialAccount
+}
+
+
+@Service
+class AccountApiServiceImpl(private val accountService: AccountService, private val transaction: Transaction) :
+    AccountApiService {
+    override suspend fun verifyCredentials(userid: Long): CredentialAccount = transaction.transaction {
+        val account = accountService.findById(userid)
+        of(account)
+    }
+
+    private fun of(account: Account): CredentialAccount {
+        return CredentialAccount(
+            id = account.id,
+            username = account.username,
+            acct = account.acct,
+            url = account.url,
+            displayName = account.displayName,
+            note = account.note,
+            avatar = account.avatar,
+            avatarStatic = account.avatarStatic,
+            header = account.header,
+            headerStatic = account.headerStatic,
+            locked = account.locked,
+            fields = account.fields,
+            emojis = account.emojis,
+            bot = account.bot,
+            group = account.group,
+            discoverable = account.discoverable,
+            createdAt = account.createdAt,
+            lastStatusAt = account.lastStatusAt,
+            statusesCount = account.statusesCount,
+            followersCount = account.followersCount,
+            noindex = account.noindex,
+            moved = account.moved,
+            suspendex = account.suspendex,
+            limited = account.limited,
+            followingCount = account.followingCount,
+            source = CredentialAccountSource(
+                account.note,
+                account.fields,
+                CredentialAccountSource.Privacy.public,
+                false,
+                0
+            ),
+            role = Role(0, "Admin", "", 32)
+        )
+    }
+
+}
