@@ -11,8 +11,6 @@ import io.ktor.client.plugins.api.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.server.response.*
 import kotlinx.coroutines.runBlocking
 import tech.barbero.http.message.signing.HttpMessage
 import tech.barbero.http.message.signing.HttpMessageSigner
@@ -27,12 +25,6 @@ import java.security.spec.X509EncodedKeySpec
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.crypto.SecretKey
-
-suspend fun <T : JsonLd> ApplicationCall.respondAp(message: T, status: HttpStatusCode = HttpStatusCode.OK) {
-    message.context += "https://www.w3.org/ns/activitystreams"
-    val activityJson = Config.configData.objectMapper.writeValueAsString(message)
-    respondText(activityJson, ContentType.Application.Activity, status)
-}
 
 suspend fun HttpClient.postAp(urlString: String, username: String, jsonLd: JsonLd): HttpResponse {
     jsonLd.context += "https://www.w3.org/ns/activitystreams"
