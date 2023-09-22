@@ -39,3 +39,4 @@ out/
 /node_modules/
 /src/main/web/generated/
 /stats.html
+/tomcat/

@@ -1,16 +1,22 @@
 package dev.usbharu.hideout.repository
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.repository.RegisteredClient.clientId
 import dev.usbharu.hideout.repository.RegisteredClient.clientSettings
 import dev.usbharu.hideout.repository.RegisteredClient.tokenSettings
-import dev.usbharu.hideout.util.JsonUtil
+import dev.usbharu.hideout.service.auth.ExposedOAuth2AuthorizationService
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.javatime.CurrentTimestamp
 import org.jetbrains.exposed.sql.javatime.timestamp
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.slf4j.LoggerFactory
+import org.springframework.security.jackson2.SecurityJackson2Modules
 import org.springframework.security.oauth2.core.AuthorizationGrantType
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository
+import org.springframework.security.oauth2.server.authorization.jackson2.OAuth2AuthorizationServerJackson2Module
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings
 import org.springframework.security.oauth2.server.authorization.settings.ConfigurationSettingNames
 import org.springframework.security.oauth2.server.authorization.settings.OAuth2TokenFormat
@@ -41,13 +47,15 @@ class RegisteredClientRepositoryImpl(private val database: Database) : Registere
                 it[clientSecret] = registeredClient.clientSecret
                 it[clientSecretExpiresAt] = registeredClient.clientSecretExpiresAt
                 it[clientName] = registeredClient.clientName
-                it[clientAuthenticationMethods] = registeredClient.clientAuthenticationMethods.joinToString(",")
-                it[authorizationGrantTypes] = registeredClient.authorizationGrantTypes.joinToString(",")
+                it[clientAuthenticationMethods] =
+                    registeredClient.clientAuthenticationMethods.map { it.value }.joinToString(",")
+                it[authorizationGrantTypes] =
+                    registeredClient.authorizationGrantTypes.map { it.value }.joinToString(",")
                 it[redirectUris] = registeredClient.redirectUris.joinToString(",")
                 it[postLogoutRedirectUris] = registeredClient.postLogoutRedirectUris.joinToString(",")
                 it[scopes] = registeredClient.scopes.joinToString(",")
-                it[clientSettings] = JsonUtil.mapToJson(registeredClient.clientSettings.settings)
-                it[tokenSettings] = JsonUtil.mapToJson(registeredClient.tokenSettings.settings)
+                it[clientSettings] = mapToJson(registeredClient.clientSettings.settings)
+                it[tokenSettings] = mapToJson(registeredClient.tokenSettings.settings)
             }
         } else {
             RegisteredClient.update({ RegisteredClient.id eq registeredClient.id }) {
@@ -61,8 +69,8 @@ class RegisteredClientRepositoryImpl(private val database: Database) : Registere
                 it[redirectUris] = registeredClient.redirectUris.joinToString(",")
                 it[postLogoutRedirectUris] = registeredClient.postLogoutRedirectUris.joinToString(",")
                 it[scopes] = registeredClient.scopes.joinToString(",")
-                it[clientSettings] = JsonUtil.mapToJson(registeredClient.clientSettings.settings)
-                it[tokenSettings] = JsonUtil.mapToJson(registeredClient.tokenSettings.settings)
+                it[clientSettings] = mapToJson(registeredClient.clientSettings.settings)
+                it[tokenSettings] = mapToJson(registeredClient.tokenSettings.settings)
             }
         }
     }
@@ -81,10 +89,93 @@ class RegisteredClientRepositoryImpl(private val database: Database) : Registere
         if (clientId == null) {
             return null
         }
-        return RegisteredClient.select {
+        val toRegisteredClient = RegisteredClient.select {
             RegisteredClient.clientId eq clientId
         }.singleOrNull()?.toRegisteredClient()
+        LOGGER.trace("findByClientId: $toRegisteredClient")
+        return toRegisteredClient
     }
+
+    private fun mapToJson(map: Map<*, *>): String = objectMapper.writeValueAsString(map)
+
+    private fun <T, U> jsonToMap(json: String): Map<T, U> = objectMapper.readValue(json)
+
+    companion object {
+        val objectMapper: ObjectMapper = ObjectMapper()
+        val LOGGER = LoggerFactory.getLogger(RegisteredClientRepositoryImpl::class.java)
+
+        init {
+
+            val classLoader = ExposedOAuth2AuthorizationService::class.java.classLoader
+            val modules = SecurityJackson2Modules.getModules(classLoader)
+            this.objectMapper.registerModules(JavaTimeModule())
+            this.objectMapper.registerModules(modules)
+            this.objectMapper.registerModules(OAuth2AuthorizationServerJackson2Module())
+        }
+    }
+
+    fun ResultRow.toRegisteredClient(): SpringRegisteredClient {
+        fun resolveClientAuthenticationMethods(string: String): ClientAuthenticationMethod {
+            return when (string) {
+                ClientAuthenticationMethod.CLIENT_SECRET_BASIC.value -> ClientAuthenticationMethod.CLIENT_SECRET_BASIC
+                ClientAuthenticationMethod.CLIENT_SECRET_JWT.value -> ClientAuthenticationMethod.CLIENT_SECRET_JWT
+                ClientAuthenticationMethod.CLIENT_SECRET_POST.value -> ClientAuthenticationMethod.CLIENT_SECRET_POST
+                ClientAuthenticationMethod.NONE.value -> ClientAuthenticationMethod.NONE
+                else -> {
+                    ClientAuthenticationMethod(string)
+                }
+            }
+        }
+
+        fun resolveAuthorizationGrantType(string: String): AuthorizationGrantType {
+            return when (string) {
+                AuthorizationGrantType.AUTHORIZATION_CODE.value -> AuthorizationGrantType.AUTHORIZATION_CODE
+                AuthorizationGrantType.CLIENT_CREDENTIALS.value -> AuthorizationGrantType.CLIENT_CREDENTIALS
+                AuthorizationGrantType.REFRESH_TOKEN.value -> AuthorizationGrantType.REFRESH_TOKEN
+                else -> {
+                    AuthorizationGrantType(string)
+                }
+            }
+        }
+
+        val clientAuthenticationMethods = this[RegisteredClient.clientAuthenticationMethods].split(",").toSet()
+        val authorizationGrantTypes = this[RegisteredClient.authorizationGrantTypes].split(",").toSet()
+        val redirectUris = this[RegisteredClient.redirectUris]?.split(",").orEmpty().toSet()
+        val postLogoutRedirectUris = this[RegisteredClient.postLogoutRedirectUris]?.split(",").orEmpty().toSet()
+        val clientScopes = this[RegisteredClient.scopes].split(",").toSet()
+
+        val builder = SpringRegisteredClient
+            .withId(this[RegisteredClient.id])
+            .clientId(this[clientId])
+            .clientIdIssuedAt(this[RegisteredClient.clientIdIssuedAt])
+            .clientSecret(this[RegisteredClient.clientSecret])
+            .clientSecretExpiresAt(this[RegisteredClient.clientSecretExpiresAt])
+            .clientName(this[RegisteredClient.clientName])
+            .clientAuthenticationMethods {
+                clientAuthenticationMethods.forEach { s ->
+                    it.add(resolveClientAuthenticationMethods(s))
+                }
+            }
+            .authorizationGrantTypes {
+                authorizationGrantTypes.forEach { s ->
+                    it.add(resolveAuthorizationGrantType(s))
+                }
+            }
+            .redirectUris { it.addAll(redirectUris) }
+            .postLogoutRedirectUris { it.addAll(postLogoutRedirectUris) }
+            .scopes { it.addAll(clientScopes) }
+            .clientSettings(ClientSettings.withSettings(jsonToMap(this[clientSettings])).build())
+
+        val tokenSettingsMap = jsonToMap<String, Any>(this[tokenSettings])
+        val withSettings = TokenSettings.withSettings(tokenSettingsMap)
+        if (tokenSettingsMap.containsKey(ConfigurationSettingNames.Token.ACCESS_TOKEN_FORMAT)) {
+            withSettings.accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED)
+        }
+        builder.tokenSettings(withSettings.build())
+
+        return builder.build()
+    }
+
 }
 
 // org/springframework/security/oauth2/server/authorization/client/oauth2-registered-client-schema.sql
@@ -104,66 +195,4 @@ object RegisteredClient : Table("registered_client") {
     val tokenSettings = varchar("token_settings", 2000)
 
     override val primaryKey = PrimaryKey(id)
-}
-
-fun ResultRow.toRegisteredClient(): SpringRegisteredClient {
-    fun resolveClientAuthenticationMethods(string: String): ClientAuthenticationMethod {
-        return when (string) {
-            ClientAuthenticationMethod.CLIENT_SECRET_BASIC.value -> ClientAuthenticationMethod.CLIENT_SECRET_BASIC
-            ClientAuthenticationMethod.CLIENT_SECRET_JWT.value -> ClientAuthenticationMethod.CLIENT_SECRET_JWT
-            ClientAuthenticationMethod.CLIENT_SECRET_POST.value -> ClientAuthenticationMethod.CLIENT_SECRET_POST
-            ClientAuthenticationMethod.NONE.value -> ClientAuthenticationMethod.NONE
-            else -> {
-                ClientAuthenticationMethod(string)
-            }
-        }
-    }
-
-    fun resolveAuthorizationGrantType(string: String): AuthorizationGrantType {
-        return when (string) {
-            AuthorizationGrantType.AUTHORIZATION_CODE.value -> AuthorizationGrantType.AUTHORIZATION_CODE
-            AuthorizationGrantType.CLIENT_CREDENTIALS.value -> AuthorizationGrantType.CLIENT_CREDENTIALS
-            AuthorizationGrantType.REFRESH_TOKEN.value -> AuthorizationGrantType.REFRESH_TOKEN
-            else -> {
-                AuthorizationGrantType(string)
-            }
-        }
-    }
-
-    val clientAuthenticationMethods = this[RegisteredClient.clientAuthenticationMethods].split(",").toSet()
-    val authorizationGrantTypes = this[RegisteredClient.authorizationGrantTypes].split(",").toSet()
-    val redirectUris = this[RegisteredClient.redirectUris]?.split(",").orEmpty().toSet()
-    val postLogoutRedirectUris = this[RegisteredClient.postLogoutRedirectUris]?.split(",").orEmpty().toSet()
-    val clientScopes = this[RegisteredClient.scopes].split(",").toSet()
-
-    val builder = SpringRegisteredClient
-        .withId(this[RegisteredClient.id])
-        .clientId(this[clientId])
-        .clientIdIssuedAt(this[RegisteredClient.clientIdIssuedAt])
-        .clientSecret(this[RegisteredClient.clientSecret])
-        .clientSecretExpiresAt(this[RegisteredClient.clientSecretExpiresAt])
-        .clientName(this[RegisteredClient.clientName])
-        .clientAuthenticationMethods {
-            clientAuthenticationMethods.forEach { s ->
-                it.add(resolveClientAuthenticationMethods(s))
-            }
-        }
-        .authorizationGrantTypes {
-            authorizationGrantTypes.forEach { s ->
-                it.add(resolveAuthorizationGrantType(s))
-            }
-        }
-        .redirectUris { it.addAll(redirectUris) }
-        .postLogoutRedirectUris { it.addAll(postLogoutRedirectUris) }
-        .scopes { it.addAll(clientScopes) }
-        .clientSettings(ClientSettings.withSettings(JsonUtil.jsonToMap(this[clientSettings])).build())
-
-    val tokenSettingsMap = JsonUtil.jsonToMap<String, Any>(this[tokenSettings])
-    val withSettings = TokenSettings.withSettings(tokenSettingsMap)
-    if (tokenSettingsMap.containsKey(ConfigurationSettingNames.Token.ACCESS_TOKEN_FORMAT)) {
-        withSettings.accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED)
-    }
-    builder.tokenSettings(withSettings.build())
-
-    return builder.build()
 }

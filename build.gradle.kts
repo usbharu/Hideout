@@ -15,9 +15,9 @@ plugins {
     id("org.graalvm.buildtools.native") version "0.9.21"
     id("io.gitlab.arturbosch.detekt") version "1.23.1"
     id("com.google.devtools.ksp") version "1.8.21-1.0.11"
-    id("org.springframework.boot") version "3.1.2"
+    id("org.springframework.boot") version "3.1.3"
     kotlin("plugin.spring") version "1.8.21"
-    id("org.openapi.generator") version "6.6.0"
+    id("org.openapi.generator") version "7.0.1"
 //    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
 }
 
@@ -47,8 +47,8 @@ tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs += "-Xjsr305=strict"
     }
-    dependsOn("openApiGenerateServer")
-    mustRunAfter("openApiGenerateServer")
+    dependsOn("openApiGenerateMastodonCompatibleApi")
+    mustRunAfter("openApiGenerateMastodonCompatibleApi")
 }
 
 tasks.withType<ShadowJar> {
@@ -63,30 +63,45 @@ tasks.clean {
     delete += listOf("$rootDir/src/main/resources/static")
 }
 
-tasks.create<GenerateTask>("openApiGenerateServer", GenerateTask::class) {
+//tasks.create<GenerateTask>("openApiGenerateServer", GenerateTask::class) {
+//    generatorName.set("kotlin-spring")
+//    inputSpec.set("$rootDir/src/main/resources/openapi/api.yaml")
+//    outputDir.set("$buildDir/generated/sources/openapi")
+//    apiPackage.set("dev.usbharu.hideout.controller.generated")
+//    modelPackage.set("dev.usbharu.hideout.domain.model.generated")
+//    configOptions.put("interfaceOnly", "true")
+//    configOptions.put("useSpringBoot3", "true")
+//    additionalProperties.put("useTags", "true")
+//    schemaMappings.putAll(
+//        mapOf(
+//            "ReactionResponse" to "dev.usbharu.hideout.domain.model.hideout.dto.ReactionResponse",
+//            "Account" to "dev.usbharu.hideout.domain.model.hideout.dto.Account",
+//            "JwtToken" to "dev.usbharu.hideout.domain.model.hideout.dto.JwtToken",
+//            "PostRequest" to "dev.usbharu.hideout.domain.model.hideout.form.Post",
+//            "PostResponse" to "dev.usbharu.hideout.domain.model.hideout.dto.PostResponse",
+//            "Reaction" to "dev.usbharu.hideout.domain.model.hideout.form.Reaction",
+//            "RefreshToken" to "dev.usbharu.hideout.domain.model.hideout.form.RefreshToken",
+//            "UserLogin" to "dev.usbharu.hideout.domain.model.hideout.form.UserLogin",
+//            "UserResponse" to "dev.usbharu.hideout.domain.model.hideout.dto.UserResponse",
+//            "UserCreate" to "dev.usbharu.hideout.domain.model.hideout.form.UserCreate",
+//            "Visibility" to "dev.usbharu.hideout.domain.model.hideout.entity.Visibility",
+//        )
+//    )
+//
+////    importMappings.putAll(mapOf("ReactionResponse" to "ReactionResponse"))
+////    typeMappings.putAll(mapOf("ReactionResponse" to "ReactionResponse"))
+//}
+
+tasks.create<GenerateTask>("openApiGenerateMastodonCompatibleApi", GenerateTask::class) {
     generatorName.set("kotlin-spring")
-    inputSpec.set("$rootDir/src/main/resources/openapi/api.yaml")
-    outputDir.set("$buildDir/generated/sources/openapi")
-    apiPackage.set("dev.usbharu.hideout.controller.generated")
-    modelPackage.set("dev.usbharu.hideout.domain.model.generated")
+    inputSpec.set("$rootDir/src/main/resources/openapi/mastodon.yaml")
+    outputDir.set("$buildDir/generated/sources/mastodon")
+    apiPackage.set("dev.usbharu.hideout.controller.mastodon.generated")
+    modelPackage.set("dev.usbharu.hideout.domain.mastodon.model.generated")
     configOptions.put("interfaceOnly", "true")
     configOptions.put("useSpringBoot3", "true")
+    configOptions.put("reactive", "true")
     additionalProperties.put("useTags", "true")
-    schemaMappings.putAll(
-        mapOf(
-            "ReactionResponse" to "dev.usbharu.hideout.domain.model.hideout.dto.ReactionResponse",
-            "Account" to "dev.usbharu.hideout.domain.model.hideout.dto.Account",
-            "JwtToken" to "dev.usbharu.hideout.domain.model.hideout.dto.JwtToken",
-            "PostRequest" to "dev.usbharu.hideout.domain.model.hideout.form.Post",
-            "PostResponse" to "dev.usbharu.hideout.domain.model.hideout.dto.PostResponse",
-            "Reaction" to "dev.usbharu.hideout.domain.model.hideout.form.Reaction",
-            "RefreshToken" to "dev.usbharu.hideout.domain.model.hideout.form.RefreshToken",
-            "UserLogin" to "dev.usbharu.hideout.domain.model.hideout.form.UserLogin",
-            "UserResponse" to "dev.usbharu.hideout.domain.model.hideout.dto.UserResponse",
-            "UserCreate" to "dev.usbharu.hideout.domain.model.hideout.form.UserCreate",
-            "Visibility" to "dev.usbharu.hideout.domain.model.hideout.entity.Visibility",
-        )
-    )
 
 //    importMappings.putAll(mapOf("ReactionResponse" to "ReactionResponse"))
 //    typeMappings.putAll(mapOf("ReactionResponse" to "ReactionResponse"))
@@ -105,7 +120,11 @@ kotlin {
 }
 
 sourceSets.main {
-    kotlin.srcDirs("$buildDir/generated/ksp/main", "$buildDir/generated/sources/openapi/src/main/kotlin")
+    kotlin.srcDirs(
+        "$buildDir/generated/ksp/main",
+        "$buildDir/generated/sources/openapi/src/main/kotlin",
+        "$buildDir/generated/sources/mastodon/src/main/kotlin"
+    )
 }
 
 dependencies {
@@ -134,6 +153,7 @@ dependencies {
     implementation("io.insert-koin:koin-logger-slf4j:$koin_version")
     implementation("io.insert-koin:koin-annotations:1.2.0")
     implementation("io.ktor:ktor-server-compression-jvm:2.3.0")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
     ksp("io.insert-koin:koin-ksp-compiler:1.2.0")
 
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -153,6 +173,9 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     testImplementation("org.springframework.boot:spring-boot-test-autoconfigure")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("org.springframework.security:spring-security-oauth2-jose")
 
     implementation("io.ktor:ktor-client-logging-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-host-common-jvm:$ktor_version")

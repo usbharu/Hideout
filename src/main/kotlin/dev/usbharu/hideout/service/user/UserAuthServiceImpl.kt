@@ -2,8 +2,8 @@ package dev.usbharu.hideout.service.user
 
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.query.UserQueryService
-import io.ktor.util.*
 import org.koin.core.annotation.Single
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import java.security.*
 import java.util.*
@@ -15,8 +15,7 @@ class UserAuthServiceImpl(
 ) : UserAuthService {
 
     override fun hash(password: String): String {
-        val digest = sha256.digest(password.toByteArray(Charsets.UTF_8))
-        return hex(digest)
+        return BCryptPasswordEncoder().encode(password)
     }
 
     override suspend fun usernameAlreadyUse(username: String): Boolean {
