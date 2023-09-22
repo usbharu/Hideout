@@ -90,6 +90,9 @@ dependencies {
     implementation("com.h2database:h2:$h2_version")
     implementation("org.xerial:sqlite-jdbc:3.40.1.0")
     implementation("ch.qos.logback:logback-classic:$logback_version")
+    implementation("com.auth0:java-jwt:4.4.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.6.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 
     implementation("io.insert-koin:koin-core:$koin_version")
     implementation("io.insert-koin:koin-ktor:$koin_version")
