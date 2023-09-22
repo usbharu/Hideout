@@ -30,8 +30,6 @@ class UserDetailsImpl(
         @Serial
         private const val serialVersionUID: Long = -899168205656607781L
     }
-
-
 }
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
@@ -46,11 +44,9 @@ class UserDetailsImpl(
 @JsonSubTypes
 abstract class UserDetailsMixin
 
-
 class UserDetailsDeserializer : JsonDeserializer<UserDetailsImpl>() {
     val SIMPLE_GRANTED_AUTHORITY_SET = object : TypeReference<Set<SimpleGrantedAuthority>>() {}
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): UserDetailsImpl {
-
         val mapper = p.codec as ObjectMapper
         val jsonNode: JsonNode = mapper.readTree(p)
         println(jsonNode)
@@ -70,7 +66,6 @@ class UserDetailsDeserializer : JsonDeserializer<UserDetailsImpl>() {
             true,
             authorities.toMutableList(),
         )
-
     }
 
     fun JsonNode.readText(field: String, defaultValue: String = ""): String {
@@ -79,5 +74,4 @@ class UserDetailsDeserializer : JsonDeserializer<UserDetailsImpl>() {
             else -> defaultValue
         }
     }
-
 }

@@ -35,7 +35,6 @@ import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.util.*
 
-
 @EnableWebSecurity(debug = true)
 @Configuration
 class SecurityConfig {
@@ -152,8 +151,6 @@ class SecurityConfig {
             if (OAuth2TokenType.ACCESS_TOKEN == context.tokenType) {
                 val userDetailsImpl = context.getPrincipal<Authentication>().principal as UserDetailsImpl
                 context.claims.claim("uid", userDetailsImpl.id.toString())
-
-
             }
         }
     }

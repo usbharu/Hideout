@@ -35,5 +35,4 @@ class MastodonAppsApiController(private val appApiService: AppApiService) : AppA
             HttpStatus.OK
         )
     }
-
 }
