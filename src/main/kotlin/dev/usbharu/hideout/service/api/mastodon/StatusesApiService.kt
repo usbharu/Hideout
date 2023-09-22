@@ -18,7 +18,6 @@ interface StatusesApiService {
     suspend fun postStatus(statusesRequest: StatusesRequest, user: UserDetailsImpl): Status
 }
 
-
 @Service
 class StatsesApiServiceImpl(
     private val postService: PostService,
@@ -28,7 +27,6 @@ class StatsesApiServiceImpl(
 ) :
     StatusesApiService {
     override suspend fun postStatus(statusesRequest: StatusesRequest, user: UserDetailsImpl): Status {
-
         val visibility = when (statusesRequest.visibility) {
             StatusesRequest.Visibility.public -> Visibility.PUBLIC
             StatusesRequest.Visibility.unlisted -> Visibility.UNLISTED
@@ -66,7 +64,6 @@ class StatsesApiServiceImpl(
         } else {
             null
         }
-
 
         return Status(
             id = post.id.toString(),
