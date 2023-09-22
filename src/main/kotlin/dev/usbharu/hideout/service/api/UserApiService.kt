@@ -9,7 +9,6 @@ import dev.usbharu.hideout.query.FollowerQueryService
 import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.service.core.Transaction
 import dev.usbharu.hideout.service.user.UserService
-import org.koin.core.annotation.Single
 import org.springframework.stereotype.Service
 import kotlin.math.min
 
@@ -38,7 +37,6 @@ interface UserApiService {
     suspend fun follow(targetAcct: Acct, sourceId: Long): Boolean
 }
 
-@Single
 @Service
 class UserApiServiceImpl(
     private val userQueryService: UserQueryService,

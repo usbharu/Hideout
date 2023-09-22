@@ -14,7 +14,6 @@ import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.service.job.JobQueueParentService
 import io.ktor.client.*
 import kjob.core.job.JobProps
-import org.koin.core.annotation.Single
 import org.springframework.stereotype.Service
 import java.time.Instant
 
@@ -26,7 +25,6 @@ interface APReactionService {
     suspend fun removeReactionJob(props: JobProps<DeliverRemoveReactionJob>)
 }
 
-@Single
 @Service
 class APReactionServiceImpl(
     private val jobQueueParentService: JobQueueParentService,

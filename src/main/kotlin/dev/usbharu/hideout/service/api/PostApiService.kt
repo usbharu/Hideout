@@ -12,7 +12,6 @@ import dev.usbharu.hideout.service.core.Transaction
 import dev.usbharu.hideout.service.post.PostService
 import dev.usbharu.hideout.service.reaction.ReactionService
 import dev.usbharu.hideout.util.AcctUtil
-import org.koin.core.annotation.Single
 import org.springframework.stereotype.Service
 import java.time.Instant
 
@@ -45,7 +44,6 @@ interface PostApiService {
     suspend fun removeReaction(userId: Long, postId: Long)
 }
 
-@Single
 @Service
 class PostApiServiceImpl(
     private val postService: PostService,

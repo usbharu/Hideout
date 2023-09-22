@@ -5,11 +5,9 @@ import dev.usbharu.hideout.service.core.IdGenerateService
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.koin.core.annotation.Single
 import org.springframework.stereotype.Repository
 import java.time.Instant
 
-@Single
 @Repository
 class JwtRefreshTokenRepositoryImpl(
     private val database: Database,

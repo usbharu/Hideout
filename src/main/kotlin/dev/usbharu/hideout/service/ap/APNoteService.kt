@@ -19,7 +19,6 @@ import dev.usbharu.hideout.service.job.JobQueueParentService
 import io.ktor.client.*
 import io.ktor.client.statement.*
 import kjob.core.job.JobProps
-import org.koin.core.annotation.Single
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.Instant
@@ -34,7 +33,6 @@ interface APNoteService {
     suspend fun fetchNote(note: Note, targetActor: String? = null): Note
 }
 
-@Single
 @Service
 class APNoteServiceImpl(
     private val httpClient: HttpClient,

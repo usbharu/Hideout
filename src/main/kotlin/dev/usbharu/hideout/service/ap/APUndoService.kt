@@ -8,7 +8,6 @@ import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.service.core.Transaction
 import dev.usbharu.hideout.service.user.UserService
 import io.ktor.http.*
-import org.koin.core.annotation.Single
 import org.springframework.stereotype.Service
 
 @Service
@@ -16,7 +15,6 @@ interface APUndoService {
     suspend fun receiveUndo(undo: Undo): ActivityPubResponse
 }
 
-@Single
 @Service
 @Suppress("UnsafeCallOnNullableType")
 class APUndoServiceImpl(

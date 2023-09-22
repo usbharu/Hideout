@@ -18,7 +18,6 @@ import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import org.koin.core.annotation.Single
 import org.springframework.stereotype.Service
 
 @Service
@@ -37,7 +36,6 @@ interface APUserService {
     suspend fun fetchPersonWithEntity(url: String, targetActor: String? = null): Pair<Person, User>
 }
 
-@Single
 @Service
 class APUserServiceImpl(
     private val userService: UserService,

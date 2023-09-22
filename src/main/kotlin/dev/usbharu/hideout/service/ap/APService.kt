@@ -9,7 +9,6 @@ import dev.usbharu.hideout.domain.model.job.*
 import dev.usbharu.hideout.exception.JsonParseException
 import kjob.core.dsl.JobContextWithProps
 import kjob.core.job.JobProps
-import org.koin.core.annotation.Single
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -174,7 +173,6 @@ enum class ExtendedVocabulary {
     Emoji
 }
 
-@Single
 @Service
 class APServiceImpl(
     private val apReceiveFollowService: APReceiveFollowService,
