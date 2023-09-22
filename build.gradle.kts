@@ -1,4 +1,3 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
@@ -11,7 +10,6 @@ val koin_version: String by project
 
 plugins {
     kotlin("jvm") version "1.8.21"
-    id("io.ktor.plugin") version "2.3.0"
     id("org.graalvm.buildtools.native") version "0.9.21"
     id("io.gitlab.arturbosch.detekt") version "1.23.1"
     id("com.google.devtools.ksp") version "1.8.21-1.0.11"
@@ -27,12 +25,6 @@ apply {
 
 group = "dev.usbharu"
 version = "0.0.1"
-application {
-    mainClass.set("dev.usbharu.hideout.SpringApplicationKt")
-
-    val isDevelopment: Boolean = project.ext.has("development")
-    applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
-}
 
 tasks.withType<Test> {
     useJUnitPlatform()
@@ -51,46 +43,10 @@ tasks.withType<KotlinCompile> {
     mustRunAfter("openApiGenerateMastodonCompatibleApi")
 }
 
-tasks.withType<ShadowJar> {
-    manifest {
-        attributes(
-            "Implementation-Version" to project.version.toString()
-        )
-    }
-}
 
 tasks.clean {
     delete += listOf("$rootDir/src/main/resources/static")
 }
-
-//tasks.create<GenerateTask>("openApiGenerateServer", GenerateTask::class) {
-//    generatorName.set("kotlin-spring")
-//    inputSpec.set("$rootDir/src/main/resources/openapi/api.yaml")
-//    outputDir.set("$buildDir/generated/sources/openapi")
-//    apiPackage.set("dev.usbharu.hideout.controller.generated")
-//    modelPackage.set("dev.usbharu.hideout.domain.model.generated")
-//    configOptions.put("interfaceOnly", "true")
-//    configOptions.put("useSpringBoot3", "true")
-//    additionalProperties.put("useTags", "true")
-//    schemaMappings.putAll(
-//        mapOf(
-//            "ReactionResponse" to "dev.usbharu.hideout.domain.model.hideout.dto.ReactionResponse",
-//            "Account" to "dev.usbharu.hideout.domain.model.hideout.dto.Account",
-//            "JwtToken" to "dev.usbharu.hideout.domain.model.hideout.dto.JwtToken",
-//            "PostRequest" to "dev.usbharu.hideout.domain.model.hideout.form.Post",
-//            "PostResponse" to "dev.usbharu.hideout.domain.model.hideout.dto.PostResponse",
-//            "Reaction" to "dev.usbharu.hideout.domain.model.hideout.form.Reaction",
-//            "RefreshToken" to "dev.usbharu.hideout.domain.model.hideout.form.RefreshToken",
-//            "UserLogin" to "dev.usbharu.hideout.domain.model.hideout.form.UserLogin",
-//            "UserResponse" to "dev.usbharu.hideout.domain.model.hideout.dto.UserResponse",
-//            "UserCreate" to "dev.usbharu.hideout.domain.model.hideout.form.UserCreate",
-//            "Visibility" to "dev.usbharu.hideout.domain.model.hideout.entity.Visibility",
-//        )
-//    )
-//
-////    importMappings.putAll(mapOf("ReactionResponse" to "ReactionResponse"))
-////    typeMappings.putAll(mapOf("ReactionResponse" to "ReactionResponse"))
-//}
 
 tasks.create<GenerateTask>("openApiGenerateMastodonCompatibleApi", GenerateTask::class) {
     generatorName.set("kotlin-spring")
@@ -128,31 +84,18 @@ sourceSets.main {
 }
 
 dependencies {
-    implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-auth:$ktor_version")
-    implementation("io.ktor:ktor-server-auth-jwt:$ktor_version")
-    implementation("io.ktor:ktor-server-sessions-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-auto-head-response-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-cors-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-default-headers-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-forwarded-header-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-call-logging-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktor_version")
     implementation("io.ktor:ktor-serialization-jackson:$ktor_version")
     implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
     implementation("com.h2database:h2:$h2_version")
     implementation("org.xerial:sqlite-jdbc:3.40.1.0")
-    implementation("io.ktor:ktor-server-websockets-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-cio-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-compression:$ktor_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
 
     implementation("io.insert-koin:koin-core:$koin_version")
     implementation("io.insert-koin:koin-ktor:$koin_version")
     implementation("io.insert-koin:koin-logger-slf4j:$koin_version")
     implementation("io.insert-koin:koin-annotations:1.2.0")
-    implementation("io.ktor:ktor-server-compression-jvm:2.3.0")
+
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     ksp("io.insert-koin:koin-ksp-compiler:1.2.0")
 
@@ -178,10 +121,7 @@ dependencies {
     implementation("org.springframework.security:spring-security-oauth2-jose")
 
     implementation("io.ktor:ktor-client-logging-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-host-common-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-status-pages-jvm:$ktor_version")
 
-    testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
 
@@ -197,51 +137,9 @@ dependencies {
 
 
     implementation("org.drewcarlson:kjob-core:0.6.0")
-    testImplementation("io.ktor:ktor-server-test-host-jvm:$ktor_version")
-
     testImplementation("org.slf4j:slf4j-simple:2.0.7")
 
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.22.0")
-}
-
-jib {
-    if (System.getProperty("os.name").toLowerCase().contains("windows")) {
-        dockerClient.environment = mapOf(
-            "DOCKER_HOST" to "localhost:2375"
-        )
-    }
-}
-
-ktor {
-    docker {
-        localImageName.set("hideout")
-    }
-}
-
-graalvmNative {
-    binaries {
-        named("main") {
-            fallback.set(false)
-            verbose.set(true)
-            agent {
-                enabled.set(false)
-            }
-
-            buildArgs.add("--initialize-at-build-time=io.ktor,kotlin,kotlinx")
-//            buildArgs.add("--trace-class-initialization=ch.qos.logback.classic.Logger")
-//            buildArgs.add("--trace-object-instantiation=ch.qos.logback.core.AsyncAppenderBase"+"$"+"Worker")
-//            buildArgs.add("--trace-object-instantiation=ch.qos.logback.classic.Logger")
-            buildArgs.add("--initialize-at-build-time=org.slf4j.LoggerFactory,ch.qos.logback")
-//            buildArgs.add("--trace-object-instantiation=kotlinx.coroutines.channels.ArrayChannel")
-            buildArgs.add("--initialize-at-build-time=kotlinx.coroutines.channels.ArrayChannel")
-            buildArgs.add("-H:+InstallExitHandlers")
-            buildArgs.add("-H:+ReportUnsupportedElementsAtRuntime")
-            buildArgs.add("-H:+ReportExceptionStackTraces")
-
-            runtimeArgs.add("-config=$buildDir/resources/main/application-native.conf")
-            imageName.set("graal-server")
-        }
-    }
 }
 
 detekt {
