@@ -12,10 +12,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
-import org.springframework.http.MediaType
 import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
 import org.springframework.security.core.Authentication
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -28,7 +28,6 @@ import org.springframework.security.oauth2.server.authorization.token.OAuth2Toke
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher
-import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector
 import java.security.KeyPairGenerator
 import java.security.interfaces.RSAPrivateKey
@@ -36,6 +35,7 @@ import java.security.interfaces.RSAPublicKey
 import java.util.*
 
 @EnableWebSecurity(debug = true)
+@EnableWebFluxSecurity()
 @Configuration
 class SecurityConfig {
 
@@ -47,9 +47,8 @@ class SecurityConfig {
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http)
         http
             .exceptionHandling {
-                it.defaultAuthenticationEntryPointFor(
-                    LoginUrlAuthenticationEntryPoint("/login"),
-                    MediaTypeRequestMatcher(MediaType.TEXT_HTML)
+                it.authenticationEntryPoint(
+                    LoginUrlAuthenticationEntryPoint("/login")
                 )
             }
             .oauth2ResourceServer {
@@ -58,29 +57,23 @@ class SecurityConfig {
         return http.build()
     }
 
+
     @Bean
     @Order(2)
     fun defaultSecurityFilterChain(http: HttpSecurity, introspector: HandlerMappingIntrospector): SecurityFilterChain {
         val builder = MvcRequestMatcher.Builder(introspector)
 
-        http.authorizeHttpRequests {
-            it.requestMatchers(builder.pattern("/api/v1/**")).hasAnyAuthority("SCOPE_read", "SCOPE_read:accounts")
-        }
-        http
-            .authorizeHttpRequests {
-                it.requestMatchers(
-                    builder.pattern("/inbox"),
-                    builder.pattern("/api/v1/apps"),
-                    builder.pattern("/api/v1/instance/**")
-                ).permitAll()
-            }
         http
             .authorizeHttpRequests {
                 it.requestMatchers(PathRequest.toH2Console()).permitAll()
-            }
-        http
-            .authorizeHttpRequests {
-                it.anyRequest().authenticated()
+                it.requestMatchers(
+                    builder.pattern("/inbox"),
+                    builder.pattern("/api/v1/apps"),
+                    builder.pattern("/api/v1/instance/**"),
+                    builder.pattern("/.well-known/**")
+                ).permitAll()
+                it.requestMatchers(builder.pattern("/api/v1/**")).hasAnyAuthority("SCOPE_read", "SCOPE_read:accounts")
+                it.anyRequest().denyAll()
             }
         http
             .oauth2ResourceServer {
