@@ -15,7 +15,6 @@ import org.springframework.core.annotation.Order
 import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
 import org.springframework.security.core.Authentication
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -35,7 +34,6 @@ import java.security.interfaces.RSAPublicKey
 import java.util.*
 
 @EnableWebSecurity(debug = true)
-@EnableWebFluxSecurity()
 @Configuration
 class SecurityConfig {
 
@@ -70,9 +68,11 @@ class SecurityConfig {
                     builder.pattern("/inbox"),
                     builder.pattern("/api/v1/apps"),
                     builder.pattern("/api/v1/instance/**"),
-                    builder.pattern("/.well-known/**")
+                    builder.pattern("/.well-known/**"),
+                    builder.pattern("/error")
                 ).permitAll()
-                it.requestMatchers(builder.pattern("/api/v1/**")).hasAnyAuthority("SCOPE_read", "SCOPE_read:accounts")
+                it.requestMatchers(builder.pattern("/api/v1/accounts/verify_credentials"))
+                    .hasAnyAuthority("SCOPE_read", "SCOPE_read:accounts")
                 it.anyRequest().denyAll()
             }
         http
