@@ -55,11 +55,7 @@ tasks.create<GenerateTask>("openApiGenerateMastodonCompatibleApi", GenerateTask:
     modelPackage.set("dev.usbharu.hideout.domain.mastodon.model.generated")
     configOptions.put("interfaceOnly", "true")
     configOptions.put("useSpringBoot3", "true")
-    configOptions.put("reactive", "true")
     additionalProperties.put("useTags", "true")
-
-//    importMappings.putAll(mapOf("ReactionResponse" to "ReactionResponse"))
-//    typeMappings.putAll(mapOf("ReactionResponse" to "ReactionResponse"))
 }
 
 repositories {
@@ -108,8 +104,6 @@ dependencies {
     implementation("org.springframework.data:spring-data-commons")
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
-    implementation("org.springframework.boot:spring-boot-starter-webflux")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     testImplementation("org.springframework.boot:spring-boot-test-autoconfigure")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
