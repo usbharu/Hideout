@@ -69,8 +69,10 @@ class SecurityConfig {
                     builder.pattern("/api/v1/apps"),
                     builder.pattern("/api/v1/instance/**"),
                     builder.pattern("/.well-known/**"),
-                    builder.pattern("/error")
+                    builder.pattern("/error"),
+                    builder.pattern("/nodeinfo/2.0")
                 ).permitAll()
+                it.requestMatchers(builder.pattern("/change-password")).authenticated()
                 it.requestMatchers(builder.pattern("/api/v1/accounts/verify_credentials"))
                     .hasAnyAuthority("SCOPE_read", "SCOPE_read:accounts")
                 it.anyRequest().denyAll()
@@ -79,6 +81,7 @@ class SecurityConfig {
             .oauth2ResourceServer {
                 it.jwt(Customizer.withDefaults())
             }
+            .passwordManagement { }
             .formLogin(Customizer.withDefaults())
             .csrf {
                 it.ignoringRequestMatchers(builder.pattern("/api/**"))
