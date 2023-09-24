@@ -12,7 +12,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
-import org.springframework.http.MediaType
 import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -28,7 +27,6 @@ import org.springframework.security.oauth2.server.authorization.token.OAuth2Toke
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher
-import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector
 import java.security.KeyPairGenerator
 import java.security.interfaces.RSAPrivateKey
@@ -47,9 +45,8 @@ class SecurityConfig {
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http)
         http
             .exceptionHandling {
-                it.defaultAuthenticationEntryPointFor(
-                    LoginUrlAuthenticationEntryPoint("/login"),
-                    MediaTypeRequestMatcher(MediaType.TEXT_HTML)
+                it.authenticationEntryPoint(
+                    LoginUrlAuthenticationEntryPoint("/login")
                 )
             }
             .oauth2ResourceServer {
@@ -58,34 +55,33 @@ class SecurityConfig {
         return http.build()
     }
 
+
     @Bean
     @Order(2)
     fun defaultSecurityFilterChain(http: HttpSecurity, introspector: HandlerMappingIntrospector): SecurityFilterChain {
         val builder = MvcRequestMatcher.Builder(introspector)
 
-        http.authorizeHttpRequests {
-            it.requestMatchers(builder.pattern("/api/v1/**")).hasAnyAuthority("SCOPE_read", "SCOPE_read:accounts")
-        }
-        http
-            .authorizeHttpRequests {
-                it.requestMatchers(
-                    builder.pattern("/inbox"),
-                    builder.pattern("/api/v1/apps"),
-                    builder.pattern("/api/v1/instance/**")
-                ).permitAll()
-            }
         http
             .authorizeHttpRequests {
                 it.requestMatchers(PathRequest.toH2Console()).permitAll()
-            }
-        http
-            .authorizeHttpRequests {
-                it.anyRequest().authenticated()
+                it.requestMatchers(
+                    builder.pattern("/inbox"),
+                    builder.pattern("/api/v1/apps"),
+                    builder.pattern("/api/v1/instance/**"),
+                    builder.pattern("/.well-known/**"),
+                    builder.pattern("/error"),
+                    builder.pattern("/nodeinfo/2.0")
+                ).permitAll()
+                it.requestMatchers(builder.pattern("/change-password")).authenticated()
+                it.requestMatchers(builder.pattern("/api/v1/accounts/verify_credentials"))
+                    .hasAnyAuthority("SCOPE_read", "SCOPE_read:accounts")
+                it.anyRequest().permitAll()
             }
         http
             .oauth2ResourceServer {
                 it.jwt(Customizer.withDefaults())
             }
+            .passwordManagement { }
             .formLogin(Customizer.withDefaults())
             .csrf {
                 it.ignoringRequestMatchers(builder.pattern("/api/**"))
