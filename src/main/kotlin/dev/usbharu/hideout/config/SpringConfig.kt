@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import java.net.URL
 
 @Configuration
 class SpringConfig {
@@ -28,7 +29,7 @@ class SpringConfig {
 
 @ConfigurationProperties("hideout")
 data class ApplicationConfig(
-    val url: String
+    val url: URL
 )
 
 @ConfigurationProperties("hideout.database")

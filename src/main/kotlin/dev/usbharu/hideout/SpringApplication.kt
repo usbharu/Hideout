@@ -8,6 +8,7 @@ import org.springframework.boot.runApplication
 @ConfigurationPropertiesScan
 class SpringApplication
 
+@Suppress("SpreadOperator")
 fun main(args: Array<String>) {
     runApplication<SpringApplication>(*args)
 }

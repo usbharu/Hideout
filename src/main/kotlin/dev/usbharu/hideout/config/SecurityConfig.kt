@@ -33,7 +33,7 @@ import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.util.*
 
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity(debug = false)
 @Configuration
 class SecurityConfig {
 
@@ -55,7 +55,6 @@ class SecurityConfig {
         return http.build()
     }
 
-
     @Bean
     @Order(2)
     fun defaultSecurityFilterChain(http: HttpSecurity, introspector: HandlerMappingIntrospector): SecurityFilterChain {
@@ -66,6 +65,7 @@ class SecurityConfig {
                 it.requestMatchers(PathRequest.toH2Console()).permitAll()
                 it.requestMatchers(
                     builder.pattern("/inbox"),
+                    builder.pattern("/users/*/inbox"),
                     builder.pattern("/api/v1/apps"),
                     builder.pattern("/api/v1/instance/**"),
                     builder.pattern("/.well-known/**"),
@@ -85,6 +85,8 @@ class SecurityConfig {
             .formLogin(Customizer.withDefaults())
             .csrf {
                 it.ignoringRequestMatchers(builder.pattern("/api/**"))
+                it.ignoringRequestMatchers(builder.pattern("/users/*/inbox"))
+                it.ignoringRequestMatchers(builder.pattern("/inbox"))
                 it.ignoringRequestMatchers(PathRequest.toH2Console())
             }
             .headers {
@@ -96,9 +98,7 @@ class SecurityConfig {
     }
 
     @Bean
-    fun passwordEncoder(): PasswordEncoder {
-        return BCryptPasswordEncoder()
-    }
+    fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
 
     @Bean
     fun genJwkSource(): JWKSource<SecurityContext> {
@@ -128,9 +128,8 @@ class SecurityConfig {
     }
 
     @Bean
-    fun jwtDecoder(jwkSource: JWKSource<SecurityContext>): JwtDecoder {
-        return OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource)
-    }
+    fun jwtDecoder(jwkSource: JWKSource<SecurityContext>): JwtDecoder =
+        OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource)
 
     @Bean
     fun authorizationServerSettings(): AuthorizationServerSettings {

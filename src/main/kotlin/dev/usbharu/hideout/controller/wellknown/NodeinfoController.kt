@@ -20,11 +20,13 @@ class NodeinfoController(private val applicationConfig: ApplicationConfig) {
                         "${applicationConfig.url}/nodeinfo/2.0"
                     )
                 )
-            ), HttpStatus.OK
+            ),
+            HttpStatus.OK
         )
     }
 
     @GetMapping("/nodeinfo/2.0")
+    @Suppress("FunctionNaming")
     fun nodeinfo2_0(): ResponseEntity<Nodeinfo2_0> {
         return ResponseEntity(
             Nodeinfo2_0(

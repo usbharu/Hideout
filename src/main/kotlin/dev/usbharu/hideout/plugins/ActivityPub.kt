@@ -1,6 +1,7 @@
 package dev.usbharu.hideout.plugins
 
-import dev.usbharu.hideout.config.Config
+import com.fasterxml.jackson.databind.ObjectMapper
+import dev.usbharu.hideout.config.ApplicationConfig
 import dev.usbharu.hideout.domain.model.ap.JsonLd
 import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.service.core.Transaction
@@ -26,13 +27,18 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.crypto.SecretKey
 
-suspend fun HttpClient.postAp(urlString: String, username: String, jsonLd: JsonLd): HttpResponse {
+suspend fun HttpClient.postAp(
+    urlString: String,
+    username: String,
+    jsonLd: JsonLd,
+    objectMapper: ObjectMapper
+): HttpResponse {
     jsonLd.context += "https://www.w3.org/ns/activitystreams"
     return this.post(urlString) {
         header("Accept", ContentType.Application.Activity)
         header("Content-Type", ContentType.Application.Activity)
         header("Signature", "keyId=\"$username\",algorithm=\"rsa-sha256\",headers=\"(request-target) digest date\"")
-        val text = Config.configData.objectMapper.writeValueAsString(jsonLd)
+        val text = objectMapper.writeValueAsString(jsonLd)
         setBody(text)
     }
 }
@@ -157,7 +163,11 @@ val httpSignaturePlugin = createClientPlugin("HttpSign", ::HttpSignaturePluginCo
     }
 }
 
-class KtorKeyMap(private val userQueryService: UserQueryService, private val transaction: Transaction) : KeyMap {
+class KtorKeyMap(
+    private val userQueryService: UserQueryService,
+    private val transaction: Transaction,
+    private val applicationConfig: ApplicationConfig
+) : KeyMap {
     override fun getPublicKey(keyId: String?): PublicKey = runBlocking {
         val username = (keyId ?: throw IllegalArgumentException("keyId is null")).substringBeforeLast("#pubkey")
             .substringAfterLast("/")
@@ -165,7 +175,7 @@ class KtorKeyMap(private val userQueryService: UserQueryService, private val tra
             transaction.transaction {
                 userQueryService.findByNameAndDomain(
                     username,
-                    Config.configData.domain
+                    applicationConfig.url.host
                 ).run {
                     publicKey
                         .replace("-----BEGIN PUBLIC KEY-----", "")
@@ -185,7 +195,7 @@ class KtorKeyMap(private val userQueryService: UserQueryService, private val tra
             transaction.transaction {
                 userQueryService.findByNameAndDomain(
                     username,
-                    Config.configData.domain
+                    applicationConfig.url.host
                 ).privateKey?.run {
                     replace("-----BEGIN PRIVATE KEY-----", "")
                         .replace("-----END PRIVATE KEY-----", "")

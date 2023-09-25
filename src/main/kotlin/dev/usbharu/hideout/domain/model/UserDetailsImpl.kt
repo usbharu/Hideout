@@ -42,10 +42,12 @@ class UserDetailsImpl(
 )
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSubTypes
+@Suppress("UnnecessaryAbstractClass")
 abstract class UserDetailsMixin
 
 class UserDetailsDeserializer : JsonDeserializer<UserDetailsImpl>() {
-    val SIMPLE_GRANTED_AUTHORITY_SET = object : TypeReference<Set<SimpleGrantedAuthority>>() {}
+
+    private val SIMPLE_GRANTED_AUTHORITY_SET = object : TypeReference<Set<SimpleGrantedAuthority>>() {}
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): UserDetailsImpl {
         val mapper = p.codec as ObjectMapper
         val jsonNode: JsonNode = mapper.readTree(p)
@@ -57,14 +59,14 @@ class UserDetailsDeserializer : JsonDeserializer<UserDetailsImpl>() {
 
         val password = jsonNode.readText("password")
         return UserDetailsImpl(
-            jsonNode["id"].longValue(),
-            jsonNode.readText("username"),
-            password,
-            true,
-            true,
-            true,
-            true,
-            authorities.toMutableList(),
+            id = jsonNode["id"].longValue(),
+            username = jsonNode.readText("username"),
+            password = password,
+            enabled = true,
+            accountNonExpired = true,
+            credentialsNonExpired = true,
+            accountNonLocked = true,
+            authorities = authorities.toMutableList(),
         )
     }
 

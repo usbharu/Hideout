@@ -22,13 +22,15 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito.eq
 import org.mockito.kotlin.*
 import utils.JsonObjectMapper
+import utils.JsonObjectMapper.objectMapper
+import utils.TestApplicationConfig.testApplicationConfig
 import java.time.Instant
 import kotlin.test.assertEquals
 
 class APNoteServiceImplTest {
     @Test
     fun `createPost 新しい投稿`() = runTest {
-        val followers = listOf<User>(
+        val followers = listOf(
             User.of(
                 2L,
                 "follower",
@@ -84,7 +86,9 @@ class APNoteServiceImplTest {
                 mock(),
                 userQueryService,
                 followerQueryService,
-                mock()
+                mock(),
+                objectMapper = objectMapper,
+                applicationConfig = testApplicationConfig
             )
         val postEntity = Post.of(
             1L,
@@ -109,13 +113,15 @@ class APNoteServiceImplTest {
             }
         )
         val activityPubNoteService = APNoteServiceImpl(
-            httpClient,
-            mock(),
-            mock(),
-            mock(),
-            mock(),
-            mock(),
-            mock()
+            httpClient = httpClient,
+            jobQueueParentService = mock(),
+            postRepository = mock(),
+            apUserService = mock(),
+            userQueryService = mock(),
+            followerQueryService = mock(),
+            postQueryService = mock(),
+            objectMapper = objectMapper,
+            applicationConfig = testApplicationConfig
         )
         activityPubNoteService.createNoteJob(
             JobProps(

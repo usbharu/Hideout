@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.domain.model.wellknown
 
+@Suppress("ClassNaming")
 data class Nodeinfo2_0(
     val version: String,
     val software: Software,
