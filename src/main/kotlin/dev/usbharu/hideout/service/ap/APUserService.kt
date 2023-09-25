@@ -1,7 +1,8 @@
 package dev.usbharu.hideout.service.ap
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import dev.usbharu.hideout.config.Config
+import dev.usbharu.hideout.config.ApplicationConfig
 import dev.usbharu.hideout.domain.model.ap.Image
 import dev.usbharu.hideout.domain.model.ap.Key
 import dev.usbharu.hideout.domain.model.ap.Person
@@ -18,6 +19,7 @@ import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 
 @Service
@@ -41,16 +43,18 @@ class APUserServiceImpl(
     private val userService: UserService,
     private val httpClient: HttpClient,
     private val userQueryService: UserQueryService,
-    private val transaction: Transaction
+    private val transaction: Transaction,
+    private val applicationConfig: ApplicationConfig,
+    @Qualifier("activitypub") private val objectMapper: ObjectMapper
 ) :
     APUserService {
 
     override suspend fun getPersonByName(name: String): Person {
         val userEntity = transaction.transaction {
-            userQueryService.findByNameAndDomain(name, Config.configData.domain)
+            userQueryService.findByNameAndDomain(name, applicationConfig.url.host)
         }
         // TODO: JOINで書き直し
-        val userUrl = "${Config.configData.url}/users/$name"
+        val userUrl = "${applicationConfig.url}/users/$name"
         return Person(
             type = emptyList(),
             name = userEntity.name,
@@ -73,7 +77,7 @@ class APUserServiceImpl(
                 owner = userUrl,
                 publicKeyPem = userEntity.publicKey
             ),
-            endpoints = mapOf("sharedInbox" to "${Config.configData.url}/inbox")
+            endpoints = mapOf("sharedInbox" to "${applicationConfig.url}/inbox")
         )
     }
 
@@ -105,7 +109,7 @@ class APUserServiceImpl(
                     owner = url,
                     publicKeyPem = userEntity.publicKey
                 ),
-                endpoints = mapOf("sharedInbox" to "${Config.configData.url}/inbox")
+                endpoints = mapOf("sharedInbox" to "${applicationConfig.url}/inbox")
             ) to userEntity
         } catch (ignore: FailedToGetResourcesException) {
             val httpResponse = if (targetActor != null) {
@@ -115,7 +119,7 @@ class APUserServiceImpl(
                     accept(ContentType.Application.Activity)
                 }
             }
-            val person = Config.configData.objectMapper.readValue<Person>(httpResponse.bodyAsText())
+            val person = objectMapper.readValue<Person>(httpResponse.bodyAsText())
 
             person to userService.createRemoteUser(
                 RemoteUserCreateDto(

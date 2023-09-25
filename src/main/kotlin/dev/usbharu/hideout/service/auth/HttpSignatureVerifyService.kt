@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.service.auth
 
+import dev.usbharu.hideout.config.ApplicationConfig
 import dev.usbharu.hideout.plugins.KtorKeyMap
 import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.service.core.Transaction
@@ -15,10 +16,13 @@ interface HttpSignatureVerifyService {
 @Service
 class HttpSignatureVerifyServiceImpl(
     private val userQueryService: UserQueryService,
-    private val transaction: Transaction
+    private val transaction: Transaction,
+    private val applicationConfig: ApplicationConfig
 ) : HttpSignatureVerifyService {
     override fun verify(headers: Headers): Boolean {
-        val build = SignatureHeaderVerifier.builder().keyMap(KtorKeyMap(userQueryService, transaction)).build()
+        val build =
+            SignatureHeaderVerifier.builder().keyMap(KtorKeyMap(userQueryService, transaction, applicationConfig))
+                .build()
         return true
 //        build.verify(object : HttpMessage {
 //            override fun headerValues(name: String?): MutableList<String> {

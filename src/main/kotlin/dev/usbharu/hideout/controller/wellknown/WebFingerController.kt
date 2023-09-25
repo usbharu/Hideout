@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
-import java.net.URL
 
 @Controller
 class WebFingerController(
@@ -21,14 +20,14 @@ class WebFingerController(
     fun webfinger(@RequestParam("resource") resource: String): ResponseEntity<WebFinger> = runBlocking {
         val acct = AcctUtil.parse(resource.replace("acct:", ""))
         val user =
-            webFingerApiService.findByNameAndDomain(acct.username, acct.domain ?: URL(applicationConfig.url).host)
+            webFingerApiService.findByNameAndDomain(acct.username, acct.domain ?: applicationConfig.url.host)
         val webFinger = WebFinger(
             "acct:${user.name}@${user.domain}",
             listOf(
                 WebFinger.Link(
                     "self",
                     "application/activity+json",
-                    applicationConfig.url + "/users/" + user.id
+                    user.url
                 )
             )
         )

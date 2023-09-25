@@ -1,6 +1,6 @@
 package dev.usbharu.hideout.service.user
 
-import dev.usbharu.hideout.config.Config
+import dev.usbharu.hideout.config.ApplicationConfig
 import dev.usbharu.hideout.domain.model.hideout.dto.RemoteUserCreateDto
 import dev.usbharu.hideout.domain.model.hideout.dto.SendFollowDto
 import dev.usbharu.hideout.domain.model.hideout.dto.UserCreateDto
@@ -19,12 +19,13 @@ class UserServiceImpl(
     private val userAuthService: UserAuthService,
     private val apSendFollowService: APSendFollowService,
     private val userQueryService: UserQueryService,
-    private val followerQueryService: FollowerQueryService
+    private val followerQueryService: FollowerQueryService,
+    private val applicationConfig: ApplicationConfig
 ) :
     UserService {
 
     override suspend fun usernameAlreadyUse(username: String): Boolean {
-        val findByNameAndDomain = userQueryService.findByNameAndDomain(username, Config.configData.domain)
+        val findByNameAndDomain = userQueryService.findByNameAndDomain(username, applicationConfig.url.host)
         return findByNameAndDomain != null
     }
 
@@ -35,13 +36,13 @@ class UserServiceImpl(
         val userEntity = User.of(
             id = nextId,
             name = user.name,
-            domain = Config.configData.domain,
+            domain = applicationConfig.url.host,
             screenName = user.screenName,
             description = user.description,
             password = hashedPassword,
-            inbox = "${Config.configData.url}/users/${user.name}/inbox",
-            outbox = "${Config.configData.url}/users/${user.name}/outbox",
-            url = "${Config.configData.url}/users/${user.name}",
+            inbox = "${applicationConfig.url}/users/${user.name}/inbox",
+            outbox = "${applicationConfig.url}/users/${user.name}/outbox",
+            url = "${applicationConfig.url}/users/${user.name}",
             publicKey = keyPair.public.toPem(),
             privateKey = keyPair.private.toPem(),
             createdAt = Instant.now()
@@ -70,7 +71,7 @@ class UserServiceImpl(
     override suspend fun followRequest(id: Long, followerId: Long): Boolean {
         val user = userRepository.findById(id) ?: throw UserNotFoundException("$id was not found.")
         val follower = userRepository.findById(followerId) ?: throw UserNotFoundException("$followerId was not found.")
-        return if (user.domain == Config.configData.domain) {
+        return if (user.domain == applicationConfig.url.host) {
             follow(id, followerId)
             true
         } else {
