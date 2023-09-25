@@ -18,10 +18,10 @@ class AccountApiServiceImpl(private val accountService: AccountService, private 
     AccountApiService {
     override suspend fun verifyCredentials(userid: Long): CredentialAccount = transaction.transaction {
         val account = accountService.findById(userid)
-        of(account)
+        from(account)
     }
 
-    private fun of(account: Account): CredentialAccount {
+    private fun from(account: Account): CredentialAccount {
         return CredentialAccount(
             id = account.id,
             username = account.username,

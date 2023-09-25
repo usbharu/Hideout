@@ -30,17 +30,19 @@ class JobQueueWorkerRunner(
 ) : ApplicationRunner {
     override fun run(args: ApplicationArguments?) {
         LOGGER.info("Init job queue worker.")
-        jobQueueWorkerService.init(jobs.map {
-            it to {
-                execute {
-                    LOGGER.debug("excute job ${it.name}")
-                    apService.processActivity(
-                        job = this,
-                        hideoutJob = it
-                    )
+        jobQueueWorkerService.init(
+            jobs.map {
+                it to {
+                    execute {
+                        LOGGER.debug("excute job ${it.name}")
+                        apService.processActivity(
+                            job = this,
+                            hideoutJob = it
+                        )
+                    }
                 }
             }
-        })
+        )
     }
 
     companion object {

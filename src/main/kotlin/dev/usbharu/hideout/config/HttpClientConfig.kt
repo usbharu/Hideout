@@ -32,7 +32,9 @@ class HttpClientConfig {
         applicationConfig: ApplicationConfig
     ): KtorKeyMap {
         return KtorKeyMap(
-            userQueryService, transaction, applicationConfig
+            userQueryService,
+            transaction,
+            applicationConfig
         )
     }
 }

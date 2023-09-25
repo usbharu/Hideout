@@ -1,6 +1,5 @@
 package dev.usbharu.hideout.domain.model.wellknown
 
-
 data class Nodeinfo(
     val links: List<Links>
 ) {

@@ -83,7 +83,8 @@ class APReactionServiceImpl(
                 `object` = postUrl,
                 id = "${Config.configData.url}/like/note/$id",
                 content = content
-            ), objectMapper
+            ),
+            objectMapper
         )
     }
 
@@ -100,7 +101,8 @@ class APReactionServiceImpl(
                 `object` = like,
                 id = "${Config.configData.url}/undo/note/${like.id}",
                 published = Instant.now()
-            ), objectMapper
+            ),
+            objectMapper
         )
     }
 }

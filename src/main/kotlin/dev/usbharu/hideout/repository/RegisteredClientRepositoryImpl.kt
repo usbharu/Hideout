@@ -48,9 +48,9 @@ class RegisteredClientRepositoryImpl(private val database: Database) : Registere
                 it[clientSecretExpiresAt] = registeredClient.clientSecretExpiresAt
                 it[clientName] = registeredClient.clientName
                 it[clientAuthenticationMethods] =
-                    registeredClient.clientAuthenticationMethods.map { it.value }.joinToString(",")
+                    registeredClient.clientAuthenticationMethods.map { method -> method.value }.joinToString(",")
                 it[authorizationGrantTypes] =
-                    registeredClient.authorizationGrantTypes.map { it.value }.joinToString(",")
+                    registeredClient.authorizationGrantTypes.map { type -> type.value }.joinToString(",")
                 it[redirectUris] = registeredClient.redirectUris.joinToString(",")
                 it[postLogoutRedirectUris] = registeredClient.postLogoutRedirectUris.joinToString(",")
                 it[scopes] = registeredClient.scopes.joinToString(",")
@@ -100,20 +100,7 @@ class RegisteredClientRepositoryImpl(private val database: Database) : Registere
 
     private fun <T, U> jsonToMap(json: String): Map<T, U> = objectMapper.readValue(json)
 
-    companion object {
-        val objectMapper: ObjectMapper = ObjectMapper()
-        val LOGGER = LoggerFactory.getLogger(RegisteredClientRepositoryImpl::class.java)
-
-        init {
-
-            val classLoader = ExposedOAuth2AuthorizationService::class.java.classLoader
-            val modules = SecurityJackson2Modules.getModules(classLoader)
-            this.objectMapper.registerModules(JavaTimeModule())
-            this.objectMapper.registerModules(modules)
-            this.objectMapper.registerModules(OAuth2AuthorizationServerJackson2Module())
-        }
-    }
-
+    @Suppress("CyclomaticComplexMethod")
     fun ResultRow.toRegisteredClient(): SpringRegisteredClient {
         fun resolveClientAuthenticationMethods(string: String): ClientAuthenticationMethod {
             return when (string) {
@@ -174,6 +161,20 @@ class RegisteredClientRepositoryImpl(private val database: Database) : Registere
         builder.tokenSettings(withSettings.build())
 
         return builder.build()
+    }
+
+    companion object {
+        val objectMapper: ObjectMapper = ObjectMapper()
+        val LOGGER = LoggerFactory.getLogger(RegisteredClientRepositoryImpl::class.java)
+
+        init {
+
+            val classLoader = ExposedOAuth2AuthorizationService::class.java.classLoader
+            val modules = SecurityJackson2Modules.getModules(classLoader)
+            this.objectMapper.registerModules(JavaTimeModule())
+            this.objectMapper.registerModules(modules)
+            this.objectMapper.registerModules(OAuth2AuthorizationServerJackson2Module())
+        }
     }
 }
 

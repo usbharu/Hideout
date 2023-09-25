@@ -11,13 +11,15 @@ interface InstanceApiService {
 
 @Service
 class InstanceApiServiceImpl(private val applicationConfig: ApplicationConfig) : InstanceApiService {
+    @Suppress("LongMethod")
     override suspend fun v1Instance(): V1Instance {
         val url = applicationConfig.url
         return V1Instance(
             uri = url.host,
             title = "Hideout Server",
             shortDescription = "Hideout test server",
-            description = "This server is operated for testing of Hideout. We are not responsible for any events that occur when associating with this server",
+            description = "This server is operated for testing of Hideout." +
+                    " We are not responsible for any events that occur when associating with this server",
             email = "i@usbharu.dev",
             version = "0.0.1",
             urls = V1InstanceUrls("wss://${url.host}"),
@@ -35,7 +37,7 @@ class InstanceApiServiceImpl(private val applicationConfig: ApplicationConfig) :
                     23
                 ),
                 mediaAttachments = V1InstanceConfigurationMediaAttachments(
-                    listOf(),
+                    emptyList(),
                     0,
                     0,
                     0,

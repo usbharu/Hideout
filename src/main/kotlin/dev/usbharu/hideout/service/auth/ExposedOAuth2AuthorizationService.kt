@@ -40,6 +40,7 @@ class ExposedOAuth2AuthorizationService(
         }
     }
 
+    @Suppress("LongMethod", "CyclomaticComplexMethod")
     override fun save(authorization: OAuth2Authorization?): Unit = runBlocking {
         requireNotNull(authorization)
         transaction.transaction {
@@ -56,7 +57,8 @@ class ExposedOAuth2AuthorizationService(
                     it[registeredClientId] = authorization.registeredClientId
                     it[principalName] = authorization.principalName
                     it[authorizationGrantType] = authorization.authorizationGrantType.value
-                    it[authorizedScopes] = authorization.authorizedScopes.joinToString(",").takeIf { it.isNotEmpty() }
+                    it[authorizedScopes] =
+                        authorization.authorizedScopes.joinToString(",").takeIf { s -> s.isNotEmpty() }
                     it[attributes] = mapToJson(authorization.attributes)
                     it[state] = authorization.getAttribute(OAuth2ParameterNames.STATE)
                     it[authorizationCodeValue] = authorizationCodeToken?.token?.tokenValue
@@ -99,7 +101,8 @@ class ExposedOAuth2AuthorizationService(
                     it[registeredClientId] = authorization.registeredClientId
                     it[principalName] = authorization.principalName
                     it[authorizationGrantType] = authorization.authorizationGrantType.value
-                    it[authorizedScopes] = authorization.authorizedScopes.joinToString(",").takeIf { it.isNotEmpty() }
+                    it[authorizedScopes] =
+                        authorization.authorizedScopes.joinToString(",").takeIf { s -> s.isNotEmpty() }
                     it[attributes] = mapToJson(authorization.attributes)
                     it[state] = authorization.getAttribute(OAuth2ParameterNames.STATE)
                     it[authorizationCodeValue] = authorizationCodeToken?.token?.tokenValue
@@ -111,8 +114,9 @@ class ExposedOAuth2AuthorizationService(
                     it[accessTokenIssuedAt] = accessToken?.token?.issuedAt
                     it[accessTokenExpiresAt] = accessToken?.token?.expiresAt
                     it[accessTokenMetadata] = accessToken?.metadata?.let { it1 -> mapToJson(it1) }
-                    it[accessTokenType] = accessToken?.token?.tokenType?.value
-                    it[accessTokenScopes] = accessToken?.token?.scopes?.joinToString(",")?.takeIf { it.isNotEmpty() }
+                    it[accessTokenType] = accessToken?.run { token.tokenType.value }
+                    it[accessTokenScopes] =
+                        accessToken?.run { token.scopes.joinToString(",").takeIf { s -> s.isNotEmpty() } }
                     it[refreshTokenValue] = refreshToken?.token?.tokenValue
                     it[refreshTokenIssuedAt] = refreshToken?.token?.issuedAt
                     it[refreshTokenExpiresAt] = refreshToken?.token?.expiresAt
@@ -203,6 +207,7 @@ class ExposedOAuth2AuthorizationService(
         }
     }
 
+    @Suppress("LongMethod", "CyclomaticComplexMethod")
     fun ResultRow.toAuthorization(): OAuth2Authorization {
         val registeredClientId = this[Authorization.registeredClientId]
 
