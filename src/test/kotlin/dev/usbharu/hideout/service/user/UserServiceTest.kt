@@ -12,6 +12,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.*
+import utils.TestApplicationConfig.testApplicationConfig
 import java.security.KeyPairGenerator
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -28,7 +29,8 @@ class UserServiceTest {
             onBlocking { hash(anyString()) } doReturn "hashedPassword"
             onBlocking { generateKeyPair() } doReturn generateKeyPair
         }
-        val userService = UserServiceImpl(userRepository, userAuthService, mock(), mock(), mock())
+        val userService =
+            UserServiceImpl(userRepository, userAuthService, mock(), mock(), mock(), testApplicationConfig)
         userService.createLocalUser(UserCreateDto("test", "testUser", "XXXXXXXXXXXXX", "test"))
         verify(userRepository, times(1)).save(any())
         argumentCaptor<dev.usbharu.hideout.domain.model.hideout.entity.User> {
@@ -54,7 +56,7 @@ class UserServiceTest {
         val userRepository = mock<UserRepository> {
             onBlocking { nextId() } doReturn 113345L
         }
-        val userService = UserServiceImpl(userRepository, mock(), mock(), mock(), mock())
+        val userService = UserServiceImpl(userRepository, mock(), mock(), mock(), mock(), testApplicationConfig)
         val user = RemoteUserCreateDto(
             "test",
             "example.com",
