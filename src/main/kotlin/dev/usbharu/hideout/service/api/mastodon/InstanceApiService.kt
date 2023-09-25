@@ -3,7 +3,6 @@ package dev.usbharu.hideout.service.api.mastodon
 import dev.usbharu.hideout.config.ApplicationConfig
 import dev.usbharu.hideout.domain.mastodon.model.generated.*
 import org.springframework.stereotype.Service
-import java.net.URL
 
 @Service
 interface InstanceApiService {
@@ -14,15 +13,14 @@ interface InstanceApiService {
 class InstanceApiServiceImpl(private val applicationConfig: ApplicationConfig) : InstanceApiService {
     override suspend fun v1Instance(): V1Instance {
         val url = applicationConfig.url
-        val url1 = URL(url)
         return V1Instance(
-            uri = url1.host,
+            uri = url.host,
             title = "Hideout Server",
             shortDescription = "Hideout test server",
             description = "This server is operated for testing of Hideout. We are not responsible for any events that occur when associating with this server",
             email = "i@usbharu.dev",
             version = "0.0.1",
-            urls = V1InstanceUrls("wss://${url1.host}"),
+            urls = V1InstanceUrls("wss://${url.host}"),
             stats = V1InstanceStats(1, 0, 0),
             thumbnail = null,
             languages = listOf("ja-JP"),

@@ -1,7 +1,8 @@
 package dev.usbharu.hideout.service.ap
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import dev.usbharu.hideout.config.Config
+import dev.usbharu.hideout.config.ApplicationConfig
 import dev.usbharu.hideout.domain.model.ap.Create
 import dev.usbharu.hideout.domain.model.ap.Note
 import dev.usbharu.hideout.domain.model.hideout.entity.Post
@@ -20,6 +21,7 @@ import io.ktor.client.*
 import io.ktor.client.statement.*
 import kjob.core.job.JobProps
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import java.time.Instant
 
@@ -34,14 +36,17 @@ interface APNoteService {
 }
 
 @Service
-class APNoteServiceImpl(
+class APNoteServiceImpl private constructor(
     private val httpClient: HttpClient,
     private val jobQueueParentService: JobQueueParentService,
     private val postRepository: PostRepository,
     private val apUserService: APUserService,
     private val userQueryService: UserQueryService,
     private val followerQueryService: FollowerQueryService,
-    private val postQueryService: PostQueryService
+    private val postQueryService: PostQueryService,
+    @Qualifier("activitypub") private val objectMapper: ObjectMapper,
+    private val applicationConfig: ApplicationConfig
+
 ) : APNoteService {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -49,7 +54,7 @@ class APNoteServiceImpl(
     override suspend fun createNote(post: Post) {
         val followers = followerQueryService.findFollowersById(post.userId)
         val userEntity = userQueryService.findById(post.userId)
-        val note = Config.configData.objectMapper.writeValueAsString(post)
+        val note = objectMapper.writeValueAsString(post)
         followers.forEach { followerEntity ->
             jobQueueParentService.schedule(DeliverPostJob) {
                 props[DeliverPostJob.actor] = userEntity.url
@@ -61,7 +66,7 @@ class APNoteServiceImpl(
 
     override suspend fun createNoteJob(props: JobProps<DeliverPostJob>) {
         val actor = props[DeliverPostJob.actor]
-        val postEntity = Config.configData.objectMapper.readValue<Post>(props[DeliverPostJob.post])
+        val postEntity = objectMapper.readValue<Post>(props[DeliverPostJob.post])
         val note = Note(
             name = "Note",
             id = postEntity.url,
@@ -79,8 +84,9 @@ class APNoteServiceImpl(
                 name = "Create Note",
                 `object` = note,
                 actor = note.attributedTo,
-                id = "${Config.configData.url}/create/note/${postEntity.id}"
-            )
+                id = "${applicationConfig.url}/create/note/${postEntity.id}"
+            ),
+            objectMapper
         )
     }
 
@@ -95,7 +101,7 @@ class APNoteServiceImpl(
             url,
             targetActor?.let { "$targetActor#pubkey" }
         )
-        val note = Config.configData.objectMapper.readValue<Note>(response.bodyAsText())
+        val note = objectMapper.readValue<Note>(response.bodyAsText())
         return note(note, targetActor, url)
     }
 

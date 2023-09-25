@@ -33,7 +33,7 @@ import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.util.*
 
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity(debug = false)
 @Configuration
 class SecurityConfig {
 
@@ -66,6 +66,7 @@ class SecurityConfig {
                 it.requestMatchers(PathRequest.toH2Console()).permitAll()
                 it.requestMatchers(
                     builder.pattern("/inbox"),
+                    builder.pattern("/users/*/inbox"),
                     builder.pattern("/api/v1/apps"),
                     builder.pattern("/api/v1/instance/**"),
                     builder.pattern("/.well-known/**"),
@@ -85,6 +86,8 @@ class SecurityConfig {
             .formLogin(Customizer.withDefaults())
             .csrf {
                 it.ignoringRequestMatchers(builder.pattern("/api/**"))
+                it.ignoringRequestMatchers(builder.pattern("/users/*/inbox"))
+                it.ignoringRequestMatchers(builder.pattern("/inbox"))
                 it.ignoringRequestMatchers(PathRequest.toH2Console())
             }
             .headers {

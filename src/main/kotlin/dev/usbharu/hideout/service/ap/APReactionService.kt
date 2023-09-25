@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.service.ap
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.domain.model.ap.Like
@@ -14,6 +15,7 @@ import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.service.job.JobQueueParentService
 import io.ktor.client.*
 import kjob.core.job.JobProps
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import java.time.Instant
 
@@ -31,8 +33,10 @@ class APReactionServiceImpl(
     private val httpClient: HttpClient,
     private val userQueryService: UserQueryService,
     private val followerQueryService: FollowerQueryService,
-    private val postQueryService: PostQueryService
-) : APReactionService {
+    private val postQueryService: PostQueryService,
+    @Qualifier("activitypub") private val objectMapper: ObjectMapper,
+
+    ) : APReactionService {
     override suspend fun reaction(like: Reaction) {
         val followers = followerQueryService.findFollowersById(like.userId)
         val user = userQueryService.findById(like.userId)
@@ -79,7 +83,7 @@ class APReactionServiceImpl(
                 `object` = postUrl,
                 id = "${Config.configData.url}/like/note/$id",
                 content = content
-            )
+            ), objectMapper
         )
     }
 
@@ -96,7 +100,7 @@ class APReactionServiceImpl(
                 `object` = like,
                 id = "${Config.configData.url}/undo/note/${like.id}",
                 published = Instant.now()
-            )
+            ), objectMapper
         )
     }
 }
