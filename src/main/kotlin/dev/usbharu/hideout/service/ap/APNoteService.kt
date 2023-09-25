@@ -36,7 +36,7 @@ interface APNoteService {
 }
 
 @Service
-class APNoteServiceImpl private constructor(
+class APNoteServiceImpl(
     private val httpClient: HttpClient,
     private val jobQueueParentService: JobQueueParentService,
     private val postRepository: PostRepository,
