@@ -29,14 +29,8 @@ class HostMetaController(private val applicationConfig: ApplicationConfig) {
 }"""
 
     @GetMapping("/.well-known/host-meta", produces = ["application/xml"])
-    fun hostmeta(): ResponseEntity<String> {
-        return ResponseEntity(xml, HttpStatus.OK)
-    }
+    fun hostmeta(): ResponseEntity<String> = ResponseEntity(xml, HttpStatus.OK)
 
     @GetMapping("/.well-known/host-meta.json", produces = ["application/json"])
-    fun hostmetJson(): ResponseEntity<String> {
-        return ResponseEntity(json, HttpStatus.OK)
-    }
-
-
+    fun hostmetJson(): ResponseEntity<String> = ResponseEntity(json, HttpStatus.OK)
 }

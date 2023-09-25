@@ -24,14 +24,14 @@ class UserDetailsServiceImpl(
         transaction.transaction {
             val findById = userQueryService.findByNameAndDomain(username, applicationConfig.url.host)
             UserDetailsImpl(
-                findById.id,
-                findById.name,
-                findById.password,
-                true,
-                true,
-                true,
-                true,
-                mutableListOf()
+                id = findById.id,
+                username = findById.name,
+                password = findById.password,
+                enabled = true,
+                accountNonExpired = true,
+                credentialsNonExpired = true,
+                accountNonLocked = true,
+                authorities = mutableListOf()
             )
         }
     }

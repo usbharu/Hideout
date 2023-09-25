@@ -12,10 +12,11 @@ interface InboxController {
     @RequestMapping(
         "/inbox",
         "/users/{username}/inbox",
-        produces = ["application/activity+json", "application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\""],
+        produces = [
+            "application/activity+json",
+            "application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\""
+        ],
         method = [RequestMethod.GET, RequestMethod.POST]
     )
-    fun inbox(@RequestBody string: String): ResponseEntity<Unit> {
-        return ResponseEntity(HttpStatus.ACCEPTED)
-    }
+    fun inbox(@RequestBody string: String): ResponseEntity<Unit> = ResponseEntity(HttpStatus.ACCEPTED)
 }

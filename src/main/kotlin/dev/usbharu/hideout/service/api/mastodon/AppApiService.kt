@@ -55,7 +55,5 @@ class AppApiServiceImpl(
         }
     }
 
-    private fun parseScope(string: String): Set<String> {
-        return string.split(" ").toSet()
-    }
+    private fun parseScope(string: String): Set<String> = string.split(" ").toSet()
 }

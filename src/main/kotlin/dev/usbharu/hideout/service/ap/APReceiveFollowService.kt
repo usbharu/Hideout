@@ -18,7 +18,6 @@ import kjob.core.job.JobProps
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 
-
 interface APReceiveFollowService {
     suspend fun receiveFollow(follow: Follow): ActivityPubResponse
     suspend fun receiveFollowJob(props: JobProps<ReceiveFollowJob>)
@@ -58,7 +57,8 @@ class APReceiveFollowServiceImpl(
                     name = "Follow",
                     `object` = follow,
                     actor = targetActor
-                ), objectMapper
+                ),
+                objectMapper
             )
 
             val targetEntity = userQueryService.findByUrl(targetActor)

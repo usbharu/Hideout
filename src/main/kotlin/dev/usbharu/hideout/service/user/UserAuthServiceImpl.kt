@@ -12,9 +12,7 @@ class UserAuthServiceImpl(
     val userQueryService: UserQueryService
 ) : UserAuthService {
 
-    override fun hash(password: String): String {
-        return BCryptPasswordEncoder().encode(password)
-    }
+    override fun hash(password: String): String = BCryptPasswordEncoder().encode(password)
 
     override suspend fun usernameAlreadyUse(username: String): Boolean {
         userQueryService.findByName(username)
