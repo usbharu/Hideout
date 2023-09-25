@@ -1,13 +1,13 @@
 package dev.usbharu.hideout.service.job
 
 import dev.usbharu.kjob.exposed.ExposedKJob
-import kjob.core.Job
+import kjob.core.dsl.JobRegisterContext
 import kjob.core.dsl.KJobFunctions
 import kjob.core.kjob
 import org.jetbrains.exposed.sql.Database
 import org.springframework.stereotype.Service
+import dev.usbharu.hideout.domain.model.job.HideoutJob as HJ
 import kjob.core.dsl.JobContextWithProps as JCWP
-import kjob.core.dsl.JobRegisterContext as JRC
 
 @Service
 class KJobJobQueueWorkerService(private val database: Database) : JobQueueWorkerService {
@@ -22,7 +22,7 @@ class KJobJobQueueWorkerService(private val database: Database) : JobQueueWorker
     }
 
     override fun init(
-        defines: List<Pair<Job, JRC<Job, JCWP<Job>>.(Job) -> KJobFunctions<Job, JCWP<Job>>>>
+        defines: List<Pair<HJ, JobRegisterContext<HJ, JCWP<HJ>>.(HJ) -> KJobFunctions<HJ, JCWP<HJ>>>>
     ) {
         defines.forEach { job ->
             kjob.register(job.first, job.second)

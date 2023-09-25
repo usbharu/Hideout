@@ -26,6 +26,7 @@ class StatsesApiServiceImpl(
     private val userQueryService: UserQueryService
 ) :
     StatusesApiService {
+    @Suppress("LongMethod")
     override suspend fun postStatus(statusesRequest: StatusesRequest, user: UserDetailsImpl): Status {
         val visibility = when (statusesRequest.visibility) {
             StatusesRequest.Visibility.public -> Visibility.PUBLIC
@@ -37,12 +38,12 @@ class StatsesApiServiceImpl(
 
         val post = postService.createLocal(
             PostCreateDto(
-                statusesRequest.status.orEmpty(),
-                statusesRequest.spoilerText,
-                visibility,
-                null,
-                statusesRequest.inReplyToId?.toLongOrNull(),
-                user.id
+                text = statusesRequest.status.orEmpty(),
+                overview = statusesRequest.spoilerText,
+                visibility = visibility,
+                repostId = null,
+                repolyId = statusesRequest.inReplyToId?.toLongOrNull(),
+                userId = user.id
             )
         )
         val account = accountService.findById(user.id)
@@ -58,7 +59,7 @@ class StatsesApiServiceImpl(
         val replyUser = if (post.replyId != null) {
             try {
                 userQueryService.findById(postQueryService.findById(post.replyId).userId).id
-            } catch (e: FailedToGetResourcesException) {
+            } catch (ignore: FailedToGetResourcesException) {
                 null
             }
         } else {
@@ -82,7 +83,7 @@ class StatsesApiServiceImpl(
             favouritesCount = 0,
             repliesCount = 0,
             url = post.url,
-            post.replyId?.toString(),
+            inReplyToId = post.replyId?.toString(),
             inReplyToAccountId = replyUser?.toString(),
             reblog = null,
             language = null,

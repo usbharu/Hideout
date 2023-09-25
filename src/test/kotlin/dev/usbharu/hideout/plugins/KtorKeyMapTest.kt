@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.mock
+import utils.TestApplicationConfig.testApplicationConfig
 import utils.TestTransaction
 import java.security.KeyPairGenerator
 import java.time.Instant
@@ -36,7 +37,7 @@ class KtorKeyMapTest {
                 )
             }
         }
-        val ktorKeyMap = KtorKeyMap(userQueryService, TestTransaction)
+        val ktorKeyMap = KtorKeyMap(userQueryService, TestTransaction, testApplicationConfig)
 
         ktorKeyMap.getPrivateKey("test")
     }

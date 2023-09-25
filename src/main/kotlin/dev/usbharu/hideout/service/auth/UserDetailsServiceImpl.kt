@@ -9,7 +9,6 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
-import java.net.URL
 
 @Service
 class UserDetailsServiceImpl(
@@ -23,16 +22,16 @@ class UserDetailsServiceImpl(
             throw UsernameNotFoundException("$username not found")
         }
         transaction.transaction {
-            val findById = userQueryService.findByNameAndDomain(username, URL(applicationConfig.url).host)
+            val findById = userQueryService.findByNameAndDomain(username, applicationConfig.url.host)
             UserDetailsImpl(
-                findById.id,
-                findById.name,
-                findById.password,
-                true,
-                true,
-                true,
-                true,
-                mutableListOf()
+                id = findById.id,
+                username = findById.name,
+                password = findById.password,
+                enabled = true,
+                accountNonExpired = true,
+                credentialsNonExpired = true,
+                accountNonLocked = true,
+                authorities = mutableListOf()
             )
         }
     }
