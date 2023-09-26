@@ -1,6 +1,6 @@
 package dev.usbharu.hideout.service.api
 
-import dev.usbharu.hideout.config.Config
+import dev.usbharu.hideout.config.ApplicationConfig
 import dev.usbharu.hideout.domain.model.Acct
 import dev.usbharu.hideout.domain.model.hideout.dto.UserCreateDto
 import dev.usbharu.hideout.domain.model.hideout.dto.UserResponse
@@ -42,7 +42,8 @@ class UserApiServiceImpl(
     private val userQueryService: UserQueryService,
     private val followerQueryService: FollowerQueryService,
     private val userService: UserService,
-    private val transaction: Transaction
+    private val transaction: Transaction,
+    private val applicationConfig: ApplicationConfig
 ) : UserApiService {
     override suspend fun findAll(limit: Int?, offset: Long): List<UserResponse> = transaction.transaction {
         userQueryService.findAll(min(limit ?: 100, 100), offset).map { UserResponse.from(it) }
@@ -62,7 +63,7 @@ class UserApiServiceImpl(
             UserResponse.from(
                 userQueryService.findByNameAndDomain(
                     acct.username,
-                    acct.domain ?: Config.configData.domain
+                    acct.domain ?: applicationConfig.url.host
                 )
             )
         }
@@ -77,18 +78,18 @@ class UserApiServiceImpl(
     }
 
     override suspend fun findFollowersByAcct(acct: Acct): List<UserResponse> = transaction.transaction {
-        followerQueryService.findFollowersByNameAndDomain(acct.username, acct.domain ?: Config.configData.domain)
+        followerQueryService.findFollowersByNameAndDomain(acct.username, acct.domain ?: applicationConfig.url.host)
             .map { UserResponse.from(it) }
     }
 
     override suspend fun findFollowingsByAcct(acct: Acct): List<UserResponse> = transaction.transaction {
-        followerQueryService.findFollowingByNameAndDomain(acct.username, acct.domain ?: Config.configData.domain)
+        followerQueryService.findFollowingByNameAndDomain(acct.username, acct.domain ?: applicationConfig.url.host)
             .map { UserResponse.from(it) }
     }
 
     override suspend fun createUser(username: String, password: String): UserResponse {
         return transaction.transaction {
-            if (userQueryService.existByNameAndDomain(username, Config.configData.domain)) {
+            if (userQueryService.existByNameAndDomain(username, applicationConfig.url.host)) {
                 throw UsernameAlreadyExistException()
             }
             UserResponse.from(userService.createLocalUser(UserCreateDto(username, username, "", password)))
@@ -106,7 +107,7 @@ class UserApiServiceImpl(
             userService.followRequest(
                 userQueryService.findByNameAndDomain(
                     targetAcct.username,
-                    targetAcct.domain ?: Config.configData.domain
+                    targetAcct.domain ?: applicationConfig.url.host
                 ).id,
                 sourceId
             )
