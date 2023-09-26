@@ -198,10 +198,6 @@ paths:
       responses:
         200:
           description: 成功
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Token"
 
 components:
   schemas:
@@ -220,6 +216,9 @@ components:
           type: boolean
         reason:
           type: string
+      required:
+        - username
+        - password
 
     Token:
       type: object
@@ -232,6 +231,7 @@ components:
           type: string
         created_at:
           type: integer
+          format: int64
 
     Account:
       type: object
