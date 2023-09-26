@@ -36,7 +36,12 @@ class APReceiveFollowServiceImplTest {
         }
         val activityPubFollowService =
             APReceiveFollowServiceImpl(
-                jobQueueParentService, mock(), mock(), mock(), mock(), TestTransaction,
+                jobQueueParentService,
+                mock(),
+                mock(),
+                mock(),
+                mock(),
+                TestTransaction,
                 objectMapper
             )
         activityPubFollowService.receiveFollow(

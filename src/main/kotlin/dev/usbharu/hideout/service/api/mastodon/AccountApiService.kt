@@ -4,21 +4,32 @@ import dev.usbharu.hideout.domain.mastodon.model.generated.Account
 import dev.usbharu.hideout.domain.mastodon.model.generated.CredentialAccount
 import dev.usbharu.hideout.domain.mastodon.model.generated.CredentialAccountSource
 import dev.usbharu.hideout.domain.mastodon.model.generated.Role
+import dev.usbharu.hideout.domain.model.hideout.dto.UserCreateDto
 import dev.usbharu.hideout.service.core.Transaction
 import dev.usbharu.hideout.service.mastodon.AccountService
+import dev.usbharu.hideout.service.user.UserService
 import org.springframework.stereotype.Service
 
 @Service
 interface AccountApiService {
     suspend fun verifyCredentials(userid: Long): CredentialAccount
+    suspend fun registerAccount(userCreateDto: UserCreateDto): Unit
 }
 
 @Service
-class AccountApiServiceImpl(private val accountService: AccountService, private val transaction: Transaction) :
+class AccountApiServiceImpl(
+    private val accountService: AccountService,
+    private val transaction: Transaction,
+    private val userService: UserService
+) :
     AccountApiService {
     override suspend fun verifyCredentials(userid: Long): CredentialAccount = transaction.transaction {
         val account = accountService.findById(userid)
         from(account)
+    }
+
+    override suspend fun registerAccount(userCreateDto: UserCreateDto) {
+        userService.createLocalUser(UserCreateDto(userCreateDto.name, userCreateDto.name, "", userCreateDto.password))
     }
 
     private fun from(account: Account): CredentialAccount {
