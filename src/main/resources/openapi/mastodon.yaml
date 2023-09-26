@@ -182,8 +182,57 @@ paths:
               schema:
                 $ref: "#/components/schemas/CredentialAccount"
 
+  /api/v1/accounts:
+    post:
+      tags:
+        - account
+      security:
+        - OAuth2:
+            - "write:accounts"
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/AccountsCreateRequest"
+      responses:
+        200:
+          description: 成功
+
 components:
   schemas:
+    AccountsCreateRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        agreement:
+          type: boolean
+        locale:
+          type: boolean
+        reason:
+          type: string
+      required:
+        - username
+        - password
+
+    Token:
+      type: object
+      properties:
+        access_token:
+          type: string
+        token_type:
+          type: string
+        scope:
+          type: string
+        created_at:
+          type: integer
+          format: int64
+
     Account:
       type: object
       properties:
