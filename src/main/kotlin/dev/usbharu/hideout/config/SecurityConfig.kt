@@ -72,6 +72,9 @@ class SecurityConfig {
                     builder.pattern("/error"),
                     builder.pattern("/nodeinfo/2.0")
                 ).permitAll()
+                it.requestMatchers(
+                    builder.pattern("/auth/**")
+                ).anonymous()
                 it.requestMatchers(builder.pattern("/change-password")).authenticated()
                 it.requestMatchers(builder.pattern("/api/v1/accounts/verify_credentials"))
                     .hasAnyAuthority("SCOPE_read", "SCOPE_read:accounts")
@@ -84,7 +87,6 @@ class SecurityConfig {
             .passwordManagement { }
             .formLogin(Customizer.withDefaults())
             .csrf {
-                it.ignoringRequestMatchers(builder.pattern("/api/**"))
                 it.ignoringRequestMatchers(builder.pattern("/users/*/inbox"))
                 it.ignoringRequestMatchers(builder.pattern("/inbox"))
                 it.ignoringRequestMatchers(PathRequest.toH2Console())
