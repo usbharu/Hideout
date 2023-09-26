@@ -2,7 +2,7 @@ package dev.usbharu.hideout.service.ap
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import dev.usbharu.hideout.config.Config
+import dev.usbharu.hideout.config.ApplicationConfig
 import dev.usbharu.hideout.domain.model.ap.Like
 import dev.usbharu.hideout.domain.model.ap.Undo
 import dev.usbharu.hideout.domain.model.hideout.entity.Reaction
@@ -35,6 +35,7 @@ class APReactionServiceImpl(
     private val followerQueryService: FollowerQueryService,
     private val postQueryService: PostQueryService,
     @Qualifier("activitypub") private val objectMapper: ObjectMapper,
+    private val applicationConfig: ApplicationConfig
 
     ) : APReactionService {
     override suspend fun reaction(like: Reaction) {
@@ -63,7 +64,7 @@ class APReactionServiceImpl(
                 props[DeliverRemoveReactionJob.actor] = user.url
                 props[DeliverRemoveReactionJob.inbox] = follower.inbox
                 props[DeliverRemoveReactionJob.id] = post.id.toString()
-                props[DeliverRemoveReactionJob.like] = Config.configData.objectMapper.writeValueAsString(like)
+                props[DeliverRemoveReactionJob.like] = objectMapper.writeValueAsString(like)
             }
         }
     }
@@ -81,7 +82,7 @@ class APReactionServiceImpl(
                 name = "Like",
                 actor = actor,
                 `object` = postUrl,
-                id = "${Config.configData.url}/like/note/$id",
+                id = "${applicationConfig.url}/like/note/$id",
                 content = content
             ),
             objectMapper
@@ -91,7 +92,7 @@ class APReactionServiceImpl(
     override suspend fun removeReactionJob(props: JobProps<DeliverRemoveReactionJob>) {
         val inbox = props[DeliverRemoveReactionJob.inbox]
         val actor = props[DeliverRemoveReactionJob.actor]
-        val like = Config.configData.objectMapper.readValue<Like>(props[DeliverRemoveReactionJob.like])
+        val like = objectMapper.readValue<Like>(props[DeliverRemoveReactionJob.like])
         httpClient.postAp(
             urlString = inbox,
             username = "$actor#pubkey",
@@ -99,7 +100,7 @@ class APReactionServiceImpl(
                 name = "Undo Reaction",
                 actor = actor,
                 `object` = like,
-                id = "${Config.configData.url}/undo/note/${like.id}",
+                id = "${applicationConfig.url}/undo/note/${like.id}",
                 published = Instant.now()
             ),
             objectMapper

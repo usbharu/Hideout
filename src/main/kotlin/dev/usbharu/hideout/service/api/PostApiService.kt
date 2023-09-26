@@ -1,6 +1,6 @@
 package dev.usbharu.hideout.service.api
 
-import dev.usbharu.hideout.config.Config
+import dev.usbharu.hideout.config.ApplicationConfig
 import dev.usbharu.hideout.domain.model.hideout.dto.PostCreateDto
 import dev.usbharu.hideout.domain.model.hideout.dto.PostResponse
 import dev.usbharu.hideout.domain.model.hideout.dto.ReactionResponse
@@ -51,7 +51,8 @@ class PostApiServiceImpl(
     private val postResponseQueryService: PostResponseQueryService,
     private val reactionQueryService: ReactionQueryService,
     private val reactionService: ReactionService,
-    private val transaction: Transaction
+    private val transaction: Transaction,
+    private val applicationConfig: ApplicationConfig
 ) : PostApiService {
     override suspend fun createPost(postForm: Post, userId: Long): PostResponse {
         return transaction.transaction {
@@ -102,7 +103,10 @@ class PostApiServiceImpl(
         val idOrNull = nameOrId.toLongOrNull()
         return if (idOrNull == null) {
             val acct = AcctUtil.parse(nameOrId)
-            postResponseQueryService.findByUserNameAndUserDomain(acct.username, acct.domain ?: Config.configData.domain)
+            postResponseQueryService.findByUserNameAndUserDomain(
+                acct.username,
+                acct.domain ?: applicationConfig.url.host
+            )
         } else {
             postResponseQueryService.findByUserId(idOrNull)
         }
