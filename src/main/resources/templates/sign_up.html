@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>SignUp</title>
 </head>
 <body>
 
-<form action='/api/v1/accounts' method='post'>
+<form method='post' th:action="@{/api/v1/accounts}">
     <input name='username' type='text' value=''>
     <input name='password' type='password'>
     <input type="submit">
