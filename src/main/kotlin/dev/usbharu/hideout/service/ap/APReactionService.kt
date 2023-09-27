@@ -37,7 +37,7 @@ class APReactionServiceImpl(
     @Qualifier("activitypub") private val objectMapper: ObjectMapper,
     private val applicationConfig: ApplicationConfig
 
-    ) : APReactionService {
+) : APReactionService {
     override suspend fun reaction(like: Reaction) {
         val followers = followerQueryService.findFollowersById(like.userId)
         val user = userQueryService.findById(like.userId)
