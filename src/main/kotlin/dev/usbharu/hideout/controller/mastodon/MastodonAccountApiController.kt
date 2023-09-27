@@ -37,7 +37,6 @@ class MastodonAccountApiController(
         reason: String?
     ): ResponseEntity<Unit> = runBlocking {
         transaction.transaction {
-
             accountApiService.registerAccount(UserCreateDto(username, username, "", password))
         }
         val httpHeaders = HttpHeaders()
