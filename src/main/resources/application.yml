@@ -5,6 +5,8 @@ hideout:
     driver: "org.h2.Driver"
     user: ""
     password: ""
+  job-queue:
+    type: "nosql"
 spring:
   jackson:
     serialization:
