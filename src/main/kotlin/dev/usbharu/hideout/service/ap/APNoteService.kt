@@ -17,6 +17,8 @@ import dev.usbharu.hideout.query.PostQueryService
 import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.repository.PostRepository
 import dev.usbharu.hideout.service.job.JobQueueParentService
+import dev.usbharu.hideout.service.post.PostCreateInterceptor
+import dev.usbharu.hideout.service.post.PostService
 import io.ktor.client.*
 import io.ktor.client.statement.*
 import kjob.core.job.JobProps
@@ -45,9 +47,14 @@ class APNoteServiceImpl(
     private val followerQueryService: FollowerQueryService,
     private val postQueryService: PostQueryService,
     @Qualifier("activitypub") private val objectMapper: ObjectMapper,
-    private val applicationConfig: ApplicationConfig
+    private val applicationConfig: ApplicationConfig,
+    private val postService: PostService
 
-) : APNoteService {
+) : APNoteService, PostCreateInterceptor {
+
+    init {
+        postService.addInterceptor(this)
+    }
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -161,7 +168,7 @@ class APNoteServiceImpl(
             postQueryService.findByUrl(it)
         }
 
-        postRepository.save(
+        postService.createRemote(
             Post.of(
                 id = postRepository.generateId(),
                 userId = person.second.id,
@@ -184,5 +191,9 @@ class APNoteServiceImpl(
 
     companion object {
         const val public: String = "https://www.w3.org/ns/activitystreams#Public"
+    }
+
+    override suspend fun run(post: Post) {
+        createNote(post)
     }
 }
