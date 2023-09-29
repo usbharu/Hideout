@@ -23,11 +23,16 @@ class PostServiceImpl(
     }
 
     override suspend fun createRemote(post: Post): Post {
-        return postRepository.save(post)
+        return internalCreate(post)
     }
 
     override fun addInterceptor(postCreateInterceptor: PostCreateInterceptor) {
         interceptors.add(postCreateInterceptor)
+    }
+
+    private suspend fun internalCreate(post: Post): Post {
+
+        return postRepository.save(post)
     }
 
     private suspend fun internalCreate(post: PostCreateDto): Post {
@@ -44,6 +49,6 @@ class PostServiceImpl(
             repostId = null,
             replyId = null
         )
-        return postRepository.save(createPost)
+        return internalCreate(post)
     }
 }
