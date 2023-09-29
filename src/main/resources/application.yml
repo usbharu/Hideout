@@ -22,6 +22,9 @@ spring:
     url: "jdbc:h2:./test-dev2;MODE=POSTGRESQL"
     username: ""
     password: ""
+  data:
+    mongodb:
+
 
   h2:
     console:
