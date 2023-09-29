@@ -10,7 +10,10 @@ import org.springframework.security.oauth2.core.ClientAuthenticationMethod
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings
+import org.springframework.security.oauth2.server.authorization.settings.TokenSettings
 import org.springframework.stereotype.Service
+import java.time.Duration
+import java.time.Instant
 import java.util.*
 
 @Service
@@ -40,6 +43,13 @@ class AppApiServiceImpl(
                 .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
                 .redirectUri(appsRequest.redirectUris)
+                .tokenSettings(
+                    TokenSettings.builder()
+                        .accessTokenTimeToLive(
+                            Duration.ofSeconds((Instant.MAX.epochSecond - Instant.now().epochSecond - 10000) / 1000)
+                        )
+                        .build()
+                )
                 .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
                 .scopes { it.addAll(parseScope(appsRequest.scopes.orEmpty())) }
                 .build()

@@ -6,12 +6,14 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet
 import com.nimbusds.jose.jwk.source.JWKSource
 import com.nimbusds.jose.proc.SecurityContext
 import dev.usbharu.hideout.domain.model.UserDetailsImpl
+import dev.usbharu.hideout.util.RsaUtil
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
+import org.springframework.http.HttpMethod
 import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -33,7 +35,7 @@ import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.util.*
 
-@EnableWebSecurity(debug = false)
+@EnableWebSecurity(debug = true)
 @Configuration
 class SecurityConfig {
 
@@ -88,6 +90,7 @@ class SecurityConfig {
             .formLogin(Customizer.withDefaults())
             .csrf {
                 it.ignoringRequestMatchers(builder.pattern("/users/*/inbox"))
+                it.ignoringRequestMatchers(builder.pattern(HttpMethod.POST, "/api/v1/apps"))
                 it.ignoringRequestMatchers(builder.pattern("/inbox"))
                 it.ignoringRequestMatchers(PathRequest.toH2Console())
             }
@@ -103,6 +106,7 @@ class SecurityConfig {
     fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
 
     @Bean
+    @ConditionalOnProperty(name = ["hideout.security.jwt.generate"], havingValue = "false", matchIfMissing = true)
     fun genJwkSource(): JWKSource<SecurityContext> {
         val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
         keyPairGenerator.initialize(2048)
@@ -122,8 +126,8 @@ class SecurityConfig {
     @Bean
     @ConditionalOnProperty(name = ["hideout.security.jwt.generate"], havingValue = "")
     fun loadJwkSource(jwkConfig: JwkConfig): JWKSource<SecurityContext> {
-        val rsaKey = RSAKey.Builder(jwkConfig.publicKey)
-            .privateKey(jwkConfig.privateKey)
+        val rsaKey = RSAKey.Builder(RsaUtil.decodeRsaPublicKey(jwkConfig.publicKey))
+            .privateKey(RsaUtil.decodeRsaPrivateKey(jwkConfig.privateKey))
             .keyID(jwkConfig.keyId)
             .build()
         return ImmutableJWKSet(JWKSet(rsaKey))
@@ -157,6 +161,6 @@ class SecurityConfig {
 @ConditionalOnProperty(name = ["hideout.security.jwt.generate"], havingValue = "")
 data class JwkConfig(
     val keyId: String,
-    val publicKey: RSAPublicKey,
-    val privateKey: RSAPrivateKey
+    val publicKey: String,
+    val privateKey: String
 )
