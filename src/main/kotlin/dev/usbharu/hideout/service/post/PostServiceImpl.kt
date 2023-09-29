@@ -18,25 +18,25 @@ class PostServiceImpl(
     private val interceptors = Collections.synchronizedList(mutableListOf<PostCreateInterceptor>())
 
     override suspend fun createLocal(post: PostCreateDto): Post {
-        val create = internalCreate(post)
+        val create = internalCreate(post, true)
         interceptors.forEach { it.run(create) }
         return create
     }
 
     override suspend fun createRemote(post: Post): Post {
-        return internalCreate(post)
+        return internalCreate(post, false)
     }
 
     override fun addInterceptor(postCreateInterceptor: PostCreateInterceptor) {
         interceptors.add(postCreateInterceptor)
     }
 
-    private suspend fun internalCreate(post: Post): Post {
-        timelineService.publishTimeline(post)
+    private suspend fun internalCreate(post: Post, isLocal: Boolean): Post {
+        timelineService.publishTimeline(post, isLocal)
         return postRepository.save(post)
     }
 
-    private suspend fun internalCreate(post: PostCreateDto): Post {
+    private suspend fun internalCreate(post: PostCreateDto, isLocal: Boolean): Post {
         val user = userRepository.findById(post.userId) ?: throw UserNotFoundException("${post.userId} was not found")
         val id = postRepository.generateId()
         val createPost = Post.of(
@@ -50,6 +50,6 @@ class PostServiceImpl(
             repostId = null,
             replyId = null
         )
-        return internalCreate(createPost)
+        return internalCreate(createPost, isLocal)
     }
 }

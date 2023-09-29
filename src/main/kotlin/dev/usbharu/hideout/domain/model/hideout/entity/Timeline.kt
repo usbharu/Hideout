@@ -13,5 +13,6 @@ data class Timeline(
     val replyId: Long?,
     val repostId: Long?,
     val visibility: Visibility,
-    val sensitive: Boolean
+    val sensitive: Boolean,
+    val isLocal: Boolean
 )

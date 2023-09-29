@@ -11,7 +11,7 @@ class TimelineService(
     private val followerQueryService: FollowerQueryService,
     private val timelineRepository: TimelineRepository
 ) {
-    suspend fun publishTimeline(post: Post) {
+    suspend fun publishTimeline(post: Post, isLocal: Boolean) {
         val findFollowersById = followerQueryService.findFollowersById(post.userId)
         timelineRepository.saveAll(findFollowersById.map {
             Timeline(
@@ -24,7 +24,8 @@ class TimelineService(
                 replyId = post.replyId,
                 repostId = post.repostId,
                 visibility = post.visibility,
-                sensitive = post.sensitive
+                sensitive = post.sensitive,
+                isLocal = isLocal
             )
         })
     }
