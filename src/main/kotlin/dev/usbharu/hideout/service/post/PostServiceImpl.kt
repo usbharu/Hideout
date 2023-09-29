@@ -13,6 +13,7 @@ import java.util.*
 class PostServiceImpl(
     private val postRepository: PostRepository,
     private val userRepository: UserRepository,
+    private val timelineService: TimelineService
 ) : PostService {
     private val interceptors = Collections.synchronizedList(mutableListOf<PostCreateInterceptor>())
 
@@ -31,7 +32,7 @@ class PostServiceImpl(
     }
 
     private suspend fun internalCreate(post: Post): Post {
-
+        timelineService.publishTimeline(post)
         return postRepository.save(post)
     }
 
@@ -49,6 +50,6 @@ class PostServiceImpl(
             repostId = null,
             replyId = null
         )
-        return internalCreate(post)
+        return internalCreate(createPost)
     }
 }
