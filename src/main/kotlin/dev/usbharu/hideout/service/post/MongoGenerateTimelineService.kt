@@ -6,7 +6,9 @@ import dev.usbharu.hideout.repository.MongoTimelineRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.springframework.data.domain.Pageable
+import org.springframework.stereotype.Service
 
+@Service
 class MongoGenerateTimelineService(
     private val mongoTimelineRepository: MongoTimelineRepository,
     private val statusQueryService: StatusQueryService
@@ -23,7 +25,7 @@ class MongoGenerateTimelineService(
     ): List<Status> {
         val timelines =
             withContext(Dispatchers.IO) {
-                mongoTimelineRepository.findByUserIdAndTimelineIdAndPostIdBetweenAndLocal(
+                mongoTimelineRepository.findByUserIdAndTimelineIdAndPostIdBetweenAndIsLocal(
                     forUserId, 0, maxId, minId, localOnly, Pageable.ofSize(limit)
                 )
             }

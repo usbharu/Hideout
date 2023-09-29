@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.repository.MongoRepository
 interface MongoTimelineRepository : MongoRepository<Timeline, Long> {
     fun findByUserId(id: Long): List<Timeline>
     fun findByUserIdAndTimelineId(userId: Long, timelineId: Long): List<Timeline>
-    fun findByUserIdAndTimelineIdAndPostIdBetweenAndLocal(
+    fun findByUserIdAndTimelineIdAndPostIdBetweenAndIsLocal(
         userId: Long?,
         timelineId: Long?,
         postIdMin: Long?,
