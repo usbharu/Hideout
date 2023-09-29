@@ -15,9 +15,12 @@ class TimelineService(
     private val timelineRepository: TimelineRepository
 ) {
     suspend fun publishTimeline(post: Post, isLocal: Boolean) {
-        // 自分自身も含める必要がある
-        val user = userQueryService.findById(post.userId)
-        val findFollowersById = followerQueryService.findFollowersById(post.userId).plus(user)
+        val findFollowersById = followerQueryService.findFollowersById(post.userId).toMutableList()
+        if (isLocal) {
+            // 自分自身も含める必要がある
+            val user = userQueryService.findById(post.userId)
+            findFollowersById.add(user)
+        }
         val timelines = findFollowersById.map {
             Timeline(
                 id = timelineRepository.generateId(),
