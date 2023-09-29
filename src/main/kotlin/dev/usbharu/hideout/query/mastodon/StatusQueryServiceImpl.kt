@@ -6,8 +6,10 @@ import dev.usbharu.hideout.repository.Posts
 import dev.usbharu.hideout.repository.Users
 import org.jetbrains.exposed.sql.innerJoin
 import org.jetbrains.exposed.sql.select
+import org.springframework.stereotype.Repository
 import java.time.Instant
 
+@Repository
 class StatusQueryServiceImpl : StatusQueryService {
     override suspend fun findByPostIds(ids: List<Long>): List<Status> {
 
