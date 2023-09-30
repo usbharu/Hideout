@@ -23,9 +23,7 @@ class PostServiceImpl(
         return create
     }
 
-    override suspend fun createRemote(post: Post): Post {
-        return internalCreate(post, false)
-    }
+    override suspend fun createRemote(post: Post): Post = internalCreate(post, false)
 
     override fun addInterceptor(postCreateInterceptor: PostCreateInterceptor) {
         interceptors.add(postCreateInterceptor)
