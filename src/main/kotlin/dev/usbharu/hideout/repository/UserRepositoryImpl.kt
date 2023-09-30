@@ -6,23 +6,12 @@ import dev.usbharu.hideout.service.core.IdGenerateService
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.stereotype.Repository
 import java.time.Instant
 
 @Repository
-class UserRepositoryImpl(private val database: Database, private val idGenerateService: IdGenerateService) :
+class UserRepositoryImpl(private val idGenerateService: IdGenerateService) :
     UserRepository {
-    init {
-        transaction(database) {
-            SchemaUtils.create(Users)
-            SchemaUtils.create(UsersFollowers)
-            SchemaUtils.createMissingTablesAndColumns(Users)
-            SchemaUtils.createMissingTablesAndColumns(UsersFollowers)
-            SchemaUtils.create(FollowRequests)
-            SchemaUtils.createMissingTablesAndColumns(FollowRequests)
-        }
-    }
 
     override suspend fun save(user: User): User {
         val singleOrNull = Users.select { Users.id eq user.id }.singleOrNull()

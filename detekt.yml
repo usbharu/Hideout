@@ -157,3 +157,6 @@ potential-bugs:
 
   ElseCaseInsteadOfExhaustiveWhen:
     active: true
+
+  HasPlatformType:
+    active: false
