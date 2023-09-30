@@ -38,6 +38,7 @@ interface APNoteService {
 }
 
 @Service
+@Suppress("LongParameterList")
 class APNoteServiceImpl(
     private val httpClient: HttpClient,
     private val jobQueueParentService: JobQueueParentService,

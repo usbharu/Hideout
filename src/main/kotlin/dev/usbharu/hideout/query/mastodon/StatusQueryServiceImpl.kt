@@ -11,8 +11,8 @@ import java.time.Instant
 
 @Repository
 class StatusQueryServiceImpl : StatusQueryService {
+    @Suppress("LongMethod")
     override suspend fun findByPostIds(ids: List<Long>): List<Status> {
-
         val pairs = Posts.innerJoin(Users, onColumn = { userId }, otherColumn = { id })
             .select { Posts.id inList ids }
             .map {
@@ -98,7 +98,5 @@ class StatusQueryServiceImpl : StatusQueryService {
                     it
                 }
             }
-
-
     }
 }
