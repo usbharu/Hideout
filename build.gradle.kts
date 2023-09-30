@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
+import kotlin.math.min
 
 val ktor_version: String by project
 val kotlin_version: String by project
@@ -27,6 +28,9 @@ version = "0.0.1"
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    val cpus = Runtime.getRuntime().availableProcessors()
+    maxParallelForks = min(1, cpus - 1)
+    setForkEvery(4)
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>().configureEach {
