@@ -5,21 +5,13 @@ import dev.usbharu.hideout.service.core.IdGenerateService
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.stereotype.Repository
 
 @Repository
 class ReactionRepositoryImpl(
-    private val database: Database,
     private val idGenerateService: IdGenerateService
 ) : ReactionRepository {
 
-    init {
-        transaction(database) {
-            SchemaUtils.create(Reactions)
-            SchemaUtils.createMissingTablesAndColumns(Reactions)
-        }
-    }
 
     override suspend fun generateId(): Long = idGenerateService.generateId()
 

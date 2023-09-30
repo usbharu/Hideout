@@ -1,20 +1,15 @@
 package dev.usbharu.hideout.repository
 
 import dev.usbharu.hideout.domain.model.hideout.entity.Jwt
-import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.update
 import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-class MetaRepositoryImpl(private val database: Database) : MetaRepository {
-
-    init {
-        transaction(database) {
-            SchemaUtils.create(Meta)
-            SchemaUtils.createMissingTablesAndColumns(Meta)
-        }
-    }
+class MetaRepositoryImpl : MetaRepository {
 
     override suspend fun save(meta: dev.usbharu.hideout.domain.model.hideout.entity.Meta) {
         if (Meta.select { Meta.id eq 1 }.empty()) {

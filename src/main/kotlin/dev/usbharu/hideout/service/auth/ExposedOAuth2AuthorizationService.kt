@@ -10,7 +10,6 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.javatime.timestamp
-import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.security.jackson2.CoreJackson2Module
 import org.springframework.security.jackson2.SecurityJackson2Modules
 import org.springframework.security.oauth2.core.*
@@ -29,16 +28,9 @@ import org.springframework.stereotype.Service
 class ExposedOAuth2AuthorizationService(
     private val registeredClientRepository: RegisteredClientRepository,
     private val transaction: Transaction,
-    private val database: Database
 ) :
     OAuth2AuthorizationService {
 
-    init {
-        transaction(database) {
-            SchemaUtils.create(Authorization)
-            SchemaUtils.createMissingTablesAndColumns(Authorization)
-        }
-    }
 
     @Suppress("LongMethod", "CyclomaticComplexMethod")
     override fun save(authorization: OAuth2Authorization?): Unit = runBlocking {
