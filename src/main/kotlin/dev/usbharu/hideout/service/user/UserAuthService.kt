@@ -10,5 +10,4 @@ interface UserAuthService {
     suspend fun usernameAlreadyUse(username: String): Boolean
 
     suspend fun generateKeyPair(): KeyPair
-
 }

@@ -28,7 +28,6 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 @Repository
 class RegisteredClientRepositoryImpl : RegisteredClientRepository {
 
-
     override fun save(registeredClient: SpringRegisteredClient?) {
         requireNotNull(registeredClient)
         val singleOrNull = RegisteredClient.select { RegisteredClient.id eq registeredClient.id }.singleOrNull()
