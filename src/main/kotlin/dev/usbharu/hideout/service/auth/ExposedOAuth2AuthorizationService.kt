@@ -31,7 +31,6 @@ class ExposedOAuth2AuthorizationService(
 ) :
     OAuth2AuthorizationService {
 
-
     @Suppress("LongMethod", "CyclomaticComplexMethod")
     override fun save(authorization: OAuth2Authorization?): Unit = runBlocking {
         requireNotNull(authorization)
