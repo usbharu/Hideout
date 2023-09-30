@@ -111,6 +111,8 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.springframework.security:spring-security-oauth2-jose")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
+    implementation("org.jetbrains.exposed:exposed-spring-boot-starter:0.44.0")
+
 
     implementation("io.ktor:ktor-client-logging-jvm:$ktor_version")
 
