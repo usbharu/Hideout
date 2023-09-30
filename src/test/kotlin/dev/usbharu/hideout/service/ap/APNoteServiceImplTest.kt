@@ -80,15 +80,16 @@ class APNoteServiceImplTest {
         val jobQueueParentService = mock<JobQueueParentService>()
         val activityPubNoteService =
             APNoteServiceImpl(
-                mock(),
-                jobQueueParentService,
-                mock(),
-                mock(),
-                userQueryService,
-                followerQueryService,
-                mock(),
+                httpClient = mock(),
+                jobQueueParentService = jobQueueParentService,
+                postRepository = mock(),
+                apUserService = mock(),
+                userQueryService = userQueryService,
+                followerQueryService = followerQueryService,
+                postQueryService = mock(),
                 objectMapper = objectMapper,
-                applicationConfig = testApplicationConfig
+                applicationConfig = testApplicationConfig,
+                postService = mock()
             )
         val postEntity = Post.of(
             1L,
@@ -121,7 +122,8 @@ class APNoteServiceImplTest {
             followerQueryService = mock(),
             postQueryService = mock(),
             objectMapper = objectMapper,
-            applicationConfig = testApplicationConfig
+            applicationConfig = testApplicationConfig,
+            postService = mock()
         )
         activityPubNoteService.createNoteJob(
             JobProps(

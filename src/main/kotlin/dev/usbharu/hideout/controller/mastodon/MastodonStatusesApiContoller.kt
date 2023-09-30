@@ -22,5 +22,5 @@ class MastodonStatusesApiContoller(private val statusesApiService: StatusesApiSe
                 statusesApiService.postStatus(statusesRequest, jwt.getClaim<String>("uid").toLong()),
                 HttpStatus.OK
             )
-    }
+        }
 }

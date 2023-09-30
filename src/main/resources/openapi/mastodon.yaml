@@ -15,6 +15,8 @@ tags:
     description: app
   - name: instance
     description: instance
+  - name: timeline
+    description: timeline
 
 paths:
   /api/v2/instance:
@@ -201,6 +203,94 @@ paths:
       responses:
         200:
           description: 成功
+
+  /api/v1/timelines/public:
+    get:
+      tags:
+        - timeline
+      parameters:
+        - in: query
+          name: local
+          required: false
+          schema:
+            type: boolean
+        - in: query
+          name: remote
+          required: false
+          schema:
+            type: boolean
+        - in: query
+          name: only_media
+          required: false
+          schema:
+            type: boolean
+        - in: query
+          name: max_id
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: since_id
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: min_id
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Status"
+
+  /api/v1/timelines/home:
+    get:
+      tags:
+        - timeline
+      security:
+        - OAuth2:
+            - "read:statuses"
+      parameters:
+        - in: query
+          name: max_id
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: since_id
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: min_id
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Status"
 
 components:
   schemas:
