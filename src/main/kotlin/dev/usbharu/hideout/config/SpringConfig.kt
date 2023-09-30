@@ -1,9 +1,7 @@
 package dev.usbharu.hideout.config
 
-import org.jetbrains.exposed.sql.Database
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import java.net.URL
 
@@ -15,16 +13,6 @@ class SpringConfig {
 
     @Autowired
     lateinit var config: ApplicationConfig
-
-    @Bean
-    fun database(): Database {
-        return Database.connect(
-            url = dbConfig.url,
-            driver = dbConfig.driver,
-            user = dbConfig.user,
-            password = dbConfig.password
-        )
-    }
 }
 
 @ConfigurationProperties("hideout")

@@ -33,8 +33,9 @@ spring:
   h2:
     console:
       enabled: true
+  exposed:
+    generate-ddl: true
 server:
-
   tomcat:
     basedir: tomcat
     accesslog:
