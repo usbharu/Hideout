@@ -190,11 +190,11 @@ class APNoteServiceImpl(
     override suspend fun fetchNote(note: Note, targetActor: String?): Note =
         note(note, targetActor, note.id ?: throw IllegalArgumentException("note.id is null"))
 
-    companion object {
-        const val public: String = "https://www.w3.org/ns/activitystreams#Public"
-    }
-
     override suspend fun run(post: Post) {
         createNote(post)
+    }
+
+    companion object {
+        const val public: String = "https://www.w3.org/ns/activitystreams#Public"
     }
 }

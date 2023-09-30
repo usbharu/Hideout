@@ -21,9 +21,8 @@ class MongoTimelineRepositoryWrapper(
         }
     }
 
-    override suspend fun saveAll(timelines: List<Timeline>): List<Timeline> {
-        return mongoTimelineRepository.saveAll(timelines)
-    }
+    override suspend fun saveAll(timelines: List<Timeline>): List<Timeline> =
+        mongoTimelineRepository.saveAll(timelines)
 
     override suspend fun findByUserId(id: Long): List<Timeline> {
         return withContext(Dispatchers.IO) {

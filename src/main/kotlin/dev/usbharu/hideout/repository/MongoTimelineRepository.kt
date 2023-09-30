@@ -4,7 +4,7 @@ import dev.usbharu.hideout.domain.model.hideout.entity.Timeline
 import org.springframework.data.domain.Pageable
 import org.springframework.data.mongodb.repository.MongoRepository
 
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "FunctionMaxLength")
 interface MongoTimelineRepository : MongoRepository<Timeline, Long> {
     fun findByUserId(id: Long): List<Timeline>
     fun findByUserIdAndTimelineId(userId: Long, timelineId: Long): List<Timeline>
