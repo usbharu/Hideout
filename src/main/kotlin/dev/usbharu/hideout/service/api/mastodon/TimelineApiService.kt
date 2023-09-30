@@ -5,6 +5,7 @@ import dev.usbharu.hideout.service.core.Transaction
 import dev.usbharu.hideout.service.post.GenerateTimelineService
 import org.springframework.stereotype.Service
 
+@Suppress("LongParameterList")
 interface TimelineApiService {
     suspend fun publicTimeline(
         localOnly: Boolean = false,
@@ -24,7 +25,6 @@ interface TimelineApiService {
         limit: Int = 20
     ): List<Status>
 }
-
 
 @Service
 class TimelineApiServiceImpl(

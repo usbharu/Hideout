@@ -7,6 +7,7 @@ import kotlinx.coroutines.withContext
 import org.springframework.stereotype.Repository
 
 @Repository
+@Suppress("InjectDispatcher")
 class MongoTimelineRepositoryWrapper(
     private val mongoTimelineRepository: MongoTimelineRepository,
     private val idGenerateService: IdGenerateService

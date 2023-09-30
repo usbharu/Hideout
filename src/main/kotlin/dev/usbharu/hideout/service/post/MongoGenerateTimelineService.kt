@@ -23,8 +23,6 @@ class MongoGenerateTimelineService(
         sinceId: Long?,
         limit: Int
     ): List<Status> {
-
-
         val query = Query()
         if (forUserId != null) {
             val criteria = Criteria.where("userId").`is`(forUserId)

@@ -4,6 +4,7 @@ import dev.usbharu.hideout.domain.mastodon.model.generated.Status
 import org.springframework.stereotype.Service
 
 @Service
+@Suppress("LongParameterList")
 interface GenerateTimelineService {
     suspend fun getTimeline(
         forUserId: Long? = null,
@@ -14,5 +15,4 @@ interface GenerateTimelineService {
         sinceId: Long? = null,
         limit: Int = 20
     ): List<Status>
-
 }
