@@ -5,17 +5,36 @@ import dev.usbharu.hideout.domain.model.hideout.entity.Post
 import dev.usbharu.hideout.exception.UserNotFoundException
 import dev.usbharu.hideout.repository.PostRepository
 import dev.usbharu.hideout.repository.UserRepository
-import dev.usbharu.hideout.service.ap.APNoteService
 import org.springframework.stereotype.Service
 import java.time.Instant
+import java.util.*
 
 @Service
 class PostServiceImpl(
     private val postRepository: PostRepository,
     private val userRepository: UserRepository,
-    private val apNoteService: APNoteService
+    private val timelineService: TimelineService
 ) : PostService {
+    private val interceptors = Collections.synchronizedList(mutableListOf<PostCreateInterceptor>())
+
     override suspend fun createLocal(post: PostCreateDto): Post {
+        val create = internalCreate(post, true)
+        interceptors.forEach { it.run(create) }
+        return create
+    }
+
+    override suspend fun createRemote(post: Post): Post = internalCreate(post, false)
+
+    override fun addInterceptor(postCreateInterceptor: PostCreateInterceptor) {
+        interceptors.add(postCreateInterceptor)
+    }
+
+    private suspend fun internalCreate(post: Post, isLocal: Boolean): Post {
+        timelineService.publishTimeline(post, isLocal)
+        return postRepository.save(post)
+    }
+
+    private suspend fun internalCreate(post: PostCreateDto, isLocal: Boolean): Post {
         val user = userRepository.findById(post.userId) ?: throw UserNotFoundException("${post.userId} was not found")
         val id = postRepository.generateId()
         val createPost = Post.of(
@@ -29,9 +48,6 @@ class PostServiceImpl(
             repostId = null,
             replyId = null
         )
-        apNoteService.createNote(createPost)
-        return internalCreate(createPost)
+        return internalCreate(createPost, isLocal)
     }
-
-    private suspend fun internalCreate(post: Post): Post = postRepository.save(post)
 }

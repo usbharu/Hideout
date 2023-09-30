@@ -22,6 +22,13 @@ spring:
     url: "jdbc:h2:./test-dev2;MODE=POSTGRESQL"
     username: ""
     password: ""
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: hideout
+  #      username: hideoutuser
+  #      password: hideoutpass
 
   h2:
     console:
