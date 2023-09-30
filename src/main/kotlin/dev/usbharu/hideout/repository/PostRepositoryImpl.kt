@@ -11,8 +11,6 @@ import org.springframework.stereotype.Repository
 @Repository
 class PostRepositoryImpl(private val idGenerateService: IdGenerateService) : PostRepository {
 
-    override suspend fun generateId(): Long = idGenerateService.generateId()
-
     override suspend fun save(post: Post): Post {
         val singleOrNull = Posts.select { Posts.id eq post.id }.singleOrNull()
         if (singleOrNull == null) {
