@@ -41,7 +41,7 @@ class TimelineApiServiceImpl(
         limit: Int
     ): List<Status> = transaction.transaction {
         generateTimelineService.getTimeline(
-            forUserId = null,
+            forUserId = 0,
             localOnly = localOnly,
             mediaOnly = mediaOnly,
             maxId = maxId,
