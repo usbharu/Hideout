@@ -11,5 +11,4 @@ interface UserAuthService {
 
     suspend fun generateKeyPair(): KeyPair
 
-    suspend fun verifyAccount(username: String, password: String): Boolean
 }
