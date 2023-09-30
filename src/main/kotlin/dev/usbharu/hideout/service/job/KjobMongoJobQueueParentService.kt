@@ -10,8 +10,6 @@ import org.springframework.stereotype.Service
 @Service
 @ConditionalOnProperty(name = ["hideout.job-queue.type"], havingValue = "nosql")
 class KjobMongoJobQueueParentService : JobQueueParentService {
-    override fun init(jobDefines: List<Job>) = Unit
-
     private val kjob = kjob(Mongo) {
         connectionString = "mongodb://localhost"
         databaseName = "kjob"
@@ -20,6 +18,8 @@ class KjobMongoJobQueueParentService : JobQueueParentService {
         expireLockInMinutes = 5L
         isWorker = false
     }.start()
+
+    override fun init(jobDefines: List<Job>) = Unit
 
     override suspend fun <J : Job> schedule(job: J, block: ScheduleContext<J>.(J) -> Unit) {
         kjob.schedule(job, block)
