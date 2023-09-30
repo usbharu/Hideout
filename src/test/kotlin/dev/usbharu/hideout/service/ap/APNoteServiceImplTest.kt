@@ -89,7 +89,8 @@ class APNoteServiceImplTest {
                 postQueryService = mock(),
                 objectMapper = objectMapper,
                 applicationConfig = testApplicationConfig,
-                postService = mock()
+                postService = mock(),
+                idGenerateService = mock()
             )
         val postEntity = Post.of(
             1L,
@@ -123,7 +124,8 @@ class APNoteServiceImplTest {
             postQueryService = mock(),
             objectMapper = objectMapper,
             applicationConfig = testApplicationConfig,
-            postService = mock()
+            postService = mock(),
+            idGenerateService = mock()
         )
         activityPubNoteService.createNoteJob(
             JobProps(
