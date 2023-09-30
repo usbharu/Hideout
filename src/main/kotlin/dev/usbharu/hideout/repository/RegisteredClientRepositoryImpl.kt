@@ -10,7 +10,6 @@ import dev.usbharu.hideout.service.auth.ExposedOAuth2AuthorizationService
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.javatime.CurrentTimestamp
 import org.jetbrains.exposed.sql.javatime.timestamp
-import org.jetbrains.exposed.sql.transactions.transaction
 import org.slf4j.LoggerFactory
 import org.springframework.security.jackson2.SecurityJackson2Modules
 import org.springframework.security.oauth2.core.AuthorizationGrantType
@@ -27,14 +26,7 @@ import java.time.Instant
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient as SpringRegisteredClient
 
 @Repository
-class RegisteredClientRepositoryImpl(private val database: Database) : RegisteredClientRepository {
-
-    init {
-        transaction(database) {
-            SchemaUtils.create(RegisteredClient)
-            SchemaUtils.createMissingTablesAndColumns(RegisteredClient)
-        }
-    }
+class RegisteredClientRepositoryImpl : RegisteredClientRepository {
 
     override fun save(registeredClient: SpringRegisteredClient?) {
         requireNotNull(registeredClient)

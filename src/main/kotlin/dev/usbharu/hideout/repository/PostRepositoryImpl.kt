@@ -6,20 +6,10 @@ import dev.usbharu.hideout.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.service.core.IdGenerateService
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.stereotype.Repository
 
 @Repository
-class PostRepositoryImpl(database: Database, private val idGenerateService: IdGenerateService) : PostRepository {
-
-    init {
-        transaction(database) {
-            SchemaUtils.create(Posts)
-            SchemaUtils.createMissingTablesAndColumns(Posts)
-        }
-    }
-
-    override suspend fun generateId(): Long = idGenerateService.generateId()
+class PostRepositoryImpl(private val idGenerateService: IdGenerateService) : PostRepository {
 
     override suspend fun save(post: Post): Post {
         val singleOrNull = Posts.select { Posts.id eq post.id }.singleOrNull()

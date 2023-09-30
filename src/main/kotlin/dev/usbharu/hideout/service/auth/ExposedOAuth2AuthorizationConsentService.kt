@@ -4,7 +4,6 @@ import dev.usbharu.hideout.service.core.Transaction
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository
@@ -15,16 +14,8 @@ import org.springframework.security.oauth2.server.authorization.OAuth2Authorizat
 class ExposedOAuth2AuthorizationConsentService(
     private val registeredClientRepository: RegisteredClientRepository,
     private val transaction: Transaction,
-    private val database: Database
 ) :
     OAuth2AuthorizationConsentService {
-
-    init {
-        transaction(database) {
-            SchemaUtils.create(OAuth2AuthorizationConsent)
-            SchemaUtils.createMissingTablesAndColumns(OAuth2AuthorizationConsent)
-        }
-    }
 
     override fun save(authorizationConsent: AuthorizationConsent?) = runBlocking {
         requireNotNull(authorizationConsent)
