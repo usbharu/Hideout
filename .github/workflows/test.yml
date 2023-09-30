@@ -22,11 +22,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: actions/cache@2
+      - name: Cache
+        uses: actions/cache@v3.3.2
         with:
           path: ~/.gradle/wrapper
           key: gradle-wrapper-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
-      - uses: actions/cache@2
+      - name: Cache
+        uses: actions/cache@v3.3.2
         with:
           path: |
             ~/.gradle/caches/jars-*
@@ -34,7 +36,8 @@ jobs:
             ~/.gradle/caches/modules-*
           key: gradle-dependencies-${{ steps.cache-key.outputs.week }}-${{ hashFiles('**/*.gradle.kts') }}
           restore-keys: gradle-dependencies-${{ steps.cache-key.outputs.week }}-
-      - uses: actions/cache@v2
+      - name: Cache
+        uses: actions/cache@v3.3.2
         with:
           path: |
             ~/.gradle/caches/build-cache-*
