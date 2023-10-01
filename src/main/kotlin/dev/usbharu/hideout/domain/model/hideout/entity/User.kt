@@ -2,10 +2,12 @@ package dev.usbharu.hideout.domain.model.hideout.entity
 
 import dev.usbharu.hideout.config.Config
 import org.slf4j.LoggerFactory
+import org.springframework.data.annotation.Id
+import org.springframework.data.annotation.PersistenceCreator
 import java.time.Instant
 
 data class User private constructor(
-    val id: Long,
+    @Id val id: Long,
     val name: String,
     val domain: String,
     val screenName: String,
@@ -20,13 +22,16 @@ data class User private constructor(
 ) {
     override fun toString(): String {
         return "User(id=$id, name='$name', domain='$domain', screenName='$screenName', description='$description'," +
-            " password=****, inbox='$inbox', outbox='$outbox', url='$url', publicKey='$publicKey'," +
-            " privateKey=****, createdAt=$createdAt)"
+                " password=****, inbox='$inbox', outbox='$outbox', url='$url', publicKey='$publicKey'," +
+                " privateKey=****, createdAt=$createdAt)"
     }
 
     companion object {
         private val logger = LoggerFactory.getLogger(User::class.java)
 
+        @JvmOverloads
+        @JvmStatic
+        @PersistenceCreator
         @Suppress("LongParameterList", "FunctionMinLength")
         fun of(
             id: Long,

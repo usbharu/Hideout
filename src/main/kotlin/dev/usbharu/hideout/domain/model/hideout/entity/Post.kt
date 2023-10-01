@@ -1,9 +1,11 @@
 package dev.usbharu.hideout.domain.model.hideout.entity
 
 import dev.usbharu.hideout.config.Config
+import org.springframework.data.annotation.Id
+import org.springframework.data.annotation.PersistenceCreator
 
 data class Post private constructor(
-    val id: Long,
+    @Id val id: Long,
     val userId: Long,
     val overview: String? = null,
     val text: String,
@@ -16,7 +18,10 @@ data class Post private constructor(
     val apId: String = url
 ) {
     companion object {
+        @JvmStatic
+        @JvmOverloads
         @Suppress("FunctionMinLength", "LongParameterList")
+        @PersistenceCreator
         fun of(
             id: Long,
             userId: Long,
