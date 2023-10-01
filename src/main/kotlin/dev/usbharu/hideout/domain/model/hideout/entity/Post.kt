@@ -3,7 +3,9 @@ package dev.usbharu.hideout.domain.model.hideout.entity
 import dev.usbharu.hideout.config.Config
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.PersistenceCreator
+import org.springframework.data.relational.core.mapping.Table
 
+@Table("POSTS")
 data class Post private constructor(
     @Id val id: Long,
     val userId: Long,

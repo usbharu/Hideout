@@ -9,21 +9,10 @@ import java.net.URL
 class SpringConfig {
 
     @Autowired
-    lateinit var dbConfig: DatabaseConnectConfig
-
-    @Autowired
     lateinit var config: ApplicationConfig
 }
 
 @ConfigurationProperties("hideout")
 data class ApplicationConfig(
     val url: URL
-)
-
-@ConfigurationProperties("hideout.database")
-data class DatabaseConnectConfig(
-    val url: String,
-    val driver: String,
-    val user: String,
-    val password: String
 )

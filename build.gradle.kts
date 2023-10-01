@@ -106,8 +106,6 @@ dependencies {
     implementation("io.swagger.core.v3:swagger-models:2.2.6")
     implementation("org.jetbrains.exposed:exposed-java-time:$exposed_version")
     implementation("org.jetbrains.exposed:spring-transaction:$exposed_version")
-    implementation("org.springframework.data:spring-data-commons")
-    implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
     testImplementation("org.springframework.boot:spring-boot-test-autoconfigure")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -115,7 +113,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.springframework.security:spring-security-oauth2-jose")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
-    implementation("org.jetbrains.exposed:exposed-spring-boot-starter:0.44.0")
+//    implementation("org.jetbrains.exposed:exposed-spring-boot-starter:0.44.0")
 
 
     implementation("io.ktor:ktor-client-logging-jvm:$ktor_version")

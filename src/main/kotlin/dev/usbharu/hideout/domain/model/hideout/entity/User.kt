@@ -4,8 +4,10 @@ import dev.usbharu.hideout.config.Config
 import org.slf4j.LoggerFactory
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.PersistenceCreator
+import org.springframework.data.relational.core.mapping.Table
 import java.time.Instant
 
+@Table("USERS")
 data class User private constructor(
     @Id val id: Long,
     val name: String,
@@ -32,6 +34,39 @@ data class User private constructor(
         @JvmOverloads
         @JvmStatic
         @PersistenceCreator
+        @Suppress("LongParameterList", "FunctionMinLength")
+        fun of(
+            id: Long,
+            name: String,
+            domain: String,
+            screenName: String,
+            description: String,
+            password: String? = null,
+            inbox: String,
+            outbox: String,
+            url: String,
+            publicKey: String,
+            privateKey: String? = null,
+            createdAt: Long
+        ): User {
+            return of(
+                id,
+                name,
+                domain,
+                screenName,
+                description,
+                password,
+                inbox,
+                outbox,
+                url,
+                publicKey,
+                privateKey,
+                Instant.ofEpochMilli(createdAt)
+            )
+        }
+
+        @JvmOverloads
+        @JvmStatic
         @Suppress("LongParameterList", "FunctionMinLength")
         fun of(
             id: Long,

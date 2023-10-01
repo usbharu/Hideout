@@ -10,6 +10,7 @@ import dev.usbharu.hideout.query.FollowerQueryService
 import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.repository.UserRepository
 import dev.usbharu.hideout.service.ap.APSendFollowService
+import dev.usbharu.hideout.service.core.IdGenerateService
 import org.springframework.stereotype.Service
 import java.time.Instant
 
@@ -20,7 +21,8 @@ class UserServiceImpl(
     private val apSendFollowService: APSendFollowService,
     private val userQueryService: UserQueryService,
     private val followerQueryService: FollowerQueryService,
-    private val applicationConfig: ApplicationConfig
+    private val applicationConfig: ApplicationConfig,
+    private val idGenerateService: IdGenerateService
 ) :
     UserService {
 
@@ -30,7 +32,7 @@ class UserServiceImpl(
     }
 
     override suspend fun createLocalUser(user: UserCreateDto): User {
-        val nextId = userRepository.nextId()
+        val nextId = idGenerateService.generateId()
         val hashedPassword = userAuthService.hash(user.password)
         val keyPair = userAuthService.generateKeyPair()
         val userEntity = User.of(
@@ -51,7 +53,7 @@ class UserServiceImpl(
     }
 
     override suspend fun createRemoteUser(user: RemoteUserCreateDto): User {
-        val nextId = userRepository.nextId()
+        val nextId = idGenerateService.generateId()
         val userEntity = User.of(
             id = nextId,
             name = user.name,
