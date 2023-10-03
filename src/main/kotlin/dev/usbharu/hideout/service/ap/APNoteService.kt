@@ -16,7 +16,6 @@ import dev.usbharu.hideout.query.FollowerQueryService
 import dev.usbharu.hideout.query.PostQueryService
 import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.repository.PostRepository
-import dev.usbharu.hideout.service.core.IdGenerateService
 import dev.usbharu.hideout.service.job.JobQueueParentService
 import dev.usbharu.hideout.service.post.PostCreateInterceptor
 import dev.usbharu.hideout.service.post.PostService
@@ -50,8 +49,7 @@ class APNoteServiceImpl(
     private val postQueryService: PostQueryService,
     @Qualifier("activitypub") private val objectMapper: ObjectMapper,
     private val applicationConfig: ApplicationConfig,
-    private val postService: PostService,
-    private val idGenerateService: IdGenerateService
+    private val postService: PostService
 
 ) : APNoteService, PostCreateInterceptor {
 
@@ -173,7 +171,7 @@ class APNoteServiceImpl(
 
         postService.createRemote(
             Post.of(
-                id = idGenerateService.generateId(),
+                id = postRepository.generateId(),
                 userId = person.second.id,
                 overview = null,
                 text = note.content.orEmpty(),
