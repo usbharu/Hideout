@@ -1,7 +1,6 @@
 hideout:
   url: "https://test-hideout.usbharu.dev"
-  job-queue:
-    type: "nosql"
+  use-mongodb: true
   security:
     jwt:
       generate: true
