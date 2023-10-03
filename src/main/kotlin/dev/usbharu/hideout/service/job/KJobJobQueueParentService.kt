@@ -11,7 +11,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Service
 
 @Service
-@ConditionalOnProperty(name = ["hideout.job-queue.type"], havingValue = "rdb")
+@ConditionalOnProperty(name = ["hideout.use-mongodb"], havingValue = "false", matchIfMissing = true)
 class KJobJobQueueParentService(private val database: Database) : JobQueueParentService {
 
     private val logger = LoggerFactory.getLogger(this::class.java)

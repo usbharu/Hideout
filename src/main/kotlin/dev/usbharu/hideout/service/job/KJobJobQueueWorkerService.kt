@@ -11,7 +11,7 @@ import dev.usbharu.hideout.domain.model.job.HideoutJob as HJ
 import kjob.core.dsl.JobContextWithProps as JCWP
 
 @Service
-@ConditionalOnProperty(name = ["hideout.job-queue.type"], havingValue = "rdb", matchIfMissing = true)
+@ConditionalOnProperty(name = ["hideout.use-mongodb"], havingValue = "false", matchIfMissing = true)
 class KJobJobQueueWorkerService(private val database: Database) : JobQueueWorkerService {
 
     val kjob by lazy {
