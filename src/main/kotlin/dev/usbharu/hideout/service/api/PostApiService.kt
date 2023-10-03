@@ -11,33 +11,13 @@ import dev.usbharu.hideout.repository.UserRepository
 import dev.usbharu.hideout.service.core.Transaction
 import dev.usbharu.hideout.service.post.PostService
 import dev.usbharu.hideout.service.reaction.ReactionService
-import dev.usbharu.hideout.util.AcctUtil
 import org.springframework.stereotype.Service
-import java.time.Instant
 
 @Suppress("LongParameterList")
 @Service
 interface PostApiService {
     suspend fun createPost(postForm: dev.usbharu.hideout.domain.model.hideout.form.Post, userId: Long): PostResponse
     suspend fun getById(id: Long, userId: Long?): PostResponse
-    suspend fun getAll(
-        since: Instant? = null,
-        until: Instant? = null,
-        minId: Long? = null,
-        maxId: Long? = null,
-        limit: Int? = null,
-        userId: Long? = null
-    ): List<PostResponse>
-
-    suspend fun getByUser(
-        nameOrId: String,
-        since: Instant? = null,
-        until: Instant? = null,
-        minId: Long? = null,
-        maxId: Long? = null,
-        limit: Int? = null,
-        userId: Long? = null
-    ): List<PostResponse>
 
     suspend fun getReactionByPostId(postId: Long, userId: Long? = null): List<ReactionResponse>
     suspend fun appendReaction(reaction: String, userId: Long, postId: Long)
@@ -72,45 +52,6 @@ class PostApiServiceImpl(
     }
 
     override suspend fun getById(id: Long, userId: Long?): PostResponse = postResponseQueryService.findById(id, userId)
-
-    override suspend fun getAll(
-        since: Instant?,
-        until: Instant?,
-        minId: Long?,
-        maxId: Long?,
-        limit: Int?,
-        userId: Long?
-    ): List<PostResponse> = transaction.transaction {
-        postResponseQueryService.findAll(
-            since = since?.toEpochMilli(),
-            until = until?.toEpochMilli(),
-            minId = minId,
-            maxId = maxId,
-            limit = limit,
-            userId = userId
-        )
-    }
-
-    override suspend fun getByUser(
-        nameOrId: String,
-        since: Instant?,
-        until: Instant?,
-        minId: Long?,
-        maxId: Long?,
-        limit: Int?,
-        userId: Long?
-    ): List<PostResponse> {
-        val idOrNull = nameOrId.toLongOrNull()
-        return if (idOrNull == null) {
-            val acct = AcctUtil.parse(nameOrId)
-            postResponseQueryService.findByUserNameAndUserDomain(
-                acct.username,
-                acct.domain ?: applicationConfig.url.host
-            )
-        } else {
-            postResponseQueryService.findByUserId(idOrNull)
-        }
-    }
 
     override suspend fun getReactionByPostId(postId: Long, userId: Long?): List<ReactionResponse> =
         transaction.transaction { reactionQueryService.findByPostIdWithUsers(postId, userId) }

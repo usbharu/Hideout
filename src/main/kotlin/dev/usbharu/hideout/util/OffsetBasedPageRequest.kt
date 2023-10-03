@@ -5,11 +5,11 @@ import org.springframework.data.domain.Sort
 
 
 class OffsetBasedPageRequest(limit: Int, offset: Int) : Pageable {
-    val pageSize: Int
+    private val pageSize: Int
     private val offset: Int
 
     // Constructor could be expanded if sorting is needed
-    val sort: Sort = Sort.by(Sort.Direction.DESC, "id")
+    private val sort: Sort = Sort.by(Sort.Direction.DESC, "id")
 
     init {
         require(limit >= 1) { "Limit must not be less than one!" }
@@ -18,10 +18,8 @@ class OffsetBasedPageRequest(limit: Int, offset: Int) : Pageable {
         this.offset = offset
     }
 
-    val pageNumber: Int
-        get() = offset / pageSize
 
-    override fun getPageNumber(): Int = pageNumber
+    override fun getPageNumber(): Int = offset / pageSize
 
     override fun getPageSize(): Int = pageSize
 
