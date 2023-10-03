@@ -60,6 +60,8 @@ tasks.create<GenerateTask>("openApiGenerateMastodonCompatibleApi", GenerateTask:
     configOptions.put("interfaceOnly", "true")
     configOptions.put("useSpringBoot3", "true")
     additionalProperties.put("useTags", "true")
+    importMappings.put("org.springframework.core.io.Resource", "org.springframework.web.multipart.MultipartFile")
+    typeMappings.put("org.springframework.core.io.Resource", "org.springframework.web.multipart.MultipartFile")
 }
 
 repositories {
