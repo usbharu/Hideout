@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.query.Query
 import org.springframework.stereotype.Service
 
 @Service
-@ConditionalOnProperty("hideout.use-mongodb", havingValue = "", matchIfMissing = false)
+@ConditionalOnProperty("hideout.use-mongodb", havingValue = "true", matchIfMissing = false)
 class MongoGenerateTimelineService(
     private val statusQueryService: StatusQueryService,
     private val mongoTemplate: MongoTemplate
