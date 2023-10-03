@@ -12,6 +12,9 @@ class ReactionRepositoryImpl(
     private val idGenerateService: IdGenerateService
 ) : ReactionRepository {
 
+
+    override suspend fun generateId(): Long = idGenerateService.generateId()
+
     override suspend fun save(reaction: Reaction): Reaction {
         if (Reactions.select { Reactions.id eq reaction.id }.empty()) {
             Reactions.insert {

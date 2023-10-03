@@ -13,6 +13,7 @@ class MongoTimelineRepositoryWrapper(
     private val idGenerateService: IdGenerateService
 ) :
     TimelineRepository {
+    override suspend fun generateId(): Long = idGenerateService.generateId()
 
     override suspend fun save(timeline: Timeline): Timeline {
         return withContext(Dispatchers.IO) {

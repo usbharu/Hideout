@@ -5,7 +5,6 @@ import dev.usbharu.hideout.domain.model.hideout.entity.Post
 import dev.usbharu.hideout.exception.UserNotFoundException
 import dev.usbharu.hideout.repository.PostRepository
 import dev.usbharu.hideout.repository.UserRepository
-import dev.usbharu.hideout.service.core.IdGenerateService
 import org.springframework.stereotype.Service
 import java.time.Instant
 import java.util.*
@@ -14,8 +13,7 @@ import java.util.*
 class PostServiceImpl(
     private val postRepository: PostRepository,
     private val userRepository: UserRepository,
-    private val timelineService: TimelineService,
-    private val idGenerateService: IdGenerateService
+    private val timelineService: TimelineService
 ) : PostService {
     private val interceptors = Collections.synchronizedList(mutableListOf<PostCreateInterceptor>())
 
@@ -38,7 +36,7 @@ class PostServiceImpl(
 
     private suspend fun internalCreate(post: PostCreateDto, isLocal: Boolean): Post {
         val user = userRepository.findById(post.userId) ?: throw UserNotFoundException("${post.userId} was not found")
-        val id = idGenerateService.generateId()
+        val id = postRepository.generateId()
         val createPost = Post.of(
             id = id,
             userId = post.userId,
