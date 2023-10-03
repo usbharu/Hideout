@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Service
 
 @Service
-@ConditionalOnProperty(name = ["hideout.job-queue.type"], havingValue = "nosql")
+@ConditionalOnProperty(name = ["hideout.use-mongodb"], havingValue = "", matchIfMissing = false)
 class KjobMongoJobQueueParentService : JobQueueParentService {
     private val kjob = kjob(Mongo) {
         connectionString = "mongodb://localhost"

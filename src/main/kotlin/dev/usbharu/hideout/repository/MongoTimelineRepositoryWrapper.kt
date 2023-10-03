@@ -4,10 +4,12 @@ import dev.usbharu.hideout.domain.model.hideout.entity.Timeline
 import dev.usbharu.hideout.service.core.IdGenerateService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Repository
 
 @Repository
 @Suppress("InjectDispatcher")
+@ConditionalOnProperty("hideout.use-mongodb", havingValue = "", matchIfMissing = false)
 class MongoTimelineRepositoryWrapper(
     private val mongoTimelineRepository: MongoTimelineRepository,
     private val idGenerateService: IdGenerateService

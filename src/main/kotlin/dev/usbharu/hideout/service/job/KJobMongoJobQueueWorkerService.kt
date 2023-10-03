@@ -10,7 +10,7 @@ import dev.usbharu.hideout.domain.model.job.HideoutJob as HJ
 import kjob.core.dsl.JobContextWithProps as JCWP
 
 @Service
-@ConditionalOnProperty(name = ["hideout.job-queue.type"], havingValue = "nosql")
+@ConditionalOnProperty(name = ["hideout.use-mongodb"], havingValue = "", matchIfMissing = false)
 class KJobMongoJobQueueWorkerService : JobQueueWorkerService {
     val kjob by lazy {
         kjob(Mongo) {
