@@ -3,12 +3,14 @@ package dev.usbharu.hideout.service.post
 import dev.usbharu.hideout.domain.mastodon.model.generated.Status
 import dev.usbharu.hideout.domain.model.hideout.entity.Timeline
 import dev.usbharu.hideout.query.mastodon.StatusQueryService
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
 import org.springframework.stereotype.Service
 
 @Service
+@ConditionalOnProperty("hideout.use-mongodb", havingValue = "", matchIfMissing = false)
 class MongoGenerateTimelineService(
     private val statusQueryService: StatusQueryService,
     private val mongoTemplate: MongoTemplate
