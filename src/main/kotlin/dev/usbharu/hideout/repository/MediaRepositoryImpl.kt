@@ -1,9 +1,9 @@
 package dev.usbharu.hideout.repository
 
 
+import dev.usbharu.hideout.domain.model.hideout.dto.FileType
 import dev.usbharu.hideout.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.service.core.IdGenerateService
-import dev.usbharu.hideout.service.media.FileTypeDeterminationService
 import dev.usbharu.hideout.util.singleOr
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -63,7 +63,7 @@ class MediaRepositoryImpl(private val idGenerateService: IdGenerateService) : Me
             this[Media.url],
             this[Media.remoteUrl],
             this[Media.thumbnailUrl],
-            FileTypeDeterminationService.FileType.values().first { it.ordinal == this[Media.type] },
+            FileType.values().first { it.ordinal == this[Media.type] },
             this[Media.blurhash],
         )
     }

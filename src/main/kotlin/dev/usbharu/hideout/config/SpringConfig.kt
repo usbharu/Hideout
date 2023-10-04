@@ -10,9 +10,23 @@ class SpringConfig {
 
     @Autowired
     lateinit var config: ApplicationConfig
+
+    @Autowired
+    lateinit var storageConfig: StorageConfig
 }
 
 @ConfigurationProperties("hideout")
 data class ApplicationConfig(
     val url: URL
+)
+
+@ConfigurationProperties("hideout.storage")
+data class StorageConfig(
+    val useS3: Boolean,
+    val endpoint: String,
+    val publicUrl: String,
+    val bucket: String,
+    val region: String,
+    val accessKey: String,
+    val secretKey: String
 )

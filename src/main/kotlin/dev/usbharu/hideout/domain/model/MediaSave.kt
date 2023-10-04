@@ -6,5 +6,5 @@ data class MediaSave(
     val name: String,
     val prefix: String,
     val fileInputStream: InputStream,
-    val thumbnailInputStream: InputStream
+    val thumbnailInputStream: InputStream?
 )

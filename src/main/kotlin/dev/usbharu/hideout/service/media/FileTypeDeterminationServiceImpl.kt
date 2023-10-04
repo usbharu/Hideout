@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.service.media
 
+import dev.usbharu.hideout.domain.model.hideout.dto.FileType
 import org.springframework.stereotype.Component
 
 @Component
@@ -8,19 +9,19 @@ class FileTypeDeterminationServiceImpl : FileTypeDeterminationService {
         byteArray: ByteArray,
         filename: String,
         contentType: String?
-    ): FileTypeDeterminationService.FileType {
+    ): FileType {
         if (contentType == null) {
-            return FileTypeDeterminationService.FileType.Unknown
+            return FileType.Unknown
         }
         if (contentType.startsWith("image")) {
-            return FileTypeDeterminationService.FileType.Image
+            return FileType.Image
         }
         if (contentType.startsWith("video")) {
-            return FileTypeDeterminationService.FileType.Video
+            return FileType.Video
         }
         if (contentType.startsWith("audio")) {
-            return FileTypeDeterminationService.FileType.Audio
+            return FileType.Audio
         }
-        return FileTypeDeterminationService.FileType.Unknown
+        return FileType.Unknown
     }
 }
