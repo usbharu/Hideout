@@ -1,6 +1,6 @@
 package dev.usbharu.hideout.exception.media
 
-open class MediaUploadException : MediaException {
+open class MediaConvertException : MediaException {
     constructor() : super()
     constructor(message: String?) : super(message)
     constructor(message: String?, cause: Throwable?) : super(message, cause)

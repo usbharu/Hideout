@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.service.media
+package dev.usbharu.hideout.domain.model.hideout.dto
 
 sealed class SavedMedia(val success: Boolean)
 

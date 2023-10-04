@@ -6,6 +6,9 @@ import dev.usbharu.hideout.service.media.MediaService
 
 class MediaApiServiceImpl(private val mediaService: MediaService) : MediaApiService {
     override suspend fun postMedia(media: Media): MediaAttachment {
-        mediaService.uploadLocalMedia(media)
+        val uploadLocalMedia = mediaService.uploadLocalMedia(media)
+        return MediaAttachment(
+
+        )
     }
 }

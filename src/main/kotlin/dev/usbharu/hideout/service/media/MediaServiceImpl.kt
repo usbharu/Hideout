@@ -1,56 +1,87 @@
 package dev.usbharu.hideout.service.media
 
 import dev.usbharu.hideout.domain.model.MediaSave
+import dev.usbharu.hideout.domain.model.hideout.dto.FaildSavedMedia
+import dev.usbharu.hideout.domain.model.hideout.dto.FileType
+import dev.usbharu.hideout.domain.model.hideout.dto.RemoteMedia
+import dev.usbharu.hideout.domain.model.hideout.dto.SuccessSavedMedia
 import dev.usbharu.hideout.domain.model.hideout.form.Media
-import dev.usbharu.hideout.exception.media.MediaException
+import dev.usbharu.hideout.exception.media.MediaFileSizeIsZeroException
+import dev.usbharu.hideout.exception.media.MediaSaveException
+import dev.usbharu.hideout.exception.media.UnsupportedMediaException
+import dev.usbharu.hideout.repository.MediaRepository
+import dev.usbharu.hideout.service.media.converter.MediaProcessService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.util.*
 import javax.imageio.ImageIO
+import dev.usbharu.hideout.domain.model.hideout.entity.Media as EntityMedia
 
 @Service
 class MediaServiceImpl(
     private val mediaDataStore: MediaDataStore,
     private val fileTypeDeterminationService: FileTypeDeterminationService,
-    private val mediaBlurhashService: MediaBlurhashService
+    private val mediaBlurhashService: MediaBlurhashService,
+    private val mediaRepository: MediaRepository,
+    private val mediaProcessService: MediaProcessService
 ) : MediaService {
-    override suspend fun uploadLocalMedia(media: Media): SavedMedia {
+    override suspend fun uploadLocalMedia(media: Media): EntityMedia {
         if (media.file.size == 0L) {
-            return FaildSavedMedia(
-                "File size is 0.",
-                "Cannot upload a file with a file size of 0."
-            )
+            throw MediaFileSizeIsZeroException("Media file size is zero.")
         }
 
         val fileType = fileTypeDeterminationService.fileType(media.file.bytes, media.file.name, media.file.contentType)
-        if (fileType != FileTypeDeterminationService.FileType.Image) {
-            return FaildSavedMedia("Unsupported file type.", "FileType: $fileType is not supported.")
+        if (fileType != FileType.Image) {
+            throw UnsupportedMediaException("FileType: $fileType  is not supported.")
         }
 
-        try {
-            mediaDataStore.save(
-                MediaSave(
-                    media.file.name,
-                    "",
-                    media.file.inputStream,
-                    media.thumbnail.inputStream
-                )
-            )
-        } catch (e: MediaException) {
-            return FaildSavedMedia(
-                "Faild to upload.",
-                e.localizedMessage,
-                e
-            )
-        }
+        val process = mediaProcessService.process(fileType, media.file.inputStream, media.thumbnail?.inputStream)
 
-        val withContext = withContext(Dispatchers.IO) {
-            mediaBlurhashService.generateBlurhash(ImageIO.read(media.file.inputStream))
-        }
-
-        return SuccessSavedMedia(
-            media.file.name, "", "",
-            withContext
+        val dataMediaSave = MediaSave(
+            UUID.randomUUID().toString(),
+            "",
+            process.first,
+            process.second
         )
+        val save = try {
+            mediaDataStore.save(dataMediaSave)
+        } catch (e: Exception) {
+            logger.warn("Failed save media", e)
+            throw MediaSaveException("Failed save media.", e)
+        }
+
+        if (save.success.not()) {
+            save as FaildSavedMedia
+            logger.warn("Failed save media. reason: ${save.reason}")
+            logger.warn(save.description, save.trace)
+            throw MediaSaveException("Failed save media.")
+        }
+        save as SuccessSavedMedia
+
+        val blurHash = withContext(Dispatchers.IO) {
+            mediaBlurhashService.generateBlurhash(ImageIO.read(media.file.bytes.inputStream()))
+        }
+
+        return mediaRepository.save(
+            EntityMedia(
+                id = mediaRepository.generateId(),
+                name = media.file.name,
+                url = save.url,
+                remoteUrl = null,
+                thumbnailUrl = save.thumbnailUrl,
+                type = fileType,
+                blurHash = blurHash
+            )
+        )
+    }
+
+    override suspend fun uploadRemoteMedia(remoteMedia: RemoteMedia) {
+
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(MediaServiceImpl::class.java)
     }
 }
