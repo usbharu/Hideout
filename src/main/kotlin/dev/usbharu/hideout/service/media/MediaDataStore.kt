@@ -5,5 +5,5 @@ import dev.usbharu.hideout.domain.model.hideout.dto.SavedMedia
 
 interface MediaDataStore {
     suspend fun save(dataMediaSave: MediaSave): SavedMedia
-    suspend fun delete(id: Long)
+    suspend fun delete(id: String)
 }

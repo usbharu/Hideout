@@ -11,6 +11,7 @@ import kotlinx.coroutines.withContext
 import org.springframework.stereotype.Service
 import software.amazon.awssdk.core.sync.RequestBody
 import software.amazon.awssdk.services.s3.S3Client
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest
 import software.amazon.awssdk.services.s3.model.GetUrlRequest
 import software.amazon.awssdk.services.s3.model.PutObjectRequest
 
@@ -53,7 +54,11 @@ class S3MediaDataStore(private val s3Client: S3Client, private val storageConfig
         )
     }
 
-    override suspend fun delete(id: Long) {
-        TODO("Not yet implemented")
+    override suspend fun delete(id: String) {
+        val fileDeleteRequest = DeleteObjectRequest.builder().bucket(storageConfig.bucket).key(id).build()
+        val thumbnailDeleteRequest =
+            DeleteObjectRequest.builder().bucket(storageConfig.bucket).key("thumbnail-$id").build()
+        s3Client.deleteObject(fileDeleteRequest)
+        s3Client.deleteObject(thumbnailDeleteRequest)
     }
 }
