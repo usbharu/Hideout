@@ -6,7 +6,6 @@ class SuccessSavedMedia(
     val name: String,
     val url: String,
     val thumbnailUrl: String,
-    val blurhash: String
 ) :
     SavedMedia(true)
 

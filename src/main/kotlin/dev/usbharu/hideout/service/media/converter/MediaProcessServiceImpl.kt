@@ -5,8 +5,6 @@ import dev.usbharu.hideout.exception.media.MediaConvertException
 import dev.usbharu.hideout.service.media.ThumbnailGenerateService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import java.io.InputStream
-import java.io.OutputStream
 
 @Service
 class MediaProcessServiceImpl(
@@ -15,18 +13,18 @@ class MediaProcessServiceImpl(
 ) : MediaProcessService {
     override suspend fun process(
         fileType: FileType,
-        file: InputStream,
-        thumbnail: InputStream?
-    ): Pair<OutputStream, OutputStream> {
+        file: ByteArray,
+        thumbnail: ByteArray?
+    ): Pair<ByteArray, ByteArray> {
 
         val fileInputStream = try {
-            mediaConverterRoot.convert(fileType, file)
+            mediaConverterRoot.convert(fileType, file.inputStream().buffered())
         } catch (e: Exception) {
             logger.warn("Failed convert media.", e)
             throw MediaConvertException("Failed convert media.", e)
         }
         val thumbnailInputStream = try {
-            thumbnail?.let { mediaConverterRoot.convert(fileType, it) }
+            thumbnail?.let { mediaConverterRoot.convert(fileType, it.inputStream().buffered()) }
         } catch (e: Exception) {
             logger.warn("Failed convert thumbnail media.", e)
             null

@@ -37,7 +37,7 @@ class MediaServiceImpl(
             throw UnsupportedMediaException("FileType: $fileType  is not supported.")
         }
 
-        val process = mediaProcessService.process(fileType, media.file.inputStream, media.thumbnail?.inputStream)
+        val process = mediaProcessService.process(fileType, media.file.bytes, media.thumbnail?.bytes)
 
         val dataMediaSave = MediaSave(
             UUID.randomUUID().toString(),
