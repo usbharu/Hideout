@@ -10,7 +10,6 @@ import dev.usbharu.hideout.service.user.UserService
 import io.ktor.http.*
 import org.springframework.stereotype.Service
 
-@Service
 interface APUndoService {
     suspend fun receiveUndo(undo: Undo): ActivityPubResponse
 }

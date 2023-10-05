@@ -10,6 +10,7 @@ import dev.usbharu.hideout.service.auth.ExposedOAuth2AuthorizationService
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.javatime.CurrentTimestamp
 import org.jetbrains.exposed.sql.javatime.timestamp
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.security.jackson2.SecurityJackson2Modules
 import org.springframework.security.oauth2.core.AuthorizationGrantType
@@ -40,9 +41,9 @@ class RegisteredClientRepositoryImpl : RegisteredClientRepository {
                 it[clientSecretExpiresAt] = registeredClient.clientSecretExpiresAt
                 it[clientName] = registeredClient.clientName
                 it[clientAuthenticationMethods] =
-                    registeredClient.clientAuthenticationMethods.map { method -> method.value }.joinToString(",")
+                    registeredClient.clientAuthenticationMethods.joinToString(",") { method -> method.value }
                 it[authorizationGrantTypes] =
-                    registeredClient.authorizationGrantTypes.map { type -> type.value }.joinToString(",")
+                    registeredClient.authorizationGrantTypes.joinToString(",") { type -> type.value }
                 it[redirectUris] = registeredClient.redirectUris.joinToString(",")
                 it[postLogoutRedirectUris] = registeredClient.postLogoutRedirectUris.joinToString(",")
                 it[scopes] = registeredClient.scopes.joinToString(",")
@@ -84,7 +85,7 @@ class RegisteredClientRepositoryImpl : RegisteredClientRepository {
         val toRegisteredClient = RegisteredClient.select {
             RegisteredClient.clientId eq clientId
         }.singleOrNull()?.toRegisteredClient()
-        LOGGER.trace("findByClientId: $toRegisteredClient")
+        LOGGER.trace("findByClientId: {}", toRegisteredClient)
         return toRegisteredClient
     }
 
@@ -157,7 +158,7 @@ class RegisteredClientRepositoryImpl : RegisteredClientRepository {
 
     companion object {
         val objectMapper: ObjectMapper = ObjectMapper()
-        val LOGGER = LoggerFactory.getLogger(RegisteredClientRepositoryImpl::class.java)
+        val LOGGER: Logger = LoggerFactory.getLogger(RegisteredClientRepositoryImpl::class.java)
 
         init {
 
@@ -172,19 +173,19 @@ class RegisteredClientRepositoryImpl : RegisteredClientRepository {
 
 // org/springframework/security/oauth2/server/authorization/client/oauth2-registered-client-schema.sql
 object RegisteredClient : Table("registered_client") {
-    val id = varchar("id", 100)
-    val clientId = varchar("client_id", 100)
-    val clientIdIssuedAt = timestamp("client_id_issued_at").defaultExpression(CurrentTimestamp())
-    val clientSecret = varchar("client_secret", 200).nullable().default(null)
-    val clientSecretExpiresAt = timestamp("client_secret_expires_at").nullable().default(null)
-    val clientName = varchar("client_name", 200)
-    val clientAuthenticationMethods = varchar("client_authentication_methods", 1000)
-    val authorizationGrantTypes = varchar("authorization_grant_types", 1000)
-    val redirectUris = varchar("redirect_uris", 1000).nullable().default(null)
-    val postLogoutRedirectUris = varchar("post_logout_redirect_uris", 1000).nullable().default(null)
-    val scopes = varchar("scopes", 1000)
-    val clientSettings = varchar("client_settings", 2000)
-    val tokenSettings = varchar("token_settings", 2000)
+    val id: Column<String> = varchar("id", 100)
+    val clientId: Column<String> = varchar("client_id", 100)
+    val clientIdIssuedAt: Column<Instant> = timestamp("client_id_issued_at").defaultExpression(CurrentTimestamp())
+    val clientSecret: Column<String?> = varchar("client_secret", 200).nullable().default(null)
+    val clientSecretExpiresAt: Column<Instant?> = timestamp("client_secret_expires_at").nullable().default(null)
+    val clientName: Column<String> = varchar("client_name", 200)
+    val clientAuthenticationMethods: Column<String> = varchar("client_authentication_methods", 1000)
+    val authorizationGrantTypes: Column<String> = varchar("authorization_grant_types", 1000)
+    val redirectUris: Column<String?> = varchar("redirect_uris", 1000).nullable().default(null)
+    val postLogoutRedirectUris: Column<String?> = varchar("post_logout_redirect_uris", 1000).nullable().default(null)
+    val scopes: Column<String> = varchar("scopes", 1000)
+    val clientSettings: Column<String> = varchar("client_settings", 2000)
+    val tokenSettings: Column<String> = varchar("token_settings", 2000)
 
-    override val primaryKey = PrimaryKey(id)
+    override val primaryKey: PrimaryKey = PrimaryKey(id)
 }

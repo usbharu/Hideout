@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import java.time.Instant
 
-@Service
 interface APReactionService {
     suspend fun reaction(like: Reaction)
     suspend fun removeReaction(like: Reaction)

@@ -56,7 +56,10 @@ class HttpSignaturePluginConfig {
     lateinit var keyMap: KeyMap
 }
 
-val httpSignaturePlugin = createClientPlugin("HttpSign", ::HttpSignaturePluginConfig) {
+val httpSignaturePlugin: ClientPlugin<HttpSignaturePluginConfig> = createClientPlugin(
+    "HttpSign",
+    ::HttpSignaturePluginConfig
+) {
     val keyMap = pluginConfig.keyMap
     val format = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US)
     format.timeZone = TimeZone.getTimeZone("GMT")
@@ -141,13 +144,13 @@ val httpSignaturePlugin = createClientPlugin("HttpSign", ::HttpSignaturePluginCo
 
             request.headers.remove("Signature")
 
-            signer!!.sign(object : HttpMessage, HttpRequest {
+            (signer ?: return@onRequest).sign(object : HttpMessage, HttpRequest {
                 override fun headerValues(name: String?): MutableList<String> =
                     name?.let { request.headers.getAll(it) }?.toMutableList() ?: mutableListOf()
 
                 override fun addHeader(name: String?, value: String?) {
                     val split = value?.split("=").orEmpty()
-                    name?.let { request.header(it, split.get(0) + "=\"" + split.get(1).trim('"') + "\"") }
+                    name?.let { request.header(it, split[0] + "=\"" + split[1].trim('"') + "\"") }
                 }
 
                 override fun method(): String = request.method.value

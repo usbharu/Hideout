@@ -12,7 +12,7 @@ class MetaServiceImpl(private val metaRepository: MetaRepository, private val tr
     override suspend fun getMeta(): Meta =
         transaction.transaction { metaRepository.get() ?: throw NotInitException("Meta is null") }
 
-    override suspend fun updateMeta(meta: Meta) = transaction.transaction {
+    override suspend fun updateMeta(meta: Meta): Unit = transaction.transaction {
         metaRepository.save(meta)
     }
 
