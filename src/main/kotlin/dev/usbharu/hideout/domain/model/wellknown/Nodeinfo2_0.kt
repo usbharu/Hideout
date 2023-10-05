@@ -1,3 +1,5 @@
+@file:Suppress("ClassName")
+
 package dev.usbharu.hideout.domain.model.wellknown
 
 @Suppress("ClassNaming")

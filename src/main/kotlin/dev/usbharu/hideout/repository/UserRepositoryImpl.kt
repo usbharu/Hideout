@@ -71,18 +71,24 @@ class UserRepositoryImpl(private val idGenerateService: IdGenerateService) :
 }
 
 object Users : Table("users") {
-    val id = long("id")
-    val name = varchar("name", length = Config.configData.characterLimit.account.id)
-    val domain = varchar("domain", length = Config.configData.characterLimit.general.domain)
-    val screenName = varchar("screen_name", length = Config.configData.characterLimit.account.name)
-    val description = varchar("description", length = Config.configData.characterLimit.account.description)
-    val password = varchar("password", length = 255).nullable()
-    val inbox = varchar("inbox", length = Config.configData.characterLimit.general.url).uniqueIndex()
-    val outbox = varchar("outbox", length = Config.configData.characterLimit.general.url).uniqueIndex()
-    val url = varchar("url", length = Config.configData.characterLimit.general.url).uniqueIndex()
-    val publicKey = varchar("public_key", length = Config.configData.characterLimit.general.publicKey)
-    val privateKey = varchar("private_key", length = Config.configData.characterLimit.general.privateKey).nullable()
-    val createdAt = long("created_at")
+    val id: Column<Long> = long("id")
+    val name: Column<String> = varchar("name", length = Config.configData.characterLimit.account.id)
+    val domain: Column<String> = varchar("domain", length = Config.configData.characterLimit.general.domain)
+    val screenName: Column<String> = varchar("screen_name", length = Config.configData.characterLimit.account.name)
+    val description: Column<String> = varchar(
+        "description",
+        length = Config.configData.characterLimit.account.description
+    )
+    val password: Column<String?> = varchar("password", length = 255).nullable()
+    val inbox: Column<String> = varchar("inbox", length = Config.configData.characterLimit.general.url).uniqueIndex()
+    val outbox: Column<String> = varchar("outbox", length = Config.configData.characterLimit.general.url).uniqueIndex()
+    val url: Column<String> = varchar("url", length = Config.configData.characterLimit.general.url).uniqueIndex()
+    val publicKey: Column<String> = varchar("public_key", length = Config.configData.characterLimit.general.publicKey)
+    val privateKey: Column<String?> = varchar(
+        "private_key",
+        length = Config.configData.characterLimit.general.privateKey
+    ).nullable()
+    val createdAt: Column<Long> = long("created_at")
 
     override val primaryKey: PrimaryKey = PrimaryKey(id)
 
@@ -109,8 +115,8 @@ fun ResultRow.toUser(): User {
 }
 
 object UsersFollowers : LongIdTable("users_followers") {
-    val userId = long("user_id").references(Users.id).index()
-    val followerId = long("follower_id").references(Users.id)
+    val userId: Column<Long> = long("user_id").references(Users.id).index()
+    val followerId: Column<Long> = long("follower_id").references(Users.id)
 
     init {
         uniqueIndex(userId, followerId)
@@ -118,8 +124,8 @@ object UsersFollowers : LongIdTable("users_followers") {
 }
 
 object FollowRequests : LongIdTable("follow_requests") {
-    val userId = long("user_id").references(Users.id)
-    val followerId = long("follower_id").references(Users.id)
+    val userId: Column<Long> = long("user_id").references(Users.id)
+    val followerId: Column<Long> = long("follower_id").references(Users.id)
 
     init {
         uniqueIndex(userId, followerId)

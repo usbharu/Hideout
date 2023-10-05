@@ -1,10 +1,7 @@
 package dev.usbharu.hideout.repository
 
 import dev.usbharu.hideout.domain.model.hideout.entity.Jwt
-import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.update
+import org.jetbrains.exposed.sql.*
 import org.springframework.stereotype.Repository
 import java.util.*
 
@@ -41,10 +38,10 @@ class MetaRepositoryImpl : MetaRepository {
 }
 
 object Meta : Table("meta_info") {
-    val id = long("id")
-    val version = varchar("version", 1000)
-    val kid = varchar("kid", 1000)
-    val jwtPrivateKey = varchar("jwt_private_key", 100000)
-    val jwtPublicKey = varchar("jwt_public_key", 100000)
+    val id: Column<Long> = long("id")
+    val version: Column<String> = varchar("version", 1000)
+    val kid: Column<String> = varchar("kid", 1000)
+    val jwtPrivateKey: Column<String> = varchar("jwt_private_key", 100000)
+    val jwtPublicKey: Column<String> = varchar("jwt_public_key", 100000)
     override val primaryKey: PrimaryKey = PrimaryKey(id)
 }

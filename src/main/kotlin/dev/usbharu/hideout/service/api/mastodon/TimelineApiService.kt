@@ -60,8 +60,6 @@ class TimelineApiServiceImpl(
     ): List<Status> = transaction.transaction {
         generateTimelineService.getTimeline(
             forUserId = userId,
-            localOnly = false,
-            mediaOnly = false,
             maxId = maxId,
             minId = minId,
             sinceId = sinceId,

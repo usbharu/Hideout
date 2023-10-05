@@ -12,7 +12,6 @@ import dev.usbharu.hideout.service.user.UserService
 import io.ktor.http.*
 import org.springframework.stereotype.Service
 
-@Service
 interface APAcceptService {
     suspend fun receiveAccept(accept: Accept): ActivityPubResponse
 }

@@ -53,9 +53,9 @@ fun ResultRow.toReaction(): Reaction {
 }
 
 object Reactions : LongIdTable("reactions") {
-    val emojiId = long("emoji_id")
-    val postId = long("post_id").references(Posts.id)
-    val userId = long("user_id").references(Users.id)
+    val emojiId: Column<Long> = long("emoji_id")
+    val postId: Column<Long> = long("post_id").references(Posts.id)
+    val userId: Column<Long> = long("user_id").references(Users.id)
 
     init {
         uniqueIndex(emojiId, postId, userId)

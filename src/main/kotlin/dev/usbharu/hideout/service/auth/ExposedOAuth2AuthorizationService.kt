@@ -23,6 +23,7 @@ import org.springframework.security.oauth2.server.authorization.OAuth2TokenType
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository
 import org.springframework.security.oauth2.server.authorization.jackson2.OAuth2AuthorizationServerJackson2Module
 import org.springframework.stereotype.Service
+import java.time.Instant
 
 @Service
 class ExposedOAuth2AuthorizationService(
@@ -133,7 +134,7 @@ class ExposedOAuth2AuthorizationService(
         if (authorization == null) {
             return
         }
-        Authorization.deleteWhere { Authorization.id eq authorization.id }
+        Authorization.deleteWhere { id eq authorization.id }
     }
 
     override fun findById(id: String?): OAuth2Authorization? {
@@ -336,40 +337,44 @@ class ExposedOAuth2AuthorizationService(
 }
 
 object Authorization : Table("application_authorization") {
-    val id = varchar("id", 255)
-    val registeredClientId = varchar("registered_client_id", 255)
-    val principalName = varchar("principal_name", 255)
-    val authorizationGrantType = varchar("authorization_grant_type", 255)
-    val authorizedScopes = varchar("authorized_scopes", 1000).nullable().default(null)
-    val attributes = varchar("attributes", 4000).nullable().default(null)
-    val state = varchar("state", 500).nullable().default(null)
-    val authorizationCodeValue = varchar("authorization_code_value", 4000).nullable().default(null)
-    val authorizationCodeIssuedAt = timestamp("authorization_code_issued_at").nullable().default(null)
-    val authorizationCodeExpiresAt = timestamp("authorization_code_expires_at").nullable().default(null)
-    val authorizationCodeMetadata = varchar("authorization_code_metadata", 2000).nullable().default(null)
-    val accessTokenValue = varchar("access_token_value", 4000).nullable().default(null)
-    val accessTokenIssuedAt = timestamp("access_token_issued_at").nullable().default(null)
-    val accessTokenExpiresAt = timestamp("access_token_expires_at").nullable().default(null)
-    val accessTokenMetadata = varchar("access_token_metadata", 2000).nullable().default(null)
-    val accessTokenType = varchar("access_token_type", 255).nullable().default(null)
-    val accessTokenScopes = varchar("access_token_scopes", 1000).nullable().default(null)
-    val refreshTokenValue = varchar("refresh_token_value", 4000).nullable().default(null)
-    val refreshTokenIssuedAt = timestamp("refresh_token_issued_at").nullable().default(null)
-    val refreshTokenExpiresAt = timestamp("refresh_token_expires_at").nullable().default(null)
-    val refreshTokenMetadata = varchar("refresh_token_metadata", 2000).nullable().default(null)
-    val oidcIdTokenValue = varchar("oidc_id_token_value", 4000).nullable().default(null)
-    val oidcIdTokenIssuedAt = timestamp("oidc_id_token_issued_at").nullable().default(null)
-    val oidcIdTokenExpiresAt = timestamp("oidc_id_token_expires_at").nullable().default(null)
-    val oidcIdTokenMetadata = varchar("oidc_id_token_metadata", 2000).nullable().default(null)
-    val oidcIdTokenClaims = varchar("oidc_id_token_claims", 2000).nullable().default(null)
-    val userCodeValue = varchar("user_code_value", 4000).nullable().default(null)
-    val userCodeIssuedAt = timestamp("user_code_issued_at").nullable().default(null)
-    val userCodeExpiresAt = timestamp("user_code_expires_at").nullable().default(null)
-    val userCodeMetadata = varchar("user_code_metadata", 2000).nullable().default(null)
-    val deviceCodeValue = varchar("device_code_value", 4000).nullable().default(null)
-    val deviceCodeIssuedAt = timestamp("device_code_issued_at").nullable().default(null)
-    val deviceCodeExpiresAt = timestamp("device_code_expires_at").nullable().default(null)
-    val deviceCodeMetadata = varchar("device_code_metadata", 2000).nullable().default(null)
+    val id: Column<String> = varchar("id", 255)
+    val registeredClientId: Column<String> = varchar("registered_client_id", 255)
+    val principalName: Column<String> = varchar("principal_name", 255)
+    val authorizationGrantType: Column<String> = varchar("authorization_grant_type", 255)
+    val authorizedScopes: Column<String?> = varchar("authorized_scopes", 1000).nullable().default(null)
+    val attributes: Column<String?> = varchar("attributes", 4000).nullable().default(null)
+    val state: Column<String?> = varchar("state", 500).nullable().default(null)
+    val authorizationCodeValue: Column<String?> = varchar("authorization_code_value", 4000).nullable().default(null)
+    val authorizationCodeIssuedAt: Column<Instant?> = timestamp("authorization_code_issued_at").nullable().default(null)
+    val authorizationCodeExpiresAt: Column<Instant?> = timestamp("authorization_code_expires_at").nullable().default(
+        null
+    )
+    val authorizationCodeMetadata: Column<String?> = varchar("authorization_code_metadata", 2000).nullable().default(
+        null
+    )
+    val accessTokenValue: Column<String?> = varchar("access_token_value", 4000).nullable().default(null)
+    val accessTokenIssuedAt: Column<Instant?> = timestamp("access_token_issued_at").nullable().default(null)
+    val accessTokenExpiresAt: Column<Instant?> = timestamp("access_token_expires_at").nullable().default(null)
+    val accessTokenMetadata: Column<String?> = varchar("access_token_metadata", 2000).nullable().default(null)
+    val accessTokenType: Column<String?> = varchar("access_token_type", 255).nullable().default(null)
+    val accessTokenScopes: Column<String?> = varchar("access_token_scopes", 1000).nullable().default(null)
+    val refreshTokenValue: Column<String?> = varchar("refresh_token_value", 4000).nullable().default(null)
+    val refreshTokenIssuedAt: Column<Instant?> = timestamp("refresh_token_issued_at").nullable().default(null)
+    val refreshTokenExpiresAt: Column<Instant?> = timestamp("refresh_token_expires_at").nullable().default(null)
+    val refreshTokenMetadata: Column<String?> = varchar("refresh_token_metadata", 2000).nullable().default(null)
+    val oidcIdTokenValue: Column<String?> = varchar("oidc_id_token_value", 4000).nullable().default(null)
+    val oidcIdTokenIssuedAt: Column<Instant?> = timestamp("oidc_id_token_issued_at").nullable().default(null)
+    val oidcIdTokenExpiresAt: Column<Instant?> = timestamp("oidc_id_token_expires_at").nullable().default(null)
+    val oidcIdTokenMetadata: Column<String?> = varchar("oidc_id_token_metadata", 2000).nullable().default(null)
+    val oidcIdTokenClaims: Column<String?> = varchar("oidc_id_token_claims", 2000).nullable().default(null)
+    val userCodeValue: Column<String?> = varchar("user_code_value", 4000).nullable().default(null)
+    val userCodeIssuedAt: Column<Instant?> = timestamp("user_code_issued_at").nullable().default(null)
+    val userCodeExpiresAt: Column<Instant?> = timestamp("user_code_expires_at").nullable().default(null)
+    val userCodeMetadata: Column<String?> = varchar("user_code_metadata", 2000).nullable().default(null)
+    val deviceCodeValue: Column<String?> = varchar("device_code_value", 4000).nullable().default(null)
+    val deviceCodeIssuedAt: Column<Instant?> = timestamp("device_code_issued_at").nullable().default(null)
+    val deviceCodeExpiresAt: Column<Instant?> = timestamp("device_code_expires_at").nullable().default(null)
+    val deviceCodeMetadata: Column<String?> = varchar("device_code_metadata", 2000).nullable().default(null)
 
-    override val primaryKey = PrimaryKey(id)
+    override val primaryKey: PrimaryKey = PrimaryKey(id)
 }

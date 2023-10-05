@@ -26,8 +26,8 @@ class UserAuthServiceImpl(
 
     companion object {
         val sha256: MessageDigest = MessageDigest.getInstance("SHA-256")
-        const val keySize = 2048
-        const val pemSize = 64
+        const val keySize: Int = 2048
+        const val pemSize: Int = 64
     }
 }
 

@@ -26,7 +26,7 @@ class ExposedKJob(config: Configuration) : BaseKJob<ExposedKJob.Configuration>(c
         return super.start()
     }
 
-    override fun shutdown() = runBlocking {
+    override fun shutdown(): Unit = runBlocking {
         super.shutdown()
         lockRepository.clearExpired()
     }
@@ -40,10 +40,10 @@ class ExposedKJob(config: Configuration) : BaseKJob<ExposedKJob.Configuration>(c
         var driverClassName: String? = null
         var connectionDatabase: Database? = null
 
-        var jobTableName = "kjobJobs"
+        var jobTableName: String = "kjobJobs"
 
-        var lockTableName = "kjobLocks"
+        var lockTableName: String = "kjobLocks"
 
-        var expireLockInMinutes = 5L
+        var expireLockInMinutes: Long = 5L
     }
 }
