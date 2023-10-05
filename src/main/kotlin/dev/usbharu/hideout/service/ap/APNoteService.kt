@@ -168,6 +168,7 @@ class APNoteServiceImpl(
             postQueryService.findByUrl(it)
         }
 
+        // TODO: リモートのメディア処理を追加
         postService.createRemote(
             Post.of(
                 id = postRepository.generateId(),

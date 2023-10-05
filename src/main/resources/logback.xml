@@ -13,4 +13,5 @@
     <logger name="Exposed" level="INFO"/>
     <logger name="io.ktor.server.plugins.contentnegotiation" level="INFO"/>
     <logger name="org.springframework.security" level="DEBUG"/>
+    <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter" level="DEBUG"/>
 </configuration>
