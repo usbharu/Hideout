@@ -55,17 +55,17 @@ class PostRepositoryImpl(private val idGenerateService: IdGenerateService) : Pos
 }
 
 object Posts : Table() {
-    val id = long("id")
-    val userId = long("userId").references(Users.id)
-    val overview = varchar("overview", 100).nullable()
-    val text = varchar("text", 3000)
-    val createdAt = long("createdAt")
-    val visibility = integer("visibility").default(0)
-    val url = varchar("url", 500)
-    val repostId = long("repostId").references(id).nullable()
-    val replyId = long("replyId").references(id).nullable()
-    val sensitive = bool("sensitive").default(false)
-    val apId = varchar("ap_id", 100).uniqueIndex()
+    val id: Column<Long> = long("id")
+    val userId: Column<Long> = long("userId").references(Users.id)
+    val overview: Column<String?> = varchar("overview", 100).nullable()
+    val text: Column<String> = varchar("text", 3000)
+    val createdAt: Column<Long> = long("createdAt")
+    val visibility: Column<Int> = integer("visibility").default(0)
+    val url: Column<String> = varchar("url", 500)
+    val repostId: Column<Long?> = long("repostId").references(id).nullable()
+    val replyId: Column<Long?> = long("replyId").references(id).nullable()
+    val sensitive: Column<Boolean> = bool("sensitive").default(false)
+    val apId: Column<String> = varchar("ap_id", 100).uniqueIndex()
     override val primaryKey: PrimaryKey = PrimaryKey(id)
 }
 

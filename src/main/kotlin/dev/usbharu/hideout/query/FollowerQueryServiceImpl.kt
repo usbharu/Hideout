@@ -59,7 +59,7 @@ class FollowerQueryServiceImpl : FollowerQueryService {
         val followers = Users.alias("FOLLOWERS")
         return Users.innerJoin(
             otherTable = UsersFollowers,
-            onColumn = { Users.id },
+            onColumn = { id },
             otherColumn = { userId }
         )
             .innerJoin(
@@ -149,7 +149,7 @@ class FollowerQueryServiceImpl : FollowerQueryService {
         val followers = Users.alias("FOLLOWERS")
         return Users.innerJoin(
             otherTable = UsersFollowers,
-            onColumn = { Users.id },
+            onColumn = { id },
             otherColumn = { userId }
         )
             .innerJoin(

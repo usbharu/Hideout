@@ -9,7 +9,6 @@ import dev.usbharu.hideout.service.core.Transaction
 import io.ktor.http.*
 import org.springframework.stereotype.Service
 
-@Service
 interface APCreateService {
     suspend fun receiveCreate(create: Create): ActivityPubResponse
 }

@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import java.time.Instant
 
-@Service
 interface APNoteService {
 
     suspend fun createNote(post: Post)
@@ -57,7 +56,7 @@ class APNoteServiceImpl(
         postService.addInterceptor(this)
     }
 
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = LoggerFactory.getLogger(APNoteServiceImpl::class.java)
 
     override suspend fun createNote(post: Post) {
         val followers = followerQueryService.findFollowersById(post.userId)
@@ -81,7 +80,7 @@ class APNoteServiceImpl(
             attributedTo = actor,
             content = postEntity.text,
             published = Instant.ofEpochMilli(postEntity.createdAt).toString(),
-            to = listOf(public, actor + "/follower")
+            to = listOf(public, "$actor/follower")
         )
         val inbox = props[DeliverPostJob.inbox]
         logger.debug("createNoteJob: actor={}, note={}, inbox={}", actor, postEntity, inbox)
@@ -173,12 +172,10 @@ class APNoteServiceImpl(
             Post.of(
                 id = postRepository.generateId(),
                 userId = person.second.id,
-                overview = null,
                 text = note.content.orEmpty(),
                 createdAt = Instant.parse(note.published).toEpochMilli(),
                 visibility = visibility,
                 url = note.id ?: url,
-                repostId = null,
                 replyId = reply?.id,
                 sensitive = note.sensitive,
                 apId = note.id ?: url,
