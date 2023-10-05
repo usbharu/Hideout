@@ -60,6 +60,8 @@ tasks.create<GenerateTask>("openApiGenerateMastodonCompatibleApi", GenerateTask:
     configOptions.put("interfaceOnly", "true")
     configOptions.put("useSpringBoot3", "true")
     additionalProperties.put("useTags", "true")
+    importMappings.put("org.springframework.core.io.Resource", "org.springframework.web.multipart.MultipartFile")
+    typeMappings.put("org.springframework.core.io.Resource", "org.springframework.web.multipart.MultipartFile")
 }
 
 repositories {
@@ -116,6 +118,9 @@ dependencies {
     implementation("org.springframework.security:spring-security-oauth2-jose")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
     implementation("org.jetbrains.exposed:exposed-spring-boot-starter:0.44.0")
+    implementation("io.trbl:blurhash:1.0.0")
+    implementation("software.amazon.awssdk:s3:2.20.157")
+
 
 
     implementation("io.ktor:ktor-client-logging-jvm:$ktor_version")
