@@ -17,6 +17,8 @@ tags:
     description: instance
   - name: timeline
     description: timeline
+  - name: media
+    description: media
 
 paths:
   /api/v2/instance:
@@ -291,9 +293,48 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Status"
+  /api/v1/media:
+    post:
+      tags:
+        - media
+      security:
+        - OAuth2:
+            - "write:media"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/V1MediaRequest"
+            encoding:
+              file:
+                contentType: image/jpeg, image/png
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaAttachment"
 
 components:
   schemas:
+    V1MediaRequest:
+      type: object
+      properties:
+        file:
+          type: string
+          format: binary
+        thumbnail:
+          type: string
+          format: binary
+        description:
+          type: string
+        focus:
+          type: string
+      required:
+        - file
+
     AccountsCreateRequest:
       type: object
       properties:
