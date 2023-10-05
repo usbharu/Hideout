@@ -8,7 +8,6 @@ import io.ktor.client.*
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 
-@Service
 interface APSendFollowService {
     suspend fun sendFollow(sendFollowDto: SendFollowDto)
 }

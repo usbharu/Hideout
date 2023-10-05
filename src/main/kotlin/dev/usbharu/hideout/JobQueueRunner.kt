@@ -4,6 +4,7 @@ import dev.usbharu.hideout.domain.model.job.HideoutJob
 import dev.usbharu.hideout.service.ap.APService
 import dev.usbharu.hideout.service.job.JobQueueParentService
 import dev.usbharu.hideout.service.job.JobQueueWorkerService
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
@@ -18,7 +19,7 @@ class JobQueueRunner(private val jobQueueParentService: JobQueueParentService, p
     }
 
     companion object {
-        val LOGGER = LoggerFactory.getLogger(JobQueueRunner::class.java)
+        val LOGGER: Logger = LoggerFactory.getLogger(JobQueueRunner::class.java)
     }
 }
 
@@ -46,6 +47,6 @@ class JobQueueWorkerRunner(
     }
 
     companion object {
-        val LOGGER = LoggerFactory.getLogger(JobQueueWorkerRunner::class.java)
+        val LOGGER: Logger = LoggerFactory.getLogger(JobQueueWorkerRunner::class.java)
     }
 }

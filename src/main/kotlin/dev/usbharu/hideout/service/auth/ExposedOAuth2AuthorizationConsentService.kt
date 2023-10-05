@@ -17,7 +17,7 @@ class ExposedOAuth2AuthorizationConsentService(
 ) :
     OAuth2AuthorizationConsentService {
 
-    override fun save(authorizationConsent: AuthorizationConsent?) = runBlocking {
+    override fun save(authorizationConsent: AuthorizationConsent?): Unit = runBlocking {
         requireNotNull(authorizationConsent)
         transaction.transaction {
             val singleOrNull =
@@ -74,8 +74,8 @@ class ExposedOAuth2AuthorizationConsentService(
 }
 
 object OAuth2AuthorizationConsent : Table("oauth2_authorization_consent") {
-    val registeredClientId = varchar("registered_client_id", 100)
-    val principalName = varchar("principal_name", 200)
-    val authorities = varchar("authorities", 1000)
-    override val primaryKey = PrimaryKey(registeredClientId, principalName)
+    val registeredClientId: Column<String> = varchar("registered_client_id", 100)
+    val principalName: Column<String> = varchar("principal_name", 200)
+    val authorities: Column<String> = varchar("authorities", 1000)
+    override val primaryKey: PrimaryKey = PrimaryKey(registeredClientId, principalName)
 }

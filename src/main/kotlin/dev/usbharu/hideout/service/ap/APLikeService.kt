@@ -10,7 +10,6 @@ import dev.usbharu.hideout.service.reaction.ReactionService
 import io.ktor.http.*
 import org.springframework.stereotype.Service
 
-@Service
 interface APLikeService {
     suspend fun receiveLike(like: Like): ActivityPubResponse
 }
@@ -29,9 +28,9 @@ class APLikeServiceImpl(
         like.`object` ?: throw IllegalActivityPubObjectException("object is null")
         transaction.transaction(java.sql.Connection.TRANSACTION_SERIALIZABLE) {
             val person = apUserService.fetchPersonWithEntity(actor)
-            apNoteService.fetchNote(like.`object`!!)
+            apNoteService.fetchNote(like.`object` ?: return@transaction)
 
-            val post = postQueryService.findByUrl(like.`object`!!)
+            val post = postQueryService.findByUrl(like.`object` ?: return@transaction)
 
             reactionService.receiveReaction(
                 content,

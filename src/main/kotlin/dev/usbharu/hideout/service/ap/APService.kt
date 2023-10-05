@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 
-@Service
 interface APService {
     fun parseActivity(json: String): ActivityType
 
@@ -186,7 +185,7 @@ class APServiceImpl(
     @Qualifier("activitypub") private val objectMapper: ObjectMapper
 ) : APService {
 
-    val logger: Logger = LoggerFactory.getLogger(this::class.java)
+    val logger: Logger = LoggerFactory.getLogger(APServiceImpl::class.java)
     override fun parseActivity(json: String): ActivityType {
         val readTree = objectMapper.readTree(json)
         logger.trace("readTree: {}", readTree)
@@ -229,16 +228,16 @@ class APServiceImpl(
 
 //        println(apReceiveFollowService::class.java)
 //        apReceiveFollowService.receiveFollowJob(job.props as JobProps<ReceiveFollowJob>)
-        when {
-            hideoutJob is ReceiveFollowJob -> {
+        when (hideoutJob) {
+            is ReceiveFollowJob -> {
                 apReceiveFollowService.receiveFollowJob(
                     job.props as JobProps<ReceiveFollowJob>
                 )
             }
 
-            hideoutJob is DeliverPostJob -> apNoteService.createNoteJob(job.props as JobProps<DeliverPostJob>)
-            hideoutJob is DeliverReactionJob -> apReactionService.reactionJob(job.props as JobProps<DeliverReactionJob>)
-            hideoutJob is DeliverRemoveReactionJob -> apReactionService.removeReactionJob(
+            is DeliverPostJob -> apNoteService.createNoteJob(job.props as JobProps<DeliverPostJob>)
+            is DeliverReactionJob -> apReactionService.reactionJob(job.props as JobProps<DeliverReactionJob>)
+            is DeliverRemoveReactionJob -> apReactionService.removeReactionJob(
                 job.props as JobProps<DeliverRemoveReactionJob>
             )
 

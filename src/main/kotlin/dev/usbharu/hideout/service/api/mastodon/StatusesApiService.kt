@@ -42,7 +42,6 @@ class StatsesApiServiceImpl(
                 text = statusesRequest.status.orEmpty(),
                 overview = statusesRequest.spoilerText,
                 visibility = visibility,
-                repostId = null,
                 repolyId = statusesRequest.inReplyToId?.toLongOrNull(),
                 userId = userId
             )
@@ -86,19 +85,9 @@ class StatsesApiServiceImpl(
             url = post.url,
             inReplyToId = post.replyId?.toString(),
             inReplyToAccountId = replyUser?.toString(),
-            reblog = null,
             language = null,
             text = post.text,
-            editedAt = null,
-            application = null,
-            poll = null,
-            card = null,
-            favourited = null,
-            reblogged = null,
-            muted = null,
-            bookmarked = null,
-            pinned = null,
-            filtered = null
+            editedAt = null
         )
     }
 }

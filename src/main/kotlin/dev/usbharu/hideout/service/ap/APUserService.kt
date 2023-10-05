@@ -22,7 +22,6 @@ import io.ktor.http.*
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 
-@Service
 interface APUserService {
     suspend fun getPersonByName(name: String): Person
 

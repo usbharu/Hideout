@@ -69,16 +69,7 @@ class StatusQueryServiceImpl : StatusQueryService {
                     inReplyToAccountId = null,
                     language = null,
                     text = it[Posts.text],
-                    editedAt = null,
-                    application = null,
-                    poll = null,
-                    card = null,
-                    favourited = null,
-                    reblogged = null,
-                    muted = null,
-                    bookmarked = null,
-                    pinned = null,
-                    filtered = null
+                    editedAt = null
                 ) to it[Posts.repostId]
             }
 
@@ -86,14 +77,14 @@ class StatusQueryServiceImpl : StatusQueryService {
         return pairs
             .map {
                 if (it.second != null) {
-                    it.first.copy(reblog = statuses.find { status -> status.id == it.second.toString() })
+                    it.first.copy(reblog = statuses.find { (id) -> id == it.second.toString() })
                 } else {
                     it.first
                 }
             }
             .map {
                 if (it.inReplyToId != null) {
-                    it.copy(inReplyToAccountId = statuses.find { status -> status.id == it.inReplyToId }?.id)
+                    it.copy(inReplyToAccountId = statuses.find { (id) -> id == it.inReplyToId }?.id)
                 } else {
                     it
                 }
