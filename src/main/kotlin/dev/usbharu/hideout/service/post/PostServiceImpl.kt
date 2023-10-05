@@ -44,7 +44,8 @@ class PostServiceImpl(
             text = post.text,
             createdAt = Instant.now().toEpochMilli(),
             visibility = post.visibility,
-            url = "${user.url}/posts/$id"
+            url = "${user.url}/posts/$id",
+            mediaIds = post.mediaIds
         )
         return internalCreate(createPost, isLocal)
     }
