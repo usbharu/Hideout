@@ -1,28 +1,27 @@
 package dev.usbharu.hideout.service.media
 
+import dev.usbharu.hideout.domain.model.hideout.dto.ProcessedFile
 import org.springframework.stereotype.Service
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
-import java.io.OutputStream
 import javax.imageio.ImageIO
-import javax.imageio.stream.MemoryCacheImageOutputStream
 
 @Service
 class ThumbnailGenerateServiceImpl : ThumbnailGenerateService {
-    override fun generate(bufferedImage: InputStream, width: Int, height: Int): ByteArrayOutputStream {
+    override fun generate(bufferedImage: InputStream, width: Int, height: Int): ProcessedFile? {
         val image = ImageIO.read(bufferedImage)
         return internalGenerate(image)
     }
 
-    override fun generate(outputStream: OutputStream, width: Int, height: Int): ByteArrayOutputStream {
-        val image = ImageIO.read(MemoryCacheImageOutputStream(outputStream))
+    override fun generate(outputStream: ByteArray, width: Int, height: Int): ProcessedFile? {
+        val image = ImageIO.read(outputStream.inputStream())
         return internalGenerate(image)
     }
 
-    private fun internalGenerate(image: BufferedImage): ByteArrayOutputStream {
+    private fun internalGenerate(image: BufferedImage): ProcessedFile {
         val byteArrayOutputStream = ByteArrayOutputStream()
-        ImageIO.write(image, "webp", byteArrayOutputStream)
-        return byteArrayOutputStream
+        ImageIO.write(image, "jpeg", byteArrayOutputStream)
+        return ProcessedFile(byteArrayOutputStream.toByteArray(), "jpg")
     }
 }

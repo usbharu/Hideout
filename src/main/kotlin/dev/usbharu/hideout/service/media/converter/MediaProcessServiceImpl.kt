@@ -1,6 +1,7 @@
 package dev.usbharu.hideout.service.media.converter
 
 import dev.usbharu.hideout.domain.model.hideout.dto.FileType
+import dev.usbharu.hideout.domain.model.hideout.dto.ProcessedMedia
 import dev.usbharu.hideout.exception.media.MediaConvertException
 import dev.usbharu.hideout.service.media.ThumbnailGenerateService
 import org.slf4j.LoggerFactory
@@ -13,26 +14,30 @@ class MediaProcessServiceImpl(
 ) : MediaProcessService {
     override suspend fun process(
         fileType: FileType,
+        contentType: String,
+        filename: String,
         file: ByteArray,
         thumbnail: ByteArray?
-    ): Pair<ByteArray, ByteArray> {
+    ): ProcessedMedia {
 
         val fileInputStream = try {
-            mediaConverterRoot.convert(fileType, file.inputStream().buffered())
+            mediaConverterRoot.convert(fileType, contentType, filename, file.inputStream().buffered())
         } catch (e: Exception) {
             logger.warn("Failed convert media.", e)
             throw MediaConvertException("Failed convert media.", e)
         }
         val thumbnailInputStream = try {
-            thumbnail?.let { mediaConverterRoot.convert(fileType, it.inputStream().buffered()) }
+            thumbnail?.let { mediaConverterRoot.convert(fileType, contentType, filename, it.inputStream().buffered()) }
         } catch (e: Exception) {
             logger.warn("Failed convert thumbnail media.", e)
             null
         }
-        return fileInputStream to thumbnailGenerateService.generate(
-            thumbnailInputStream ?: fileInputStream,
-            2048,
-            2048
+        return ProcessedMedia(
+            fileInputStream, thumbnailGenerateService.generate(
+                thumbnailInputStream?.byteArray ?: file,
+                2048,
+                2048
+            )
         )
     }
 
