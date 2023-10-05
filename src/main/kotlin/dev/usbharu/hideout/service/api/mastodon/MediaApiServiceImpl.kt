@@ -13,7 +13,6 @@ class MediaApiServiceImpl(private val mediaService: MediaService, private val tr
 
     override suspend fun postMedia(media: Media): MediaAttachment {
         return transaction.transaction {
-
             val uploadLocalMedia = mediaService.uploadLocalMedia(media)
             val type = when (uploadLocalMedia.type) {
                 FileType.Image -> MediaAttachment.Type.image
@@ -22,14 +21,14 @@ class MediaApiServiceImpl(private val mediaService: MediaService, private val tr
                 FileType.Unknown -> MediaAttachment.Type.unknown
             }
             return@transaction MediaAttachment(
-                uploadLocalMedia.id.toString(),
-                type,
-                uploadLocalMedia.url,
-                uploadLocalMedia.thumbnailUrl,
-                null,
-                media.description,
-                uploadLocalMedia.blurHash,
-                uploadLocalMedia.url
+                id = uploadLocalMedia.id.toString(),
+                type = type,
+                url = uploadLocalMedia.url,
+                previewUrl = uploadLocalMedia.thumbnailUrl,
+                remoteUrl = null,
+                description = media.description,
+                blurhash = uploadLocalMedia.blurHash,
+                textUrl = uploadLocalMedia.url
             )
         }
     }

@@ -9,7 +9,6 @@ class SuccessSavedMedia(
 ) :
     SavedMedia(true)
 
-
 class FaildSavedMedia(
     val reason: String,
     val description: String,

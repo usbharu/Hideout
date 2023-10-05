@@ -28,7 +28,9 @@ class MediaServiceImpl(
     private val mediaProcessService: MediaProcessService
 ) : MediaService {
     override suspend fun uploadLocalMedia(media: Media): EntityMedia {
-        logger.info("Media upload. filename:${media.file.name} size:${media.file.size} contentType:${media.file.contentType}")
+        logger.info(
+            "Media upload. filename:${media.file.name} size:${media.file.size} contentType:${media.file.contentType}"
+        )
 
         if (media.file.size == 0L) {
             throw MediaFileSizeIsZeroException("Media file size is zero.")
@@ -85,9 +87,7 @@ class MediaServiceImpl(
         )
     }
 
-    override suspend fun uploadRemoteMedia(remoteMedia: RemoteMedia) {
-
-    }
+    override suspend fun uploadRemoteMedia(remoteMedia: RemoteMedia) = Unit
 
     companion object {
         private val logger = LoggerFactory.getLogger(MediaServiceImpl::class.java)

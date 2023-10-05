@@ -19,7 +19,6 @@ class MediaProcessServiceImpl(
         file: ByteArray,
         thumbnail: ByteArray?
     ): ProcessedMedia {
-
         val fileInputStream = try {
             mediaConverterRoot.convert(fileType, contentType, filename, file.inputStream().buffered())
         } catch (e: Exception) {
@@ -33,7 +32,8 @@ class MediaProcessServiceImpl(
             null
         }
         return ProcessedMedia(
-            fileInputStream, thumbnailGenerateService.generate(
+            fileInputStream,
+            thumbnailGenerateService.generate(
                 thumbnailInputStream?.byteArray ?: file,
                 2048,
                 2048
