@@ -33,7 +33,10 @@ class S3MediaDataStore(private val s3Client: S3Client, private val storageConfig
             awaitAll(
                 async {
                     if (dataMediaSave.thumbnailInputStream != null) {
-                        s3Client.putObject(fileUploadRequest, RequestBody.fromBytes(dataMediaSave.thumbnailInputStream))
+                        s3Client.putObject(
+                            thumbnailUploadRequest,
+                            RequestBody.fromBytes(dataMediaSave.thumbnailInputStream)
+                        )
                         "thumbnail" to s3Client.utilities()
                             .getUrl(GetUrlRequest.builder().bucket(storageConfig.bucket).key(thumbnailKey).build())
                     } else {
@@ -41,7 +44,7 @@ class S3MediaDataStore(private val s3Client: S3Client, private val storageConfig
                     }
                 },
                 async {
-                    s3Client.putObject(thumbnailUploadRequest, RequestBody.fromBytes(dataMediaSave.fileInputStream))
+                    s3Client.putObject(fileUploadRequest, RequestBody.fromBytes(dataMediaSave.fileInputStream))
                     "file" to s3Client.utilities()
                         .getUrl(GetUrlRequest.builder().bucket(storageConfig.bucket).key(dataMediaSave.name).build())
                 }

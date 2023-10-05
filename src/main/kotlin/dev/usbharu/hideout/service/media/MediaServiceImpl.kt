@@ -28,6 +28,8 @@ class MediaServiceImpl(
     private val mediaProcessService: MediaProcessService
 ) : MediaService {
     override suspend fun uploadLocalMedia(media: Media): EntityMedia {
+        logger.info("Media upload. filename:${media.file.name} size:${media.file.size} contentType:${media.file.contentType}")
+
         if (media.file.size == 0L) {
             throw MediaFileSizeIsZeroException("Media file size is zero.")
         }
@@ -37,13 +39,19 @@ class MediaServiceImpl(
             throw UnsupportedMediaException("FileType: $fileType  is not supported.")
         }
 
-        val process = mediaProcessService.process(fileType, media.file.bytes, media.thumbnail?.bytes)
+        val process = mediaProcessService.process(
+            fileType,
+            media.file.contentType.orEmpty(),
+            media.file.name,
+            media.file.bytes,
+            media.thumbnail?.bytes
+        )
 
         val dataMediaSave = MediaSave(
-            UUID.randomUUID().toString(),
+            "${UUID.randomUUID()}.${process.file.extension}",
             "",
-            process.first,
-            process.second
+            process.file.byteArray,
+            process.thumbnail?.byteArray
         )
         val save = try {
             mediaDataStore.save(dataMediaSave)

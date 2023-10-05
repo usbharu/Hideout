@@ -4,6 +4,7 @@ import dev.usbharu.hideout.controller.mastodon.generated.MediaApi
 import dev.usbharu.hideout.domain.mastodon.model.generated.MediaAttachment
 import dev.usbharu.hideout.domain.model.hideout.form.Media
 import dev.usbharu.hideout.service.api.mastodon.MediaApiService
+import kotlinx.coroutines.runBlocking
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.multipart.MultipartFile
@@ -15,8 +16,8 @@ class MastodonMediaApiController(private val mediaApiService: MediaApiService) :
         thumbnail: MultipartFile?,
         description: String?,
         focus: String?
-    ): ResponseEntity<MediaAttachment> {
-        return ResponseEntity.ok(
+    ): ResponseEntity<MediaAttachment> = runBlocking {
+        ResponseEntity.ok(
             mediaApiService.postMedia(
                 Media(
                     file,
