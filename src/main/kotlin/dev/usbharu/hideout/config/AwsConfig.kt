@@ -10,7 +10,7 @@ import java.net.URI
 @Configuration
 class AwsConfig {
     @Bean
-    fun s3(awsConfig: StorageConfig): S3Client {
+    fun s3Client(awsConfig: StorageConfig): S3Client {
         return S3Client.builder()
             .endpointOverride(URI.create(awsConfig.endpoint))
             .region(Region.of(awsConfig.region))

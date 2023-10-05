@@ -1,6 +1,5 @@
 package dev.usbharu.hideout.repository
 
-
 import dev.usbharu.hideout.domain.model.hideout.dto.FileType
 import dev.usbharu.hideout.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.service.core.IdGenerateService
@@ -17,7 +16,8 @@ class MediaRepositoryImpl(private val idGenerateService: IdGenerateService) : Me
     override suspend fun save(media: EntityMedia): EntityMedia {
         if (Media.select {
                 Media.id eq media.id
-            }.singleOrNull() != null) {
+            }.singleOrNull() != null
+        ) {
             Media.update({ Media.id eq media.id }) {
                 it[Media.name] = media.name
                 it[Media.url] = media.url
@@ -58,13 +58,13 @@ class MediaRepositoryImpl(private val idGenerateService: IdGenerateService) : Me
 
     fun ResultRow.toMedia(): EntityMedia {
         return EntityMedia(
-            this[Media.id],
-            this[Media.name],
-            this[Media.url],
-            this[Media.remoteUrl],
-            this[Media.thumbnailUrl],
-            FileType.values().first { it.ordinal == this[Media.type] },
-            this[Media.blurhash],
+            id = this[Media.id],
+            name = this[Media.name],
+            url = this[Media.url],
+            remoteUrl = this[Media.remoteUrl],
+            thumbnailUrl = this[Media.thumbnailUrl],
+            type = FileType.values().first { it.ordinal == this[Media.type] },
+            blurHash = this[Media.blurhash],
         )
     }
 }

@@ -3,6 +3,7 @@ build:
   weights:
     Indentation: 0
     MagicNumber: 0
+    InjectDispatcher: 0
 
 style:
   ClassOrdering:
