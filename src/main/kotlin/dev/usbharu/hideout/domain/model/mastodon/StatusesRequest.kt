@@ -1,31 +1,38 @@
 package dev.usbharu.hideout.domain.model.mastodon
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.usbharu.hideout.domain.mastodon.model.generated.StatusesRequest
 import dev.usbharu.hideout.domain.mastodon.model.generated.StatusesRequestPoll
 
 class StatusesRequest {
     @JsonProperty("status")
     var status: String? = null
+
     @JsonProperty("media_ids")
     var media_ids: List<String> = emptyList()
+
     @JsonProperty("poll")
     var poll: StatusesRequestPoll? = null
+
     @JsonProperty("in_reply_to_id")
     var in_reply_to_id: String? = null
+
     @JsonProperty("sensitive")
     var sensitive: Boolean? = null
+
     @JsonProperty("spoiler_text")
     var spoiler_text: String? = null
+
     @JsonProperty("visibility")
-    var visibility: StatusesRequest.Visibility? = null
+    var visibility: Visibility? = null
+
     @JsonProperty("language")
     var language: String? = null
+
     @JsonProperty("scheduled_at")
     var scheduled_at: String? = null
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is dev.usbharu.hideout.domain.model.mastodon.StatusesRequest) return false
+        if (other !is StatusesRequest) return false
 
         if (status != other.status) return false
         if (media_ids != other.media_ids) return false
@@ -40,7 +47,6 @@ class StatusesRequest {
         return true
     }
 
-
     override fun hashCode(): Int {
         var result = status?.hashCode() ?: 0
         result = 31 * result + media_ids.hashCode()
@@ -54,9 +60,15 @@ class StatusesRequest {
         return result
     }
 
+
     override fun toString(): String {
         return "StatusesRequest(status=$status, mediaIds=$media_ids, poll=$poll, inReplyToId=$in_reply_to_id, sensitive=$sensitive, spoilerText=$spoiler_text, visibility=$visibility, language=$language, scheduledAt=$scheduled_at)"
     }
 
-
+    enum class Visibility {
+        `public`,
+        unlisted,
+        private,
+        direct;
+    }
 }
