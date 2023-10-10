@@ -21,7 +21,6 @@ class Document : Object {
         this.url = url
     }
 
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is Document) return false
@@ -43,6 +42,4 @@ class Document : Object {
     override fun toString(): String {
         return "Document(mediaType=$mediaType, url=$url) ${super.toString()}"
     }
-
-
 }

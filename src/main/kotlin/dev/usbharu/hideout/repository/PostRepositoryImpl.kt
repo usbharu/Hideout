@@ -90,7 +90,6 @@ object PostsMedia : Table() {
     override val primaryKey = PrimaryKey(postId, mediaId)
 }
 
-
 fun ResultRow.toPost(): Post {
     return Post.of(
         id = this[Posts.id],

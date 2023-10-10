@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.web.filter.CommonsRequestLoggingFilter
 import java.net.URL
 
-
 @Configuration
 class SpringConfig {
 

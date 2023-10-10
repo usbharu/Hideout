@@ -27,7 +27,6 @@ class StatusQueryServiceImpl : StatusQueryService {
         return resolveReplyAndRepost(pairs)
     }
 
-
     private fun resolveReplyAndRepost(pairs: List<Pair<Status, Long?>>): List<Status> {
         val statuses = pairs.map { it.first }
         return pairs
@@ -56,25 +55,27 @@ class StatusQueryServiceImpl : StatusQueryService {
             .groupBy { it[Posts.id] }
             .map { it.value }
             .map {
-                toStatus(it.first()).copy(mediaAttachments = it.map {
-                    it.toMedia().let {
-                        MediaAttachment(
-                            it.id.toString(),
-                            when (it.type) {
-                                FileType.Image -> MediaAttachment.Type.image
-                                FileType.Video -> MediaAttachment.Type.video
-                                FileType.Audio -> MediaAttachment.Type.audio
-                                FileType.Unknown -> MediaAttachment.Type.unknown
-                            },
-                            it.url,
-                            it.thumbnailUrl,
-                            it.remoteUrl,
-                            "",
-                            it.blurHash,
-                            it.url
-                        )
+                toStatus(it.first()).copy(
+                    mediaAttachments = it.map {
+                        it.toMedia().let {
+                            MediaAttachment(
+                                it.id.toString(),
+                                when (it.type) {
+                                    FileType.Image -> MediaAttachment.Type.image
+                                    FileType.Video -> MediaAttachment.Type.video
+                                    FileType.Audio -> MediaAttachment.Type.audio
+                                    FileType.Unknown -> MediaAttachment.Type.unknown
+                                },
+                                it.url,
+                                it.thumbnailUrl,
+                                it.remoteUrl,
+                                "",
+                                it.blurHash,
+                                it.url
+                            )
+                        }
                     }
-                }) to it.first()[Posts.repostId]
+                ) to it.first()[Posts.repostId]
             }
         return resolveReplyAndRepost(pairs)
     }
