@@ -62,6 +62,7 @@ tasks.create<GenerateTask>("openApiGenerateMastodonCompatibleApi", GenerateTask:
     additionalProperties.put("useTags", "true")
     importMappings.put("org.springframework.core.io.Resource", "org.springframework.web.multipart.MultipartFile")
     typeMappings.put("org.springframework.core.io.Resource", "org.springframework.web.multipart.MultipartFile")
+    templateDir.set("$rootDir/templates")
 }
 
 repositories {
