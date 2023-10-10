@@ -60,9 +60,17 @@ tasks.create<GenerateTask>("openApiGenerateMastodonCompatibleApi", GenerateTask:
     configOptions.put("interfaceOnly", "true")
     configOptions.put("useSpringBoot3", "true")
     additionalProperties.put("useTags", "true")
+
     importMappings.put("org.springframework.core.io.Resource", "org.springframework.web.multipart.MultipartFile")
     typeMappings.put("org.springframework.core.io.Resource", "org.springframework.web.multipart.MultipartFile")
+    schemaMappings.put(
+        "StatusesRequest",
+        "dev.usbharu.hideout.domain.model.mastodon.StatusesRequest"
+    )
     templateDir.set("$rootDir/templates")
+    globalProperties.put("debugModels", "true")
+    globalProperties.put("debugOpenAPI", "true")
+    globalProperties.put("debugOperations", "true")
 }
 
 repositories {

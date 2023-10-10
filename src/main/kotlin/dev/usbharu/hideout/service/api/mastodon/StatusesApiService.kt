@@ -18,7 +18,10 @@ import java.time.Instant
 
 @Service
 interface StatusesApiService {
-    suspend fun postStatus(statusesRequest: StatusesRequest, userId: Long): Status
+    suspend fun postStatus(
+        statusesRequest: dev.usbharu.hideout.domain.model.mastodon.StatusesRequest,
+        userId: Long
+    ): Status
 }
 
 @Service
@@ -32,8 +35,11 @@ class StatsesApiServiceImpl(
 ) :
     StatusesApiService {
     @Suppress("LongMethod")
-    override suspend fun postStatus(statusesRequest: StatusesRequest, userId: Long): Status = transaction.transaction {
-        println("Post status media ids " + statusesRequest.mediaIds)
+    override suspend fun postStatus(
+        statusesRequest: dev.usbharu.hideout.domain.model.mastodon.StatusesRequest,
+        userId: Long
+    ): Status = transaction.transaction {
+        println("Post status media ids " + statusesRequest.media_ids)
         val visibility = when (statusesRequest.visibility) {
             StatusesRequest.Visibility.public -> Visibility.PUBLIC
             StatusesRequest.Visibility.unlisted -> Visibility.UNLISTED
@@ -45,11 +51,11 @@ class StatsesApiServiceImpl(
         val post = postService.createLocal(
             PostCreateDto(
                 text = statusesRequest.status.orEmpty(),
-                overview = statusesRequest.spoilerText,
+                overview = statusesRequest.spoiler_text,
                 visibility = visibility,
-                repolyId = statusesRequest.inReplyToId?.toLongOrNull(),
+                repolyId = statusesRequest.in_reply_to_id?.toLongOrNull(),
                 userId = userId,
-                mediaIds = statusesRequest.mediaIds.orEmpty().map { it.toLong() }
+                mediaIds = statusesRequest.media_ids.orEmpty().map { it.toLong() }
             )
         )
         val account = accountService.findById(userId)
