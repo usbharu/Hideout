@@ -10,11 +10,10 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.stereotype.Controller
-import org.springframework.web.bind.annotation.ModelAttribute
 
 @Controller
 class MastodonStatusesApiContoller(private val statusesApiService: StatusesApiService) : StatusApi {
-    override fun apiV1StatusesPost(@ModelAttribute statusesRequest: StatusesRequest): ResponseEntity<Status> =
+    override fun apiV1StatusesPost(statusesRequest: StatusesRequest): ResponseEntity<Status> =
         runBlocking {
             val jwt = SecurityContextHolder.getContext().authentication.principal as Jwt
 
