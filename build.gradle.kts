@@ -68,9 +68,6 @@ tasks.create<GenerateTask>("openApiGenerateMastodonCompatibleApi", GenerateTask:
         "dev.usbharu.hideout.domain.model.mastodon.StatusesRequest"
     )
     templateDir.set("$rootDir/templates")
-    globalProperties.put("debugModels", "true")
-    globalProperties.put("debugOpenAPI", "true")
-    globalProperties.put("debugOperations", "true")
 }
 
 repositories {
