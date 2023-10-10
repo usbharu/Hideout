@@ -80,7 +80,9 @@ class APNoteServiceImpl(
         val actor = props[DeliverPostJob.actor]
         val postEntity = objectMapper.readValue<Post>(props[DeliverPostJob.post])
         val mediaList =
-            objectMapper.readValue<List<dev.usbharu.hideout.domain.model.hideout.entity.Media>>(props[DeliverPostJob.media])
+            objectMapper.readValue<List<dev.usbharu.hideout.domain.model.hideout.entity.Media>>(
+                props[DeliverPostJob.media]
+            )
         val note = Note(
             name = "Note",
             id = postEntity.url,
