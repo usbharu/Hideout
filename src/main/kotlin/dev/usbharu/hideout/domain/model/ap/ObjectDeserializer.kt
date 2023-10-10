@@ -84,7 +84,7 @@ class ObjectDeserializer : JsonDeserializer<Object>() {
                 ExtendedActivityVocabulary.Service -> TODO()
                 ExtendedActivityVocabulary.Article -> TODO()
                 ExtendedActivityVocabulary.Audio -> TODO()
-                ExtendedActivityVocabulary.Document -> TODO()
+                ExtendedActivityVocabulary.Document -> p.codec.treeToValue(treeNode, Document::class.java)
                 ExtendedActivityVocabulary.Event -> TODO()
                 ExtendedActivityVocabulary.Image -> p.codec.treeToValue(treeNode, Image::class.java)
                 ExtendedActivityVocabulary.Page -> TODO()
