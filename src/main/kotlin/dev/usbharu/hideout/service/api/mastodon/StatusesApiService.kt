@@ -2,10 +2,10 @@ package dev.usbharu.hideout.service.api.mastodon
 
 import dev.usbharu.hideout.domain.mastodon.model.generated.MediaAttachment
 import dev.usbharu.hideout.domain.mastodon.model.generated.Status
-import dev.usbharu.hideout.domain.mastodon.model.generated.StatusesRequest
 import dev.usbharu.hideout.domain.model.hideout.dto.FileType
 import dev.usbharu.hideout.domain.model.hideout.dto.PostCreateDto
 import dev.usbharu.hideout.domain.model.hideout.entity.Visibility
+import dev.usbharu.hideout.domain.model.mastodon.StatusesRequest
 import dev.usbharu.hideout.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.query.PostQueryService
 import dev.usbharu.hideout.query.UserQueryService
