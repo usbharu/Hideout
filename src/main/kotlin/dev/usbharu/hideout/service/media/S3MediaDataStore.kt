@@ -51,9 +51,9 @@ class S3MediaDataStore(private val s3Client: S3Client, private val storageConfig
             )
         }.toMap()
         return SuccessSavedMedia(
-            dataMediaSave.name,
-            pairList.getValue("file").toString(),
-            pairList.getValue("thumbnail").toString()
+            name = dataMediaSave.name,
+            url = "${storageConfig.publicUrl}/${storageConfig.bucket}/${dataMediaSave.name}",
+            thumbnailUrl = "${storageConfig.publicUrl}/${storageConfig.bucket}/$thumbnailKey"
         )
     }
 
