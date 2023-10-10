@@ -15,7 +15,6 @@ class MvcConfigurer(private val jsonOrFormModelMethodProcessor: JsonOrFormModelM
     }
 }
 
-
 @Configuration
 class JsonOrFormModelMethodProcessorConfig {
     @Bean

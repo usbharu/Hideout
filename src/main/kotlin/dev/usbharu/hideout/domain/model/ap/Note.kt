@@ -40,7 +40,6 @@ open class Note : Object {
         this.attachment = attachment
     }
 
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is Note) return false
@@ -74,6 +73,4 @@ open class Note : Object {
     override fun toString(): String {
         return "Note(attributedTo=$attributedTo, attachment=$attachment, content=$content, published=$published, to=$to, cc=$cc, sensitive=$sensitive, inReplyTo=$inReplyTo) ${super.toString()}"
     }
-
-
 }
