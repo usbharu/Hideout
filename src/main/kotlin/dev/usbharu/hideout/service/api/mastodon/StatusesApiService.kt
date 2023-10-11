@@ -39,7 +39,6 @@ class StatsesApiServiceImpl(
         statusesRequest: dev.usbharu.hideout.domain.model.mastodon.StatusesRequest,
         userId: Long
     ): Status = transaction.transaction {
-        println("Post status media ids " + statusesRequest.media_ids)
         val visibility = when (statusesRequest.visibility) {
             StatusesRequest.Visibility.public -> Visibility.PUBLIC
             StatusesRequest.Visibility.unlisted -> Visibility.UNLISTED

@@ -3,6 +3,7 @@ package dev.usbharu.hideout.service.post
 import dev.usbharu.hideout.domain.model.hideout.dto.PostCreateDto
 import dev.usbharu.hideout.domain.model.hideout.entity.Post
 import dev.usbharu.hideout.exception.UserNotFoundException
+import dev.usbharu.hideout.query.PostQueryService
 import dev.usbharu.hideout.repository.PostRepository
 import dev.usbharu.hideout.repository.UserRepository
 import org.springframework.stereotype.Service
@@ -13,7 +14,8 @@ import java.util.*
 class PostServiceImpl(
     private val postRepository: PostRepository,
     private val userRepository: UserRepository,
-    private val timelineService: TimelineService
+    private val timelineService: TimelineService,
+    private val postQueryService: PostQueryService
 ) : PostService {
     private val interceptors = Collections.synchronizedList(mutableListOf<PostCreateInterceptor>())
 
@@ -30,8 +32,13 @@ class PostServiceImpl(
     }
 
     private suspend fun internalCreate(post: Post, isLocal: Boolean): Post {
-        timelineService.publishTimeline(post, isLocal)
-        return postRepository.save(post)
+        val save = try {
+            postRepository.save(post)
+        } catch (e: Exception) {
+            postQueryService.findByApId(post.apId)
+        }
+        timelineService.publishTimeline(save, isLocal)
+        return save
     }
 
     private suspend fun internalCreate(post: PostCreateDto, isLocal: Boolean): Post {

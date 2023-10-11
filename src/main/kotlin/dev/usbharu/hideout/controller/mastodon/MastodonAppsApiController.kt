@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam
 @Controller
 class MastodonAppsApiController(private val appApiService: AppApiService) : AppApi {
     override fun apiV1AppsPost(appsRequest: AppsRequest): ResponseEntity<Application> = runBlocking {
-        println(appsRequest)
         ResponseEntity(
             appApiService.createApp(appsRequest),
             HttpStatus.OK

@@ -54,7 +54,6 @@ open class Object : JsonLd {
 
 class TypeSerializer : JsonSerializer<List<String>>() {
     override fun serialize(value: List<String>?, gen: JsonGenerator?, serializers: SerializerProvider?) {
-        println(value)
         if (value?.size == 1) {
             gen?.writeString(value[0])
         } else {
