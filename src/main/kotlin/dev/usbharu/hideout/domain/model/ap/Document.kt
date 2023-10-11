@@ -1,6 +1,6 @@
 package dev.usbharu.hideout.domain.model.ap
 
-class Document : Object {
+open class Document : Object {
 
     var mediaType: String? = null
     var url: String? = null
@@ -39,7 +39,5 @@ class Document : Object {
         return result
     }
 
-    override fun toString(): String {
-        return "Document(mediaType=$mediaType, url=$url) ${super.toString()}"
-    }
+    override fun toString(): String = "Document(mediaType=$mediaType, url=$url) ${super.toString()}"
 }
