@@ -10,6 +10,7 @@ import dev.usbharu.hideout.domain.model.hideout.entity.Post
 import dev.usbharu.hideout.domain.model.hideout.entity.Visibility
 import dev.usbharu.hideout.domain.model.job.DeliverPostJob
 import dev.usbharu.hideout.exception.FailedToGetResourcesException
+import dev.usbharu.hideout.exception.ap.FailedToGetActivityPubResourceException
 import dev.usbharu.hideout.exception.ap.IllegalActivityPubObjectException
 import dev.usbharu.hideout.plugins.getAp
 import dev.usbharu.hideout.plugins.postAp
@@ -22,6 +23,7 @@ import dev.usbharu.hideout.service.job.JobQueueParentService
 import dev.usbharu.hideout.service.post.PostCreateInterceptor
 import dev.usbharu.hideout.service.post.PostService
 import io.ktor.client.*
+import io.ktor.client.plugins.*
 import io.ktor.client.statement.*
 import kjob.core.job.JobProps
 import kotlinx.coroutines.CoroutineScope
@@ -77,7 +79,13 @@ class APNoteServiceImpl(
     private val logger = LoggerFactory.getLogger(APNoteServiceImpl::class.java)
 
     override suspend fun createNote(post: Post) {
+        logger.info("CREATE Create Local Note ${post.url}")
+        logger.debug("START Create Local Note ${post.url}")
+        logger.trace("{}", post)
         val followers = followerQueryService.findFollowersById(post.userId)
+
+        logger.debug("DELIVER Deliver Note Create ${followers.size} accounts.")
+
         val userEntity = userQueryService.findById(post.userId)
         val note = objectMapper.writeValueAsString(post)
         val mediaList = objectMapper.writeValueAsString(mediaQueryService.findByPostId(post.id))
@@ -89,6 +97,8 @@ class APNoteServiceImpl(
                 props[DeliverPostJob.media] = mediaList
             }
         }
+
+        logger.debug("SUCCESS Create Local Note ${post.url}")
     }
 
     override suspend fun createNoteJob(props: JobProps<DeliverPostJob>) {
@@ -124,18 +134,32 @@ class APNoteServiceImpl(
     }
 
     override suspend fun fetchNote(url: String, targetActor: String?): Note {
+        logger.debug("START Fetch Note url: {}", url)
         try {
             val post = postQueryService.findByUrl(url)
+            logger.debug("SUCCESS Found in local url: {}", url)
             return postToNote(post)
         } catch (_: FailedToGetResourcesException) {
         }
 
-        val response = httpClient.getAp(
-            url,
-            targetActor?.let { "$targetActor#pubkey" }
-        )
+        logger.info("AP GET url: {}", url)
+        val response = try {
+            httpClient.getAp(
+                url,
+                targetActor?.let { "$targetActor#pubkey" }
+            )
+        } catch (e: ClientRequestException) {
+            logger.warn(
+                "FAILED Failed to retrieve ActivityPub resource. HTTP Status Code: {} url: {}",
+                e.response.status,
+                url
+            )
+            throw FailedToGetActivityPubResourceException("Could not retrieve $url.", e)
+        }
         val note = objectMapper.readValue<Note>(response.bodyAsText())
-        return note(note, targetActor, url)
+        val savedNote = saveIfMissing(note, targetActor, url)
+        logger.debug("SUCCESS Fetch Note url: {}", url)
+        return savedNote
     }
 
     private suspend fun postToNote(post: Post): Note {
@@ -154,7 +178,7 @@ class APNoteServiceImpl(
         )
     }
 
-    private suspend fun note(
+    private suspend fun saveIfMissing(
         note: Note,
         targetActor: String?,
         url: String
@@ -167,12 +191,12 @@ class APNoteServiceImpl(
         val findByApId = try {
             postQueryService.findByApId(note.id!!)
         } catch (_: FailedToGetResourcesException) {
-            return internalNote(note, targetActor, url)
+            return saveNote(note, targetActor, url)
         }
         return postToNote(findByApId)
     }
 
-    private suspend fun internalNote(note: Note, targetActor: String?, url: String): Note {
+    private suspend fun saveNote(note: Note, targetActor: String?, url: String): Note {
         val person = apUserService.fetchPersonWithEntity(
             note.attributedTo ?: throw IllegalActivityPubObjectException("note.attributedTo is null"),
             targetActor
@@ -212,7 +236,7 @@ class APNoteServiceImpl(
     }
 
     override suspend fun fetchNote(note: Note, targetActor: String?): Note =
-        note(note, targetActor, note.id ?: throw IllegalArgumentException("note.id is null"))
+        saveIfMissing(note, targetActor, note.id ?: throw IllegalArgumentException("note.id is null"))
 
     override suspend fun run(post: Post) {
         createNote(post)
