@@ -10,6 +10,7 @@ import dev.usbharu.hideout.query.FollowerQueryService
 import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.repository.UserRepository
 import dev.usbharu.hideout.service.ap.APSendFollowService
+import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.springframework.stereotype.Service
 import java.time.Instant
 
@@ -66,7 +67,7 @@ class UserServiceImpl(
         )
         return try {
             userRepository.save(userEntity)
-        } catch (e: Exception) {
+        } catch (e: ExposedSQLException) {
             userQueryService.findByUrl(user.url)
         }
     }

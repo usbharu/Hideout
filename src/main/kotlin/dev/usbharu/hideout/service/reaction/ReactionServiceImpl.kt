@@ -4,6 +4,7 @@ import dev.usbharu.hideout.domain.model.hideout.entity.Reaction
 import dev.usbharu.hideout.query.ReactionQueryService
 import dev.usbharu.hideout.repository.ReactionRepository
 import dev.usbharu.hideout.service.ap.APReactionService
+import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -20,8 +21,9 @@ class ReactionServiceImpl(
                 reactionRepository.save(
                     Reaction(reactionRepository.generateId(), 0, postId, userId)
                 )
-            } catch (_: Exception) {
+            } catch (e: ExposedSQLException) {
                 LOGGER.warn("FAILED Failure to persist reaction information.")
+                LOGGER.debug("FAILED", e)
             }
         }
     }
