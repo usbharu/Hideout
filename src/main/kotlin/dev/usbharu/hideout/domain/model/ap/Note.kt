@@ -72,7 +72,7 @@ open class Note : Object {
 
     override fun toString(): String {
         return "Note(attributedTo=$attributedTo, attachment=$attachment, " +
-                "content=$content, published=$published, to=$to, cc=$cc, sensitive=$sensitive," +
-                " inReplyTo=$inReplyTo) ${super.toString()}"
+            "content=$content, published=$published, to=$to, cc=$cc, sensitive=$sensitive," +
+            " inReplyTo=$inReplyTo) ${super.toString()}"
     }
 }
