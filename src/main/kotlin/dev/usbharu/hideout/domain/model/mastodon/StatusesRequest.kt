@@ -72,6 +72,6 @@ class StatusesRequest {
         `public`,
         unlisted,
         private,
-        direct;
+        direct
     }
 }
