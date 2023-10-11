@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.config
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.nimbusds.jose.jwk.JWKSet
 import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet
@@ -8,12 +9,16 @@ import com.nimbusds.jose.proc.SecurityContext
 import dev.usbharu.hideout.domain.model.UserDetailsImpl
 import dev.usbharu.hideout.util.RsaUtil
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Primary
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpMethod
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -34,6 +39,7 @@ import java.security.KeyPairGenerator
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.util.*
+
 
 @EnableWebSecurity(debug = false)
 @Configuration
@@ -154,6 +160,21 @@ class SecurityConfig {
                 context.claims.claim("uid", userDetailsImpl.id.toString())
             }
         }
+    }
+
+    @Bean
+    @Primary
+    fun jackson2ObjectMapperBuilderCustomizer(): Jackson2ObjectMapperBuilderCustomizer {
+        return Jackson2ObjectMapperBuilderCustomizer {
+            it.serializationInclusion(JsonInclude.Include.ALWAYS).serializers()
+        }
+    }
+
+    @Bean
+    fun mappingJackson2HttpMessageConverter(): MappingJackson2HttpMessageConverter {
+        val builder = Jackson2ObjectMapperBuilder()
+            .serializationInclusion(JsonInclude.Include.NON_NULL)
+        return MappingJackson2HttpMessageConverter(builder.build())
     }
 }
 
