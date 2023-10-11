@@ -8,5 +8,6 @@ data class PostCreateDto(
     val visibility: Visibility = Visibility.PUBLIC,
     val repostId: Long? = null,
     val repolyId: Long? = null,
-    val userId: Long
+    val userId: Long,
+    val mediaIds: List<Long> = emptyList()
 )

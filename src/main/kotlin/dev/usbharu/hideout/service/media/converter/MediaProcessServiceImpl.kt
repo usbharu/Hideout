@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
+@Suppress("TooGenericExceptionCaught")
 class MediaProcessServiceImpl(
     private val mediaConverterRoot: MediaConverterRoot,
     private val thumbnailGenerateService: ThumbnailGenerateService

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.config.ApplicationConfig
 import dev.usbharu.hideout.domain.model.ap.Create
+import dev.usbharu.hideout.domain.model.ap.Document
 import dev.usbharu.hideout.domain.model.ap.Note
 import dev.usbharu.hideout.domain.model.hideout.entity.Post
 import dev.usbharu.hideout.domain.model.hideout.entity.Visibility
@@ -13,6 +14,7 @@ import dev.usbharu.hideout.exception.ap.IllegalActivityPubObjectException
 import dev.usbharu.hideout.plugins.getAp
 import dev.usbharu.hideout.plugins.postAp
 import dev.usbharu.hideout.query.FollowerQueryService
+import dev.usbharu.hideout.query.MediaQueryService
 import dev.usbharu.hideout.query.PostQueryService
 import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.repository.PostRepository
@@ -46,6 +48,7 @@ class APNoteServiceImpl(
     private val userQueryService: UserQueryService,
     private val followerQueryService: FollowerQueryService,
     private val postQueryService: PostQueryService,
+    private val mediaQueryService: MediaQueryService,
     @Qualifier("activitypub") private val objectMapper: ObjectMapper,
     private val applicationConfig: ApplicationConfig,
     private val postService: PostService
@@ -62,11 +65,13 @@ class APNoteServiceImpl(
         val followers = followerQueryService.findFollowersById(post.userId)
         val userEntity = userQueryService.findById(post.userId)
         val note = objectMapper.writeValueAsString(post)
+        val mediaList = objectMapper.writeValueAsString(mediaQueryService.findByPostId(post.id))
         followers.forEach { followerEntity ->
             jobQueueParentService.schedule(DeliverPostJob) {
                 props[DeliverPostJob.actor] = userEntity.url
                 props[DeliverPostJob.post] = note
                 props[DeliverPostJob.inbox] = followerEntity.inbox
+                props[DeliverPostJob.media] = mediaList
             }
         }
     }
@@ -74,13 +79,19 @@ class APNoteServiceImpl(
     override suspend fun createNoteJob(props: JobProps<DeliverPostJob>) {
         val actor = props[DeliverPostJob.actor]
         val postEntity = objectMapper.readValue<Post>(props[DeliverPostJob.post])
+        val mediaList =
+            objectMapper.readValue<List<dev.usbharu.hideout.domain.model.hideout.entity.Media>>(
+                props[DeliverPostJob.media]
+            )
         val note = Note(
             name = "Note",
             id = postEntity.url,
             attributedTo = actor,
             content = postEntity.text,
             published = Instant.ofEpochMilli(postEntity.createdAt).toString(),
-            to = listOf(public, "$actor/follower")
+            to = listOf(public, "$actor/follower"),
+            attachment = mediaList.map { Document(mediaType = "image/jpeg", url = it.url) }
+
         )
         val inbox = props[DeliverPostJob.inbox]
         logger.debug("createNoteJob: actor={}, note={}, inbox={}", actor, postEntity, inbox)
@@ -168,6 +179,7 @@ class APNoteServiceImpl(
             postQueryService.findByUrl(it)
         }
 
+        // TODO: リモートのメディア処理を追加
         postService.createRemote(
             Post.of(
                 id = postRepository.generateId(),

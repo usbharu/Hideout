@@ -55,18 +55,18 @@ class MediaRepositoryImpl(private val idGenerateService: IdGenerateService) : Me
             Media.id eq id
         }
     }
+}
 
-    fun ResultRow.toMedia(): EntityMedia {
-        return EntityMedia(
-            id = this[Media.id],
-            name = this[Media.name],
-            url = this[Media.url],
-            remoteUrl = this[Media.remoteUrl],
-            thumbnailUrl = this[Media.thumbnailUrl],
-            type = FileType.values().first { it.ordinal == this[Media.type] },
-            blurHash = this[Media.blurhash],
-        )
-    }
+fun ResultRow.toMedia(): EntityMedia {
+    return EntityMedia(
+        id = this[Media.id],
+        name = this[Media.name],
+        url = this[Media.url],
+        remoteUrl = this[Media.remoteUrl],
+        thumbnailUrl = this[Media.thumbnailUrl],
+        type = FileType.values().first { it.ordinal == this[Media.type] },
+        blurHash = this[Media.blurhash],
+    )
 }
 
 object Media : Table("media") {
@@ -77,4 +77,5 @@ object Media : Table("media") {
     val thumbnailUrl = varchar("thumbnail_url", 255).nullable()
     val type = integer("type")
     val blurhash = varchar("blurhash", 255).nullable()
+    override val primaryKey = PrimaryKey(id)
 }
