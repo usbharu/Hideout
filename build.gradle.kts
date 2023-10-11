@@ -1,6 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
-import kotlin.math.min
+import kotlin.math.max
 
 val ktor_version: String by project
 val kotlin_version: String by project
@@ -29,7 +29,7 @@ version = "0.0.1"
 tasks.withType<Test> {
     useJUnitPlatform()
     val cpus = Runtime.getRuntime().availableProcessors()
-    maxParallelForks = min(1, cpus - 1)
+    maxParallelForks = max(1, cpus - 1)
     setForkEvery(4)
 }
 
@@ -60,8 +60,14 @@ tasks.create<GenerateTask>("openApiGenerateMastodonCompatibleApi", GenerateTask:
     configOptions.put("interfaceOnly", "true")
     configOptions.put("useSpringBoot3", "true")
     additionalProperties.put("useTags", "true")
+
     importMappings.put("org.springframework.core.io.Resource", "org.springframework.web.multipart.MultipartFile")
     typeMappings.put("org.springframework.core.io.Resource", "org.springframework.web.multipart.MultipartFile")
+    schemaMappings.put(
+        "StatusesRequest",
+        "dev.usbharu.hideout.domain.model.mastodon.StatusesRequest"
+    )
+    templateDir.set("$rootDir/templates")
 }
 
 repositories {
@@ -150,7 +156,7 @@ detekt {
     parallel = true
     config = files("detekt.yml")
     buildUponDefaultConfig = true
-    basePath = rootDir.absolutePath
+    basePath = "${rootDir.absolutePath}/src/"
     autoCorrect = true
 }
 

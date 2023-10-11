@@ -2,6 +2,7 @@ package dev.usbharu.hideout.domain.model.ap
 
 open class Note : Object {
     var attributedTo: String? = null
+    var attachment: List<Document> = emptyList()
     var content: String? = null
     var published: String? = null
     var to: List<String> = emptyList()
@@ -22,7 +23,8 @@ open class Note : Object {
         to: List<String> = emptyList(),
         cc: List<String> = emptyList(),
         sensitive: Boolean = false,
-        inReplyTo: String? = null
+        inReplyTo: String? = null,
+        attachment: List<Document> = emptyList()
     ) : super(
         type = add(type, "Note"),
         name = name,
@@ -35,6 +37,7 @@ open class Note : Object {
         this.cc = cc
         this.sensitive = sensitive
         this.inReplyTo = inReplyTo
+        this.attachment = attachment
     }
 
     override fun equals(other: Any?): Boolean {
@@ -42,23 +45,34 @@ open class Note : Object {
         if (other !is Note) return false
         if (!super.equals(other)) return false
 
-        if (id != other.id) return false
         if (attributedTo != other.attributedTo) return false
+        if (attachment != other.attachment) return false
         if (content != other.content) return false
         if (published != other.published) return false
-        return to == other.to
+        if (to != other.to) return false
+        if (cc != other.cc) return false
+        if (sensitive != other.sensitive) return false
+        if (inReplyTo != other.inReplyTo) return false
+
+        return true
     }
 
     override fun hashCode(): Int {
         var result = super.hashCode()
-        result = 31 * result + (id?.hashCode() ?: 0)
         result = 31 * result + (attributedTo?.hashCode() ?: 0)
+        result = 31 * result + attachment.hashCode()
         result = 31 * result + (content?.hashCode() ?: 0)
         result = 31 * result + (published?.hashCode() ?: 0)
         result = 31 * result + to.hashCode()
+        result = 31 * result + cc.hashCode()
+        result = 31 * result + sensitive.hashCode()
+        result = 31 * result + (inReplyTo?.hashCode() ?: 0)
         return result
     }
 
-    override fun toString(): String =
-        "Note(id=$id, attributedTo=$attributedTo, content=$content, published=$published, to=$to) ${super.toString()}"
+    override fun toString(): String {
+        return "Note(attributedTo=$attributedTo, attachment=$attachment, " +
+            "content=$content, published=$published, to=$to, cc=$cc, sensitive=$sensitive," +
+            " inReplyTo=$inReplyTo) ${super.toString()}"
+    }
 }

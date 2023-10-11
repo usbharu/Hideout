@@ -29,7 +29,7 @@ class S3MediaDataStore(private val s3Client: S3Client, private val storageConfig
             .key(thumbnailKey)
             .build()
 
-        val pairList = withContext(Dispatchers.IO) {
+        withContext(Dispatchers.IO) {
             awaitAll(
                 async {
                     if (dataMediaSave.thumbnailInputStream != null) {
@@ -37,23 +37,23 @@ class S3MediaDataStore(private val s3Client: S3Client, private val storageConfig
                             thumbnailUploadRequest,
                             RequestBody.fromBytes(dataMediaSave.thumbnailInputStream)
                         )
-                        "thumbnail" to s3Client.utilities()
+                        s3Client.utilities()
                             .getUrl(GetUrlRequest.builder().bucket(storageConfig.bucket).key(thumbnailKey).build())
                     } else {
-                        "thumbnail" to null
+                        null
                     }
                 },
                 async {
                     s3Client.putObject(fileUploadRequest, RequestBody.fromBytes(dataMediaSave.fileInputStream))
-                    "file" to s3Client.utilities()
+                    s3Client.utilities()
                         .getUrl(GetUrlRequest.builder().bucket(storageConfig.bucket).key(dataMediaSave.name).build())
                 }
             )
-        }.toMap()
+        }
         return SuccessSavedMedia(
-            dataMediaSave.name,
-            pairList.getValue("file").toString(),
-            pairList.getValue("thumbnail").toString()
+            name = dataMediaSave.name,
+            url = "${storageConfig.publicUrl}/${storageConfig.bucket}/${dataMediaSave.name}",
+            thumbnailUrl = "${storageConfig.publicUrl}/${storageConfig.bucket}/$thumbnailKey"
         )
     }
 

@@ -13,7 +13,8 @@ data class Post private constructor(
     val repostId: Long? = null,
     val replyId: Long? = null,
     val sensitive: Boolean = false,
-    val apId: String = url
+    val apId: String = url,
+    val mediaIds: List<Long> = emptyList()
 ) {
     companion object {
         @Suppress("FunctionMinLength", "LongParameterList")
@@ -28,7 +29,8 @@ data class Post private constructor(
             repostId: Long? = null,
             replyId: Long? = null,
             sensitive: Boolean = false,
-            apId: String = url
+            apId: String = url,
+            mediaIds: List<Long> = emptyList()
         ): Post {
             val characterLimit = Config.configData.characterLimit
 
@@ -67,7 +69,8 @@ data class Post private constructor(
                 repostId = repostId,
                 replyId = replyId,
                 sensitive = sensitive,
-                apId = apId
+                apId = apId,
+                mediaIds = mediaIds
             )
         }
     }

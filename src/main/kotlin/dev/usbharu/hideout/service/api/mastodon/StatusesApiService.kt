@@ -1,12 +1,15 @@
 package dev.usbharu.hideout.service.api.mastodon
 
+import dev.usbharu.hideout.domain.mastodon.model.generated.MediaAttachment
 import dev.usbharu.hideout.domain.mastodon.model.generated.Status
-import dev.usbharu.hideout.domain.mastodon.model.generated.StatusesRequest
+import dev.usbharu.hideout.domain.model.hideout.dto.FileType
 import dev.usbharu.hideout.domain.model.hideout.dto.PostCreateDto
 import dev.usbharu.hideout.domain.model.hideout.entity.Visibility
+import dev.usbharu.hideout.domain.model.mastodon.StatusesRequest
 import dev.usbharu.hideout.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.query.PostQueryService
 import dev.usbharu.hideout.query.UserQueryService
+import dev.usbharu.hideout.repository.MediaRepository
 import dev.usbharu.hideout.service.core.Transaction
 import dev.usbharu.hideout.service.mastodon.AccountService
 import dev.usbharu.hideout.service.post.PostService
@@ -15,7 +18,10 @@ import java.time.Instant
 
 @Service
 interface StatusesApiService {
-    suspend fun postStatus(statusesRequest: StatusesRequest, userId: Long): Status
+    suspend fun postStatus(
+        statusesRequest: dev.usbharu.hideout.domain.model.mastodon.StatusesRequest,
+        userId: Long
+    ): Status
 }
 
 @Service
@@ -24,11 +30,16 @@ class StatsesApiServiceImpl(
     private val accountService: AccountService,
     private val postQueryService: PostQueryService,
     private val userQueryService: UserQueryService,
+    private val mediaRepository: MediaRepository,
     private val transaction: Transaction
 ) :
     StatusesApiService {
-    @Suppress("LongMethod")
-    override suspend fun postStatus(statusesRequest: StatusesRequest, userId: Long): Status = transaction.transaction {
+    @Suppress("LongMethod", "CyclomaticComplexMethod")
+    override suspend fun postStatus(
+        statusesRequest: dev.usbharu.hideout.domain.model.mastodon.StatusesRequest,
+        userId: Long
+    ): Status = transaction.transaction {
+        println("Post status media ids " + statusesRequest.media_ids)
         val visibility = when (statusesRequest.visibility) {
             StatusesRequest.Visibility.public -> Visibility.PUBLIC
             StatusesRequest.Visibility.unlisted -> Visibility.UNLISTED
@@ -40,10 +51,11 @@ class StatsesApiServiceImpl(
         val post = postService.createLocal(
             PostCreateDto(
                 text = statusesRequest.status.orEmpty(),
-                overview = statusesRequest.spoilerText,
+                overview = statusesRequest.spoiler_text,
                 visibility = visibility,
-                repolyId = statusesRequest.inReplyToId?.toLongOrNull(),
-                userId = userId
+                repolyId = statusesRequest.in_reply_to_id?.toLongOrNull(),
+                userId = userId,
+                mediaIds = statusesRequest.media_ids.map { it.toLong() }
             )
         )
         val account = accountService.findById(userId)
@@ -66,6 +78,27 @@ class StatsesApiServiceImpl(
             null
         }
 
+        // TODO: n+1解消
+        val mediaAttachment = post.mediaIds.map { mediaId ->
+            mediaRepository.findById(mediaId)
+        }.map {
+            MediaAttachment(
+                id = it.id.toString(),
+                type = when (it.type) {
+                    FileType.Image -> MediaAttachment.Type.image
+                    FileType.Video -> MediaAttachment.Type.video
+                    FileType.Audio -> MediaAttachment.Type.audio
+                    FileType.Unknown -> MediaAttachment.Type.unknown
+                },
+                url = it.url,
+                previewUrl = it.thumbnailUrl,
+                remoteUrl = it.remoteUrl,
+                description = "",
+                blurhash = it.blurHash,
+                textUrl = it.url
+            )
+        }
+
         Status(
             id = post.id.toString(),
             uri = post.apId,
@@ -75,7 +108,7 @@ class StatsesApiServiceImpl(
             visibility = postVisibility,
             sensitive = post.sensitive,
             spoilerText = post.overview.orEmpty(),
-            mediaAttachments = emptyList(),
+            mediaAttachments = mediaAttachment,
             mentions = emptyList(),
             tags = emptyList(),
             emojis = emptyList(),
@@ -87,7 +120,7 @@ class StatsesApiServiceImpl(
             inReplyToAccountId = replyUser?.toString(),
             language = null,
             text = post.text,
-            editedAt = null
+            editedAt = null,
         )
     }
 }

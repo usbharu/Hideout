@@ -29,7 +29,18 @@ class PostRepositoryImpl(private val idGenerateService: IdGenerateService) : Pos
                 it[sensitive] = post.sensitive
                 it[apId] = post.apId
             }
+            PostsMedia.batchInsert(post.mediaIds) {
+                this[PostsMedia.postId] = post.id
+                this[PostsMedia.mediaId] = it
+            }
         } else {
+            PostsMedia.deleteWhere {
+                PostsMedia.postId eq post.id
+            }
+            PostsMedia.batchInsert(post.mediaIds) {
+                this[PostsMedia.postId] = post.id
+                this[PostsMedia.mediaId] = it
+            }
             Posts.update({ Posts.id eq post.id }) {
                 it[userId] = post.userId
                 it[overview] = post.overview
@@ -46,8 +57,12 @@ class PostRepositoryImpl(private val idGenerateService: IdGenerateService) : Pos
         return post
     }
 
-    override suspend fun findById(id: Long): Post = Posts.select { Posts.id eq id }.singleOrNull()?.toPost()
-        ?: throw FailedToGetResourcesException("id: $id was not found.")
+    override suspend fun findById(id: Long): Post =
+        Posts.innerJoin(PostsMedia, onColumn = { Posts.id }, otherColumn = { PostsMedia.postId })
+            .select { Posts.id eq id }
+            .toPost()
+            .singleOrNull()
+            ?: throw FailedToGetResourcesException("id: $id was not found.")
 
     override suspend fun delete(id: Long) {
         Posts.deleteWhere { Posts.id eq id }
@@ -69,6 +84,12 @@ object Posts : Table() {
     override val primaryKey: PrimaryKey = PrimaryKey(id)
 }
 
+object PostsMedia : Table() {
+    val postId = long("post_id").references(Posts.id, ReferenceOption.CASCADE, ReferenceOption.CASCADE)
+    val mediaId = long("media_id").references(Media.id, ReferenceOption.CASCADE, ReferenceOption.CASCADE)
+    override val primaryKey = PrimaryKey(postId, mediaId)
+}
+
 fun ResultRow.toPost(): Post {
     return Post.of(
         id = this[Posts.id],
@@ -81,6 +102,12 @@ fun ResultRow.toPost(): Post {
         repostId = this[Posts.repostId],
         replyId = this[Posts.replyId],
         sensitive = this[Posts.sensitive],
-        apId = this[Posts.apId]
+        apId = this[Posts.apId],
     )
+}
+
+fun Query.toPost(): List<Post> {
+    return this.groupBy { it[Posts.id] }
+        .map { it.value }
+        .map { it.first().toPost().copy(mediaIds = it.map { it[PostsMedia.mediaId] }) }
 }
