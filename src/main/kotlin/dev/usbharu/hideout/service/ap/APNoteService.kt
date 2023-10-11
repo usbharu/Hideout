@@ -24,8 +24,14 @@ import dev.usbharu.hideout.service.post.PostService
 import io.ktor.client.*
 import io.ktor.client.statement.*
 import kjob.core.job.JobProps
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import java.time.Instant
 
@@ -33,6 +39,15 @@ interface APNoteService {
 
     suspend fun createNote(post: Post)
     suspend fun createNoteJob(props: JobProps<DeliverPostJob>)
+
+    @Cacheable("fetchNote")
+    fun fetchNoteAsync(url: String, targetActor: String? = null): Deferred<Note> {
+        return CoroutineScope(Dispatchers.IO).async {
+            newSuspendedTransaction {
+                fetchNote(url, targetActor)
+            }
+        }
+    }
 
     suspend fun fetchNote(url: String, targetActor: String? = null): Note
     suspend fun fetchNote(note: Note, targetActor: String? = null): Note
