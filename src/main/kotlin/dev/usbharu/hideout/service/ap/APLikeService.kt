@@ -28,7 +28,7 @@ class APLikeServiceImpl(
         like.`object` ?: throw IllegalActivityPubObjectException("object is null")
         transaction.transaction {
             val person = apUserService.fetchPersonWithEntity(actor)
-            apNoteService.fetchNote(like.`object` ?: return@transaction)
+            apNoteService.fetchNoteAsync(like.`object` ?: return@transaction).await()
 
             val post = postQueryService.findByUrl(like.`object` ?: return@transaction)
 
