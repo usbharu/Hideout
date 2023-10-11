@@ -9,15 +9,15 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver
 import org.springframework.web.method.support.ModelAndViewContainer
 import org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor
 
+@Suppress("TooGenericExceptionCaught")
 class JsonOrFormModelMethodProcessor(
     private val modelAttributeMethodProcessor: ModelAttributeMethodProcessor,
     private val requestResponseBodyMethodProcessor: RequestResponseBodyMethodProcessor
 ) : HandlerMethodArgumentResolver {
-    override fun supportsParameter(parameter: MethodParameter): Boolean {
-        return parameter.hasParameterAnnotation(JsonOrFormBind::class.java)
-    }
-
     private val isJsonRegex = Regex("application/((\\w*)\\+)?json")
+
+    override fun supportsParameter(parameter: MethodParameter): Boolean =
+        parameter.hasParameterAnnotation(JsonOrFormBind::class.java)
 
     override fun resolveArgument(
         parameter: MethodParameter,
@@ -39,7 +39,7 @@ class JsonOrFormModelMethodProcessor(
 
         return try {
             modelAttributeMethodProcessor.resolveArgument(parameter, mavContainer, webRequest, binderFactory)
-        } catch (e: Exception) {
+        } catch (ignore: Exception) {
             try {
                 requestResponseBodyMethodProcessor.resolveArgument(parameter, mavContainer, webRequest, binderFactory)
             } catch (e: Exception) {

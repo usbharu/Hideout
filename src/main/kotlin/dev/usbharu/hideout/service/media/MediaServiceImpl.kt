@@ -20,6 +20,7 @@ import javax.imageio.ImageIO
 import dev.usbharu.hideout.domain.model.hideout.entity.Media as EntityMedia
 
 @Service
+@Suppress("TooGenericExceptionCaught")
 class MediaServiceImpl(
     private val mediaDataStore: MediaDataStore,
     private val fileTypeDeterminationService: FileTypeDeterminationService,

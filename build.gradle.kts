@@ -156,7 +156,7 @@ detekt {
     parallel = true
     config = files("detekt.yml")
     buildUponDefaultConfig = true
-    basePath = rootDir.absolutePath
+    basePath = "${rootDir.absolutePath}/src/"
     autoCorrect = true
 }
 

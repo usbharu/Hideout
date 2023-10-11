@@ -34,7 +34,7 @@ class StatsesApiServiceImpl(
     private val transaction: Transaction
 ) :
     StatusesApiService {
-    @Suppress("LongMethod")
+    @Suppress("LongMethod", "CyclomaticComplexMethod")
     override suspend fun postStatus(
         statusesRequest: dev.usbharu.hideout.domain.model.mastodon.StatusesRequest,
         userId: Long
@@ -55,7 +55,7 @@ class StatsesApiServiceImpl(
                 visibility = visibility,
                 repolyId = statusesRequest.in_reply_to_id?.toLongOrNull(),
                 userId = userId,
-                mediaIds = statusesRequest.media_ids.orEmpty().map { it.toLong() }
+                mediaIds = statusesRequest.media_ids.map { it.toLong() }
             )
         )
         val account = accountService.findById(userId)
@@ -83,19 +83,19 @@ class StatsesApiServiceImpl(
             mediaRepository.findById(mediaId)
         }.map {
             MediaAttachment(
-                it.id.toString(),
-                when (it.type) {
+                id = it.id.toString(),
+                type = when (it.type) {
                     FileType.Image -> MediaAttachment.Type.image
                     FileType.Video -> MediaAttachment.Type.video
                     FileType.Audio -> MediaAttachment.Type.audio
                     FileType.Unknown -> MediaAttachment.Type.unknown
                 },
-                it.url,
-                it.thumbnailUrl,
-                it.remoteUrl,
-                "",
-                it.blurHash,
-                it.url
+                url = it.url,
+                previewUrl = it.thumbnailUrl,
+                remoteUrl = it.remoteUrl,
+                description = "",
+                blurhash = it.blurHash,
+                textUrl = it.url
             )
         }
 

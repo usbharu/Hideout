@@ -4,6 +4,7 @@ build:
     Indentation: 0
     MagicNumber: 0
     InjectDispatcher: 0
+    EnumEntryNameCase: 0
 
 style:
   ClassOrdering:
@@ -160,4 +161,8 @@ potential-bugs:
     active: true
 
   HasPlatformType:
+    active: false
+
+coroutines:
+  RedundantSuspendModifier:
     active: false

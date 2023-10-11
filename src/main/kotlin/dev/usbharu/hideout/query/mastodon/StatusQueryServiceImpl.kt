@@ -16,6 +16,7 @@ class StatusQueryServiceImpl : StatusQueryService {
     @Suppress("LongMethod")
     override suspend fun findByPostIds(ids: List<Long>): List<Status> = findByPostIdsWithMediaAttachments(ids)
 
+    @Suppress("unused")
     private suspend fun internalFindByPostIds(ids: List<Long>): List<Status> {
         val pairs = Posts
             .innerJoin(Users, onColumn = { Posts.userId }, otherColumn = { id })
@@ -46,6 +47,7 @@ class StatusQueryServiceImpl : StatusQueryService {
             }
     }
 
+    @Suppress("FunctionMaxLength")
     private suspend fun findByPostIdsWithMediaAttachments(ids: List<Long>): List<Status> {
         val pairs = Posts
             .innerJoin(PostsMedia, onColumn = { Posts.id }, otherColumn = { PostsMedia.postId })
@@ -59,19 +61,19 @@ class StatusQueryServiceImpl : StatusQueryService {
                     mediaAttachments = it.map {
                         it.toMedia().let {
                             MediaAttachment(
-                                it.id.toString(),
-                                when (it.type) {
+                                id = it.id.toString(),
+                                type = when (it.type) {
                                     FileType.Image -> MediaAttachment.Type.image
                                     FileType.Video -> MediaAttachment.Type.video
                                     FileType.Audio -> MediaAttachment.Type.audio
                                     FileType.Unknown -> MediaAttachment.Type.unknown
                                 },
-                                it.url,
-                                it.thumbnailUrl,
-                                it.remoteUrl,
-                                "",
-                                it.blurHash,
-                                it.url
+                                url = it.url,
+                                previewUrl = it.thumbnailUrl,
+                                remoteUrl = it.remoteUrl,
+                                description = "",
+                                blurhash = it.blurHash,
+                                textUrl = it.url
                             )
                         }
                     }
