@@ -16,7 +16,6 @@ class ReactionServiceImpl(
 ) : ReactionService {
     override suspend fun receiveReaction(name: String, domain: String, userId: Long, postId: Long) {
         if (reactionQueryService.reactionAlreadyExist(postId, userId, 0).not()) {
-
             try {
                 reactionRepository.save(
                     Reaction(reactionRepository.generateId(), 0, postId, userId)

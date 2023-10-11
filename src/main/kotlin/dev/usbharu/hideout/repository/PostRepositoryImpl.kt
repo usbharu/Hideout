@@ -55,7 +55,6 @@ class PostRepositoryImpl(private val idGenerateService: IdGenerateService) : Pos
             }
         }
 
-
         assert(Posts.select { Posts.id eq post.id }.singleOrNull() != null) {
             "Faild to insert"
         }
