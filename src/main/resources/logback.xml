@@ -1,10 +1,10 @@
 <configuration>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{x-request-id}] %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="STDOUT"/>
     </root>
     <logger name="org.eclipse.jetty" level="INFO"/>
@@ -12,6 +12,5 @@
     <logger name="kjob.core.internal.scheduler.JobServiceImpl" level="INFO"/>
     <logger name="Exposed" level="INFO"/>
     <logger name="io.ktor.server.plugins.contentnegotiation" level="INFO"/>
-    <logger name="org.springframework.security" level="DEBUG"/>
-    <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter" level="DEBUG"/>
+    <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter" level="INFO"/>
 </configuration>

@@ -50,16 +50,16 @@ class StatusQueryServiceImpl : StatusQueryService {
     @Suppress("FunctionMaxLength")
     private suspend fun findByPostIdsWithMediaAttachments(ids: List<Long>): List<Status> {
         val pairs = Posts
-            .innerJoin(PostsMedia, onColumn = { Posts.id }, otherColumn = { PostsMedia.postId })
-            .innerJoin(Users, onColumn = { Posts.userId }, otherColumn = { id })
-            .innerJoin(Media, onColumn = { PostsMedia.mediaId }, otherColumn = { id })
+            .leftJoin(PostsMedia)
+            .leftJoin(Users)
+            .leftJoin(Media)
             .select { Posts.id inList ids }
             .groupBy { it[Posts.id] }
             .map { it.value }
             .map {
                 toStatus(it.first()).copy(
-                    mediaAttachments = it.map {
-                        it.toMedia().let {
+                    mediaAttachments = it.mapNotNull {
+                        it.toMediaOrNull()?.let {
                             MediaAttachment(
                                 id = it.id.toString(),
                                 type = when (it.type) {
@@ -132,7 +132,7 @@ private fun toStatus(it: ResultRow) = Status(
     favouritesCount = 0,
     repliesCount = 0,
     url = it[Posts.apId],
-    inReplyToId = it[Posts.replyId].toString(),
+    inReplyToId = it[Posts.replyId]?.toString(),
     inReplyToAccountId = null,
     language = null,
     text = it[Posts.text],

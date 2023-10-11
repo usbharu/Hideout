@@ -67,11 +67,9 @@ val httpSignaturePlugin: ClientPlugin<HttpSignaturePluginConfig> = createClientP
 
         request.header("Date", format.format(Date()))
         request.header("Host", request.url.host)
-        println(request.bodyType)
-        println(request.bodyType?.type)
         if (request.bodyType?.type == String::class) {
-            println(body as String)
-            println("Digest !!")
+            body as String
+
 //            UserAuthService.sha256.reset()
             val digest =
                 Base64.getEncoder().encodeToString(UserAuthServiceImpl.sha256.digest(body.toByteArray(Charsets.UTF_8)))

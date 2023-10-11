@@ -113,10 +113,6 @@ dependencies {
     compileOnly("io.swagger.core.v3:swagger-annotations:2.2.6")
     implementation("io.swagger.core.v3:swagger-models:2.2.6")
     implementation("org.jetbrains.exposed:exposed-java-time:$exposed_version")
-    implementation("org.jetbrains.exposed:spring-transaction:$exposed_version")
-    implementation("org.springframework.data:spring-data-commons")
-    implementation("org.springframework.boot:spring-boot-starter-jdbc")
-    implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
     testImplementation("org.springframework.boot:spring-boot-test-autoconfigure")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
@@ -149,7 +145,7 @@ dependencies {
     implementation("org.drewcarlson:kjob-mongo:0.6.0")
     testImplementation("org.slf4j:slf4j-simple:2.0.7")
 
-    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.22.0")
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.1")
 }
 
 detekt {

@@ -51,7 +51,6 @@ class UserDetailsDeserializer : JsonDeserializer<UserDetailsImpl>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): UserDetailsImpl {
         val mapper = p.codec as ObjectMapper
         val jsonNode: JsonNode = mapper.readTree(p)
-        println(jsonNode)
         val authorities: Set<GrantedAuthority> = mapper.convertValue(
             jsonNode["authorities"],
             SIMPLE_GRANTED_AUTHORITY_SET
