@@ -21,6 +21,6 @@ class MdcXrequestIdFilter : Filter {
     }
 
     companion object {
-        val KEY = "x-request-id"
+        private const val KEY = "x-request-id"
     }
 }
