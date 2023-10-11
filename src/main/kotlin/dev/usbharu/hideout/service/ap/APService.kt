@@ -226,8 +226,6 @@ class APServiceImpl(
     override suspend fun <T : HideoutJob> processActivity(job: JobContextWithProps<T>, hideoutJob: HideoutJob) {
         logger.debug("processActivity: ${hideoutJob.name}")
 
-//        println(apReceiveFollowService::class.java)
-//        apReceiveFollowService.receiveFollowJob(job.props as JobProps<ReceiveFollowJob>)
         when (hideoutJob) {
             is ReceiveFollowJob -> {
                 apReceiveFollowService.receiveFollowJob(

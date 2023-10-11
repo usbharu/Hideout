@@ -34,7 +34,6 @@ class ObjectDeserializer : JsonDeserializer<Object>() {
             return when (activityType) {
                 ExtendedActivityVocabulary.Follow -> {
                     val readValue = p.codec.treeToValue(treeNode, Follow::class.java)
-                    println(readValue)
                     readValue
                 }
 

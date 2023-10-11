@@ -64,7 +64,11 @@ class UserServiceImpl(
             publicKey = user.publicKey,
             createdAt = Instant.now()
         )
-        return userRepository.save(userEntity)
+        return try {
+            userRepository.save(userEntity)
+        } catch (e: Exception) {
+            userQueryService.findByUrl(user.url)
+        }
     }
 
     // TODO APのフォロー処理を作る

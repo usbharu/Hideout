@@ -20,7 +20,6 @@ object HttpUtil {
         subType: String,
         parameter: String
     ): Boolean {
-        println("$contentType/$subType $parameter")
         if (contentType != "application") {
             return false
         }
