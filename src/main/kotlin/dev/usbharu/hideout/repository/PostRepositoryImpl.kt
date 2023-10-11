@@ -54,6 +54,11 @@ class PostRepositoryImpl(private val idGenerateService: IdGenerateService) : Pos
                 it[apId] = post.apId
             }
         }
+
+        assert(Posts.select { Posts.id eq post.id }.singleOrNull() != null) {
+            "Faild to insert"
+        }
+
         return post
     }
 
@@ -109,5 +114,5 @@ fun ResultRow.toPost(): Post {
 fun Query.toPost(): List<Post> {
     return this.groupBy { it[Posts.id] }
         .map { it.value }
-        .map { it.first().toPost().copy(mediaIds = it.map { it[PostsMedia.mediaId] }) }
+        .map { it.first().toPost().copy(mediaIds = it.mapNotNull { it.getOrNull(PostsMedia.mediaId) }) }
 }

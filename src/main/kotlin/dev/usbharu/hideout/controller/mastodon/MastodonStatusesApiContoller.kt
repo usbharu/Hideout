@@ -13,7 +13,9 @@ import org.springframework.stereotype.Controller
 
 @Controller
 class MastodonStatusesApiContoller(private val statusesApiService: StatusesApiService) : StatusApi {
-    override fun apiV1StatusesPost(devUsbharuHideoutDomainModelMastodonStatusesRequest: StatusesRequest): ResponseEntity<Status> {
+    override fun apiV1StatusesPost(
+        devUsbharuHideoutDomainModelMastodonStatusesRequest: StatusesRequest
+    ): ResponseEntity<Status> {
         return runBlocking {
             val jwt = SecurityContextHolder.getContext().authentication.principal as Jwt
 

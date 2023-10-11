@@ -3,11 +3,13 @@ package dev.usbharu.hideout.service.ap
 import dev.usbharu.hideout.domain.model.ActivityPubResponse
 import dev.usbharu.hideout.domain.model.ActivityPubStringResponse
 import dev.usbharu.hideout.domain.model.ap.Like
+import dev.usbharu.hideout.exception.ap.FailedToGetActivityPubResourceException
 import dev.usbharu.hideout.exception.ap.IllegalActivityPubObjectException
 import dev.usbharu.hideout.query.PostQueryService
 import dev.usbharu.hideout.service.core.Transaction
 import dev.usbharu.hideout.service.reaction.ReactionService
 import io.ktor.http.*
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 interface APLikeService {
@@ -23,14 +25,27 @@ class APLikeServiceImpl(
     private val transaction: Transaction
 ) : APLikeService {
     override suspend fun receiveLike(like: Like): ActivityPubResponse {
+        LOGGER.debug("START Add Like")
+        LOGGER.trace("{}", like)
+
         val actor = like.actor ?: throw IllegalActivityPubObjectException("actor is null")
         val content = like.content ?: throw IllegalActivityPubObjectException("content is null")
         like.`object` ?: throw IllegalActivityPubObjectException("object is null")
-        transaction.transaction(java.sql.Connection.TRANSACTION_SERIALIZABLE) {
+        transaction.transaction {
+            LOGGER.trace("FETCH Liked Person $actor")
             val person = apUserService.fetchPersonWithEntity(actor)
-            apNoteService.fetchNote(like.`object` ?: return@transaction)
+            LOGGER.trace("{}", person.second)
 
+            LOGGER.trace("FETCH Liked Note ${like.`object`}")
+            try {
+                apNoteService.fetchNoteAsync(like.`object` ?: return@transaction).await()
+            } catch (e: FailedToGetActivityPubResourceException) {
+                LOGGER.debug("FAILED Failed to Get ${like.`object`}")
+                LOGGER.trace("", e)
+                return@transaction
+            }
             val post = postQueryService.findByUrl(like.`object` ?: return@transaction)
+            LOGGER.trace("{}", post)
 
             reactionService.receiveReaction(
                 content,
@@ -38,7 +53,12 @@ class APLikeServiceImpl(
                 person.second.id,
                 post.id
             )
+            LOGGER.debug("SUCCESS Add Like($content) from ${person.second.url} to ${post.url}")
         }
         return ActivityPubStringResponse(HttpStatusCode.OK, "")
+    }
+
+    companion object {
+        private val LOGGER = LoggerFactory.getLogger(APLikeServiceImpl::class.java)
     }
 }

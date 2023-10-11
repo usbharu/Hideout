@@ -203,16 +203,12 @@ class APServiceImpl(
 
     @Suppress("CyclomaticComplexMethod", "NotImplementedDeclaration")
     override suspend fun processActivity(json: String, type: ActivityType): ActivityPubResponse {
-        logger.debug("proccess activity: {}", type)
+        logger.debug("process activity: {}", type)
         return when (type) {
             ActivityType.Accept -> apAcceptService.receiveAccept(objectMapper.readValue(json))
-            ActivityType.Follow -> apReceiveFollowService.receiveFollow(
-                objectMapper.readValue(
-                    json,
-                    Follow::class.java
-                )
-            )
-
+            ActivityType.Follow ->
+                apReceiveFollowService
+                    .receiveFollow(objectMapper.readValue(json, Follow::class.java))
             ActivityType.Create -> apCreateService.receiveCreate(objectMapper.readValue(json))
             ActivityType.Like -> apLikeService.receiveLike(objectMapper.readValue(json))
             ActivityType.Undo -> apUndoService.receiveUndo(objectMapper.readValue(json))
@@ -226,8 +222,6 @@ class APServiceImpl(
     override suspend fun <T : HideoutJob> processActivity(job: JobContextWithProps<T>, hideoutJob: HideoutJob) {
         logger.debug("processActivity: ${hideoutJob.name}")
 
-//        println(apReceiveFollowService::class.java)
-//        apReceiveFollowService.receiveFollowJob(job.props as JobProps<ReceiveFollowJob>)
         when (hideoutJob) {
             is ReceiveFollowJob -> {
                 apReceiveFollowService.receiveFollowJob(

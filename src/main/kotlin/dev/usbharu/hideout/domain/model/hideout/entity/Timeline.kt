@@ -1,7 +1,9 @@
 package dev.usbharu.hideout.domain.model.hideout.entity
 
 import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.mapping.Document
 
+@Document
 data class Timeline(
     @Id
     val id: Long,

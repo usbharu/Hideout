@@ -49,7 +49,7 @@ class ExposedLockRepository(
         val lock = Lock(id, now)
         query {
             if (locks.select(locks.id eq id).limit(1)
-                .map { Lock(it[locks.id].value, Instant.ofEpochMilli(it[locks.expiresAt])) }.isEmpty()
+                    .map { Lock(it[locks.id].value, Instant.ofEpochMilli(it[locks.expiresAt])) }.isEmpty()
             ) {
                 locks.insert {
                     it[locks.id] = id

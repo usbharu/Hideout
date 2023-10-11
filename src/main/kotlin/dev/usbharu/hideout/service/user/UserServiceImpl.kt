@@ -10,6 +10,7 @@ import dev.usbharu.hideout.query.FollowerQueryService
 import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.repository.UserRepository
 import dev.usbharu.hideout.service.ap.APSendFollowService
+import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.springframework.stereotype.Service
 import java.time.Instant
 
@@ -64,7 +65,11 @@ class UserServiceImpl(
             publicKey = user.publicKey,
             createdAt = Instant.now()
         )
-        return userRepository.save(userEntity)
+        return try {
+            userRepository.save(userEntity)
+        } catch (_: ExposedSQLException) {
+            userQueryService.findByUrl(user.url)
+        }
     }
 
     // TODO APのフォロー処理を作る

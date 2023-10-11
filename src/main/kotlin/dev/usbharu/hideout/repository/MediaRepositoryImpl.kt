@@ -69,6 +69,18 @@ fun ResultRow.toMedia(): EntityMedia {
     )
 }
 
+fun ResultRow.toMediaOrNull(): EntityMedia? {
+    return EntityMedia(
+        id = this.getOrNull(Media.id) ?: return null,
+        name = this.getOrNull(Media.name) ?: return null,
+        url = this.getOrNull(Media.url) ?: return null,
+        remoteUrl = this[Media.remoteUrl],
+        thumbnailUrl = this[Media.thumbnailUrl],
+        type = FileType.values().first { it.ordinal == this.getOrNull(Media.type) },
+        blurHash = this[Media.blurhash],
+    )
+}
+
 object Media : Table("media") {
     val id = long("id")
     val name = varchar("name", 255)
