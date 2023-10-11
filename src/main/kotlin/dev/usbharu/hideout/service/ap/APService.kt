@@ -206,8 +206,9 @@ class APServiceImpl(
         logger.debug("process activity: {}", type)
         return when (type) {
             ActivityType.Accept -> apAcceptService.receiveAccept(objectMapper.readValue(json))
-            ActivityType.Follow -> apReceiveFollowService
-                .receiveFollow(objectMapper.readValue(json, Follow::class.java))
+            ActivityType.Follow ->
+                apReceiveFollowService
+                    .receiveFollow(objectMapper.readValue(json, Follow::class.java))
             ActivityType.Create -> apCreateService.receiveCreate(objectMapper.readValue(json))
             ActivityType.Like -> apLikeService.receiveLike(objectMapper.readValue(json))
             ActivityType.Undo -> apUndoService.receiveUndo(objectMapper.readValue(json))

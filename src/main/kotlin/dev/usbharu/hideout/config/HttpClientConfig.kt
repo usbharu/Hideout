@@ -22,10 +22,8 @@ class HttpClientConfig {
         install(Logging) {
             logger = Logger.DEFAULT
             level = LogLevel.INFO
-
         }
         install(HttpCache) {
-
         }
         expectSuccess = true
     }

@@ -18,7 +18,6 @@ class MdcXrequestIdFilter : Filter {
         } finally {
             MDC.remove(KEY)
         }
-
     }
 
     companion object {

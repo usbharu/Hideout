@@ -32,7 +32,6 @@ class APLikeServiceImpl(
         val content = like.content ?: throw IllegalActivityPubObjectException("content is null")
         like.`object` ?: throw IllegalActivityPubObjectException("object is null")
         transaction.transaction {
-
             LOGGER.trace("FETCH Liked Person $actor")
             val person = apUserService.fetchPersonWithEntity(actor)
             LOGGER.trace("{}", person.second)
