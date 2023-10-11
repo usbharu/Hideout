@@ -67,7 +67,7 @@ class UserServiceImpl(
         )
         return try {
             userRepository.save(userEntity)
-        } catch (e: ExposedSQLException) {
+        } catch (_: ExposedSQLException) {
             userQueryService.findByUrl(user.url)
         }
     }

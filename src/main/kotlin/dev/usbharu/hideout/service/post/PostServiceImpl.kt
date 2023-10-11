@@ -35,7 +35,7 @@ class PostServiceImpl(
     private suspend fun internalCreate(post: Post, isLocal: Boolean): Post {
         val save = try {
             postRepository.save(post)
-        } catch (e: ExposedSQLException) {
+        } catch (_: ExposedSQLException) {
             postQueryService.findByApId(post.apId)
         }
         timelineService.publishTimeline(save, isLocal)
