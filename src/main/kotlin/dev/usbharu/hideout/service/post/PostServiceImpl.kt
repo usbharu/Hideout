@@ -6,6 +6,7 @@ import dev.usbharu.hideout.exception.UserNotFoundException
 import dev.usbharu.hideout.query.PostQueryService
 import dev.usbharu.hideout.repository.PostRepository
 import dev.usbharu.hideout.repository.UserRepository
+import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.springframework.stereotype.Service
 import java.time.Instant
 import java.util.*
@@ -34,7 +35,7 @@ class PostServiceImpl(
     private suspend fun internalCreate(post: Post, isLocal: Boolean): Post {
         val save = try {
             postRepository.save(post)
-        } catch (e: Exception) {
+        } catch (e: ExposedSQLException) {
             postQueryService.findByApId(post.apId)
         }
         timelineService.publishTimeline(save, isLocal)
