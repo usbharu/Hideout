@@ -49,7 +49,8 @@ class APResourceResolveServiceImplTest {
             )
         )
 
-        val apResourceResolveService = APResourceResolveServiceImpl(httpClient, userRepository, objectMapper)
+        val apResourceResolveService =
+            APResourceResolveServiceImpl(httpClient, userRepository, InMemoryCacheManager(), objectMapper)
 
         apResourceResolveService.resolve("https", 0)
 
@@ -83,7 +84,8 @@ class APResourceResolveServiceImplTest {
             )
         )
 
-        val apResourceResolveService = APResourceResolveServiceImpl(httpClient, userRepository, objectMapper)
+        val apResourceResolveService =
+            APResourceResolveServiceImpl(httpClient, userRepository, InMemoryCacheManager(), objectMapper)
 
         apResourceResolveService.resolve("https", 0)
         apResourceResolveService.resolve("https", 0)
@@ -120,7 +122,8 @@ class APResourceResolveServiceImplTest {
             )
         )
 
-        val apResourceResolveService = APResourceResolveServiceImpl(httpClient, userRepository, objectMapper)
+        val apResourceResolveService =
+            APResourceResolveServiceImpl(httpClient, userRepository, InMemoryCacheManager(), objectMapper)
 
         repeat(10) {
             awaitAll(
@@ -168,7 +171,8 @@ class APResourceResolveServiceImplTest {
             )
         )
 
-        val apResourceResolveService = APResourceResolveServiceImpl(httpClient, userRepository, objectMapper)
+        val apResourceResolveService =
+            APResourceResolveServiceImpl(httpClient, userRepository, InMemoryCacheManager(), objectMapper)
 
         apResourceResolveService.resolve("abcd", 0)
         apResourceResolveService.resolve("1234", 0)

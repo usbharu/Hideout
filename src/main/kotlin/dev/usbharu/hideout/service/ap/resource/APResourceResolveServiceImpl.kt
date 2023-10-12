@@ -8,17 +8,14 @@ import dev.usbharu.hideout.repository.UserRepository
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
-import kotlinx.coroutines.delay
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
-import java.time.Instant
-import java.util.*
-import java.util.concurrent.ConcurrentHashMap
 
 @Service
 class APResourceResolveServiceImpl(
     private val httpClient: HttpClient,
     private val userRepository: UserRepository,
+    private val cacheManager: CacheManager,
     @Qualifier("activitypub") private val objectMapper: ObjectMapper
 ) :
     APResourceResolveService {
@@ -34,31 +31,19 @@ class APResourceResolveServiceImpl(
     private suspend fun internalResolve(url: String, singerId: Long?): Object {
 
         val key = genCacheKey(url, singerId)
-        val ifAbsent = cacheKey.putIfAbsent(key, Instant.now().toEpochMilli())
-        if (ifAbsent == null) {
-            val resolve = runResolve(url, singerId?.let { userRepository.findById(it) })
-            valueStore.putIfAbsent(key, resolve)
-            return resolve
+
+        cacheManager.putCache(key) {
+            runResolve(url, singerId?.let { userRepository.findById(it) })
         }
-        return wait(key)
+        return cacheManager.getOrWait(key)
     }
 
     private suspend fun internalResolve(url: String, singer: User?): Object {
         val key = genCacheKey(url, singer?.id)
-        val ifAbsent = cacheKey.putIfAbsent(key, Instant.now().toEpochMilli())
-        if (ifAbsent == null) {
-            val resolve = runResolve(url, singer)
-            valueStore.putIfAbsent(key, resolve)
-            return resolve
+        cacheManager.putCache(key) {
+            runResolve(url, singer)
         }
-        return wait(key)
-    }
-
-    private suspend fun wait(key: String): Object {
-        while (valueStore.containsKey(key).not()) {
-            delay(1)
-        }
-        return valueStore.getValue(key) as Object
+        return cacheManager.getOrWait(key)
     }
 
     private suspend fun runResolve(url: String, singer: User?): Object {
@@ -72,7 +57,4 @@ class APResourceResolveServiceImpl(
         }
         return url
     }
-
-    private val cacheKey = ConcurrentHashMap<String, Long>()
-    private val valueStore = Collections.synchronizedMap(mutableMapOf<String, Object>())
 }
