@@ -3,7 +3,7 @@ package dev.usbharu.hideout.domain.model.mastodon
 import com.fasterxml.jackson.annotation.JsonProperty
 import dev.usbharu.hideout.domain.mastodon.model.generated.StatusesRequestPoll
 
-@Suppress("VariableNaming")
+@Suppress("VariableNaming", "EnumEntryName")
 class StatusesRequest {
     @JsonProperty("status")
     var status: String? = null
