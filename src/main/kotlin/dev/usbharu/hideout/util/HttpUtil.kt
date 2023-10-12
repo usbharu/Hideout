@@ -17,8 +17,7 @@ object HttpUtil {
 
     fun isContentTypeOfActivityPub(
         contentType: String,
-        subType: String,
-        parameter: String
+        subType: String
     ): Boolean {
         if (contentType != "application") {
             return false
@@ -32,8 +31,7 @@ object HttpUtil {
     fun isContentTypeOfActivityPub(contentType: ContentType): Boolean {
         return isContentTypeOfActivityPub(
             contentType.contentType,
-            contentType.contentSubtype,
-            contentType.parameter("profile").orEmpty()
+            contentType.contentSubtype
         )
     }
 //    fun
