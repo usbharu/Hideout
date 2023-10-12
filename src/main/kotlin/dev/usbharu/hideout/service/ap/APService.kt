@@ -219,9 +219,12 @@ class APServiceImpl(
         }
     }
 
+    @Suppress("REDUNDANT_ELSE_IN_WHEN")
     override suspend fun <T : HideoutJob> processActivity(job: JobContextWithProps<T>, hideoutJob: HideoutJob) {
         logger.debug("processActivity: ${hideoutJob.name}")
 
+        @Suppress("ElseCaseInsteadOfExhaustiveWhen")
+        // Springで作成されるプロキシの都合上パターンマッチングが壊れるので必須
         when (hideoutJob) {
             is ReceiveFollowJob -> {
                 apReceiveFollowService.receiveFollowJob(
