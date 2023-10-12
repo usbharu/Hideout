@@ -1,7 +1,6 @@
 package dev.usbharu.hideout.service.ap.resource
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.domain.model.ap.Object
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.repository.UserRepository
@@ -20,35 +19,35 @@ class APResourceResolveServiceImpl(
 ) :
     APResourceResolveService {
 
-    override suspend fun resolve(url: String, singerId: Long?): Object {
-        return internalResolve(url, singerId)
+    override suspend fun <T : Object> resolve(url: String, clazz: Class<T>, singerId: Long?): T {
+        return internalResolve(url, singerId, clazz)
     }
 
-    override suspend fun resolve(url: String, singer: User?): Object {
-        return internalResolve(url, singer)
+    override suspend fun <T : Object> resolve(url: String, clazz: Class<T>, singer: User?): T {
+        return internalResolve(url, singer, clazz)
     }
 
-    private suspend fun internalResolve(url: String, singerId: Long?): Object {
+    private suspend fun <T : Object> internalResolve(url: String, singerId: Long?, clazz: Class<T>): T {
 
         val key = genCacheKey(url, singerId)
 
         cacheManager.putCache(key) {
-            runResolve(url, singerId?.let { userRepository.findById(it) })
+            runResolve(url, singerId?.let { userRepository.findById(it) }, clazz)
         }
-        return cacheManager.getOrWait(key)
+        return cacheManager.getOrWait(key) as T
     }
 
-    private suspend fun internalResolve(url: String, singer: User?): Object {
+    private suspend fun <T : Object> internalResolve(url: String, singer: User?, clazz: Class<T>): T {
         val key = genCacheKey(url, singer?.id)
         cacheManager.putCache(key) {
-            runResolve(url, singer)
+            runResolve(url, singer, clazz)
         }
-        return cacheManager.getOrWait(key)
+        return cacheManager.getOrWait(key) as T
     }
 
-    private suspend fun runResolve(url: String, singer: User?): Object {
+    private suspend fun <T : Object> runResolve(url: String, singer: User?, clazz: Class<T>): Object {
         val bodyAsText = httpClient.get(url).bodyAsText()
-        return objectMapper.readValue<Object>(bodyAsText)
+        return objectMapper.readValue(bodyAsText, clazz)
     }
 
     private fun genCacheKey(url: String, singerId: Long?): String {
