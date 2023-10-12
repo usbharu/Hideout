@@ -47,13 +47,12 @@ abstract class UserDetailsMixin
 
 class UserDetailsDeserializer : JsonDeserializer<UserDetailsImpl>() {
 
-    private val SIMPLE_GRANTED_AUTHORITY_SET = object : TypeReference<Set<SimpleGrantedAuthority>>() {}
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): UserDetailsImpl {
         val mapper = p.codec as ObjectMapper
         val jsonNode: JsonNode = mapper.readTree(p)
         val authorities: Set<GrantedAuthority> = mapper.convertValue(
             jsonNode["authorities"],
-            SIMPLE_GRANTED_AUTHORITY_SET
+            Companion.SIMPLE_GRANTED_AUTHORITY_SET
         )
 
         val password = jsonNode.readText("password")
@@ -74,5 +73,9 @@ class UserDetailsDeserializer : JsonDeserializer<UserDetailsImpl>() {
             has(field) -> get(field).asText(defaultValue)
             else -> defaultValue
         }
+    }
+
+    companion object {
+        private val SIMPLE_GRANTED_AUTHORITY_SET = object : TypeReference<Set<SimpleGrantedAuthority>>() {}
     }
 }
