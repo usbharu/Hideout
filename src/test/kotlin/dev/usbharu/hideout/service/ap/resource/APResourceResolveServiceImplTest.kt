@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.service.ap.resource
 
+import dev.usbharu.hideout.domain.model.ap.Object
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.repository.UserRepository
 import io.ktor.client.*
@@ -52,7 +53,7 @@ class APResourceResolveServiceImplTest {
         val apResourceResolveService =
             APResourceResolveServiceImpl(httpClient, userRepository, InMemoryCacheManager(), objectMapper)
 
-        apResourceResolveService.resolve("https", 0)
+        apResourceResolveService.resolve<Object>("https", 0)
 
         assertEquals(1, count)
     }
@@ -87,10 +88,10 @@ class APResourceResolveServiceImplTest {
         val apResourceResolveService =
             APResourceResolveServiceImpl(httpClient, userRepository, InMemoryCacheManager(), objectMapper)
 
-        apResourceResolveService.resolve("https", 0)
-        apResourceResolveService.resolve("https", 0)
-        apResourceResolveService.resolve("https", 0)
-        apResourceResolveService.resolve("https", 0)
+        apResourceResolveService.resolve<Object>("https", 0)
+        apResourceResolveService.resolve<Object>("https", 0)
+        apResourceResolveService.resolve<Object>("https", 0)
+        apResourceResolveService.resolve<Object>("https", 0)
 
         assertEquals(1, count)
     }
@@ -127,17 +128,17 @@ class APResourceResolveServiceImplTest {
 
         repeat(10) {
             awaitAll(
-                async { apResourceResolveService.resolve("https", 0) },
-                async { apResourceResolveService.resolve("https", 0) },
-                async { apResourceResolveService.resolve("https", 0) },
-                async { apResourceResolveService.resolve("https", 0) },
-                async { apResourceResolveService.resolve("https", 0) },
-                async { apResourceResolveService.resolve("https", 0) },
-                async { apResourceResolveService.resolve("https", 0) },
-                async { apResourceResolveService.resolve("https", 0) },
-                async { apResourceResolveService.resolve("https", 0) },
-                async { apResourceResolveService.resolve("https", 0) },
-                async { apResourceResolveService.resolve("https", 0) },
+                async { apResourceResolveService.resolve<Object>("https", 0) },
+                async { apResourceResolveService.resolve<Object>("https", 0) },
+                async { apResourceResolveService.resolve<Object>("https", 0) },
+                async { apResourceResolveService.resolve<Object>("https", 0) },
+                async { apResourceResolveService.resolve<Object>("https", 0) },
+                async { apResourceResolveService.resolve<Object>("https", 0) },
+                async { apResourceResolveService.resolve<Object>("https", 0) },
+                async { apResourceResolveService.resolve<Object>("https", 0) },
+                async { apResourceResolveService.resolve<Object>("https", 0) },
+                async { apResourceResolveService.resolve<Object>("https", 0) },
+                async { apResourceResolveService.resolve<Object>("https", 0) },
             )
         }
 
@@ -174,9 +175,9 @@ class APResourceResolveServiceImplTest {
         val apResourceResolveService =
             APResourceResolveServiceImpl(httpClient, userRepository, InMemoryCacheManager(), objectMapper)
 
-        apResourceResolveService.resolve("abcd", 0)
-        apResourceResolveService.resolve("1234", 0)
-        apResourceResolveService.resolve("aaaa", 0)
+        apResourceResolveService.resolve<Object>("abcd", 0)
+        apResourceResolveService.resolve<Object>("1234", 0)
+        apResourceResolveService.resolve<Object>("aaaa", 0)
 
         assertEquals(3, count)
     }
