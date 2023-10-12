@@ -1,17 +1,26 @@
 package dev.usbharu.hideout.service.ap.resource
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.domain.model.ap.Object
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.repository.UserRepository
 import io.ktor.client.*
-import io.ktor.client.call.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import kotlinx.coroutines.delay
+import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.stereotype.Service
 import java.time.Instant
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-class APResourceResolveServiceImpl(private val httpClient: HttpClient, private val userRepository: UserRepository) :
+@Service
+class APResourceResolveServiceImpl(
+    private val httpClient: HttpClient,
+    private val userRepository: UserRepository,
+    @Qualifier("activitypub") private val objectMapper: ObjectMapper
+) :
     APResourceResolveService {
 
     override suspend fun resolve(url: String, singerId: Long?): Object {
@@ -53,7 +62,8 @@ class APResourceResolveServiceImpl(private val httpClient: HttpClient, private v
     }
 
     private suspend fun runResolve(url: String, singer: User?): Object {
-        return httpClient.get(url).body<Object>()
+        val bodyAsText = httpClient.get(url).bodyAsText()
+        return objectMapper.readValue<Object>(bodyAsText)
     }
 
     private fun genCacheKey(url: String, singerId: Long?): String {
@@ -63,8 +73,6 @@ class APResourceResolveServiceImpl(private val httpClient: HttpClient, private v
         return url
     }
 
-    companion object {
-        private val cacheKey = ConcurrentHashMap<String, Long>()
-        private val valueStore = Collections.synchronizedMap(mutableMapOf<String, Object>())
-    }
+    private val cacheKey = ConcurrentHashMap<String, Long>()
+    private val valueStore = Collections.synchronizedMap(mutableMapOf<String, Object>())
 }
