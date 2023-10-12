@@ -12,19 +12,19 @@ import dev.usbharu.hideout.domain.model.job.DeliverPostJob
 import dev.usbharu.hideout.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.exception.ap.FailedToGetActivityPubResourceException
 import dev.usbharu.hideout.exception.ap.IllegalActivityPubObjectException
-import dev.usbharu.hideout.plugins.getAp
 import dev.usbharu.hideout.plugins.postAp
 import dev.usbharu.hideout.query.FollowerQueryService
 import dev.usbharu.hideout.query.MediaQueryService
 import dev.usbharu.hideout.query.PostQueryService
 import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.repository.PostRepository
+import dev.usbharu.hideout.service.ap.resource.APResourceResolveService
+import dev.usbharu.hideout.service.ap.resource.resolve
 import dev.usbharu.hideout.service.job.JobQueueParentService
 import dev.usbharu.hideout.service.post.PostCreateInterceptor
 import dev.usbharu.hideout.service.post.PostService
 import io.ktor.client.*
 import io.ktor.client.plugins.*
-import io.ktor.client.statement.*
 import kjob.core.job.JobProps
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
@@ -68,7 +68,8 @@ class APNoteServiceImpl(
     private val mediaQueryService: MediaQueryService,
     @Qualifier("activitypub") private val objectMapper: ObjectMapper,
     private val applicationConfig: ApplicationConfig,
-    private val postService: PostService
+    private val postService: PostService,
+    private val apResourceResolveService: APResourceResolveService
 
 ) : APNoteService, PostCreateInterceptor {
 
@@ -143,11 +144,8 @@ class APNoteServiceImpl(
         }
 
         logger.info("AP GET url: {}", url)
-        val response = try {
-            httpClient.getAp(
-                url,
-                targetActor?.let { "$targetActor#pubkey" }
-            )
+        val note = try {
+            apResourceResolveService.resolve<Note>(url, null as Long?)
         } catch (e: ClientRequestException) {
             logger.warn(
                 "FAILED Failed to retrieve ActivityPub resource. HTTP Status Code: {} url: {}",
@@ -156,7 +154,6 @@ class APNoteServiceImpl(
             )
             throw FailedToGetActivityPubResourceException("Could not retrieve $url.", e)
         }
-        val note = objectMapper.readValue<Note>(response.bodyAsText())
         val savedNote = saveIfMissing(note, targetActor, url)
         logger.debug("SUCCESS Fetch Note url: {}", url)
         return savedNote
