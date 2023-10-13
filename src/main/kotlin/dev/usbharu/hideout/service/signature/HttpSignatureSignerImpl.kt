@@ -44,7 +44,7 @@ class HttpSignatureSignerImpl : HttpSignatureSigner {
         val signature = Base64Util.encode(sign)
         return Sign(
             signature,
-            """keyId="${keyPair.keyId}",algorithm="${signHeaders.joinToString(" ")}",signature="$signature""""
+            """keyId="${keyPair.keyId}",algorithm="rsa-sha256",headers="${signHeaders.joinToString(" ")}",signature="$signature""""
         )
     }
 
