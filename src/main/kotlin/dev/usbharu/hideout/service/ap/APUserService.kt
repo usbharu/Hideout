@@ -1,6 +1,5 @@
 package dev.usbharu.hideout.service.ap
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import dev.usbharu.hideout.config.ApplicationConfig
 import dev.usbharu.hideout.domain.model.ap.Image
 import dev.usbharu.hideout.domain.model.ap.Key
@@ -14,8 +13,6 @@ import dev.usbharu.hideout.service.ap.resource.APResourceResolveService
 import dev.usbharu.hideout.service.ap.resource.resolve
 import dev.usbharu.hideout.service.core.Transaction
 import dev.usbharu.hideout.service.user.UserService
-import io.ktor.client.*
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 
 interface APUserService {
@@ -36,12 +33,10 @@ interface APUserService {
 @Service
 class APUserServiceImpl(
     private val userService: UserService,
-    private val httpClient: HttpClient,
     private val userQueryService: UserQueryService,
     private val transaction: Transaction,
     private val applicationConfig: ApplicationConfig,
-    private val apResourceResolveService: APResourceResolveService,
-    @Qualifier("activitypub") private val objectMapper: ObjectMapper
+    private val apResourceResolveService: APResourceResolveService
 ) :
     APUserService {
 
