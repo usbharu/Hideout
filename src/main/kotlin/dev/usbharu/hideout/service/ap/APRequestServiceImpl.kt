@@ -16,8 +16,8 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import java.net.URL
 import java.security.MessageDigest
-import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 @Service
@@ -30,7 +30,7 @@ class APRequestServiceImpl(
 
     override suspend fun <R : Object> apGet(url: String, signer: User?, responseClass: Class<R>): R {
 
-        val date = dateTimeFormatter.format(LocalDateTime.now(ZoneId.of("GMT")))
+        val date = dateTimeFormatter.format(ZonedDateTime.now(ZoneId.of("GMT")))
         val u = URL(url)
         if (signer?.privateKey == null) {
             val bodyAsText = httpClient.get(url) {
@@ -71,6 +71,11 @@ class APRequestServiceImpl(
         signer: User?,
         responseClass: Class<R>
     ): R {
+        val bodyAsText = apPost(url, body, signer)
+        return objectMapper.readValue(bodyAsText, responseClass)
+    }
+
+    override suspend fun <T : Object> apPost(url: String, body: T?, signer: User?): String {
 
         val requestBody = objectMapper.writeValueAsString(body)
 
@@ -78,17 +83,16 @@ class APRequestServiceImpl(
 
         val digest = Base64Util.encode(sha256.digest(requestBody.toByteArray()))
 
-        val date = dateTimeFormatter.format(LocalDateTime.now(ZoneId.of("GMT")))
+        val date = dateTimeFormatter.format(ZonedDateTime.now(ZoneId.of("GMT")))
         val u = URL(url)
         if (signer?.privateKey == null) {
-            val bodyAsText = httpClient.post(url) {
+            return httpClient.post(url) {
                 header("Accept", ContentType.Application.Activity)
                 header("ContentType", ContentType.Application.Activity)
                 header("Date", date)
                 header("Digest", digest)
                 setBody(requestBody)
             }.bodyAsText()
-            return objectMapper.readValue(bodyAsText, responseClass)
         }
 
         val headers = headers {
@@ -107,7 +111,7 @@ class APRequestServiceImpl(
             ), listOf("(request-target)", "date", "host", "digest")
         )
 
-        val bodyAsText = httpClient.post(url) {
+        return httpClient.post(url) {
             headers {
                 headers {
                     appendAll(sign.headers)
@@ -116,6 +120,5 @@ class APRequestServiceImpl(
             }
             setBody(requestBody)
         }.bodyAsText()
-        return objectMapper.readValue(bodyAsText, responseClass)
     }
 }

@@ -11,6 +11,8 @@ interface APRequestService {
         signer: User? = null,
         responseClass: Class<R>
     ): R
+
+    suspend fun <T : Object> apPost(url: String, body: T? = null, signer: User? = null): String
 }
 
 suspend inline fun <reified R : Object> APRequestService.apGet(url: String, signer: User? = null): R =
