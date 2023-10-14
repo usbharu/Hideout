@@ -27,10 +27,14 @@ class HttpSignatureSignerImpl : HttpSignatureSigner {
             keyPair = keyPair,
             signHeaders = signHeaders
         )
+        val signedHeaders = headers {
+            appendAll(headers)
+            set("Signature", sign.signatureHeader)
+        }
         return SignedRequest(
             url = url,
             method = method,
-            headers = headers,
+            headers = signedHeaders,
             requestBody = requestBody,
             sign = sign
         )
