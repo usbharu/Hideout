@@ -151,8 +151,17 @@ detekt {
     parallel = true
     config = files("detekt.yml")
     buildUponDefaultConfig = true
-    basePath = "${rootDir.absolutePath}/src/"
+    basePath = "${rootDir.absolutePath}/src/main/kotlin"
     autoCorrect = true
+}
+
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt>() {
+    exclude("**/generated/**")
+    doFirst {
+
+    }
+    setSource("src/main/kotlin")
+    exclude("build/")
 }
 
 tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
