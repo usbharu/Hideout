@@ -3,8 +3,6 @@ package dev.usbharu.hideout.service.ap
 import com.fasterxml.jackson.databind.ObjectMapper
 import dev.usbharu.hideout.domain.model.ap.Follow
 import dev.usbharu.hideout.domain.model.hideout.dto.SendFollowDto
-import dev.usbharu.hideout.plugins.postAp
-import io.ktor.client.*
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 
@@ -14,8 +12,8 @@ interface APSendFollowService {
 
 @Service
 class APSendFollowServiceImpl(
-    private val httpClient: HttpClient,
     @Qualifier("activitypub") private val objectMapper: ObjectMapper,
+    private val apRequestService: APRequestService,
 ) : APSendFollowService {
     override suspend fun sendFollow(sendFollowDto: SendFollowDto) {
         val follow = Follow(
@@ -23,11 +21,7 @@ class APSendFollowServiceImpl(
             `object` = sendFollowDto.followTargetUserId.url,
             actor = sendFollowDto.userId.url
         )
-        httpClient.postAp(
-            urlString = sendFollowDto.followTargetUserId.inbox,
-            username = sendFollowDto.userId.url,
-            jsonLd = follow,
-            objectMapper
-        )
+
+        apRequestService.apPost(sendFollowDto.followTargetUserId.inbox, follow, sendFollowDto.userId)
     }
 }

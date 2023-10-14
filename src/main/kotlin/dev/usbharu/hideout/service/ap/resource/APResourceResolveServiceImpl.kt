@@ -4,17 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import dev.usbharu.hideout.domain.model.ap.Object
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.repository.UserRepository
-import dev.usbharu.hideout.util.HttpUtil.Activity
-import io.ktor.client.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
+import dev.usbharu.hideout.service.ap.APRequestService
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 
 @Service
 class APResourceResolveServiceImpl(
-    private val httpClient: HttpClient,
+    private val apRequestService: APRequestService,
     private val userRepository: UserRepository,
     private val cacheManager: CacheManager,
     @Qualifier("activitypub") private val objectMapper: ObjectMapper
@@ -48,10 +44,7 @@ class APResourceResolveServiceImpl(
     }
 
     private suspend fun <T : Object> runResolve(url: String, singer: User?, clazz: Class<T>): Object {
-        val bodyAsText = httpClient.get(url) {
-            header("Accept", ContentType.Application.Activity)
-        }.bodyAsText()
-        return objectMapper.readValue(bodyAsText, clazz)
+        return apRequestService.apGet(url, singer, clazz)
     }
 
     private fun genCacheKey(url: String, singerId: Long?): String {

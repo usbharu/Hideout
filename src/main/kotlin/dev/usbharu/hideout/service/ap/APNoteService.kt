@@ -12,7 +12,6 @@ import dev.usbharu.hideout.domain.model.job.DeliverPostJob
 import dev.usbharu.hideout.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.exception.ap.FailedToGetActivityPubResourceException
 import dev.usbharu.hideout.exception.ap.IllegalActivityPubObjectException
-import dev.usbharu.hideout.plugins.postAp
 import dev.usbharu.hideout.query.FollowerQueryService
 import dev.usbharu.hideout.query.MediaQueryService
 import dev.usbharu.hideout.query.PostQueryService
@@ -20,6 +19,7 @@ import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.repository.PostRepository
 import dev.usbharu.hideout.service.ap.resource.APResourceResolveService
 import dev.usbharu.hideout.service.ap.resource.resolve
+import dev.usbharu.hideout.service.core.Transaction
 import dev.usbharu.hideout.service.job.JobQueueParentService
 import dev.usbharu.hideout.service.post.PostCreateInterceptor
 import dev.usbharu.hideout.service.post.PostService
@@ -69,7 +69,9 @@ class APNoteServiceImpl(
     @Qualifier("activitypub") private val objectMapper: ObjectMapper,
     private val applicationConfig: ApplicationConfig,
     private val postService: PostService,
-    private val apResourceResolveService: APResourceResolveService
+    private val apResourceResolveService: APResourceResolveService,
+    private val apRequestService: APRequestService,
+    private val transaction: Transaction
 
 ) : APNoteService, PostCreateInterceptor {
 
@@ -121,17 +123,20 @@ class APNoteServiceImpl(
         )
         val inbox = props[DeliverPostJob.inbox]
         logger.debug("createNoteJob: actor={}, note={}, inbox={}", actor, postEntity, inbox)
-        httpClient.postAp(
-            urlString = inbox,
-            username = "$actor#pubkey",
-            jsonLd = Create(
-                name = "Create Note",
-                `object` = note,
-                actor = note.attributedTo,
-                id = "${applicationConfig.url}/create/note/${postEntity.id}"
-            ),
-            objectMapper
-        )
+
+        transaction.transaction {
+            val signer = userQueryService.findByUrl(actor)
+            apRequestService.apPost(
+                inbox, Create(
+                    name = "Create Note",
+                    `object` = note,
+                    actor = note.attributedTo,
+                    id = "${applicationConfig.url}/create/note/${postEntity.id}"
+                ), signer
+            )
+        }
+
+
     }
 
     override suspend fun fetchNote(url: String, targetActor: String?): Note {

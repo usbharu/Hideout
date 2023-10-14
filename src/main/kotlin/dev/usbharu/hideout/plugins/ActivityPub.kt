@@ -1,16 +1,11 @@
 package dev.usbharu.hideout.plugins
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import dev.usbharu.hideout.config.ApplicationConfig
-import dev.usbharu.hideout.domain.model.ap.JsonLd
 import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.service.core.Transaction
 import dev.usbharu.hideout.service.user.UserAuthServiceImpl
-import dev.usbharu.hideout.util.HttpUtil.Activity
-import io.ktor.client.*
 import io.ktor.client.plugins.api.*
 import io.ktor.client.request.*
-import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 import tech.barbero.http.message.signing.HttpMessage
@@ -26,31 +21,6 @@ import java.security.spec.X509EncodedKeySpec
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.crypto.SecretKey
-
-suspend fun HttpClient.postAp(
-    urlString: String,
-    username: String,
-    jsonLd: JsonLd,
-    objectMapper: ObjectMapper
-): HttpResponse {
-    jsonLd.context += "https://www.w3.org/ns/activitystreams"
-    return this.post(urlString) {
-        header("Accept", ContentType.Application.Activity)
-        header("Content-Type", ContentType.Application.Activity)
-        header("Signature", "keyId=\"$username\",algorithm=\"rsa-sha256\",headers=\"(request-target) digest date\"")
-        val text = objectMapper.writeValueAsString(jsonLd)
-        setBody(text)
-    }
-}
-
-suspend fun HttpClient.getAp(urlString: String, username: String?): HttpResponse {
-    return this.get(urlString) {
-        header("Accept", ContentType.Application.Activity)
-        username?.let {
-            header("Signature", "keyId=\"$username\",algorithm=\"rsa-sha256\",headers=\"(request-target) host date\"")
-        }
-    }
-}
 
 class HttpSignaturePluginConfig {
     lateinit var keyMap: KeyMap
