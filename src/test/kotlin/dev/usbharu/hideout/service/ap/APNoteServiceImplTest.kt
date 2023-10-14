@@ -97,7 +97,9 @@ class APNoteServiceImplTest {
                     applicationConfig = testApplicationConfig,
                     postService = mock(),
                     mediaQueryService = mediaQueryService,
-                    apResourceResolveService = mock()
+                    apResourceResolveService = mock(),
+                    apRequestService = mock(),
+                    transaction = mock()
                 )
             val postEntity = Post.of(
                 1L,
@@ -138,7 +140,9 @@ class APNoteServiceImplTest {
                 applicationConfig = testApplicationConfig,
                 postService = mock(),
                 mediaQueryService = mediaQueryService,
-                apResourceResolveService = mock()
+                apResourceResolveService = mock(),
+                transaction = mock(),
+                apRequestService = mock()
             )
             activityPubNoteService.createNoteJob(
                 JobProps(

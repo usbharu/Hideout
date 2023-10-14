@@ -42,7 +42,8 @@ class APReceiveFollowServiceImplTest {
                 mock(),
                 mock(),
                 TestTransaction,
-                objectMapper
+                objectMapper,
+                mock()
             )
         activityPubFollowService.receiveFollow(
             Follow(
@@ -173,7 +174,8 @@ class APReceiveFollowServiceImplTest {
                 ),
                 userQueryService,
                 TestTransaction,
-                objectMapper
+                objectMapper,
+                mock()
             )
         activityPubFollowService.receiveFollowJob(
             JobProps(
