@@ -3,17 +3,17 @@
 
 package dev.usbharu.hideout.service.ap
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.config.ConfigData
-import dev.usbharu.hideout.domain.model.ap.*
+import dev.usbharu.hideout.domain.model.ap.Follow
+import dev.usbharu.hideout.domain.model.ap.Image
+import dev.usbharu.hideout.domain.model.ap.Key
+import dev.usbharu.hideout.domain.model.ap.Person
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.domain.model.job.ReceiveFollowJob
 import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.service.job.JobQueueParentService
 import dev.usbharu.hideout.service.user.UserService
-import io.ktor.client.*
-import io.ktor.client.engine.mock.*
 import kjob.core.dsl.ScheduleContext
 import kjob.core.job.JobProps
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -40,9 +40,9 @@ class APReceiveFollowServiceImplTest {
                 mock(),
                 mock(),
                 mock(),
-                mock(),
                 TestTransaction,
-                objectMapper
+                objectMapper,
+                mock()
             )
         activityPubFollowService.receiveFollow(
             Follow(
@@ -145,35 +145,10 @@ class APReceiveFollowServiceImplTest {
                 mock(),
                 apUserService,
                 userService,
-                HttpClient(
-                    MockEngine { httpRequestData ->
-                        assertEquals(person.inbox, httpRequestData.url.toString())
-                        val accept = Accept(
-                            type = emptyList(),
-                            name = "Follow",
-                            `object` = Follow(
-                                type = emptyList(),
-                                name = "Follow",
-                                `object` = "https://example.com",
-                                actor = "https://follower.example.com"
-                            ),
-                            actor = "https://example.com"
-                        )
-                        accept.context += "https://www.w3.org/ns/activitystreams"
-                        val content = httpRequestData.body.toByteArray().decodeToString()
-                        println(content)
-                        assertEquals(
-                            accept,
-                            Config.configData.objectMapper.readValue<Accept>(
-                                content
-                            )
-                        )
-                        respondOk()
-                    }
-                ),
                 userQueryService,
                 TestTransaction,
-                objectMapper
+                objectMapper,
+                mock()
             )
         activityPubFollowService.receiveFollowJob(
             JobProps(
