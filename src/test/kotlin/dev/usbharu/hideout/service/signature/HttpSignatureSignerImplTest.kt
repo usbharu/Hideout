@@ -16,6 +16,9 @@ import java.security.MessageDigest
 import java.security.PrivateKey
 import java.security.PublicKey
 import java.text.SimpleDateFormat
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import javax.crypto.SecretKey
 import kotlin.test.assertFalse
@@ -95,6 +98,120 @@ class HttpSignatureSignerImplTest {
             headers,
             requestBody,
             Key("https://example.com", privateKey, publicKey),
+            listOf("(request-target)", "date", "host", "digest")
+        )
+
+        val keyMap = object : KeyMap {
+            override fun getPublicKey(keyId: String?): PublicKey {
+                return publicKey
+            }
+
+            override fun getPrivateKey(keyId: String?): PrivateKey {
+                return privateKey
+            }
+
+            override fun getSecretKey(keyId: String?): SecretKey {
+                TODO("Not yet implemented")
+            }
+
+        }
+        val verifier = SignatureHeaderVerifier.builder().keyMap(keyMap).build()
+
+        val headers1 = headers {
+            appendAll(headers)
+            append("Signature", sign.sign.signatureHeader)
+        }
+
+        val httpMessage = object : HttpMessage, HttpRequest {
+            override fun headerValues(name: String?): MutableList<String> {
+                return name?.let { headers1.getAll(it) }.orEmpty().toMutableList()
+            }
+
+            override fun addHeader(name: String?, value: String?) {
+                TODO("Not yet implemented")
+            }
+
+            override fun method(): String {
+                return "POST"
+            }
+
+            override fun uri(): URI {
+                return URI(url)
+            }
+        }
+        val verify = verifier.verify(httpMessage)
+        assertTrue(verify)
+    }
+
+    @Test
+    fun `HTTP Signatureの署名が検証に成功する2`() = runTest {
+        val publicKey = RsaUtil.decodeRsaPublicKeyPem(
+            """-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAq3YdxpopDvAIp+Ciplvx
+SfY8tV3GquYIfxSfTPAqiusgf8zXxYz0ilxY+nHjzIpdOA8rDHcDVhBXI/5lP1Vl
+sgeY5cgJRuG9g9ZWaQV/8oKYoillgTkNuyNB0OGa84BAeKo+VMG1NNtlVCn2DrvA
+8FLXAc2e4wPcOozKV5JYHZ0RDcSIS1bPb5ArxhhF8zAjn9+s/plsDz+mgHD0Ce5z
+UUv1uHQF8nj53WL4cCcrl5TSvqaK6Krcmb7i1YVSlk52p0AYg79pXpPQLhe3TnvJ
+Gy+KPvKPq1cho5jM1vJktK6eGlnUPEgD0bCSXl7FrtE7mPMCsaQCRj+up4t+NBWu
+gwIDAQAB
+-----END PUBLIC KEY-----"""
+        )
+        val privateKey = RsaUtil.decodeRsaPrivateKeyPem(
+            """-----BEGIN PRIVATE KEY-----
+MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCrdh3GmikO8Ain
+4KKmW/FJ9jy1Xcaq5gh/FJ9M8CqK6yB/zNfFjPSKXFj6cePMil04DysMdwNWEFcj
+/mU/VWWyB5jlyAlG4b2D1lZpBX/ygpiiKWWBOQ27I0HQ4ZrzgEB4qj5UwbU022VU
+KfYOu8DwUtcBzZ7jA9w6jMpXklgdnRENxIhLVs9vkCvGGEXzMCOf36z+mWwPP6aA
+cPQJ7nNRS/W4dAXyePndYvhwJyuXlNK+poroqtyZvuLVhVKWTnanQBiDv2lek9Au
+F7dOe8kbL4o+8o+rVyGjmMzW8mS0rp4aWdQ8SAPRsJJeXsWu0TuY8wKxpAJGP66n
+i340Fa6DAgMBAAECggEAUsE0h9l5/aKumtAZ0K9JmwgErwiuzWcvLJ64cDruXZQ0
+YFpuvgNVN75wl5gGeX9ClL8FaQO8EXrbhBzRoyrFZZKzIhxVFef4PzxhAllMMrED
+mCjgu+jcjrjqmDV7QxFgjJymbuP7YKKPmnqSLvRBn/xrl4w1pp4DWiL/uhqA+vE8
+ZOgfzJ6LzU3CUFjCEi73gfZzTyykzpw+H3Lf8WPYCRQteng7zGxFDpPM3uDt0AKV
+nTReopN6HKVOqobBuJLbD2kORfFzfzfLKrkAELivO/yOdosbG5GIf8nxZ0h86QIo
+knav6boRgF9LqZTzC+QWBjGXEng58gEYEuAaovup8QKBgQDeR9onVIj67FZ/J1k4
+VBTfxRZ4r2oFHyhh3O2Y1xmVM0ejlvtnQL989d6HCieT6wd9CcfTOnTidgXCW+1a
+wW3Q6eqtaPanRsU8aCcG2Pa19hbEkdsAvu/8eS8SWegnyqk0lKZjRP6KXDto99dd
+CWs8KMcTXTqpFfNr83AeuR1ViwKBgQDFeLms7hvnLVF0oS6LIh73WVd1YfhcCsxo
+MfjLmsivCfvyo/RAWmWjHTvh9ofYm3a/1gU4ACm33tI++uWz1juHxJFy+ryjjz7z
+MHimmohaWkeax9wyUn66hG52JYUHQFoi85cL/YLMMX3WZXa5LQyyXPgirF4L9+c9
+MTZNrKDZ6QKBgEhDX77NksLQtsYbyruvSiH9dvLBRFxp5rz6EBxSQbTpuO6MFSta
+N2auoCuSt481J3gVB+u542oEKJcpP57zp3n1sh+yMg3ryg97ZMSrIHnDiV9ac7Jo
+YKjZ1N3IcNsO3beEZBt9wKrGlWHowRE0ELK8Jww6kOmLg1mjCN5UHB9FAoGAVewl
+vl0MvxY07y6C9f8uwimZqHWsf0AjmOLFgrIiyCbr/bPhP28V8ldyCuweR929WdNi
+Ce/oNx05FjZNZGa/GGAreYAoPHLDzUU1+igbVFUb+vkjkrHaeoXNGpNQwsr5bWPY
+QVtZYkfWnUcg1YoIkENrpIqjkUmY0ENtgXavtqECgYEA2F+FJPPpm39gD2mnbnAH
+goM9c+h9hh/o3kW3CUNgPKeYT4ptd3AG0k9C9De+eWb3GGqH1/KUGvUbyXm7f1Wi
+y+SBT1Uk6/85ZZ3nCz2Yj8eGokhcfKhXd8K3HV2wgoUWMJT1Qvedrqc2R5S9wdY8
+wADggCG8df/amNR+dyQOOuQ=
+-----END PRIVATE KEY-----"""
+        )
+
+        val httpSignatureSignerImpl = HttpSignatureSignerImpl()
+
+        val format = DateTimeFormatter.RFC_1123_DATE_TIME
+
+        //language=JSON
+        val requestBody = """{
+  "hoge": "fuga"
+}"""
+
+        val sha256 = MessageDigest.getInstance("SHA-256")
+
+        val encode = Base64Util.encode(sha256.digest(requestBody.toByteArray()))
+
+        val url = "https://test-hideout.usbharu.dev/users/97ws8y3rj6/inbox"
+        val headers = Headers.build {
+            append("Date", format.format(ZonedDateTime.now(ZoneId.of("GMT"))))
+            append("Host", URL(url).host)
+            append("Digest", "sha-256=$encode")
+        }
+        val sign = httpSignatureSignerImpl.sign(
+            url,
+            HttpMethod.Post,
+            headers,
+            requestBody,
+            Key("https://test-hideout.usbharu.dev/users/c#pubkey", privateKey, publicKey),
             listOf("(request-target)", "date", "host", "digest")
         )
 
