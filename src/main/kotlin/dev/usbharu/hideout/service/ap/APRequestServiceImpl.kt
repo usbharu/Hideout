@@ -29,7 +29,6 @@ class APRequestServiceImpl(
 ) : APRequestService {
 
     override suspend fun <R : Object> apGet(url: String, signer: User?, responseClass: Class<R>): R {
-
         val date = dateTimeFormatter.format(ZonedDateTime.now(ZoneId.of("GMT")))
         val u = URL(url)
         if (signer?.privateKey == null) {
@@ -47,11 +46,16 @@ class APRequestServiceImpl(
         }
 
         val sign = httpSignatureSigner.sign(
-            url, HttpMethod.Get, headers, "", Key(
+            url = url,
+            method = HttpMethod.Get,
+            headers = headers,
+            requestBody = "",
+            keyPair = Key(
                 keyId = "${signer.url}#pubkey",
                 privateKey = RsaUtil.decodeRsaPrivateKeyPem(signer.privateKey),
                 publicKey = RsaUtil.decodeRsaPublicKeyPem(signer.publicKey)
-            ), listOf("(request-target)", "date", "host", "accept")
+            ),
+            signHeaders = listOf("(request-target)", "date", "host", "accept")
         )
 
         val bodyAsText = httpClient.get(url) {
@@ -77,7 +81,6 @@ class APRequestServiceImpl(
     }
 
     override suspend fun <T : Object> apPost(url: String, body: T?, signer: User?): String {
-
         if (body != null) {
             val mutableListOf = mutableListOf<String>()
             mutableListOf.add("https://www.w3.org/ns/activitystreams")
@@ -111,11 +114,16 @@ class APRequestServiceImpl(
         }
 
         val sign = httpSignatureSigner.sign(
-            url, HttpMethod.Post, headers, "", Key(
+            url = url,
+            method = HttpMethod.Post,
+            headers = headers,
+            requestBody = "",
+            keyPair = Key(
                 keyId = "${signer.url}#pubkey",
                 privateKey = RsaUtil.decodeRsaPrivateKeyPem(signer.privateKey),
                 publicKey = RsaUtil.decodeRsaPublicKeyPem(signer.publicKey)
-            ), listOf("(request-target)", "date", "host", "digest")
+            ),
+            signHeaders = listOf("(request-target)", "date", "host", "digest")
         )
 
         return httpClient.post(url) {

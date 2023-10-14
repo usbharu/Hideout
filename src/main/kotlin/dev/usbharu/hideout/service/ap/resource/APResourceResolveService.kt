@@ -8,10 +8,8 @@ interface APResourceResolveService {
     suspend fun <T : Object> resolve(url: String, clazz: Class<T>, singerId: Long?): T
 }
 
-suspend inline fun <reified T : Object> APResourceResolveService.resolve(url: String, singer: User?): T {
-    return resolve(url, T::class.java, singer)
-}
+suspend inline fun <reified T : Object> APResourceResolveService.resolve(url: String, singer: User?): T =
+    resolve(url, T::class.java, singer)
 
-suspend inline fun <reified T : Object> APResourceResolveService.resolve(url: String, singerId: Long?): T {
-    return resolve(url, T::class.java, singerId)
-}
+suspend inline fun <reified T : Object> APResourceResolveService.resolve(url: String, singerId: Long?): T =
+    resolve(url, T::class.java, singerId)

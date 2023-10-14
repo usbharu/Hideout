@@ -1,9 +1,7 @@
 package dev.usbharu.hideout.service.ap
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import dev.usbharu.hideout.domain.model.ap.Follow
 import dev.usbharu.hideout.domain.model.hideout.dto.SendFollowDto
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 
 interface APSendFollowService {
@@ -12,7 +10,6 @@ interface APSendFollowService {
 
 @Service
 class APSendFollowServiceImpl(
-    @Qualifier("activitypub") private val objectMapper: ObjectMapper,
     private val apRequestService: APRequestService,
 ) : APSendFollowService {
     override suspend fun sendFollow(sendFollowDto: SendFollowDto) {

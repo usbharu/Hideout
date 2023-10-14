@@ -7,6 +7,8 @@ import java.security.spec.PKCS8EncodedKeySpec
 import java.security.spec.X509EncodedKeySpec
 
 object RsaUtil {
+    private val replaceHeaderAndFooterRegex = Regex("-----.*?-----")
+
     fun decodeRsaPublicKey(byteArray: ByteArray): RSAPublicKey {
         val x509EncodedKeySpec = X509EncodedKeySpec(byteArray)
         return KeyFactory.getInstance("RSA").generatePublic(x509EncodedKeySpec) as RSAPublicKey
@@ -32,6 +34,4 @@ object RsaUtil {
             .replace("\n", "")
         return decodeRsaPrivateKey(replace)
     }
-
-    private val replaceHeaderAndFooterRegex = Regex("-----.*?-----")
 }

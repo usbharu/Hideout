@@ -48,7 +48,11 @@ class HttpSignatureSignerImpl : HttpSignatureSigner {
         val signature = Base64Util.encode(sign)
         return Sign(
             signature,
-            """keyId="${keyPair.keyId}",algorithm="rsa-sha256",headers="${signHeaders.joinToString(" ")}",signature="$signature""""
+            """keyId="${keyPair.keyId}",algorithm="rsa-sha256",headers="${
+                signHeaders.joinToString(
+                    " "
+                )
+            }",signature="$signature""""
         )
     }
 
@@ -76,7 +80,5 @@ class HttpSignatureSignerImpl : HttpSignatureSigner {
         return "(request-target): ${method.value.lowercase()} ${url.path}"
     }
 
-    private fun generalHeader(fieldName: String, value: String): String {
-        return "$fieldName: $value"
-    }
+    private fun generalHeader(fieldName: String, value: String): String = "$fieldName: $value"
 }
