@@ -12,7 +12,6 @@ import dev.usbharu.hideout.query.FollowerQueryService
 import dev.usbharu.hideout.query.PostQueryService
 import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.service.job.JobQueueParentService
-import io.ktor.client.*
 import kjob.core.job.JobProps
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
@@ -28,7 +27,6 @@ interface APReactionService {
 @Service
 class APReactionServiceImpl(
     private val jobQueueParentService: JobQueueParentService,
-    private val httpClient: HttpClient,
     private val userQueryService: UserQueryService,
     private val followerQueryService: FollowerQueryService,
     private val postQueryService: PostQueryService,
@@ -77,13 +75,15 @@ class APReactionServiceImpl(
         val signer = userQueryService.findByUrl(actor)
 
         apRequestService.apPost(
-            inbox, Like(
+            inbox,
+            Like(
                 name = "Like",
                 actor = actor,
                 `object` = postUrl,
                 id = "${applicationConfig.url}/like/note/$id",
                 content = content
-            ), signer
+            ),
+            signer
         )
     }
 
@@ -95,13 +95,15 @@ class APReactionServiceImpl(
         val signer = userQueryService.findByUrl(actor)
 
         apRequestService.apPost(
-            inbox, Undo(
+            inbox,
+            Undo(
                 name = "Undo Reaction",
                 actor = actor,
                 `object` = like,
                 id = "${applicationConfig.url}/undo/note/${like.id}",
                 published = Instant.now()
-            ), signer
+            ),
+            signer
         )
     }
 }

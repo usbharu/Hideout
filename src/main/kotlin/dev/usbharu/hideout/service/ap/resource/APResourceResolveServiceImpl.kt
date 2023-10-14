@@ -1,32 +1,26 @@
 package dev.usbharu.hideout.service.ap.resource
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import dev.usbharu.hideout.domain.model.ap.Object
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.repository.UserRepository
 import dev.usbharu.hideout.service.ap.APRequestService
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 
 @Service
 class APResourceResolveServiceImpl(
     private val apRequestService: APRequestService,
     private val userRepository: UserRepository,
-    private val cacheManager: CacheManager,
-    @Qualifier("activitypub") private val objectMapper: ObjectMapper
+    private val cacheManager: CacheManager
 ) :
     APResourceResolveService {
 
-    override suspend fun <T : Object> resolve(url: String, clazz: Class<T>, singerId: Long?): T {
-        return internalResolve(url, singerId, clazz)
-    }
+    override suspend fun <T : Object> resolve(url: String, clazz: Class<T>, singerId: Long?): T =
+        internalResolve(url, singerId, clazz)
 
-    override suspend fun <T : Object> resolve(url: String, clazz: Class<T>, singer: User?): T {
-        return internalResolve(url, singer, clazz)
-    }
+    override suspend fun <T : Object> resolve(url: String, clazz: Class<T>, singer: User?): T =
+        internalResolve(url, singer, clazz)
 
     private suspend fun <T : Object> internalResolve(url: String, singerId: Long?, clazz: Class<T>): T {
-
         val key = genCacheKey(url, singerId)
 
         cacheManager.putCache(key) {
@@ -43,9 +37,8 @@ class APResourceResolveServiceImpl(
         return cacheManager.getOrWait(key) as T
     }
 
-    private suspend fun <T : Object> runResolve(url: String, singer: User?, clazz: Class<T>): Object {
-        return apRequestService.apGet(url, singer, clazz)
-    }
+    private suspend fun <T : Object> runResolve(url: String, singer: User?, clazz: Class<T>): Object =
+        apRequestService.apGet(url, singer, clazz)
 
     private fun genCacheKey(url: String, singerId: Long?): String {
         if (singerId != null) {

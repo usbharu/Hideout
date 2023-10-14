@@ -103,7 +103,6 @@ class APUserServiceImpl(
                 endpoints = mapOf("sharedInbox" to "${applicationConfig.url}/inbox")
             ) to userEntity
         } catch (ignore: FailedToGetResourcesException) {
-
             val person = apResourceResolveService.resolve<Person>(url, null as Long?)
 
             person to userService.createRemoteUser(

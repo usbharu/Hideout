@@ -16,7 +16,6 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
-import utils.JsonObjectMapper.objectMapper
 import java.time.Instant
 import kotlin.test.assertEquals
 
@@ -53,7 +52,7 @@ class APResourceResolveServiceImplTest {
         )
 
         val apResourceResolveService =
-            APResourceResolveServiceImpl(mock(), userRepository, InMemoryCacheManager(), objectMapper)
+            APResourceResolveServiceImpl(mock(), userRepository, InMemoryCacheManager())
 
         apResourceResolveService.resolve<Object>("https", 0)
 
@@ -88,7 +87,7 @@ class APResourceResolveServiceImplTest {
         )
 
         val apResourceResolveService =
-            APResourceResolveServiceImpl(mock(), userRepository, InMemoryCacheManager(), objectMapper)
+            APResourceResolveServiceImpl(mock(), userRepository, InMemoryCacheManager())
 
         apResourceResolveService.resolve<Object>("https", 0)
         apResourceResolveService.resolve<Object>("https", 0)
@@ -126,7 +125,7 @@ class APResourceResolveServiceImplTest {
         )
 
         val apResourceResolveService =
-            APResourceResolveServiceImpl(mock(), userRepository, InMemoryCacheManager(), objectMapper)
+            APResourceResolveServiceImpl(mock(), userRepository, InMemoryCacheManager())
 
         repeat(10) {
             awaitAll(
@@ -175,7 +174,7 @@ class APResourceResolveServiceImplTest {
         )
 
         val apResourceResolveService =
-            APResourceResolveServiceImpl(mock(), userRepository, InMemoryCacheManager(), objectMapper)
+            APResourceResolveServiceImpl(mock(), userRepository, InMemoryCacheManager())
 
         apResourceResolveService.resolve<Object>("abcd", 0)
         apResourceResolveService.resolve<Object>("1234", 0)

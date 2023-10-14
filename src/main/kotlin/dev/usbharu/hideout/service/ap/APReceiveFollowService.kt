@@ -11,7 +11,6 @@ import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.service.core.Transaction
 import dev.usbharu.hideout.service.job.JobQueueParentService
 import dev.usbharu.hideout.service.user.UserService
-import io.ktor.client.*
 import io.ktor.http.*
 import kjob.core.job.JobProps
 import org.springframework.beans.factory.annotation.Qualifier
@@ -27,7 +26,6 @@ class APReceiveFollowServiceImpl(
     private val jobQueueParentService: JobQueueParentService,
     private val apUserService: APUserService,
     private val userService: UserService,
-    private val httpClient: HttpClient,
     private val userQueryService: UserQueryService,
     private val transaction: Transaction,
     @Qualifier("activitypub") private val objectMapper: ObjectMapper,
@@ -56,11 +54,13 @@ class APReceiveFollowServiceImpl(
             val urlString = person.inbox ?: throw IllegalArgumentException("inbox is not found")
 
             apRequestService.apPost(
-                urlString, Accept(
+                urlString,
+                Accept(
                     name = "Follow",
                     `object` = follow,
                     actor = targetActor
-                ), signer
+                ),
+                signer
             )
 
             val targetEntity = userQueryService.findByUrl(targetActor)

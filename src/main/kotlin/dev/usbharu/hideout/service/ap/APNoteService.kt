@@ -127,16 +127,16 @@ class APNoteServiceImpl(
         transaction.transaction {
             val signer = userQueryService.findByUrl(actor)
             apRequestService.apPost(
-                inbox, Create(
+                inbox,
+                Create(
                     name = "Create Note",
                     `object` = note,
                     actor = note.attributedTo,
                     id = "${applicationConfig.url}/create/note/${postEntity.id}"
-                ), signer
+                ),
+                signer
             )
         }
-
-
     }
 
     override suspend fun fetchNote(url: String, targetActor: String?): Note {

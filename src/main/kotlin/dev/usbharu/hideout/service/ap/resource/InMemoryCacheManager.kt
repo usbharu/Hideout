@@ -35,12 +35,10 @@ class InMemoryCacheManager : CacheManager {
             if (cacheKey.containsKey(key)) {
                 valueStore[key] = processed
             }
-
         }
     }
 
     override suspend fun getOrWait(key: String): Object {
-
         while (valueStore.contains(key).not()) {
             if (cacheKey.containsKey(key).not()) {
                 throw IllegalStateException("Invalid cache key.")
@@ -48,6 +46,5 @@ class InMemoryCacheManager : CacheManager {
             delay(1)
         }
         return valueStore.getValue(key)
-
     }
 }

@@ -3,6 +3,7 @@ package dev.usbharu.hideout.service.signature
 import io.ktor.http.*
 
 interface HttpSignatureSigner {
+    @Suppress("LongParameterList")
     suspend fun sign(
         url: String,
         method: HttpMethod,

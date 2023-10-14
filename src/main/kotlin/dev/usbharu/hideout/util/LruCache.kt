@@ -10,5 +10,4 @@ class LruCache<K, V>(private val maxSize: Int) : LinkedHashMap<K, V>(15, 0.75f, 
         @Serial
         private const val serialVersionUID: Long = -6446947260925053191L
     }
-
 }
