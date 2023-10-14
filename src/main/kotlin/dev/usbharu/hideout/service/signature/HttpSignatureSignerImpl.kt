@@ -55,13 +55,13 @@ class HttpSignatureSignerImpl : HttpSignatureSigner {
         signHeaders: List<String>
     ): String {
         headers.toMap().map { it.key.lowercase() to it.value }.toMap()
-        val result = signHeaders.map {
+        val result = signHeaders.joinToString("\n") {
             if (it.startsWith("(")) {
                 specialHeader(it, url, method)
             } else {
                 generalHeader(it, headers.get(it)!!)
             }
-        }.joinToString("\n")
+        }
         return result
     }
 
