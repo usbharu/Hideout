@@ -143,7 +143,6 @@ dependencies {
 
     implementation("org.drewcarlson:kjob-core:0.6.0")
     implementation("org.drewcarlson:kjob-mongo:0.6.0")
-    testImplementation("org.slf4j:slf4j-simple:2.0.7")
 
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.1")
 }
@@ -152,8 +151,17 @@ detekt {
     parallel = true
     config = files("detekt.yml")
     buildUponDefaultConfig = true
-    basePath = "${rootDir.absolutePath}/src/"
+    basePath = "${rootDir.absolutePath}/src/main/kotlin"
     autoCorrect = true
+}
+
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt>() {
+    exclude("**/generated/**")
+    doFirst {
+
+    }
+    setSource("src/main/kotlin")
+    exclude("build/")
 }
 
 tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {

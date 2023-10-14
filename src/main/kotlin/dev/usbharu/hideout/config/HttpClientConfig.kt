@@ -1,7 +1,6 @@
 package dev.usbharu.hideout.config
 
 import dev.usbharu.hideout.plugins.KtorKeyMap
-import dev.usbharu.hideout.plugins.httpSignaturePlugin
 import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.service.core.Transaction
 import io.ktor.client.*
@@ -16,9 +15,6 @@ import tech.barbero.http.message.signing.KeyMap
 class HttpClientConfig {
     @Bean
     fun httpClient(keyMap: KeyMap): HttpClient = HttpClient(CIO).config {
-        install(httpSignaturePlugin) {
-            this.keyMap = keyMap
-        }
         install(Logging) {
             logger = Logger.DEFAULT
             level = LogLevel.INFO
