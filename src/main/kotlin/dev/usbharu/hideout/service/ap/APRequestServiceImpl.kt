@@ -49,8 +49,8 @@ class APRequestServiceImpl(
         val sign = httpSignatureSigner.sign(
             url, HttpMethod.Get, headers, "", Key(
                 keyId = "${signer.url}#pubkey",
-                privateKey = RsaUtil.decodeRsaPrivateKey(signer.privateKey),
-                publicKey = RsaUtil.decodeRsaPublicKey(signer.publicKey)
+                privateKey = RsaUtil.decodeRsaPrivateKeyPem(signer.privateKey),
+                publicKey = RsaUtil.decodeRsaPublicKeyPem(signer.publicKey)
             ), listOf("(request-target)", "date", "host", "accept")
         )
 
@@ -61,6 +61,7 @@ class APRequestServiceImpl(
                     remove("Host")
                 }
             }
+            contentType(ContentType.Application.Activity)
         }.bodyAsText()
         return objectMapper.readValue(bodyAsText, responseClass)
     }
@@ -77,6 +78,13 @@ class APRequestServiceImpl(
 
     override suspend fun <T : Object> apPost(url: String, body: T?, signer: User?): String {
 
+        if (body != null) {
+            val mutableListOf = mutableListOf<String>()
+            mutableListOf.add("https://www.w3.org/ns/activitystreams")
+            mutableListOf.addAll(body.context)
+            body.context = mutableListOf
+        }
+
         val requestBody = objectMapper.writeValueAsString(body)
 
         val sha256 = MessageDigest.getInstance("SHA-256")
@@ -88,26 +96,25 @@ class APRequestServiceImpl(
         if (signer?.privateKey == null) {
             return httpClient.post(url) {
                 header("Accept", ContentType.Application.Activity)
-                header("ContentType", ContentType.Application.Activity)
                 header("Date", date)
-                header("Digest", digest)
+                header("Digest", "sha-256=$digest")
                 setBody(requestBody)
+                contentType(ContentType.Application.Activity)
             }.bodyAsText()
         }
 
         val headers = headers {
             append("Accept", ContentType.Application.Activity)
-            append("ContentType", ContentType.Application.Activity)
             append("Date", date)
             append("Host", u.host)
-            append("Digest", digest)
+            append("Digest", "sha-256=$digest")
         }
 
         val sign = httpSignatureSigner.sign(
-            url, HttpMethod.Get, headers, "", Key(
+            url, HttpMethod.Post, headers, "", Key(
                 keyId = "${signer.url}#pubkey",
-                privateKey = RsaUtil.decodeRsaPrivateKey(signer.privateKey),
-                publicKey = RsaUtil.decodeRsaPublicKey(signer.publicKey)
+                privateKey = RsaUtil.decodeRsaPrivateKeyPem(signer.privateKey),
+                publicKey = RsaUtil.decodeRsaPublicKeyPem(signer.publicKey)
             ), listOf("(request-target)", "date", "host", "digest")
         )
 
@@ -115,10 +122,10 @@ class APRequestServiceImpl(
             headers {
                 headers {
                     appendAll(sign.headers)
-                    remove("Host")
                 }
             }
             setBody(requestBody)
+            contentType(ContentType.Application.Activity)
         }.bodyAsText()
     }
 }

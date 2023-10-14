@@ -14,10 +14,24 @@ object RsaUtil {
 
     fun decodeRsaPublicKey(encoded: String): RSAPublicKey = decodeRsaPublicKey(Base64Util.decode(encoded))
 
+    fun decodeRsaPublicKeyPem(pem: String): RSAPublicKey {
+        val replace = pem.replace(replaceHeaderAndFooterRegex, "")
+            .replace("\n", "")
+        return decodeRsaPublicKey(replace)
+    }
+
     fun decodeRsaPrivateKey(byteArray: ByteArray): RSAPrivateKey {
         val pkcS8EncodedKeySpec = PKCS8EncodedKeySpec(byteArray)
         return KeyFactory.getInstance("RSA").generatePrivate(pkcS8EncodedKeySpec) as RSAPrivateKey
     }
 
     fun decodeRsaPrivateKey(encoded: String): RSAPrivateKey = decodeRsaPrivateKey(Base64Util.decode(encoded))
+
+    fun decodeRsaPrivateKeyPem(pem: String): RSAPrivateKey {
+        val replace = pem.replace(replaceHeaderAndFooterRegex, "")
+            .replace("\n", "")
+        return decodeRsaPrivateKey(replace)
+    }
+
+    private val replaceHeaderAndFooterRegex = Regex("-----.*?-----")
 }
