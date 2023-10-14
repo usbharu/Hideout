@@ -42,6 +42,7 @@ import java.util.*
 
 @EnableWebSecurity(debug = false)
 @Configuration
+@Suppress("FunctionMaxLength ")
 class SecurityConfig {
 
     @Bean
