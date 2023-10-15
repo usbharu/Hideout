@@ -18,5 +18,5 @@ interface InboxController {
         ],
         method = [RequestMethod.GET, RequestMethod.POST]
     )
-    fun inbox(@RequestBody string: String): ResponseEntity<Unit> = ResponseEntity(HttpStatus.ACCEPTED)
+    suspend fun inbox(@RequestBody string: String): ResponseEntity<Unit> = ResponseEntity(HttpStatus.ACCEPTED)
 }
