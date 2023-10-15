@@ -7,5 +7,6 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class OutboxControllerImpl : OutboxController {
-    override fun outbox(@RequestBody string: String): ResponseEntity<Unit> = ResponseEntity(HttpStatus.NOT_IMPLEMENTED)
+    override suspend fun outbox(@RequestBody string: String): ResponseEntity<Unit> =
+        ResponseEntity(HttpStatus.NOT_IMPLEMENTED)
 }

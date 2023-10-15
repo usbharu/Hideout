@@ -59,6 +59,7 @@ tasks.create<GenerateTask>("openApiGenerateMastodonCompatibleApi", GenerateTask:
     modelPackage.set("dev.usbharu.hideout.domain.mastodon.model.generated")
     configOptions.put("interfaceOnly", "true")
     configOptions.put("useSpringBoot3", "true")
+    configOptions.put("reactive", "true")
     additionalProperties.put("useTags", "true")
 
     importMappings.put("org.springframework.core.io.Resource", "org.springframework.web.multipart.MultipartFile")
@@ -122,7 +123,8 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-spring-boot-starter:0.44.0")
     implementation("io.trbl:blurhash:1.0.0")
     implementation("software.amazon.awssdk:s3:2.20.157")
-
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.7.3")
 
 
     implementation("io.ktor:ktor-client-logging-jvm:$ktor_version")
