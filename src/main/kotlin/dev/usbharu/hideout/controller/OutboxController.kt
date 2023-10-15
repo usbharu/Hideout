@@ -10,5 +10,5 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 interface OutboxController {
     @RequestMapping("/outbox", "/users/{username}/outbox", method = [RequestMethod.POST, RequestMethod.GET])
-    fun outbox(@RequestBody string: String): ResponseEntity<Unit> = ResponseEntity(HttpStatus.ACCEPTED)
+    suspend fun outbox(@RequestBody string: String): ResponseEntity<Unit> = ResponseEntity(HttpStatus.ACCEPTED)
 }

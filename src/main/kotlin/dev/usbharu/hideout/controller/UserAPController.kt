@@ -9,5 +9,5 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 interface UserAPController {
     @GetMapping("/users/{username}")
-    fun userAp(@PathVariable("username") username: String): ResponseEntity<Person>
+    suspend fun userAp(@PathVariable("username") username: String): ResponseEntity<Person>
 }
