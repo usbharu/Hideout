@@ -34,7 +34,10 @@ class FollowerQueryServiceImpl : FollowerQueryService {
                 followers[Users.url],
                 followers[Users.publicKey],
                 followers[Users.privateKey],
-                followers[Users.createdAt]
+                followers[Users.createdAt],
+                followers[Users.keyId],
+                followers[Users.following],
+                followers[Users.followers]
             )
             .select { Users.id eq id }
             .map {
@@ -50,7 +53,10 @@ class FollowerQueryServiceImpl : FollowerQueryService {
                     url = it[followers[Users.url]],
                     publicKey = it[followers[Users.publicKey]],
                     privateKey = it[followers[Users.privateKey]],
-                    createdAt = Instant.ofEpochMilli(it[followers[Users.createdAt]])
+                    createdAt = Instant.ofEpochMilli(it[followers[Users.createdAt]]),
+                    keyId = it[followers[Users.keyId]],
+                    followers = it[followers[Users.followers]],
+                    following = it[followers[Users.following]]
                 )
             }
     }
@@ -79,7 +85,10 @@ class FollowerQueryServiceImpl : FollowerQueryService {
                 followers[Users.url],
                 followers[Users.publicKey],
                 followers[Users.privateKey],
-                followers[Users.createdAt]
+                followers[Users.createdAt],
+                followers[Users.keyId],
+                followers[Users.following],
+                followers[Users.followers]
             )
             .select { Users.name eq name and (Users.domain eq domain) }
             .map {
@@ -95,7 +104,10 @@ class FollowerQueryServiceImpl : FollowerQueryService {
                     url = it[followers[Users.url]],
                     publicKey = it[followers[Users.publicKey]],
                     privateKey = it[followers[Users.privateKey]],
-                    createdAt = Instant.ofEpochMilli(it[followers[Users.createdAt]])
+                    createdAt = Instant.ofEpochMilli(it[followers[Users.createdAt]]),
+                    keyId = it[followers[Users.keyId]],
+                    followers = it[followers[Users.followers]],
+                    following = it[followers[Users.following]]
                 )
             }
     }
@@ -124,7 +136,10 @@ class FollowerQueryServiceImpl : FollowerQueryService {
                 followers[Users.url],
                 followers[Users.publicKey],
                 followers[Users.privateKey],
-                followers[Users.createdAt]
+                followers[Users.createdAt],
+                followers[Users.keyId],
+                followers[Users.following],
+                followers[Users.followers]
             )
             .select { followers[Users.id] eq id }
             .map {
@@ -140,7 +155,10 @@ class FollowerQueryServiceImpl : FollowerQueryService {
                     url = it[followers[Users.url]],
                     publicKey = it[followers[Users.publicKey]],
                     privateKey = it[followers[Users.privateKey]],
-                    createdAt = Instant.ofEpochMilli(it[followers[Users.createdAt]])
+                    createdAt = Instant.ofEpochMilli(it[followers[Users.createdAt]]),
+                    keyId = it[followers[Users.keyId]],
+                    followers = it[followers[Users.followers]],
+                    following = it[followers[Users.following]]
                 )
             }
     }
@@ -169,7 +187,10 @@ class FollowerQueryServiceImpl : FollowerQueryService {
                 followers[Users.url],
                 followers[Users.publicKey],
                 followers[Users.privateKey],
-                followers[Users.createdAt]
+                followers[Users.createdAt],
+                followers[Users.keyId],
+                followers[Users.following],
+                followers[Users.followers]
             )
             .select { followers[Users.name] eq name and (followers[Users.domain] eq domain) }
             .map {
@@ -185,7 +206,10 @@ class FollowerQueryServiceImpl : FollowerQueryService {
                     url = it[followers[Users.url]],
                     publicKey = it[followers[Users.publicKey]],
                     privateKey = it[followers[Users.privateKey]],
-                    createdAt = Instant.ofEpochMilli(it[followers[Users.createdAt]])
+                    createdAt = Instant.ofEpochMilli(it[followers[Users.createdAt]]),
+                    keyId = it[followers[Users.keyId]],
+                    followers = it[followers[Users.followers]],
+                    following = it[followers[Users.following]]
                 )
             }
     }

@@ -9,6 +9,8 @@ open class Person : Object {
     private var icon: Image? = null
     var publicKey: Key? = null
     var endpoints: Map<String, String> = emptyMap()
+    var following: String? = null
+    var followers: String? = null
 
     protected constructor() : super()
 
@@ -24,7 +26,9 @@ open class Person : Object {
         url: String?,
         icon: Image?,
         publicKey: Key?,
-        endpoints: Map<String, String> = emptyMap()
+        endpoints: Map<String, String> = emptyMap(),
+        followers: String?,
+        following: String?
     ) : super(add(type, "Person"), name, id = id) {
         this.preferredUsername = preferredUsername
         this.summary = summary
@@ -34,6 +38,8 @@ open class Person : Object {
         this.icon = icon
         this.publicKey = publicKey
         this.endpoints = endpoints
+        this.followers = followers
+        this.following = following
     }
 
     override fun equals(other: Any?): Boolean {
