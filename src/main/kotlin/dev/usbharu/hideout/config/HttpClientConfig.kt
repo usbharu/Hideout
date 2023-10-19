@@ -19,5 +19,4 @@ class HttpClientConfig {
         }
         expectSuccess = true
     }
-
 }
