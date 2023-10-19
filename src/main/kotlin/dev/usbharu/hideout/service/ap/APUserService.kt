@@ -64,11 +64,13 @@ class APUserServiceImpl(
             publicKey = Key(
                 type = emptyList(),
                 name = "Public Key",
-                id = "$userUrl#pubkey",
+                id = userEntity.keyId,
                 owner = userUrl,
                 publicKeyPem = userEntity.publicKey
             ),
-            endpoints = mapOf("sharedInbox" to "${applicationConfig.url}/inbox")
+            endpoints = mapOf("sharedInbox" to "${applicationConfig.url}/inbox"),
+            followers = userEntity.followers,
+            following = userEntity.following
         )
     }
 
@@ -96,11 +98,13 @@ class APUserServiceImpl(
                 publicKey = Key(
                     type = emptyList(),
                     name = "Public Key",
-                    id = "$url#pubkey",
+                    id = userEntity.keyId,
                     owner = url,
                     publicKeyPem = userEntity.publicKey
                 ),
-                endpoints = mapOf("sharedInbox" to "${applicationConfig.url}/inbox")
+                endpoints = mapOf("sharedInbox" to "${applicationConfig.url}/inbox"),
+                followers = userEntity.followers,
+                following = userEntity.following
             ) to userEntity
         } catch (ignore: FailedToGetResourcesException) {
             val person = apResourceResolveService.resolve<Person>(url, null as Long?)
@@ -118,6 +122,9 @@ class APUserServiceImpl(
                     url = url,
                     publicKey = person.publicKey?.publicKeyPem
                         ?: throw IllegalActivityPubObjectException("publicKey is null"),
+                    keyId = person.publicKey?.id ?: throw IllegalActivityPubObjectException("publicKey keyId is null"),
+                    following = person.following,
+                    followers = person.followers
                 )
             )
         }
