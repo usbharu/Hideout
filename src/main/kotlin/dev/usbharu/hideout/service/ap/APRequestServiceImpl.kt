@@ -16,6 +16,7 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.util.*
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import java.net.URL
@@ -53,7 +54,7 @@ class APRequestServiceImpl(
             httpRequest = HttpRequest(
                 url = u,
                 headers = HttpHeaders(headers.toMap()),
-                dev.usbharu.httpsignature.common.HttpMethod.GET
+                HttpMethod.GET
             ),
             privateKey = PrivateKey(
                 keyId = "${signer.url}#pubkey",
@@ -102,6 +103,8 @@ class APRequestServiceImpl(
         val date = dateTimeFormatter.format(ZonedDateTime.now(ZoneId.of("GMT")))
         val u = URL(url)
         if (signer?.privateKey == null) {
+            logger.debug("NOT SIGN Request: {}", url)
+            logger.trace("{}", signer)
             return httpClient.post(url) {
                 header("Accept", ContentType.Application.Activity)
                 header("Date", date)
@@ -110,6 +113,8 @@ class APRequestServiceImpl(
                 contentType(ContentType.Application.Activity)
             }.bodyAsText()
         }
+
+        logger.debug("SIGN Request: {}", url)
 
         val headers = headers {
             append("Accept", ContentType.Application.Activity)
@@ -123,7 +128,7 @@ class APRequestServiceImpl(
                 u, HttpHeaders(headers.toMap()), HttpMethod.POST
             ),
             privateKey = PrivateKey(
-                keyId = "${signer.url}#pubkey",
+                keyId = signer.keyId,
                 privateKey = RsaUtil.decodeRsaPrivateKeyPem(signer.privateKey)
             ),
             signHeaders = listOf("(request-target)", "date", "host", "digest")
@@ -134,10 +139,15 @@ class APRequestServiceImpl(
                 headers {
                     appendAll(headers)
                     append("Signature", sign.signatureHeader)
+                    remove("Host")
                 }
             }
             setBody(requestBody)
             contentType(ContentType.Application.Activity)
         }.bodyAsText()
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(APRequestServiceImpl::class.java)
     }
 }
