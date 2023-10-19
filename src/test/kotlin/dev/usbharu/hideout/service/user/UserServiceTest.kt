@@ -58,14 +58,17 @@ class UserServiceTest {
         }
         val userService = UserServiceImpl(userRepository, mock(), mock(), mock(), mock(), testApplicationConfig)
         val user = RemoteUserCreateDto(
-            "test",
-            "example.com",
-            "testUser",
-            "test user",
-            "https://example.com/inbox",
-            "https://example.com/outbox",
-            "https://example.com",
-            "-----BEGIN PUBLIC KEY-----...-----END PUBLIC KEY-----"
+            name = "test",
+            domain = "example.com",
+            screenName = "testUser",
+            description = "test user",
+            inbox = "https://example.com/inbox",
+            outbox = "https://example.com/outbox",
+            url = "https://example.com",
+            publicKey = "-----BEGIN PUBLIC KEY-----...-----END PUBLIC KEY-----",
+            keyId = "a",
+            following = "",
+            followers = ""
         )
         userService.createRemoteUser(user)
         verify(userRepository, times(1)).save(any())

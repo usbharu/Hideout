@@ -89,6 +89,9 @@ object Users : Table("users") {
         length = Config.configData.characterLimit.general.privateKey
     ).nullable()
     val createdAt: Column<Long> = long("created_at")
+    val keyId = varchar("key_id", length = Config.configData.characterLimit.general.url)
+    val following = varchar("following", length = Config.configData.characterLimit.general.url).nullable()
+    val followers = varchar("followers", length = Config.configData.characterLimit.general.url).nullable()
 
     override val primaryKey: PrimaryKey = PrimaryKey(id)
 
@@ -110,7 +113,10 @@ fun ResultRow.toUser(): User {
         url = this[Users.url],
         publicKey = this[Users.publicKey],
         privateKey = this[Users.privateKey],
-        createdAt = Instant.ofEpochMilli((this[Users.createdAt]))
+        createdAt = Instant.ofEpochMilli((this[Users.createdAt])),
+        keyId = this[Users.keyId],
+        followers = this[Users.followers],
+        following = this[Users.following]
     )
 }
 
