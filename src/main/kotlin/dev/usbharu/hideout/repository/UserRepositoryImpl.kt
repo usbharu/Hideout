@@ -29,6 +29,9 @@ class UserRepositoryImpl(private val idGenerateService: IdGenerateService) :
                 it[createdAt] = user.createdAt.toEpochMilli()
                 it[publicKey] = user.publicKey
                 it[privateKey] = user.privateKey
+                it[keyId] = user.keyId
+                it[following] = user.following
+                it[followers] = user.followers
             }
         } else {
             Users.update({ Users.id eq user.id }) {
@@ -43,6 +46,9 @@ class UserRepositoryImpl(private val idGenerateService: IdGenerateService) :
                 it[createdAt] = user.createdAt.toEpochMilli()
                 it[publicKey] = user.publicKey
                 it[privateKey] = user.privateKey
+                it[keyId] = user.keyId
+                it[following] = user.following
+                it[followers] = user.followers
             }
         }
         return user
