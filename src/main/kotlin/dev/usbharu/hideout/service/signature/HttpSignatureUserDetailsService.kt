@@ -23,8 +23,6 @@ class HttpSignatureUserDetailsService(
     AuthenticationUserDetailsService<PreAuthenticatedAuthenticationToken> {
     override fun loadUserDetails(token: PreAuthenticatedAuthenticationToken): UserDetails = runBlocking {
         transaction.transaction {
-
-
             if (token.principal !is String) {
                 throw IllegalStateException("Token is not String")
             }
