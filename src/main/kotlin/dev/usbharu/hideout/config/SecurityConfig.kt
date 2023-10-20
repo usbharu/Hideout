@@ -56,16 +56,15 @@ import java.util.*
 
 @EnableWebSecurity(debug = false)
 @Configuration
-@Suppress("FunctionMaxLength")
+@Suppress("FunctionMaxLength", "TooManyFunctions")
 class SecurityConfig {
 
     @Autowired
     private lateinit var userQueryService: UserQueryService
 
     @Bean
-    fun authenticationManager(authenticationConfiguration: AuthenticationConfiguration): AuthenticationManager? {
-        return authenticationConfiguration.authenticationManager
-    }
+    fun authenticationManager(authenticationConfiguration: AuthenticationConfiguration): AuthenticationManager? =
+        authenticationConfiguration.authenticationManager
 
     @Bean
     @Order(1)

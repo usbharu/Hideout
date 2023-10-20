@@ -21,15 +21,17 @@ data class User private constructor(
     val followers: String? = null,
     val following: String? = null
 ) {
-    override fun toString(): String {
-        return "User(id=$id, name='$name', domain='$domain', screenName='$screenName', description='$description', password=$password, inbox='$inbox', outbox='$outbox', url='$url', publicKey='$publicKey', privateKey=$privateKey, createdAt=$createdAt, keyId='$keyId', followers=$followers, following=$following)"
-    }
+    override fun toString(): String =
+        "User(id=$id, name='$name', domain='$domain', screenName='$screenName', description='$description'," +
+                " password=$password, inbox='$inbox', outbox='$outbox', url='$url', publicKey='$publicKey'," +
+                " privateKey=$privateKey, createdAt=$createdAt, keyId='$keyId', followers=$followers," +
+                " following=$following)"
 
     companion object {
 
         private val logger = LoggerFactory.getLogger(User::class.java)
 
-        @Suppress("LongParameterList", "FunctionMinLength")
+        @Suppress("LongParameterList", "FunctionMinLength", "LongMethod")
         fun of(
             id: Long,
             name: String,
