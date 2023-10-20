@@ -49,6 +49,7 @@ class HttpSignatureUserDetailsService(
             HttpSignatureUser(
                 username = findByKeyId.name,
                 domain = findByKeyId.domain,
+                id = findByKeyId.id,
                 credentialsNonExpired = true,
                 accountNonLocked = true,
                 authorities = mutableListOf()
