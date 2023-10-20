@@ -47,7 +47,8 @@ class APResourceResolveServiceImplTest {
                 "https://follower.example.com",
                 "https://follower.example.com",
                 publicKey = "",
-                createdAt = Instant.now()
+                createdAt = Instant.now(),
+                keyId = ""
             )
         )
 
@@ -82,7 +83,8 @@ class APResourceResolveServiceImplTest {
                 "https://follower.example.com",
                 "https://follower.example.com",
                 publicKey = "",
-                createdAt = Instant.now()
+                createdAt = Instant.now(),
+                keyId = ""
             )
         )
 
@@ -120,7 +122,8 @@ class APResourceResolveServiceImplTest {
                 "https://follower.example.com",
                 "https://follower.example.com",
                 publicKey = "",
-                createdAt = Instant.now()
+                createdAt = Instant.now(),
+                keyId = ""
             )
         )
 
@@ -169,7 +172,8 @@ class APResourceResolveServiceImplTest {
                 "https://follower.example.com",
                 "https://follower.example.com",
                 publicKey = "",
-                createdAt = Instant.now()
+                createdAt = Instant.now(),
+                keyId = ""
             )
         )
 

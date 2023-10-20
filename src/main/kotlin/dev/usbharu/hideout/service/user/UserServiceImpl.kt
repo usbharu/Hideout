@@ -34,6 +34,7 @@ class UserServiceImpl(
         val nextId = userRepository.nextId()
         val hashedPassword = userAuthService.hash(user.password)
         val keyPair = userAuthService.generateKeyPair()
+        val userUrl = "${applicationConfig.url}/users/${user.name}"
         val userEntity = User.of(
             id = nextId,
             name = user.name,
@@ -41,12 +42,15 @@ class UserServiceImpl(
             screenName = user.screenName,
             description = user.description,
             password = hashedPassword,
-            inbox = "${applicationConfig.url}/users/${user.name}/inbox",
-            outbox = "${applicationConfig.url}/users/${user.name}/outbox",
-            url = "${applicationConfig.url}/users/${user.name}",
+            inbox = "$userUrl/inbox",
+            outbox = "$userUrl/outbox",
+            url = userUrl,
             publicKey = keyPair.public.toPem(),
             privateKey = keyPair.private.toPem(),
-            createdAt = Instant.now()
+            createdAt = Instant.now(),
+            following = "$userUrl/following",
+            followers = "$userUrl/followers",
+            keyId = "$userUrl#pubkey"
         )
         return userRepository.save(userEntity)
     }
@@ -63,7 +67,10 @@ class UserServiceImpl(
             outbox = user.outbox,
             url = user.url,
             publicKey = user.publicKey,
-            createdAt = Instant.now()
+            createdAt = Instant.now(),
+            followers = user.followers,
+            following = user.following,
+            keyId = user.keyId
         )
         return try {
             userRepository.save(userEntity)

@@ -73,6 +73,18 @@ tasks.create<GenerateTask>("openApiGenerateMastodonCompatibleApi", GenerateTask:
 
 repositories {
     mavenCentral()
+    maven {
+        url = uri("https://git.usbharu.dev/api/packages/usbharu/maven")
+    }
+    maven {
+        name = "GitHubPackages"
+        url = uri("https://maven.pkg.github.com/usbharu/http-signature")
+        credentials {
+
+            username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
+            password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
+        }
+    }
 }
 
 kotlin {
@@ -125,7 +137,7 @@ dependencies {
     implementation("software.amazon.awssdk:s3:2.20.157")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.7.3")
-
+    implementation("dev.usbharu:http-signature:1.0.0")
 
     implementation("io.ktor:ktor-client-logging-jvm:$ktor_version")
 
@@ -136,7 +148,6 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:$ktor_version")
     implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
     testImplementation("io.ktor:ktor-client-mock:$ktor_version")
-    implementation("tech.barbero.http-messages-signing:http-messages-signing-core:1.0.0")
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")

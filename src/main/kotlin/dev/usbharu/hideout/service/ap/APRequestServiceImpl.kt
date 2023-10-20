@@ -3,15 +3,20 @@ package dev.usbharu.hideout.service.ap
 import com.fasterxml.jackson.databind.ObjectMapper
 import dev.usbharu.hideout.domain.model.ap.Object
 import dev.usbharu.hideout.domain.model.hideout.entity.User
-import dev.usbharu.hideout.service.signature.HttpSignatureSigner
-import dev.usbharu.hideout.service.signature.Key
 import dev.usbharu.hideout.util.Base64Util
 import dev.usbharu.hideout.util.HttpUtil.Activity
 import dev.usbharu.hideout.util.RsaUtil
+import dev.usbharu.httpsignature.common.HttpHeaders
+import dev.usbharu.httpsignature.common.HttpMethod
+import dev.usbharu.httpsignature.common.HttpRequest
+import dev.usbharu.httpsignature.common.PrivateKey
+import dev.usbharu.httpsignature.sign.HttpSignatureSigner
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import io.ktor.util.*
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import java.net.URL
@@ -46,14 +51,14 @@ class APRequestServiceImpl(
         }
 
         val sign = httpSignatureSigner.sign(
-            url = url,
-            method = HttpMethod.Get,
-            headers = headers,
-            requestBody = "",
-            keyPair = Key(
+            httpRequest = HttpRequest(
+                url = u,
+                headers = HttpHeaders(headers.toMap()),
+                HttpMethod.GET
+            ),
+            privateKey = PrivateKey(
                 keyId = "${signer.url}#pubkey",
                 privateKey = RsaUtil.decodeRsaPrivateKeyPem(signer.privateKey),
-                publicKey = RsaUtil.decodeRsaPublicKeyPem(signer.publicKey)
             ),
             signHeaders = listOf("(request-target)", "date", "host", "accept")
         )
@@ -61,7 +66,8 @@ class APRequestServiceImpl(
         val bodyAsText = httpClient.get(url) {
             headers {
                 headers {
-                    appendAll(sign.headers)
+                    appendAll(headers)
+                    append("Signature", sign.signatureHeader)
                     remove("Host")
                 }
             }
@@ -97,6 +103,8 @@ class APRequestServiceImpl(
         val date = dateTimeFormatter.format(ZonedDateTime.now(ZoneId.of("GMT")))
         val u = URL(url)
         if (signer?.privateKey == null) {
+            logger.debug("NOT SIGN Request: {}", url)
+            logger.trace("{}", signer)
             return httpClient.post(url) {
                 header("Accept", ContentType.Application.Activity)
                 header("Date", date)
@@ -106,6 +114,8 @@ class APRequestServiceImpl(
             }.bodyAsText()
         }
 
+        logger.debug("SIGN Request: {}", url)
+
         val headers = headers {
             append("Accept", ContentType.Application.Activity)
             append("Date", date)
@@ -114,14 +124,14 @@ class APRequestServiceImpl(
         }
 
         val sign = httpSignatureSigner.sign(
-            url = url,
-            method = HttpMethod.Post,
-            headers = headers,
-            requestBody = "",
-            keyPair = Key(
-                keyId = "${signer.url}#pubkey",
-                privateKey = RsaUtil.decodeRsaPrivateKeyPem(signer.privateKey),
-                publicKey = RsaUtil.decodeRsaPublicKeyPem(signer.publicKey)
+            httpRequest = HttpRequest(
+                u,
+                HttpHeaders(headers.toMap()),
+                HttpMethod.POST
+            ),
+            privateKey = PrivateKey(
+                keyId = signer.keyId,
+                privateKey = RsaUtil.decodeRsaPrivateKeyPem(signer.privateKey)
             ),
             signHeaders = listOf("(request-target)", "date", "host", "digest")
         )
@@ -129,11 +139,17 @@ class APRequestServiceImpl(
         return httpClient.post(url) {
             headers {
                 headers {
-                    appendAll(sign.headers)
+                    appendAll(headers)
+                    append("Signature", sign.signatureHeader)
+                    remove("Host")
                 }
             }
             setBody(requestBody)
             contentType(ContentType.Application.Activity)
         }.bodyAsText()
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(APRequestServiceImpl::class.java)
     }
 }

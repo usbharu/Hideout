@@ -102,7 +102,9 @@ class APReceiveFollowServiceImplTest {
                 id = "https://follower.example.com#main-key",
                 owner = "https://follower.example.com",
                 publicKeyPem = "BEGIN PUBLIC KEY...END PUBLIC KEY",
-            )
+            ),
+            followers = "",
+            following = ""
 
         )
         val apUserService = mock<APUserService> {
@@ -111,30 +113,32 @@ class APReceiveFollowServiceImplTest {
         val userQueryService = mock<UserQueryService> {
             onBlocking { findByUrl(eq("https://example.com")) } doReturn
                     User.of(
-                    id = 1L,
-                    name = "test",
-                    domain = "example.com",
-                    screenName = "testUser",
-                    description = "This user is test user.",
-                    inbox = "https://example.com/inbox",
-                    outbox = "https://example.com/outbox",
-                    url = "https://example.com",
-                    publicKey = "",
-                    createdAt = Instant.now()
-                )
+                        id = 1L,
+                        name = "test",
+                        domain = "example.com",
+                        screenName = "testUser",
+                        description = "This user is test user.",
+                        inbox = "https://example.com/inbox",
+                        outbox = "https://example.com/outbox",
+                        url = "https://example.com",
+                        publicKey = "",
+                        createdAt = Instant.now(),
+                        keyId = "a"
+                    )
             onBlocking { findByUrl(eq("https://follower.example.com")) } doReturn
                     User.of(
-                    id = 2L,
-                    name = "follower",
-                    domain = "follower.example.com",
-                    screenName = "followerUser",
-                    description = "This user is test follower user.",
-                    inbox = "https://follower.example.com/inbox",
-                    outbox = "https://follower.example.com/outbox",
-                    url = "https://follower.example.com",
-                    publicKey = "",
-                    createdAt = Instant.now()
-                )
+                        id = 2L,
+                        name = "follower",
+                        domain = "follower.example.com",
+                        screenName = "followerUser",
+                        description = "This user is test follower user.",
+                        inbox = "https://follower.example.com/inbox",
+                        outbox = "https://follower.example.com/outbox",
+                        url = "https://follower.example.com",
+                        publicKey = "",
+                        createdAt = Instant.now(),
+                        keyId = "a"
+                    )
         }
 
         val userService = mock<UserService> {

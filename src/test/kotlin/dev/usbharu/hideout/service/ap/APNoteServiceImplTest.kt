@@ -48,7 +48,8 @@ class APNoteServiceImplTest {
                     "https://follower.example.com",
                     "https://follower.example.com",
                     publicKey = "",
-                    createdAt = Instant.now()
+                    createdAt = Instant.now(),
+                    keyId = "a"
                 ),
                 User.of(
                     3L,
@@ -61,7 +62,8 @@ class APNoteServiceImplTest {
                     "https://follower2.example.com",
                     "https://follower2.example.com",
                     publicKey = "",
-                    createdAt = Instant.now()
+                    createdAt = Instant.now(),
+                    keyId = "a"
                 )
             )
             val userQueryService = mock<UserQueryService> {
@@ -77,7 +79,8 @@ class APNoteServiceImplTest {
                     "https://example.com",
                     publicKey = "",
                     privateKey = "a",
-                    createdAt = Instant.now()
+                    createdAt = Instant.now(),
+                    keyId = "a"
                 )
             }
             val followerQueryService = mock<FollowerQueryService> {
@@ -86,17 +89,16 @@ class APNoteServiceImplTest {
             val jobQueueParentService = mock<JobQueueParentService>()
             val activityPubNoteService =
                 APNoteServiceImpl(
-                    httpClient = mock(),
                     jobQueueParentService = jobQueueParentService,
                     postRepository = mock(),
                     apUserService = mock(),
                     userQueryService = userQueryService,
                     followerQueryService = followerQueryService,
                     postQueryService = mock(),
+                    mediaQueryService = mediaQueryService,
                     objectMapper = objectMapper,
                     applicationConfig = testApplicationConfig,
                     postService = mock(),
-                    mediaQueryService = mediaQueryService,
                     apResourceResolveService = mock(),
                     apRequestService = mock(),
                     transaction = mock()
@@ -129,20 +131,19 @@ class APNoteServiceImplTest {
                 }
             )
             val activityPubNoteService = APNoteServiceImpl(
-                httpClient = httpClient,
                 jobQueueParentService = mock(),
                 postRepository = mock(),
                 apUserService = mock(),
                 userQueryService = mock(),
                 followerQueryService = mock(),
                 postQueryService = mock(),
+                mediaQueryService = mediaQueryService,
                 objectMapper = objectMapper,
                 applicationConfig = testApplicationConfig,
                 postService = mock(),
-                mediaQueryService = mediaQueryService,
                 apResourceResolveService = mock(),
-                transaction = mock(),
-                apRequestService = mock()
+                apRequestService = mock(),
+                transaction = mock()
             )
             activityPubNoteService.createNoteJob(
                 JobProps(

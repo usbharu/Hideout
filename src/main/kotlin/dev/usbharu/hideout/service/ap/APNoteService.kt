@@ -23,7 +23,6 @@ import dev.usbharu.hideout.service.core.Transaction
 import dev.usbharu.hideout.service.job.JobQueueParentService
 import dev.usbharu.hideout.service.post.PostCreateInterceptor
 import dev.usbharu.hideout.service.post.PostService
-import io.ktor.client.*
 import io.ktor.client.plugins.*
 import kjob.core.job.JobProps
 import kotlinx.coroutines.CoroutineScope
@@ -58,7 +57,6 @@ interface APNoteService {
 @Service
 @Suppress("LongParameterList")
 class APNoteServiceImpl(
-    private val httpClient: HttpClient,
     private val jobQueueParentService: JobQueueParentService,
     private val postRepository: PostRepository,
     private val apUserService: APUserService,
