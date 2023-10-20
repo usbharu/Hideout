@@ -26,6 +26,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpMethod
+import org.springframework.http.HttpStatus
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.security.authentication.AccountStatusUserDetailsChecker
@@ -45,6 +46,8 @@ import org.springframework.security.oauth2.server.authorization.settings.Authori
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.WebAttributes
+import org.springframework.security.web.authentication.HttpStatusEntryPoint
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher
@@ -54,7 +57,8 @@ import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.util.*
 
-@EnableWebSecurity(debug = false)
+
+@EnableWebSecurity(debug = true)
 @Configuration
 @Suppress("FunctionMaxLength", "TooManyFunctions")
 class SecurityConfig {
@@ -69,7 +73,9 @@ class SecurityConfig {
     @Bean
     @Order(1)
     fun httpSignatureFilterChain(http: HttpSecurity, httpSignatureFilter: HttpSignatureFilter): SecurityFilterChain {
-        http.securityMatcher("/inbox", "/outbox", "/users/*/inbox", "/users/*/outbox")
+        http
+
+            .securityMatcher("/inbox", "/outbox", "/users/*/inbox", "/users/*/outbox", "/users/*/posts/*")
             .addFilter(httpSignatureFilter)
             .authorizeHttpRequests {
                 it.anyRequest().permitAll()
@@ -77,9 +83,13 @@ class SecurityConfig {
             .csrf {
                 it.disable()
             }
+            .exceptionHandling {
+                it.authenticationEntryPoint(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+            }
             .sessionManagement {
                 it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             }
+
         return http.build()
     }
 
@@ -87,6 +97,17 @@ class SecurityConfig {
     fun getHttpSignatureFilter(authenticationManager: AuthenticationManager): HttpSignatureFilter {
         val httpSignatureFilter = HttpSignatureFilter(DefaultSignatureHeaderParser())
         httpSignatureFilter.setAuthenticationManager(authenticationManager)
+        httpSignatureFilter.setAuthenticationFailureHandler { request, response, exception ->
+            println(response::class.java)
+            if (response.isCommitted) {
+                return@setAuthenticationFailureHandler
+            }
+            response.setStatus(HttpStatus.UNAUTHORIZED.value())
+            request.getSession(false)?.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION)
+            response.outputStream.close()
+        }
+        httpSignatureFilter.setCheckForPrincipalChanges(true)
+        httpSignatureFilter.setInvalidateSessionOnPrincipalChange(true)
         return httpSignatureFilter
     }
 
@@ -95,17 +116,13 @@ class SecurityConfig {
         val provider = PreAuthenticatedAuthenticationProvider()
         provider.setPreAuthenticatedUserDetailsService(
             HttpSignatureUserDetailsService(
-                userQueryService,
-                HttpSignatureVerifierComposite(
+                userQueryService, HttpSignatureVerifierComposite(
                     mapOf(
                         "rsa-sha256" to RsaSha256HttpSignatureVerifier(
-                            DefaultSignatureHeaderParser(),
-                            RsaSha256HttpSignatureSigner()
+                            DefaultSignatureHeaderParser(), RsaSha256HttpSignatureSigner()
                         )
-                    ),
-                    DefaultSignatureHeaderParser()
-                ),
-                transaction
+                    ), DefaultSignatureHeaderParser()
+                ), transaction
             )
         )
         provider.setUserDetailsChecker(AccountStatusUserDetailsChecker())
@@ -118,15 +135,13 @@ class SecurityConfig {
         val builder = MvcRequestMatcher.Builder(introspector)
 
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http)
-        http
-            .exceptionHandling {
-                it.authenticationEntryPoint(
-                    LoginUrlAuthenticationEntryPoint("/login")
-                )
-            }
-            .oauth2ResourceServer {
-                it.jwt(Customizer.withDefaults())
-            }
+        http.exceptionHandling {
+            it.authenticationEntryPoint(
+                LoginUrlAuthenticationEntryPoint("/login")
+            )
+        }.oauth2ResourceServer {
+            it.jwt(Customizer.withDefaults())
+        }
         return http.build()
     }
 
@@ -135,43 +150,37 @@ class SecurityConfig {
     fun defaultSecurityFilterChain(http: HttpSecurity, introspector: HandlerMappingIntrospector): SecurityFilterChain {
         val builder = MvcRequestMatcher.Builder(introspector)
 
-        http
-            .authorizeHttpRequests {
-                it.requestMatchers(PathRequest.toH2Console()).permitAll()
-                it.requestMatchers(
-                    builder.pattern("/inbox"),
-                    builder.pattern("/users/*/inbox"),
-                    builder.pattern("/api/v1/apps"),
-                    builder.pattern("/api/v1/instance/**"),
-                    builder.pattern("/.well-known/**"),
-                    builder.pattern("/error"),
-                    builder.pattern("/nodeinfo/2.0")
-                ).permitAll()
-                it.requestMatchers(
-                    builder.pattern("/auth/**")
-                ).anonymous()
-                it.requestMatchers(builder.pattern("/change-password")).authenticated()
-                it.requestMatchers(builder.pattern("/api/v1/accounts/verify_credentials"))
-                    .hasAnyAuthority("SCOPE_read", "SCOPE_read:accounts")
-                it.anyRequest().permitAll()
+        http.authorizeHttpRequests {
+            it.requestMatchers(PathRequest.toH2Console()).permitAll()
+            it.requestMatchers(
+                builder.pattern("/inbox"),
+                builder.pattern("/users/*/inbox"),
+                builder.pattern("/api/v1/apps"),
+                builder.pattern("/api/v1/instance/**"),
+                builder.pattern("/.well-known/**"),
+                builder.pattern("/error"),
+                builder.pattern("/nodeinfo/2.0")
+            ).permitAll()
+            it.requestMatchers(
+                builder.pattern("/auth/**")
+            ).anonymous()
+            it.requestMatchers(builder.pattern("/change-password")).authenticated()
+            it.requestMatchers(builder.pattern("/api/v1/accounts/verify_credentials"))
+                .hasAnyAuthority("SCOPE_read", "SCOPE_read:accounts")
+            it.anyRequest().permitAll()
+        }
+        http.oauth2ResourceServer {
+            it.jwt(Customizer.withDefaults())
+        }.passwordManagement { }.formLogin(Customizer.withDefaults()).csrf {
+            it.ignoringRequestMatchers(builder.pattern("/users/*/inbox"))
+            it.ignoringRequestMatchers(builder.pattern(HttpMethod.POST, "/api/v1/apps"))
+            it.ignoringRequestMatchers(builder.pattern("/inbox"))
+            it.ignoringRequestMatchers(PathRequest.toH2Console())
+        }.headers {
+            it.frameOptions {
+                it.sameOrigin()
             }
-        http
-            .oauth2ResourceServer {
-                it.jwt(Customizer.withDefaults())
-            }
-            .passwordManagement { }
-            .formLogin(Customizer.withDefaults())
-            .csrf {
-                it.ignoringRequestMatchers(builder.pattern("/users/*/inbox"))
-                it.ignoringRequestMatchers(builder.pattern(HttpMethod.POST, "/api/v1/apps"))
-                it.ignoringRequestMatchers(builder.pattern("/inbox"))
-                it.ignoringRequestMatchers(PathRequest.toH2Console())
-            }
-            .headers {
-                it.frameOptions {
-                    it.sameOrigin()
-                }
-            }
+        }
         return http.build()
     }
 
@@ -186,11 +195,7 @@ class SecurityConfig {
         val generateKeyPair = keyPairGenerator.generateKeyPair()
         val rsaPublicKey = generateKeyPair.public as RSAPublicKey
         val rsaPrivateKey = generateKeyPair.private as RSAPrivateKey
-        val rsaKey = RSAKey
-            .Builder(rsaPublicKey)
-            .privateKey(rsaPrivateKey)
-            .keyID(UUID.randomUUID().toString())
-            .build()
+        val rsaKey = RSAKey.Builder(rsaPublicKey).privateKey(rsaPrivateKey).keyID(UUID.randomUUID().toString()).build()
 
         val jwkSet = JWKSet(rsaKey)
         return ImmutableJWKSet(jwkSet)
@@ -200,9 +205,7 @@ class SecurityConfig {
     @ConditionalOnProperty(name = ["hideout.security.jwt.generate"], havingValue = "")
     fun loadJwkSource(jwkConfig: JwkConfig): JWKSource<SecurityContext> {
         val rsaKey = RSAKey.Builder(RsaUtil.decodeRsaPublicKey(jwkConfig.publicKey))
-            .privateKey(RsaUtil.decodeRsaPrivateKey(jwkConfig.privateKey))
-            .keyID(jwkConfig.keyId)
-            .build()
+            .privateKey(RsaUtil.decodeRsaPrivateKey(jwkConfig.privateKey)).keyID(jwkConfig.keyId).build()
         return ImmutableJWKSet(JWKSet(rsaKey))
     }
 
@@ -212,11 +215,8 @@ class SecurityConfig {
 
     @Bean
     fun authorizationServerSettings(): AuthorizationServerSettings {
-        return AuthorizationServerSettings.builder()
-            .authorizationEndpoint("/oauth/authorize")
-            .tokenEndpoint("/oauth/token")
-            .tokenRevocationEndpoint("/oauth/revoke")
-            .build()
+        return AuthorizationServerSettings.builder().authorizationEndpoint("/oauth/authorize")
+            .tokenEndpoint("/oauth/token").tokenRevocationEndpoint("/oauth/revoke").build()
     }
 
     @Bean
@@ -239,8 +239,7 @@ class SecurityConfig {
 
     @Bean
     fun mappingJackson2HttpMessageConverter(): MappingJackson2HttpMessageConverter {
-        val builder = Jackson2ObjectMapperBuilder()
-            .serializationInclusion(JsonInclude.Include.NON_NULL)
+        val builder = Jackson2ObjectMapperBuilder().serializationInclusion(JsonInclude.Include.NON_NULL)
         return MappingJackson2HttpMessageConverter(builder.build())
     }
 }
@@ -248,7 +247,5 @@ class SecurityConfig {
 @ConfigurationProperties("hideout.security.jwt")
 @ConditionalOnProperty(name = ["hideout.security.jwt.generate"], havingValue = "")
 data class JwkConfig(
-    val keyId: String,
-    val publicKey: String,
-    val privateKey: String
+    val keyId: String, val publicKey: String, val privateKey: String
 )
