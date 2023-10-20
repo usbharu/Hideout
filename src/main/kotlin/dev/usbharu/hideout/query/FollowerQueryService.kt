@@ -1,9 +1,7 @@
 package dev.usbharu.hideout.query
 
 import dev.usbharu.hideout.domain.model.hideout.entity.User
-import org.springframework.stereotype.Repository
 
-@Repository
 interface FollowerQueryService {
     suspend fun findFollowersById(id: Long): List<User>
     suspend fun findFollowersByNameAndDomain(name: String, domain: String): List<User>

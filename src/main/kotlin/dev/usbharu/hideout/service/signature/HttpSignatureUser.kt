@@ -7,6 +7,7 @@ import java.io.Serial
 class HttpSignatureUser(
     username: String,
     val domain: String,
+    val id: Long,
     credentialsNonExpired: Boolean,
     accountNonLocked: Boolean,
     authorities: MutableCollection<out GrantedAuthority>?
@@ -19,6 +20,26 @@ class HttpSignatureUser(
     accountNonLocked,
     authorities
 ) {
+
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is HttpSignatureUser) return false
+        if (!super.equals(other)) return false
+
+        if (domain != other.domain) return false
+        if (id != other.id) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + domain.hashCode()
+        result = 31 * result + id.hashCode()
+        return result
+    }
+
     companion object {
         @Serial
         private const val serialVersionUID: Long = -3330552099960982997L
