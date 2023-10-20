@@ -40,7 +40,7 @@ class HttpSignatureFilter(private val httpSignatureHeaderParser: SignatureHeader
         }
 
         return HttpRequest(
-            URL(url + request.queryString),
+            URL(url + request.queryString.orEmpty()),
             HttpHeaders(headers),
             method
         )
