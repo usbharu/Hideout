@@ -84,7 +84,6 @@ class SecurityConfig {
         return http.build()
     }
 
-
     @Bean
     fun getHttpSignatureFilter(authenticationManager: AuthenticationManager): HttpSignatureFilter {
         val httpSignatureFilter = HttpSignatureFilter(DefaultSignatureHeaderParser())
@@ -97,14 +96,17 @@ class SecurityConfig {
         val provider = PreAuthenticatedAuthenticationProvider()
         provider.setPreAuthenticatedUserDetailsService(
             HttpSignatureUserDetailsService(
-                userQueryService, HttpSignatureVerifierComposite(
+                userQueryService,
+                HttpSignatureVerifierComposite(
                     mapOf(
                         "rsa-sha256" to RsaSha256HttpSignatureVerifier(
                             DefaultSignatureHeaderParser(),
                             RsaSha256HttpSignatureSigner()
                         )
-                    ), DefaultSignatureHeaderParser()
-                ), transaction
+                    ),
+                    DefaultSignatureHeaderParser()
+                ),
+                transaction
             )
         )
         provider.setUserDetailsChecker(AccountStatusUserDetailsChecker())
