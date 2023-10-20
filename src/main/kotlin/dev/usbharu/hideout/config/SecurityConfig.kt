@@ -7,7 +7,16 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet
 import com.nimbusds.jose.jwk.source.JWKSource
 import com.nimbusds.jose.proc.SecurityContext
 import dev.usbharu.hideout.domain.model.UserDetailsImpl
+import dev.usbharu.hideout.query.UserQueryService
+import dev.usbharu.hideout.service.core.Transaction
+import dev.usbharu.hideout.service.signature.HttpSignatureFilter
+import dev.usbharu.hideout.service.signature.HttpSignatureUserDetailsService
+import dev.usbharu.hideout.service.signature.HttpSignatureVerifierComposite
 import dev.usbharu.hideout.util.RsaUtil
+import dev.usbharu.httpsignature.sign.RsaSha256HttpSignatureSigner
+import dev.usbharu.httpsignature.verify.DefaultSignatureHeaderParser
+import dev.usbharu.httpsignature.verify.RsaSha256HttpSignatureVerifier
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest
@@ -19,9 +28,13 @@ import org.springframework.core.annotation.Order
 import org.springframework.http.HttpMethod
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
+import org.springframework.security.authentication.AccountStatusUserDetailsChecker
+import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.Customizer
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.Authentication
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -33,6 +46,7 @@ import org.springframework.security.oauth2.server.authorization.token.JwtEncodin
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector
 import java.security.KeyPairGenerator
@@ -42,11 +56,64 @@ import java.util.*
 
 @EnableWebSecurity(debug = false)
 @Configuration
-@Suppress("FunctionMaxLength ")
+@Suppress("FunctionMaxLength", "TooManyFunctions")
 class SecurityConfig {
+
+    @Autowired
+    private lateinit var userQueryService: UserQueryService
+
+    @Bean
+    fun authenticationManager(authenticationConfiguration: AuthenticationConfiguration): AuthenticationManager? =
+        authenticationConfiguration.authenticationManager
 
     @Bean
     @Order(1)
+    fun httpSignatureFilterChain(http: HttpSecurity, httpSignatureFilter: HttpSignatureFilter): SecurityFilterChain {
+        http.securityMatcher("/inbox", "/outbox", "/users/*/inbox", "/users/*/outbox")
+            .addFilter(httpSignatureFilter)
+            .authorizeHttpRequests {
+                it.anyRequest().permitAll()
+            }
+            .csrf {
+                it.disable()
+            }
+            .sessionManagement {
+                it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            }
+        return http.build()
+    }
+
+    @Bean
+    fun getHttpSignatureFilter(authenticationManager: AuthenticationManager): HttpSignatureFilter {
+        val httpSignatureFilter = HttpSignatureFilter(DefaultSignatureHeaderParser())
+        httpSignatureFilter.setAuthenticationManager(authenticationManager)
+        return httpSignatureFilter
+    }
+
+    @Bean
+    fun httpSignatureAuthenticationProvider(transaction: Transaction): PreAuthenticatedAuthenticationProvider {
+        val provider = PreAuthenticatedAuthenticationProvider()
+        provider.setPreAuthenticatedUserDetailsService(
+            HttpSignatureUserDetailsService(
+                userQueryService,
+                HttpSignatureVerifierComposite(
+                    mapOf(
+                        "rsa-sha256" to RsaSha256HttpSignatureVerifier(
+                            DefaultSignatureHeaderParser(),
+                            RsaSha256HttpSignatureSigner()
+                        )
+                    ),
+                    DefaultSignatureHeaderParser()
+                ),
+                transaction
+            )
+        )
+        provider.setUserDetailsChecker(AccountStatusUserDetailsChecker())
+        return provider
+    }
+
+    @Bean
+    @Order(2)
     fun oauth2SecurityFilterChain(http: HttpSecurity, introspector: HandlerMappingIntrospector): SecurityFilterChain {
         val builder = MvcRequestMatcher.Builder(introspector)
 
@@ -64,7 +131,7 @@ class SecurityConfig {
     }
 
     @Bean
-    @Order(2)
+    @Order(4)
     fun defaultSecurityFilterChain(http: HttpSecurity, introspector: HandlerMappingIntrospector): SecurityFilterChain {
         val builder = MvcRequestMatcher.Builder(introspector)
 

@@ -49,18 +49,18 @@ class APReceiveFollowServiceImpl(
             val person = apUserService.fetchPerson(actor, targetActor)
             val follow = objectMapper.readValue<Follow>(props[ReceiveFollowJob.follow])
 
-            val signer = userQueryService.findByUrl(actor)
+            val signer = userQueryService.findByUrl(targetActor)
 
             val urlString = person.inbox ?: throw IllegalArgumentException("inbox is not found")
 
             apRequestService.apPost(
-                urlString,
-                Accept(
+                url = urlString,
+                body = Accept(
                     name = "Follow",
                     `object` = follow,
                     actor = targetActor
                 ),
-                signer
+                signer = signer
             )
 
             val targetEntity = userQueryService.findByUrl(targetActor)

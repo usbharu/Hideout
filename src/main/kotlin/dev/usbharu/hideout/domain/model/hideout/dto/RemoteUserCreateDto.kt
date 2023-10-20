@@ -9,4 +9,7 @@ data class RemoteUserCreateDto(
     val outbox: String,
     val url: String,
     val publicKey: String,
+    val keyId: String,
+    val followers: String?,
+    val following: String?
 )
