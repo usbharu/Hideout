@@ -44,4 +44,10 @@ class UserQueryServiceImpl : UserQueryService {
 
     override suspend fun existByNameAndDomain(name: String, domain: String): Boolean =
         Users.select { Users.name eq name and (Users.domain eq domain) }.empty().not()
+
+    override suspend fun findByKeyId(keyId: String): User {
+        return Users.select { Users.keyId eq keyId }
+            .singleOr { FailedToGetResourcesException("keyId: $keyId  is duplicate or does not exist.", it) }
+            .toUser()
+    }
 }
