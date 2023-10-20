@@ -171,9 +171,9 @@ class APNoteServiceImpl(
             attributedTo = user.url,
             content = post.text,
             published = Instant.ofEpochMilli(post.createdAt).toString(),
-            to = listOf(public, user.url + "/follower"),
+            to = listOfNotNull(public, user.followers),
             sensitive = post.sensitive,
-            cc = listOf(public, user.url + "/follower"),
+            cc = listOfNotNull(public, user.followers),
             inReplyTo = reply?.url
         )
     }
@@ -202,16 +202,20 @@ class APNoteServiceImpl(
             targetActor
         )
 
+        logger.debug("VISIBILITY url: {} to: {} cc: {}", note.id, note.to, note.cc)
+
         val visibility =
-            if (note.to.contains(public) && note.cc.contains(public)) {
+            if (note.to.contains(public)) {
                 Visibility.PUBLIC
-            } else if (note.to.find { it.endsWith("/followers") } != null && note.cc.contains(public)) {
+            } else if (note.to.contains(person.second.followers) && note.cc.contains(public)) {
                 Visibility.UNLISTED
-            } else if (note.to.find { it.endsWith("/followers") } != null) {
+            } else if (note.to.contains(person.second.followers)) {
                 Visibility.FOLLOWERS
             } else {
                 Visibility.DIRECT
             }
+
+        logger.debug("VISIBILITY is {} url: {}", visibility.name, note.id)
 
         val reply = note.inReplyTo?.let {
             fetchNote(it, targetActor)
