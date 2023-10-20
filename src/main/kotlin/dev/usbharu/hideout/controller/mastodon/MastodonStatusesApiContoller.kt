@@ -15,7 +15,6 @@ class MastodonStatusesApiContoller(private val statusesApiService: StatusesApiSe
     override suspend fun apiV1StatusesPost(
         devUsbharuHideoutDomainModelMastodonStatusesRequest: StatusesRequest
     ): ResponseEntity<Status> {
-
         val jwt = SecurityContextHolder.getContext().authentication.principal as Jwt
 
         return ResponseEntity(
@@ -25,6 +24,5 @@ class MastodonStatusesApiContoller(private val statusesApiService: StatusesApiSe
             ),
             HttpStatus.OK
         )
-
     }
 }
