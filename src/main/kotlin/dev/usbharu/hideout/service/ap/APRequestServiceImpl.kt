@@ -125,7 +125,9 @@ class APRequestServiceImpl(
 
         val sign = httpSignatureSigner.sign(
             httpRequest = HttpRequest(
-                u, HttpHeaders(headers.toMap()), HttpMethod.POST
+                u,
+                HttpHeaders(headers.toMap()),
+                HttpMethod.POST
             ),
             privateKey = PrivateKey(
                 keyId = signer.keyId,
