@@ -24,7 +24,6 @@ class HttpSignatureUserDetailsService(
 ) :
     AuthenticationUserDetailsService<PreAuthenticatedAuthenticationToken> {
     override fun loadUserDetails(token: PreAuthenticatedAuthenticationToken): UserDetails = runBlocking {
-
         if (token.principal !is String) {
             throw IllegalStateException("Token is not String")
         }
@@ -40,7 +39,6 @@ class HttpSignatureUserDetailsService(
                 throw UsernameNotFoundException("User not found", e)
             }
         }
-
 
         val verify = try {
             httpSignatureVerifier.verify(
@@ -64,7 +62,6 @@ class HttpSignatureUserDetailsService(
             accountNonLocked = true,
             authorities = mutableListOf()
         )
-
     }
 
     companion object {

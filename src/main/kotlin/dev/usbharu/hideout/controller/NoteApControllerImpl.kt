@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class NoteApControllerImpl(private val noteApApiService: NoteApApiService) : NoteApController {
     override suspend fun postsAp(
-        @PathVariable(value = "postId") postId: Long, @CurrentSecurityContext context: SecurityContext
+        @PathVariable(value = "postId") postId: Long,
+        @CurrentSecurityContext context: SecurityContext
     ): ResponseEntity<Note> {
-
         val userId =
             if (context.authentication is PreAuthenticatedAuthenticationToken && context.authentication.details is HttpSignatureUser) {
                 (context.authentication.details as HttpSignatureUser).id

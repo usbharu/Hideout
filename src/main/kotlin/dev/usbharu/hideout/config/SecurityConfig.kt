@@ -59,7 +59,6 @@ import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.util.*
 
-
 @EnableWebSecurity(debug = false)
 @Configuration
 @Suppress("FunctionMaxLength", "TooManyFunctions")
@@ -76,7 +75,6 @@ class SecurityConfig {
     @Order(1)
     fun httpSignatureFilterChain(http: HttpSecurity, httpSignatureFilter: HttpSignatureFilter): SecurityFilterChain {
         http
-
             .securityMatcher("/inbox", "/outbox", "/users/*/inbox", "/users/*/outbox", "/users/*/posts/*")
             .addFilter(httpSignatureFilter)
             .addFilterBefore(
@@ -121,13 +119,16 @@ class SecurityConfig {
         val provider = PreAuthenticatedAuthenticationProvider()
         provider.setPreAuthenticatedUserDetailsService(
             HttpSignatureUserDetailsService(
-                userQueryService, HttpSignatureVerifierComposite(
+                userQueryService,
+                HttpSignatureVerifierComposite(
                     mapOf(
                         "rsa-sha256" to RsaSha256HttpSignatureVerifier(
                             DefaultSignatureHeaderParser(), RsaSha256HttpSignatureSigner()
                         )
-                    ), DefaultSignatureHeaderParser()
-                ), transaction
+                    ),
+                    DefaultSignatureHeaderParser()
+                ),
+                transaction
             )
         )
         provider.setUserDetailsChecker(AccountStatusUserDetailsChecker())
@@ -252,5 +253,7 @@ class SecurityConfig {
 @ConfigurationProperties("hideout.security.jwt")
 @ConditionalOnProperty(name = ["hideout.security.jwt.generate"], havingValue = "")
 data class JwkConfig(
-    val keyId: String, val publicKey: String, val privateKey: String
+    val keyId: String,
+    val publicKey: String,
+    val privateKey: String
 )

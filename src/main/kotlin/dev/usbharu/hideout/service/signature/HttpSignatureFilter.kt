@@ -21,7 +21,6 @@ class HttpSignatureFilter(private val httpSignatureHeaderParser: SignatureHeader
         } catch (e: IllegalArgumentException) {
             return null
         } catch (e: RuntimeException) {
-
             return ""
         }
         return signature.keyId
