@@ -20,7 +20,6 @@ class NoteQueryServiceImpl : NoteQueryService {
             .select { Posts.id eq id }
             .singleOr { FailedToGetResourcesException("id $id is duplicate or does not exist.") }
             .let { it.toNote() to it.toPost() }
-
     }
 
     private fun ResultRow.toNote(): Note {
