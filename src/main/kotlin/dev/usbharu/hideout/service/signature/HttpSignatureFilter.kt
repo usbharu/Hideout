@@ -10,13 +10,19 @@ import java.net.URL
 
 class HttpSignatureFilter(private val httpSignatureHeaderParser: SignatureHeaderParser) :
     AbstractPreAuthenticatedProcessingFilter() {
-    override fun getPreAuthenticatedPrincipal(request: HttpServletRequest?): Any {
+    override fun getPreAuthenticatedPrincipal(request: HttpServletRequest?): Any? {
         val headersList = request?.headerNames?.toList().orEmpty()
 
         val headers =
             headersList.associateWith { header -> request?.getHeaders(header)?.toList().orEmpty() }
 
-        val signature = httpSignatureHeaderParser.parse(HttpHeaders(headers))
+        val signature = try {
+            httpSignatureHeaderParser.parse(HttpHeaders(headers))
+        } catch (e: IllegalArgumentException) {
+            return null
+        } catch (e: RuntimeException) {
+            return ""
+        }
         return signature.keyId
     }
 
