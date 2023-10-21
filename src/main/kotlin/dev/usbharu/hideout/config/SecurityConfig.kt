@@ -46,11 +46,13 @@ import org.springframework.security.oauth2.server.authorization.settings.Authori
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer
 import org.springframework.security.web.SecurityFilterChain
-import org.springframework.security.web.WebAttributes
+import org.springframework.security.web.access.ExceptionTranslationFilter
+import org.springframework.security.web.authentication.AuthenticationEntryPointFailureHandler
 import org.springframework.security.web.authentication.HttpStatusEntryPoint
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher
+import org.springframework.security.web.util.matcher.AnyRequestMatcher
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector
 import java.security.KeyPairGenerator
 import java.security.interfaces.RSAPrivateKey
@@ -58,7 +60,7 @@ import java.security.interfaces.RSAPublicKey
 import java.util.*
 
 
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity(debug = false)
 @Configuration
 @Suppress("FunctionMaxLength", "TooManyFunctions")
 class SecurityConfig {
@@ -77,6 +79,10 @@ class SecurityConfig {
 
             .securityMatcher("/inbox", "/outbox", "/users/*/inbox", "/users/*/outbox", "/users/*/posts/*")
             .addFilter(httpSignatureFilter)
+            .addFilterBefore(
+                ExceptionTranslationFilter(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)),
+                HttpSignatureFilter::class.java
+            )
             .authorizeHttpRequests {
                 it.anyRequest().permitAll()
             }
@@ -85,6 +91,10 @@ class SecurityConfig {
             }
             .exceptionHandling {
                 it.authenticationEntryPoint(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+                it.defaultAuthenticationEntryPointFor(
+                    HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
+                    AnyRequestMatcher.INSTANCE
+                )
             }
             .sessionManagement {
                 it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -97,17 +107,12 @@ class SecurityConfig {
     fun getHttpSignatureFilter(authenticationManager: AuthenticationManager): HttpSignatureFilter {
         val httpSignatureFilter = HttpSignatureFilter(DefaultSignatureHeaderParser())
         httpSignatureFilter.setAuthenticationManager(authenticationManager)
-        httpSignatureFilter.setAuthenticationFailureHandler { request, response, exception ->
-            println(response::class.java)
-            if (response.isCommitted) {
-                return@setAuthenticationFailureHandler
-            }
-            response.setStatus(HttpStatus.UNAUTHORIZED.value())
-            request.getSession(false)?.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION)
-            response.outputStream.close()
-        }
-        httpSignatureFilter.setCheckForPrincipalChanges(true)
-        httpSignatureFilter.setInvalidateSessionOnPrincipalChange(true)
+        httpSignatureFilter.setContinueFilterChainOnUnsuccessfulAuthentication(false)
+        val authenticationEntryPointFailureHandler =
+            AuthenticationEntryPointFailureHandler(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+        authenticationEntryPointFailureHandler.setRethrowAuthenticationServiceException(false)
+        httpSignatureFilter.setAuthenticationFailureHandler(authenticationEntryPointFailureHandler)
+
         return httpSignatureFilter
     }
 
