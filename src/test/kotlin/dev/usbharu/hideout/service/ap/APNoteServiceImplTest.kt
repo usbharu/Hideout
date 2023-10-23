@@ -3,8 +3,8 @@
 
 package dev.usbharu.hideout.service.ap
 
-import dev.usbharu.hideout.config.Config
-import dev.usbharu.hideout.config.ConfigData
+import dev.usbharu.hideout.config.ApplicationConfig
+import dev.usbharu.hideout.config.CharacterLimit
 import dev.usbharu.hideout.domain.model.hideout.entity.Post
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.domain.model.hideout.entity.Visibility
@@ -23,21 +23,28 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito.anyLong
 import org.mockito.Mockito.eq
 import org.mockito.kotlin.*
-import utils.JsonObjectMapper
 import utils.JsonObjectMapper.objectMapper
 import utils.TestApplicationConfig.testApplicationConfig
+import java.net.URL
 import java.time.Instant
 import kotlin.test.assertEquals
 
 class APNoteServiceImplTest {
+
+    val userBuilder = User.UserBuilder(CharacterLimit(), ApplicationConfig(URL("https://example.com")))
+    val postBuilder = Post.PostBuilder(CharacterLimit())
+
     @Test
     fun `createPost 新しい投稿`() {
         val mediaQueryService = mock<MediaQueryService> {
             onBlocking { findByPostId(anyLong()) } doReturn emptyList()
         }
+
+
+
         runTest {
             val followers = listOf(
-                User.of(
+                userBuilder.of(
                     2L,
                     "follower",
                     "follower.example.com",
@@ -51,7 +58,7 @@ class APNoteServiceImplTest {
                     createdAt = Instant.now(),
                     keyId = "a"
                 ),
-                User.of(
+                userBuilder.of(
                     3L,
                     "follower2",
                     "follower2.example.com",
@@ -67,7 +74,7 @@ class APNoteServiceImplTest {
                 )
             )
             val userQueryService = mock<UserQueryService> {
-                onBlocking { findById(eq(1L)) } doReturn User.of(
+                onBlocking { findById(eq(1L)) } doReturn userBuilder.of(
                     1L,
                     "test",
                     "example.com",
@@ -101,9 +108,10 @@ class APNoteServiceImplTest {
                     postService = mock(),
                     apResourceResolveService = mock(),
                     apRequestService = mock(),
-                    transaction = mock()
+                    transaction = mock(),
+                    postBuilder = postBuilder
                 )
-            val postEntity = Post.of(
+            val postEntity = postBuilder.of(
                 1L,
                 1L,
                 null,
@@ -123,7 +131,7 @@ class APNoteServiceImplTest {
             val mediaQueryService = mock<MediaQueryService> {
                 onBlocking { findByPostId(anyLong()) } doReturn emptyList()
             }
-            Config.configData = ConfigData(objectMapper = JsonObjectMapper.objectMapper)
+
             val httpClient = HttpClient(
                 MockEngine { httpRequestData ->
                     assertEquals("https://follower.example.com/inbox", httpRequestData.url.toString())
@@ -143,7 +151,8 @@ class APNoteServiceImplTest {
                 postService = mock(),
                 apResourceResolveService = mock(),
                 apRequestService = mock(),
-                transaction = mock()
+                transaction = mock(),
+                postBuilder = postBuilder
             )
             activityPubNoteService.createNoteJob(
                 JobProps(

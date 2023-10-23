@@ -43,3 +43,35 @@ data class StorageConfig(
     val accessKey: String,
     val secretKey: String
 )
+
+@ConfigurationProperties("hideout.character-limit")
+data class CharacterLimit(
+    val general: General = General(),
+    val post: Post = Post(),
+    val account: Account = Account(),
+    val instance: Instance = Instance()
+) {
+
+    data class General(
+        val url: Int = 1000,
+        val domain: Int = 1000,
+        val publicKey: Int = 10000,
+        val privateKey: Int = 10000
+    )
+
+    data class Post(
+        val text: Int = 3000,
+        val overview: Int = 3000
+    )
+
+    data class Account(
+        val id: Int = 300,
+        val name: Int = 300,
+        val description: Int = 10000
+    )
+
+    data class Instance(
+        val name: Int = 600,
+        val description: Int = 10000
+    )
+}

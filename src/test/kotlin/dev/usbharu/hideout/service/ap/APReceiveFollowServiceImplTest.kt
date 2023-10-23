@@ -3,12 +3,13 @@
 
 package dev.usbharu.hideout.service.ap
 
-import dev.usbharu.hideout.config.Config
-import dev.usbharu.hideout.config.ConfigData
+import dev.usbharu.hideout.config.ApplicationConfig
+import dev.usbharu.hideout.config.CharacterLimit
 import dev.usbharu.hideout.domain.model.ap.Follow
 import dev.usbharu.hideout.domain.model.ap.Image
 import dev.usbharu.hideout.domain.model.ap.Key
 import dev.usbharu.hideout.domain.model.ap.Person
+import dev.usbharu.hideout.domain.model.hideout.entity.Post
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.domain.model.job.ReceiveFollowJob
 import dev.usbharu.hideout.query.UserQueryService
@@ -23,12 +24,16 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.*
-import utils.JsonObjectMapper
 import utils.JsonObjectMapper.objectMapper
 import utils.TestTransaction
+import java.net.URL
 import java.time.Instant
 
 class APReceiveFollowServiceImplTest {
+
+    val userBuilder = User.UserBuilder(CharacterLimit(), ApplicationConfig(URL("https://example.com")))
+    val postBuilder = Post.PostBuilder(CharacterLimit())
+
     @Test
     fun `receiveFollow フォロー受付処理`() = runTest {
         val jobQueueParentService = mock<JobQueueParentService> {
@@ -80,7 +85,6 @@ class APReceiveFollowServiceImplTest {
 
     @Test
     fun `receiveFollowJob フォロー受付処理のJob`() = runTest {
-        Config.configData = ConfigData(objectMapper = JsonObjectMapper.objectMapper)
         val person = Person(
             type = emptyList(),
             name = "follower",
@@ -112,7 +116,7 @@ class APReceiveFollowServiceImplTest {
         }
         val userQueryService = mock<UserQueryService> {
             onBlocking { findByUrl(eq("https://example.com")) } doReturn
-                    User.of(
+                    userBuilder.of(
                         id = 1L,
                         name = "test",
                         domain = "example.com",
@@ -122,11 +126,13 @@ class APReceiveFollowServiceImplTest {
                         outbox = "https://example.com/outbox",
                         url = "https://example.com",
                         publicKey = "",
+                        password = "a",
+                        privateKey = "a",
                         createdAt = Instant.now(),
                         keyId = "a"
                     )
             onBlocking { findByUrl(eq("https://follower.example.com")) } doReturn
-                    User.of(
+                    userBuilder.of(
                         id = 2L,
                         name = "follower",
                         domain = "follower.example.com",

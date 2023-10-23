@@ -1,7 +1,9 @@
 package dev.usbharu.hideout.domain.model.hideout.entity
 
-import dev.usbharu.hideout.config.Config
+import dev.usbharu.hideout.config.ApplicationConfig
+import dev.usbharu.hideout.config.CharacterLimit
 import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Component
 import java.time.Instant
 
 data class User private constructor(
@@ -27,9 +29,9 @@ data class User private constructor(
                 " privateKey=$privateKey, createdAt=$createdAt, keyId='$keyId', followers=$followers," +
                 " following=$following)"
 
-    companion object {
-
-        private val logger = LoggerFactory.getLogger(User::class.java)
+    @Component
+    class UserBuilder(private val characterLimit: CharacterLimit, private val applicationConfig: ApplicationConfig) {
+        private val logger = LoggerFactory.getLogger(UserBuilder::class.java)
 
         @Suppress("LongParameterList", "FunctionMinLength", "LongMethod")
         fun of(
@@ -49,8 +51,6 @@ data class User private constructor(
             following: String? = null,
             followers: String? = null
         ): User {
-            val characterLimit = Config.configData.characterLimit
-
             // idは0未満ではいけない
             require(id >= 0) { "id must be greater than or equal to 0." }
 
@@ -93,7 +93,7 @@ data class User private constructor(
             }
 
             // ローカルユーザーはpasswordとprivateKeyをnullにしてはいけない
-            if (domain == Config.configData.domain) {
+            if (domain == applicationConfig.url.host) {
                 requireNotNull(password) { "password and privateKey must not be null for local users." }
                 requireNotNull(privateKey) { "password and privateKey must not be null for local users." }
             }
