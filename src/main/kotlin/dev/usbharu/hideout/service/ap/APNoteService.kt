@@ -69,6 +69,7 @@ class APNoteServiceImpl(
     private val postService: PostService,
     private val apResourceResolveService: APResourceResolveService,
     private val apRequestService: APRequestService,
+    private val postBuilder: Post.PostBuilder,
     private val transaction: Transaction
 
 ) : APNoteService, PostCreateInterceptor {
@@ -224,7 +225,7 @@ class APNoteServiceImpl(
 
         // TODO: リモートのメディア処理を追加
         postService.createRemote(
-            Post.of(
+            postBuilder.of(
                 id = postRepository.generateId(),
                 userId = person.second.id,
                 text = note.content.orEmpty(),
