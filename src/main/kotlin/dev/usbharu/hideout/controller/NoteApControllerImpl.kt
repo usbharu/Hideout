@@ -17,7 +17,9 @@ class NoteApControllerImpl(private val noteApApiService: NoteApApiService) : Not
         @CurrentSecurityContext context: SecurityContext
     ): ResponseEntity<Note> {
         val userId =
-            if (context.authentication is PreAuthenticatedAuthenticationToken && context.authentication.details is HttpSignatureUser) {
+            if (context.authentication is PreAuthenticatedAuthenticationToken &&
+                context.authentication.details is HttpSignatureUser
+            ) {
                 (context.authentication.details as HttpSignatureUser).id
             } else {
                 null
