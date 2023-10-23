@@ -1,6 +1,7 @@
 package dev.usbharu.hideout.service.post
 
 import dev.usbharu.hideout.domain.mastodon.model.generated.Status
+import dev.usbharu.hideout.domain.model.hideout.dto.StatusQuery
 import dev.usbharu.hideout.domain.model.hideout.entity.Timeline
 import dev.usbharu.hideout.query.mastodon.StatusQueryService
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
@@ -50,6 +51,15 @@ class MongoGenerateTimelineService(
 
         val timelines = mongoTemplate.find(query, Timeline::class.java)
 
-        return statusQueryService.findByPostIds(timelines.flatMap { setOfNotNull(it.postId, it.replyId, it.repostId) })
+        return statusQueryService.findByPostIdsWithMediaIds(
+            timelines.map {
+                StatusQuery(
+                    it.postId,
+                    it.replyId,
+                    it.repostId,
+                    it.mediaIds
+                )
+            }
+        )
     }
 }

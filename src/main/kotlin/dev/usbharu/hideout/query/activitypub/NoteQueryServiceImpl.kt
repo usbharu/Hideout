@@ -21,7 +21,6 @@ class NoteQueryServiceImpl(private val postRepository: PostRepository) : NoteQue
             .leftJoin(Media)
             .select { Posts.id eq id }
             .let { it.toNote() to it.toPost().first() }
-
     }
 
     private suspend fun ResultRow.toNote(mediaList: List<dev.usbharu.hideout.domain.model.hideout.entity.Media>): Note {

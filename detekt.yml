@@ -5,6 +5,7 @@ build:
     MagicNumber: 0
     InjectDispatcher: 0
     EnumEntryNameCase: 0
+    ReplaceSafeCallChainWithRun: 0
 
 style:
   ClassOrdering:
