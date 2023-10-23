@@ -18,9 +18,9 @@ class HttpSignatureFilter(private val httpSignatureHeaderParser: SignatureHeader
 
         val signature = try {
             httpSignatureHeaderParser.parse(HttpHeaders(headers))
-        } catch (e: IllegalArgumentException) {
+        } catch (_: IllegalArgumentException) {
             return null
-        } catch (e: RuntimeException) {
+        } catch (_: RuntimeException) {
             return ""
         }
         return signature.keyId
