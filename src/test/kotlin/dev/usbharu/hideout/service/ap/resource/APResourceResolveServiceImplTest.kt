@@ -1,6 +1,9 @@
 package dev.usbharu.hideout.service.ap.resource
 
+import dev.usbharu.hideout.config.ApplicationConfig
+import dev.usbharu.hideout.config.CharacterLimit
 import dev.usbharu.hideout.domain.model.ap.Object
+import dev.usbharu.hideout.domain.model.hideout.entity.Post
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.repository.UserRepository
 import io.ktor.client.*
@@ -16,12 +19,16 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
+import java.net.URL
 import java.time.Instant
 import kotlin.test.assertEquals
 
 @ExtendWith(MockitoExtension::class)
 @Disabled
 class APResourceResolveServiceImplTest {
+
+    val userBuilder = User.UserBuilder(CharacterLimit(), ApplicationConfig(URL("https://example.com")))
+    val postBuilder = Post.PostBuilder(CharacterLimit())
 
     @Test
     fun `単純な一回のリクエスト`() = runTest {
@@ -36,7 +43,7 @@ class APResourceResolveServiceImplTest {
         val userRepository = mock<UserRepository>()
 
         whenever(userRepository.findById(any())).doReturn(
-            User.of(
+            userBuilder.of(
                 2L,
                 "follower",
                 "follower.example.com",
@@ -72,7 +79,7 @@ class APResourceResolveServiceImplTest {
         val userRepository = mock<UserRepository>()
 
         whenever(userRepository.findById(any())).doReturn(
-            User.of(
+            userBuilder.of(
                 2L,
                 "follower",
                 "follower.example.com",
@@ -111,7 +118,7 @@ class APResourceResolveServiceImplTest {
         val userRepository = mock<UserRepository>()
 
         whenever(userRepository.findById(any())).doReturn(
-            User.of(
+            userBuilder.of(
                 2L,
                 "follower",
                 "follower.example.com",
@@ -161,7 +168,7 @@ class APResourceResolveServiceImplTest {
         val userRepository = mock<UserRepository>()
 
         whenever(userRepository.findById(any())).doReturn(
-            User.of(
+            userBuilder.of(
                 2L,
                 "follower",
                 "follower.example.com",

@@ -13,14 +13,15 @@ import org.springframework.stereotype.Repository
 import java.time.Instant
 
 @Repository
-class NoteQueryServiceImpl(private val postRepository: PostRepository) : NoteQueryService {
+class NoteQueryServiceImpl(private val postRepository: PostRepository, private val postQueryMapper: QueryMapper<Post>) :
+    NoteQueryService {
     override suspend fun findById(id: Long): Pair<Note, Post> {
         return Posts
             .leftJoin(Users)
             .leftJoin(PostsMedia)
             .leftJoin(Media)
             .select { Posts.id eq id }
-            .let { it.toNote() to it.toPost().first() }
+            .let { it.toNote() to postQueryMapper.map(it).first() }
     }
 
     private suspend fun ResultRow.toNote(mediaList: List<dev.usbharu.hideout.domain.model.hideout.entity.Media>): Note {

@@ -1,7 +1,6 @@
 package dev.usbharu.hideout.repository
 
 import dev.usbharu.hideout.domain.model.hideout.entity.Post
-import dev.usbharu.hideout.domain.model.hideout.entity.Visibility
 import dev.usbharu.hideout.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.service.core.IdGenerateService
 import org.jetbrains.exposed.sql.*
@@ -9,7 +8,10 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.springframework.stereotype.Repository
 
 @Repository
-class PostRepositoryImpl(private val idGenerateService: IdGenerateService) : PostRepository {
+class PostRepositoryImpl(
+    private val idGenerateService: IdGenerateService,
+    private val postQueryMapper: QueryMapper<Post>
+) : PostRepository {
 
     override suspend fun generateId(): Long = idGenerateService.generateId()
 
@@ -65,7 +67,7 @@ class PostRepositoryImpl(private val idGenerateService: IdGenerateService) : Pos
     override suspend fun findById(id: Long): Post =
         Posts.innerJoin(PostsMedia, onColumn = { Posts.id }, otherColumn = { PostsMedia.postId })
             .select { Posts.id eq id }
-            .toPost()
+            .let(postQueryMapper::map)
             .singleOrNull()
             ?: throw FailedToGetResourcesException("id: $id was not found.")
 
@@ -93,26 +95,4 @@ object PostsMedia : Table() {
     val postId = long("post_id").references(Posts.id, ReferenceOption.CASCADE, ReferenceOption.CASCADE)
     val mediaId = long("media_id").references(Media.id, ReferenceOption.CASCADE, ReferenceOption.CASCADE)
     override val primaryKey = PrimaryKey(postId, mediaId)
-}
-
-fun ResultRow.toPost(): Post {
-    return Post.of(
-        id = this[Posts.id],
-        userId = this[Posts.userId],
-        overview = this[Posts.overview],
-        text = this[Posts.text],
-        createdAt = this[Posts.createdAt],
-        visibility = Visibility.values().first { visibility -> visibility.ordinal == this[Posts.visibility] },
-        url = this[Posts.url],
-        repostId = this[Posts.repostId],
-        replyId = this[Posts.replyId],
-        sensitive = this[Posts.sensitive],
-        apId = this[Posts.apId],
-    )
-}
-
-fun Query.toPost(): List<Post> {
-    return this.groupBy { it[Posts.id] }
-        .map { it.value }
-        .map { it.first().toPost().copy(mediaIds = it.mapNotNull { it.getOrNull(PostsMedia.mediaId) }) }
 }

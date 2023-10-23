@@ -1,6 +1,7 @@
 package dev.usbharu.hideout.domain.model.hideout.entity
 
-import dev.usbharu.hideout.config.Config
+import dev.usbharu.hideout.config.CharacterLimit
+import org.springframework.stereotype.Component
 
 data class Post private constructor(
     val id: Long,
@@ -16,7 +17,9 @@ data class Post private constructor(
     val apId: String = url,
     val mediaIds: List<Long> = emptyList()
 ) {
-    companion object {
+
+    @Component
+    class PostBuilder(private val characterLimit: CharacterLimit) {
         @Suppress("FunctionMinLength", "LongParameterList")
         fun of(
             id: Long,
@@ -32,8 +35,6 @@ data class Post private constructor(
             apId: String = url,
             mediaIds: List<Long> = emptyList()
         ): Post {
-            val characterLimit = Config.configData.characterLimit
-
             require(id >= 0) { "id must be greater than or equal to 0." }
 
             require(userId >= 0) { "userId must be greater than or equal to 0." }

@@ -16,7 +16,8 @@ class PostServiceImpl(
     private val postRepository: PostRepository,
     private val userRepository: UserRepository,
     private val timelineService: TimelineService,
-    private val postQueryService: PostQueryService
+    private val postQueryService: PostQueryService,
+    private val postBuilder: Post.PostBuilder
 ) : PostService {
     private val interceptors = Collections.synchronizedList(mutableListOf<PostCreateInterceptor>())
 
@@ -45,7 +46,7 @@ class PostServiceImpl(
     private suspend fun internalCreate(post: PostCreateDto, isLocal: Boolean): Post {
         val user = userRepository.findById(post.userId) ?: throw UserNotFoundException("${post.userId} was not found")
         val id = postRepository.generateId()
-        val createPost = Post.of(
+        val createPost = postBuilder.of(
             id = id,
             userId = post.userId,
             overview = post.overview,
