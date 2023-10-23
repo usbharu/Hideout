@@ -9,7 +9,10 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.springframework.stereotype.Repository
 
 @Repository
-class PostRepositoryImpl(private val idGenerateService: IdGenerateService) : PostRepository {
+class PostRepositoryImpl(
+    private val idGenerateService: IdGenerateService,
+    private val postQueryMapper: QueryMapper<Post>
+) : PostRepository {
 
     override suspend fun generateId(): Long = idGenerateService.generateId()
 
@@ -65,7 +68,7 @@ class PostRepositoryImpl(private val idGenerateService: IdGenerateService) : Pos
     override suspend fun findById(id: Long): Post =
         Posts.innerJoin(PostsMedia, onColumn = { Posts.id }, otherColumn = { PostsMedia.postId })
             .select { Posts.id eq id }
-            .toPost()
+            .let(postQueryMapper::map)
             .singleOrNull()
             ?: throw FailedToGetResourcesException("id: $id was not found.")
 
@@ -95,6 +98,7 @@ object PostsMedia : Table() {
     override val primaryKey = PrimaryKey(postId, mediaId)
 }
 
+@Deprecated("toPost is depracated")
 fun ResultRow.toPost(): Post {
     return Post.of(
         id = this[Posts.id],
@@ -111,6 +115,7 @@ fun ResultRow.toPost(): Post {
     )
 }
 
+@Deprecated("toPost is deprecated")
 fun Query.toPost(): List<Post> {
     return this.groupBy { it[Posts.id] }
         .map { it.value }
