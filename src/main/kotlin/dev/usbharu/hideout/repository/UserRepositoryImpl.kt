@@ -1,6 +1,5 @@
 package dev.usbharu.hideout.repository
 
-import dev.usbharu.hideout.config.Config
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.service.core.IdGenerateService
 import org.jetbrains.exposed.dao.id.LongIdTable
@@ -78,26 +77,26 @@ class UserRepositoryImpl(private val idGenerateService: IdGenerateService) :
 
 object Users : Table("users") {
     val id: Column<Long> = long("id")
-    val name: Column<String> = varchar("name", length = Config.configData.characterLimit.account.id)
-    val domain: Column<String> = varchar("domain", length = Config.configData.characterLimit.general.domain)
-    val screenName: Column<String> = varchar("screen_name", length = Config.configData.characterLimit.account.name)
+    val name: Column<String> = varchar("name", length = 300)
+    val domain: Column<String> = varchar("domain", length = 1000)
+    val screenName: Column<String> = varchar("screen_name", length = 300)
     val description: Column<String> = varchar(
         "description",
-        length = Config.configData.characterLimit.account.description
+        length = 10000
     )
     val password: Column<String?> = varchar("password", length = 255).nullable()
-    val inbox: Column<String> = varchar("inbox", length = Config.configData.characterLimit.general.url).uniqueIndex()
-    val outbox: Column<String> = varchar("outbox", length = Config.configData.characterLimit.general.url).uniqueIndex()
-    val url: Column<String> = varchar("url", length = Config.configData.characterLimit.general.url).uniqueIndex()
-    val publicKey: Column<String> = varchar("public_key", length = Config.configData.characterLimit.general.publicKey)
+    val inbox: Column<String> = varchar("inbox", length = 1000).uniqueIndex()
+    val outbox: Column<String> = varchar("outbox", length = 1000).uniqueIndex()
+    val url: Column<String> = varchar("url", length = 1000).uniqueIndex()
+    val publicKey: Column<String> = varchar("public_key", length = 10000)
     val privateKey: Column<String?> = varchar(
         "private_key",
-        length = Config.configData.characterLimit.general.privateKey
+        length = 10000
     ).nullable()
     val createdAt: Column<Long> = long("created_at")
-    val keyId = varchar("key_id", length = Config.configData.characterLimit.general.url)
-    val following = varchar("following", length = Config.configData.characterLimit.general.url).nullable()
-    val followers = varchar("followers", length = Config.configData.characterLimit.general.url).nullable()
+    val keyId = varchar("key_id", length = 1000)
+    val following = varchar("following", length = 1000).nullable()
+    val followers = varchar("followers", length = 1000).nullable()
 
     override val primaryKey: PrimaryKey = PrimaryKey(id)
 
