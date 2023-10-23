@@ -4,6 +4,7 @@ import dev.usbharu.hideout.domain.mastodon.model.generated.Account
 import dev.usbharu.hideout.domain.mastodon.model.generated.MediaAttachment
 import dev.usbharu.hideout.domain.mastodon.model.generated.Status
 import dev.usbharu.hideout.domain.model.hideout.dto.FileType
+import dev.usbharu.hideout.domain.model.hideout.dto.StatusQuery
 import dev.usbharu.hideout.repository.*
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.innerJoin
@@ -15,6 +16,46 @@ import java.time.Instant
 class StatusQueryServiceImpl : StatusQueryService {
     @Suppress("LongMethod")
     override suspend fun findByPostIds(ids: List<Long>): List<Status> = findByPostIdsWithMediaAttachments(ids)
+
+    override suspend fun findByPostIdsWithMediaIds(statusQueries: List<StatusQuery>): List<Status> {
+        val postIdSet = mutableSetOf<Long>()
+        postIdSet.addAll(statusQueries.flatMap { listOfNotNull(it.postId, it.replyId, it.repostId) })
+        val mediaIdSet = mutableSetOf<Long>()
+        mediaIdSet.addAll(statusQueries.flatMap { it.mediaIds })
+        val postMap = Posts
+            .leftJoin(Users)
+            .select { Posts.id inList postIdSet }
+            .associate { it[Posts.id] to toStatus(it) }
+        val mediaMap = Media.select { Media.id inList mediaIdSet }
+            .associate {
+                it[Media.id] to it.toMedia().let {
+                    MediaAttachment(
+                        id = it.id.toString(),
+                        type = when (it.type) {
+                            FileType.Image -> MediaAttachment.Type.image
+                            FileType.Video -> MediaAttachment.Type.video
+                            FileType.Audio -> MediaAttachment.Type.audio
+                            FileType.Unknown -> MediaAttachment.Type.unknown
+                        },
+                        url = it.url,
+                        previewUrl = it.thumbnailUrl,
+                        remoteUrl = it.remoteUrl,
+                        description = "",
+                        blurhash = it.blurHash,
+                        textUrl = it.url
+                    )
+                }
+            }
+
+        return statusQueries.mapNotNull {
+            postMap[it.postId]?.copy(
+                inReplyToId = it.replyId?.toString(),
+                inReplyToAccountId = postMap[it.replyId]?.account?.id,
+                reblog = postMap[it.repostId],
+                mediaAttachments = it.mediaIds.mapNotNull { mediaMap[it] }
+            )
+        }
+    }
 
     @Suppress("unused")
     private suspend fun internalFindByPostIds(ids: List<Long>): List<Status> {
