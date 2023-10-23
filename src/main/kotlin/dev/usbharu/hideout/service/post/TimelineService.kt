@@ -33,7 +33,9 @@ class TimelineService(
                 repostId = post.repostId,
                 visibility = post.visibility,
                 sensitive = post.sensitive,
-                isLocal = isLocal
+                isLocal = isLocal,
+                isPureRepost = post.repostId == null || (post.text.isBlank() && post.overview.isNullOrBlank()),
+                mediaIds = post.mediaIds
             )
         }.toMutableList()
         if (post.visibility == Visibility.PUBLIC) {
@@ -49,7 +51,9 @@ class TimelineService(
                     repostId = post.repostId,
                     visibility = post.visibility,
                     sensitive = post.sensitive,
-                    isLocal = isLocal
+                    isLocal = isLocal,
+                    isPureRepost = post.repostId == null || (post.text.isBlank() && post.overview.isNullOrBlank()),
+                    mediaIds = post.mediaIds
                 )
             )
         }
