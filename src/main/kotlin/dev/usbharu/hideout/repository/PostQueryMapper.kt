@@ -10,7 +10,7 @@ class PostQueryMapper(private val postResultRowMapper: ResultRowMapper<Post>) : 
         return query.groupBy { it[Posts.id] }
             .map { it.value }
             .map {
-                it.first().let(postResultRowMapper::map)!!
+                it.first().let(postResultRowMapper::map)
                     .copy(mediaIds = it.mapNotNull { it.getOrNull(PostsMedia.mediaId) })
             }
     }

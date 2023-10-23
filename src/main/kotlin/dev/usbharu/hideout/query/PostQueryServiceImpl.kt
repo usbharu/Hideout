@@ -19,7 +19,7 @@ class PostQueryServiceImpl(
         Posts.leftJoin(PostsMedia)
             .select { Posts.id eq id }
             .singleOr { FailedToGetResourcesException("id: $id is duplicate or does not exist.", it) }
-            .let(postResultRowMapper::map)!!
+            .let(postResultRowMapper::map)
 
     override suspend fun findByUrl(url: String): Post =
         Posts.leftJoin(PostsMedia)

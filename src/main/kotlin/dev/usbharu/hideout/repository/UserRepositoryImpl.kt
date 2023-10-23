@@ -9,7 +9,10 @@ import org.springframework.stereotype.Repository
 import java.time.Instant
 
 @Repository
-class UserRepositoryImpl(private val idGenerateService: IdGenerateService) :
+class UserRepositoryImpl(
+    private val idGenerateService: IdGenerateService,
+    private val userResultRowMapper: ResultRowMapper<User>
+) :
     UserRepository {
 
     override suspend fun save(user: User): User {
@@ -54,9 +57,7 @@ class UserRepositoryImpl(private val idGenerateService: IdGenerateService) :
     }
 
     override suspend fun findById(id: Long): User? {
-        return Users.select { Users.id eq id }.map {
-            it.toUser()
-        }.singleOrNull()
+        return Users.select { Users.id eq id }.singleOrNull()?.let(userResultRowMapper::map)
     }
 
     override suspend fun deleteFollowRequest(id: Long, follower: Long) {
