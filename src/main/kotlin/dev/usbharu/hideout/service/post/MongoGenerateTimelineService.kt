@@ -51,13 +51,15 @@ class MongoGenerateTimelineService(
 
         val timelines = mongoTemplate.find(query, Timeline::class.java)
 
-        return statusQueryService.findByPostIdsWithMediaIds(timelines.map {
-            StatusQuery(
-                it.postId,
-                it.replyId,
-                it.repostId,
-                it.mediaIds
-            )
-        })
+        return statusQueryService.findByPostIdsWithMediaIds(
+            timelines.map {
+                StatusQuery(
+                    it.postId,
+                    it.replyId,
+                    it.repostId,
+                    it.mediaIds
+                )
+            }
+        )
     }
 }
