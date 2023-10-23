@@ -3,8 +3,6 @@
 
 package dev.usbharu.hideout.service.ap
 
-import dev.usbharu.hideout.config.Config
-import dev.usbharu.hideout.config.ConfigData
 import dev.usbharu.hideout.domain.model.ap.Follow
 import dev.usbharu.hideout.domain.model.ap.Image
 import dev.usbharu.hideout.domain.model.ap.Key
@@ -23,6 +21,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.*
+import org.springframework.boot.context.config.ConfigData
 import utils.JsonObjectMapper.objectMapper
 import utils.TestTransaction
 import java.time.Instant

@@ -3,8 +3,6 @@
 
 package dev.usbharu.hideout.service.ap
 
-import dev.usbharu.hideout.config.Config
-import dev.usbharu.hideout.config.ConfigData
 import dev.usbharu.hideout.domain.model.hideout.entity.Post
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.domain.model.hideout.entity.Visibility
@@ -23,6 +21,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito.anyLong
 import org.mockito.Mockito.eq
 import org.mockito.kotlin.*
+import org.springframework.boot.context.config.ConfigData
 import utils.JsonObjectMapper.objectMapper
 import utils.TestApplicationConfig.testApplicationConfig
 import java.time.Instant

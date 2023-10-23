@@ -2,8 +2,6 @@
 
 package dev.usbharu.hideout.service.user
 
-import dev.usbharu.hideout.config.Config
-import dev.usbharu.hideout.config.ConfigData
 import dev.usbharu.hideout.domain.model.hideout.dto.RemoteUserCreateDto
 import dev.usbharu.hideout.domain.model.hideout.dto.UserCreateDto
 import dev.usbharu.hideout.repository.UserRepository
@@ -12,6 +10,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.*
+import org.springframework.boot.context.config.ConfigData
 import utils.TestApplicationConfig.testApplicationConfig
 import java.security.KeyPairGenerator
 import kotlin.test.assertEquals
