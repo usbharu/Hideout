@@ -6,7 +6,6 @@ import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.springframework.stereotype.Repository
-import java.time.Instant
 
 @Repository
 class UserRepositoryImpl(
@@ -104,26 +103,6 @@ object Users : Table("users") {
     init {
         uniqueIndex(name, domain)
     }
-}
-
-fun ResultRow.toUser(): User {
-    return User.of(
-        id = this[Users.id],
-        name = this[Users.name],
-        domain = this[Users.domain],
-        screenName = this[Users.screenName],
-        description = this[Users.description],
-        password = this[Users.password],
-        inbox = this[Users.inbox],
-        outbox = this[Users.outbox],
-        url = this[Users.url],
-        publicKey = this[Users.publicKey],
-        privateKey = this[Users.privateKey],
-        createdAt = Instant.ofEpochMilli((this[Users.createdAt])),
-        keyId = this[Users.keyId],
-        followers = this[Users.followers],
-        following = this[Users.following]
-    )
 }
 
 object UsersFollowers : LongIdTable("users_followers") {
