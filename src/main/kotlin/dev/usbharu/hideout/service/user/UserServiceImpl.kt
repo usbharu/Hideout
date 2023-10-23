@@ -21,6 +21,7 @@ class UserServiceImpl(
     private val apSendFollowService: APSendFollowService,
     private val userQueryService: UserQueryService,
     private val followerQueryService: FollowerQueryService,
+    private val userBuilder: User.UserBuilder,
     private val applicationConfig: ApplicationConfig
 ) :
     UserService {
@@ -35,7 +36,7 @@ class UserServiceImpl(
         val hashedPassword = userAuthService.hash(user.password)
         val keyPair = userAuthService.generateKeyPair()
         val userUrl = "${applicationConfig.url}/users/${user.name}"
-        val userEntity = User.of(
+        val userEntity = userBuilder.of(
             id = nextId,
             name = user.name,
             domain = applicationConfig.url.host,
@@ -57,7 +58,7 @@ class UserServiceImpl(
 
     override suspend fun createRemoteUser(user: RemoteUserCreateDto): User {
         val nextId = userRepository.nextId()
-        val userEntity = User.of(
+        val userEntity = userBuilder.of(
             id = nextId,
             name = user.name,
             domain = user.domain,
