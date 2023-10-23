@@ -28,7 +28,6 @@ class SpringConfig {
     }
 }
 
-
 @ConfigurationProperties("hideout")
 data class ApplicationConfig(
     val url: URL
