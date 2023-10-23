@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository
 import java.time.Instant
 
 @Repository
-class FollowerQueryServiceImpl : FollowerQueryService {
+class FollowerQueryServiceImpl(private val userBuilder: User.UserBuilder) : FollowerQueryService {
     override suspend fun findFollowersById(id: Long): List<User> {
         val followers = Users.alias("FOLLOWERS")
         return Users.innerJoin(
@@ -41,7 +41,7 @@ class FollowerQueryServiceImpl : FollowerQueryService {
             )
             .select { Users.id eq id }
             .map {
-                User.of(
+                userBuilder.of(
                     id = it[followers[Users.id]],
                     name = it[followers[Users.name]],
                     domain = it[followers[Users.domain]],
@@ -92,7 +92,7 @@ class FollowerQueryServiceImpl : FollowerQueryService {
             )
             .select { Users.name eq name and (Users.domain eq domain) }
             .map {
-                User.of(
+                userBuilder.of(
                     id = it[followers[Users.id]],
                     name = it[followers[Users.name]],
                     domain = it[followers[Users.domain]],
@@ -143,7 +143,7 @@ class FollowerQueryServiceImpl : FollowerQueryService {
             )
             .select { followers[Users.id] eq id }
             .map {
-                User.of(
+                userBuilder.of(
                     id = it[followers[Users.id]],
                     name = it[followers[Users.name]],
                     domain = it[followers[Users.domain]],
@@ -194,7 +194,7 @@ class FollowerQueryServiceImpl : FollowerQueryService {
             )
             .select { followers[Users.name] eq name and (followers[Users.domain] eq domain) }
             .map {
-                User.of(
+                userBuilder.of(
                     id = it[followers[Users.id]],
                     name = it[followers[Users.name]],
                     domain = it[followers[Users.domain]],
