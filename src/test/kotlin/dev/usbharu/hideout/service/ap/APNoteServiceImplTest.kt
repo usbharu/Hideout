@@ -23,7 +23,6 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito.anyLong
 import org.mockito.Mockito.eq
 import org.mockito.kotlin.*
-import utils.JsonObjectMapper
 import utils.JsonObjectMapper.objectMapper
 import utils.TestApplicationConfig.testApplicationConfig
 import java.time.Instant
@@ -123,7 +122,7 @@ class APNoteServiceImplTest {
             val mediaQueryService = mock<MediaQueryService> {
                 onBlocking { findByPostId(anyLong()) } doReturn emptyList()
             }
-            Config.configData = ConfigData(objectMapper = JsonObjectMapper.objectMapper)
+            Config.configData = ConfigData()
             val httpClient = HttpClient(
                 MockEngine { httpRequestData ->
                     assertEquals("https://follower.example.com/inbox", httpRequestData.url.toString())

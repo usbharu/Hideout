@@ -23,7 +23,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.*
-import utils.JsonObjectMapper
 import utils.JsonObjectMapper.objectMapper
 import utils.TestTransaction
 import java.time.Instant
@@ -80,7 +79,7 @@ class APReceiveFollowServiceImplTest {
 
     @Test
     fun `receiveFollowJob フォロー受付処理のJob`() = runTest {
-        Config.configData = ConfigData(objectMapper = JsonObjectMapper.objectMapper)
+        Config.configData = ConfigData()
         val person = Person(
             type = emptyList(),
             name = "follower",
