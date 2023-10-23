@@ -16,5 +16,7 @@ data class Timeline(
     val repostId: Long?,
     val visibility: Visibility,
     val sensitive: Boolean,
-    val isLocal: Boolean
+    val isLocal: Boolean,
+    val isPureRepost: Boolean = false,
+    val mediaIds: List<Long> = emptyList()
 )
