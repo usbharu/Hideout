@@ -1,7 +1,6 @@
 package dev.usbharu.hideout.repository
 
 import dev.usbharu.hideout.domain.model.hideout.entity.Post
-import dev.usbharu.hideout.domain.model.hideout.entity.Visibility
 import dev.usbharu.hideout.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.service.core.IdGenerateService
 import org.jetbrains.exposed.sql.*
@@ -96,28 +95,4 @@ object PostsMedia : Table() {
     val postId = long("post_id").references(Posts.id, ReferenceOption.CASCADE, ReferenceOption.CASCADE)
     val mediaId = long("media_id").references(Media.id, ReferenceOption.CASCADE, ReferenceOption.CASCADE)
     override val primaryKey = PrimaryKey(postId, mediaId)
-}
-
-@Deprecated("toPost is depracated")
-fun ResultRow.toPost(): Post {
-    return Post.of(
-        id = this[Posts.id],
-        userId = this[Posts.userId],
-        overview = this[Posts.overview],
-        text = this[Posts.text],
-        createdAt = this[Posts.createdAt],
-        visibility = Visibility.values().first { visibility -> visibility.ordinal == this[Posts.visibility] },
-        url = this[Posts.url],
-        repostId = this[Posts.repostId],
-        replyId = this[Posts.replyId],
-        sensitive = this[Posts.sensitive],
-        apId = this[Posts.apId],
-    )
-}
-
-@Deprecated("toPost is deprecated")
-fun Query.toPost(): List<Post> {
-    return this.groupBy { it[Posts.id] }
-        .map { it.value }
-        .map { it.first().toPost().copy(mediaIds = it.mapNotNull { it.getOrNull(PostsMedia.mediaId) }) }
 }
