@@ -5,6 +5,7 @@ import dev.usbharu.hideout.domain.model.wellknown.WebFinger
 import dev.usbharu.hideout.service.api.WebFingerApiService
 import dev.usbharu.hideout.util.AcctUtil
 import kotlinx.coroutines.runBlocking
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
@@ -18,7 +19,13 @@ class WebFingerController(
 ) {
     @GetMapping("/.well-known/webfinger")
     fun webfinger(@RequestParam("resource") resource: String): ResponseEntity<WebFinger> = runBlocking {
-        val acct = AcctUtil.parse(resource.replace("acct:", ""))
+        logger.info("WEBFINGER Lookup webfinger resource: {}", resource)
+        val acct = try {
+            AcctUtil.parse(resource.replace("acct:", ""))
+        } catch (e: IllegalArgumentException) {
+            logger.warn("FAILED Parse acct.", e)
+            return@runBlocking ResponseEntity.badRequest().build()
+        }
         val user =
             webFingerApiService.findByNameAndDomain(acct.username, acct.domain ?: applicationConfig.url.host)
         val webFinger = WebFinger(
@@ -31,6 +38,11 @@ class WebFingerController(
                 )
             )
         )
+        logger.info("SUCCESS Lookup webfinger resource: {} acct: {}", resource, acct)
         ResponseEntity(webFinger, HttpStatus.OK)
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(WebFingerController::class.java)
     }
 }

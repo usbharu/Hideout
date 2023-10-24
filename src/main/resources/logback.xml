@@ -14,4 +14,5 @@
     <logger name="io.ktor.server.plugins.contentnegotiation" level="INFO"/>
     <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter" level="INFO"/>
     <logger name="org.mongodb.driver.protocol.command" level="INFO"/>
+    <logger name="dev.usbharu" level="TRACE"/>
 </configuration>

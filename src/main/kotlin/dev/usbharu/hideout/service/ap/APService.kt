@@ -188,11 +188,21 @@ class APServiceImpl(
     val logger: Logger = LoggerFactory.getLogger(APServiceImpl::class.java)
     override fun parseActivity(json: String): ActivityType {
         val readTree = objectMapper.readTree(json)
-        logger.trace("readTree: {}", readTree)
+        logger.trace(
+            """
+            |
+            |***** Trace Begin Activity *****
+            |
+            |{}
+            |
+            |***** Trace End Activity *****
+            |
+        """.trimMargin(), readTree.toPrettyString()
+        )
         if (readTree.isObject.not()) {
             throw JsonParseException("Json is not object.")
         }
-        val type = readTree["type"]
+        val type = readTree["type"] ?: throw JsonParseException("Type is null")
         if (type.isArray) {
             return type.firstNotNullOf { jsonNode: JsonNode ->
                 ActivityType.values().firstOrNull { it.name.equals(jsonNode.asText(), true) }

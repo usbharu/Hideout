@@ -20,9 +20,7 @@ class ReactionServiceImpl(
                 reactionRepository.save(
                     Reaction(reactionRepository.generateId(), 0, postId, userId)
                 )
-            } catch (e: ExposedSQLException) {
-                LOGGER.warn("FAILED Failure to persist reaction information.")
-                LOGGER.debug("FAILED", e)
+            } catch (_: ExposedSQLException) {
             }
         }
     }
