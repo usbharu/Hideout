@@ -5,10 +5,13 @@ import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletRequest
 import jakarta.servlet.ServletResponse
 import org.slf4j.MDC
-import org.springframework.stereotype.Service
+import org.springframework.boot.autoconfigure.security.SecurityProperties
+import org.springframework.core.annotation.Order
+import org.springframework.stereotype.Component
 import java.util.*
 
-@Service
+@Component
+@Order(SecurityProperties.DEFAULT_FILTER_ORDER - 1)
 class MdcXrequestIdFilter : Filter {
     override fun doFilter(request: ServletRequest?, response: ServletResponse?, chain: FilterChain) {
         val uuid = UUID.randomUUID()
