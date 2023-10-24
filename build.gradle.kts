@@ -137,6 +137,7 @@ dependencies {
     implementation("software.amazon.awssdk:s3:2.20.157")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:1.7.3")
     implementation("dev.usbharu:http-signature:1.0.0")
 
     implementation("io.ktor:ktor-client-logging-jvm:$ktor_version")

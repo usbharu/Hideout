@@ -29,6 +29,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.slf4j.MDCContext
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
@@ -43,8 +44,8 @@ interface APNoteService {
 
     @Cacheable("fetchNote")
     fun fetchNoteAsync(url: String, targetActor: String? = null): Deferred<Note> {
-        return CoroutineScope(Dispatchers.IO).async {
-            newSuspendedTransaction {
+        return CoroutineScope(Dispatchers.IO + MDCContext()).async {
+            newSuspendedTransaction(MDCContext()) {
                 fetchNote(url, targetActor)
             }
         }

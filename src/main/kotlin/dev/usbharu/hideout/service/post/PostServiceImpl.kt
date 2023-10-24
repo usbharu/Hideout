@@ -7,6 +7,7 @@ import dev.usbharu.hideout.query.PostQueryService
 import dev.usbharu.hideout.repository.PostRepository
 import dev.usbharu.hideout.repository.UserRepository
 import org.jetbrains.exposed.exceptions.ExposedSQLException
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.Instant
 import java.util.*
@@ -22,12 +23,19 @@ class PostServiceImpl(
     private val interceptors = Collections.synchronizedList(mutableListOf<PostCreateInterceptor>())
 
     override suspend fun createLocal(post: PostCreateDto): Post {
+        logger.info("START Create Local Post user: {}, media: {}", post.userId, post.mediaIds.size)
         val create = internalCreate(post, true)
         interceptors.forEach { it.run(create) }
+        logger.info("SUCCESS Create Local Post url: {}", create.url)
         return create
     }
 
-    override suspend fun createRemote(post: Post): Post = internalCreate(post, false)
+    override suspend fun createRemote(post: Post): Post {
+        logger.info("START Create Remote Post user: {}, remote url: {}", post.userId, post.apId)
+        val createdPost = internalCreate(post, false)
+        logger.info("SUCCESS Create Remote Post url: {}", createdPost.url)
+        return createdPost
+    }
 
     override fun addInterceptor(postCreateInterceptor: PostCreateInterceptor) {
         interceptors.add(postCreateInterceptor)
@@ -57,5 +65,9 @@ class PostServiceImpl(
             mediaIds = post.mediaIds
         )
         return internalCreate(createPost, isLocal)
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(PostServiceImpl::class.java)
     }
 }
