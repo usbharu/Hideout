@@ -13,6 +13,7 @@ import dev.usbharu.hideout.service.job.JobQueueParentService
 import dev.usbharu.hideout.service.user.UserService
 import io.ktor.http.*
 import kjob.core.job.JobProps
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 
@@ -32,7 +33,7 @@ class APReceiveFollowServiceImpl(
     private val apRequestService: APRequestService
 ) : APReceiveFollowService {
     override suspend fun receiveFollow(follow: Follow): ActivityPubResponse {
-        // TODO: Verify HTTP  Signature
+        logger.info("FOLLOW from: {} to: {}", follow.actor, follow.`object`)
         jobQueueParentService.schedule(ReceiveFollowJob) {
             props[ReceiveFollowJob.actor] = follow.actor
             props[ReceiveFollowJob.follow] = objectMapper.writeValueAsString(follow)
@@ -42,12 +43,12 @@ class APReceiveFollowServiceImpl(
     }
 
     override suspend fun receiveFollowJob(props: JobProps<ReceiveFollowJob>) {
-//        throw Exception()
         transaction.transaction {
             val actor = props[ReceiveFollowJob.actor]
             val targetActor = props[ReceiveFollowJob.targetActor]
             val person = apUserService.fetchPerson(actor, targetActor)
             val follow = objectMapper.readValue<Follow>(props[ReceiveFollowJob.follow])
+            logger.info("START Follow from: {} to: {}", targetActor, actor)
 
             val signer = userQueryService.findByUrl(targetActor)
 
@@ -68,6 +69,11 @@ class APReceiveFollowServiceImpl(
                 userQueryService.findByUrl(follow.actor ?: throw java.lang.IllegalArgumentException("Actor is null"))
 
             userService.followRequest(targetEntity.id, followActorEntity.id)
+            logger.info("SUCCESS Follow from: {} to: {}", targetActor, actor)
         }
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(APReceiveFollowServiceImpl::class.java)
     }
 }
