@@ -40,6 +40,7 @@ class HttpSignatureUserDetailsService(
             }
         }
 
+        @Suppress("TooGenericExceptionCaught")
         val verify = try {
             httpSignatureVerifier.verify(
                 token.credentials as HttpRequest,

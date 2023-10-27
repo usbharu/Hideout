@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class InboxControllerImpl(private val apService: APService) : InboxController {
+    @Suppress("TooGenericExceptionCaught")
     override suspend fun inbox(@RequestBody string: String): ResponseEntity<Unit> {
         val parseActivity = try {
             apService.parseActivity(string)
