@@ -25,7 +25,6 @@ import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.*
 import utils.JsonObjectMapper.objectMapper
-import utils.TestTransaction
 import java.net.URL
 import java.time.Instant
 
@@ -42,12 +41,7 @@ class APReceiveFollowServiceImplTest {
         val activityPubFollowService =
             APReceiveFollowServiceImpl(
                 jobQueueParentService,
-                mock(),
-                mock(),
-                mock(),
-                TestTransaction,
-                objectMapper,
-                mock()
+                objectMapper
             )
         activityPubFollowService.receiveFollow(
             Follow(
@@ -153,12 +147,7 @@ class APReceiveFollowServiceImplTest {
         val activityPubFollowService =
             APReceiveFollowServiceImpl(
                 mock(),
-                apUserService,
-                userService,
-                userQueryService,
-                TestTransaction,
-                objectMapper,
-                mock()
+                objectMapper
             )
         activityPubFollowService.receiveFollowJob(
             JobProps(

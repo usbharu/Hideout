@@ -24,7 +24,6 @@ import org.mockito.Mockito.anyLong
 import org.mockito.Mockito.eq
 import org.mockito.kotlin.*
 import utils.JsonObjectMapper.objectMapper
-import utils.TestApplicationConfig.testApplicationConfig
 import java.net.URL
 import java.time.Instant
 import kotlin.test.assertEquals
@@ -104,11 +103,8 @@ class APNoteServiceImplTest {
                     postQueryService = mock(),
                     mediaQueryService = mediaQueryService,
                     objectMapper = objectMapper,
-                    applicationConfig = testApplicationConfig,
                     postService = mock(),
                     apResourceResolveService = mock(),
-                    apRequestService = mock(),
-                    transaction = mock(),
                     postBuilder = postBuilder
                 )
             val postEntity = postBuilder.of(
@@ -147,11 +143,8 @@ class APNoteServiceImplTest {
                 postQueryService = mock(),
                 mediaQueryService = mediaQueryService,
                 objectMapper = objectMapper,
-                applicationConfig = testApplicationConfig,
                 postService = mock(),
                 apResourceResolveService = mock(),
-                apRequestService = mock(),
-                transaction = mock(),
                 postBuilder = postBuilder
             )
             activityPubNoteService.createNoteJob(

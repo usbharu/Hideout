@@ -7,6 +7,9 @@ import dev.usbharu.hideout.domain.model.ActivityPubResponse
 import dev.usbharu.hideout.domain.model.ap.Follow
 import dev.usbharu.hideout.domain.model.job.*
 import dev.usbharu.hideout.exception.JsonParseException
+import dev.usbharu.hideout.service.ap.job.APReceiveFollowJobService
+import dev.usbharu.hideout.service.ap.job.ApNoteJobService
+import dev.usbharu.hideout.service.ap.job.ApReactionJobService
 import kjob.core.dsl.JobContextWithProps
 import kjob.core.job.JobProps
 import org.slf4j.Logger
@@ -176,13 +179,14 @@ enum class ExtendedVocabulary {
 @Service
 class APServiceImpl(
     private val apReceiveFollowService: APReceiveFollowService,
-    private val apNoteService: APNoteService,
     private val apUndoService: APUndoService,
     private val apAcceptService: APAcceptService,
     private val apCreateService: APCreateService,
     private val apLikeService: APLikeService,
-    private val apReactionService: APReactionService,
-    @Qualifier("activitypub") private val objectMapper: ObjectMapper
+    @Qualifier("activitypub") private val objectMapper: ObjectMapper,
+    private val apReceiveFollowJobService: APReceiveFollowJobService,
+    private val apNoteJobService: ApNoteJobService,
+    private val apReactionJobService: ApReactionJobService
 ) : APService {
 
     val logger: Logger = LoggerFactory.getLogger(APServiceImpl::class.java)
@@ -237,14 +241,14 @@ class APServiceImpl(
         // Springで作成されるプロキシの都合上パターンマッチングが壊れるので必須
         when (hideoutJob) {
             is ReceiveFollowJob -> {
-                apReceiveFollowService.receiveFollowJob(
+                apReceiveFollowJobService.receiveFollowJob(
                     job.props as JobProps<ReceiveFollowJob>
                 )
             }
 
-            is DeliverPostJob -> apNoteService.createNoteJob(job.props as JobProps<DeliverPostJob>)
-            is DeliverReactionJob -> apReactionService.reactionJob(job.props as JobProps<DeliverReactionJob>)
-            is DeliverRemoveReactionJob -> apReactionService.removeReactionJob(
+            is DeliverPostJob -> apNoteJobService.createNoteJob(job.props as JobProps<DeliverPostJob>)
+            is DeliverReactionJob -> apReactionJobService.reactionJob(job.props as JobProps<DeliverReactionJob>)
+            is DeliverRemoveReactionJob -> apReactionJobService.removeReactionJob(
                 job.props as JobProps<DeliverRemoveReactionJob>
             )
 
