@@ -196,7 +196,8 @@ class APServiceImpl(
             |
             |***** Trace End Activity *****
             |
-        """.trimMargin(), readTree.toPrettyString()
+            """.trimMargin(),
+            readTree.toPrettyString()
         )
         if (readTree.isObject.not()) {
             throw JsonParseException("Json is not object.")
@@ -227,6 +228,4 @@ class APServiceImpl(
             }
         }
     }
-
-
 }
