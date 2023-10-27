@@ -1,7 +1,7 @@
 package dev.usbharu.hideout
 
 import dev.usbharu.hideout.domain.model.job.HideoutJob
-import dev.usbharu.hideout.service.ap.APService
+import dev.usbharu.hideout.service.ap.job.ApJobService
 import dev.usbharu.hideout.service.job.JobQueueParentService
 import dev.usbharu.hideout.service.job.JobQueueWorkerService
 import org.slf4j.Logger
@@ -27,7 +27,7 @@ class JobQueueRunner(private val jobQueueParentService: JobQueueParentService, p
 class JobQueueWorkerRunner(
     private val jobQueueWorkerService: JobQueueWorkerService,
     private val jobs: List<HideoutJob>,
-    private val apService: APService
+    private val apJobService: ApJobService
 ) : ApplicationRunner {
     override fun run(args: ApplicationArguments?) {
         LOGGER.info("Init job queue worker.")
@@ -36,7 +36,7 @@ class JobQueueWorkerRunner(
                 it to {
                     execute {
                         LOGGER.debug("excute job ${it.name}")
-                        apService.processActivity(
+                        apJobService.processActivity(
                             job = this,
                             hideoutJob = it
                         )
