@@ -42,6 +42,7 @@ class APRequestServiceImpl(
                 header("Accept", ContentType.Application.Activity)
                 header("Date", date)
             }.bodyAsText()
+            logBody(bodyAsText, url)
             return objectMapper.readValue(bodyAsText, responseClass)
         }
 
@@ -81,15 +82,7 @@ class APRequestServiceImpl(
             httpResponse.status,
             httpResponse.request.url
         )
-        logger.trace(
-            """
-            |***** BEGIN HTTP Response Trace url: {} *****
-            |
-            |$bodyAsText
-            |
-            |***** END HTTP Response TRACE url: {} *****
-        """.trimMargin(), url, url
-        )
+        logBody(bodyAsText, url)
         return readValue
     }
 
@@ -116,11 +109,13 @@ class APRequestServiceImpl(
 
         logger.trace(
             """
+                |
             |***** BEGIN HTTP Request Trace url: {} *****
             |
             |$requestBody
             |
             |***** END HTTP Request Trace url: {} *****
+            |
         """.trimMargin(), url, url
         )
 
@@ -131,13 +126,15 @@ class APRequestServiceImpl(
         val date = dateTimeFormatter.format(ZonedDateTime.now(ZoneId.of("GMT")))
         val u = URL(url)
         if (signer?.privateKey == null) {
-            return httpClient.post(url) {
+            val bodyAsText = httpClient.post(url) {
                 header("Accept", ContentType.Application.Activity)
                 header("Date", date)
                 header("Digest", "sha-256=$digest")
                 setBody(requestBody)
                 contentType(ContentType.Application.Activity)
             }.bodyAsText()
+            logBody(bodyAsText, url)
+            return bodyAsText
         }
 
         val headers = headers {
@@ -177,16 +174,22 @@ class APRequestServiceImpl(
             httpResponse.status,
             httpResponse.request.url
         )
+        logBody(bodyAsText, url)
+        return bodyAsText
+    }
+
+    private fun logBody(bodyAsText: String, url: String) {
         logger.trace(
             """
-            |***** BEGIN HTTP Response Trace url: {} *****
-            |
-            |$bodyAsText
-            |
-            |***** END HTTP Response TRACE url: {} *****
-        """.trimMargin(), url, url
+                |
+                |***** BEGIN HTTP Response Trace url: {} *****
+                |
+                |$bodyAsText
+                |
+                |***** END HTTP Response TRACE url: {} *****
+                |
+            """.trimMargin(), url, url
         )
-        return bodyAsText
     }
 
     companion object {
