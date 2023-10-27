@@ -1,10 +1,6 @@
 package dev.usbharu.hideout.service.ap
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
-import dev.usbharu.hideout.config.ApplicationConfig
-import dev.usbharu.hideout.domain.model.ap.Create
-import dev.usbharu.hideout.domain.model.ap.Document
 import dev.usbharu.hideout.domain.model.ap.Note
 import dev.usbharu.hideout.domain.model.hideout.entity.Post
 import dev.usbharu.hideout.domain.model.hideout.entity.Visibility
@@ -19,12 +15,10 @@ import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.repository.PostRepository
 import dev.usbharu.hideout.service.ap.resource.APResourceResolveService
 import dev.usbharu.hideout.service.ap.resource.resolve
-import dev.usbharu.hideout.service.core.Transaction
 import dev.usbharu.hideout.service.job.JobQueueParentService
 import dev.usbharu.hideout.service.post.PostCreateInterceptor
 import dev.usbharu.hideout.service.post.PostService
 import io.ktor.client.plugins.*
-import kjob.core.job.JobProps
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -40,7 +34,6 @@ import java.time.Instant
 interface APNoteService {
 
     suspend fun createNote(post: Post)
-    suspend fun createNoteJob(props: JobProps<DeliverPostJob>)
 
     @Cacheable("fetchNote")
     fun fetchNoteAsync(url: String, targetActor: String? = null): Deferred<Note> {
@@ -66,12 +59,9 @@ class APNoteServiceImpl(
     private val postQueryService: PostQueryService,
     private val mediaQueryService: MediaQueryService,
     @Qualifier("activitypub") private val objectMapper: ObjectMapper,
-    private val applicationConfig: ApplicationConfig,
     private val postService: PostService,
     private val apResourceResolveService: APResourceResolveService,
-    private val apRequestService: APRequestService,
-    private val postBuilder: Post.PostBuilder,
-    private val transaction: Transaction
+    private val postBuilder: Post.PostBuilder
 
 ) : APNoteService, PostCreateInterceptor {
 
@@ -102,41 +92,6 @@ class APNoteServiceImpl(
         }
 
         logger.debug("SUCCESS Create Local Note ${post.url}")
-    }
-
-    override suspend fun createNoteJob(props: JobProps<DeliverPostJob>) {
-        val actor = props[DeliverPostJob.actor]
-        val postEntity = objectMapper.readValue<Post>(props[DeliverPostJob.post])
-        val mediaList =
-            objectMapper.readValue<List<dev.usbharu.hideout.domain.model.hideout.entity.Media>>(
-                props[DeliverPostJob.media]
-            )
-        val note = Note(
-            name = "Note",
-            id = postEntity.url,
-            attributedTo = actor,
-            content = postEntity.text,
-            published = Instant.ofEpochMilli(postEntity.createdAt).toString(),
-            to = listOf(public, "$actor/follower"),
-            attachment = mediaList.map { Document(mediaType = "image/jpeg", url = it.url) }
-
-        )
-        val inbox = props[DeliverPostJob.inbox]
-        logger.debug("createNoteJob: actor={}, note={}, inbox={}", actor, postEntity, inbox)
-
-        transaction.transaction {
-            val signer = userQueryService.findByUrl(actor)
-            apRequestService.apPost(
-                inbox,
-                Create(
-                    name = "Create Note",
-                    `object` = note,
-                    actor = note.attributedTo,
-                    id = "${applicationConfig.url}/create/note/${postEntity.id}"
-                ),
-                signer
-            )
-        }
     }
 
     override suspend fun fetchNote(url: String, targetActor: String?): Note {

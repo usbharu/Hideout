@@ -13,6 +13,7 @@ import dev.usbharu.hideout.domain.model.hideout.entity.Post
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.domain.model.job.ReceiveFollowJob
 import dev.usbharu.hideout.query.UserQueryService
+import dev.usbharu.hideout.service.ap.job.APReceiveFollowJobServiceImpl
 import dev.usbharu.hideout.service.job.JobQueueParentService
 import dev.usbharu.hideout.service.user.UserService
 import kjob.core.dsl.ScheduleContext
@@ -42,12 +43,7 @@ class APReceiveFollowServiceImplTest {
         val activityPubFollowService =
             APReceiveFollowServiceImpl(
                 jobQueueParentService,
-                mock(),
-                mock(),
-                mock(),
-                TestTransaction,
-                objectMapper,
-                mock()
+                objectMapper
             )
         activityPubFollowService.receiveFollow(
             Follow(
@@ -151,14 +147,13 @@ class APReceiveFollowServiceImplTest {
             onBlocking { followRequest(any(), any()) } doReturn false
         }
         val activityPubFollowService =
-            APReceiveFollowServiceImpl(
-                mock(),
+            APReceiveFollowJobServiceImpl(
                 apUserService,
-                userService,
                 userQueryService,
-                TestTransaction,
+                mock(),
+                userService,
                 objectMapper,
-                mock()
+                TestTransaction
             )
         activityPubFollowService.receiveFollowJob(
             JobProps(
