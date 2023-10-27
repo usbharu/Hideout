@@ -5,10 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.domain.model.ActivityPubResponse
 import dev.usbharu.hideout.domain.model.ap.Follow
-import dev.usbharu.hideout.domain.model.job.*
 import dev.usbharu.hideout.exception.JsonParseException
-import kjob.core.dsl.JobContextWithProps
-import kjob.core.job.JobProps
+import dev.usbharu.hideout.service.ap.job.APReceiveFollowJobService
+import dev.usbharu.hideout.service.ap.job.ApNoteJobService
+import dev.usbharu.hideout.service.ap.job.ApReactionJobService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
@@ -18,8 +18,6 @@ interface APService {
     fun parseActivity(json: String): ActivityType
 
     suspend fun processActivity(json: String, type: ActivityType): ActivityPubResponse?
-
-    suspend fun <T : HideoutJob> processActivity(job: JobContextWithProps<T>, hideoutJob: HideoutJob)
 }
 
 enum class ActivityType {
@@ -176,13 +174,14 @@ enum class ExtendedVocabulary {
 @Service
 class APServiceImpl(
     private val apReceiveFollowService: APReceiveFollowService,
-    private val apNoteService: APNoteService,
     private val apUndoService: APUndoService,
     private val apAcceptService: APAcceptService,
     private val apCreateService: APCreateService,
     private val apLikeService: APLikeService,
-    private val apReactionService: APReactionService,
-    @Qualifier("activitypub") private val objectMapper: ObjectMapper
+    @Qualifier("activitypub") private val objectMapper: ObjectMapper,
+    private val apReceiveFollowJobService: APReceiveFollowJobService,
+    private val apNoteJobService: ApNoteJobService,
+    private val apReactionJobService: ApReactionJobService
 ) : APService {
 
     val logger: Logger = LoggerFactory.getLogger(APServiceImpl::class.java)
@@ -197,7 +196,8 @@ class APServiceImpl(
             |
             |***** Trace End Activity *****
             |
-        """.trimMargin(), readTree.toPrettyString()
+            """.trimMargin(),
+            readTree.toPrettyString()
         )
         if (readTree.isObject.not()) {
             throw JsonParseException("Json is not object.")
@@ -225,31 +225,6 @@ class APServiceImpl(
 
             else -> {
                 throw IllegalArgumentException("$type is not supported.")
-            }
-        }
-    }
-
-    @Suppress("REDUNDANT_ELSE_IN_WHEN")
-    override suspend fun <T : HideoutJob> processActivity(job: JobContextWithProps<T>, hideoutJob: HideoutJob) {
-        logger.debug("processActivity: ${hideoutJob.name}")
-
-        @Suppress("ElseCaseInsteadOfExhaustiveWhen")
-        // Springで作成されるプロキシの都合上パターンマッチングが壊れるので必須
-        when (hideoutJob) {
-            is ReceiveFollowJob -> {
-                apReceiveFollowService.receiveFollowJob(
-                    job.props as JobProps<ReceiveFollowJob>
-                )
-            }
-
-            is DeliverPostJob -> apNoteService.createNoteJob(job.props as JobProps<DeliverPostJob>)
-            is DeliverReactionJob -> apReactionService.reactionJob(job.props as JobProps<DeliverReactionJob>)
-            is DeliverRemoveReactionJob -> apReactionService.removeReactionJob(
-                job.props as JobProps<DeliverRemoveReactionJob>
-            )
-
-            else -> {
-                throw IllegalStateException("WTF")
             }
         }
     }
