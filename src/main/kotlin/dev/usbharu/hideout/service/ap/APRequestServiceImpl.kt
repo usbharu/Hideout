@@ -116,7 +116,9 @@ class APRequestServiceImpl(
             |
             |***** END HTTP Request Trace url: {} *****
             |
-        """.trimMargin(), url, url
+            """.trimMargin(),
+            url,
+            url
         )
 
         val sha256 = MessageDigest.getInstance("SHA-256")
@@ -188,7 +190,9 @@ class APRequestServiceImpl(
                 |
                 |***** END HTTP Response TRACE url: {} *****
                 |
-            """.trimMargin(), url, url
+            """.trimMargin(),
+            url,
+            url
         )
     }
 
