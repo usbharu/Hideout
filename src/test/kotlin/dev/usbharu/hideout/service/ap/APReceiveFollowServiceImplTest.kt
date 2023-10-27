@@ -13,6 +13,7 @@ import dev.usbharu.hideout.domain.model.hideout.entity.Post
 import dev.usbharu.hideout.domain.model.hideout.entity.User
 import dev.usbharu.hideout.domain.model.job.ReceiveFollowJob
 import dev.usbharu.hideout.query.UserQueryService
+import dev.usbharu.hideout.service.ap.job.APReceiveFollowJobServiceImpl
 import dev.usbharu.hideout.service.job.JobQueueParentService
 import dev.usbharu.hideout.service.user.UserService
 import kjob.core.dsl.ScheduleContext
@@ -25,6 +26,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.*
 import utils.JsonObjectMapper.objectMapper
+import utils.TestTransaction
 import java.net.URL
 import java.time.Instant
 
@@ -145,9 +147,13 @@ class APReceiveFollowServiceImplTest {
             onBlocking { followRequest(any(), any()) } doReturn false
         }
         val activityPubFollowService =
-            APReceiveFollowServiceImpl(
+            APReceiveFollowJobServiceImpl(
+                apUserService,
+                userQueryService,
                 mock(),
-                objectMapper
+                userService,
+                objectMapper,
+                TestTransaction
             )
         activityPubFollowService.receiveFollowJob(
             JobProps(
