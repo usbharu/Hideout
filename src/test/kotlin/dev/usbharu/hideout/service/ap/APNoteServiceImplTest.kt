@@ -12,6 +12,7 @@ import dev.usbharu.hideout.domain.model.job.DeliverPostJob
 import dev.usbharu.hideout.query.FollowerQueryService
 import dev.usbharu.hideout.query.MediaQueryService
 import dev.usbharu.hideout.query.UserQueryService
+import dev.usbharu.hideout.service.ap.job.ApNoteJobServiceImpl
 import dev.usbharu.hideout.service.job.JobQueueParentService
 import io.ktor.client.*
 import io.ktor.client.engine.mock.*
@@ -24,6 +25,7 @@ import org.mockito.Mockito.anyLong
 import org.mockito.Mockito.eq
 import org.mockito.kotlin.*
 import utils.JsonObjectMapper.objectMapper
+import utils.TestTransaction
 import java.net.URL
 import java.time.Instant
 import kotlin.test.assertEquals
@@ -134,18 +136,13 @@ class APNoteServiceImplTest {
                     respondOk()
                 }
             )
-            val activityPubNoteService = APNoteServiceImpl(
-                jobQueueParentService = mock(),
-                postRepository = mock(),
-                apUserService = mock(),
+            val activityPubNoteService = ApNoteJobServiceImpl(
+
                 userQueryService = mock(),
-                followerQueryService = mock(),
-                postQueryService = mock(),
-                mediaQueryService = mediaQueryService,
                 objectMapper = objectMapper,
-                postService = mock(),
-                apResourceResolveService = mock(),
-                postBuilder = postBuilder
+                apRequestService = mock(),
+                transaction = TestTransaction,
+                applicationConfig = ApplicationConfig(URL("https://example.com"))
             )
             activityPubNoteService.createNoteJob(
                 JobProps(
