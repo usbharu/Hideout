@@ -35,7 +35,6 @@ interface APNoteService {
 
     suspend fun createNote(post: Post)
 
-
     @Cacheable("fetchNote")
     fun fetchNoteAsync(url: String, targetActor: String? = null): Deferred<Note> {
         return CoroutineScope(Dispatchers.IO + MDCContext()).async {
@@ -94,8 +93,6 @@ class APNoteServiceImpl(
 
         logger.debug("SUCCESS Create Local Note ${post.url}")
     }
-
-
 
     override suspend fun fetchNote(url: String, targetActor: String?): Note {
         logger.debug("START Fetch Note url: {}", url)
