@@ -55,9 +55,8 @@ class UserRepositoryImpl(
         return user
     }
 
-    override suspend fun findById(id: Long): User? {
-        return Users.select { Users.id eq id }.singleOrNull()?.let(userResultRowMapper::map)
-    }
+    override suspend fun findById(id: Long): User? =
+        Users.select { Users.id eq id }.singleOrNull()?.let(userResultRowMapper::map)
 
     override suspend fun deleteFollowRequest(id: Long, follower: Long) {
         FollowRequests.deleteWhere { userId.eq(id) and followerId.eq(follower) }

@@ -6,7 +6,5 @@ import org.springframework.stereotype.Component
 
 @Component
 class UserQueryMapper(private val userResultRowMapper: ResultRowMapper<User>) : QueryMapper<User> {
-    override fun map(query: Query): List<User> {
-        return query.map(userResultRowMapper::map)
-    }
+    override fun map(query: Query): List<User> = query.map(userResultRowMapper::map)
 }
