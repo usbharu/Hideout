@@ -45,6 +45,7 @@ class APUndoServiceImpl(
                     val target = userQueryService.findByUrl(follow.`object`!!)
                     userService.unfollow(target.id, follower.id)
                 }
+                return ActivityPubStringResponse(HttpStatusCode.OK, "Accept")
             }
 
             else -> {}
