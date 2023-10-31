@@ -13,7 +13,7 @@ object UserBuilder {
 
     private val idGenerator = TwitterSnowflakeIdGenerateService
 
-    suspend fun localUserOf(
+    fun localUserOf(
         id: Long = generateId(),
         name: String = "test-user-$id",
         domain: String = "example.com",
@@ -42,6 +42,40 @@ object UserBuilder {
             url = url,
             publicKey = publicKey,
             privateKey = privateKey,
+            createdAt = createdAt,
+            keyId = keyId,
+            followers = following,
+            following = followers
+        )
+    }
+
+    fun remoteUserOf(
+        id: Long = generateId(),
+        name: String = "test-user-$id",
+        domain: String = "remote.example.com",
+        screenName: String = name,
+        description: String = "This user is test user.",
+        inbox: String = "https://$domain/$id/inbox",
+        outbox: String = "https://$domain/$id/outbox",
+        url: String = "https://$domain/$id/",
+        publicKey: String = "-----BEGIN PUBLIC KEY-----...-----END PUBLIC KEY-----",
+        createdAt: Instant = Instant.now(),
+        keyId: String = "https://$domain/$id#pubkey",
+        followers: String = "https://$domain/$id/followers",
+        following: String = "https://$domain/$id/following"
+    ): User {
+        return userBuilder.of(
+            id = id,
+            name = name,
+            domain = domain,
+            screenName = screenName,
+            description = description,
+            password = null,
+            inbox = inbox,
+            outbox = outbox,
+            url = url,
+            publicKey = publicKey,
+            privateKey = null,
             createdAt = createdAt,
             keyId = keyId,
             followers = following,
