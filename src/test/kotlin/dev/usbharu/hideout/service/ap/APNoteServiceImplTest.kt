@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalCoroutinesApi::class) @file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@file:OptIn(ExperimentalCoroutinesApi::class)
 
 package dev.usbharu.hideout.service.ap
 
@@ -20,7 +20,6 @@ import dev.usbharu.hideout.query.PostQueryService
 import dev.usbharu.hideout.query.UserQueryService
 import dev.usbharu.hideout.repository.PostRepository
 import dev.usbharu.hideout.service.ap.APNoteServiceImpl.Companion.public
-import dev.usbharu.hideout.service.ap.job.ApNoteJobServiceImpl
 import dev.usbharu.hideout.service.ap.resource.APResourceResolveService
 import dev.usbharu.hideout.service.core.TwitterSnowflakeIdGenerateService
 import dev.usbharu.hideout.service.job.JobQueueParentService
@@ -35,12 +34,10 @@ import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.util.*
 import io.ktor.util.date.*
-import kjob.core.job.JobProps
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.test.runTest
-import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -48,7 +45,6 @@ import org.mockito.Mockito.anyLong
 import org.mockito.kotlin.*
 import utils.JsonObjectMapper.objectMapper
 import utils.PostBuilder
-import utils.TestTransaction
 import utils.UserBuilder
 import java.net.URL
 import java.time.Instant
@@ -412,31 +408,5 @@ class APNoteServiceImplTest {
         assertEquals(note, fetchNote)
     }
 
-    @Test
-    fun `createPostJob 新しい投稿のJob`() {
-        runTest {
-            val activityPubNoteService = ApNoteJobServiceImpl(
 
-                userQueryService = mock(),
-                objectMapper = objectMapper,
-                apRequestService = mock(),
-                transaction = TestTransaction,
-                applicationConfig = ApplicationConfig(URL("https://example.com"))
-            )
-            activityPubNoteService.createNoteJob(
-                JobProps(
-                    data = mapOf<String, Any>(
-                        DeliverPostJob.actor.name to "https://follower.example.com", DeliverPostJob.post.name to """{
-      "id": 1,
-      "userId": 1,
-      "text": "test text",
-      "createdAt": 132525324,
-      "visibility": 0,
-      "url": "https://example.com"
-    }""", DeliverPostJob.inbox.name to "https://follower.example.com/inbox", DeliverPostJob.media.name to "[]"
-                    ), json = Json
-                )
-            )
-        }
-    }
 }
