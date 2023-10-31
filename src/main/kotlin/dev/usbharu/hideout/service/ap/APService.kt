@@ -6,9 +6,6 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.domain.model.ActivityPubResponse
 import dev.usbharu.hideout.domain.model.ap.Follow
 import dev.usbharu.hideout.exception.JsonParseException
-import dev.usbharu.hideout.service.ap.job.APReceiveFollowJobService
-import dev.usbharu.hideout.service.ap.job.ApNoteJobService
-import dev.usbharu.hideout.service.ap.job.ApReactionJobService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
@@ -178,10 +175,7 @@ class APServiceImpl(
     private val apAcceptService: APAcceptService,
     private val apCreateService: APCreateService,
     private val apLikeService: APLikeService,
-    @Qualifier("activitypub") private val objectMapper: ObjectMapper,
-    private val apReceiveFollowJobService: APReceiveFollowJobService,
-    private val apNoteJobService: ApNoteJobService,
-    private val apReactionJobService: ApReactionJobService
+    @Qualifier("activitypub") private val objectMapper: ObjectMapper
 ) : APService {
 
     val logger: Logger = LoggerFactory.getLogger(APServiceImpl::class.java)
