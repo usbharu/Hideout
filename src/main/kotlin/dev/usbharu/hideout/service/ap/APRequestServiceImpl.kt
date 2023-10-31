@@ -98,14 +98,17 @@ class APRequestServiceImpl(
 
     override suspend fun <T : Object> apPost(url: String, body: T?, signer: User?): String {
         logger.debug("START ActivityPub Request POST url: {}, signer: {}", url, signer?.url)
-        if (body != null) {
+        val requestBody = if (body != null) {
             val mutableListOf = mutableListOf<String>()
             mutableListOf.add("https://www.w3.org/ns/activitystreams")
             mutableListOf.addAll(body.context)
             body.context = mutableListOf
+            objectMapper.writeValueAsString(body)
+        } else {
+            null
         }
 
-        val requestBody = objectMapper.writeValueAsString(body)
+
 
         logger.trace(
             """
@@ -123,17 +126,19 @@ class APRequestServiceImpl(
 
         val sha256 = MessageDigest.getInstance("SHA-256")
 
-        val digest = Base64Util.encode(sha256.digest(requestBody.toByteArray()))
+        val digest = Base64Util.encode(sha256.digest(requestBody.orEmpty().toByteArray()))
 
         val date = dateTimeFormatter.format(ZonedDateTime.now(ZoneId.of("GMT")))
         val u = URL(url)
         if (signer?.privateKey == null) {
             val bodyAsText = httpClient.post(url) {
-                header("Accept", ContentType.Application.Activity)
+                accept(ContentType.Application.Activity)
                 header("Date", date)
                 header("Digest", "sha-256=$digest")
-                setBody(requestBody)
-                contentType(ContentType.Application.Activity)
+                if (requestBody != null) {
+                    setBody(requestBody)
+                    contentType(ContentType.Application.Activity)
+                }
             }.bodyAsText()
             logBody(bodyAsText, url)
             return bodyAsText
