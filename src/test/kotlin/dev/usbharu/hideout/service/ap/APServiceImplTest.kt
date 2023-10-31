@@ -16,10 +16,7 @@ class APServiceImplTest {
             apAcceptService = mock(),
             apCreateService = mock(),
             apLikeService = mock(),
-            objectMapper = objectMapper,
-            apReceiveFollowJobService = mock(),
-            apNoteJobService = mock(),
-            apReactionJobService = mock()
+            objectMapper = objectMapper
         )
 
         //language=JSON
@@ -36,10 +33,7 @@ class APServiceImplTest {
             apAcceptService = mock(),
             apCreateService = mock(),
             apLikeService = mock(),
-            objectMapper = objectMapper,
-            apReceiveFollowJobService = mock(),
-            apNoteJobService = mock(),
-            apReactionJobService = mock()
+            objectMapper = objectMapper
         )
 
         //language=JSON
@@ -56,10 +50,7 @@ class APServiceImplTest {
             apAcceptService = mock(),
             apCreateService = mock(),
             apLikeService = mock(),
-            objectMapper = objectMapper,
-            apReceiveFollowJobService = mock(),
-            apNoteJobService = mock(),
-            apReactionJobService = mock()
+            objectMapper = objectMapper
         )
 
         //language=JSON
@@ -76,10 +67,7 @@ class APServiceImplTest {
             apAcceptService = mock(),
             apCreateService = mock(),
             apLikeService = mock(),
-            objectMapper = objectMapper,
-            apReceiveFollowJobService = mock(),
-            apNoteJobService = mock(),
-            apReactionJobService = mock()
+            objectMapper = objectMapper
         )
 
         //language=JSON
@@ -96,10 +84,7 @@ class APServiceImplTest {
             apAcceptService = mock(),
             apCreateService = mock(),
             apLikeService = mock(),
-            objectMapper = objectMapper,
-            apReceiveFollowJobService = mock(),
-            apNoteJobService = mock(),
-            apReactionJobService = mock()
+            objectMapper = objectMapper
         )
 
         //language=JSON
@@ -116,10 +101,7 @@ class APServiceImplTest {
             apAcceptService = mock(),
             apCreateService = mock(),
             apLikeService = mock(),
-            objectMapper = objectMapper,
-            apReceiveFollowJobService = mock(),
-            apNoteJobService = mock(),
-            apReactionJobService = mock()
+            objectMapper = objectMapper
         )
 
         //language=JSON
@@ -136,10 +118,7 @@ class APServiceImplTest {
             apAcceptService = mock(),
             apCreateService = mock(),
             apLikeService = mock(),
-            objectMapper = objectMapper,
-            apReceiveFollowJobService = mock(),
-            apNoteJobService = mock(),
-            apReactionJobService = mock()
+            objectMapper = objectMapper
         )
 
         //language=JSON
@@ -156,10 +135,7 @@ class APServiceImplTest {
             apAcceptService = mock(),
             apCreateService = mock(),
             apLikeService = mock(),
-            objectMapper = objectMapper,
-            apReceiveFollowJobService = mock(),
-            apNoteJobService = mock(),
-            apReactionJobService = mock()
+            objectMapper = objectMapper
         )
 
         //language=JSON
@@ -176,10 +152,7 @@ class APServiceImplTest {
             apAcceptService = mock(),
             apCreateService = mock(),
             apLikeService = mock(),
-            objectMapper = objectMapper,
-            apReceiveFollowJobService = mock(),
-            apNoteJobService = mock(),
-            apReactionJobService = mock()
+            objectMapper = objectMapper
         )
 
         //language=JSON
@@ -196,10 +169,7 @@ class APServiceImplTest {
             apAcceptService = mock(),
             apCreateService = mock(),
             apLikeService = mock(),
-            objectMapper = objectMapper,
-            apReceiveFollowJobService = mock(),
-            apNoteJobService = mock(),
-            apReactionJobService = mock()
+            objectMapper = objectMapper
         )
 
         //language=JSON
@@ -216,10 +186,7 @@ class APServiceImplTest {
             apAcceptService = mock(),
             apCreateService = mock(),
             apLikeService = mock(),
-            objectMapper = objectMapper,
-            apReceiveFollowJobService = mock(),
-            apNoteJobService = mock(),
-            apReactionJobService = mock()
+            objectMapper = objectMapper
         )
 
         //language=JSON
@@ -236,10 +203,7 @@ class APServiceImplTest {
             apAcceptService = mock(),
             apCreateService = mock(),
             apLikeService = mock(),
-            objectMapper = objectMapper,
-            apReceiveFollowJobService = mock(),
-            apNoteJobService = mock(),
-            apReactionJobService = mock()
+            objectMapper = objectMapper
         )
 
         //language=JSON
@@ -256,10 +220,7 @@ class APServiceImplTest {
             apAcceptService = mock(),
             apCreateService = mock(),
             apLikeService = mock(),
-            objectMapper = objectMapper,
-            apReceiveFollowJobService = mock(),
-            apNoteJobService = mock(),
-            apReactionJobService = mock()
+            objectMapper = objectMapper
         )
 
         //language=JSON
