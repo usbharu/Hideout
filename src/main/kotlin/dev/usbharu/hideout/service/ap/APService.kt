@@ -186,7 +186,11 @@ class APServiceImpl(
 
     val logger: Logger = LoggerFactory.getLogger(APServiceImpl::class.java)
     override fun parseActivity(json: String): ActivityType {
-        val readTree = objectMapper.readTree(json)
+        val readTree = try {
+            objectMapper.readTree(json)
+        } catch (e: com.fasterxml.jackson.core.JsonParseException) {
+            throw JsonParseException("Failed to parse json", e)
+        }
         logger.trace(
             """
             |
@@ -204,11 +208,19 @@ class APServiceImpl(
         }
         val type = readTree["type"] ?: throw JsonParseException("Type is null")
         if (type.isArray) {
-            return type.firstNotNullOf { jsonNode: JsonNode ->
-                ActivityType.values().firstOrNull { it.name.equals(jsonNode.asText(), true) }
+            try {
+                return type.firstNotNullOf { jsonNode: JsonNode ->
+                    ActivityType.values().firstOrNull { it.name.equals(jsonNode.asText(), true) }
+                }
+            } catch (e: NoSuchElementException) {
+                throw IllegalArgumentException("No valid TYPE", e)
             }
         }
-        return ActivityType.values().first { it.name.equals(type.asText(), true) }
+        try {
+            return ActivityType.values().first { it.name.equals(type.asText(), true) }
+        } catch (e: NoSuchElementException) {
+            throw IllegalArgumentException("No valid TYPE", e)
+        }
     }
 
     @Suppress("CyclomaticComplexMethod", "NotImplementedDeclaration")
@@ -219,6 +231,7 @@ class APServiceImpl(
             ActivityType.Follow ->
                 apReceiveFollowService
                     .receiveFollow(objectMapper.readValue(json, Follow::class.java))
+
             ActivityType.Create -> apCreateService.receiveCreate(objectMapper.readValue(json))
             ActivityType.Like -> apLikeService.receiveLike(objectMapper.readValue(json))
             ActivityType.Undo -> apUndoService.receiveUndo(objectMapper.readValue(json))
