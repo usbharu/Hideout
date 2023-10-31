@@ -9,7 +9,6 @@ sealed class ActivityPubResponse(
     val contentType: ContentType = ContentType.Application.Activity
 ) {
 
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is ActivityPubResponse) return false
@@ -37,7 +36,6 @@ class ActivityPubStringResponse(
     contentType: ContentType = ContentType.Application.Activity
 ) : ActivityPubResponse(httpStatusCode, contentType) {
 
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is ActivityPubStringResponse) return false
@@ -54,8 +52,6 @@ class ActivityPubStringResponse(
     override fun toString(): String {
         return "ActivityPubStringResponse(message='$message') ${super.toString()}"
     }
-
-
 }
 
 class ActivityPubObjectResponse(
@@ -79,6 +75,4 @@ class ActivityPubObjectResponse(
     override fun toString(): String {
         return "ActivityPubObjectResponse(message=$message) ${super.toString()}"
     }
-
-
 }

@@ -108,8 +108,6 @@ class APRequestServiceImpl(
             null
         }
 
-
-
         logger.trace(
             """
                 |
