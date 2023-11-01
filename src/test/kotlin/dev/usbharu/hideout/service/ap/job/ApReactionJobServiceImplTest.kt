@@ -2,13 +2,14 @@
 
 package dev.usbharu.hideout.service.ap.job
 
-import dev.usbharu.hideout.config.ApplicationConfig
-import dev.usbharu.hideout.domain.model.ap.Like
-import dev.usbharu.hideout.domain.model.ap.Undo
-import dev.usbharu.hideout.domain.model.job.DeliverReactionJob
-import dev.usbharu.hideout.domain.model.job.DeliverRemoveReactionJob
-import dev.usbharu.hideout.query.UserQueryService
-import dev.usbharu.hideout.service.ap.APRequestService
+import dev.usbharu.hideout.activitypub.domain.model.Like
+import dev.usbharu.hideout.activitypub.domain.model.Undo
+import dev.usbharu.hideout.activitypub.service.activity.like.ApReactionJobServiceImpl
+import dev.usbharu.hideout.activitypub.service.common.APRequestService
+import dev.usbharu.hideout.application.config.ApplicationConfig
+import dev.usbharu.hideout.core.external.job.DeliverReactionJob
+import dev.usbharu.hideout.core.external.job.DeliverRemoveReactionJob
+import dev.usbharu.hideout.core.query.UserQueryService
 import kjob.core.job.JobProps
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json

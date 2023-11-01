@@ -2,13 +2,14 @@
 
 package dev.usbharu.hideout.service.ap.job
 
-import dev.usbharu.hideout.config.ApplicationConfig
-import dev.usbharu.hideout.domain.model.ap.Create
-import dev.usbharu.hideout.domain.model.ap.Note
-import dev.usbharu.hideout.domain.model.job.DeliverPostJob
-import dev.usbharu.hideout.query.UserQueryService
-import dev.usbharu.hideout.service.ap.APNoteServiceImpl
-import dev.usbharu.hideout.service.ap.APRequestService
+import dev.usbharu.hideout.activitypub.domain.model.Create
+import dev.usbharu.hideout.activitypub.domain.model.Note
+import dev.usbharu.hideout.activitypub.service.common.APRequestService
+import dev.usbharu.hideout.activitypub.service.`object`.note.APNoteServiceImpl
+import dev.usbharu.hideout.activitypub.service.`object`.note.ApNoteJobServiceImpl
+import dev.usbharu.hideout.application.config.ApplicationConfig
+import dev.usbharu.hideout.core.external.job.DeliverPostJob
+import dev.usbharu.hideout.core.query.UserQueryService
 import kjob.core.job.JobProps
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
