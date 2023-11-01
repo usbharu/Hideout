@@ -2,13 +2,12 @@
 
 package dev.usbharu.hideout.service.user
 
-import dev.usbharu.hideout.config.ApplicationConfig
-import dev.usbharu.hideout.config.CharacterLimit
-import dev.usbharu.hideout.domain.model.hideout.dto.RemoteUserCreateDto
-import dev.usbharu.hideout.domain.model.hideout.dto.UserCreateDto
-import dev.usbharu.hideout.domain.model.hideout.entity.Post
-import dev.usbharu.hideout.domain.model.hideout.entity.User
-import dev.usbharu.hideout.repository.UserRepository
+import dev.usbharu.hideout.application.config.ApplicationConfig
+import dev.usbharu.hideout.application.config.CharacterLimit
+import dev.usbharu.hideout.core.domain.model.post.Post
+import dev.usbharu.hideout.core.domain.model.user.User
+import dev.usbharu.hideout.core.domain.model.user.UserRepository
+import dev.usbharu.hideout.core.service.user.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
@@ -46,7 +45,7 @@ class UserServiceTest {
             )
         userService.createLocalUser(UserCreateDto("test", "testUser", "XXXXXXXXXXXXX", "test"))
         verify(userRepository, times(1)).save(any())
-        argumentCaptor<dev.usbharu.hideout.domain.model.hideout.entity.User> {
+        argumentCaptor<User> {
             verify(userRepository, times(1)).save(capture())
             assertEquals("test", firstValue.name)
             assertEquals("testUser", firstValue.screenName)
@@ -85,7 +84,7 @@ class UserServiceTest {
         )
         userService.createRemoteUser(user)
         verify(userRepository, times(1)).save(any())
-        argumentCaptor<dev.usbharu.hideout.domain.model.hideout.entity.User> {
+        argumentCaptor<User> {
             verify(userRepository, times(1)).save(capture())
             assertEquals("test", firstValue.name)
             assertEquals("testUser", firstValue.screenName)

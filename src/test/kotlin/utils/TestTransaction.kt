@@ -1,6 +1,6 @@
 package utils
 
-import dev.usbharu.hideout.service.core.Transaction
+import dev.usbharu.hideout.application.external.Transaction
 
 object TestTransaction : Transaction {
     override suspend fun <T> transaction(block: suspend () -> T): T = block()

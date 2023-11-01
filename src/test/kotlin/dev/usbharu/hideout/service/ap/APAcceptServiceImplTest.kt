@@ -1,13 +1,14 @@
 package dev.usbharu.hideout.service.ap
 
-import dev.usbharu.hideout.domain.model.ActivityPubStringResponse
-import dev.usbharu.hideout.domain.model.ap.Accept
-import dev.usbharu.hideout.domain.model.ap.Follow
-import dev.usbharu.hideout.domain.model.ap.Like
-import dev.usbharu.hideout.exception.ap.IllegalActivityPubObjectException
-import dev.usbharu.hideout.query.FollowerQueryService
-import dev.usbharu.hideout.query.UserQueryService
-import dev.usbharu.hideout.service.user.UserService
+import dev.usbharu.hideout.activitypub.domain.exception.IllegalActivityPubObjectException
+import dev.usbharu.hideout.activitypub.domain.model.Accept
+import dev.usbharu.hideout.activitypub.domain.model.Follow
+import dev.usbharu.hideout.activitypub.domain.model.Like
+import dev.usbharu.hideout.activitypub.interfaces.api.common.ActivityPubStringResponse
+import dev.usbharu.hideout.activitypub.service.activity.accept.APAcceptServiceImpl
+import dev.usbharu.hideout.core.query.FollowerQueryService
+import dev.usbharu.hideout.core.query.UserQueryService
+import dev.usbharu.hideout.core.service.user.UserService
 import io.ktor.http.*
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals

@@ -3,7 +3,7 @@ package {{package}}
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.RequestMapping
 import java.util.Optional
-import dev.usbharu.hideout.config.JsonOrFormBind
+import dev.usbharu.hideout.generate.JsonOrFormBind
 
 {{>generatedAnnotation}}
 @Controller{{#beanQualifiers}}("{{package}}.{{classname}}Controller"){{/beanQualifiers}}

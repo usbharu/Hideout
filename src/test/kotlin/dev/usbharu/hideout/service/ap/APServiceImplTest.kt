@@ -1,6 +1,8 @@
 package dev.usbharu.hideout.service.ap
 
-import dev.usbharu.hideout.exception.JsonParseException
+import dev.usbharu.hideout.activitypub.domain.exception.JsonParseException
+import dev.usbharu.hideout.activitypub.service.common.APServiceImpl
+import dev.usbharu.hideout.activitypub.service.common.ActivityType
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.mock

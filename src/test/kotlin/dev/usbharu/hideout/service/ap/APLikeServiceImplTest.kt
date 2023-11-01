@@ -1,12 +1,15 @@
 package dev.usbharu.hideout.service.ap
 
-import dev.usbharu.hideout.domain.model.ActivityPubStringResponse
-import dev.usbharu.hideout.domain.model.ap.Like
-import dev.usbharu.hideout.domain.model.ap.Note
-import dev.usbharu.hideout.domain.model.ap.Person
-import dev.usbharu.hideout.exception.ap.FailedToGetActivityPubResourceException
-import dev.usbharu.hideout.query.PostQueryService
-import dev.usbharu.hideout.service.reaction.ReactionService
+import dev.usbharu.hideout.activitypub.domain.exception.FailedToGetActivityPubResourceException
+import dev.usbharu.hideout.activitypub.domain.model.Like
+import dev.usbharu.hideout.activitypub.domain.model.Note
+import dev.usbharu.hideout.activitypub.domain.model.Person
+import dev.usbharu.hideout.activitypub.interfaces.api.common.ActivityPubStringResponse
+import dev.usbharu.hideout.activitypub.service.activity.like.APLikeServiceImpl
+import dev.usbharu.hideout.activitypub.service.`object`.note.APNoteService
+import dev.usbharu.hideout.activitypub.service.`object`.user.APUserService
+import dev.usbharu.hideout.core.query.PostQueryService
+import dev.usbharu.hideout.core.service.reaction.ReactionService
 import io.ktor.http.*
 import kotlinx.coroutines.async
 import kotlinx.coroutines.test.runTest

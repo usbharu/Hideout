@@ -1,7 +1,8 @@
 package dev.usbharu.hideout.service.ap
 
 import com.fasterxml.jackson.module.kotlin.readValue
-import dev.usbharu.hideout.domain.model.ap.Follow
+import dev.usbharu.hideout.activitypub.domain.model.Follow
+import dev.usbharu.hideout.activitypub.service.common.APRequestServiceImpl
 import dev.usbharu.hideout.util.Base64Util
 import dev.usbharu.httpsignature.common.HttpHeaders
 import dev.usbharu.httpsignature.common.HttpMethod
