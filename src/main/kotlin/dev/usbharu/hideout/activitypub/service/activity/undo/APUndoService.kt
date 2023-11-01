@@ -4,7 +4,7 @@ import dev.usbharu.hideout.activitypub.domain.model.Follow
 import dev.usbharu.hideout.activitypub.domain.model.Undo
 import dev.usbharu.hideout.activitypub.interfaces.api.common.ActivityPubResponse
 import dev.usbharu.hideout.activitypub.interfaces.api.common.ActivityPubStringResponse
-import dev.usbharu.hideout.activitypub.service.`object`.user.APUserService
+import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
 import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.query.UserQueryService
 import dev.usbharu.hideout.core.service.user.UserService

@@ -1,6 +1,6 @@
 package dev.usbharu.hideout.activitypub.service.common
 
-import dev.usbharu.hideout.activitypub.domain.model.`object`.Object
+import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 import dev.usbharu.hideout.util.LruCache
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex

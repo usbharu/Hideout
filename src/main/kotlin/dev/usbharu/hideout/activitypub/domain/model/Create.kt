@@ -1,8 +1,8 @@
 package dev.usbharu.hideout.activitypub.domain.model
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import dev.usbharu.hideout.activitypub.domain.model.`object`.Object
-import dev.usbharu.hideout.activitypub.domain.model.`object`.ObjectDeserializer
+import dev.usbharu.hideout.activitypub.domain.model.objects.Object
+import dev.usbharu.hideout.activitypub.domain.model.objects.ObjectDeserializer
 
 open class Create : Object {
     @JsonDeserialize(using = ObjectDeserializer::class)

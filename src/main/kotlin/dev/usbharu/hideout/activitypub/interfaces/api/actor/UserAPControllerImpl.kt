@@ -1,7 +1,7 @@
 package dev.usbharu.hideout.activitypub.interfaces.api.actor
 
 import dev.usbharu.hideout.activitypub.domain.model.Person
-import dev.usbharu.hideout.activitypub.service.`object`.user.APUserService
+import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController

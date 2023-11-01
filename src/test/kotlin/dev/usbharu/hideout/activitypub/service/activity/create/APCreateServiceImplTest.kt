@@ -5,7 +5,7 @@ import dev.usbharu.hideout.activitypub.domain.model.Create
 import dev.usbharu.hideout.activitypub.domain.model.Like
 import dev.usbharu.hideout.activitypub.domain.model.Note
 import dev.usbharu.hideout.activitypub.interfaces.api.common.ActivityPubStringResponse
-import dev.usbharu.hideout.activitypub.service.`object`.note.APNoteService
+import dev.usbharu.hideout.activitypub.service.objects.note.APNoteService
 import io.ktor.http.*
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals

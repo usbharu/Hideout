@@ -1,6 +1,6 @@
 package dev.usbharu.hideout.activitypub.domain.model
 
-import dev.usbharu.hideout.activitypub.domain.model.`object`.Object
+import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 
 open class Person : Object {
     var preferredUsername: String? = null

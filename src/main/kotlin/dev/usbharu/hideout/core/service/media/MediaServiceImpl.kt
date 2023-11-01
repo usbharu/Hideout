@@ -25,7 +25,8 @@ class MediaServiceImpl(
 ) : MediaService {
     override suspend fun uploadLocalMedia(mediaRequest: MediaRequest): EntityMedia {
         logger.info(
-            "Media upload. filename:${mediaRequest.file.name} size:${mediaRequest.file.size} contentType:${mediaRequest.file.contentType}"
+            "Media upload. filename:${mediaRequest.file.name} size:${mediaRequest.file.size} " +
+                    "contentType:${mediaRequest.file.contentType}"
         )
 
         if (mediaRequest.file.size == 0L) {
