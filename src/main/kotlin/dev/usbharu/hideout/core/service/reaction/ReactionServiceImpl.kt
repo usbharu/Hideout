@@ -1,9 +1,9 @@
 package dev.usbharu.hideout.core.service.reaction
 
-import dev.usbharu.hideout.core.domain.model.reaction.Reaction
-import dev.usbharu.hideout.core.query.ReactionQueryService
-import dev.usbharu.hideout.core.domain.model.reaction.ReactionRepository
 import dev.usbharu.hideout.activitypub.service.activity.like.APReactionService
+import dev.usbharu.hideout.core.domain.model.reaction.Reaction
+import dev.usbharu.hideout.core.domain.model.reaction.ReactionRepository
+import dev.usbharu.hideout.core.query.ReactionQueryService
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service

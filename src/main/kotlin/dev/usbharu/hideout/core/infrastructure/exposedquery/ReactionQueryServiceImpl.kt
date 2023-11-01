@@ -1,10 +1,10 @@
 package dev.usbharu.hideout.core.infrastructure.exposedquery
 
-import dev.usbharu.hideout.core.domain.model.reaction.Reaction
 import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
-import dev.usbharu.hideout.core.query.ReactionQueryService
+import dev.usbharu.hideout.core.domain.model.reaction.Reaction
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Reactions
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.toReaction
+import dev.usbharu.hideout.core.query.ReactionQueryService
 import dev.usbharu.hideout.util.singleOr
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -46,5 +46,4 @@ class ReactionQueryServiceImpl : ReactionQueryService {
     override suspend fun deleteByPostIdAndUserId(postId: Long, userId: Long) {
         Reactions.deleteWhere { Reactions.postId.eq(postId).and(Reactions.userId.eq(userId)) }
     }
-
 }
