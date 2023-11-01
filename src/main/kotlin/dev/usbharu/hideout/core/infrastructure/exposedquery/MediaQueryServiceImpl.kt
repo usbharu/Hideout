@@ -14,7 +14,8 @@ class MediaQueryServiceImpl : MediaQueryService {
         return dev.usbharu.hideout.core.infrastructure.exposedrepository.Media.innerJoin(
             PostsMedia,
             onColumn = { id },
-            otherColumn = { mediaId })
+            otherColumn = { mediaId }
+        )
             .select { PostsMedia.postId eq postId }
             .map { it.toMedia() }
     }

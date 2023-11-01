@@ -13,5 +13,4 @@ interface ReactionQueryService {
     suspend fun reactionAlreadyExist(postId: Long, userId: Long, emojiId: Long): Boolean
 
     suspend fun deleteByPostIdAndUserId(postId: Long, userId: Long)
-
 }
