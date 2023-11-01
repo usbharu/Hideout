@@ -3,19 +3,21 @@
 
 package dev.usbharu.hideout.service.ap
 
-import dev.usbharu.hideout.config.ApplicationConfig
-import dev.usbharu.hideout.config.CharacterLimit
-import dev.usbharu.hideout.domain.model.ap.Follow
-import dev.usbharu.hideout.domain.model.ap.Image
-import dev.usbharu.hideout.domain.model.ap.Key
-import dev.usbharu.hideout.domain.model.ap.Person
-import dev.usbharu.hideout.domain.model.hideout.entity.Post
-import dev.usbharu.hideout.domain.model.hideout.entity.User
-import dev.usbharu.hideout.domain.model.job.ReceiveFollowJob
-import dev.usbharu.hideout.query.UserQueryService
-import dev.usbharu.hideout.service.ap.job.APReceiveFollowJobServiceImpl
-import dev.usbharu.hideout.service.job.JobQueueParentService
-import dev.usbharu.hideout.service.user.UserService
+import dev.usbharu.hideout.activitypub.domain.model.Follow
+import dev.usbharu.hideout.activitypub.domain.model.Image
+import dev.usbharu.hideout.activitypub.domain.model.Key
+import dev.usbharu.hideout.activitypub.domain.model.Person
+import dev.usbharu.hideout.activitypub.service.activity.follow.APReceiveFollowJobServiceImpl
+import dev.usbharu.hideout.activitypub.service.activity.follow.APReceiveFollowServiceImpl
+import dev.usbharu.hideout.activitypub.service.`object`.user.APUserService
+import dev.usbharu.hideout.application.config.ApplicationConfig
+import dev.usbharu.hideout.application.config.CharacterLimit
+import dev.usbharu.hideout.core.domain.model.post.Post
+import dev.usbharu.hideout.core.domain.model.user.User
+import dev.usbharu.hideout.core.external.job.ReceiveFollowJob
+import dev.usbharu.hideout.core.query.UserQueryService
+import dev.usbharu.hideout.core.service.job.JobQueueParentService
+import dev.usbharu.hideout.core.service.user.UserService
 import kjob.core.dsl.ScheduleContext
 import kjob.core.job.JobProps
 import kotlinx.coroutines.ExperimentalCoroutinesApi

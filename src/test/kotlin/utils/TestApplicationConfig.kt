@@ -1,6 +1,6 @@
 package utils
 
-import dev.usbharu.hideout.config.ApplicationConfig
+import dev.usbharu.hideout.application.config.ApplicationConfig
 import java.net.URL
 
 object TestApplicationConfig {

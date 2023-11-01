@@ -1,7 +1,9 @@
 package dev.usbharu.hideout.service.ap
 
-import dev.usbharu.hideout.domain.model.ap.Follow
-import dev.usbharu.hideout.domain.model.hideout.dto.SendFollowDto
+import dev.usbharu.hideout.activitypub.domain.model.Follow
+import dev.usbharu.hideout.activitypub.service.activity.follow.APSendFollowServiceImpl
+import dev.usbharu.hideout.activitypub.service.common.APRequestService
+import dev.usbharu.hideout.core.service.follow.SendFollowDto
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.eq

@@ -1,11 +1,14 @@
 package dev.usbharu.hideout.service.ap.resource
 
-import dev.usbharu.hideout.config.ApplicationConfig
-import dev.usbharu.hideout.config.CharacterLimit
-import dev.usbharu.hideout.domain.model.ap.Object
-import dev.usbharu.hideout.domain.model.hideout.entity.Post
-import dev.usbharu.hideout.domain.model.hideout.entity.User
-import dev.usbharu.hideout.repository.UserRepository
+import dev.usbharu.hideout.activitypub.domain.model.`object`.Object
+import dev.usbharu.hideout.activitypub.service.common.APResourceResolveServiceImpl
+import dev.usbharu.hideout.activitypub.service.common.InMemoryCacheManager
+import dev.usbharu.hideout.activitypub.service.common.resolve
+import dev.usbharu.hideout.application.config.ApplicationConfig
+import dev.usbharu.hideout.application.config.CharacterLimit
+import dev.usbharu.hideout.core.domain.model.post.Post
+import dev.usbharu.hideout.core.domain.model.user.User
+import dev.usbharu.hideout.core.domain.model.user.UserRepository
 import io.ktor.client.*
 import io.ktor.client.engine.mock.*
 import kotlinx.coroutines.async

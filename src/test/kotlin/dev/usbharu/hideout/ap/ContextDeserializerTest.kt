@@ -3,7 +3,7 @@ package dev.usbharu.hideout.ap
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import dev.usbharu.hideout.domain.model.ap.Follow
+import dev.usbharu.hideout.activitypub.domain.model.Follow
 
 class ContextDeserializerTest {
 

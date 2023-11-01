@@ -1,7 +1,8 @@
 package dev.usbharu.hideout.domain.model.ap
 
+import dev.usbharu.hideout.activitypub.domain.model.Follow
+import dev.usbharu.hideout.activitypub.domain.model.Undo
 import org.intellij.lang.annotations.Language
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import utils.JsonObjectMapper
 import java.time.Clock

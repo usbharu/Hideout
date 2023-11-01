@@ -1,9 +1,10 @@
 package dev.usbharu.hideout.service.ap
 
-import dev.usbharu.hideout.domain.model.ActivityPubStringResponse
-import dev.usbharu.hideout.domain.model.ap.Follow
-import dev.usbharu.hideout.domain.model.ap.Undo
-import dev.usbharu.hideout.query.UserQueryService
+import dev.usbharu.hideout.activitypub.domain.model.Follow
+import dev.usbharu.hideout.activitypub.domain.model.Undo
+import dev.usbharu.hideout.activitypub.interfaces.api.common.ActivityPubStringResponse
+import dev.usbharu.hideout.activitypub.service.activity.undo.APUndoServiceImpl
+import dev.usbharu.hideout.core.query.UserQueryService
 import io.ktor.http.*
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals

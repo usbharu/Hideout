@@ -1,13 +1,14 @@
 package dev.usbharu.hideout.service.ap
 
 
-import dev.usbharu.hideout.domain.model.hideout.entity.Reaction
-import dev.usbharu.hideout.domain.model.job.DeliverReactionJob
-import dev.usbharu.hideout.domain.model.job.DeliverRemoveReactionJob
-import dev.usbharu.hideout.query.FollowerQueryService
-import dev.usbharu.hideout.query.PostQueryService
-import dev.usbharu.hideout.service.core.TwitterSnowflakeIdGenerateService
-import dev.usbharu.hideout.service.job.JobQueueParentService
+import dev.usbharu.hideout.activitypub.service.activity.like.APReactionServiceImpl
+import dev.usbharu.hideout.application.service.id.TwitterSnowflakeIdGenerateService
+import dev.usbharu.hideout.core.domain.model.reaction.Reaction
+import dev.usbharu.hideout.core.external.job.DeliverReactionJob
+import dev.usbharu.hideout.core.external.job.DeliverRemoveReactionJob
+import dev.usbharu.hideout.core.query.FollowerQueryService
+import dev.usbharu.hideout.core.query.PostQueryService
+import dev.usbharu.hideout.core.service.job.JobQueueParentService
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.*
