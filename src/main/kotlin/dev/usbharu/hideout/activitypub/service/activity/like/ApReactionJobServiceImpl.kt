@@ -47,6 +47,7 @@ class ApReactionJobServiceImpl(
         val inbox = props[DeliverRemoveReactionJob.inbox]
         val actor = props[DeliverRemoveReactionJob.actor]
         val like = objectMapper.readValue<Like>(props[DeliverRemoveReactionJob.like])
+        val id = props[DeliverRemoveReactionJob.id]
 
         val signer = userQueryService.findByUrl(actor)
 
@@ -56,7 +57,7 @@ class ApReactionJobServiceImpl(
                 name = "Undo Reaction",
                 actor = actor,
                 `object` = like,
-                id = "${applicationConfig.url}/undo/note/${like.id}",
+                id = "${applicationConfig.url}/undo/note/$id",
                 published = Instant.now()
             ),
             signer

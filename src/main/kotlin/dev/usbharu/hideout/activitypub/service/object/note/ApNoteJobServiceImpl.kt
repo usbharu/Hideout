@@ -33,21 +33,21 @@ class ApNoteJobServiceImpl(
             objectMapper.readValue<List<Media>>(
                 props[DeliverPostJob.media]
             )
-        val note = Note(
-            name = "Note",
-            id = postEntity.url,
-            attributedTo = actor,
-            content = postEntity.text,
-            published = Instant.ofEpochMilli(postEntity.createdAt).toString(),
-            to = listOf(APNoteServiceImpl.public, "$actor/follower"),
-            attachment = mediaList.map { Document(mediaType = "image/jpeg", url = it.url) }
-
-        )
-        val inbox = props[DeliverPostJob.inbox]
-        logger.debug("createNoteJob: actor={}, note={}, inbox={}", actor, postEntity, inbox)
 
         transaction.transaction {
             val signer = userQueryService.findByUrl(actor)
+            val note = Note(
+                name = "Note",
+                id = postEntity.url,
+                attributedTo = actor,
+                content = postEntity.text,
+                published = Instant.ofEpochMilli(postEntity.createdAt).toString(),
+                to = listOfNotNull(APNoteServiceImpl.public, signer.followers),
+                attachment = mediaList.map { Document(mediaType = "image/jpeg", url = it.url) }
+
+            )
+            val inbox = props[DeliverPostJob.inbox]
+            logger.debug("createNoteJob: actor={}, note={}, inbox={}", actor, postEntity, inbox)
             apRequestService.apPost(
                 inbox,
                 Create(

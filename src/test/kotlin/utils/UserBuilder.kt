@@ -44,8 +44,8 @@ object UserBuilder {
             privateKey = privateKey,
             createdAt = createdAt,
             keyId = keyId,
-            followers = following,
-            following = followers
+            followers = followers,
+            following = following
         )
     }
 
@@ -78,8 +78,8 @@ object UserBuilder {
             privateKey = null,
             createdAt = createdAt,
             keyId = keyId,
-            followers = following,
-            following = followers
+            followers = followers,
+            following = following
         )
     }
 
