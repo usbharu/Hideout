@@ -1,7 +1,7 @@
 package dev.usbharu.hideout.activitypub.interfaces.api.note
 
 import dev.usbharu.hideout.activitypub.domain.model.Note
-import dev.usbharu.hideout.activitypub.service.`object`.note.NoteApApiService
+import dev.usbharu.hideout.activitypub.service.objects.note.NoteApApiService
 import dev.usbharu.hideout.core.infrastructure.springframework.httpsignature.HttpSignatureUser
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.CurrentSecurityContext

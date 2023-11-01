@@ -9,7 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.*
 import utils.UserBuilder
-import dev.usbharu.hideout.activitypub.domain.model.`object`.Object as APObject
+import dev.usbharu.hideout.activitypub.domain.model.objects.Object as APObject
 
 @ExtendWith(MockitoExtension::class)
 

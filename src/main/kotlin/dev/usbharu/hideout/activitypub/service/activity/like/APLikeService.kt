@@ -5,8 +5,8 @@ import dev.usbharu.hideout.activitypub.domain.exception.IllegalActivityPubObject
 import dev.usbharu.hideout.activitypub.domain.model.Like
 import dev.usbharu.hideout.activitypub.interfaces.api.common.ActivityPubResponse
 import dev.usbharu.hideout.activitypub.interfaces.api.common.ActivityPubStringResponse
-import dev.usbharu.hideout.activitypub.service.`object`.note.APNoteService
-import dev.usbharu.hideout.activitypub.service.`object`.user.APUserService
+import dev.usbharu.hideout.activitypub.service.objects.note.APNoteService
+import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
 import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.query.PostQueryService
 import dev.usbharu.hideout.core.service.reaction.ReactionService

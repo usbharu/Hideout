@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalCoroutinesApi::class) @file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 
-package dev.usbharu.hideout.activitypub.service.`object`.note
+package dev.usbharu.hideout.activitypub.service.objects.note
 
 import dev.usbharu.hideout.activitypub.domain.exception.FailedToGetActivityPubResourceException
 import dev.usbharu.hideout.activitypub.domain.model.Image
@@ -8,8 +8,8 @@ import dev.usbharu.hideout.activitypub.domain.model.Key
 import dev.usbharu.hideout.activitypub.domain.model.Note
 import dev.usbharu.hideout.activitypub.domain.model.Person
 import dev.usbharu.hideout.activitypub.service.common.APResourceResolveService
-import dev.usbharu.hideout.activitypub.service.`object`.note.APNoteServiceImpl.Companion.public
-import dev.usbharu.hideout.activitypub.service.`object`.user.APUserService
+import dev.usbharu.hideout.activitypub.service.objects.note.APNoteServiceImpl.Companion.public
+import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
 import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.application.config.CharacterLimit
 import dev.usbharu.hideout.application.service.id.TwitterSnowflakeIdGenerateService

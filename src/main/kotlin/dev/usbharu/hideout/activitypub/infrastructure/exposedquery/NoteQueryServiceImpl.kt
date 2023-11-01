@@ -3,7 +3,7 @@ package dev.usbharu.hideout.activitypub.infrastructure.exposedquery
 import dev.usbharu.hideout.activitypub.domain.model.Document
 import dev.usbharu.hideout.activitypub.domain.model.Note
 import dev.usbharu.hideout.activitypub.query.NoteQueryService
-import dev.usbharu.hideout.activitypub.service.`object`.note.APNoteServiceImpl.Companion.public
+import dev.usbharu.hideout.activitypub.service.objects.note.APNoteServiceImpl.Companion.public
 import dev.usbharu.hideout.application.infrastructure.exposed.QueryMapper
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostRepository

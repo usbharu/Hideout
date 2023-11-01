@@ -1,6 +1,6 @@
 package dev.usbharu.hideout.activitypub.service.common
 
-import dev.usbharu.hideout.activitypub.domain.model.`object`.Object
+import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 import dev.usbharu.hideout.core.domain.model.user.User
 import dev.usbharu.hideout.core.domain.model.user.UserRepository
 import org.springframework.stereotype.Service

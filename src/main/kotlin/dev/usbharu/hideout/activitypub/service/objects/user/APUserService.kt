@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.activitypub.service.`object`.user
+package dev.usbharu.hideout.activitypub.service.objects.user
 
 import dev.usbharu.hideout.activitypub.domain.exception.IllegalActivityPubObjectException
 import dev.usbharu.hideout.activitypub.domain.model.Image

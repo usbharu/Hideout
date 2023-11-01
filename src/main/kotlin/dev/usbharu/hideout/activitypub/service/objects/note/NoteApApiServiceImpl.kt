@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.activitypub.service.`object`.note
+package dev.usbharu.hideout.activitypub.service.objects.note
 
 import dev.usbharu.hideout.activitypub.domain.model.Note
 import dev.usbharu.hideout.activitypub.query.NoteQueryService

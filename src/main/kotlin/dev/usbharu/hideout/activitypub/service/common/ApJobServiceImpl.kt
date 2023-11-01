@@ -2,7 +2,7 @@ package dev.usbharu.hideout.activitypub.service.common
 
 import dev.usbharu.hideout.activitypub.service.activity.follow.APReceiveFollowJobService
 import dev.usbharu.hideout.activitypub.service.activity.like.ApReactionJobService
-import dev.usbharu.hideout.activitypub.service.`object`.note.ApNoteJobService
+import dev.usbharu.hideout.activitypub.service.objects.note.ApNoteJobService
 import dev.usbharu.hideout.core.external.job.*
 import kjob.core.dsl.JobContextWithProps
 import kjob.core.job.JobProps

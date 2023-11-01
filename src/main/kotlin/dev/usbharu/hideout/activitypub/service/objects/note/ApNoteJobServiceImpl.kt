@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.activitypub.service.`object`.note
+package dev.usbharu.hideout.activitypub.service.objects.note
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue

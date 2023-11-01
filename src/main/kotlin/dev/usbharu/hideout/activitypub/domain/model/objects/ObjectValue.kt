@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.activitypub.domain.model.`object`
+package dev.usbharu.hideout.activitypub.domain.model.objects
 
 open class ObjectValue : Object {
 

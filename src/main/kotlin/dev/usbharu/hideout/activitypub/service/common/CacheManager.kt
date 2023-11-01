@@ -1,6 +1,6 @@
 package dev.usbharu.hideout.activitypub.service.common
 
-import dev.usbharu.hideout.activitypub.domain.model.`object`.Object
+import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 
 interface CacheManager {
 

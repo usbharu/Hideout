@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.activitypub.service.`object`.note
+package dev.usbharu.hideout.activitypub.service.objects.note
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import dev.usbharu.hideout.activitypub.domain.exception.FailedToGetActivityPubResourceException
@@ -6,7 +6,7 @@ import dev.usbharu.hideout.activitypub.domain.exception.IllegalActivityPubObject
 import dev.usbharu.hideout.activitypub.domain.model.Note
 import dev.usbharu.hideout.activitypub.service.common.APResourceResolveService
 import dev.usbharu.hideout.activitypub.service.common.resolve
-import dev.usbharu.hideout.activitypub.service.`object`.user.APUserService
+import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
 import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostRepository

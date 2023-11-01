@@ -25,9 +25,7 @@ sealed class ActivityPubResponse(
         return result
     }
 
-    override fun toString(): String {
-        return "ActivityPubResponse(httpStatusCode=$httpStatusCode, contentType=$contentType)"
-    }
+    override fun toString(): String = "ActivityPubResponse(httpStatusCode=$httpStatusCode, contentType=$contentType)"
 }
 
 class ActivityPubStringResponse(
@@ -45,13 +43,9 @@ class ActivityPubStringResponse(
         return true
     }
 
-    override fun hashCode(): Int {
-        return message.hashCode()
-    }
+    override fun hashCode(): Int = message.hashCode()
 
-    override fun toString(): String {
-        return "ActivityPubStringResponse(message='$message') ${super.toString()}"
-    }
+    override fun toString(): String = "ActivityPubStringResponse(message='$message') ${super.toString()}"
 }
 
 class ActivityPubObjectResponse(
@@ -68,11 +62,7 @@ class ActivityPubObjectResponse(
         return true
     }
 
-    override fun hashCode(): Int {
-        return message.hashCode()
-    }
+    override fun hashCode(): Int = message.hashCode()
 
-    override fun toString(): String {
-        return "ActivityPubObjectResponse(message=$message) ${super.toString()}"
-    }
+    override fun toString(): String = "ActivityPubObjectResponse(message=$message) ${super.toString()}"
 }

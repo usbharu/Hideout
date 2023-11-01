@@ -47,6 +47,9 @@ style:
   UseRequire:
     active: false
 
+  VarCouldBeVal:
+    ignoreLateinitVar: true
+
 complexity:
   CognitiveComplexMethod:
     active: true

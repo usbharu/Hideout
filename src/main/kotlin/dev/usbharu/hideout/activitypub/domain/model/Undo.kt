@@ -1,8 +1,8 @@
 package dev.usbharu.hideout.activitypub.domain.model
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import dev.usbharu.hideout.activitypub.domain.model.`object`.Object
-import dev.usbharu.hideout.activitypub.domain.model.`object`.ObjectDeserializer
+import dev.usbharu.hideout.activitypub.domain.model.objects.Object
+import dev.usbharu.hideout.activitypub.domain.model.objects.ObjectDeserializer
 import java.time.Instant
 
 open class Undo : Object {

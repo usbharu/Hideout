@@ -7,7 +7,7 @@ import dev.usbharu.hideout.activitypub.domain.model.Follow
 import dev.usbharu.hideout.activitypub.domain.model.Image
 import dev.usbharu.hideout.activitypub.domain.model.Key
 import dev.usbharu.hideout.activitypub.domain.model.Person
-import dev.usbharu.hideout.activitypub.service.`object`.user.APUserService
+import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
 import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.application.config.CharacterLimit
 import dev.usbharu.hideout.core.domain.model.post.Post
