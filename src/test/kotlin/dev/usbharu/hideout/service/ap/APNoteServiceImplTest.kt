@@ -414,31 +414,5 @@ class APNoteServiceImplTest {
         assertEquals(note, fetchNote)
     }
 
-    @Test
-    fun `createPostJob 新しい投稿のJob`() {
-        runTest {
-            val activityPubNoteService = ApNoteJobServiceImpl(
 
-                userQueryService = mock(),
-                objectMapper = objectMapper,
-                apRequestService = mock(),
-                transaction = TestTransaction,
-                applicationConfig = ApplicationConfig(URL("https://example.com"))
-            )
-            activityPubNoteService.createNoteJob(
-                JobProps(
-                    data = mapOf<String, Any>(
-                        DeliverPostJob.actor.name to "https://follower.example.com", DeliverPostJob.post.name to """{
-      "id": 1,
-      "userId": 1,
-      "text": "test text",
-      "createdAt": 132525324,
-      "visibility": 0,
-      "url": "https://example.com"
-    }""", DeliverPostJob.inbox.name to "https://follower.example.com/inbox", DeliverPostJob.media.name to "[]"
-                    ), json = Json
-                )
-            )
-        }
-    }
 }

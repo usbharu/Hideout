@@ -1,6 +1,6 @@
 package dev.usbharu.hideout.service.ap.resource
 
-import dev.usbharu.hideout.activitypub.domain.model.`object`.Object
+import dev.usbharu.hideout.activitypub.service.common.APRequestService
 import dev.usbharu.hideout.activitypub.service.common.APResourceResolveServiceImpl
 import dev.usbharu.hideout.activitypub.service.common.InMemoryCacheManager
 import dev.usbharu.hideout.activitypub.service.common.resolve
@@ -9,192 +9,165 @@ import dev.usbharu.hideout.application.config.CharacterLimit
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.user.User
 import dev.usbharu.hideout.core.domain.model.user.UserRepository
-import io.ktor.client.*
-import io.ktor.client.engine.mock.*
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.junit.jupiter.MockitoExtension
-import org.mockito.kotlin.any
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.whenever
+import org.mockito.kotlin.*
+import utils.UserBuilder
 import java.net.URL
-import java.time.Instant
-import kotlin.test.assertEquals
+import dev.usbharu.hideout.activitypub.domain.model.`object`.Object as APObject
 
 @ExtendWith(MockitoExtension::class)
-@Disabled
-class APResourceResolveServiceImplTest {
 
-    val userBuilder = User.UserBuilder(CharacterLimit(), ApplicationConfig(URL("https://example.com")))
-    val postBuilder = Post.PostBuilder(CharacterLimit())
+class APResourceResolveServiceImplTest {
 
     @Test
     fun `単純な一回のリクエスト`() = runTest {
 
-        var count = 0
-
-        val httpClient = HttpClient(MockEngine { request ->
-            count++
-            respondOk("{}")
-        })
 
         val userRepository = mock<UserRepository>()
 
-        whenever(userRepository.findById(any())).doReturn(
-            userBuilder.of(
-                2L,
-                "follower",
-                "follower.example.com",
-                "followerUser",
-                "test follower user",
-                "https://follower.example.com/inbox",
-                "https://follower.example.com/outbox",
-                "https://follower.example.com",
-                "https://follower.example.com",
-                publicKey = "",
-                createdAt = Instant.now(),
-                keyId = ""
+        val user = UserBuilder.localUserOf()
+        whenever(userRepository.findById(any())) doReturn user
+
+        val apRequestService = mock<APRequestService> {
+            onBlocking {
+                apGet(
+                    eq("https"),
+                    eq(user),
+                    eq(APObject::class.java)
+                )
+            } doReturn APObject(
+                emptyList()
             )
-        )
-
+        }
         val apResourceResolveService =
-            APResourceResolveServiceImpl(mock(), userRepository, InMemoryCacheManager())
+            APResourceResolveServiceImpl(apRequestService, userRepository, InMemoryCacheManager())
 
-        apResourceResolveService.resolve<Object>("https", 0)
+        apResourceResolveService.resolve<APObject>("https", 0)
 
-        assertEquals(1, count)
+        verify(apRequestService, times(1)).apGet(eq("https"), eq(user), eq(APObject::class.java))
     }
 
     @Test
     fun 複数回の同じリクエストが重複して発行されない() = runTest {
-        var count = 0
 
-        val httpClient = HttpClient(MockEngine { request ->
-            count++
-            respondOk("{}")
-        })
 
         val userRepository = mock<UserRepository>()
 
-        whenever(userRepository.findById(any())).doReturn(
-            userBuilder.of(
-                2L,
-                "follower",
-                "follower.example.com",
-                "followerUser",
-                "test follower user",
-                "https://follower.example.com/inbox",
-                "https://follower.example.com/outbox",
-                "https://follower.example.com",
-                "https://follower.example.com",
-                publicKey = "",
-                createdAt = Instant.now(),
-                keyId = ""
+        val user = UserBuilder.localUserOf()
+        whenever(userRepository.findById(any())) doReturn user
+
+        val apRequestService = mock<APRequestService> {
+            onBlocking {
+                apGet(
+                    eq("https"),
+                    eq(user),
+                    eq(APObject::class.java)
+                )
+            } doReturn APObject(
+                emptyList()
             )
-        )
-
+        }
         val apResourceResolveService =
-            APResourceResolveServiceImpl(mock(), userRepository, InMemoryCacheManager())
+            APResourceResolveServiceImpl(apRequestService, userRepository, InMemoryCacheManager())
 
-        apResourceResolveService.resolve<Object>("https", 0)
-        apResourceResolveService.resolve<Object>("https", 0)
-        apResourceResolveService.resolve<Object>("https", 0)
-        apResourceResolveService.resolve<Object>("https", 0)
+        apResourceResolveService.resolve<APObject>("https", 0)
+        apResourceResolveService.resolve<APObject>("https", 0)
+        apResourceResolveService.resolve<APObject>("https", 0)
+        apResourceResolveService.resolve<APObject>("https", 0)
 
-        assertEquals(1, count)
+        verify(apRequestService, times(1)).apGet(
+            eq("https"),
+            eq(user),
+            eq(APObject::class.java)
+        )
     }
 
     @Test
     fun 複数回の同じリクエストが同時に発行されても重複して発行されない() = runTest {
-        var count = 0
 
-        val httpClient = HttpClient(MockEngine { request ->
-            count++
-            respondOk("{}")
-        })
 
         val userRepository = mock<UserRepository>()
+        val user = UserBuilder.localUserOf()
 
-        whenever(userRepository.findById(any())).doReturn(
-            userBuilder.of(
-                2L,
-                "follower",
-                "follower.example.com",
-                "followerUser",
-                "test follower user",
-                "https://follower.example.com/inbox",
-                "https://follower.example.com/outbox",
-                "https://follower.example.com",
-                "https://follower.example.com",
-                publicKey = "",
-                createdAt = Instant.now(),
-                keyId = ""
+        whenever(userRepository.findById(any())) doReturn user
+
+
+        val apRequestService = mock<APRequestService> {
+            onBlocking {
+                apGet(
+                    eq("https"),
+                    eq(user),
+                    eq(APObject::class.java)
+                )
+            } doReturn APObject(
+                emptyList()
             )
-        )
-
+        }
         val apResourceResolveService =
-            APResourceResolveServiceImpl(mock(), userRepository, InMemoryCacheManager())
+            APResourceResolveServiceImpl(apRequestService, userRepository, InMemoryCacheManager())
 
         repeat(10) {
             awaitAll(
-                async { apResourceResolveService.resolve<Object>("https", 0) },
-                async { apResourceResolveService.resolve<Object>("https", 0) },
-                async { apResourceResolveService.resolve<Object>("https", 0) },
-                async { apResourceResolveService.resolve<Object>("https", 0) },
-                async { apResourceResolveService.resolve<Object>("https", 0) },
-                async { apResourceResolveService.resolve<Object>("https", 0) },
-                async { apResourceResolveService.resolve<Object>("https", 0) },
-                async { apResourceResolveService.resolve<Object>("https", 0) },
-                async { apResourceResolveService.resolve<Object>("https", 0) },
-                async { apResourceResolveService.resolve<Object>("https", 0) },
-                async { apResourceResolveService.resolve<Object>("https", 0) },
+                async { apResourceResolveService.resolve<APObject>("https", 0) },
+                async { apResourceResolveService.resolve<APObject>("https", 0) },
+                async { apResourceResolveService.resolve<APObject>("https", 0) },
+                async { apResourceResolveService.resolve<APObject>("https", 0) },
+                async { apResourceResolveService.resolve<APObject>("https", 0) },
+                async { apResourceResolveService.resolve<APObject>("https", 0) },
+                async { apResourceResolveService.resolve<APObject>("https", 0) },
+                async { apResourceResolveService.resolve<APObject>("https", 0) },
+                async { apResourceResolveService.resolve<APObject>("https", 0) },
+                async { apResourceResolveService.resolve<APObject>("https", 0) },
+                async { apResourceResolveService.resolve<APObject>("https", 0) },
             )
         }
 
-        assertEquals(1, count)
+        verify(apRequestService, times(1)).apGet(
+            eq("https"),
+            eq(user),
+            eq(APObject::class.java)
+        )
     }
 
     @Test
     fun 関係のないリクエストは発行する() = runTest {
-        var count = 0
-
-        val httpClient = HttpClient(MockEngine { request ->
-            count++
-            respondOk("{}")
-        })
 
         val userRepository = mock<UserRepository>()
 
+        val user = UserBuilder.localUserOf()
         whenever(userRepository.findById(any())).doReturn(
-            userBuilder.of(
-                2L,
-                "follower",
-                "follower.example.com",
-                "followerUser",
-                "test follower user",
-                "https://follower.example.com/inbox",
-                "https://follower.example.com/outbox",
-                "https://follower.example.com",
-                "https://follower.example.com",
-                publicKey = "",
-                createdAt = Instant.now(),
-                keyId = ""
-            )
+            user
         )
 
+        val apRequestService = mock<APRequestService> {
+            onBlocking {
+                apGet(
+                    any(),
+                    eq(user),
+                    eq(APObject::class.java)
+                )
+            } doReturn APObject(
+                emptyList()
+            )
+        }
+
         val apResourceResolveService =
-            APResourceResolveServiceImpl(mock(), userRepository, InMemoryCacheManager())
+            APResourceResolveServiceImpl(apRequestService, userRepository, InMemoryCacheManager())
 
-        apResourceResolveService.resolve<Object>("abcd", 0)
-        apResourceResolveService.resolve<Object>("1234", 0)
-        apResourceResolveService.resolve<Object>("aaaa", 0)
+        apResourceResolveService.resolve<APObject>("abcd", 0)
+        apResourceResolveService.resolve<APObject>("1234", 0)
+        apResourceResolveService.resolve<APObject>("aaaa", 0)
 
-        assertEquals(3, count)
+        verify(apRequestService, times(3)).apGet(
+            any(),
+            eq(user),
+            eq(APObject::class.java)
+        )
     }
 
 
