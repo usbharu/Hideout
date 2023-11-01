@@ -66,7 +66,7 @@ tasks.create<GenerateTask>("openApiGenerateMastodonCompatibleApi", GenerateTask:
     typeMappings.put("org.springframework.core.io.Resource", "org.springframework.web.multipart.MultipartFile")
     schemaMappings.put(
         "StatusesRequest",
-        "dev.usbharu.hideout.domain.model.mastodon.StatusesRequest"
+        "dev.usbharu.hideout.mastodon.interfaces.api.status.StatusesRequest"
     )
     templateDir.set("$rootDir/templates")
 }
