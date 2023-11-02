@@ -181,8 +181,8 @@ class APServiceImpl(
     private val apAcceptService: APAcceptService,
     private val apCreateService: APCreateService,
     private val apLikeService: APLikeService,
-    @Qualifier("activitypub") private val objectMapper: ObjectMapper,
-    private val apReceiveDeleteService: APReceiveDeleteService
+    private val apReceiveDeleteService: APReceiveDeleteService,
+    @Qualifier("activitypub") private val objectMapper: ObjectMapper
 ) : APService {
 
     val logger: Logger = LoggerFactory.getLogger(APServiceImpl::class.java)
