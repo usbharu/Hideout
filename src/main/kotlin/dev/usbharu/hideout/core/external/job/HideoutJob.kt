@@ -15,10 +15,9 @@ object ReceiveFollowJob : HideoutJob("ReceiveFollowJob") {
 
 @Component
 object DeliverPostJob : HideoutJob("DeliverPostJob") {
-    val post: Prop<DeliverPostJob, String> = string("post")
-    val actor: Prop<DeliverPostJob, String> = string("actor")
-    val inbox: Prop<DeliverPostJob, String> = string("inbox")
-    val media: Prop<DeliverPostJob, String> = string("media")
+    val create = string("create")
+    val inbox = string("inbox")
+    val actor = string("actor")
 }
 
 @Component
