@@ -5,10 +5,12 @@ import dev.usbharu.hideout.activitypub.domain.model.Note
 import dev.usbharu.hideout.activitypub.query.NoteQueryService
 import dev.usbharu.hideout.activitypub.service.objects.note.APNoteServiceImpl.Companion.public
 import dev.usbharu.hideout.application.infrastructure.exposed.QueryMapper
+import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.domain.model.post.Visibility
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.*
+import dev.usbharu.hideout.util.singleOr
 import org.jetbrains.exposed.sql.Query
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.select
@@ -24,7 +26,22 @@ class NoteQueryServiceImpl(private val postRepository: PostRepository, private v
             .leftJoin(PostsMedia)
             .leftJoin(Media)
             .select { Posts.id eq id }
-            .let { it.toNote() to postQueryMapper.map(it).first() }
+            .let {
+                it.toNote() to postQueryMapper.map(it)
+                    .singleOr { FailedToGetResourcesException("id: $id does not exist.") }
+            }
+    }
+
+    override suspend fun findByApid(apId: String): Pair<Note, Post> {
+        return Posts
+            .leftJoin(Users)
+            .leftJoin(PostsMedia)
+            .leftJoin(Media)
+            .select { Posts.apId eq apId }
+            .let {
+                it.toNote() to postQueryMapper.map(it)
+                    .singleOr { FailedToGetResourcesException("apid: $apId does not exist.") }
+            }
     }
 
     private suspend fun ResultRow.toNote(mediaList: List<dev.usbharu.hideout.core.domain.model.media.Media>): Note {
@@ -58,7 +75,7 @@ class NoteQueryServiceImpl(private val postRepository: PostRepository, private v
         return this.groupBy { it[Posts.id] }
             .map { it.value }
             .map { it.first().toNote(it.mapNotNull { it.toMediaOrNull() }) }
-            .first()
+            .singleOr { FailedToGetResourcesException("resource does not exist.") }
     }
 
     private fun visibility(visibility: Visibility, followers: String?): Pair<List<String>, List<String>> {
