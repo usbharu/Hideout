@@ -132,6 +132,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.springframework.security:spring-security-oauth2-jose")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
+    implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
     implementation("org.jetbrains.exposed:exposed-spring-boot-starter:0.44.0")
     implementation("io.trbl:blurhash:1.0.0")
     implementation("software.amazon.awssdk:s3:2.20.157")
