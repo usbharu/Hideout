@@ -40,6 +40,8 @@ open class JsonLd {
 }
 
 class ContextDeserializer : JsonDeserializer<String>() {
+
+
     override fun deserialize(
         p0: com.fasterxml.jackson.core.JsonParser?,
         p1: com.fasterxml.jackson.databind.DeserializationContext?
@@ -54,11 +56,18 @@ class ContextDeserializer : JsonDeserializer<String>() {
 
 class ContextSerializer : JsonSerializer<List<String>>() {
 
-    override fun isEmpty(value: List<String>?): Boolean = value.isNullOrEmpty()
+    override fun isEmpty(value: List<String>?): Boolean {
+        return value.isNullOrEmpty()
+    }
 
-    override fun serialize(value: List<String>?, gen: JsonGenerator?, serializers: SerializerProvider?) {
+    override fun isEmpty(provider: SerializerProvider?, value: List<String>?): Boolean {
+        return value.isNullOrEmpty()
+    }
+
+    override fun serialize(value: List<String>?, gen: JsonGenerator?, serializers: SerializerProvider) {
+
         if (value.isNullOrEmpty()) {
-            gen?.writeNull()
+            serializers.defaultSerializeNull(gen)
             return
         }
         if (value.size == 1) {
