@@ -16,6 +16,7 @@ class APServiceImplTest {
             apAcceptService = mock(),
             apCreateService = mock(),
             apLikeService = mock(),
+            apReceiveDeleteService = mock(),
             objectMapper = objectMapper
         )
 
@@ -33,6 +34,7 @@ class APServiceImplTest {
             apAcceptService = mock(),
             apCreateService = mock(),
             apLikeService = mock(),
+            apReceiveDeleteService = mock(),
             objectMapper = objectMapper
         )
 
@@ -50,6 +52,7 @@ class APServiceImplTest {
             apAcceptService = mock(),
             apCreateService = mock(),
             apLikeService = mock(),
+            apReceiveDeleteService = mock(),
             objectMapper = objectMapper
         )
 
@@ -67,6 +70,7 @@ class APServiceImplTest {
             apAcceptService = mock(),
             apCreateService = mock(),
             apLikeService = mock(),
+            apReceiveDeleteService = mock(),
             objectMapper = objectMapper
         )
 
@@ -84,6 +88,7 @@ class APServiceImplTest {
             apAcceptService = mock(),
             apCreateService = mock(),
             apLikeService = mock(),
+            apReceiveDeleteService = mock(),
             objectMapper = objectMapper
         )
 
@@ -101,6 +106,7 @@ class APServiceImplTest {
             apAcceptService = mock(),
             apCreateService = mock(),
             apLikeService = mock(),
+            apReceiveDeleteService = mock(),
             objectMapper = objectMapper
         )
 
@@ -118,6 +124,7 @@ class APServiceImplTest {
             apAcceptService = mock(),
             apCreateService = mock(),
             apLikeService = mock(),
+            apReceiveDeleteService = mock(),
             objectMapper = objectMapper
         )
 
@@ -135,6 +142,7 @@ class APServiceImplTest {
             apAcceptService = mock(),
             apCreateService = mock(),
             apLikeService = mock(),
+            apReceiveDeleteService = mock(),
             objectMapper = objectMapper
         )
 
@@ -152,6 +160,7 @@ class APServiceImplTest {
             apAcceptService = mock(),
             apCreateService = mock(),
             apLikeService = mock(),
+            apReceiveDeleteService = mock(),
             objectMapper = objectMapper
         )
 
@@ -169,6 +178,7 @@ class APServiceImplTest {
             apAcceptService = mock(),
             apCreateService = mock(),
             apLikeService = mock(),
+            apReceiveDeleteService = mock(),
             objectMapper = objectMapper
         )
 
@@ -186,6 +196,7 @@ class APServiceImplTest {
             apAcceptService = mock(),
             apCreateService = mock(),
             apLikeService = mock(),
+            apReceiveDeleteService = mock(),
             objectMapper = objectMapper
         )
 
@@ -203,6 +214,7 @@ class APServiceImplTest {
             apAcceptService = mock(),
             apCreateService = mock(),
             apLikeService = mock(),
+            apReceiveDeleteService = mock(),
             objectMapper = objectMapper
         )
 
@@ -220,6 +232,7 @@ class APServiceImplTest {
             apAcceptService = mock(),
             apCreateService = mock(),
             apLikeService = mock(),
+            apReceiveDeleteService = mock(),
             objectMapper = objectMapper
         )
 
