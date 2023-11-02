@@ -11,20 +11,13 @@ import dev.usbharu.hideout.activitypub.query.NoteQueryService
 import dev.usbharu.hideout.activitypub.service.common.APResourceResolveService
 import dev.usbharu.hideout.activitypub.service.objects.note.APNoteServiceImpl.Companion.public
 import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
-import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.application.config.CharacterLimit
 import dev.usbharu.hideout.application.service.id.TwitterSnowflakeIdGenerateService
 import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
-import dev.usbharu.hideout.core.domain.model.post.Visibility
-import dev.usbharu.hideout.core.domain.model.user.User
-import dev.usbharu.hideout.core.external.job.DeliverPostJob
-import dev.usbharu.hideout.core.query.FollowerQueryService
-import dev.usbharu.hideout.core.query.MediaQueryService
 import dev.usbharu.hideout.core.query.PostQueryService
 import dev.usbharu.hideout.core.query.UserQueryService
-import dev.usbharu.hideout.core.service.job.JobQueueParentService
 import dev.usbharu.hideout.core.service.post.PostService
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -43,100 +36,16 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.mockito.Mockito.anyLong
 import org.mockito.kotlin.*
 import utils.JsonObjectMapper.objectMapper
 import utils.PostBuilder
 import utils.UserBuilder
-import java.net.URL
 import java.time.Instant
 
 
 class APNoteServiceImplTest {
 
-    val userBuilder = User.UserBuilder(CharacterLimit(), ApplicationConfig(URL("https://example.com")))
     val postBuilder = Post.PostBuilder(CharacterLimit())
-
-    @Test
-    fun `createPost 新しい投稿`() {
-        val mediaQueryService = mock<MediaQueryService> {
-            onBlocking { findByPostId(anyLong()) } doReturn emptyList()
-        }
-
-
-
-        runTest {
-            val followers = listOf(
-                userBuilder.of(
-                    2L,
-                    "follower",
-                    "follower.example.com",
-                    "followerUser",
-                    "test follower user",
-                    "https://follower.example.com/inbox",
-                    "https://follower.example.com/outbox",
-                    "https://follower.example.com",
-                    "https://follower.example.com",
-                    publicKey = "",
-                    createdAt = Instant.now(),
-                    keyId = "a"
-                ), userBuilder.of(
-                    3L,
-                    "follower2",
-                    "follower2.example.com",
-                    "follower2User",
-                    "test follower2 user",
-                    "https://follower2.example.com/inbox",
-                    "https://follower2.example.com/outbox",
-                    "https://follower2.example.com",
-                    "https://follower2.example.com",
-                    publicKey = "",
-                    createdAt = Instant.now(),
-                    keyId = "a"
-                )
-            )
-            val userQueryService = mock<UserQueryService> {
-                onBlocking { findById(eq(1L)) } doReturn userBuilder.of(
-                    1L,
-                    "test",
-                    "example.com",
-                    "testUser",
-                    "test user",
-                    "a",
-                    "https://example.com/inbox",
-                    "https://example.com/outbox",
-                    "https://example.com",
-                    publicKey = "",
-                    privateKey = "a",
-                    createdAt = Instant.now(),
-                    keyId = "a"
-                )
-            }
-            val followerQueryService = mock<FollowerQueryService> {
-                onBlocking { findFollowersById(eq(1L)) } doReturn followers
-            }
-            val jobQueueParentService = mock<JobQueueParentService>()
-            val activityPubNoteService = APNoteServiceImpl(
-                jobQueueParentService = jobQueueParentService,
-                postRepository = mock(),
-                apUserService = mock(),
-                userQueryService = userQueryService,
-                followerQueryService = followerQueryService,
-                postQueryService = mock(),
-                mediaQueryService = mediaQueryService,
-                objectMapper = objectMapper,
-                postService = mock(),
-                apResourceResolveService = mock(),
-                postBuilder = postBuilder,
-                noteQueryService = mock()
-            )
-            val postEntity = postBuilder.of(
-                1L, 1L, null, "test text", 1L, Visibility.PUBLIC, "https://example.com"
-            )
-            activityPubNoteService.createNote(postEntity)
-            verify(jobQueueParentService, times(2)).schedule(eq(DeliverPostJob), any())
-        }
-    }
 
     @Test
     fun `fetchNote(String,String) ノートが既に存在する場合はDBから取得したものを返す`() = runTest {
@@ -162,13 +71,9 @@ class APNoteServiceImplTest {
             onBlocking { findByApid(eq(url)) } doReturn (expected to post)
         }
         val apNoteServiceImpl = APNoteServiceImpl(
-            jobQueueParentService = mock(),
             postRepository = mock(),
             apUserService = mock(),
-            userQueryService = userQueryService,
-            followerQueryService = mock(),
             postQueryService = mock(),
-            mediaQueryService = mock(),
             objectMapper = objectMapper,
             postService = mock(),
             apResourceResolveService = mock(),
@@ -243,13 +148,9 @@ class APNoteServiceImplTest {
             onBlocking { generateId() } doReturn TwitterSnowflakeIdGenerateService.generateId()
         }
         val apNoteServiceImpl = APNoteServiceImpl(
-            jobQueueParentService = mock(),
             postRepository = postRepository,
             apUserService = apUserService,
-            userQueryService = userQueryService,
-            followerQueryService = mock(),
             postQueryService = postQueryService,
-            mediaQueryService = mock(),
             objectMapper = objectMapper,
             postService = mock(),
             apResourceResolveService = apResourceResolveService,
@@ -315,13 +216,9 @@ class APNoteServiceImplTest {
                 onBlocking { findByApid(eq(url)) } doThrow FailedToGetResourcesException()
             }
             val apNoteServiceImpl = APNoteServiceImpl(
-                jobQueueParentService = mock(),
                 postRepository = mock(),
                 apUserService = mock(),
-                userQueryService = userQueryService,
-                followerQueryService = mock(),
                 postQueryService = postQueryService,
-                mediaQueryService = mock(),
                 objectMapper = objectMapper,
                 postService = mock(),
                 apResourceResolveService = apResourceResolveService,
@@ -371,13 +268,9 @@ class APNoteServiceImplTest {
             onBlocking { findByApid(eq(post.apId)) } doThrow FailedToGetResourcesException()
         }
         val apNoteServiceImpl = APNoteServiceImpl(
-            jobQueueParentService = mock(),
             postRepository = postRepository,
             apUserService = apUserService,
-            userQueryService = mock(),
-            followerQueryService = mock(),
             postQueryService = mock(),
-            mediaQueryService = mock(),
             objectMapper = objectMapper,
             postService = postService,
             apResourceResolveService = mock(),
@@ -433,13 +326,9 @@ class APNoteServiceImplTest {
             onBlocking { findByApid(eq(post.apId)) } doReturn (note to post)
         }
         val apNoteServiceImpl = APNoteServiceImpl(
-            jobQueueParentService = mock(),
             postRepository = mock(),
             apUserService = mock(),
-            userQueryService = userQueryService,
-            followerQueryService = mock(),
             postQueryService = mock(),
-            mediaQueryService = mock(),
             objectMapper = objectMapper,
             postService = mock(),
             apResourceResolveService = mock(),
