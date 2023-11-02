@@ -48,12 +48,12 @@ class StatusQueryServiceImpl : StatusQueryService {
                 }
             }
 
-        return statusQueries.mapNotNull {
-            postMap[it.postId]?.copy(
-                inReplyToId = it.replyId?.toString(),
-                inReplyToAccountId = postMap[it.replyId]?.account?.id,
-                reblog = postMap[it.repostId],
-                mediaAttachments = it.mediaIds.mapNotNull { mediaMap[it] }
+        return statusQueries.mapNotNull { statusQuery ->
+            postMap[statusQuery.postId]?.copy(
+                inReplyToId = statusQuery.replyId?.toString(),
+                inReplyToAccountId = postMap[statusQuery.replyId]?.account?.id,
+                reblog = postMap[statusQuery.repostId],
+                mediaAttachments = statusQuery.mediaIds.mapNotNull { mediaMap[it] }
             )
         }
     }
