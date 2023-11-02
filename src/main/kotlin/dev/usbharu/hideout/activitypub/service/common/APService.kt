@@ -8,6 +8,7 @@ import dev.usbharu.hideout.activitypub.domain.model.Follow
 import dev.usbharu.hideout.activitypub.interfaces.api.common.ActivityPubResponse
 import dev.usbharu.hideout.activitypub.service.activity.accept.APAcceptService
 import dev.usbharu.hideout.activitypub.service.activity.create.APCreateService
+import dev.usbharu.hideout.activitypub.service.activity.delete.APReceiveDeleteService
 import dev.usbharu.hideout.activitypub.service.activity.follow.APReceiveFollowService
 import dev.usbharu.hideout.activitypub.service.activity.like.APLikeService
 import dev.usbharu.hideout.activitypub.service.activity.undo.APUndoService
@@ -180,6 +181,7 @@ class APServiceImpl(
     private val apAcceptService: APAcceptService,
     private val apCreateService: APCreateService,
     private val apLikeService: APLikeService,
+    private val apReceiveDeleteService: APReceiveDeleteService,
     @Qualifier("activitypub") private val objectMapper: ObjectMapper
 ) : APService {
 
@@ -234,6 +236,7 @@ class APServiceImpl(
             ActivityType.Create -> apCreateService.receiveCreate(objectMapper.readValue(json))
             ActivityType.Like -> apLikeService.receiveLike(objectMapper.readValue(json))
             ActivityType.Undo -> apUndoService.receiveUndo(objectMapper.readValue(json))
+            ActivityType.Delete -> apReceiveDeleteService.receiveDelete(objectMapper.readValue(json))
 
             else -> {
                 throw IllegalArgumentException("$type is not supported.")
