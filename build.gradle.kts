@@ -141,6 +141,7 @@ dependencies {
     implementation("dev.usbharu:http-signature:1.0.0")
 
     implementation("org.postgresql:postgresql:42.6.0")
+    implementation("com.twelvemonkeys.imageio:imageio-webp:3.10.0")
 
 
     implementation("io.ktor:ktor-client-logging-jvm:$ktor_version")
