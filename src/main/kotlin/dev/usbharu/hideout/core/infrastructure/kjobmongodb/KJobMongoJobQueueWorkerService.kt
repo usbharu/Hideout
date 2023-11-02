@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.core.infrastructure.kjobmongodb
 
+import com.mongodb.reactivestreams.client.MongoClient
 import dev.usbharu.hideout.core.service.job.JobQueueWorkerService
 import kjob.core.dsl.JobRegisterContext
 import kjob.core.dsl.KJobFunctions
@@ -12,10 +13,10 @@ import kjob.core.dsl.JobContextWithProps as JCWP
 
 @Service
 @ConditionalOnProperty(name = ["hideout.use-mongodb"], havingValue = "true", matchIfMissing = false)
-class KJobMongoJobQueueWorkerService : JobQueueWorkerService {
+class KJobMongoJobQueueWorkerService(private val mongoClient: MongoClient) : JobQueueWorkerService, AutoCloseable {
     val kjob by lazy {
         kjob(Mongo) {
-            connectionString = "mongodb://localhost"
+            client = mongoClient
             nonBlockingMaxJobs = 10
             blockingMaxJobs = 10
             jobExecutionPeriodInSeconds = 1
@@ -28,5 +29,9 @@ class KJobMongoJobQueueWorkerService : JobQueueWorkerService {
         defines.forEach { job ->
             kjob.register(job.first, job.second)
         }
+    }
+
+    override fun close() {
+        kjob.shutdown()
     }
 }
