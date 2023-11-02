@@ -1,6 +1,5 @@
 package dev.usbharu.hideout.core.service.post
 
-import com.mongodb.DuplicateKeyException
 import dev.usbharu.hideout.activitypub.service.activity.create.ApSendCreateService
 import dev.usbharu.hideout.core.domain.exception.UserNotFoundException
 import dev.usbharu.hideout.core.domain.model.post.Post
@@ -10,6 +9,7 @@ import dev.usbharu.hideout.core.query.PostQueryService
 import dev.usbharu.hideout.core.service.timeline.TimelineService
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.slf4j.LoggerFactory
+import org.springframework.dao.DuplicateKeyException
 import org.springframework.stereotype.Service
 import java.time.Instant
 
