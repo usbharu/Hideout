@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.core.infrastructure.kjobmongodb
 
+import com.mongodb.reactivestreams.client.MongoClient
 import dev.usbharu.hideout.core.service.job.JobQueueParentService
 import kjob.core.Job
 import kjob.core.dsl.ScheduleContext
@@ -10,9 +11,9 @@ import org.springframework.stereotype.Service
 
 @Service
 @ConditionalOnProperty(name = ["hideout.use-mongodb"], havingValue = "true", matchIfMissing = false)
-class KjobMongoJobQueueParentService : JobQueueParentService {
+class KjobMongoJobQueueParentService(private val mongoClient: MongoClient) : JobQueueParentService, AutoCloseable {
     private val kjob = kjob(Mongo) {
-        connectionString = "mongodb://localhost"
+        client = mongoClient
         databaseName = "kjob"
         jobCollection = "kjob-jobs"
         lockCollection = "kjob-locks"
@@ -24,5 +25,9 @@ class KjobMongoJobQueueParentService : JobQueueParentService {
 
     override suspend fun <J : Job> schedule(job: J, block: ScheduleContext<J>.(J) -> Unit) {
         kjob.schedule(job, block)
+    }
+
+    override fun close() {
+        kjob.shutdown()
     }
 }
