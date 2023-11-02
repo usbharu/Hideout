@@ -44,6 +44,4 @@ open class Delete : Object {
     override fun toString(): String {
         return "Delete(`object`=$`object`, published=$published) ${super.toString()}"
     }
-
-
 }
