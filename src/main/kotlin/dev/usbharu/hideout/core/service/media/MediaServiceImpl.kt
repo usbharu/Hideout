@@ -95,7 +95,6 @@ class MediaServiceImpl(
         )
     }
 
-
     // TODO: 仮の処理として保存したように動かす
     override suspend fun uploadRemoteMedia(remoteMedia: RemoteMedia): Media {
         logger.info("MEDIA Remote media. filename:${remoteMedia.name} url:${remoteMedia.url}")
@@ -145,7 +144,6 @@ class MediaServiceImpl(
             mediaBlurhashService.generateBlurhash(ImageIO.read(bytes.inputStream()))
         }
 
-
         return mediaRepository.save(
             EntityMedia(
                 id = mediaRepository.generateId(),
@@ -158,7 +156,6 @@ class MediaServiceImpl(
             )
         )
     }
-
 
     companion object {
         private val logger = LoggerFactory.getLogger(MediaServiceImpl::class.java)
