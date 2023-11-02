@@ -18,7 +18,6 @@ import dev.usbharu.hideout.core.query.MediaQueryService
 import dev.usbharu.hideout.core.query.PostQueryService
 import dev.usbharu.hideout.core.query.UserQueryService
 import dev.usbharu.hideout.core.service.job.JobQueueParentService
-import dev.usbharu.hideout.core.service.post.PostCreateInterceptor
 import dev.usbharu.hideout.core.service.post.PostService
 import io.ktor.client.plugins.*
 import kotlinx.coroutines.CoroutineScope
@@ -34,8 +33,6 @@ import org.springframework.stereotype.Service
 import java.time.Instant
 
 interface APNoteService {
-
-    suspend fun createNote(post: Post)
 
     @Cacheable("fetchNote")
     fun fetchNoteAsync(url: String, targetActor: String? = null): Deferred<Note> {
@@ -66,15 +63,12 @@ class APNoteServiceImpl(
     private val postBuilder: Post.PostBuilder,
     private val noteQueryService: NoteQueryService
 
-) : APNoteService, PostCreateInterceptor {
+) : APNoteService {
 
-    init {
-        postService.addInterceptor(this)
-    }
 
     private val logger = LoggerFactory.getLogger(APNoteServiceImpl::class.java)
 
-    override suspend fun createNote(post: Post) {
+    suspend fun createNote(post: Post) {
         logger.info("CREATE Create Local Note ${post.url}")
         logger.debug("START Create Local Note ${post.url}")
         logger.trace("{}", post)
@@ -185,9 +179,6 @@ class APNoteServiceImpl(
     override suspend fun fetchNote(note: Note, targetActor: String?): Note =
         saveIfMissing(note, targetActor, note.id ?: throw IllegalArgumentException("note.id is null"))
 
-    override suspend fun run(post: Post) {
-        createNote(post)
-    }
 
     companion object {
         const val public: String = "https://www.w3.org/ns/activitystreams#Public"
