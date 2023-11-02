@@ -96,6 +96,7 @@ class APRequestServiceImpl(
         return objectMapper.readValue(bodyAsText, responseClass)
     }
 
+    @Suppress("LongMethod")
     override suspend fun <T : Object> apPost(url: String, body: T?, signer: User?): String {
         logger.debug("START ActivityPub Request POST url: {}, signer: {}", url, signer?.url)
         val requestBody = if (body != null) {
