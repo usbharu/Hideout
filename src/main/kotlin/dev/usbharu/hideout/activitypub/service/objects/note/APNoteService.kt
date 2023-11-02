@@ -89,10 +89,7 @@ class APNoteServiceImpl(
         targetActor: String?,
         url: String
     ): Note {
-        if (note.id == null) {
-            throw IllegalArgumentException("id is null")
-//            return internalNote(note, targetActor, url)
-        }
+        requireNotNull(note.id) { "id is null" }
 
         return try {
             noteQueryService.findByApid(note.id!!).first
