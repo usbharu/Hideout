@@ -126,14 +126,14 @@ class APNoteServiceImpl(
             postQueryService.findByUrl(it)
         }
 
-
         val mediaList = note.attachment
             .filter { it.url != null }
             .map {
                 mediaService.uploadRemoteMedia(
                     RemoteMedia(
                         (it.name ?: it.url)!!,
-                        it.url!!, it.mediaType ?: "application/octet-stream"
+                        it.url!!,
+                        it.mediaType ?: "application/octet-stream"
                     )
                 )
             }
