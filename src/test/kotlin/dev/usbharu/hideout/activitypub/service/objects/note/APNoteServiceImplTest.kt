@@ -78,7 +78,8 @@ class APNoteServiceImplTest {
             postService = mock(),
             apResourceResolveService = mock(),
             postBuilder = Post.PostBuilder(CharacterLimit()),
-            noteQueryService = noteQueryService
+            noteQueryService = noteQueryService,
+            mock()
         )
 
         val actual = apNoteServiceImpl.fetchNote(url)
@@ -155,7 +156,8 @@ class APNoteServiceImplTest {
             postService = mock(),
             apResourceResolveService = apResourceResolveService,
             postBuilder = Post.PostBuilder(CharacterLimit()),
-            noteQueryService = noteQueryService
+            noteQueryService = noteQueryService,
+            mock()
         )
 
         val actual = apNoteServiceImpl.fetchNote(url)
@@ -223,7 +225,8 @@ class APNoteServiceImplTest {
                 postService = mock(),
                 apResourceResolveService = apResourceResolveService,
                 postBuilder = Post.PostBuilder(CharacterLimit()),
-                noteQueryService = noteQueryService
+                noteQueryService = noteQueryService,
+                mock()
             )
 
             assertThrows<FailedToGetActivityPubResourceException> { apNoteServiceImpl.fetchNote(url) }
@@ -275,7 +278,8 @@ class APNoteServiceImplTest {
             postService = postService,
             apResourceResolveService = mock(),
             postBuilder = postBuilder,
-            noteQueryService = noteQueryService
+            noteQueryService = noteQueryService,
+            mock()
         )
 
         val note = Note(
@@ -333,7 +337,8 @@ class APNoteServiceImplTest {
             postService = mock(),
             apResourceResolveService = mock(),
             postBuilder = postBuilder,
-            noteQueryService = noteQueryService
+            noteQueryService = noteQueryService,
+            mock()
         )
 
 
