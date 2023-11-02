@@ -3,9 +3,11 @@ package dev.usbharu.hideout.core.service.media
 import dev.usbharu.hideout.core.domain.exception.media.MediaFileSizeIsZeroException
 import dev.usbharu.hideout.core.domain.exception.media.MediaSaveException
 import dev.usbharu.hideout.core.domain.exception.media.UnsupportedMediaException
+import dev.usbharu.hideout.core.domain.model.media.Media
 import dev.usbharu.hideout.core.domain.model.media.MediaRepository
 import dev.usbharu.hideout.core.service.media.converter.MediaProcessService
 import dev.usbharu.hideout.mastodon.interfaces.api.media.MediaRequest
+import io.ktor.client.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
@@ -21,7 +23,8 @@ class MediaServiceImpl(
     private val fileTypeDeterminationService: FileTypeDeterminationService,
     private val mediaBlurhashService: MediaBlurhashService,
     private val mediaRepository: MediaRepository,
-    private val mediaProcessService: MediaProcessService
+    private val mediaProcessService: MediaProcessService,
+    private val httpClient: HttpClient
 ) : MediaService {
     override suspend fun uploadLocalMedia(mediaRequest: MediaRequest): EntityMedia {
         logger.info(
@@ -88,7 +91,24 @@ class MediaServiceImpl(
         )
     }
 
-    override suspend fun uploadRemoteMedia(remoteMedia: RemoteMedia) = Unit
+
+    // TODO: 仮の処理として保存したように動かす
+    override suspend fun uploadRemoteMedia(remoteMedia: RemoteMedia): Media {
+        logger.info("MEDIA Remote media. filename:${remoteMedia.name} url:${remoteMedia.url}")
+
+        return mediaRepository.save(
+            EntityMedia(
+                id = mediaRepository.generateId(),
+                name = remoteMedia.name,
+                url = remoteMedia.url,
+                remoteUrl = remoteMedia.url,
+                thumbnailUrl = remoteMedia.url,
+                type = FileType.Image,
+                blurHash = null
+            )
+        )
+    }
+
 
     companion object {
         private val logger = LoggerFactory.getLogger(MediaServiceImpl::class.java)
