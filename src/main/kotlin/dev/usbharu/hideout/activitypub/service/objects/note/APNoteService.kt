@@ -12,13 +12,7 @@ import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.domain.model.post.Visibility
-import dev.usbharu.hideout.core.external.job.DeliverPostJob
-import dev.usbharu.hideout.core.query.FollowerQueryService
-import dev.usbharu.hideout.core.query.MediaQueryService
 import dev.usbharu.hideout.core.query.PostQueryService
-import dev.usbharu.hideout.core.query.UserQueryService
-import dev.usbharu.hideout.core.service.job.JobQueueParentService
-import dev.usbharu.hideout.core.service.post.PostCreateInterceptor
 import dev.usbharu.hideout.core.service.post.PostService
 import io.ktor.client.plugins.*
 import kotlinx.coroutines.CoroutineScope
@@ -34,8 +28,6 @@ import org.springframework.stereotype.Service
 import java.time.Instant
 
 interface APNoteService {
-
-    suspend fun createNote(post: Post)
 
     @Cacheable("fetchNote")
     fun fetchNoteAsync(url: String, targetActor: String? = null): Deferred<Note> {
@@ -53,49 +45,18 @@ interface APNoteService {
 @Service
 @Suppress("LongParameterList")
 class APNoteServiceImpl(
-    private val jobQueueParentService: JobQueueParentService,
     private val postRepository: PostRepository,
     private val apUserService: APUserService,
-    private val userQueryService: UserQueryService,
-    private val followerQueryService: FollowerQueryService,
     private val postQueryService: PostQueryService,
-    private val mediaQueryService: MediaQueryService,
     @Qualifier("activitypub") private val objectMapper: ObjectMapper,
     private val postService: PostService,
     private val apResourceResolveService: APResourceResolveService,
     private val postBuilder: Post.PostBuilder,
     private val noteQueryService: NoteQueryService
 
-) : APNoteService, PostCreateInterceptor {
-
-    init {
-        postService.addInterceptor(this)
-    }
+) : APNoteService {
 
     private val logger = LoggerFactory.getLogger(APNoteServiceImpl::class.java)
-
-    override suspend fun createNote(post: Post) {
-        logger.info("CREATE Create Local Note ${post.url}")
-        logger.debug("START Create Local Note ${post.url}")
-        logger.trace("{}", post)
-        val followers = followerQueryService.findFollowersById(post.userId)
-
-        logger.debug("DELIVER Deliver Note Create ${followers.size} accounts.")
-
-        val userEntity = userQueryService.findById(post.userId)
-        val note = objectMapper.writeValueAsString(post)
-        val mediaList = objectMapper.writeValueAsString(mediaQueryService.findByPostId(post.id))
-        followers.forEach { followerEntity ->
-            jobQueueParentService.schedule(DeliverPostJob) {
-                props[DeliverPostJob.actor] = userEntity.url
-                props[DeliverPostJob.post] = note
-                props[DeliverPostJob.inbox] = followerEntity.inbox
-                props[DeliverPostJob.media] = mediaList
-            }
-        }
-
-        logger.debug("SUCCESS Create Local Note ${post.url}")
-    }
 
     override suspend fun fetchNote(url: String, targetActor: String?): Note {
         logger.debug("START Fetch Note url: {}", url)
@@ -127,10 +88,7 @@ class APNoteServiceImpl(
         targetActor: String?,
         url: String
     ): Note {
-        if (note.id == null) {
-            throw IllegalArgumentException("id is null")
-//            return internalNote(note, targetActor, url)
-        }
+        requireNotNull(note.id) { "id is null" }
 
         return try {
             noteQueryService.findByApid(note.id!!).first
@@ -184,10 +142,6 @@ class APNoteServiceImpl(
 
     override suspend fun fetchNote(note: Note, targetActor: String?): Note =
         saveIfMissing(note, targetActor, note.id ?: throw IllegalArgumentException("note.id is null"))
-
-    override suspend fun run(post: Post) {
-        createNote(post)
-    }
 
     companion object {
         const val public: String = "https://www.w3.org/ns/activitystreams#Public"

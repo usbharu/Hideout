@@ -7,9 +7,4 @@ import org.springframework.stereotype.Service
 interface PostService {
     suspend fun createLocal(post: PostCreateDto): Post
     suspend fun createRemote(post: Post): Post
-    fun addInterceptor(postCreateInterceptor: PostCreateInterceptor)
-}
-
-interface PostCreateInterceptor {
-    suspend fun run(post: Post)
 }
