@@ -11,7 +11,7 @@ open class Delete : Object {
 
     constructor(
         type: List<String> = emptyList(),
-        name: String = "Delete",
+        name: String? = "Delete",
         actor: String,
         id: String,
         `object`: Object,
