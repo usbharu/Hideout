@@ -22,7 +22,6 @@ class PostServiceImpl(
     private val apSendCreateService: ApSendCreateService
 ) : PostService {
 
-
     override suspend fun createLocal(post: PostCreateDto): Post {
         logger.info("START Create Local Post user: {}, media: {}", post.userId, post.mediaIds.size)
         val create = internalCreate(post, true)
@@ -37,7 +36,6 @@ class PostServiceImpl(
         logger.info("SUCCESS Create Remote Post url: {}", createdPost.url)
         return createdPost
     }
-
 
     private suspend fun internalCreate(post: Post, isLocal: Boolean): Post {
         val save = try {

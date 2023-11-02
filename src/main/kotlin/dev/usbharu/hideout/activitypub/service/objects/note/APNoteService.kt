@@ -56,7 +56,6 @@ class APNoteServiceImpl(
 
 ) : APNoteService {
 
-
     private val logger = LoggerFactory.getLogger(APNoteServiceImpl::class.java)
 
     override suspend fun fetchNote(url: String, targetActor: String?): Note {
@@ -143,7 +142,6 @@ class APNoteServiceImpl(
 
     override suspend fun fetchNote(note: Note, targetActor: String?): Note =
         saveIfMissing(note, targetActor, note.id ?: throw IllegalArgumentException("note.id is null"))
-
 
     companion object {
         const val public: String = "https://www.w3.org/ns/activitystreams#Public"

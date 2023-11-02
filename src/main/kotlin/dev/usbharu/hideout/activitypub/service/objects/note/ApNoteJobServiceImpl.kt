@@ -20,7 +20,6 @@ class ApNoteJobServiceImpl(
     private val transaction: Transaction
 ) : ApNoteJobService {
     override suspend fun createNoteJob(props: JobProps<DeliverPostJob>) {
-
         val actor = props[DeliverPostJob.actor]
         val create = objectMapper.readValue<Create>(props[DeliverPostJob.create])
         transaction.transaction {
