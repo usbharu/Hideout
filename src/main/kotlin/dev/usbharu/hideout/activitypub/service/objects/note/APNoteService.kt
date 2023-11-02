@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import dev.usbharu.hideout.activitypub.domain.exception.FailedToGetActivityPubResourceException
 import dev.usbharu.hideout.activitypub.domain.exception.IllegalActivityPubObjectException
 import dev.usbharu.hideout.activitypub.domain.model.Note
+import dev.usbharu.hideout.activitypub.query.NoteQueryService
 import dev.usbharu.hideout.activitypub.service.common.APResourceResolveService
 import dev.usbharu.hideout.activitypub.service.common.resolve
 import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
@@ -62,7 +63,8 @@ class APNoteServiceImpl(
     @Qualifier("activitypub") private val objectMapper: ObjectMapper,
     private val postService: PostService,
     private val apResourceResolveService: APResourceResolveService,
-    private val postBuilder: Post.PostBuilder
+    private val postBuilder: Post.PostBuilder,
+    private val noteQueryService: NoteQueryService
 
 ) : APNoteService, PostCreateInterceptor {
 
@@ -98,9 +100,9 @@ class APNoteServiceImpl(
     override suspend fun fetchNote(url: String, targetActor: String?): Note {
         logger.debug("START Fetch Note url: {}", url)
         try {
-            val post = postQueryService.findByUrl(url)
+            val post = noteQueryService.findByApid(url)
             logger.debug("SUCCESS Found in local url: {}", url)
-            return postToNote(post)
+            return post.first
         } catch (_: FailedToGetResourcesException) {
         }
 
@@ -115,25 +117,9 @@ class APNoteServiceImpl(
             )
             throw FailedToGetActivityPubResourceException("Could not retrieve $url.", e)
         }
-        val savedNote = saveIfMissing(note, targetActor, url)
+        val savedNote = saveNote(note, targetActor, url)
         logger.debug("SUCCESS Fetch Note url: {}", url)
         return savedNote
-    }
-
-    private suspend fun postToNote(post: Post): Note {
-        val user = userQueryService.findById(post.userId)
-        val reply = post.replyId?.let { postQueryService.findById(it) }
-        return Note(
-            name = "Post",
-            id = post.apId,
-            attributedTo = user.url,
-            content = post.text,
-            published = Instant.ofEpochMilli(post.createdAt).toString(),
-            to = listOfNotNull(public, user.followers),
-            sensitive = post.sensitive,
-            cc = listOfNotNull(public, user.followers),
-            inReplyTo = reply?.url
-        )
     }
 
     private suspend fun saveIfMissing(
@@ -146,12 +132,12 @@ class APNoteServiceImpl(
 //            return internalNote(note, targetActor, url)
         }
 
-        val findByApId = try {
-            postQueryService.findByApId(note.id!!)
+        return try {
+            noteQueryService.findByApid(note.id!!).first
         } catch (_: FailedToGetResourcesException) {
-            return saveNote(note, targetActor, url)
+            saveNote(note, targetActor, url)
         }
-        return postToNote(findByApId)
+
     }
 
     private suspend fun saveNote(note: Note, targetActor: String?, url: String): Note {
