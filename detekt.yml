@@ -6,6 +6,8 @@ build:
     InjectDispatcher: 0
     EnumEntryNameCase: 0
     ReplaceSafeCallChainWithRun: 0
+    VariableNaming: 0
+    NoNameShadowing: 0
 
 style:
   ClassOrdering:
