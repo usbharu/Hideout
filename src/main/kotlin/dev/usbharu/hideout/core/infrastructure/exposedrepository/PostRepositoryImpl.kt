@@ -17,7 +17,7 @@ class PostRepositoryImpl(
 
     override suspend fun generateId(): Long = idGenerateService.generateId()
 
-    override suspend fun save(post: Post): Post {
+    override suspend fun save(post: Post): Boolean {
         val singleOrNull = Posts.select { Posts.id eq post.id }.singleOrNull()
         if (singleOrNull == null) {
             Posts.insert {
@@ -63,7 +63,7 @@ class PostRepositoryImpl(
             "Faild to insert"
         }
 
-        return post
+        return singleOrNull == null
     }
 
     override suspend fun findById(id: Long): Post =

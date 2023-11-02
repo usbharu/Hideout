@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.core.service.post
 
+import com.mongodb.DuplicateKeyException
 import dev.usbharu.hideout.activitypub.service.activity.create.ApSendCreateService
 import dev.usbharu.hideout.core.domain.exception.UserNotFoundException
 import dev.usbharu.hideout.core.domain.model.post.Post
@@ -38,13 +39,17 @@ class PostServiceImpl(
     }
 
     private suspend fun internalCreate(post: Post, isLocal: Boolean): Post {
-        val save = try {
-            postRepository.save(post)
+        return try {
+            if (postRepository.save(post)) {
+                try {
+                    timelineService.publishTimeline(post, isLocal)
+                } catch (_: DuplicateKeyException) {
+                }
+            }
+            post
         } catch (_: ExposedSQLException) {
             postQueryService.findByApId(post.apId)
         }
-        timelineService.publishTimeline(save, isLocal)
-        return save
     }
 
     private suspend fun internalCreate(post: PostCreateDto, isLocal: Boolean): Post {
