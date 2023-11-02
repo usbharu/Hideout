@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.application
+package dev.usbharu.hideout
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
