@@ -12,12 +12,7 @@ import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.domain.model.post.Visibility
-import dev.usbharu.hideout.core.external.job.DeliverPostJob
-import dev.usbharu.hideout.core.query.FollowerQueryService
-import dev.usbharu.hideout.core.query.MediaQueryService
 import dev.usbharu.hideout.core.query.PostQueryService
-import dev.usbharu.hideout.core.query.UserQueryService
-import dev.usbharu.hideout.core.service.job.JobQueueParentService
 import dev.usbharu.hideout.core.service.post.PostService
 import io.ktor.client.plugins.*
 import kotlinx.coroutines.CoroutineScope
@@ -50,13 +45,9 @@ interface APNoteService {
 @Service
 @Suppress("LongParameterList")
 class APNoteServiceImpl(
-    private val jobQueueParentService: JobQueueParentService,
     private val postRepository: PostRepository,
     private val apUserService: APUserService,
-    private val userQueryService: UserQueryService,
-    private val followerQueryService: FollowerQueryService,
     private val postQueryService: PostQueryService,
-    private val mediaQueryService: MediaQueryService,
     @Qualifier("activitypub") private val objectMapper: ObjectMapper,
     private val postService: PostService,
     private val apResourceResolveService: APResourceResolveService,
@@ -67,29 +58,6 @@ class APNoteServiceImpl(
 
 
     private val logger = LoggerFactory.getLogger(APNoteServiceImpl::class.java)
-
-    suspend fun createNote(post: Post) {
-        logger.info("CREATE Create Local Note ${post.url}")
-        logger.debug("START Create Local Note ${post.url}")
-        logger.trace("{}", post)
-        val followers = followerQueryService.findFollowersById(post.userId)
-
-        logger.debug("DELIVER Deliver Note Create ${followers.size} accounts.")
-
-        val userEntity = userQueryService.findById(post.userId)
-        val note = objectMapper.writeValueAsString(post)
-        val mediaList = objectMapper.writeValueAsString(mediaQueryService.findByPostId(post.id))
-        followers.forEach { followerEntity ->
-            jobQueueParentService.schedule(DeliverPostJob) {
-                props[DeliverPostJob.actor] = userEntity.url
-                props[DeliverPostJob.post] = note
-                props[DeliverPostJob.inbox] = followerEntity.inbox
-                props[DeliverPostJob.media] = mediaList
-            }
-        }
-
-        logger.debug("SUCCESS Create Local Note ${post.url}")
-    }
 
     override suspend fun fetchNote(url: String, targetActor: String?): Note {
         logger.debug("START Fetch Note url: {}", url)
