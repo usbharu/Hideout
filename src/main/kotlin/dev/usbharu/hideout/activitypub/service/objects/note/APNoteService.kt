@@ -13,6 +13,8 @@ import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.domain.model.post.Visibility
 import dev.usbharu.hideout.core.query.PostQueryService
+import dev.usbharu.hideout.core.service.media.MediaService
+import dev.usbharu.hideout.core.service.media.RemoteMedia
 import dev.usbharu.hideout.core.service.post.PostService
 import io.ktor.client.plugins.*
 import kotlinx.coroutines.CoroutineScope
@@ -52,7 +54,8 @@ class APNoteServiceImpl(
     private val postService: PostService,
     private val apResourceResolveService: APResourceResolveService,
     private val postBuilder: Post.PostBuilder,
-    private val noteQueryService: NoteQueryService
+    private val noteQueryService: NoteQueryService,
+    private val mediaService: MediaService
 
 ) : APNoteService {
 
@@ -123,6 +126,19 @@ class APNoteServiceImpl(
             postQueryService.findByUrl(it)
         }
 
+
+        val mediaList = note.attachment
+            .filter { it.url != null }
+            .map {
+                mediaService.uploadRemoteMedia(
+                    RemoteMedia(
+                        (it.name ?: it.url)!!,
+                        it.url!!, it.mediaType ?: "application/octet-stream"
+                    )
+                )
+            }
+            .map { it.id }
+
         // TODO: リモートのメディア処理を追加
         postService.createRemote(
             postBuilder.of(
@@ -135,6 +151,7 @@ class APNoteServiceImpl(
                 replyId = reply?.id,
                 sensitive = note.sensitive,
                 apId = note.id ?: url,
+                mediaIds = mediaList
             )
         )
         return note
