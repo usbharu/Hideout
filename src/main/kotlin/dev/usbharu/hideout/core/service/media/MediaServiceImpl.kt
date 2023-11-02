@@ -8,6 +8,10 @@ import dev.usbharu.hideout.core.domain.model.media.MediaRepository
 import dev.usbharu.hideout.core.service.media.converter.MediaProcessService
 import dev.usbharu.hideout.mastodon.interfaces.api.media.MediaRequest
 import io.ktor.client.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
+import io.ktor.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
@@ -96,15 +100,61 @@ class MediaServiceImpl(
     override suspend fun uploadRemoteMedia(remoteMedia: RemoteMedia): Media {
         logger.info("MEDIA Remote media. filename:${remoteMedia.name} url:${remoteMedia.url}")
 
+        val httpResponse = httpClient.get(remoteMedia.url)
+        val bytes = httpResponse.bodyAsChannel().toByteArray()
+
+        val contentType = httpResponse.contentType()?.toString()
+        val fileType =
+            fileTypeDeterminationService.fileType(bytes, remoteMedia.name, contentType)
+
+        if (fileType != FileType.Image) {
+            throw UnsupportedMediaException("FileType: $fileType is not supported.")
+        }
+
+        val processedMedia = mediaProcessService.process(
+            fileType = fileType,
+            contentType = contentType.orEmpty(),
+            fileName = remoteMedia.name,
+            file = bytes,
+            thumbnail = null
+        )
+
+        val mediaSave = MediaSave(
+            "${UUID.randomUUID()}.${processedMedia.file.extension}",
+            "",
+            processedMedia.file.byteArray,
+            processedMedia.thumbnail?.byteArray
+        )
+
+        val save = try {
+            mediaDataStore.save(mediaSave)
+        } catch (e: Exception) {
+            logger.warn("Failed save media", e)
+            throw MediaSaveException("Failed save media.", e)
+        }
+
+        if (save.success.not()) {
+            save as FaildSavedMedia
+            logger.warn("Failed save media. reason: ${save.reason}")
+            logger.warn(save.description, save.trace)
+            throw MediaSaveException("Failed save media.")
+        }
+        save as SuccessSavedMedia
+
+        val blurhash = withContext(Dispatchers.IO) {
+            mediaBlurhashService.generateBlurhash(ImageIO.read(bytes.inputStream()))
+        }
+
+
         return mediaRepository.save(
             EntityMedia(
                 id = mediaRepository.generateId(),
                 name = remoteMedia.name,
-                url = remoteMedia.url,
+                url = save.url,
                 remoteUrl = remoteMedia.url,
-                thumbnailUrl = remoteMedia.url,
-                type = FileType.Image,
-                blurHash = null
+                thumbnailUrl = save.thumbnailUrl,
+                type = fileType,
+                blurHash = blurhash
             )
         )
     }
