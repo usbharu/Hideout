@@ -137,7 +137,6 @@ class APNoteServiceImpl(
         } catch (_: FailedToGetResourcesException) {
             saveNote(note, targetActor, url)
         }
-
     }
 
     private suspend fun saveNote(note: Note, targetActor: String?, url: String): Note {
