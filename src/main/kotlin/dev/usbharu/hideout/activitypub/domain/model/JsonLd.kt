@@ -19,10 +19,17 @@ open class JsonLd {
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY, using = ContextSerializer::class)
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     var context: List<String> = emptyList()
+        set(value) {
+            field = value.filterNotNull().filter { it.isNotBlank() }
+        }
 
     @JsonCreator
-    constructor(context: List<String>) {
-        this.context = context
+    constructor(context: List<String?>?) {
+        if (context != null) {
+            this.context = context.filterNotNull().filter { it.isNotBlank() }
+        } else {
+            this.context = emptyList()
+        }
     }
 
     protected constructor()
@@ -47,10 +54,10 @@ class ContextDeserializer : JsonDeserializer<String>() {
         p1: com.fasterxml.jackson.databind.DeserializationContext?
     ): String {
         val readTree: JsonNode = p0?.codec?.readTree(p0) ?: return ""
-        if (readTree.isObject) {
-            return ""
+        if (readTree.isValueNode) {
+            return readTree.textValue()
         }
-        return readTree.asText()
+        return ""
     }
 }
 
