@@ -19,6 +19,7 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.whenever
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
@@ -100,5 +101,10 @@ class InboxControllerImplTest {
                 status { isAccepted() }
             }
 
+    }
+
+    @Test
+    fun `inbox GETリクエストには504を返す`() {
+        mockMvc.get("/inbox").andExpect { status { isMethodNotAllowed() } }
     }
 }
