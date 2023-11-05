@@ -104,7 +104,7 @@ class InboxControllerImplTest {
     }
 
     @Test
-    fun `inbox GETリクエストには504を返す`() {
+    fun `inbox GETリクエストには405を返す`() {
         mockMvc.get("/inbox").andExpect { status { isMethodNotAllowed() } }
     }
 
@@ -173,7 +173,7 @@ class InboxControllerImplTest {
     }
 
     @Test
-    fun `user-inbox GETリクエストには504を返す`() {
+    fun `user-inbox GETリクエストには405を返す`() {
         mockMvc.get("/users/hoge/inbox").andExpect { status { isMethodNotAllowed() } }
     }
 }
