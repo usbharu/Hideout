@@ -1,6 +1,5 @@
 package dev.usbharu.hideout.activitypub.interfaces.api.inbox
 
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -18,5 +17,5 @@ interface InboxController {
         ],
         method = [RequestMethod.GET, RequestMethod.POST]
     )
-    suspend fun inbox(@RequestBody string: String): ResponseEntity<Unit> = ResponseEntity(HttpStatus.ACCEPTED)
+    suspend fun inbox(@RequestBody string: String): ResponseEntity<Unit>
 }
