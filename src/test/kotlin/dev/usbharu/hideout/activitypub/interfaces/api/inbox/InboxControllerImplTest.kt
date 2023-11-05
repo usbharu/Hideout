@@ -107,4 +107,73 @@ class InboxControllerImplTest {
     fun `inbox GETリクエストには504を返す`() {
         mockMvc.get("/inbox").andExpect { status { isMethodNotAllowed() } }
     }
+
+    @Test
+    fun `user-inbox 正常なPOSTリクエストをしたときAcceptが返ってくる`() = runTest {
+
+
+        val json = """{"type":"Follow"}"""
+        whenever(apService.parseActivity(eq(json))).doReturn(ActivityType.Follow)
+        whenever(apService.processActivity(eq(json), eq(ActivityType.Follow))).doReturn(
+            ActivityPubStringResponse(
+                HttpStatusCode.Accepted, ""
+            )
+        )
+
+        mockMvc
+            .post("/users/hoge/inbox") {
+                content = json
+                contentType = MediaType.APPLICATION_JSON
+            }
+            .asyncDispatch()
+            .andExpect {
+                status { isAccepted() }
+            }
+
+    }
+
+    @Test
+    fun `user-inbox parseActivityに失敗したときAcceptが返ってくる`() = runTest {
+        val json = """{"type":"Hoge"}"""
+        whenever(apService.parseActivity(eq(json))).doThrow(JsonParseException::class)
+
+        mockMvc
+            .post("/users/hoge/inbox") {
+                content = json
+                contentType = MediaType.APPLICATION_JSON
+            }
+            .asyncDispatch()
+            .andExpect {
+                status { isAccepted() }
+            }
+
+    }
+
+    @Test
+    fun `user-inbox processActivityに失敗したときAcceptが返ってくる`() = runTest {
+        val json = """{"type":"Follow"}"""
+        whenever(apService.parseActivity(eq(json))).doReturn(ActivityType.Follow)
+        whenever(
+            apService.processActivity(
+                eq(json),
+                eq(ActivityType.Follow)
+            )
+        ).doThrow(FailedToGetResourcesException::class)
+
+        mockMvc
+            .post("/users/hoge/inbox") {
+                content = json
+                contentType = MediaType.APPLICATION_JSON
+            }
+            .asyncDispatch()
+            .andExpect {
+                status { isAccepted() }
+            }
+
+    }
+
+    @Test
+    fun `user-inbox GETリクエストには504を返す`() {
+        mockMvc.get("/users/hoge/inbox").andExpect { status { isMethodNotAllowed() } }
+    }
 }
