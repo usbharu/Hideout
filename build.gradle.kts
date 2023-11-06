@@ -32,7 +32,6 @@ tasks.withType<Test> {
     val cpus = Runtime.getRuntime().availableProcessors()
     maxParallelForks = max(1, cpus - 1)
     setForkEvery(4)
-    ignoreFailures = true
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>().configureEach {
@@ -202,8 +201,20 @@ configurations.matching { it.name == "detekt" }.all {
     }
 }
 
+project.gradle.taskGraph.whenReady {
+    println(this.allTasks)
+    this.allTasks.map { println(it.name) }
+    if (this.hasTask(":koverGenerateArtifact")) {
+        println("has task")
+        val task = this.allTasks.find { it.name == "test" }
+        val verificationTask = task as VerificationTask
+        verificationTask.ignoreFailures = true
+    }
+}
+
 kover {
-    excludeSourceSets {
+
+excludeSourceSets {
         names("aot")
     }
 }
