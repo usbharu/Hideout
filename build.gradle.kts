@@ -16,6 +16,7 @@ plugins {
     id("org.springframework.boot") version "3.1.3"
     kotlin("plugin.spring") version "1.8.21"
     id("org.openapi.generator") version "7.0.1"
+    id("org.jetbrains.kotlinx.kover") version "0.7.4"
 //    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
 }
 
@@ -196,6 +197,25 @@ configurations.matching { it.name == "detekt" }.all {
     resolutionStrategy.eachDependency {
         if (requested.group == "org.jetbrains.kotlin") {
             useVersion("1.9.0")
+        }
+    }
+}
+
+kover {
+    excludeSourceSets {
+        names("aot")
+    }
+}
+
+koverReport {
+    filters {
+        excludes {
+            packages(
+                "dev.usbharu.hideout.controller.mastodon.generated",
+                "dev.usbharu.hideout.domain.mastodon.model.generated"
+            )
+            packages("org.springframework")
+            packages("org.jetbrains")
         }
     }
 }
