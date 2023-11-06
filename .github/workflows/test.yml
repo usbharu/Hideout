@@ -50,7 +50,12 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Gradle Build Action
+      - name: Run JUnit
         uses: gradle/gradle-build-action@v2.8.1
         with:
           arguments: test
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v2
+        if: always()
+        with:
+          report_paths: '**/build/test-results/test/TEST-*.xml'
