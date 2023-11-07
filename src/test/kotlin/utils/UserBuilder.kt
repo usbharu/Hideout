@@ -20,15 +20,15 @@ object UserBuilder {
         screenName: String = name,
         description: String = "This user is test user.",
         password: String = "password-$id",
-        inbox: String = "https://$domain/$id/inbox",
-        outbox: String = "https://$domain/$id/outbox",
-        url: String = "https://$domain/$id/",
+        inbox: String = "https://$domain/users/$id/inbox",
+        outbox: String = "https://$domain/users/$id/outbox",
+        url: String = "https://$domain/users/$id",
         publicKey: String = "-----BEGIN PUBLIC KEY-----...-----END PUBLIC KEY-----",
         privateKey: String = "-----BEGIN PRIVATE KEY-----...-----END PRIVATE KEY-----",
         createdAt: Instant = Instant.now(),
-        keyId: String = "https://$domain/$id#pubkey",
-        followers: String = "https://$domain/$id/followers",
-        following: String = "https://$domain/$id/following"
+        keyId: String = "https://$domain/users/$id#pubkey",
+        followers: String = "https://$domain/users/$id/followers",
+        following: String = "https://$domain/users/$id/following"
     ): User {
         return userBuilder.of(
             id = id,
