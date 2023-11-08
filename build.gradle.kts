@@ -32,6 +32,11 @@ tasks.withType<Test> {
     val cpus = Runtime.getRuntime().availableProcessors()
     maxParallelForks = max(1, cpus - 1)
     setForkEvery(4)
+    doFirst {
+        jvmArgs = arrayOf(
+            "--add-opens", "java.base/java.lang=ALL-UNNAMED"
+        ).toMutableList()
+    }
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>().configureEach {
@@ -160,7 +165,8 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
     testImplementation("org.mockito:mockito-inline:5.2.0")
-
+    testImplementation("nl.jqno.equalsverifier:equalsverifier:3.15.3")
+    testImplementation("com.jparams:to-string-verifier:1.4.8")
 
     implementation("org.drewcarlson:kjob-core:0.6.0")
     implementation("org.drewcarlson:kjob-mongo:0.6.0")
