@@ -28,6 +28,7 @@ class OutboxControllerImplTest {
     fun `outbox GETに501を返す`() {
         mockMvc
             .get("/outbox")
+            .asyncDispatch()
             .andDo { print() }
             .andExpect { status { isNotImplemented() } }
     }
@@ -36,6 +37,7 @@ class OutboxControllerImplTest {
     fun `user-outbox GETに501を返す`() {
         mockMvc
             .get("/users/hoge/outbox")
+            .asyncDispatch()
             .andDo { print() }
             .andExpect { status { isNotImplemented() } }
     }
@@ -44,6 +46,7 @@ class OutboxControllerImplTest {
     fun `outbox POSTに501を返す`() {
         mockMvc
             .post("/outbox")
+            .asyncDispatch()
             .andDo { print() }
             .andExpect { status { isNotImplemented() } }
     }
@@ -52,6 +55,7 @@ class OutboxControllerImplTest {
     fun `user-outbox POSTに501を返す`() {
         mockMvc
             .post("/users/hoge/outbox")
+            .asyncDispatch()
             .andDo { print() }
             .andExpect { status { isNotImplemented() } }
     }
