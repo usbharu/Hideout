@@ -1,0 +1,136 @@
+package dev.usbharu.hideout.activitypub.domain.model
+
+import com.fasterxml.jackson.module.kotlin.readValue
+import dev.usbharu.hideout.application.config.ActivityPubConfig
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+
+class JsonLdSerializeTest {
+    @Test
+    fun contextが文字列のときデシリアライズできる() {
+        //language=JSON
+        val json = """{"@context":"https://example.com"}"""
+
+        val objectMapper = ActivityPubConfig().objectMapper()
+
+        val readValue = objectMapper.readValue<JsonLd>(json)
+
+        assertEquals(JsonLd(listOf("https://example.com")), readValue)
+    }
+
+    @Test
+    fun contextが文字列の配列のときデシリアライズできる() {
+        //language=JSON
+        val json = """{"@context":["https://example.com","https://www.w3.org/ns/activitystreams"]}"""
+
+        val objectMapper = ActivityPubConfig().objectMapper()
+
+        val readValue = objectMapper.readValue<JsonLd>(json)
+
+        assertEquals(JsonLd(listOf("https://example.com", "https://www.w3.org/ns/activitystreams")), readValue)
+    }
+
+    @Test
+    fun contextがnullのとき空のlistとして解釈してデシリアライズする() {
+        //language=JSON
+        val json = """{"@context":null}"""
+
+        val objectMapper = ActivityPubConfig().objectMapper()
+
+        val readValue = objectMapper.readValue<JsonLd>(json)
+
+        assertEquals(JsonLd(emptyList()), readValue)
+    }
+
+    @Test
+    fun contextがnullを含む文字列の配列のときnullを無視してデシリアライズできる() {
+        //language=JSON
+        val json = """{"@context":["https://example.com",null,"https://www.w3.org/ns/activitystreams"]}"""
+
+        val objectMapper = ActivityPubConfig().objectMapper()
+
+        val readValue = objectMapper.readValue<JsonLd>(json)
+
+        assertEquals(JsonLd(listOf("https://example.com", "https://www.w3.org/ns/activitystreams")), readValue)
+    }
+
+    @Test
+    fun contextがオブジェクトのとき無視してデシリアライズする() {
+        //language=JSON
+        val json = """{"@context":{"hoge": "fuga"}}"""
+
+        val objectMapper = ActivityPubConfig().objectMapper()
+
+        val readValue = objectMapper.readValue<JsonLd>(json)
+
+        assertEquals(JsonLd(emptyList()), readValue)
+    }
+
+    @Test
+    fun contextがオブジェクトを含む文字列の配列のときオブジェクトを無視してデシリアライズする() {
+        //language=JSON
+        val json = """{"@context":["https://example.com",{"hoge": "fuga"},"https://www.w3.org/ns/activitystreams"]}"""
+
+        val objectMapper = ActivityPubConfig().objectMapper()
+
+        val readValue = objectMapper.readValue<JsonLd>(json)
+
+        assertEquals(JsonLd(listOf("https://example.com", "https://www.w3.org/ns/activitystreams")), readValue)
+    }
+
+    @Test
+    fun contextが配列の配列のとき無視してデシリアライズする() {
+        //language=JSON
+        val json = """{"@context":[["a","b"],["c","d"]]}"""
+
+        val objectMapper = ActivityPubConfig().objectMapper()
+
+        val readValue = objectMapper.readValue<JsonLd>(json)
+
+        assertEquals(JsonLd(emptyList()), readValue)
+    }
+
+    @Test
+    fun contextが空のとき無視してシリアライズする() {
+        val jsonLd = JsonLd(emptyList())
+
+        val objectMapper = ActivityPubConfig().objectMapper()
+
+        val actual = objectMapper.writeValueAsString(jsonLd)
+
+        assertEquals("{}", actual)
+    }
+
+    @Test
+    fun contextがnullのとき無視してシリアライズする() {
+        val jsonLd = JsonLd(listOf(null))
+
+        val objectMapper = ActivityPubConfig().objectMapper()
+
+        val actual = objectMapper.writeValueAsString(jsonLd)
+
+        assertEquals("{}", actual)
+    }
+
+    @Test
+    fun contextが文字列のとき文字列としてシリアライズされる() {
+        val jsonLd = JsonLd(listOf("https://example.com"))
+
+        val objectMapper = ActivityPubConfig().objectMapper()
+
+        val actual = objectMapper.writeValueAsString(jsonLd)
+
+        assertEquals("""{"@context":"https://example.com"}""", actual)
+    }
+
+    @Test
+    fun contextが文字列の配列のとき配列としてシリアライズされる() {
+        val jsonLd = JsonLd(listOf("https://example.com", "https://www.w3.org/ns/activitystreams"))
+
+        val objectMapper = ActivityPubConfig().objectMapper()
+
+        val actual = objectMapper.writeValueAsString(jsonLd)
+
+        assertEquals("""{"@context":["https://example.com","https://www.w3.org/ns/activitystreams"]}""", actual)
+    }
+}

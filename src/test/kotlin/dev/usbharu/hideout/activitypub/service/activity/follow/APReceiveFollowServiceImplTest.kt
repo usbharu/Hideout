@@ -70,8 +70,8 @@ class APReceiveFollowServiceImplTest {
   "type": "Follow",
   "name": "Follow",
   "actor": "https://follower.example.com",
-  "object": "https://example.com",
-  "@context": null
+  "object": "https://example.com"
+  
 }"""
                 ),
                 Json.parseToJsonElement(follow)

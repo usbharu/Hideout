@@ -19,10 +19,17 @@ open class JsonLd {
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY, using = ContextSerializer::class)
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     var context: List<String> = emptyList()
+        set(value) {
+            field = value.filterNotNull().filter { it.isNotBlank() }
+        }
 
     @JsonCreator
-    constructor(context: List<String>) {
-        this.context = context
+    constructor(context: List<String?>?) {
+        if (context != null) {
+            this.context = context.filterNotNull().filter { it.isNotBlank() }
+        } else {
+            this.context = emptyList()
+        }
     }
 
     protected constructor()
@@ -40,25 +47,34 @@ open class JsonLd {
 }
 
 class ContextDeserializer : JsonDeserializer<String>() {
+
+
     override fun deserialize(
         p0: com.fasterxml.jackson.core.JsonParser?,
         p1: com.fasterxml.jackson.databind.DeserializationContext?
     ): String {
         val readTree: JsonNode = p0?.codec?.readTree(p0) ?: return ""
-        if (readTree.isObject) {
-            return ""
+        if (readTree.isValueNode) {
+            return readTree.textValue()
         }
-        return readTree.asText()
+        return ""
     }
 }
 
 class ContextSerializer : JsonSerializer<List<String>>() {
 
-    override fun isEmpty(value: List<String>?): Boolean = value.isNullOrEmpty()
+    override fun isEmpty(value: List<String>?): Boolean {
+        return value.isNullOrEmpty()
+    }
 
-    override fun serialize(value: List<String>?, gen: JsonGenerator?, serializers: SerializerProvider?) {
+    override fun isEmpty(provider: SerializerProvider?, value: List<String>?): Boolean {
+        return value.isNullOrEmpty()
+    }
+
+    override fun serialize(value: List<String>?, gen: JsonGenerator?, serializers: SerializerProvider) {
+
         if (value.isNullOrEmpty()) {
-            gen?.writeNull()
+            serializers.defaultSerializeNull(gen)
             return
         }
         if (value.size == 1) {
