@@ -27,6 +27,37 @@ apply {
 group = "dev.usbharu"
 version = "0.0.1"
 
+sourceSets {
+    create("intTest") {
+        compileClasspath += sourceSets.main.get().output
+        runtimeClasspath += sourceSets.main.get().output
+    }
+}
+
+val intTestImplementation by configurations.getting {
+    extendsFrom(configurations.implementation.get())
+}
+val intTestRuntimeOnly by configurations.getting {
+    extendsFrom(configurations.runtimeOnly.get())
+}
+
+val integrationTest = task<Test>("integrationTest") {
+    description = "Runs integration tests."
+    group = "verification"
+
+    testClassesDirs = sourceSets["intTest"].output.classesDirs
+    classpath = sourceSets["intTest"].runtimeClasspath
+    shouldRunAfter("test")
+
+    useJUnitPlatform()
+
+    testLogging {
+        events("passed")
+    }
+}
+
+tasks.check { dependsOn(integrationTest) }
+
 tasks.withType<Test> {
     useJUnitPlatform()
     val cpus = Runtime.getRuntime().availableProcessors()
@@ -220,7 +251,7 @@ project.gradle.taskGraph.whenReady {
 
 kover {
 
-excludeSourceSets {
+    excludeSourceSets {
         names("aot")
     }
 }
