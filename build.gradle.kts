@@ -16,6 +16,7 @@ plugins {
     id("org.springframework.boot") version "3.1.3"
     kotlin("plugin.spring") version "1.8.21"
     id("org.openapi.generator") version "7.0.1"
+    id("org.jetbrains.kotlinx.kover") version "0.7.4"
 //    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
 }
 
@@ -31,6 +32,11 @@ tasks.withType<Test> {
     val cpus = Runtime.getRuntime().availableProcessors()
     maxParallelForks = max(1, cpus - 1)
     setForkEvery(4)
+    doFirst {
+        jvmArgs = arrayOf(
+            "--add-opens", "java.base/java.lang=ALL-UNNAMED"
+        ).toMutableList()
+    }
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>().configureEach {
@@ -128,6 +134,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-java-time:$exposed_version")
     testImplementation("org.springframework.boot:spring-boot-test-autoconfigure")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.security:spring-security-test")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.springframework.security:spring-security-oauth2-jose")
@@ -158,7 +165,8 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
     testImplementation("org.mockito:mockito-inline:5.2.0")
-
+    testImplementation("nl.jqno.equalsverifier:equalsverifier:3.15.3")
+    testImplementation("com.jparams:to-string-verifier:1.4.8")
 
     implementation("org.drewcarlson:kjob-core:0.6.0")
     implementation("org.drewcarlson:kjob-mongo:0.6.0")
@@ -195,6 +203,37 @@ configurations.matching { it.name == "detekt" }.all {
     resolutionStrategy.eachDependency {
         if (requested.group == "org.jetbrains.kotlin") {
             useVersion("1.9.0")
+        }
+    }
+}
+
+project.gradle.taskGraph.whenReady {
+    println(this.allTasks)
+    this.allTasks.map { println(it.name) }
+    if (this.hasTask(":koverGenerateArtifact")) {
+        println("has task")
+        val task = this.allTasks.find { it.name == "test" }
+        val verificationTask = task as VerificationTask
+        verificationTask.ignoreFailures = true
+    }
+}
+
+kover {
+
+excludeSourceSets {
+        names("aot")
+    }
+}
+
+koverReport {
+    filters {
+        excludes {
+            packages(
+                "dev.usbharu.hideout.controller.mastodon.generated",
+                "dev.usbharu.hideout.domain.mastodon.model.generated"
+            )
+            packages("org.springframework")
+            packages("org.jetbrains")
         }
     }
 }
