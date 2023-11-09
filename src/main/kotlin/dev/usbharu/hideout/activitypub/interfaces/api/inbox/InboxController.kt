@@ -15,7 +15,7 @@ interface InboxController {
             "application/activity+json",
             "application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\""
         ],
-        method = [RequestMethod.GET, RequestMethod.POST]
+        method = [RequestMethod.POST]
     )
     suspend fun inbox(@RequestBody string: String): ResponseEntity<Unit>
 }
