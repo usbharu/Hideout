@@ -9,17 +9,21 @@ import dev.usbharu.hideout.activitypub.domain.model.JsonLd
 open class Object : JsonLd {
     @JsonSerialize(using = TypeSerializer::class)
     var type: List<String> = emptyList()
+        set(value) {
+            field = value.filter { it.isNotBlank() }
+        }
     var name: String? = null
     var actor: String? = null
     var id: String? = null
 
     protected constructor()
     constructor(type: List<String>, name: String? = null, actor: String? = null, id: String? = null) : super() {
-        this.type = type
+        this.type = type.filter { it.isNotBlank() }
         this.name = name
         this.actor = actor
         this.id = id
     }
+
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -29,7 +33,9 @@ open class Object : JsonLd {
         if (type != other.type) return false
         if (name != other.name) return false
         if (actor != other.actor) return false
-        return id == other.id
+        if (id != other.id) return false
+
+        return true
     }
 
     override fun hashCode(): Int {
@@ -41,7 +47,9 @@ open class Object : JsonLd {
         return result
     }
 
-    override fun toString(): String = "Object(type=$type, name=$name, actor=$actor, id=$id) ${super.toString()}"
+    override fun toString(): String {
+        return "Object(type=$type, name=$name, actor=$actor, id=$id) ${super.toString()}"
+    }
 
     companion object {
         @JvmStatic
