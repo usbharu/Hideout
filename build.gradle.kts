@@ -200,6 +200,8 @@ dependencies {
     implementation("org.drewcarlson:kjob-mongo:0.6.0")
 
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.1")
+
+    intTestImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
 detekt {
