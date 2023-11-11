@@ -202,6 +202,8 @@ dependencies {
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.1")
 
     intTestImplementation("org.springframework.boot:spring-boot-starter-test")
+    intTestImplementation("org.springframework.security:spring-security-test")
+
 }
 
 detekt {
