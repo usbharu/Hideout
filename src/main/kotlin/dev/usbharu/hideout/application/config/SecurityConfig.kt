@@ -82,7 +82,8 @@ class SecurityConfig {
                 HttpSignatureFilter::class.java
             )
             .authorizeHttpRequests {
-                it.anyRequest().authenticated()
+                it.requestMatchers("/inbox", "/outbox", "/users/*/inbox", "/users/*/outbox").authenticated()
+                it.anyRequest().permitAll()
             }
             .csrf {
                 it.disable()
