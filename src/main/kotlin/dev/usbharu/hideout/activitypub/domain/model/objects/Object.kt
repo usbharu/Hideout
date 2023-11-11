@@ -24,7 +24,6 @@ open class Object : JsonLd {
         this.id = id
     }
 
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is Object) return false
