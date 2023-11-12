@@ -18,7 +18,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.context.WebApplicationContext
 import util.TestTransaction
-import util.WithHttpSignature
+import util.WithMockHttpSignature
 
 @SpringBootTest(classes = [SpringApplication::class])
 @AutoConfigureMockMvc
@@ -49,7 +49,7 @@ class InboxTest {
     }
 
     @Test
-    @WithHttpSignature
+    @WithMockHttpSignature
     fun 有効なHttpSignatureでPOSTしたら202() {
         mockMvc
             .post("/inbox") {
@@ -72,7 +72,7 @@ class InboxTest {
     }
 
     @Test
-    @WithHttpSignature
+    @WithMockHttpSignature
     fun 有効なHttpSignaturesでPOSTしたら202() {
         mockMvc
             .post("/users/hoge/inbox") {
