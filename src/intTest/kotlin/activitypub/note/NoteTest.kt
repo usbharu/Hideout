@@ -68,7 +68,7 @@ class NoteTest {
     @Test
     @Transactional
     @WithAnonymousUser
-    @Sql("/sql/note/匿名でfollowers投稿を取得できる.sql")
+    @Sql("/sql/note/匿名でfollowers投稿を取得しようとすると404.sql")
     fun 匿名でfollowers投稿を取得しようとすると404() {
         mockMvc
             .get("/users/test-user2/posts/1236") {
