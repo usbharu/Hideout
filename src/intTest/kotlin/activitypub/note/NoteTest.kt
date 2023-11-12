@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.context.WebApplicationContext
+import util.WithHttpSignature
 
 @SpringBootTest(classes = [SpringApplication::class])
 @AutoConfigureMockMvc
@@ -87,5 +88,67 @@ class NoteTest {
             }
             .asyncDispatch()
             .andExpect { status { isNotFound() } }
+    }
+
+    @Test
+    @Sql("/sql/note/httpSignature認証でフォロワーがpublic投稿を取得できる.sql")
+    @WithHttpSignature(keyId = "https://follower.example.com/users/test-user5#pubkey")
+    fun HttpSignature認証でフォロワーがpublic投稿を取得できる() {
+        mockMvc
+            .get("/users/test-user4/posts/1237") {
+                accept(MediaType("application", "activity+json"))
+            }
+            .asyncDispatch()
+            .andDo { print() }
+            .andExpect { status { isOk() } }
+            .andExpect { content { contentType("application/activity+json") } }
+            .andExpect { jsonPath("\$.type") { value("Note") } }
+            .andExpect { jsonPath("\$.to") { value("https://www.w3.org/ns/activitystreams#Public") } }
+            .andExpect { jsonPath("\$.cc") { value("https://www.w3.org/ns/activitystreams#Public") } }
+    }
+
+    @Test
+    @Sql("/sql/note/httpSignature認証でフォロワーがunlisted投稿を取得できる.sql")
+    @WithHttpSignature(keyId = "https://follower.example.com/users/test-user7#pubkey")
+    fun httpSignature認証でフォロワーがunlisted投稿を取得できる() {
+        mockMvc
+            .get("/users/test-user6/posts/1238") {
+                accept(MediaType("application", "activity+json"))
+            }
+            .asyncDispatch()
+            .andDo { print() }
+            .andExpect { status { isOk() } }
+            .andExpect { content { contentType("application/activity+json") } }
+            .andExpect { jsonPath("\$.type") { value("Note") } }
+            .andExpect { jsonPath("\$.to") { value("https://example.com/users/test-user6/followers") } }
+            .andExpect { jsonPath("\$.cc") { value("https://www.w3.org/ns/activitystreams#Public") } }
+    }
+
+    @Test
+    @Sql("/sql/note/httpSignature認証でフォロワーがfollowers投稿を取得できる.sql")
+    @WithHttpSignature(keyId = "https://follower.example.com/users/test-user9#pubkey")
+    fun httpSignature認証でフォロワーがfollowers投稿を取得できる() {
+        mockMvc
+            .get("/users/test-user8/posts/1239") {
+                accept(MediaType("application", "activity+json"))
+            }
+            .asyncDispatch()
+            .andDo { print() }
+            .andExpect { status { isOk() } }
+            .andExpect { content { contentType("application/activity+json") } }
+            .andExpect { jsonPath("\$.type") { value("Note") } }
+            .andExpect { jsonPath("\$.to") { value("https://example.com/users/test-user8/followers") } }
+            .andExpect { jsonPath("\$.cc") { value("https://example.com/users/test-user8/followers") } }
+
+    }
+
+    @Test
+    fun リプライになっている投稿はinReplyToが存在する() {
+
+    }
+
+    @Test
+    fun メディア付き投稿はattachmentにDocumentとして画像が存在する() {
+
     }
 }
