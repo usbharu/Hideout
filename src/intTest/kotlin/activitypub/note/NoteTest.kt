@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.context.WebApplicationContext
 import util.WithHttpSignature
+import util.WithMockHttpSignature
 
 @SpringBootTest(classes = [SpringApplication::class])
 @AutoConfigureMockMvc
@@ -143,12 +144,38 @@ class NoteTest {
     }
 
     @Test
+    @Sql("/sql/note/リプライになっている投稿はinReplyToが存在する.sql")
+    @WithMockHttpSignature
     fun リプライになっている投稿はinReplyToが存在する() {
-
+        mockMvc
+            .get("/users/test-user10/posts/1241") {
+                accept(MediaType("application", "activity+json"))
+            }
+            .asyncDispatch()
+            .andDo { print() }
+            .andExpect { status { isOk() } }
+            .andExpect { content { contentType("application/activity+json") } }
+            .andExpect { jsonPath("\$.type") { value("Note") } }
+            .andExpect { jsonPath("\$.inReplyTo") { value("https://example.com/users/test-user10/posts/1240") } }
     }
 
     @Test
+    @Sql("/sql/note/メディア付き投稿はattachmentにDocumentとして画像が存在する.sql")
+    @WithMockHttpSignature
     fun メディア付き投稿はattachmentにDocumentとして画像が存在する() {
-
+        mockMvc
+            .get("/users/test-user10/posts/1242") {
+                accept(MediaType("application", "activity+json"))
+            }
+            .asyncDispatch()
+            .andDo { print() }
+            .andExpect { status { isOk() } }
+            .andExpect { content { contentType("application/activity+json") } }
+            .andExpect { jsonPath("\$.type") { value("Note") } }
+            .andExpect { jsonPath("\$.attachment") { isArray() } }
+            .andExpect { jsonPath("\$.attachment[0].type") { value("Document") } }
+            .andExpect { jsonPath("\$.attachment[0].url") { value("https://example.com/media/test-media.png") } }
+            .andExpect { jsonPath("\$.attachment[1].type") { value("Document") } }
+            .andExpect { jsonPath("\$.attachment[1].url") { value("https://example.com/media/test-media2.png") } }
     }
 }

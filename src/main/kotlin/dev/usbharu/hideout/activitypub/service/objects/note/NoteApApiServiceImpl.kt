@@ -6,6 +6,7 @@ import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.domain.model.post.Visibility
 import dev.usbharu.hideout.core.query.FollowerQueryService
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
@@ -17,7 +18,8 @@ class NoteApApiServiceImpl(
     override suspend fun getNote(postId: Long, userId: Long?): Note? = transaction.transaction {
         val findById = try {
             noteQueryService.findById(postId)
-        } catch (_: FailedToGetResourcesException) {
+        } catch (e: FailedToGetResourcesException) {
+            logger.warn("Note not found.", e)
             return@transaction null
         }
         when (findById.second.visibility) {
@@ -38,5 +40,9 @@ class NoteApApiServiceImpl(
 
             Visibility.DIRECT -> return@transaction null
         }
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(NoteApApiServiceImpl::class.java)
     }
 }
