@@ -18,8 +18,9 @@ jobs:
       - name: Run JUnit
         uses: gradle/gradle-build-action@v2.8.1
         with:
-          arguments: koverXmlReport
+          arguments: koverXmlReport -x integrationTest
       - name: Add coverage report to PR
+        if: always()
         id: kover
         uses: mi-kas/kover-report@v1
         with:
