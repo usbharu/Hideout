@@ -52,6 +52,10 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+      - name: MongoDB in GitHub Actions
+        uses: supercharge/mongodb-github-action@1.10.0
+        with:
+          mongodb-version: latest
       - name: Run Integration Test
         uses: gradle/gradle-build-action@v2.8.1
         with:
