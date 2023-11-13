@@ -1,0 +1,67 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
+
+name: Integration Test
+
+on:
+  pull_request:
+    branches: [ "develop" ]
+
+permissions:
+  contents: read
+  checks: write
+  id-token: write
+
+jobs:
+  integration-test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Cache
+        uses: actions/cache@v3.3.2
+        with:
+          path: ~/.gradle/wrapper
+          key: gradle-wrapper-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
+      - name: Cache
+        uses: actions/cache@v3.3.2
+        with:
+          path: |
+            ~/.gradle/caches/jars-*
+            ~/.gradle/caches/transforms-*
+            ~/.gradle/caches/modules-*
+          key: gradle-dependencies-${{ steps.cache-key.outputs.week }}-${{ hashFiles('**/*.gradle.kts') }}
+          restore-keys: gradle-dependencies-${{ steps.cache-key.outputs.week }}-
+      - name: Cache
+        uses: actions/cache@v3.3.2
+        with:
+          path: |
+            ~/.gradle/caches/build-cache-*
+            ~/.gradle/caches/[0-9]*.*
+            .gradle
+          key: ${{ runner.os }}-gradle-build-${{ github.workflow }}-${{ steps.cache-key.outputs.week }}-${{ github.sha }}
+          restore-keys: ${{ runner.os }}-gradle-build-${{ github.workflow }}-${{ steps.cache-key.outputs.week }}-
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: MongoDB in GitHub Actions
+        uses: supercharge/mongodb-github-action@1.10.0
+        with:
+          mongodb-version: latest
+      - name: Run Integration Test
+        uses: gradle/gradle-build-action@v2.8.1
+        with:
+          arguments: integrationTest
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v2
+        if: always()
+        with:
+          report_paths: '**/build/test-results/test/TEST-*.xml'
