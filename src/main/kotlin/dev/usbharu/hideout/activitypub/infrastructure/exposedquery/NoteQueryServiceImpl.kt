@@ -14,6 +14,7 @@ import dev.usbharu.hideout.util.singleOr
 import org.jetbrains.exposed.sql.Query
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.select
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 import java.time.Instant
 
@@ -47,7 +48,12 @@ class NoteQueryServiceImpl(private val postRepository: PostRepository, private v
     private suspend fun ResultRow.toNote(mediaList: List<dev.usbharu.hideout.core.domain.model.media.Media>): Note {
         val replyId = this[Posts.replyId]
         val replyTo = if (replyId != null) {
-            postRepository.findById(replyId).url
+            try {
+                postRepository.findById(replyId).url
+            } catch (e: FailedToGetResourcesException) {
+                logger.warn("Failed to get replyId: $replyId", e)
+                null
+            }
         } else {
             null
         }
@@ -85,5 +91,9 @@ class NoteQueryServiceImpl(private val postRepository: PostRepository, private v
             Visibility.FOLLOWERS -> listOfNotNull(followers) to listOfNotNull(followers)
             Visibility.DIRECT -> TODO()
         }
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(NoteQueryServiceImpl::class.java)
     }
 }

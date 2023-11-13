@@ -16,17 +16,10 @@ import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.*
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.anonymous
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication
-import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
-import org.springframework.security.web.DefaultSecurityFilterChain
-import org.springframework.security.web.FilterChainProxy
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken
-import org.springframework.security.web.util.matcher.AnyRequestMatcher
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
-import org.springframework.test.web.servlet.setup.StandaloneMockMvcBuilder
 import java.net.URL
 
 @ExtendWith(MockitoExtension::class)
@@ -44,21 +37,21 @@ class NoteApControllerImplTest {
     fun setUp() {
 
         mockMvc = MockMvcBuilders.standaloneSetup(noteApControllerImpl)
-            .apply<StandaloneMockMvcBuilder>(
-                springSecurity(
-                    FilterChainProxy(
-                        DefaultSecurityFilterChain(
-                            AnyRequestMatcher.INSTANCE
-                        )
-                    )
-                )
-            )
+//            .apply<StandaloneMockMvcBuilder>(
+//                springSecurity(
+//                    FilterChainProxy(
+//                        DefaultSecurityFilterChain(
+//                            AnyRequestMatcher.INSTANCE
+//                        )
+//                    )
+//                )
+//            )
             .build()
     }
 
     @Test
     fun `postAP 匿名で取得できる`() = runTest {
-
+        SecurityContextHolder.clearContext()
         val note = Note(
             name = "Note",
             id = "https://example.com/users/hoge/posts/1234",
@@ -74,7 +67,7 @@ class NoteApControllerImplTest {
 
         mockMvc
             .get("/users/hoge/posts/1234") {
-                with(anonymous())
+//                with(anonymous())
             }
             .asyncDispatch()
             .andExpect { status { isOk() } }
@@ -83,11 +76,12 @@ class NoteApControllerImplTest {
 
     @Test
     fun `postAP 存在しない場合は404`() = runTest {
+        SecurityContextHolder.clearContext()
         whenever(noteApApiService.getNote(eq(123), isNull())).doReturn(null)
 
         mockMvc
             .get("/users/hoge/posts/123") {
-                with(anonymous())
+//                with(anonymous())
             }
             .asyncDispatch()
             .andExpect { status { isNotFound() } }
@@ -117,11 +111,11 @@ class NoteApControllerImplTest {
         SecurityContextHolder.getContext().authentication = preAuthenticatedAuthenticationToken
 
         mockMvc.get("/users/hoge/posts/1234") {
-            with(
-                authentication(
-                    preAuthenticatedAuthenticationToken
-                )
-            )
+//            with(
+//                authentication(
+//                    preAuthenticatedAuthenticationToken
+//                )
+//            )
         }.asyncDispatch()
             .andExpect { status { isOk() } }
             .andExpect { content { json(objectMapper.writeValueAsString(note)) } }
