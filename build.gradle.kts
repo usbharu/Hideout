@@ -27,6 +27,37 @@ apply {
 group = "dev.usbharu"
 version = "0.0.1"
 
+sourceSets {
+    create("intTest") {
+        compileClasspath += sourceSets.main.get().output
+        runtimeClasspath += sourceSets.main.get().output
+    }
+}
+
+val intTestImplementation by configurations.getting {
+    extendsFrom(configurations.implementation.get())
+}
+val intTestRuntimeOnly by configurations.getting {
+    extendsFrom(configurations.runtimeOnly.get())
+}
+
+val integrationTest = task<Test>("integrationTest") {
+    description = "Runs integration tests."
+    group = "verification"
+
+    testClassesDirs = sourceSets["intTest"].output.classesDirs
+    classpath = sourceSets["intTest"].runtimeClasspath
+    shouldRunAfter("test")
+
+    useJUnitPlatform()
+
+    testLogging {
+        events("passed")
+    }
+}
+
+tasks.check { dependsOn(integrationTest) }
+
 tasks.withType<Test> {
     useJUnitPlatform()
     val cpus = Runtime.getRuntime().availableProcessors()
@@ -132,9 +163,7 @@ dependencies {
     compileOnly("io.swagger.core.v3:swagger-annotations:2.2.6")
     implementation("io.swagger.core.v3:swagger-models:2.2.6")
     implementation("org.jetbrains.exposed:exposed-java-time:$exposed_version")
-    testImplementation("org.springframework.boot:spring-boot-test-autoconfigure")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.springframework.security:spring-security-test")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.springframework.security:spring-security-oauth2-jose")
@@ -162,7 +191,6 @@ dependencies {
     implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
     testImplementation("io.ktor:ktor-client-mock:$ktor_version")
 
-    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
     testImplementation("org.mockito:mockito-inline:5.2.0")
     testImplementation("nl.jqno.equalsverifier:equalsverifier:3.15.3")
@@ -172,6 +200,10 @@ dependencies {
     implementation("org.drewcarlson:kjob-mongo:0.6.0")
 
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.1")
+
+    intTestImplementation("org.springframework.boot:spring-boot-starter-test")
+    intTestImplementation("org.springframework.security:spring-security-test")
+
 }
 
 detekt {
@@ -220,7 +252,7 @@ project.gradle.taskGraph.whenReady {
 
 kover {
 
-excludeSourceSets {
+    excludeSourceSets {
         names("aot")
     }
 }

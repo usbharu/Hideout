@@ -5,6 +5,7 @@ import dev.usbharu.hideout.application.service.id.IdGenerateService
 import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
+import dev.usbharu.hideout.util.singleOr
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.springframework.stereotype.Repository
@@ -67,11 +68,11 @@ class PostRepositoryImpl(
     }
 
     override suspend fun findById(id: Long): Post =
-        Posts.innerJoin(PostsMedia, onColumn = { Posts.id }, otherColumn = { postId })
+        Posts.leftJoin(PostsMedia)
             .select { Posts.id eq id }
             .let(postQueryMapper::map)
-            .singleOrNull()
-            ?: throw FailedToGetResourcesException("id: $id was not found.")
+            .singleOr { FailedToGetResourcesException("id: $id was not found.", it) }
+
 
     override suspend fun delete(id: Long) {
         Posts.deleteWhere { Posts.id eq id }

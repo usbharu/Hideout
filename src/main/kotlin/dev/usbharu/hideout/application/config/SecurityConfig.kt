@@ -59,7 +59,7 @@ import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.util.*
 
-@EnableWebSecurity(debug = false)
+@EnableWebSecurity(debug = true)
 @Configuration
 @Suppress("FunctionMaxLength", "TooManyFunctions")
 class SecurityConfig {
@@ -82,6 +82,7 @@ class SecurityConfig {
                 HttpSignatureFilter::class.java
             )
             .authorizeHttpRequests {
+                it.requestMatchers("/inbox", "/outbox", "/users/*/inbox", "/users/*/outbox").authenticated()
                 it.anyRequest().permitAll()
             }
             .csrf {
@@ -110,7 +111,6 @@ class SecurityConfig {
             AuthenticationEntryPointFailureHandler(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
         authenticationEntryPointFailureHandler.setRethrowAuthenticationServiceException(false)
         httpSignatureFilter.setAuthenticationFailureHandler(authenticationEntryPointFailureHandler)
-
         return httpSignatureFilter
     }
 
