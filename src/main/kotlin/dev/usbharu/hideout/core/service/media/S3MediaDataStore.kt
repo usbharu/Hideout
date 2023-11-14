@@ -5,6 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import software.amazon.awssdk.core.sync.RequestBody
 import software.amazon.awssdk.services.s3.S3Client
@@ -54,11 +55,67 @@ class S3MediaDataStore(private val s3Client: S3Client, private val storageConfig
         )
     }
 
+    override suspend fun save(dataSaveRequest: MediaSaveRequest): SavedMedia {
+        logger.info("MEDIA upload. {}", dataSaveRequest.name)
+
+        val fileUploadRequest = PutObjectRequest.builder()
+            .bucket(storageConfig.bucket)
+            .key(dataSaveRequest.name)
+            .build()
+
+        logger.info("MEDIA upload. bucket: {} key: {}", storageConfig.bucket, dataSaveRequest.name)
+
+        val thumbnailKey = "thumbnail-${dataSaveRequest.name}"
+        val thumbnailUploadRequest = PutObjectRequest.builder()
+            .bucket(storageConfig.bucket)
+            .key(thumbnailKey)
+            .build()
+
+        logger.info("MEDIA upload. bucket: {} key: {}", storageConfig.bucket, thumbnailKey)
+
+        withContext(Dispatchers.IO) {
+            awaitAll(
+                async {
+                    if (dataSaveRequest.thumbnailPath != null) {
+                        s3Client.putObject(
+                            thumbnailUploadRequest,
+                            RequestBody.fromFile(dataSaveRequest.thumbnailPath)
+                        )
+                    } else {
+                        null
+                    }
+                },
+                async {
+                    s3Client.putObject(fileUploadRequest, RequestBody.fromFile(dataSaveRequest.filePath))
+                }
+            )
+        }
+        val successSavedMedia = SuccessSavedMedia(
+            name = dataSaveRequest.name,
+            url = "${storageConfig.publicUrl}/${storageConfig.bucket}/${dataSaveRequest.name}",
+            thumbnailUrl = "${storageConfig.publicUrl}/${storageConfig.bucket}/$thumbnailKey"
+        )
+
+        logger.info("SUCCESS Media upload. {}", dataSaveRequest.name)
+        logger.debug(
+            "name: {} url: {} thumbnail url: {}",
+            successSavedMedia.name,
+            successSavedMedia.url,
+            successSavedMedia.thumbnailUrl
+        )
+
+        return successSavedMedia
+    }
+
     override suspend fun delete(id: String) {
         val fileDeleteRequest = DeleteObjectRequest.builder().bucket(storageConfig.bucket).key(id).build()
         val thumbnailDeleteRequest =
             DeleteObjectRequest.builder().bucket(storageConfig.bucket).key("thumbnail-$id").build()
         s3Client.deleteObject(fileDeleteRequest)
         s3Client.deleteObject(thumbnailDeleteRequest)
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(S3MediaDataStore::class.java)
     }
 }

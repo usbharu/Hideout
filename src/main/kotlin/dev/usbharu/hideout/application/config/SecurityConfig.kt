@@ -59,7 +59,7 @@ import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.util.*
 
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity(debug = false)
 @Configuration
 @Suppress("FunctionMaxLength", "TooManyFunctions")
 class SecurityConfig {
@@ -73,7 +73,12 @@ class SecurityConfig {
 
     @Bean
     @Order(1)
-    fun httpSignatureFilterChain(http: HttpSecurity, httpSignatureFilter: HttpSignatureFilter): SecurityFilterChain {
+    fun httpSignatureFilterChain(
+        http: HttpSecurity,
+        httpSignatureFilter: HttpSignatureFilter,
+        introspector: HandlerMappingIntrospector
+    ): SecurityFilterChain {
+        val builder = MvcRequestMatcher.Builder(introspector)
         http
             .securityMatcher("/inbox", "/outbox", "/users/*/inbox", "/users/*/outbox", "/users/*/posts/*")
             .addFilter(httpSignatureFilter)
@@ -82,7 +87,12 @@ class SecurityConfig {
                 HttpSignatureFilter::class.java
             )
             .authorizeHttpRequests {
-                it.requestMatchers("/inbox", "/outbox", "/users/*/inbox", "/users/*/outbox").authenticated()
+                it.requestMatchers(
+                    builder.pattern("/inbox"),
+                    builder.pattern("/outbox"),
+                    builder.pattern("/users/*/inbox"),
+                    builder.pattern("/users/*/outbox")
+                ).authenticated()
                 it.anyRequest().permitAll()
             }
             .csrf {
