@@ -6,6 +6,7 @@ import dev.usbharu.hideout.core.domain.model.media.Media
 import dev.usbharu.hideout.core.domain.model.media.MediaRepository
 import dev.usbharu.hideout.core.service.media.converter.MediaProcessService
 import dev.usbharu.hideout.mastodon.interfaces.api.media.MediaRequest
+import dev.usbharu.hideout.util.withDelete
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -38,78 +39,60 @@ class MediaServiceImpl(
         )
 
         val tempFile = Files.createTempFile("hideout-tmp-file", ".tmp")
-        AutoCloseable { println(tempFile);Files.delete(tempFile) }.use {
+
+
+
+        tempFile.withDelete().use {
             Files.newOutputStream(tempFile).use { outputStream ->
                 mediaRequest.file.inputStream.use {
                     it.transferTo(outputStream)
                 }
             }
-            val mimeType = fileTypeDeterminationService.fileType(
-                tempFile,
+            val mimeType = fileTypeDeterminationService.fileType(tempFile, fileName)
+
+            val process = findMediaProcessor(mimeType).process(
+                mimeType,
                 fileName,
+                tempFile,
+                null
             )
-            val process = try {
-                mediaProcessServices.first { it.isSupport(mimeType) }.process(
-                    mimeType,
-                    fileName,
-                    tempFile,
-                    null
-                )
-            } catch (e: NoSuchElementException) {
-                throw UnsupportedMediaException("MediaType: $mimeType isn't supported.")
-            }
+
             val dataMediaSave = MediaSaveRequest(
                 process.filePath.fileName.toString(),
                 "",
                 process.filePath,
                 process.thumbnailPath
             )
-            val save = try {
-                mediaDataStore.save(dataMediaSave)
-            } catch (e: Exception) {
-                logger.warn("Failed to save the media", e)
-                throw MediaSaveException("Failed to save the media.", e)
-            }
-            if (save.success.not()) {
-                save as FaildSavedMedia
-                logger.warn("Failed to save the media. reason: ${save.reason}")
-                logger.warn(save.description, save.trace)
-                throw MediaSaveException("Failed to save the media.")
-            }
-            save as SuccessSavedMedia
-            val blurHash = withContext(Dispatchers.IO) {
-                if (process.thumbnailPath != null && process.thumbnailMimeType != null) {
-                    val iterator =
-                        ImageIO.getImageReadersByMIMEType(process.thumbnailMimeType.type + "/" + process.thumbnailMimeType.subtype)
-                    for (imageReader in iterator) {
-                        try {
-                            ImageIO.createImageInputStream(process.thumbnailPath.toFile()).use {
-                                imageReader.input = it
-                                val read = imageReader.read(0)
-                                return@withContext mediaBlurhashService.generateBlurhash(read)
-                            }
-                        } catch (e: Exception) {
-                            logger.warn("Failed to read thumbnail", e)
-                        }
-
+            dataMediaSave.filePath.withDelete().use {
+                dataMediaSave.thumbnailPath.withDelete().use {
+                    val save = try {
+                        mediaDataStore.save(dataMediaSave)
+                    } catch (e: Exception) {
+                        logger.warn("Failed to save the media", e)
+                        throw MediaSaveException("Failed to save the media.", e)
                     }
-                    ""
-                } else {
-                    ""
+                    if (save.success.not()) {
+                        save as FaildSavedMedia
+                        logger.warn("Failed to save the media. reason: ${save.reason}")
+                        logger.warn(save.description, save.trace)
+                        throw MediaSaveException("Failed to save the media.")
+                    }
+                    save as SuccessSavedMedia
+                    val blurHash = generateBlurhash(process)
+                    return mediaRepository.save(
+                        EntityMedia(
+                            id = mediaRepository.generateId(),
+                            name = fileName,
+                            url = save.url,
+                            remoteUrl = null,
+                            thumbnailUrl = save.thumbnailUrl,
+                            type = process.fileMimeType.fileType,
+                            mimeType = process.fileMimeType,
+                            blurHash = blurHash
+                        )
+                    )
                 }
             }
-            return mediaRepository.save(
-                EntityMedia(
-                    id = mediaRepository.generateId(),
-                    name = fileName,
-                    url = save.url,
-                    remoteUrl = null,
-                    thumbnailUrl = save.thumbnailUrl,
-                    type = process.fileMimeType.fileType,
-                    mimeType = process.fileMimeType,
-                    blurHash = blurHash
-                )
-            )
         }
 
 
@@ -176,6 +159,47 @@ class MediaServiceImpl(
                 blurHash = blurhash
             )
         )
+    }
+
+    protected fun findMediaProcessor(mimeType: MimeType): MediaProcessService {
+        try {
+            return mediaProcessServices.first {
+                try {
+                    it.isSupport(mimeType)
+                } catch (e: Exception) {
+                    false
+                }
+            }
+        } catch (e: NoSuchElementException) {
+            throw UnsupportedMediaException("MediaType: $mimeType isn't supported.")
+        }
+    }
+
+    protected fun generateBlurhash(process: ProcessedMediaPath): String {
+        val path = if (process.thumbnailPath != null && process.thumbnailMimeType != null) {
+            process.thumbnailPath
+        } else {
+            process.filePath
+        }
+        val mimeType = if (process.thumbnailPath != null && process.thumbnailMimeType != null) {
+            process.thumbnailMimeType
+        } else {
+            process.fileMimeType
+        }
+
+        val imageReadersByMIMEType = ImageIO.getImageReadersByMIMEType(mimeType.type + "/" + mimeType.subtype)
+        for (imageReader in imageReadersByMIMEType) {
+            try {
+                val bufferedImage = ImageIO.createImageInputStream(path.toFile()).use {
+                    imageReader.input = it
+                    imageReader.read(0)
+                }
+                return mediaBlurhashService.generateBlurhash(bufferedImage)
+            } catch (e: Exception) {
+                logger.warn("Failed to read thumbnail", e)
+            }
+        }
+        return ""
     }
 
     companion object {
