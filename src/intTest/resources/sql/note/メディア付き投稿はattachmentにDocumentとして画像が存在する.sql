@@ -13,9 +13,9 @@ insert into POSTS (ID, "userId", OVERVIEW, TEXT, "createdAt", VISIBILITY, URL, "
 VALUES (1242, 11, null, 'test post', 12345680, 0, 'https://example.com/users/test-user11/posts/1242', null, null, false,
         'https://example.com/users/test-user11/posts/1242');
 
-insert into MEDIA (ID, NAME, URL, REMOTE_URL, THUMBNAIL_URL, TYPE, BLURHASH, MIME_TYPE)
-VALUES (1, 'test-media', 'https://example.com/media/test-media.png', null, null, 0, null, 'image/png'),
-       (2, 'test-media2', 'https://example.com/media/test-media2.png', null, null, 0, null, 'image/png');
+insert into MEDIA (ID, NAME, URL, REMOTE_URL, THUMBNAIL_URL, TYPE, BLURHASH, MIME_TYPE, DESCRIPTION)
+VALUES (1, 'test-media', 'https://example.com/media/test-media.png', null, null, 0, null, 'image/png', null),
+       (2, 'test-media2', 'https://example.com/media/test-media2.png', null, null, 0, null, 'image/png', null);
 
 insert into POSTSMEDIA(POST_ID, MEDIA_ID)
 VALUES (1242, 1),
