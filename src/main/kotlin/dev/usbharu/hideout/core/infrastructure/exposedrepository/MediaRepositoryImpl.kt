@@ -28,6 +28,8 @@ class MediaRepositoryImpl(private val idGenerateService: IdGenerateService) : Me
                 it[thumbnailUrl] = media.thumbnailUrl
                 it[type] = media.type.ordinal
                 it[blurhash] = media.blurHash
+                it[mimeType] = media.mimeType.type + "/" + media.mimeType.subtype
+                it[description] = media.description
             }
         } else {
             Media.insert {
@@ -38,6 +40,8 @@ class MediaRepositoryImpl(private val idGenerateService: IdGenerateService) : Me
                 it[thumbnailUrl] = media.thumbnailUrl
                 it[type] = media.type.ordinal
                 it[blurhash] = media.blurHash
+                it[mimeType] = media.mimeType.type + "/" + media.mimeType.subtype
+                it[description] = media.description
             }
         }
         return media
@@ -71,7 +75,8 @@ fun ResultRow.toMedia(): EntityMedia {
         thumbnailUrl = this[Media.thumbnailUrl],
         type = fileType,
         blurHash = this[Media.blurhash],
-        mimeType = MimeType(mimeType.substringBefore("/"), mimeType.substringAfter("/"), fileType)
+        mimeType = MimeType(mimeType.substringBefore("/"), mimeType.substringAfter("/"), fileType),
+        description = this[Media.description]
     )
 }
 
@@ -86,7 +91,8 @@ fun ResultRow.toMediaOrNull(): EntityMedia? {
         thumbnailUrl = this[Media.thumbnailUrl],
         type = FileType.values().first { it.ordinal == this.getOrNull(Media.type) },
         blurHash = this[Media.blurhash],
-        mimeType = MimeType(mimeType.substringBefore("/"), mimeType.substringAfter("/"), fileType)
+        mimeType = MimeType(mimeType.substringBefore("/"), mimeType.substringAfter("/"), fileType),
+        description = this[Media.description]
     )
 }
 
@@ -99,5 +105,6 @@ object Media : Table("media") {
     val type = integer("type")
     val blurhash = varchar("blurhash", 255).nullable()
     val mimeType = varchar("mime_type", 255)
+    val description = varchar("description", 4000).nullable()
     override val primaryKey = PrimaryKey(id)
 }

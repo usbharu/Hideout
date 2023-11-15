@@ -11,5 +11,6 @@ data class Media(
     val thumbnailUrl: String?,
     val type: FileType,
     val mimeType: MimeType,
-    val blurHash: String?
+    val blurHash: String?,
+    val description: String? = null
 )
