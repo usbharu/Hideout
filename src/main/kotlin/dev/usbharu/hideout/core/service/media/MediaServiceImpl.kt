@@ -80,7 +80,8 @@ open class MediaServiceImpl(
                             thumbnailUrl = save.thumbnailUrl,
                             type = process.fileMimeType.fileType,
                             mimeType = process.fileMimeType,
-                            blurHash = blurHash
+                            blurHash = blurHash,
+                            description = mediaRequest.description
                         )
                     )
                 }

@@ -133,7 +133,8 @@ class APNoteServiceImpl(
                     RemoteMedia(
                         (it.name ?: it.url)!!,
                         it.url!!,
-                        it.mediaType ?: "application/octet-stream"
+                        it.mediaType ?: "application/octet-stream",
+                        description = it.name
                     )
                 )
             }
