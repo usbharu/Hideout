@@ -3,9 +3,9 @@ package dev.usbharu.hideout.util
 import java.nio.file.Files
 import java.nio.file.Path
 
-fun Path?.withDelete(): TempFile = TempFile(this)
+fun <T : Path?> T.withDelete(): TempFile<T> = TempFile(this)
 
-class TempFile(val path: Path?) : AutoCloseable {
+class TempFile<T : Path?>(val path: T) : AutoCloseable {
     override fun close() {
         path?.let { Files.deleteIfExists(it) }
     }

@@ -7,29 +7,21 @@ import dev.usbharu.hideout.core.domain.model.media.MediaRepository
 import dev.usbharu.hideout.core.service.media.converter.MediaProcessService
 import dev.usbharu.hideout.mastodon.interfaces.api.media.MediaRequest
 import dev.usbharu.hideout.util.withDelete
-import io.ktor.client.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
-import io.ktor.util.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.nio.file.Files
-import java.util.*
 import javax.imageio.ImageIO
 import dev.usbharu.hideout.core.domain.model.media.Media as EntityMedia
 
 @Service
 @Suppress("TooGenericExceptionCaught")
-class MediaServiceImpl(
+open class MediaServiceImpl(
     private val mediaDataStore: MediaDataStore,
     private val fileTypeDeterminationService: FileTypeDeterminationService,
     private val mediaBlurhashService: MediaBlurhashService,
     private val mediaRepository: MediaRepository,
     private val mediaProcessServices: List<MediaProcessService>,
-    private val httpClient: HttpClient
+    private val remoteMediaDownloadService: RemoteMediaDownloadService
 ) : MediaService {
     override suspend fun uploadLocalMedia(mediaRequest: MediaRequest): EntityMedia {
         val fileName = mediaRequest.file.name
@@ -102,63 +94,49 @@ class MediaServiceImpl(
     override suspend fun uploadRemoteMedia(remoteMedia: RemoteMedia): Media {
         logger.info("MEDIA Remote media. filename:${remoteMedia.name} url:${remoteMedia.url}")
 
-        val httpResponse = httpClient.get(remoteMedia.url)
-        val bytes = httpResponse.bodyAsChannel().toByteArray()
+        remoteMediaDownloadService.download(remoteMedia.url).withDelete().use {
+            val mimeType = fileTypeDeterminationService.fileType(it.path, remoteMedia.name)
 
-        val contentType = httpResponse.contentType()?.toString()
-        val mimeType =
-            fileTypeDeterminationService.fileType(bytes, remoteMedia.name, contentType)
+            val process = findMediaProcessor(mimeType).process(mimeType, remoteMedia.name, it.path, null)
 
-        if (mimeType.fileType != FileType.Image) {
-            throw UnsupportedMediaException("FileType: $mimeType isn't supported.")
-        }
-
-        val processedMedia = mediaProcessServices.first().process(
-            fileType = mimeType.fileType,
-            contentType = contentType.orEmpty(),
-            fileName = remoteMedia.name,
-            file = bytes,
-            thumbnail = null
-        )
-
-        val mediaSave = MediaSave(
-            "${UUID.randomUUID()}.${processedMedia.file.extension}",
-            "",
-            processedMedia.file.byteArray,
-            processedMedia.thumbnail?.byteArray
-        )
-
-        val save = try {
-            mediaDataStore.save(mediaSave)
-        } catch (e: Exception) {
-            logger.warn("Failed save media", e)
-            throw MediaSaveException("Failed save media.", e)
-        }
-
-        if (save.success.not()) {
-            save as FaildSavedMedia
-            logger.warn("Failed to save the media. reason: ${save.reason}")
-            logger.warn(save.description, save.trace)
-            throw MediaSaveException("Failed to save the media.")
-        }
-        save as SuccessSavedMedia
-
-        val blurhash = withContext(Dispatchers.IO) {
-            mediaBlurhashService.generateBlurhash(ImageIO.read(bytes.inputStream()))
-        }
-
-        return mediaRepository.save(
-            EntityMedia(
-                id = mediaRepository.generateId(),
-                name = remoteMedia.name,
-                url = save.url,
-                remoteUrl = remoteMedia.url,
-                thumbnailUrl = save.thumbnailUrl,
-                type = mimeType.fileType,
-                mimeType = mimeType,
-                blurHash = blurhash
+            val mediaSaveRequest = MediaSaveRequest(
+                process.filePath.fileName.toString(),
+                "",
+                process.filePath,
+                process.thumbnailPath
             )
-        )
+
+            mediaSaveRequest.filePath.withDelete().use {
+                mediaSaveRequest.filePath.withDelete().use {
+                    val save = try {
+                        mediaDataStore.save(mediaSaveRequest)
+                    } catch (e: Exception) {
+                        logger.warn("Failed to save the media", e)
+                        throw MediaSaveException("Failed to save the media.", e)
+                    }
+
+                    if (save is FaildSavedMedia) {
+                        logger.warn("Failed to save the media. reason: ${save.reason}")
+                        logger.warn(save.description, save.trace)
+                        throw MediaSaveException("Failed to save the media.")
+                    }
+                    save as SuccessSavedMedia
+                    val blurhash = generateBlurhash(process)
+                    return mediaRepository.save(
+                        EntityMedia(
+                            id = mediaRepository.generateId(),
+                            name = remoteMedia.name,
+                            url = save.url,
+                            remoteUrl = remoteMedia.url,
+                            thumbnailUrl = save.thumbnailUrl,
+                            type = process.fileMimeType.fileType,
+                            mimeType = process.fileMimeType,
+                            blurHash = blurhash
+                        )
+                    )
+                }
+            }
+        }
     }
 
     protected fun findMediaProcessor(mimeType: MimeType): MediaProcessService {
