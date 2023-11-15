@@ -21,7 +21,8 @@ open class MediaServiceImpl(
     private val mediaBlurhashService: MediaBlurhashService,
     private val mediaRepository: MediaRepository,
     private val mediaProcessServices: List<MediaProcessService>,
-    private val remoteMediaDownloadService: RemoteMediaDownloadService
+    private val remoteMediaDownloadService: RemoteMediaDownloadService,
+    private val renameService: MediaFileRenameService
 ) : MediaService {
     override suspend fun uploadLocalMedia(mediaRequest: MediaRequest): EntityMedia {
         val fileName = mediaRequest.file.name
@@ -50,7 +51,12 @@ open class MediaServiceImpl(
             )
 
             val dataMediaSave = MediaSaveRequest(
-                process.filePath.fileName.toString(),
+                renameService.rename(
+                    mediaRequest.file.name,
+                    mimeType,
+                    process.filePath.fileName.toString(),
+                    process.fileMimeType
+                ),
                 "",
                 process.filePath,
                 process.thumbnailPath
@@ -101,7 +107,12 @@ open class MediaServiceImpl(
             val process = findMediaProcessor(mimeType).process(mimeType, remoteMedia.name, it.path, null)
 
             val mediaSaveRequest = MediaSaveRequest(
-                process.filePath.fileName.toString(),
+                renameService.rename(
+                    remoteMedia.name,
+                    mimeType,
+                    process.filePath.fileName.toString(),
+                    process.fileMimeType
+                ),
                 "",
                 process.filePath,
                 process.thumbnailPath
