@@ -10,6 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.slf4j.MDCContext
 import kotlinx.coroutines.withContext
 import net.coobird.thumbnailator.Thumbnails
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import java.nio.file.Files
@@ -83,6 +84,7 @@ class ImageMediaProcessService(private val imageMediaProcessorConfiguration: Ima
 
         tempFile.outputStream().use {
             if (ImageIO.write(bufferedImage, convertType, it).not()) {
+                logger.warn("Failed to save a temporary file. type: {} ,path: {}", convertType, tempFile)
                 throw MediaProcessException("Failed to save a temporary file.")
             }
         }
@@ -92,5 +94,9 @@ class ImageMediaProcessService(private val imageMediaProcessorConfiguration: Ima
             MimeType("image", convertType, FileType.Image),
             MimeType("image", convertType, FileType.Image).takeIf { genThumbnail }
         )
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(ImageMediaProcessService::class.java)
     }
 }
