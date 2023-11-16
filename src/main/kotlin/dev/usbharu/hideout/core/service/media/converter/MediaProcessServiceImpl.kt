@@ -1,11 +1,10 @@
 package dev.usbharu.hideout.core.service.media.converter
 
 import dev.usbharu.hideout.core.domain.exception.media.MediaConvertException
-import dev.usbharu.hideout.core.service.media.FileType
-import dev.usbharu.hideout.core.service.media.ProcessedMedia
-import dev.usbharu.hideout.core.service.media.ThumbnailGenerateService
+import dev.usbharu.hideout.core.service.media.*
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.nio.file.Path
 
 @Service
 @Suppress("TooGenericExceptionCaught")
@@ -13,6 +12,8 @@ class MediaProcessServiceImpl(
     private val mediaConverterRoot: MediaConverterRoot,
     private val thumbnailGenerateService: ThumbnailGenerateService
 ) : MediaProcessService {
+    override fun isSupport(mimeType: MimeType): Boolean = false
+
     override suspend fun process(
         fileType: FileType,
         contentType: String,
@@ -40,6 +41,15 @@ class MediaProcessServiceImpl(
                 2048
             )
         )
+    }
+
+    override suspend fun process(
+        mimeType: MimeType,
+        fileName: String,
+        filePath: Path,
+        thumbnails: Path?
+    ): ProcessedMediaPath {
+        TODO("Not yet implemented")
     }
 
     companion object {

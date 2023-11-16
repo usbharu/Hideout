@@ -22,7 +22,7 @@ class APReceiveDeleteServiceImpl(
 
         val post = try {
             postQueryService.findByApId(deleteId)
-        } catch (e: FailedToGetResourcesException) {
+        } catch (_: FailedToGetResourcesException) {
             return@transaction ActivityPubStringResponse(HttpStatusCode.OK, "Resource not found or already deleted")
         }
         postRepository.delete(post.id)

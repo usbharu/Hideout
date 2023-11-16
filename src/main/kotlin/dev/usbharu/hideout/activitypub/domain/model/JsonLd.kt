@@ -62,13 +62,9 @@ class ContextDeserializer : JsonDeserializer<String>() {
 
 class ContextSerializer : JsonSerializer<List<String>>() {
 
-    override fun isEmpty(value: List<String>?): Boolean {
-        return value.isNullOrEmpty()
-    }
+    override fun isEmpty(value: List<String>?): Boolean = value.isNullOrEmpty()
 
-    override fun isEmpty(provider: SerializerProvider?, value: List<String>?): Boolean {
-        return value.isNullOrEmpty()
-    }
+    override fun isEmpty(provider: SerializerProvider?, value: List<String>?): Boolean = value.isNullOrEmpty()
 
     override fun serialize(value: List<String>?, gen: JsonGenerator?, serializers: SerializerProvider) {
         if (value.isNullOrEmpty()) {

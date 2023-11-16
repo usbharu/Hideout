@@ -37,7 +37,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.*
-import utils.JsonObjectMapper.objectMapper
 import utils.PostBuilder
 import utils.UserBuilder
 import java.time.Instant
@@ -74,7 +73,6 @@ class APNoteServiceImplTest {
             postRepository = mock(),
             apUserService = mock(),
             postQueryService = mock(),
-            objectMapper = objectMapper,
             postService = mock(),
             apResourceResolveService = mock(),
             postBuilder = Post.PostBuilder(CharacterLimit()),
@@ -152,7 +150,6 @@ class APNoteServiceImplTest {
             postRepository = postRepository,
             apUserService = apUserService,
             postQueryService = postQueryService,
-            objectMapper = objectMapper,
             postService = mock(),
             apResourceResolveService = apResourceResolveService,
             postBuilder = Post.PostBuilder(CharacterLimit()),
@@ -221,7 +218,6 @@ class APNoteServiceImplTest {
                 postRepository = mock(),
                 apUserService = mock(),
                 postQueryService = postQueryService,
-                objectMapper = objectMapper,
                 postService = mock(),
                 apResourceResolveService = apResourceResolveService,
                 postBuilder = Post.PostBuilder(CharacterLimit()),
@@ -274,7 +270,6 @@ class APNoteServiceImplTest {
             postRepository = postRepository,
             apUserService = apUserService,
             postQueryService = mock(),
-            objectMapper = objectMapper,
             postService = postService,
             apResourceResolveService = mock(),
             postBuilder = postBuilder,
@@ -333,7 +328,6 @@ class APNoteServiceImplTest {
             postRepository = mock(),
             apUserService = mock(),
             postQueryService = mock(),
-            objectMapper = objectMapper,
             postService = mock(),
             apResourceResolveService = mock(),
             postBuilder = postBuilder,
