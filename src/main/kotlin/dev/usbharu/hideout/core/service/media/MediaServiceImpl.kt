@@ -24,6 +24,7 @@ open class MediaServiceImpl(
     private val remoteMediaDownloadService: RemoteMediaDownloadService,
     private val renameService: MediaFileRenameService
 ) : MediaService {
+    @Suppress("LongMethod")
     override suspend fun uploadLocalMedia(mediaRequest: MediaRequest): EntityMedia {
         val fileName = mediaRequest.file.name
         logger.info(
@@ -32,8 +33,6 @@ open class MediaServiceImpl(
         )
 
         val tempFile = Files.createTempFile("hideout-tmp-file", ".tmp")
-
-
 
         tempFile.withDelete().use {
             Files.newOutputStream(tempFile).use { outputStream ->
@@ -93,8 +92,6 @@ open class MediaServiceImpl(
                 }
             }
         }
-
-
     }
 
     // TODO: 仮の処理として保存したように動かす
@@ -156,11 +153,11 @@ open class MediaServiceImpl(
             return mediaProcessServices.first {
                 try {
                     it.isSupport(mimeType)
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     false
                 }
             }
-        } catch (e: NoSuchElementException) {
+        } catch (_: NoSuchElementException) {
             throw UnsupportedMediaException("MediaType: $mimeType isn't supported.")
         }
     }

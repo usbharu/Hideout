@@ -70,7 +70,9 @@ class ImageMediaProcessService(private val imageMediaProcessorConfiguration: Ima
                         Thumbnails.of(thumbnails.toFile()).size(width, height).asBufferedImage()
                     } else {
                         Thumbnails.of(bufferedImage).size(width, height).asBufferedImage()
-                    }, convertType, it
+                    },
+                    convertType,
+                    it
                 )
                 if (write) {
                     tempThumbnailFile

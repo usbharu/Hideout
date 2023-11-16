@@ -22,9 +22,7 @@ import kotlin.math.min
 @Service
 @Qualifier("video")
 class MovieMediaProcessService : MediaProcessService {
-    override fun isSupport(mimeType: MimeType): Boolean {
-        return mimeType.type == "video"
-    }
+    override fun isSupport(mimeType: MimeType): Boolean = mimeType.type == "video"
 
     override suspend fun process(
         fileType: FileType,
@@ -92,7 +90,6 @@ class MovieMediaProcessService : MediaProcessService {
                     while (true) {
                         val grab = grabber.grab() ?: break
 
-
                         if (bufferedImage == null) {
                             bufferedImage = frameConverter.convert(grab)
                         }
@@ -106,14 +103,11 @@ class MovieMediaProcessService : MediaProcessService {
                         }
                     }
 
-
-
                     if (bufferedImage != null) {
                         ImageIO.write(bufferedImage, "jpeg", thumbnailFile.toFile())
                     }
                 }
             }
-
         }
 
         logger.info("SUCCESS Convert Movie Media {}", fileName)

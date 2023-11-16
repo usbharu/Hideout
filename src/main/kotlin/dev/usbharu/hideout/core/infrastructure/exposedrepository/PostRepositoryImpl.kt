@@ -73,7 +73,6 @@ class PostRepositoryImpl(
             .let(postQueryMapper::map)
             .singleOr { FailedToGetResourcesException("id: $id was not found.", it) }
 
-
     override suspend fun delete(id: Long) {
         Posts.deleteWhere { Posts.id eq id }
     }

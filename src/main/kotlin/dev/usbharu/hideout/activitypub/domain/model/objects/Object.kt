@@ -46,9 +46,7 @@ open class Object : JsonLd {
         return result
     }
 
-    override fun toString(): String {
-        return "Object(type=$type, name=$name, actor=$actor, id=$id) ${super.toString()}"
-    }
+    override fun toString(): String = "Object(type=$type, name=$name, actor=$actor, id=$id) ${super.toString()}"
 
     companion object {
         @JvmStatic
