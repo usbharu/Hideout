@@ -19,8 +19,8 @@ class KJobJobQueueParentService() : JobQueueParentService {
     val kjob: KJob by lazy {
         kjob(ExposedKJob) {
             connectionDatabase = TransactionManager.defaultDatabase
-        isWorker = false
-    }.start()
+            isWorker = false
+        }.start()
     }
 
     override fun init(jobDefines: List<Job>) = Unit
