@@ -59,11 +59,6 @@ class PostRepositoryImpl(
                 it[apId] = post.apId
             }
         }
-
-        assert(Posts.select { Posts.id eq post.id }.singleOrNull() != null) {
-            "Faild to insert"
-        }
-
         return singleOrNull == null
     }
 
