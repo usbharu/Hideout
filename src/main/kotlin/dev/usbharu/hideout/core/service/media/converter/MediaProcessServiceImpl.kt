@@ -13,7 +13,7 @@ class MediaProcessServiceImpl(
     private val thumbnailGenerateService: ThumbnailGenerateService
 ) : MediaProcessService {
     override fun isSupport(mimeType: MimeType): Boolean {
-        TODO("Not yet implemented")
+        return false
     }
 
     override suspend fun process(

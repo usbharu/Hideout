@@ -181,6 +181,7 @@ dependencies {
     implementation("com.twelvemonkeys.imageio:imageio-webp:3.10.0")
     implementation("org.apache.tika:tika-core:2.9.1")
     implementation("net.coobird:thumbnailator:0.4.20")
+    implementation("org.bytedeco:javacv-platform:1.5.9")
 
     implementation("io.ktor:ktor-client-logging-jvm:$ktor_version")
 

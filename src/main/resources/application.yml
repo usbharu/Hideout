@@ -30,7 +30,10 @@ spring:
       database: hideout
   #      username: hideoutuser
   #      password: hideoutpass
-
+  servlet:
+    multipart:
+      max-file-size: 40MB
+      max-request-size: 40MB
   h2:
     console:
       enabled: true
@@ -42,5 +45,6 @@ server:
     basedir: tomcat
     accesslog:
       enabled: true
-
+    max-http-form-post-size: 40MB
+    max-swallow-size: 40MB
   port: 8081
