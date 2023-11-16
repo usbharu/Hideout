@@ -46,7 +46,6 @@ class ExposedTimelineRepository(private val idGenerateService: IdGenerateService
                 it[isLocal] = timeline.isLocal
                 it[isPureRepost] = timeline.isPureRepost
                 it[mediaIds] = timeline.mediaIds.joinToString(",")
-
             }
         }
         return timeline
