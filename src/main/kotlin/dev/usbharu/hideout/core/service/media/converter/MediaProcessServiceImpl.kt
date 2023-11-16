@@ -12,9 +12,7 @@ class MediaProcessServiceImpl(
     private val mediaConverterRoot: MediaConverterRoot,
     private val thumbnailGenerateService: ThumbnailGenerateService
 ) : MediaProcessService {
-    override fun isSupport(mimeType: MimeType): Boolean {
-        return false
-    }
+    override fun isSupport(mimeType: MimeType): Boolean = false
 
     override suspend fun process(
         fileType: FileType,

@@ -12,7 +12,7 @@ class UserAPControllerImpl(private val apUserService: APUserService) : UserAPCon
     override suspend fun userAp(username: String): ResponseEntity<Person> {
         val person = try {
             apUserService.getPersonByName(username)
-        } catch (e: FailedToGetResourcesException) {
+        } catch (_: FailedToGetResourcesException) {
             return ResponseEntity.notFound().build()
         }
         person.context += listOf("https://www.w3.org/ns/activitystreams")

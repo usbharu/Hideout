@@ -45,7 +45,7 @@ class ReactionServiceImpl(
                 reactionQueryService.findByPostIdAndUserIdAndEmojiId(postId, userId, 0)
             reactionRepository.delete(findByPostIdAndUserIdAndEmojiId)
             apReactionService.removeReaction(findByPostIdAndUserIdAndEmojiId)
-        } catch (e: FailedToGetResourcesException) {
+        } catch (_: FailedToGetResourcesException) {
         }
     }
 
