@@ -1,6 +1,5 @@
 package dev.usbharu.hideout.activitypub.service.objects.note
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import dev.usbharu.hideout.activitypub.domain.exception.FailedToGetActivityPubResourceException
 import dev.usbharu.hideout.activitypub.domain.exception.IllegalActivityPubObjectException
 import dev.usbharu.hideout.activitypub.domain.model.Note
@@ -24,7 +23,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.slf4j.MDCContext
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import java.time.Instant
@@ -50,7 +48,6 @@ class APNoteServiceImpl(
     private val postRepository: PostRepository,
     private val apUserService: APUserService,
     private val postQueryService: PostQueryService,
-    @Qualifier("activitypub") private val objectMapper: ObjectMapper,
     private val postService: PostService,
     private val apResourceResolveService: APResourceResolveService,
     private val postBuilder: Post.PostBuilder,
@@ -133,7 +130,8 @@ class APNoteServiceImpl(
                     RemoteMedia(
                         (it.name ?: it.url)!!,
                         it.url!!,
-                        it.mediaType ?: "application/octet-stream"
+                        it.mediaType ?: "application/octet-stream",
+                        description = it.name
                     )
                 )
             }

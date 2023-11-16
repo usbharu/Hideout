@@ -13,7 +13,7 @@ class HttpClientConfig {
     fun httpClient(): HttpClient = HttpClient(CIO).config {
         install(Logging) {
             logger = Logger.DEFAULT
-            level = LogLevel.INFO
+            level = LogLevel.ALL
         }
         install(HttpCache) {
         }

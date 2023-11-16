@@ -41,7 +41,5 @@ open class Delete : Object {
         return result
     }
 
-    override fun toString(): String {
-        return "Delete(`object`=$`object`, published=$published) ${super.toString()}"
-    }
+    override fun toString(): String = "Delete(`object`=$`object`, published=$published) ${super.toString()}"
 }
