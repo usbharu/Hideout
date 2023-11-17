@@ -1,6 +1,6 @@
 hideout:
   url: "https://test-hideout.usbharu.dev"
-  use-mongodb: true
+  use-mongodb: false
   security:
     jwt:
       generate: true
@@ -19,15 +19,15 @@ spring:
     default-property-inclusion: always
   datasource:
     driver-class-name: org.h2.Driver
-    url: "jdbc:h2:./test-dev3;MODE=POSTGRESQL"
+    url: "jdbc:h2:./test-dev3;MODE=POSTGRESQL;TRACE_LEVEL_FILE=4"
     username: ""
     password: ""
-  data:
-    mongodb:
-      auto-index-creation: true
-      host: localhost
-      port: 27017
-      database: hideout
+  #  data:
+  #    mongodb:
+  #      auto-index-creation: true
+  #      host: localhost
+  #      port: 27017
+  #      database: hideout
   #      username: hideoutuser
   #      password: hideoutpass
   servlet:
