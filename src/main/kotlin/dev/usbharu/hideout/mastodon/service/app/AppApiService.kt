@@ -67,8 +67,6 @@ class AppApiServiceImpl(
     }
 
     private fun parseScope(string: String): Set<String> {
-
-
         return string.split(" ")
             .flatMap {
                 when (it) {
