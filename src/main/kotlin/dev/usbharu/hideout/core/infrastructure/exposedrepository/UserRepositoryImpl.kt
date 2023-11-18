@@ -35,6 +35,7 @@ class UserRepositoryImpl(
                 it[keyId] = user.keyId
                 it[following] = user.following
                 it[followers] = user.followers
+                it[instance] = user.instance
             }
         } else {
             Users.update({ Users.id eq user.id }) {
@@ -52,6 +53,7 @@ class UserRepositoryImpl(
                 it[keyId] = user.keyId
                 it[following] = user.following
                 it[followers] = user.followers
+                it[instance] = user.instance
             }
         }
         return user
@@ -98,6 +100,7 @@ object Users : Table("users") {
     val keyId = varchar("key_id", length = 1000)
     val following = varchar("following", length = 1000).nullable()
     val followers = varchar("followers", length = 1000).nullable()
+    val instance = long("instance").references(Instance.id).nullable()
 
     override val primaryKey: PrimaryKey = PrimaryKey(id)
 

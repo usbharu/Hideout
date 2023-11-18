@@ -10,6 +10,7 @@ import dev.usbharu.hideout.core.query.UserQueryService
 import dev.usbharu.hideout.core.service.follow.SendFollowDto
 import dev.usbharu.hideout.core.service.instance.InstanceService
 import org.jetbrains.exposed.exceptions.ExposedSQLException
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.Instant
 
@@ -51,13 +52,19 @@ class UserServiceImpl(
             createdAt = Instant.now(),
             following = "$userUrl/following",
             followers = "$userUrl/followers",
-            keyId = "$userUrl#pubkey"
+            keyId = "$userUrl#pubkey",
+            instance = null
         )
         return userRepository.save(userEntity)
     }
 
     override suspend fun createRemoteUser(user: RemoteUserCreateDto): User {
-        instanceService.fetchInstance(user.url, user.sharedInbox)
+        val instance = try {
+            instanceService.fetchInstance(user.url, user.sharedInbox)
+        } catch (e: Exception) {
+            logger.warn("FAILED to fetch instance. url: {}", user.url, e)
+            null
+        }
 
         val nextId = userRepository.nextId()
         val userEntity = userBuilder.of(
@@ -73,7 +80,8 @@ class UserServiceImpl(
             createdAt = Instant.now(),
             followers = user.followers,
             following = user.following,
-            keyId = user.keyId
+            keyId = user.keyId,
+            instance = instance?.id
         )
         return try {
             userRepository.save(userEntity)
@@ -109,5 +117,9 @@ class UserServiceImpl(
     override suspend fun unfollow(id: Long, followerId: Long): Boolean {
         followerQueryService.removeFollower(id, followerId)
         return false
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(UserServiceImpl::class.java)
     }
 }

@@ -38,7 +38,8 @@ class FollowerQueryServiceImpl(private val userBuilder: User.UserBuilder) : Foll
                 followers[Users.createdAt],
                 followers[Users.keyId],
                 followers[Users.following],
-                followers[Users.followers]
+                followers[Users.followers],
+                followers[Users.instance]
             )
             .select { Users.id eq id }
             .map {
@@ -57,7 +58,8 @@ class FollowerQueryServiceImpl(private val userBuilder: User.UserBuilder) : Foll
                     createdAt = Instant.ofEpochMilli(it[followers[Users.createdAt]]),
                     keyId = it[followers[Users.keyId]],
                     followers = it[followers[Users.followers]],
-                    following = it[followers[Users.following]]
+                    following = it[followers[Users.following]],
+                    instance = it[followers[Users.instance]]
                 )
             }
     }
@@ -89,7 +91,8 @@ class FollowerQueryServiceImpl(private val userBuilder: User.UserBuilder) : Foll
                 followers[Users.createdAt],
                 followers[Users.keyId],
                 followers[Users.following],
-                followers[Users.followers]
+                followers[Users.followers],
+                followers[Users.instance]
             )
             .select { Users.name eq name and (Users.domain eq domain) }
             .map {
@@ -108,7 +111,8 @@ class FollowerQueryServiceImpl(private val userBuilder: User.UserBuilder) : Foll
                     createdAt = Instant.ofEpochMilli(it[followers[Users.createdAt]]),
                     keyId = it[followers[Users.keyId]],
                     followers = it[followers[Users.followers]],
-                    following = it[followers[Users.following]]
+                    following = it[followers[Users.following]],
+                    instance = it[followers[Users.instance]]
                 )
             }
     }
@@ -140,7 +144,8 @@ class FollowerQueryServiceImpl(private val userBuilder: User.UserBuilder) : Foll
                 followers[Users.createdAt],
                 followers[Users.keyId],
                 followers[Users.following],
-                followers[Users.followers]
+                followers[Users.followers],
+                followers[Users.instance]
             )
             .select { followers[Users.id] eq id }
             .map {
@@ -159,7 +164,8 @@ class FollowerQueryServiceImpl(private val userBuilder: User.UserBuilder) : Foll
                     createdAt = Instant.ofEpochMilli(it[followers[Users.createdAt]]),
                     keyId = it[followers[Users.keyId]],
                     followers = it[followers[Users.followers]],
-                    following = it[followers[Users.following]]
+                    following = it[followers[Users.following]],
+                    instance = it[followers[Users.instance]]
                 )
             }
     }
@@ -191,7 +197,8 @@ class FollowerQueryServiceImpl(private val userBuilder: User.UserBuilder) : Foll
                 followers[Users.createdAt],
                 followers[Users.keyId],
                 followers[Users.following],
-                followers[Users.followers]
+                followers[Users.followers],
+                followers[Users.instance]
             )
             .select { followers[Users.name] eq name and (followers[Users.domain] eq domain) }
             .map {
@@ -210,7 +217,8 @@ class FollowerQueryServiceImpl(private val userBuilder: User.UserBuilder) : Foll
                     createdAt = Instant.ofEpochMilli(it[followers[Users.createdAt]]),
                     keyId = it[followers[Users.keyId]],
                     followers = it[followers[Users.followers]],
-                    following = it[followers[Users.following]]
+                    following = it[followers[Users.following]],
+                    instance = it[followers[Users.instance]]
                 )
             }
     }

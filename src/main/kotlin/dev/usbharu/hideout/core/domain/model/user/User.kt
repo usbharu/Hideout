@@ -21,18 +21,16 @@ data class User private constructor(
     val createdAt: Instant,
     val keyId: String,
     val followers: String? = null,
-    val following: String? = null
+    val following: String? = null,
+    val instance: Long? = null
 ) {
     override fun toString(): String =
-        "User(id=$id, name='$name', domain='$domain', screenName='$screenName', description='$description'," +
-                " password=$password, inbox='$inbox', outbox='$outbox', url='$url', publicKey='$publicKey'," +
-                " privateKey=$privateKey, createdAt=$createdAt, keyId='$keyId', followers=$followers," +
-                " following=$following)"
+        "User(id=$id, name='$name', domain='$domain', screenName='$screenName', description='$description', password=$password, inbox='$inbox', outbox='$outbox', url='$url', publicKey='$publicKey', privateKey=$privateKey, createdAt=$createdAt, keyId='$keyId', followers=$followers, following=$following, instance=$instance)"
 
     @Component
     class UserBuilder(private val characterLimit: CharacterLimit, private val applicationConfig: ApplicationConfig) {
-        private val logger = LoggerFactory.getLogger(UserBuilder::class.java)
 
+        private val logger = LoggerFactory.getLogger(UserBuilder::class.java)
         @Suppress("LongParameterList", "FunctionMinLength", "LongMethod")
         fun of(
             id: Long,
@@ -49,7 +47,8 @@ data class User private constructor(
             createdAt: Instant,
             keyId: String,
             following: String? = null,
-            followers: String? = null
+            followers: String? = null,
+            instance: Long? = null
         ): User {
             // idは0未満ではいけない
             require(id >= 0) { "id must be greater than or equal to 0." }
@@ -141,7 +140,8 @@ data class User private constructor(
                 createdAt = createdAt,
                 keyId = keyId,
                 followers = followers,
-                following = following
+                following = following,
+                instance = instance
             )
         }
     }
