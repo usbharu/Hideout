@@ -6,6 +6,7 @@ import dev.usbharu.hideout.core.domain.model.timeline.Timeline
 import dev.usbharu.hideout.core.domain.model.timeline.TimelineRepository
 import dev.usbharu.hideout.core.query.FollowerQueryService
 import dev.usbharu.hideout.core.query.UserQueryService
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
@@ -58,5 +59,10 @@ class TimelineService(
             )
         }
         timelineRepository.saveAll(timelines)
+        logger.debug("SUCCESS Timeline published. {}", timelines.size)
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(TimelineService::class.java)
     }
 }

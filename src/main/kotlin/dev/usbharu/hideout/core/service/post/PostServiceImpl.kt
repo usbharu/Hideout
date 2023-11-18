@@ -43,11 +43,13 @@ class PostServiceImpl(
             if (postRepository.save(post)) {
                 try {
                     timelineService.publishTimeline(post, isLocal)
-                } catch (_: DuplicateKeyException) {
+                } catch (e: DuplicateKeyException) {
+                    logger.trace("Timeline already exists.", e)
                 }
             }
             post
-        } catch (_: ExposedSQLException) {
+        } catch (e: ExposedSQLException) {
+            logger.warn("FAILED Save to post. url: ${post.apId}", e)
             postQueryService.findByApId(post.apId)
         }
     }
