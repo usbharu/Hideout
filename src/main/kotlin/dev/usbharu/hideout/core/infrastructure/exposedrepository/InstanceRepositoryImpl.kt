@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.core.infrastructure.exposedrepository
 
+import dev.usbharu.hideout.application.service.id.IdGenerateService
 import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.domain.model.instance.InstanceRepository
 import dev.usbharu.hideout.util.singleOr
@@ -10,7 +11,9 @@ import org.springframework.stereotype.Repository
 import dev.usbharu.hideout.core.domain.model.instance.Instance as InstanceEntity
 
 @Repository
-class InstanceRepositoryImpl : InstanceRepository {
+class InstanceRepositoryImpl(private val idGenerateService: IdGenerateService) : InstanceRepository {
+    override suspend fun generateId(): Long = idGenerateService.generateId()
+
     override suspend fun save(instance: InstanceEntity): InstanceEntity {
         if (Instance.select { Instance.id.eq(instance.id) }.firstOrNull() == null) {
             Instance.insert {
@@ -78,7 +81,7 @@ object Instance : Table("instance") {
     val description = varchar("description", 5000)
     val url = varchar("url", 255)
     val iconUrl = varchar("icon_url", 255)
-    val sharedInbox = varchar("shared_inbox", 255)
+    val sharedInbox = varchar("shared_inbox", 255).nullable()
     val software = varchar("software", 255)
     val version = varchar("version", 255)
     val isBlocked = bool("is_blocked")
