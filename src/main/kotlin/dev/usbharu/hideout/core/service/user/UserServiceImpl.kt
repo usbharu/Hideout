@@ -57,7 +57,7 @@ class UserServiceImpl(
     }
 
     override suspend fun createRemoteUser(user: RemoteUserCreateDto): User {
-        instanceService.fetchInstance(user.url)
+        instanceService.fetchInstance(user.url, user.sharedInbox)
 
         val nextId = userRepository.nextId()
         val userEntity = userBuilder.of(
