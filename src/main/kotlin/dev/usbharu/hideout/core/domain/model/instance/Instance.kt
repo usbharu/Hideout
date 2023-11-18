@@ -8,7 +8,7 @@ data class Instance(
     val description: String,
     val url: String,
     val iconUrl: String,
-    val sharedInbox: String,
+    val sharedInbox: String?,
     val software: String,
     val version: String,
     val isBlocked: Boolean,
