@@ -25,7 +25,8 @@ class UserResultRowMapper(private val userBuilder: User.UserBuilder) : ResultRow
             createdAt = Instant.ofEpochMilli((resultRow[Users.createdAt])),
             keyId = resultRow[Users.keyId],
             followers = resultRow[Users.followers],
-            following = resultRow[Users.following]
+            following = resultRow[Users.following],
+            instance = resultRow[Users.instance]
         )
     }
 }
