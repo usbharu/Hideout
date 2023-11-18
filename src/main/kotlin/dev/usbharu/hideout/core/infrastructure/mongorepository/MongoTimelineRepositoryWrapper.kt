@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository
 
 @Repository
 @Suppress("InjectDispatcher")
-@ConditionalOnProperty("hideout.use-mongodb", havingValue = "", matchIfMissing = false)
+@ConditionalOnProperty("hideout.use-mongodb", havingValue = "true", matchIfMissing = false)
 class MongoTimelineRepositoryWrapper(
     private val mongoTimelineRepository: MongoTimelineRepository,
     private val idGenerateService: IdGenerateService
