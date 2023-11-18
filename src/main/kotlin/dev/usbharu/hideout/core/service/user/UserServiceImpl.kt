@@ -8,6 +8,7 @@ import dev.usbharu.hideout.core.domain.model.user.UserRepository
 import dev.usbharu.hideout.core.query.FollowerQueryService
 import dev.usbharu.hideout.core.query.UserQueryService
 import dev.usbharu.hideout.core.service.follow.SendFollowDto
+import dev.usbharu.hideout.core.service.instance.InstanceService
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.springframework.stereotype.Service
 import java.time.Instant
@@ -20,7 +21,8 @@ class UserServiceImpl(
     private val userQueryService: UserQueryService,
     private val followerQueryService: FollowerQueryService,
     private val userBuilder: User.UserBuilder,
-    private val applicationConfig: ApplicationConfig
+    private val applicationConfig: ApplicationConfig,
+    private val instanceService: InstanceService
 ) :
     UserService {
 
@@ -55,6 +57,8 @@ class UserServiceImpl(
     }
 
     override suspend fun createRemoteUser(user: RemoteUserCreateDto): User {
+        instanceService.fetchInstance(user.url)
+
         val nextId = userRepository.nextId()
         val userEntity = userBuilder.of(
             id = nextId,
