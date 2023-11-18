@@ -31,6 +31,7 @@ data class User private constructor(
     class UserBuilder(private val characterLimit: CharacterLimit, private val applicationConfig: ApplicationConfig) {
 
         private val logger = LoggerFactory.getLogger(UserBuilder::class.java)
+
         @Suppress("LongParameterList", "FunctionMinLength", "LongMethod")
         fun of(
             id: Long,

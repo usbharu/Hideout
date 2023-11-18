@@ -19,7 +19,6 @@ interface InstanceService {
     suspend fun createNewInstance(instanceCreateDto: InstanceCreateDto): Instance
 }
 
-
 @Service
 class InstanceServiceImpl(
     private val instanceRepository: InstanceRepository,
@@ -41,7 +40,6 @@ class InstanceServiceImpl(
         val nodeinfoJson = resourceResolveService.resolve("$resolveInstanceUrl/.well-known/nodeinfo").bodyAsText()
         val nodeinfo = objectMapper.readValue(nodeinfoJson, Nodeinfo::class.java)
         val nodeinfoPathMap = nodeinfo.links.associate { it.rel to it.href }
-
 
         for ((key, value) in nodeinfoPathMap) {
             when (key) {

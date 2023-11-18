@@ -7,7 +7,6 @@ class Nodeinfo {
     protected constructor()
 }
 
-
 class Links {
     var rel: String? = null
     var href: String? = null
