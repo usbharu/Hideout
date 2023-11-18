@@ -124,7 +124,8 @@ class APUserServiceImpl(
                         ?: throw IllegalActivityPubObjectException("publicKey is null"),
                     keyId = person.publicKey?.id ?: throw IllegalActivityPubObjectException("publicKey keyId is null"),
                     following = person.following,
-                    followers = person.followers
+                    followers = person.followers,
+                    sharedInbox = person.endpoints["sharedInbox"]
                 )
             )
         }
