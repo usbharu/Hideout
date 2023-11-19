@@ -75,20 +75,20 @@ class PostRepositoryImpl(
 
 object Posts : Table() {
     val id: Column<Long> = long("id")
-    val userId: Column<Long> = long("userId").references(Users.id)
+    val userId: Column<Long> = long("user_id").references(Users.id)
     val overview: Column<String?> = varchar("overview", 100).nullable()
     val text: Column<String> = varchar("text", 3000)
-    val createdAt: Column<Long> = long("createdAt")
+    val createdAt: Column<Long> = long("created_at")
     val visibility: Column<Int> = integer("visibility").default(0)
     val url: Column<String> = varchar("url", 500)
-    val repostId: Column<Long?> = long("repostId").references(id).nullable()
-    val replyId: Column<Long?> = long("replyId").references(id).nullable()
+    val repostId: Column<Long?> = long("repost_id").references(id).nullable()
+    val replyId: Column<Long?> = long("reply_id").references(id).nullable()
     val sensitive: Column<Boolean> = bool("sensitive").default(false)
     val apId: Column<String> = varchar("ap_id", 100).uniqueIndex()
     override val primaryKey: PrimaryKey = PrimaryKey(id)
 }
 
-object PostsMedia : Table() {
+object PostsMedia : Table("posts_media") {
     val postId = long("post_id").references(Posts.id, ReferenceOption.CASCADE, ReferenceOption.CASCADE)
     val mediaId = long("media_id").references(Media.id, ReferenceOption.CASCADE, ReferenceOption.CASCADE)
     override val primaryKey = PrimaryKey(postId, mediaId)

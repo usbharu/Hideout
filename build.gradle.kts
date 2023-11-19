@@ -182,6 +182,7 @@ dependencies {
     implementation("org.apache.tika:tika-core:2.9.1")
     implementation("net.coobird:thumbnailator:0.4.20")
     implementation("org.bytedeco:javacv-platform:1.5.9")
+    implementation("org.flywaydb:flyway-core")
 
     implementation("io.ktor:ktor-client-logging-jvm:$ktor_version")
 

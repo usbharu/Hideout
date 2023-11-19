@@ -9,7 +9,8 @@ VALUES (10, 'test-user10', 'example.com', 'Im test-user10.', 'THis account is te
         'https://example.com/users/test-user10#pubkey', 'https://example.com/users/test-user10/following',
         'https://example.com/users/test-user10/followers', null);
 
-insert into POSTS (ID, "userId", OVERVIEW, TEXT, "createdAt", VISIBILITY, URL, "repostId", "replyId", SENSITIVE, AP_ID)
+insert into POSTS (ID, "USER_ID", OVERVIEW, TEXT, "CREATED_AT", VISIBILITY, URL, "REPOST_ID", "REPLY_ID", SENSITIVE,
+                   AP_ID)
 VALUES (1240, 10, null, 'test post', 12345680, 0, 'https://example.com/users/test-user10/posts/1240', null, null, false,
         'https://example.com/users/test-user10/posts/1240'),
        (1241, 10, null, 'test post', 12345680, 0, 'https://example.com/users/test-user10/posts/1241', null, 1240, false,
