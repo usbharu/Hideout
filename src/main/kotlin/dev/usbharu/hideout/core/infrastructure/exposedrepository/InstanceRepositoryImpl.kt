@@ -88,4 +88,6 @@ object Instance : Table("instance") {
     val isMuted = bool("is_muted")
     val moderationNote = varchar("moderation_note", 10000)
     val createdAt = timestamp("created_at")
+
+    override val primaryKey: PrimaryKey = PrimaryKey(id)
 }

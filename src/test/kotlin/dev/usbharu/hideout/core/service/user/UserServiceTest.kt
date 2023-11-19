@@ -41,6 +41,7 @@ class UserServiceTest {
                 mock(),
                 userBuilder,
                 testApplicationConfig,
+                mock()
             )
         userService.createLocalUser(UserCreateDto("test", "testUser", "XXXXXXXXXXXXX", "test"))
         verify(userRepository, times(1)).save(any())
@@ -67,7 +68,7 @@ class UserServiceTest {
             onBlocking { nextId() } doReturn 113345L
         }
         val userService =
-            UserServiceImpl(userRepository, mock(), mock(), mock(), mock(), userBuilder, testApplicationConfig)
+            UserServiceImpl(userRepository, mock(), mock(), mock(), mock(), userBuilder, testApplicationConfig, mock())
         val user = RemoteUserCreateDto(
             name = "test",
             domain = "remote.example.com",
@@ -79,7 +80,8 @@ class UserServiceTest {
             publicKey = "-----BEGIN PUBLIC KEY-----...-----END PUBLIC KEY-----",
             keyId = "a",
             following = "",
-            followers = ""
+            followers = "",
+            sharedInbox = null
         )
         userService.createRemoteUser(user)
         verify(userRepository, times(1)).save(any())
