@@ -1,6 +1,5 @@
-package dev.usbharu.hideout.activitypub.service.common
+package dev.usbharu.hideout.core.service.resource
 
-import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 import dev.usbharu.hideout.util.LruCache
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
@@ -11,10 +10,10 @@ import java.time.Instant
 @Service
 class InMemoryCacheManager : CacheManager {
     private val cacheKey = LruCache<String, Long>(15)
-    private val valueStore = mutableMapOf<String, Object>()
+    private val valueStore = mutableMapOf<String, ResolveResponse>()
     private val keyMutex = Mutex()
 
-    override suspend fun putCache(key: String, block: suspend () -> Object) {
+    override suspend fun putCache(key: String, block: suspend () -> ResolveResponse) {
         val needRunBlock: Boolean
         keyMutex.withLock {
             cacheKey.filter { Instant.ofEpochMilli(it.value).plusSeconds(300) <= Instant.now() }
@@ -38,7 +37,7 @@ class InMemoryCacheManager : CacheManager {
         }
     }
 
-    override suspend fun getOrWait(key: String): Object {
+    override suspend fun getOrWait(key: String): ResolveResponse {
         while (valueStore.contains(key).not()) {
             if (cacheKey.containsKey(key).not()) {
                 throw IllegalStateException("Invalid cache key.")

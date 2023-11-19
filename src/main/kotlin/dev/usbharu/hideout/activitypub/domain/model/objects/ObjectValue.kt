@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.activitypub.domain.model.objects
 
+@Suppress("VariableNaming")
 open class ObjectValue : Object {
 
     var `object`: String? = null

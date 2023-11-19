@@ -1,5 +1,5 @@
 insert into "USERS" (ID, NAME, DOMAIN, SCREEN_NAME, DESCRIPTION, PASSWORD, INBOX, OUTBOX, URL, PUBLIC_KEY, PRIVATE_KEY,
-                     CREATED_AT, KEY_ID, FOLLOWING, FOLLOWERS)
+                     CREATED_AT, KEY_ID, FOLLOWING, FOLLOWERS, INSTANCE)
 VALUES (8, 'test-user8', 'example.com', 'Im test-user8.', 'THis account is test-user8.',
         '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8',
         'https://example.com/users/test-user8/inbox',
@@ -7,10 +7,10 @@ VALUES (8, 'test-user8', 'example.com', 'Im test-user8.', 'THis account is test-
         '-----BEGIN PUBLIC KEY-----...-----END PUBLIC KEY-----',
         '-----BEGIN PRIVATE KEY-----...-----END PRIVATE KEY-----', 12345678,
         'https://example.com/users/test-user8#pubkey', 'https://example.com/users/test-user8/following',
-        'https://example.com/users/test-user8/followers');
+        'https://example.com/users/test-user8/followers', null);
 
 insert into "USERS" (ID, NAME, DOMAIN, SCREEN_NAME, DESCRIPTION, PASSWORD, INBOX, OUTBOX, URL, PUBLIC_KEY, PRIVATE_KEY,
-                     CREATED_AT, KEY_ID, FOLLOWING, FOLLOWERS)
+                     CREATED_AT, KEY_ID, FOLLOWING, FOLLOWERS, INSTANCE)
 VALUES (9, 'test-user9', 'follower.example.com', 'Im test-user9.', 'THis account is test-user9.',
         null,
         'https://follower.example.com/users/test-user9/inbox',
@@ -19,7 +19,7 @@ VALUES (9, 'test-user9', 'follower.example.com', 'Im test-user9.', 'THis account
         null, 12345678,
         'https://follower.example.com/users/test-user9#pubkey',
         'https://follower.example.com/users/test-user9/following',
-        'https://follower.example.com/users/test-user9/followers');
+        'https://follower.example.com/users/test-user9/followers', null);
 
 insert into USERS_FOLLOWERS (USER_ID, FOLLOWER_ID)
 VALUES (8, 9);
