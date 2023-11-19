@@ -26,9 +26,9 @@ data class User private constructor(
 ) {
     override fun toString(): String =
         "User(id=$id, name='$name', domain='$domain', screenName='$screenName', description='$description'," +
-                " password=$password, inbox='$inbox', outbox='$outbox', url='$url', publicKey='$publicKey', " +
-                "privateKey=$privateKey, createdAt=$createdAt, keyId='$keyId', followers=$followers," +
-                " following=$following, instance=$instance)"
+            " password=$password, inbox='$inbox', outbox='$outbox', url='$url', publicKey='$publicKey', " +
+            "privateKey=$privateKey, createdAt=$createdAt, keyId='$keyId', followers=$followers," +
+            " following=$following, instance=$instance)"
 
     @Component
     class UserBuilder(private val characterLimit: CharacterLimit, private val applicationConfig: ApplicationConfig) {
