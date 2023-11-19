@@ -50,13 +50,13 @@ class InstanceServiceImpl(
                     )
 
                     val instanceCreateDto = InstanceCreateDto(
-                        nodeinfo20.metadata?.nodeName,
-                        nodeinfo20.metadata?.nodeDescription,
-                        resolveInstanceUrl,
-                        resolveInstanceUrl + "/favicon.ico",
-                        sharedInbox,
-                        nodeinfo20.software?.name,
-                        nodeinfo20.software?.version
+                        name = nodeinfo20.metadata?.nodeName,
+                        description = nodeinfo20.metadata?.nodeDescription,
+                        url = resolveInstanceUrl,
+                        iconUrl = resolveInstanceUrl + "/favicon.ico",
+                        sharedInbox = sharedInbox,
+                        software = nodeinfo20.software?.name,
+                        version = nodeinfo20.software?.version
                     )
                     return createNewInstance(instanceCreateDto)
                 }
@@ -69,13 +69,13 @@ class InstanceServiceImpl(
                     )
 
                     val instanceCreateDto = InstanceCreateDto(
-                        nodeinfo20.metadata?.nodeName,
-                        nodeinfo20.metadata?.nodeDescription,
-                        resolveInstanceUrl,
-                        resolveInstanceUrl + "/favicon.ico",
-                        sharedInbox,
-                        nodeinfo20.software?.name,
-                        nodeinfo20.software?.version
+                        name = nodeinfo20.metadata?.nodeName,
+                        description = nodeinfo20.metadata?.nodeDescription,
+                        url = resolveInstanceUrl,
+                        iconUrl = resolveInstanceUrl + "/favicon.ico",
+                        sharedInbox = sharedInbox,
+                        software = nodeinfo20.software?.name,
+                        version = nodeinfo20.software?.version
                     )
                     return createNewInstance(instanceCreateDto)
                 }
@@ -91,18 +91,18 @@ class InstanceServiceImpl(
 
     override suspend fun createNewInstance(instanceCreateDto: InstanceCreateDto): Instance {
         val instance = Instance(
-            instanceRepository.generateId(),
-            instanceCreateDto.name ?: instanceCreateDto.url,
-            instanceCreateDto.description ?: "",
-            instanceCreateDto.url,
-            instanceCreateDto.iconUrl,
-            instanceCreateDto.sharedInbox,
-            instanceCreateDto.software ?: "unknown",
-            instanceCreateDto.version ?: "unknown",
-            false,
-            false,
-            "",
-            Instant.now()
+            id = instanceRepository.generateId(),
+            name = instanceCreateDto.name ?: instanceCreateDto.url,
+            description = instanceCreateDto.description.orEmpty(),
+            url = instanceCreateDto.url,
+            iconUrl = instanceCreateDto.iconUrl,
+            sharedInbox = instanceCreateDto.sharedInbox,
+            software = instanceCreateDto.software ?: "unknown",
+            version = instanceCreateDto.version ?: "unknown",
+            isBlocked = false,
+            isMuted = false,
+            moderationNote = "",
+            createdAt = Instant.now()
         )
         instanceRepository.save(instance)
         return instance

@@ -4,12 +4,12 @@ class Nodeinfo {
 
     var links: List<Links> = emptyList()
 
-    protected constructor()
+    private constructor()
 }
 
 class Links {
     var rel: String? = null
     var href: String? = null
 
-    protected constructor()
+    private constructor()
 }

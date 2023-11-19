@@ -15,7 +15,7 @@ class InstanceRepositoryImpl(private val idGenerateService: IdGenerateService) :
     override suspend fun generateId(): Long = idGenerateService.generateId()
 
     override suspend fun save(instance: InstanceEntity): InstanceEntity {
-        if (Instance.select { Instance.id.eq(instance.id) }.firstOrNull() == null) {
+        if (Instance.select { Instance.id.eq(instance.id) }.empty()) {
             Instance.insert {
                 it[id] = instance.id
                 it[name] = instance.name
