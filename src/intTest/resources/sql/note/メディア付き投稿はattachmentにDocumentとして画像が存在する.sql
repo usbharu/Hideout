@@ -1,5 +1,5 @@
 insert into "USERS" (ID, NAME, DOMAIN, SCREEN_NAME, DESCRIPTION, PASSWORD, INBOX, OUTBOX, URL, PUBLIC_KEY, PRIVATE_KEY,
-                     CREATED_AT, KEY_ID, FOLLOWING, FOLLOWERS)
+                     CREATED_AT, KEY_ID, FOLLOWING, FOLLOWERS, INSTANCE)
 VALUES (11, 'test-user11', 'example.com', 'Im test-user11.', 'THis account is test-user11.',
         '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8',
         'https://example.com/users/test-user11/inbox',
@@ -7,7 +7,7 @@ VALUES (11, 'test-user11', 'example.com', 'Im test-user11.', 'THis account is te
         '-----BEGIN PUBLIC KEY-----...-----END PUBLIC KEY-----',
         '-----BEGIN PRIVATE KEY-----...-----END PRIVATE KEY-----', 12345678,
         'https://example.com/users/test-user11#pubkey', 'https://example.com/users/test-user11/following',
-        'https://example.com/users/test-user11/followers');
+        'https://example.com/users/test-user11/followers', null);
 
 insert into POSTS (ID, "userId", OVERVIEW, TEXT, "createdAt", VISIBILITY, URL, "repostId", "replyId", SENSITIVE, AP_ID)
 VALUES (1242, 11, null, 'test post', 12345680, 0, 'https://example.com/users/test-user11/posts/1242', null, null, false,

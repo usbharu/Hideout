@@ -11,5 +11,6 @@ data class RemoteUserCreateDto(
     val publicKey: String,
     val keyId: String,
     val followers: String?,
-    val following: String?
+    val following: String?,
+    val sharedInbox: String?
 )

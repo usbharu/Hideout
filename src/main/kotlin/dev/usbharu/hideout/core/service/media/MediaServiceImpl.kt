@@ -24,7 +24,7 @@ open class MediaServiceImpl(
     private val remoteMediaDownloadService: RemoteMediaDownloadService,
     private val renameService: MediaFileRenameService
 ) : MediaService {
-    @Suppress("LongMethod")
+    @Suppress("LongMethod", "NestedBlockDepth")
     override suspend fun uploadLocalMedia(mediaRequest: MediaRequest): EntityMedia {
         val fileName = mediaRequest.file.name
         logger.info(
@@ -95,6 +95,7 @@ open class MediaServiceImpl(
     }
 
     // TODO: 仮の処理として保存したように動かす
+    @Suppress("LongMethod", "NestedBlockDepth")
     override suspend fun uploadRemoteMedia(remoteMedia: RemoteMedia): Media {
         logger.info("MEDIA Remote media. filename:${remoteMedia.name} url:${remoteMedia.url}")
 
