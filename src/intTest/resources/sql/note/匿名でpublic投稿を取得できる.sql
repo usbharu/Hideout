@@ -8,6 +8,7 @@ VALUES (1, 'test-user', 'example.com', 'Im test user.', 'THis account is test us
         'https://example.com/users/test-user#pubkey', 'https://example.com/users/test-user/following',
         'https://example.com/users/test-users/followers', null);
 
-insert into POSTS (ID, "userId", OVERVIEW, TEXT, "createdAt", VISIBILITY, URL, "repostId", "replyId", SENSITIVE, AP_ID)
+insert into POSTS (ID, "USER_ID", OVERVIEW, TEXT, "CREATED_AT", VISIBILITY, URL, "REPOST_ID", "REPLY_ID", SENSITIVE,
+                   AP_ID)
 VALUES (1234, 1, null, 'test post', 12345680, 0, 'https://example.com/users/test-user/posts/1234', null, null, false,
         'https://example.com/users/test-user/posts/1234')

@@ -24,6 +24,6 @@ VALUES (9, 'test-user9', 'follower.example.com', 'Im test-user9.', 'THis account
 insert into USERS_FOLLOWERS (USER_ID, FOLLOWER_ID)
 VALUES (8, 9);
 
-insert into POSTS (ID, "userId", OVERVIEW, TEXT, "createdAt", VISIBILITY, URL, "repostId", "replyId", SENSITIVE, AP_ID)
+insert into POSTS (ID, USER_ID, OVERVIEW, TEXT, CREATED_AT, VISIBILITY, URL, REPLY_ID, REPOST_ID, SENSITIVE, AP_ID)
 VALUES (1239, 8, null, 'test post', 12345680, 2, 'https://example.com/users/test-user8/posts/1239', null, null, false,
         'https://example.com/users/test-user8/posts/1239');
