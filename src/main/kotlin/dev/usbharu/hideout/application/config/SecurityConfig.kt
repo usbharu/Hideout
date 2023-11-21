@@ -117,9 +117,11 @@ class SecurityConfig {
     fun getHttpSignatureFilter(
         authenticationManager: AuthenticationManager,
         transaction: Transaction,
-        apUserService: APUserService
+        apUserService: APUserService,
+        userQueryService: UserQueryService
     ): HttpSignatureFilter {
-        val httpSignatureFilter = HttpSignatureFilter(DefaultSignatureHeaderParser(), transaction, apUserService)
+        val httpSignatureFilter =
+            HttpSignatureFilter(DefaultSignatureHeaderParser(), transaction, apUserService, userQueryService)
         httpSignatureFilter.setAuthenticationManager(authenticationManager)
         httpSignatureFilter.setContinueFilterChainOnUnsuccessfulAuthentication(false)
         val authenticationEntryPointFailureHandler =

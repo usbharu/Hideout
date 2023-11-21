@@ -2,6 +2,8 @@ package dev.usbharu.hideout.core.infrastructure.springframework.httpsignature
 
 import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
 import dev.usbharu.hideout.application.external.Transaction
+import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
+import dev.usbharu.hideout.core.query.UserQueryService
 import dev.usbharu.httpsignature.common.HttpHeaders
 import dev.usbharu.httpsignature.common.HttpMethod
 import dev.usbharu.httpsignature.common.HttpRequest
@@ -14,7 +16,8 @@ import java.net.URL
 class HttpSignatureFilter(
     private val httpSignatureHeaderParser: SignatureHeaderParser,
     private val transaction: Transaction,
-    private val apUserService: APUserService
+    private val apUserService: APUserService,
+    private val userQueryService: UserQueryService
 ) :
     AbstractPreAuthenticatedProcessingFilter() {
     override fun getPreAuthenticatedPrincipal(request: HttpServletRequest?): Any? {
@@ -32,7 +35,11 @@ class HttpSignatureFilter(
         }
         runBlocking {
             transaction.transaction {
-                apUserService.fetchPerson(signature.keyId)
+                try {
+                    userQueryService.findByKeyId(signature.keyId)
+                } catch (e: FailedToGetResourcesException) {
+                    apUserService.fetchPerson(signature.keyId)
+                }
             }
         }
         return signature.keyId
