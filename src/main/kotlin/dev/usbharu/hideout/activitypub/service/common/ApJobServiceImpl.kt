@@ -12,8 +12,17 @@ import dev.usbharu.hideout.activitypub.service.activity.like.APLikeServiceImpl
 import dev.usbharu.hideout.activitypub.service.activity.like.ApReactionJobService
 import dev.usbharu.hideout.activitypub.service.activity.undo.APUndoServiceImpl
 import dev.usbharu.hideout.activitypub.service.objects.note.ApNoteJobService
+import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
+import dev.usbharu.hideout.application.external.Transaction
+import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.external.job.*
-
+import dev.usbharu.hideout.core.query.UserQueryService
+import dev.usbharu.hideout.util.RsaUtil
+import dev.usbharu.httpsignature.common.HttpHeaders
+import dev.usbharu.httpsignature.common.HttpRequest
+import dev.usbharu.httpsignature.common.PublicKey
+import dev.usbharu.httpsignature.verify.DefaultSignatureHeaderParser
+import dev.usbharu.httpsignature.verify.RsaSha256HttpSignatureVerifier
 import kjob.core.dsl.JobContextWithProps
 import kjob.core.job.JobProps
 import org.slf4j.LoggerFactory
@@ -31,7 +40,12 @@ class ApJobServiceImpl(
     private val APLikeServiceImpl: APLikeServiceImpl,
     private val APUndoServiceImpl: APUndoServiceImpl,
     private val APReceiveDeleteServiceImpl: APReceiveDeleteServiceImpl,
-    @Qualifier("activitypub") private val objectMapper: ObjectMapper
+    @Qualifier("activitypub") private val objectMapper: ObjectMapper,
+    private val httpSignatureVerifier: RsaSha256HttpSignatureVerifier,
+    private val signatureHeaderParser: DefaultSignatureHeaderParser,
+    private val apUserService: APUserService,
+    private val userQueryService: UserQueryService,
+    private val transaction: Transaction
 ) : ApJobService {
     @Suppress("REDUNDANT_ELSE_IN_WHEN")
     override suspend fun <T : HideoutJob> processActivity(job: JobContextWithProps<T>, hideoutJob: HideoutJob) {
@@ -41,6 +55,29 @@ class ApJobServiceImpl(
         // Springで作成されるプロキシの都合上パターンマッチングが壊れるので必須
         when (hideoutJob) {
             is InboxJob -> {
+                val httpRequestString = (job.props as JobProps<InboxJob>)[InboxJob.httpRequest]
+                println(httpRequestString)
+                val headerString = (job.props as JobProps<InboxJob>)[InboxJob.headers]
+
+                val readValue = objectMapper.readValue<Map<String, List<String>>>(headerString)
+
+                val httpRequest =
+                    objectMapper.readValue<HttpRequest>(httpRequestString).copy(headers = HttpHeaders(readValue))
+                val signature = signatureHeaderParser.parse(httpRequest.headers)
+
+                val publicKey = transaction.transaction {
+                    try {
+                        userQueryService.findByKeyId(signature.keyId)
+                    } catch (e: FailedToGetResourcesException) {
+                        apUserService.fetchPersonWithEntity(signature.keyId).second
+                    }.publicKey
+                }
+
+                httpSignatureVerifier.verify(
+                    httpRequest,
+                    PublicKey(RsaUtil.decodeRsaPublicKeyPem(publicKey), signature.keyId)
+                )
+
                 val typeString = (job.props as JobProps<InboxJob>)[InboxJob.type]
                 val json = (job.props as JobProps<InboxJob>)[InboxJob.json]
                 val type = ActivityType.valueOf(typeString)
@@ -60,6 +97,7 @@ class ApJobServiceImpl(
                     }
                 }
             }
+
             is ReceiveFollowJob -> {
                 apReceiveFollowJobService.receiveFollowJob(
                     job.props as JobProps<ReceiveFollowJob>
