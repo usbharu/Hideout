@@ -28,7 +28,6 @@ class AppApiServiceImpl(
     private val passwordEncoder: PasswordEncoder,
     private val transaction: Transaction
 ) : AppApiService {
-
     override suspend fun createApp(appsRequest: AppsRequest): Application {
         return transaction.transaction {
             val id = UUID.randomUUID().toString()
@@ -66,84 +65,5 @@ class AppApiServiceImpl(
         }
     }
 
-    private fun parseScope(string: String): Set<String> {
-        return string.split(" ")
-            .flatMap {
-                when (it) {
-                    "read" -> READ_SCOPES
-                    "write" -> WRITE_SCOPES
-                    "follow" -> FOLLOW_SCOPES
-                    "admin" -> ADMIN_SCOPES
-                    "admin:write" -> ADMIN_WRITE_SCOPES
-                    "admin:read" -> ADMIN_READ_SCOPES
-                    else -> listOfNotNull(it.takeIf { ALL_SCOPES.contains(it) })
-                }
-            }
-            .toSet()
-    }
-
-    companion object {
-        private val READ_SCOPES = listOf(
-            "read:accounts",
-            "read:blocks",
-            "read:bookmarks",
-            "read:favourites",
-            "read:filters",
-            "read:follows",
-            "read:lists",
-            "read:mutes",
-            "read:notifications",
-            "read:search",
-            "read:statuses"
-        )
-
-        private val WRITE_SCOPES = listOf(
-            "write:accounts",
-            "write:blocks",
-            "write:bookmarks",
-            "write:conversations",
-            "write:favourites",
-            "write:filters",
-            "write:follows",
-            "write:lists",
-            "write:media",
-            "write:mutes",
-            "write:notifications",
-            "write:reports",
-            "write:statuses"
-        )
-
-        private val FOLLOW_SCOPES = listOf(
-            "read:blocks",
-            "write:blocks",
-            "read:follows",
-            "write:follows",
-            "read:mutes",
-            "write:mutes"
-        )
-
-        private val ADMIN_READ_SCOPES = listOf(
-            "admin:read:accounts",
-            "admin:read:reports",
-            "admin:read:domain_allows",
-            "admin:read:domain_blocks",
-            "admin:read:ip_blocks",
-            "admin:read:email_domain_blocks",
-            "admin:read:canonical_email_blocks"
-        )
-
-        private val ADMIN_WRITE_SCOPES = listOf(
-            "admin:write:accounts",
-            "admin:write:reports",
-            "admin:write:domain_allows",
-            "admin:write:domain_blocks",
-            "admin:write:ip_blocks",
-            "admin:write:email_domain_blocks",
-            "admin:write:canonical_email_blocks"
-        )
-
-        private val ADMIN_SCOPES = ADMIN_READ_SCOPES + ADMIN_WRITE_SCOPES
-
-        private val ALL_SCOPES = READ_SCOPES + WRITE_SCOPES + FOLLOW_SCOPES + ADMIN_SCOPES
-    }
+    private fun parseScope(string: String): Set<String> = string.split(" ").toSet()
 }
