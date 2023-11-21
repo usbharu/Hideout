@@ -3,7 +3,10 @@ package dev.usbharu.hideout.mastodon.interfaces.api.account
 import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.controller.mastodon.generated.AccountApi
 import dev.usbharu.hideout.core.service.user.UserCreateDto
+import dev.usbharu.hideout.domain.mastodon.model.generated.Account
 import dev.usbharu.hideout.domain.mastodon.model.generated.CredentialAccount
+import dev.usbharu.hideout.domain.mastodon.model.generated.FollowRequestBody
+import dev.usbharu.hideout.domain.mastodon.model.generated.Relationship
 import dev.usbharu.hideout.mastodon.service.account.AccountApiService
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -18,6 +21,19 @@ class MastodonAccountApiController(
     private val accountApiService: AccountApiService,
     private val transaction: Transaction
 ) : AccountApi {
+
+    override suspend fun apiV1AccountsIdFollowPost(
+        id: String,
+        followRequestBody: FollowRequestBody?
+    ): ResponseEntity<Relationship> {
+        val principal = SecurityContextHolder.getContext().getAuthentication().principal as Jwt
+
+        return ResponseEntity.ok(accountApiService.follow(principal.getClaim<String>("uid").toLong(), id.toLong()))
+    }
+
+    override suspend fun apiV1AccountsIdGet(id: String): ResponseEntity<Account> =
+        ResponseEntity.ok(accountApiService.account(id.toLong()))
+
     override suspend fun apiV1AccountsVerifyCredentialsGet(): ResponseEntity<CredentialAccount> {
         val principal = SecurityContextHolder.getContext().getAuthentication().principal as Jwt
 
