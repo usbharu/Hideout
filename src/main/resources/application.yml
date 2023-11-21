@@ -18,8 +18,6 @@ spring:
       WRITE_DATES_AS_TIMESTAMPS: false
     default-property-inclusion: always
   datasource:
-    hikari:
-      transaction-isolation: "TRANSACTION_SERIALIZABLE"
     driver-class-name: org.postgresql.Driver
     url: "jdbc:postgresql:hideout2"
     username: "postgres"
