@@ -4,7 +4,6 @@ import dev.usbharu.hideout.activitypub.domain.exception.FailedToGetActivityPubRe
 import dev.usbharu.hideout.activitypub.domain.model.Like
 import dev.usbharu.hideout.activitypub.domain.model.Note
 import dev.usbharu.hideout.activitypub.domain.model.Person
-import dev.usbharu.hideout.activitypub.interfaces.api.common.ActivityPubStringResponse
 import dev.usbharu.hideout.activitypub.service.objects.note.APNoteService
 import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
 import dev.usbharu.hideout.core.query.PostQueryService
