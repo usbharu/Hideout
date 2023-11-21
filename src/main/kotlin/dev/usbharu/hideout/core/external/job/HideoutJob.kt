@@ -36,3 +36,9 @@ object DeliverRemoveReactionJob : HideoutJob("DeliverRemoveReactionJob") {
     val actor: Prop<DeliverRemoveReactionJob, String> = string("actor")
     val like: Prop<DeliverRemoveReactionJob, String> = string("like")
 }
+
+@Component
+object InboxJob : HideoutJob("InboxJob") {
+    val json = string("json")
+    val type = string("type")
+}
