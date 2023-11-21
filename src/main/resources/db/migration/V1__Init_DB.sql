@@ -1,188 +1,189 @@
-CREATE TABLE IF NOT EXISTS "INSTANCE"
+create table if not exists instance
 (
-    ID              BIGINT PRIMARY KEY,
-    "NAME"          VARCHAR(1000)  NOT NULL,
-    DESCRIPTION     VARCHAR(5000)  NOT NULL,
-    URL             VARCHAR(255)   NOT NULL,
-    ICON_URL        VARCHAR(255)   NOT NULL,
-    SHARED_INBOX    VARCHAR(255)   NULL,
-    SOFTWARE        VARCHAR(255)   NOT NULL,
-    VERSION         VARCHAR(255)   NOT NULL,
-    IS_BLOCKED      BOOLEAN        NOT NULL,
-    IS_MUTED        BOOLEAN        NOT NULL,
-    MODERATION_NOTE VARCHAR(10000) NOT NULL,
-    CREATED_AT      TIMESTAMP      NOT NULL
+    id              bigint primary key,
+    "name"          varchar(1000)  not null,
+    description     varchar(5000)  not null,
+    url          varchar(255) not null unique,
+    icon_url        varchar(255)   not null,
+    shared_inbox varchar(255) null unique,
+    software        varchar(255)   not null,
+    version         varchar(255)   not null,
+    is_blocked      boolean        not null,
+    is_muted        boolean        not null,
+    moderation_note varchar(10000) not null,
+    created_at      timestamp      not null
 );
-CREATE TABLE IF NOT EXISTS USERS
+create table if not exists users
 (
-    ID          BIGINT PRIMARY KEY,
-    "NAME"      VARCHAR(300)   NOT NULL,
-    "DOMAIN"    VARCHAR(1000)  NOT NULL,
-    SCREEN_NAME VARCHAR(300)   NOT NULL,
-    DESCRIPTION VARCHAR(10000) NOT NULL,
-    PASSWORD    VARCHAR(255)   NULL,
-    INBOX       VARCHAR(1000)  NOT NULL,
-    OUTBOX      VARCHAR(1000)  NOT NULL,
-    URL         VARCHAR(1000)  NOT NULL,
-    PUBLIC_KEY  VARCHAR(10000) NOT NULL,
-    PRIVATE_KEY VARCHAR(10000) NULL,
-    CREATED_AT  BIGINT         NOT NULL,
-    KEY_ID      VARCHAR(1000)  NOT NULL,
-    "FOLLOWING" VARCHAR(1000)  NULL,
-    FOLLOWERS   VARCHAR(1000)  NULL,
-    "INSTANCE"  BIGINT         NULL,
-    CONSTRAINT FK_USERS_INSTANCE__ID FOREIGN KEY ("INSTANCE") REFERENCES "INSTANCE" (ID) ON DELETE RESTRICT ON UPDATE RESTRICT
+    id          bigint primary key,
+    "name"      varchar(300)   not null,
+    "domain"    varchar(1000)  not null,
+    screen_name varchar(300)   not null,
+    description varchar(10000) not null,
+    password    varchar(255)   null,
+    inbox  varchar(1000) not null unique,
+    outbox varchar(1000) not null unique,
+    url    varchar(1000) not null unique,
+    public_key  varchar(10000) not null,
+    private_key varchar(10000) null,
+    created_at  bigint         not null,
+    key_id      varchar(1000)  not null,
+    "following" varchar(1000)  null,
+    followers   varchar(1000)  null,
+    "instance"  bigint         null,
+    unique (name, domain),
+    constraint fk_users_instance__id foreign key ("instance") references instance (id) on delete restrict on update restrict
 );
-CREATE TABLE IF NOT EXISTS FOLLOW_REQUESTS
+create table if not exists follow_requests
 (
-    ID          BIGSERIAL PRIMARY KEY,
-    USER_ID     BIGINT NOT NULL,
-    FOLLOWER_ID BIGINT NOT NULL,
-    CONSTRAINT FK_FOLLOW_REQUESTS_USER_ID__ID FOREIGN KEY (USER_ID) REFERENCES USERS (ID) ON DELETE RESTRICT ON UPDATE RESTRICT,
-    CONSTRAINT FK_FOLLOW_REQUESTS_FOLLOWER_ID__ID FOREIGN KEY (FOLLOWER_ID) REFERENCES USERS (ID) ON DELETE RESTRICT ON UPDATE RESTRICT
+    id          bigserial primary key,
+    user_id     bigint not null,
+    follower_id bigint not null,
+    constraint fk_follow_requests_user_id__id foreign key (user_id) references users (id) on delete restrict on update restrict,
+    constraint fk_follow_requests_follower_id__id foreign key (follower_id) references users (id) on delete restrict on update restrict
 );
-CREATE TABLE IF NOT EXISTS MEDIA
+create table if not exists media
 (
-    ID            BIGINT PRIMARY KEY,
-    "NAME"        VARCHAR(255)  NOT NULL,
-    URL           VARCHAR(255)  NOT NULL,
-    REMOTE_URL    VARCHAR(255)  NULL,
-    THUMBNAIL_URL VARCHAR(255)  NULL,
-    "TYPE"        INT           NOT NULL,
-    BLURHASH      VARCHAR(255)  NULL,
-    MIME_TYPE     VARCHAR(255)  NOT NULL,
-    DESCRIPTION   VARCHAR(4000) NULL
+    id            bigint primary key,
+    "name"        varchar(255)  not null,
+    url           varchar(255)  not null,
+    remote_url    varchar(255)  null,
+    thumbnail_url varchar(255)  null,
+    "type"        int           not null,
+    blurhash      varchar(255)  null,
+    mime_type     varchar(255)  not null,
+    description   varchar(4000) null
 );
-CREATE TABLE IF NOT EXISTS META_INFO
+create table if not exists meta_info
 (
-    ID              BIGINT PRIMARY KEY,
-    VERSION         VARCHAR(1000)   NOT NULL,
-    KID             VARCHAR(1000)   NOT NULL,
-    JWT_PRIVATE_KEY VARCHAR(100000) NOT NULL,
-    JWT_PUBLIC_KEY  VARCHAR(100000) NOT NULL
+    id              bigint primary key,
+    version         varchar(1000)   not null,
+    kid             varchar(1000)   not null,
+    jwt_private_key varchar(100000) not null,
+    jwt_public_key  varchar(100000) not null
 );
-CREATE TABLE IF NOT EXISTS POSTS
+create table if not exists posts
 (
-    ID          BIGINT PRIMARY KEY,
-    USER_ID     BIGINT                NOT NULL,
-    OVERVIEW    VARCHAR(100)          NULL,
-    TEXT        VARCHAR(3000)         NOT NULL,
-    CREATED_AT  BIGINT                NOT NULL,
-    VISIBILITY  INT     DEFAULT 0     NOT NULL,
-    URL         VARCHAR(500)          NOT NULL,
-    REPOST_ID   BIGINT                NULL,
-    REPLY_ID    BIGINT                NULL,
-    "SENSITIVE" BOOLEAN DEFAULT FALSE NOT NULL,
-    AP_ID       VARCHAR(100)          NOT NULL
+    id          bigint primary key,
+    user_id     bigint                not null,
+    overview    varchar(100)          null,
+    text        varchar(3000)         not null,
+    created_at  bigint                not null,
+    visibility  int     default 0     not null,
+    url         varchar(500)          not null,
+    repost_id   bigint                null,
+    reply_id    bigint                null,
+    "sensitive" boolean default false not null,
+    ap_id varchar(100) not null unique
 );
-ALTER TABLE POSTS
-    ADD CONSTRAINT FK_POSTS_USERID__ID FOREIGN KEY (USER_ID) REFERENCES USERS (ID) ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE POSTS
-    ADD CONSTRAINT FK_POSTS_REPOSTID__ID FOREIGN KEY (REPOST_ID) REFERENCES POSTS (ID) ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE POSTS
-    ADD CONSTRAINT FK_POSTS_REPLYID__ID FOREIGN KEY (REPLY_ID) REFERENCES POSTS (ID) ON DELETE RESTRICT ON UPDATE RESTRICT;
-CREATE TABLE IF NOT EXISTS POSTS_MEDIA
+alter table posts
+    add constraint fk_posts_userid__id foreign key (user_id) references users (id) on delete restrict on update restrict;
+alter table posts
+    add constraint fk_posts_repostid__id foreign key (repost_id) references posts (id) on delete restrict on update restrict;
+alter table posts
+    add constraint fk_posts_replyid__id foreign key (reply_id) references posts (id) on delete restrict on update restrict;
+create table if not exists posts_media
 (
-    POST_ID  BIGINT,
-    MEDIA_ID BIGINT,
-    CONSTRAINT pk_PostsMedia PRIMARY KEY (POST_ID, MEDIA_ID)
+    post_id  bigint,
+    media_id bigint,
+    constraint pk_postsmedia primary key (post_id, media_id)
 );
-ALTER TABLE POSTS_MEDIA
-    ADD CONSTRAINT FK_POSTS_MEDIA_POST_ID__ID FOREIGN KEY (POST_ID) REFERENCES POSTS (ID) ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE POSTS_MEDIA
-    ADD CONSTRAINT FK_POSTS_MEDIA_MEDIA_ID__ID FOREIGN KEY (MEDIA_ID) REFERENCES MEDIA (ID) ON DELETE CASCADE ON UPDATE CASCADE;
-CREATE TABLE IF NOT EXISTS REACTIONS
+alter table posts_media
+    add constraint fk_posts_media_post_id__id foreign key (post_id) references posts (id) on delete cascade on update cascade;
+alter table posts_media
+    add constraint fk_posts_media_media_id__id foreign key (media_id) references media (id) on delete cascade on update cascade;
+create table if not exists reactions
 (
-    ID       BIGSERIAL PRIMARY KEY,
-    EMOJI_ID BIGINT NOT NULL,
-    POST_ID  BIGINT NOT NULL,
-    USER_ID  BIGINT NOT NULL
+    id       bigserial primary key,
+    emoji_id bigint not null,
+    post_id  bigint not null,
+    user_id  bigint not null
 );
-ALTER TABLE REACTIONS
-    ADD CONSTRAINT FK_REACTIONS_POST_ID__ID FOREIGN KEY (POST_ID) REFERENCES POSTS (ID) ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE REACTIONS
-    ADD CONSTRAINT FK_REACTIONS_USER_ID__ID FOREIGN KEY (USER_ID) REFERENCES USERS (ID) ON DELETE RESTRICT ON UPDATE RESTRICT;
-CREATE TABLE IF NOT EXISTS TIMELINES
+alter table reactions
+    add constraint fk_reactions_post_id__id foreign key (post_id) references posts (id) on delete restrict on update restrict;
+alter table reactions
+    add constraint fk_reactions_user_id__id foreign key (user_id) references users (id) on delete restrict on update restrict;
+create table if not exists timelines
 (
-    ID             BIGINT PRIMARY KEY,
-    USER_ID        BIGINT       NOT NULL,
-    TIMELINE_ID    BIGINT       NOT NULL,
-    POST_ID        BIGINT       NOT NULL,
-    POST_USER_ID   BIGINT       NOT NULL,
-    CREATED_AT     BIGINT       NOT NULL,
-    REPLY_ID       BIGINT       NULL,
-    REPOST_ID      BIGINT       NULL,
-    VISIBILITY     INT          NOT NULL,
-    "SENSITIVE"    BOOLEAN      NOT NULL,
-    IS_LOCAL       BOOLEAN      NOT NULL,
-    IS_PURE_REPOST BOOLEAN      NOT NULL,
-    MEDIA_IDS      VARCHAR(255) NOT NULL
+    id             bigint primary key,
+    user_id        bigint       not null,
+    timeline_id    bigint       not null,
+    post_id        bigint       not null,
+    post_user_id   bigint       not null,
+    created_at     bigint       not null,
+    reply_id       bigint       null,
+    repost_id      bigint       null,
+    visibility     int          not null,
+    "sensitive"    boolean      not null,
+    is_local       boolean      not null,
+    is_pure_repost boolean      not null,
+    media_ids      varchar(255) not null
 );
-CREATE TABLE IF NOT EXISTS USERS_FOLLOWERS
+create table if not exists users_followers
 (
-    ID          BIGSERIAL PRIMARY KEY,
-    USER_ID     BIGINT NOT NULL,
-    FOLLOWER_ID BIGINT NOT NULL,
-    CONSTRAINT FK_USERS_FOLLOWERS_USER_ID__ID FOREIGN KEY (USER_ID) REFERENCES USERS (ID) ON DELETE RESTRICT ON UPDATE RESTRICT,
-    CONSTRAINT FK_USERS_FOLLOWERS_FOLLOWER_ID__ID FOREIGN KEY (FOLLOWER_ID) REFERENCES USERS (ID) ON DELETE RESTRICT ON UPDATE RESTRICT
+    id          bigserial primary key,
+    user_id     bigint not null,
+    follower_id bigint not null,
+    constraint fk_users_followers_user_id__id foreign key (user_id) references users (id) on delete restrict on update restrict,
+    constraint fk_users_followers_follower_id__id foreign key (follower_id) references users (id) on delete restrict on update restrict
 );
-CREATE TABLE IF NOT EXISTS APPLICATION_AUTHORIZATION
+create table if not exists application_authorization
 (
-    ID                            VARCHAR(255) PRIMARY KEY,
-    REGISTERED_CLIENT_ID          VARCHAR(255)               NOT NULL,
-    PRINCIPAL_NAME                VARCHAR(255)               NOT NULL,
-    AUTHORIZATION_GRANT_TYPE      VARCHAR(255)               NOT NULL,
-    AUTHORIZED_SCOPES             VARCHAR(1000) DEFAULT NULL NULL,
-    "ATTRIBUTES"                  VARCHAR(4000) DEFAULT NULL NULL,
-    "STATE"                       VARCHAR(500)  DEFAULT NULL NULL,
-    AUTHORIZATION_CODE_VALUE      VARCHAR(4000) DEFAULT NULL NULL,
-    AUTHORIZATION_CODE_ISSUED_AT  TIMESTAMP     DEFAULT NULL NULL,
-    AUTHORIZATION_CODE_EXPIRES_AT TIMESTAMP     DEFAULT NULL NULL,
-    AUTHORIZATION_CODE_METADATA   VARCHAR(2000) DEFAULT NULL NULL,
-    ACCESS_TOKEN_VALUE            VARCHAR(4000) DEFAULT NULL NULL,
-    ACCESS_TOKEN_ISSUED_AT        TIMESTAMP     DEFAULT NULL NULL,
-    ACCESS_TOKEN_EXPIRES_AT       TIMESTAMP     DEFAULT NULL NULL,
-    ACCESS_TOKEN_METADATA         VARCHAR(2000) DEFAULT NULL NULL,
-    ACCESS_TOKEN_TYPE             VARCHAR(255)  DEFAULT NULL NULL,
-    ACCESS_TOKEN_SCOPES           VARCHAR(1000) DEFAULT NULL NULL,
-    REFRESH_TOKEN_VALUE           VARCHAR(4000) DEFAULT NULL NULL,
-    REFRESH_TOKEN_ISSUED_AT       TIMESTAMP     DEFAULT NULL NULL,
-    REFRESH_TOKEN_EXPIRES_AT      TIMESTAMP     DEFAULT NULL NULL,
-    REFRESH_TOKEN_METADATA        VARCHAR(2000) DEFAULT NULL NULL,
-    OIDC_ID_TOKEN_VALUE           VARCHAR(4000) DEFAULT NULL NULL,
-    OIDC_ID_TOKEN_ISSUED_AT       TIMESTAMP     DEFAULT NULL NULL,
-    OIDC_ID_TOKEN_EXPIRES_AT      TIMESTAMP     DEFAULT NULL NULL,
-    OIDC_ID_TOKEN_METADATA        VARCHAR(2000) DEFAULT NULL NULL,
-    OIDC_ID_TOKEN_CLAIMS          VARCHAR(2000) DEFAULT NULL NULL,
-    USER_CODE_VALUE               VARCHAR(4000) DEFAULT NULL NULL,
-    USER_CODE_ISSUED_AT           TIMESTAMP     DEFAULT NULL NULL,
-    USER_CODE_EXPIRES_AT          TIMESTAMP     DEFAULT NULL NULL,
-    USER_CODE_METADATA            VARCHAR(2000) DEFAULT NULL NULL,
-    DEVICE_CODE_VALUE             VARCHAR(4000) DEFAULT NULL NULL,
-    DEVICE_CODE_ISSUED_AT         TIMESTAMP     DEFAULT NULL NULL,
-    DEVICE_CODE_EXPIRES_AT        TIMESTAMP     DEFAULT NULL NULL,
-    DEVICE_CODE_METADATA          VARCHAR(2000) DEFAULT NULL NULL
+    id                            varchar(255) primary key,
+    registered_client_id          varchar(255)               not null,
+    principal_name                varchar(255)               not null,
+    authorization_grant_type      varchar(255)               not null,
+    authorized_scopes             varchar(1000) default null null,
+    "attributes"                  varchar(4000) default null null,
+    "state"                       varchar(500)  default null null,
+    authorization_code_value      varchar(4000) default null null,
+    authorization_code_issued_at  timestamp     default null null,
+    authorization_code_expires_at timestamp     default null null,
+    authorization_code_metadata   varchar(2000) default null null,
+    access_token_value            varchar(4000) default null null,
+    access_token_issued_at        timestamp     default null null,
+    access_token_expires_at       timestamp     default null null,
+    access_token_metadata         varchar(2000) default null null,
+    access_token_type             varchar(255)  default null null,
+    access_token_scopes           varchar(1000) default null null,
+    refresh_token_value           varchar(4000) default null null,
+    refresh_token_issued_at       timestamp     default null null,
+    refresh_token_expires_at      timestamp     default null null,
+    refresh_token_metadata        varchar(2000) default null null,
+    oidc_id_token_value           varchar(4000) default null null,
+    oidc_id_token_issued_at       timestamp     default null null,
+    oidc_id_token_expires_at      timestamp     default null null,
+    oidc_id_token_metadata        varchar(2000) default null null,
+    oidc_id_token_claims          varchar(2000) default null null,
+    user_code_value               varchar(4000) default null null,
+    user_code_issued_at           timestamp     default null null,
+    user_code_expires_at          timestamp     default null null,
+    user_code_metadata            varchar(2000) default null null,
+    device_code_value             varchar(4000) default null null,
+    device_code_issued_at         timestamp     default null null,
+    device_code_expires_at        timestamp     default null null,
+    device_code_metadata          varchar(2000) default null null
 );
-CREATE TABLE IF NOT EXISTS OAUTH2_AUTHORIZATION_CONSENT
+create table if not exists oauth2_authorization_consent
 (
-    REGISTERED_CLIENT_ID VARCHAR(100),
-    PRINCIPAL_NAME       VARCHAR(200),
-    AUTHORITIES          VARCHAR(1000) NOT NULL,
-    CONSTRAINT pk_oauth2_authorization_consent PRIMARY KEY (REGISTERED_CLIENT_ID, PRINCIPAL_NAME)
+    registered_client_id varchar(100),
+    principal_name       varchar(200),
+    authorities          varchar(1000) not null,
+    constraint pk_oauth2_authorization_consent primary key (registered_client_id, principal_name)
 );
-CREATE TABLE IF NOT EXISTS REGISTERED_CLIENT
+create table if not exists registered_client
 (
-    ID                            VARCHAR(100) PRIMARY KEY,
-    CLIENT_ID                     VARCHAR(100)                            NOT NULL,
-    CLIENT_ID_ISSUED_AT           TIMESTAMP     DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    CLIENT_SECRET                 VARCHAR(200)  DEFAULT NULL              NULL,
-    CLIENT_SECRET_EXPIRES_AT      TIMESTAMP     DEFAULT NULL              NULL,
-    CLIENT_NAME                   VARCHAR(200)                            NOT NULL,
-    CLIENT_AUTHENTICATION_METHODS VARCHAR(1000)                           NOT NULL,
-    AUTHORIZATION_GRANT_TYPES     VARCHAR(1000)                           NOT NULL,
-    REDIRECT_URIS                 VARCHAR(1000) DEFAULT NULL              NULL,
-    POST_LOGOUT_REDIRECT_URIS     VARCHAR(1000) DEFAULT NULL              NULL,
-    SCOPES                        VARCHAR(1000)                           NOT NULL,
-    CLIENT_SETTINGS               VARCHAR(2000)                           NOT NULL,
-    TOKEN_SETTINGS                VARCHAR(2000)                           NOT NULL
+    id                            varchar(100) primary key,
+    client_id                     varchar(100)                            not null,
+    client_id_issued_at           timestamp     default current_timestamp not null,
+    client_secret                 varchar(200)  default null              null,
+    client_secret_expires_at      timestamp     default null              null,
+    client_name                   varchar(200)                            not null,
+    client_authentication_methods varchar(1000)                           not null,
+    authorization_grant_types     varchar(1000)                           not null,
+    redirect_uris                 varchar(1000) default null              null,
+    post_logout_redirect_uris     varchar(1000) default null              null,
+    scopes                        varchar(1000)                           not null,
+    client_settings               varchar(2000)                           not null,
+    token_settings                varchar(2000)                           not null
 )

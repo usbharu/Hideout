@@ -17,7 +17,7 @@ class UserRepositoryImpl(
     UserRepository {
 
     override suspend fun save(user: User): User {
-        val singleOrNull = Users.select { Users.id eq user.id or (Users.url eq user.url) }.empty()
+        val singleOrNull = Users.select { Users.id eq user.id }.empty()
         if (singleOrNull) {
             Users.insert {
                 it[id] = user.id
