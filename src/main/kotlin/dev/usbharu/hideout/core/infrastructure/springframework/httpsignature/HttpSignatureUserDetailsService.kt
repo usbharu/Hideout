@@ -36,6 +36,7 @@ class HttpSignatureUserDetailsService(
             try {
                 userQueryService.findByKeyId(keyId)
             } catch (e: FailedToGetResourcesException) {
+
                 throw UsernameNotFoundException("User not found", e)
             }
         }

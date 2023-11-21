@@ -1,11 +1,13 @@
 package dev.usbharu.hideout.application.config
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.nimbusds.jose.jwk.JWKSet
 import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet
 import com.nimbusds.jose.jwk.source.JWKSource
 import com.nimbusds.jose.proc.SecurityContext
+import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
 import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.infrastructure.springframework.httpsignature.HttpSignatureFilter
 import dev.usbharu.hideout.core.infrastructure.springframework.httpsignature.HttpSignatureUserDetailsService
@@ -17,7 +19,9 @@ import dev.usbharu.hideout.util.RsaUtil
 import dev.usbharu.httpsignature.sign.RsaSha256HttpSignatureSigner
 import dev.usbharu.httpsignature.verify.DefaultSignatureHeaderParser
 import dev.usbharu.httpsignature.verify.RsaSha256HttpSignatureVerifier
+import jakarta.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest
@@ -34,6 +38,7 @@ import org.springframework.security.authentication.AccountStatusUserDetailsCheck
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.Customizer
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -61,7 +66,8 @@ import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.util.*
 
-@EnableWebSecurity(debug = true)
+
+@EnableWebSecurity(debug = false)
 @Configuration
 @Suppress("FunctionMaxLength", "TooManyFunctions")
 class SecurityConfig {
@@ -77,12 +83,13 @@ class SecurityConfig {
     @Order(1)
     fun httpSignatureFilterChain(
         http: HttpSecurity,
+        httpSignatureFilter: HttpSignatureFilter,
         introspector: HandlerMappingIntrospector
     ): SecurityFilterChain {
         val builder = MvcRequestMatcher.Builder(introspector)
         http
             .securityMatcher("/inbox", "/outbox", "/users/*/inbox", "/users/*/outbox", "/users/*/posts/*")
-            .addFilter(getHttpSignatureFilter(http.getSharedObject(AuthenticationManager::class.java)))
+            .addFilter(httpSignatureFilter)
             .addFilterBefore(
                 ExceptionTranslationFilter(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)),
                 HttpSignatureFilter::class.java
@@ -112,9 +119,15 @@ class SecurityConfig {
         return http.build()
     }
 
-
-    fun getHttpSignatureFilter(authenticationManager: AuthenticationManager?): HttpSignatureFilter {
-        val httpSignatureFilter = HttpSignatureFilter(DefaultSignatureHeaderParser())
+    @Bean
+    fun getHttpSignatureFilter(
+        authenticationManager: AuthenticationManager,
+        @Qualifier("activitypub") objectMapper: ObjectMapper,
+        apUserService: APUserService,
+        transaction: Transaction
+    ): HttpSignatureFilter {
+        val httpSignatureFilter =
+            HttpSignatureFilter(DefaultSignatureHeaderParser(), objectMapper, apUserService, transaction)
         httpSignatureFilter.setAuthenticationManager(authenticationManager)
         httpSignatureFilter.setContinueFilterChainOnUnsuccessfulAuthentication(false)
         val authenticationEntryPointFailureHandler =
@@ -125,13 +138,16 @@ class SecurityConfig {
     }
 
     @Bean
+    @Order(2)
     fun daoAuthenticationProvider(userDetailsServiceImpl: UserDetailsServiceImpl): DaoAuthenticationProvider {
         val daoAuthenticationProvider = DaoAuthenticationProvider()
         daoAuthenticationProvider.setUserDetailsService(userDetailsServiceImpl)
+
         return daoAuthenticationProvider
     }
 
     @Bean
+    @Order(1)
     fun httpSignatureAuthenticationProvider(transaction: Transaction): PreAuthenticatedAuthenticationProvider {
         val provider = PreAuthenticatedAuthenticationProvider()
         provider.setPreAuthenticatedUserDetailsService(
@@ -280,3 +296,18 @@ data class JwkConfig(
     val publicKey: String,
     val privateKey: String
 )
+
+
+@Configuration
+class PostSecurityConfig(
+    val auth: AuthenticationManagerBuilder,
+    val daoAuthenticationProvider: DaoAuthenticationProvider,
+    val httpSignatureAuthenticationProvider: PreAuthenticatedAuthenticationProvider
+) {
+
+    @PostConstruct
+    fun config() {
+        auth.authenticationProvider(daoAuthenticationProvider)
+        auth.authenticationProvider(httpSignatureAuthenticationProvider)
+    }
+}
