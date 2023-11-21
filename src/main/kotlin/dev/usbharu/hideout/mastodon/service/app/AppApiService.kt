@@ -60,7 +60,8 @@ class AppApiServiceImpl(
                 "invalid-vapid-key",
                 appsRequest.website,
                 id,
-                clientSecret
+                clientSecret,
+                appsRequest.redirectUris
             )
         }
     }
