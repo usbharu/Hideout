@@ -182,7 +182,7 @@ class SecurityConfig {
             ).anonymous()
             it.requestMatchers(builder.pattern("/change-password")).authenticated()
             it.requestMatchers(builder.pattern("/api/v1/accounts/verify_credentials"))
-                .hasAnyAuthority("SCOPE_read:accounts")
+                .hasAnyAuthority("SCOPE_read", "SCOPE_read:accounts")
             it.anyRequest().permitAll()
         }
         http.oauth2ResourceServer {
