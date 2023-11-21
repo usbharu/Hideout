@@ -80,26 +80,27 @@ class APUserServiceImpl(
     override suspend fun fetchPersonWithEntity(url: String, targetActor: String?): Pair<Person, User> {
         return try {
             val userEntity = userQueryService.findByUrl(url)
+            val id = userEntity.url
             return Person(
                 type = emptyList(),
                 name = userEntity.name,
-                id = url,
+                id = id,
                 preferredUsername = userEntity.name,
                 summary = userEntity.description,
-                inbox = "$url/inbox",
-                outbox = "$url/outbox",
-                url = url,
+                inbox = "$id/inbox",
+                outbox = "$id/outbox",
+                url = id,
                 icon = Image(
                     type = emptyList(),
-                    name = "$url/icon.png",
+                    name = "$id/icon.png",
                     mediaType = "image/png",
-                    url = "$url/icon.png"
+                    url = "$id/icon.png"
                 ),
                 publicKey = Key(
                     type = emptyList(),
                     name = "Public Key",
                     id = userEntity.keyId,
-                    owner = url,
+                    owner = id,
                     publicKeyPem = userEntity.publicKey
                 ),
                 endpoints = mapOf("sharedInbox" to "${applicationConfig.url}/inbox"),
@@ -109,17 +110,48 @@ class APUserServiceImpl(
         } catch (ignore: FailedToGetResourcesException) {
             val person = apResourceResolveService.resolve<Person>(url, null as Long?)
 
+            val id = person.id ?: throw IllegalActivityPubObjectException("id is null")
+            try {
+                val userEntity = userQueryService.findByUrl(id)
+                return Person(
+                    type = emptyList(),
+                    name = userEntity.name,
+                    id = id,
+                    preferredUsername = userEntity.name,
+                    summary = userEntity.description,
+                    inbox = "$id/inbox",
+                    outbox = "$id/outbox",
+                    url = id,
+                    icon = Image(
+                        type = emptyList(),
+                        name = "$id/icon.png",
+                        mediaType = "image/png",
+                        url = "$id/icon.png"
+                    ),
+                    publicKey = Key(
+                        type = emptyList(),
+                        name = "Public Key",
+                        id = userEntity.keyId,
+                        owner = id,
+                        publicKeyPem = userEntity.publicKey
+                    ),
+                    endpoints = mapOf("sharedInbox" to "${applicationConfig.url}/inbox"),
+                    followers = userEntity.followers,
+                    following = userEntity.following
+                ) to userEntity
+            } catch (_: FailedToGetResourcesException) {
+            }
             person to userService.createRemoteUser(
                 RemoteUserCreateDto(
                     name = person.preferredUsername
                         ?: throw IllegalActivityPubObjectException("preferredUsername is null"),
-                    domain = url.substringAfter("://").substringBefore("/"),
+                    domain = id.substringAfter("://").substringBefore("/"),
                     screenName = (person.name ?: person.preferredUsername)
                         ?: throw IllegalActivityPubObjectException("preferredUsername is null"),
                     description = person.summary.orEmpty(),
                     inbox = person.inbox ?: throw IllegalActivityPubObjectException("inbox is null"),
                     outbox = person.outbox ?: throw IllegalActivityPubObjectException("outbox is null"),
-                    url = url,
+                    url = id,
                     publicKey = person.publicKey?.publicKeyPem
                         ?: throw IllegalActivityPubObjectException("publicKey is null"),
                     keyId = person.publicKey?.id ?: throw IllegalActivityPubObjectException("publicKey keyId is null"),

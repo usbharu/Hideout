@@ -39,9 +39,8 @@ class APResourceResolveServiceImpl(
         return (cacheManager.getOrWait(key) as APResolveResponse<T>).objects
     }
 
-    private suspend fun <T : Object> runResolve(url: String, singer: User?, clazz: Class<T>): ResolveResponse {
-        return APResolveResponse(apRequestService.apGet(url, singer, clazz))
-    }
+    private suspend fun <T : Object> runResolve(url: String, singer: User?, clazz: Class<T>): ResolveResponse =
+        APResolveResponse(apRequestService.apGet(url, singer, clazz))
 
     private fun genCacheKey(url: String, singerId: Long?): String {
         if (singerId != null) {
