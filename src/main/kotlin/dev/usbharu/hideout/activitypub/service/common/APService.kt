@@ -2,16 +2,17 @@ package dev.usbharu.hideout.activitypub.service.common
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.activitypub.domain.exception.JsonParseException
-import dev.usbharu.hideout.activitypub.domain.model.Follow
 import dev.usbharu.hideout.activitypub.interfaces.api.common.ActivityPubResponse
+import dev.usbharu.hideout.activitypub.interfaces.api.common.ActivityPubStringResponse
 import dev.usbharu.hideout.activitypub.service.activity.accept.APAcceptService
 import dev.usbharu.hideout.activitypub.service.activity.create.APCreateService
 import dev.usbharu.hideout.activitypub.service.activity.delete.APReceiveDeleteService
 import dev.usbharu.hideout.activitypub.service.activity.follow.APReceiveFollowService
 import dev.usbharu.hideout.activitypub.service.activity.like.APLikeService
 import dev.usbharu.hideout.activitypub.service.activity.undo.APUndoService
+import dev.usbharu.hideout.core.external.job.InboxJob
+import dev.usbharu.hideout.core.service.job.JobQueueParentService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
@@ -182,7 +183,8 @@ class APServiceImpl(
     private val apCreateService: APCreateService,
     private val apLikeService: APLikeService,
     private val apReceiveDeleteService: APReceiveDeleteService,
-    @Qualifier("activitypub") private val objectMapper: ObjectMapper
+    @Qualifier("activitypub") private val objectMapper: ObjectMapper,
+    private val jobQueueParentService: JobQueueParentService
 ) : APService {
 
     val logger: Logger = LoggerFactory.getLogger(APServiceImpl::class.java)
@@ -227,20 +229,10 @@ class APServiceImpl(
     @Suppress("CyclomaticComplexMethod", "NotImplementedDeclaration")
     override suspend fun processActivity(json: String, type: ActivityType): ActivityPubResponse {
         logger.debug("process activity: {}", type)
-        return when (type) {
-            ActivityType.Accept -> apAcceptService.receiveAccept(objectMapper.readValue(json))
-            ActivityType.Follow ->
-                apReceiveFollowService
-                    .receiveFollow(objectMapper.readValue(json, Follow::class.java))
-
-            ActivityType.Create -> apCreateService.receiveCreate(objectMapper.readValue(json))
-            ActivityType.Like -> apLikeService.receiveLike(objectMapper.readValue(json))
-            ActivityType.Undo -> apUndoService.receiveUndo(objectMapper.readValue(json))
-            ActivityType.Delete -> apReceiveDeleteService.receiveDelete(objectMapper.readValue(json))
-
-            else -> {
-                throw IllegalArgumentException("$type is not supported.")
-            }
+        jobQueueParentService.schedule(InboxJob) {
+            props[it.json] = json
+            props[it.type] = type.name
         }
+        return ActivityPubStringResponse(message = "")
     }
 }
