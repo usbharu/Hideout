@@ -12,5 +12,5 @@ import dev.usbharu.hideout.core.domain.model.instance.Instance as InstanceEntity
 @Repository
 class InstanceQueryServiceImpl : InstanceQueryService {
     override suspend fun findByUrl(url: String): InstanceEntity = Instance.select { Instance.url eq url }
-        .singleOr { FailedToGetResourcesException("url is doesn't exist") }.toInstance()
+        .singleOr { FailedToGetResourcesException("$url is doesn't exist", it) }.toInstance()
 }

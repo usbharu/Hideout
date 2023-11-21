@@ -1,14 +1,21 @@
 package dev.usbharu.hideout.core.infrastructure.springframework.httpsignature
 
+import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
+import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.httpsignature.common.HttpHeaders
 import dev.usbharu.httpsignature.common.HttpMethod
 import dev.usbharu.httpsignature.common.HttpRequest
 import dev.usbharu.httpsignature.verify.SignatureHeaderParser
 import jakarta.servlet.http.HttpServletRequest
+import kotlinx.coroutines.runBlocking
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter
 import java.net.URL
 
-class HttpSignatureFilter(private val httpSignatureHeaderParser: SignatureHeaderParser) :
+class HttpSignatureFilter(
+    private val httpSignatureHeaderParser: SignatureHeaderParser,
+    private val transaction: Transaction,
+    private val apUserService: APUserService
+) :
     AbstractPreAuthenticatedProcessingFilter() {
     override fun getPreAuthenticatedPrincipal(request: HttpServletRequest?): Any? {
         val headersList = request?.headerNames?.toList().orEmpty()
@@ -22,6 +29,11 @@ class HttpSignatureFilter(private val httpSignatureHeaderParser: SignatureHeader
             return null
         } catch (_: RuntimeException) {
             return ""
+        }
+        runBlocking {
+            transaction.transaction {
+                apUserService.fetchPerson(signature.keyId)
+            }
         }
         return signature.keyId
     }
