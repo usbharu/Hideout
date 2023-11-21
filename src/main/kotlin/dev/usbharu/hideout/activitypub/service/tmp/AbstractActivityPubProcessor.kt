@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory
 abstract class AbstractActivityPubProcessor<T : Object>(val transaction: Transaction) : ActivityPubProcessor<T> {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    override suspend fun process(activity: T) {
+    override suspend fun process(activity: ActivityPubProcessContext<T>) {
         logger.info("START ActivityPub process")
         try {
             transaction.transaction {
@@ -22,6 +22,6 @@ abstract class AbstractActivityPubProcessor<T : Object>(val transaction: Transac
         logger.info("SUCCESS ActivityPub process")
     }
 
-    abstract suspend fun internalProcess(activity: T)
+    abstract suspend fun internalProcess(activity: ActivityPubProcessContext<T>)
 
 }
