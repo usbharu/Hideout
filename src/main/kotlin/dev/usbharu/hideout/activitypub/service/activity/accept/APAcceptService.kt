@@ -3,18 +3,15 @@ package dev.usbharu.hideout.activitypub.service.activity.accept
 import dev.usbharu.hideout.activitypub.domain.exception.IllegalActivityPubObjectException
 import dev.usbharu.hideout.activitypub.domain.model.Accept
 import dev.usbharu.hideout.activitypub.domain.model.Follow
-import dev.usbharu.hideout.activitypub.interfaces.api.common.ActivityPubResponse
-import dev.usbharu.hideout.activitypub.interfaces.api.common.ActivityPubStringResponse
 import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.query.FollowerQueryService
 import dev.usbharu.hideout.core.query.UserQueryService
 import dev.usbharu.hideout.core.service.user.UserService
-import io.ktor.http.*
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 interface APAcceptService {
-    suspend fun receiveAccept(accept: Accept): ActivityPubResponse
+    suspend fun receiveAccept(accept: Accept)
 }
 
 @Service
@@ -24,7 +21,7 @@ class APAcceptServiceImpl(
     private val followerQueryService: FollowerQueryService,
     private val transaction: Transaction
 ) : APAcceptService {
-    override suspend fun receiveAccept(accept: Accept): ActivityPubResponse {
+    override suspend fun receiveAccept(accept: Accept) {
         return transaction.transaction {
             LOGGER.debug("START Follow")
             LOGGER.trace("{}", accept)
@@ -43,11 +40,11 @@ class APAcceptServiceImpl(
 
             if (followerQueryService.alreadyFollow(user.id, follower.id)) {
                 LOGGER.debug("END User already follow from ${follower.url} to ${user.url}")
-                return@transaction ActivityPubStringResponse(HttpStatusCode.OK, "accepted")
+                return@transaction
             }
             userService.follow(user.id, follower.id)
             LOGGER.debug("SUCCESS Follow from ${follower.url} to ${user.url}.")
-            ActivityPubStringResponse(HttpStatusCode.OK, "accepted")
+
         }
     }
 

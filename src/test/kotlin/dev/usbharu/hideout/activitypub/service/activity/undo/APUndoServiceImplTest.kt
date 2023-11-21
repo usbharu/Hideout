@@ -2,7 +2,6 @@ package dev.usbharu.hideout.activitypub.service.activity.undo
 
 import dev.usbharu.hideout.activitypub.domain.model.Follow
 import dev.usbharu.hideout.activitypub.domain.model.Undo
-import dev.usbharu.hideout.activitypub.interfaces.api.common.ActivityPubStringResponse
 import dev.usbharu.hideout.core.query.UserQueryService
 import io.ktor.http.*
 import kotlinx.coroutines.test.runTest
