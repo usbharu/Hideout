@@ -41,4 +41,6 @@ object DeliverRemoveReactionJob : HideoutJob("DeliverRemoveReactionJob") {
 object InboxJob : HideoutJob("InboxJob") {
     val json = string("json")
     val type = string("type")
+    val httpRequest = string("http_request")
+    val headers = string("headers")
 }

@@ -7,6 +7,7 @@ import dev.usbharu.hideout.activitypub.interfaces.api.common.ActivityPubResponse
 import dev.usbharu.hideout.activitypub.interfaces.api.common.ActivityPubStringResponse
 import dev.usbharu.hideout.core.external.job.InboxJob
 import dev.usbharu.hideout.core.service.job.JobQueueParentService
+import dev.usbharu.httpsignature.common.HttpRequest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
@@ -15,7 +16,12 @@ import org.springframework.stereotype.Service
 interface APService {
     fun parseActivity(json: String): ActivityType
 
-    suspend fun processActivity(json: String, type: ActivityType): ActivityPubResponse?
+    suspend fun processActivity(
+        json: String,
+        type: ActivityType,
+        httpRequest: HttpRequest,
+        map: Map<String, List<String>>
+    ): ActivityPubResponse?
 }
 
 enum class ActivityType {
@@ -215,11 +221,20 @@ class APServiceImpl(
     }
 
     @Suppress("CyclomaticComplexMethod", "NotImplementedDeclaration")
-    override suspend fun processActivity(json: String, type: ActivityType): ActivityPubResponse {
+    override suspend fun processActivity(
+        json: String,
+        type: ActivityType,
+        httpRequest: HttpRequest,
+        map: Map<String, List<String>>
+    ): ActivityPubResponse {
         logger.debug("process activity: {}", type)
         jobQueueParentService.schedule(InboxJob) {
             props[it.json] = json
             props[it.type] = type.name
+            val writeValueAsString = objectMapper.writeValueAsString(httpRequest)
+            println(writeValueAsString)
+            props[it.httpRequest] = writeValueAsString
+            props[it.headers] = objectMapper.writeValueAsString(map)
         }
         return ActivityPubStringResponse(message = "")
     }
