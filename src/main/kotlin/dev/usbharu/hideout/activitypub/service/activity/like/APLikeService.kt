@@ -3,19 +3,16 @@ package dev.usbharu.hideout.activitypub.service.activity.like
 import dev.usbharu.hideout.activitypub.domain.exception.FailedToGetActivityPubResourceException
 import dev.usbharu.hideout.activitypub.domain.exception.IllegalActivityPubObjectException
 import dev.usbharu.hideout.activitypub.domain.model.Like
-import dev.usbharu.hideout.activitypub.interfaces.api.common.ActivityPubResponse
-import dev.usbharu.hideout.activitypub.interfaces.api.common.ActivityPubStringResponse
 import dev.usbharu.hideout.activitypub.service.objects.note.APNoteService
 import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
 import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.query.PostQueryService
 import dev.usbharu.hideout.core.service.reaction.ReactionService
-import io.ktor.http.*
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 interface APLikeService {
-    suspend fun receiveLike(like: Like): ActivityPubResponse
+    suspend fun receiveLike(like: Like)
 }
 
 @Service
@@ -26,7 +23,7 @@ class APLikeServiceImpl(
     private val postQueryService: PostQueryService,
     private val transaction: Transaction
 ) : APLikeService {
-    override suspend fun receiveLike(like: Like): ActivityPubResponse {
+    override suspend fun receiveLike(like: Like) {
         LOGGER.debug("START Add Like")
         LOGGER.trace("{}", like)
 
@@ -57,7 +54,7 @@ class APLikeServiceImpl(
             )
             LOGGER.debug("SUCCESS Add Like($content) from ${person.second.url} to ${post.url}")
         }
-        return ActivityPubStringResponse(HttpStatusCode.OK, "")
+        return
     }
 
     companion object {

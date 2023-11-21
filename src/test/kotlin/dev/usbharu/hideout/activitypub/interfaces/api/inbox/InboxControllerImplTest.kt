@@ -1,7 +1,6 @@
 package dev.usbharu.hideout.activitypub.interfaces.api.inbox
 
 import dev.usbharu.hideout.activitypub.domain.exception.JsonParseException
-import dev.usbharu.hideout.activitypub.interfaces.api.common.ActivityPubStringResponse
 import dev.usbharu.hideout.activitypub.service.common.APService
 import dev.usbharu.hideout.activitypub.service.common.ActivityType
 import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException

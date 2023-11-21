@@ -4,7 +4,6 @@ import dev.usbharu.hideout.activitypub.domain.exception.IllegalActivityPubObject
 import dev.usbharu.hideout.activitypub.domain.model.Accept
 import dev.usbharu.hideout.activitypub.domain.model.Follow
 import dev.usbharu.hideout.activitypub.domain.model.Like
-import dev.usbharu.hideout.activitypub.interfaces.api.common.ActivityPubStringResponse
 import dev.usbharu.hideout.core.query.FollowerQueryService
 import dev.usbharu.hideout.core.query.UserQueryService
 import dev.usbharu.hideout.core.service.user.UserService
