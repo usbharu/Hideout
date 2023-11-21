@@ -17,7 +17,9 @@ import dev.usbharu.httpsignature.verify.Signature
 import dev.usbharu.httpsignature.verify.SignatureHeaderParser
 import kjob.core.job.JobProps
 import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Service
 
+@Service
 class InboxJobProcessor(
     private val activityPubProcessorList: List<ActivityPubProcessor<Object>>,
     private val objectMapper: ObjectMapper,
