@@ -3,9 +3,9 @@ create table if not exists instance
     id              bigint primary key,
     "name"          varchar(1000)  not null,
     description     varchar(5000)  not null,
-    url             varchar(255)   not null,
+    url          varchar(255) not null unique,
     icon_url        varchar(255)   not null,
-    shared_inbox    varchar(255)   null,
+    shared_inbox varchar(255) null unique,
     software        varchar(255)   not null,
     version         varchar(255)   not null,
     is_blocked      boolean        not null,
@@ -21,9 +21,9 @@ create table if not exists users
     screen_name varchar(300)   not null,
     description varchar(10000) not null,
     password    varchar(255)   null,
-    inbox       varchar(1000)  not null,
-    outbox      varchar(1000)  not null,
-    url         varchar(1000)  not null,
+    inbox  varchar(1000) not null unique,
+    outbox varchar(1000) not null unique,
+    url    varchar(1000) not null unique,
     public_key  varchar(10000) not null,
     private_key varchar(10000) null,
     created_at  bigint         not null,
@@ -31,6 +31,7 @@ create table if not exists users
     "following" varchar(1000)  null,
     followers   varchar(1000)  null,
     "instance"  bigint         null,
+    unique (name, domain),
     constraint fk_users_instance__id foreign key ("instance") references instance (id) on delete restrict on update restrict
 );
 create table if not exists follow_requests
@@ -73,7 +74,7 @@ create table if not exists posts
     repost_id   bigint                null,
     reply_id    bigint                null,
     "sensitive" boolean default false not null,
-    ap_id       varchar(100)          not null
+    ap_id varchar(100) not null unique
 );
 alter table posts
     add constraint fk_posts_userid__id foreign key (user_id) references users (id) on delete restrict on update restrict;
