@@ -11,6 +11,7 @@ import dev.usbharu.hideout.core.infrastructure.springframework.httpsignature.Htt
 import dev.usbharu.hideout.core.infrastructure.springframework.httpsignature.HttpSignatureUserDetailsService
 import dev.usbharu.hideout.core.infrastructure.springframework.httpsignature.HttpSignatureVerifierComposite
 import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.UserDetailsImpl
+import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.UserDetailsServiceImpl
 import dev.usbharu.hideout.core.query.UserQueryService
 import dev.usbharu.hideout.util.RsaUtil
 import dev.usbharu.httpsignature.sign.RsaSha256HttpSignatureSigner
@@ -31,6 +32,7 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.security.authentication.AccountStatusUserDetailsChecker
 import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -59,7 +61,7 @@ import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.util.*
 
-@EnableWebSecurity(debug = false)
+@EnableWebSecurity(debug = true)
 @Configuration
 @Suppress("FunctionMaxLength", "TooManyFunctions")
 class SecurityConfig {
@@ -75,13 +77,12 @@ class SecurityConfig {
     @Order(1)
     fun httpSignatureFilterChain(
         http: HttpSecurity,
-        httpSignatureFilter: HttpSignatureFilter,
         introspector: HandlerMappingIntrospector
     ): SecurityFilterChain {
         val builder = MvcRequestMatcher.Builder(introspector)
         http
             .securityMatcher("/inbox", "/outbox", "/users/*/inbox", "/users/*/outbox", "/users/*/posts/*")
-            .addFilter(httpSignatureFilter)
+            .addFilter(getHttpSignatureFilter(http.getSharedObject(AuthenticationManager::class.java)))
             .addFilterBefore(
                 ExceptionTranslationFilter(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)),
                 HttpSignatureFilter::class.java
@@ -108,12 +109,11 @@ class SecurityConfig {
             .sessionManagement {
                 it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             }
-
         return http.build()
     }
 
-    @Bean
-    fun getHttpSignatureFilter(authenticationManager: AuthenticationManager): HttpSignatureFilter {
+
+    fun getHttpSignatureFilter(authenticationManager: AuthenticationManager?): HttpSignatureFilter {
         val httpSignatureFilter = HttpSignatureFilter(DefaultSignatureHeaderParser())
         httpSignatureFilter.setAuthenticationManager(authenticationManager)
         httpSignatureFilter.setContinueFilterChainOnUnsuccessfulAuthentication(false)
@@ -122,6 +122,13 @@ class SecurityConfig {
         authenticationEntryPointFailureHandler.setRethrowAuthenticationServiceException(false)
         httpSignatureFilter.setAuthenticationFailureHandler(authenticationEntryPointFailureHandler)
         return httpSignatureFilter
+    }
+
+    @Bean
+    fun daoAuthenticationProvider(userDetailsServiceImpl: UserDetailsServiceImpl): DaoAuthenticationProvider {
+        val daoAuthenticationProvider = DaoAuthenticationProvider()
+        daoAuthenticationProvider.setUserDetailsService(userDetailsServiceImpl)
+        return daoAuthenticationProvider
     }
 
     @Bean
@@ -187,16 +194,22 @@ class SecurityConfig {
         }
         http.oauth2ResourceServer {
             it.jwt(Customizer.withDefaults())
-        }.passwordManagement { }.formLogin(Customizer.withDefaults()).csrf {
-            it.ignoringRequestMatchers(builder.pattern("/users/*/inbox"))
-            it.ignoringRequestMatchers(builder.pattern(HttpMethod.POST, "/api/v1/apps"))
-            it.ignoringRequestMatchers(builder.pattern("/inbox"))
-            it.ignoringRequestMatchers(PathRequest.toH2Console())
-        }.headers {
-            it.frameOptions {
-                it.sameOrigin()
-            }
         }
+            .passwordManagement { }
+            .formLogin {
+
+            }
+            .csrf {
+                it.ignoringRequestMatchers(builder.pattern("/users/*/inbox"))
+                it.ignoringRequestMatchers(builder.pattern(HttpMethod.POST, "/api/v1/apps"))
+                it.ignoringRequestMatchers(builder.pattern("/inbox"))
+                it.ignoringRequestMatchers(PathRequest.toH2Console())
+            }
+            .headers {
+                it.frameOptions {
+                    it.sameOrigin()
+                }
+            }
         return http.build()
     }
 
