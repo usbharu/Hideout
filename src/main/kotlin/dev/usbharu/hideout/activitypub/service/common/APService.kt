@@ -5,12 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import dev.usbharu.hideout.activitypub.domain.exception.JsonParseException
 import dev.usbharu.hideout.activitypub.interfaces.api.common.ActivityPubResponse
 import dev.usbharu.hideout.activitypub.interfaces.api.common.ActivityPubStringResponse
-import dev.usbharu.hideout.activitypub.service.activity.accept.APAcceptService
-import dev.usbharu.hideout.activitypub.service.activity.create.APCreateService
-import dev.usbharu.hideout.activitypub.service.activity.delete.APReceiveDeleteService
-import dev.usbharu.hideout.activitypub.service.activity.follow.APReceiveFollowService
-import dev.usbharu.hideout.activitypub.service.activity.like.APLikeService
-import dev.usbharu.hideout.activitypub.service.activity.undo.APUndoService
 import dev.usbharu.hideout.core.external.job.InboxJob
 import dev.usbharu.hideout.core.service.job.JobQueueParentService
 import org.slf4j.Logger
@@ -177,12 +171,6 @@ enum class ExtendedVocabulary {
 
 @Service
 class APServiceImpl(
-    private val apReceiveFollowService: APReceiveFollowService,
-    private val apUndoService: APUndoService,
-    private val apAcceptService: APAcceptService,
-    private val apCreateService: APCreateService,
-    private val apLikeService: APLikeService,
-    private val apReceiveDeleteService: APReceiveDeleteService,
     @Qualifier("activitypub") private val objectMapper: ObjectMapper,
     private val jobQueueParentService: JobQueueParentService
 ) : APService {
