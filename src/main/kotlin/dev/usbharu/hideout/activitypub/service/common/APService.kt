@@ -3,8 +3,6 @@ package dev.usbharu.hideout.activitypub.service.common
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import dev.usbharu.hideout.activitypub.domain.exception.JsonParseException
-import dev.usbharu.hideout.activitypub.interfaces.api.common.ActivityPubResponse
-import dev.usbharu.hideout.activitypub.interfaces.api.common.ActivityPubStringResponse
 import dev.usbharu.hideout.core.external.job.InboxJob
 import dev.usbharu.hideout.core.service.job.JobQueueParentService
 import dev.usbharu.httpsignature.common.HttpRequest
@@ -21,7 +19,7 @@ interface APService {
         type: ActivityType,
         httpRequest: HttpRequest,
         map: Map<String, List<String>>
-    ): ActivityPubResponse?
+    )
 }
 
 enum class ActivityType {
@@ -226,7 +224,7 @@ class APServiceImpl(
         type: ActivityType,
         httpRequest: HttpRequest,
         map: Map<String, List<String>>
-    ): ActivityPubResponse {
+    ) {
         logger.debug("process activity: {}", type)
         jobQueueParentService.schedule(InboxJob) {
             props[it.json] = json
@@ -236,6 +234,6 @@ class APServiceImpl(
             props[it.httpRequest] = writeValueAsString
             props[it.headers] = objectMapper.writeValueAsString(map)
         }
-        return ActivityPubStringResponse(message = "")
+        return
     }
 }

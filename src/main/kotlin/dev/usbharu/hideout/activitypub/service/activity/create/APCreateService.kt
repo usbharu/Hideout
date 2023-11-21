@@ -3,16 +3,13 @@ package dev.usbharu.hideout.activitypub.service.activity.create
 import dev.usbharu.hideout.activitypub.domain.exception.IllegalActivityPubObjectException
 import dev.usbharu.hideout.activitypub.domain.model.Create
 import dev.usbharu.hideout.activitypub.domain.model.Note
-import dev.usbharu.hideout.activitypub.interfaces.api.common.ActivityPubResponse
-import dev.usbharu.hideout.activitypub.interfaces.api.common.ActivityPubStringResponse
 import dev.usbharu.hideout.activitypub.service.objects.note.APNoteService
 import dev.usbharu.hideout.application.external.Transaction
-import io.ktor.http.*
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 interface APCreateService {
-    suspend fun receiveCreate(create: Create): ActivityPubResponse
+    suspend fun receiveCreate(create: Create)
 }
 
 @Service
@@ -20,7 +17,7 @@ class APCreateServiceImpl(
     private val apNoteService: APNoteService,
     private val transaction: Transaction
 ) : APCreateService {
-    override suspend fun receiveCreate(create: Create): ActivityPubResponse {
+    override suspend fun receiveCreate(create: Create) {
         LOGGER.debug("START Create new remote note.")
         LOGGER.trace("{}", create)
 
@@ -34,7 +31,6 @@ class APCreateServiceImpl(
             val note = value as Note
             apNoteService.fetchNote(note)
             LOGGER.debug("SUCCESS Create new remote note. ${note.id} by ${note.attributedTo}")
-            ActivityPubStringResponse(HttpStatusCode.OK, "Created")
         }
     }
 
