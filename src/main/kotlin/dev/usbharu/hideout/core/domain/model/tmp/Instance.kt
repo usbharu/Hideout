@@ -3,7 +3,7 @@ package dev.usbharu.hideout.core.domain.model.tmp
 import java.time.Instant
 
 data class Instance(
-    val id: Long,
+    val id: InstanceId,
     val name: String,
     val description: String,
     val url: String,

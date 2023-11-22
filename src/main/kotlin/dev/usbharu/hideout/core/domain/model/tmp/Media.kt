@@ -4,6 +4,7 @@ import java.time.Instant
 
 data class Media(
     val id: Long,
+    val userId: UserId,
     val name: String,
     val url: String,
     val remoteUrl: String?,

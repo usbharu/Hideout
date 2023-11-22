@@ -3,7 +3,7 @@ package dev.usbharu.hideout.core.domain.model.tmp
 import java.time.Instant
 
 data class User(
-    val id: Long,
+    val id: UserId,
     val name: String,
     val domain: String,
     val screenName: String,
@@ -16,7 +16,7 @@ data class User(
     val keyId: String,
     val followers: String,
     val following: String,
-    val instance: Long,
+    val instance: InstanceId,
     val createdAt: Instant,
     val updatedAt: Instant
 )
