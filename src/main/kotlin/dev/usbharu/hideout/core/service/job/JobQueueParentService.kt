@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service
 interface JobQueueParentService {
 
     fun init(jobDefines: List<Job>)
+
+    @Deprecated("use type safe → scheduleTypeSafe")
     suspend fun <J : Job> schedule(job: J, block: ScheduleContext<J>.(J) -> Unit = {})
     suspend fun <T, J : HideoutJob<T, J>> scheduleTypeSafe(job: J, jobProps: T)
 }
