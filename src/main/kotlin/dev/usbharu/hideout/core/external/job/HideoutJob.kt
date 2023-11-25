@@ -2,26 +2,44 @@ package dev.usbharu.hideout.core.external.job
 
 import kjob.core.Job
 import kjob.core.Prop
+import kjob.core.dsl.ScheduleContext
+import kjob.core.job.JobProps
 import org.springframework.stereotype.Component
 
-sealed class HideoutJob(name: String = "") : Job(name)
+abstract class HideoutJob<T, R : HideoutJob<T, R>>(name: String = "") : Job(name) {
+    abstract fun convert(value: T): ScheduleContext<R>.(R) -> Unit
+    abstract fun convert(props: JobProps<R>): T
+}
 
 @Component
-object ReceiveFollowJob : HideoutJob("ReceiveFollowJob") {
+object ReceiveFollowJob : HideoutJob<String, ReceiveFollowJob>("ReceiveFollowJob") {
     val actor: Prop<ReceiveFollowJob, String> = string("actor")
     val follow: Prop<ReceiveFollowJob, String> = string("follow")
     val targetActor: Prop<ReceiveFollowJob, String> = string("targetActor")
+
+    override fun convert(value: String): ScheduleContext<ReceiveFollowJob>.(ReceiveFollowJob) -> Unit = {
+        props[it.follow] = value
+    }
+
+    override fun convert(props: JobProps<ReceiveFollowJob>): String = TODO("Not yet implemented")
 }
 
 @Component
-object DeliverPostJob : HideoutJob("DeliverPostJob") {
+object DeliverPostJob : HideoutJob<String, DeliverPostJob>("DeliverPostJob") {
     val create = string("create")
     val inbox = string("inbox")
     val actor = string("actor")
+    override fun convert(value: String): ScheduleContext<DeliverPostJob>.(DeliverPostJob) -> Unit {
+        TODO("Not yet implemented")
+    }
+
+    override fun convert(props: JobProps<DeliverPostJob>): String {
+        TODO("Not yet implemented")
+    }
 }
 
 @Component
-object DeliverReactionJob : HideoutJob("DeliverReactionJob") {
+object DeliverReactionJob : HideoutJob<String, DeliverReactionJob>("DeliverReactionJob") {
     val reaction: Prop<DeliverReactionJob, String> = string("reaction")
     val postUrl: Prop<DeliverReactionJob, String> = string("postUrl")
     val actor: Prop<DeliverReactionJob, String> = string("actor")
@@ -30,7 +48,7 @@ object DeliverReactionJob : HideoutJob("DeliverReactionJob") {
 }
 
 @Component
-object DeliverRemoveReactionJob : HideoutJob("DeliverRemoveReactionJob") {
+object DeliverRemoveReactionJob : HideoutJob<String, DeliverRemoveReactionJob>("DeliverRemoveReactionJob") {
     val id: Prop<DeliverRemoveReactionJob, String> = string("id")
     val inbox: Prop<DeliverRemoveReactionJob, String> = string("inbox")
     val actor: Prop<DeliverRemoveReactionJob, String> = string("actor")
@@ -38,7 +56,7 @@ object DeliverRemoveReactionJob : HideoutJob("DeliverRemoveReactionJob") {
 }
 
 @Component
-object InboxJob : HideoutJob("InboxJob") {
+object InboxJob : HideoutJob<String, InboxJob>("InboxJob") {
     val json = string("json")
     val type = string("type")
     val httpRequest = string("http_request")
