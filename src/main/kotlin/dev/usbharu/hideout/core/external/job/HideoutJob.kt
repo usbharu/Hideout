@@ -6,9 +6,10 @@ import kjob.core.dsl.ScheduleContext
 import kjob.core.job.JobProps
 import org.springframework.stereotype.Component
 
-abstract class HideoutJob<T, R : HideoutJob<T, R>>(name: String = "") : Job(name) {
-    abstract fun convert(value: T): ScheduleContext<R>.(R) -> Unit
-    abstract fun convert(props: JobProps<R>): T
+abstract class HideoutJob<out T, out R : HideoutJob<T, R>>(name: String = "") : Job(name) {
+    abstract fun convert(value: @UnsafeVariance T): ScheduleContext<@UnsafeVariance R>.(@UnsafeVariance R) -> Unit
+    fun convertUnsafe(props: JobProps<*>): T = convert(props as JobProps<R>)
+    abstract fun convert(props: JobProps<@UnsafeVariance R>): T
 }
 
 data class ReceiveFollowJobParam(

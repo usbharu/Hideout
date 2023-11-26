@@ -21,7 +21,10 @@ class ApJobServiceImpl(
     private val inboxJobProcessor: InboxJobProcessor
 ) : ApJobService {
     @Suppress("REDUNDANT_ELSE_IN_WHEN")
-    override suspend fun <T : HideoutJob> processActivity(job: JobContextWithProps<T>, hideoutJob: HideoutJob) {
+    override suspend fun <T, R : HideoutJob<T, R>> processActivity(
+        job: JobContextWithProps<R>,
+        hideoutJob: HideoutJob<T, R>
+    ) {
         logger.debug("processActivity: ${hideoutJob.name}")
 
         @Suppress("ElseCaseInsteadOfExhaustiveWhen")
