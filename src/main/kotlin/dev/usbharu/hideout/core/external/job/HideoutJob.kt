@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.core.external.job
 
+import dev.usbharu.hideout.activitypub.service.common.ActivityType
 import kjob.core.Job
 import kjob.core.Prop
 import kjob.core.dsl.ScheduleContext
@@ -129,7 +130,7 @@ object DeliverRemoveReactionJob :
 
 data class InboxJobParam(
     val json: String,
-    val type: String,
+    val type: ActivityType,
     val httpRequest: String,
     val headers: String
 )
@@ -143,14 +144,14 @@ object InboxJob : HideoutJob<InboxJobParam, InboxJob>("InboxJob") {
 
     override fun convert(value: InboxJobParam): ScheduleContext<InboxJob>.(InboxJob) -> Unit = {
         props[json] = value.json
-        props[type] = value.type
+        props[type] = value.type.name
         props[httpRequest] = value.httpRequest
         props[headers] = value.headers
     }
 
     override fun convert(props: JobProps<InboxJob>): InboxJobParam = InboxJobParam(
         props[json],
-        props[type],
+        ActivityType.valueOf(props[type]),
         props[httpRequest],
         props[headers]
     )

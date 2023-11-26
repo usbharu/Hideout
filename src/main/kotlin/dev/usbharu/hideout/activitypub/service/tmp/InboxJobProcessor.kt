@@ -93,8 +93,36 @@ class InboxJobProcessor(
     }
 
     override suspend fun process(param: InboxJobParam) {
-        println(param)
-        System.err.println("aaaaaaaaaaaaaaaaaaaaaaaaaaa")
+        val jsonNode = objectMapper.readTree(param.json)
+
+        logger.info("START Process inbox. type: {}", param.type)
+        logger.trace("type: {}\njson: \n{}", param.type, jsonNode.toPrettyString())
+
+        val map = objectMapper.readValue<Map<String, List<String>>>(param.headers)
+
+        val httpRequest = objectMapper.readValue<HttpRequest>(param.httpRequest).copy(headers = HttpHeaders(map))
+
+        logger.trace("Request: {}\nheaders: {}", httpRequest, map)
+
+        val signature = parseSignatureHeader(httpRequest.headers)
+
+        logger.debug("Has signature? {}", signature != null)
+
+        val verify = signature?.let { verifyHttpSignature(httpRequest, it) } ?: false
+
+        logger.debug("Is verifying success? {}", verify)
+
+        val activityPubProcessor = activityPubProcessorList.firstOrNull { it.isSupported(param.type) }
+
+        if (activityPubProcessor == null) {
+            logger.warn("ActivityType {} is not support.", param.type)
+            throw IllegalStateException("ActivityPubProcessor not found.")
+        }
+
+        val value = objectMapper.treeToValue(jsonNode, activityPubProcessor.type())
+        activityPubProcessor.process(ActivityPubProcessContext(value, jsonNode, httpRequest, signature, verify))
+
+        logger.info("SUCCESS Process inbox. type: {}", param.type)
     }
 
     override fun job(): InboxJob = InboxJob
