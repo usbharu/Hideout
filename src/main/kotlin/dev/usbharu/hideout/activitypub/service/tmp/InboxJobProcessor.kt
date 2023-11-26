@@ -7,7 +7,9 @@ import dev.usbharu.hideout.activitypub.service.common.ActivityType
 import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
 import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.external.job.InboxJob
+import dev.usbharu.hideout.core.external.job.InboxJobParam
 import dev.usbharu.hideout.core.query.UserQueryService
+import dev.usbharu.hideout.core.service.job.JobProcessor
 import dev.usbharu.hideout.util.RsaUtil
 import dev.usbharu.httpsignature.common.HttpHeaders
 import dev.usbharu.httpsignature.common.HttpRequest
@@ -27,7 +29,7 @@ class InboxJobProcessor(
     private val signatureVerifier: HttpSignatureVerifier,
     private val userQueryService: UserQueryService,
     private val apUserService: APUserService
-) {
+) : JobProcessor<InboxJobParam, InboxJob> {
     suspend fun process(props: JobProps<InboxJob>) {
 
         val type = ActivityType.valueOf(props[InboxJob.type])
@@ -89,6 +91,13 @@ class InboxJobProcessor(
             null
         }
     }
+
+    override suspend fun process(param: InboxJobParam) {
+        println(param)
+        System.err.println("aaaaaaaaaaaaaaaaaaaaaaaaaaa")
+    }
+
+    override fun job(): InboxJob = InboxJob
 
     companion object {
         private val logger = LoggerFactory.getLogger(InboxJobProcessor::class.java)
