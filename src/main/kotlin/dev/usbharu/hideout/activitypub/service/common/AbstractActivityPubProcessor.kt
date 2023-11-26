@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.activitypub.service.tmp
+package dev.usbharu.hideout.activitypub.service.common
 
 import dev.usbharu.hideout.activitypub.domain.exception.ActivityPubProcessException
 import dev.usbharu.hideout.activitypub.domain.exception.FailedProcessException

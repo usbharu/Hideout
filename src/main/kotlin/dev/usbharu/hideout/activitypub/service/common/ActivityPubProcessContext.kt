@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.activitypub.service.tmp
+package dev.usbharu.hideout.activitypub.service.common
 
 import com.fasterxml.jackson.databind.JsonNode
 import dev.usbharu.hideout.activitypub.domain.model.objects.Object

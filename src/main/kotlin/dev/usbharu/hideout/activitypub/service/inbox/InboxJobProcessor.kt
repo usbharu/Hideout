@@ -1,10 +1,13 @@
-package dev.usbharu.hideout.activitypub.service.tmp
+package dev.usbharu.hideout.activitypub.service.inbox
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.activitypub.domain.model.objects.Object
+import dev.usbharu.hideout.activitypub.service.common.ActivityPubProcessContext
+import dev.usbharu.hideout.activitypub.service.common.ActivityPubProcessor
 import dev.usbharu.hideout.activitypub.service.common.ActivityType
 import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
+import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.external.job.InboxJob
 import dev.usbharu.hideout.core.external.job.InboxJobParam
@@ -28,7 +31,8 @@ class InboxJobProcessor(
     private val signatureHeaderParser: SignatureHeaderParser,
     private val signatureVerifier: HttpSignatureVerifier,
     private val userQueryService: UserQueryService,
-    private val apUserService: APUserService
+    private val apUserService: APUserService,
+    private val transaction: Transaction
 ) : JobProcessor<InboxJobParam, InboxJob> {
     suspend fun process(props: JobProps<InboxJob>) {
 
@@ -92,7 +96,7 @@ class InboxJobProcessor(
         }
     }
 
-    override suspend fun process(param: InboxJobParam) {
+    override suspend fun process(param: InboxJobParam) = transaction.transaction {
         val jsonNode = objectMapper.readTree(param.json)
 
         logger.info("START Process inbox. type: {}", param.type)

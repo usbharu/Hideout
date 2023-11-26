@@ -3,8 +3,8 @@ package dev.usbharu.hideout.activitypub.service.common
 import com.fasterxml.jackson.databind.ObjectMapper
 import dev.usbharu.hideout.activitypub.service.activity.follow.APReceiveFollowJobService
 import dev.usbharu.hideout.activitypub.service.activity.like.ApReactionJobService
+import dev.usbharu.hideout.activitypub.service.inbox.InboxJobProcessor
 import dev.usbharu.hideout.activitypub.service.objects.note.ApNoteJobService
-import dev.usbharu.hideout.activitypub.service.tmp.InboxJobProcessor
 import dev.usbharu.hideout.core.external.job.*
 import kjob.core.dsl.JobContextWithProps
 import kjob.core.job.JobProps
