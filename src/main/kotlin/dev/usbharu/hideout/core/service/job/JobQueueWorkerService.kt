@@ -8,7 +8,7 @@ import kjob.core.dsl.JobRegisterContext as JRC
 
 @Service
 interface JobQueueWorkerService {
-    fun init(
-        defines: List<Pair<HJ, JRC<HJ, JCWP<HJ>>.(HJ) -> KJobFunctions<HJ, JCWP<HJ>>>>
+    fun <T, R : HJ<T, R>> init(
+        defines: List<Pair<R, JRC<R, JCWP<R>>.(R) -> KJobFunctions<R, JCWP<R>>>>
     )
 }
