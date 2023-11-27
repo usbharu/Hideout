@@ -200,8 +200,8 @@ class SecurityConfig {
             it.ignoringRequestMatchers(builder.pattern("/inbox"))
             it.ignoringRequestMatchers(PathRequest.toH2Console())
         }.headers {
-            it.frameOptions {
-                it.sameOrigin()
+            it.frameOptions { frameOptionsConfig ->
+                frameOptionsConfig.sameOrigin()
             }
         }
         return http.build()

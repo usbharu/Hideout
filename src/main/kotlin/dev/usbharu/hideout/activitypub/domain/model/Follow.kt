@@ -3,6 +3,7 @@ package dev.usbharu.hideout.activitypub.domain.model
 import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 
 open class Follow : Object {
+    @Suppress("VariableNaming")
     var `object`: String? = null
 
     protected constructor() : super()

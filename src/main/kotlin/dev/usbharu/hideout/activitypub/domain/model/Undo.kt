@@ -8,6 +8,7 @@ import java.time.Instant
 open class Undo : Object {
 
     @JsonDeserialize(using = ObjectDeserializer::class)
+    @Suppress("VariableNaming")
     var `object`: Object? = null
     var published: String? = null
 

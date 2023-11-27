@@ -112,7 +112,9 @@ object DeliverRemoveReactionJob :
     val actor: Prop<DeliverRemoveReactionJob, String> = string("actor")
     val like: Prop<DeliverRemoveReactionJob, String> = string("like")
 
-    override fun convert(value: DeliverRemoveReactionJobParam): ScheduleContext<DeliverRemoveReactionJob>.(DeliverRemoveReactionJob) -> Unit =
+    override fun convert(
+        value: DeliverRemoveReactionJobParam
+    ): ScheduleContext<DeliverRemoveReactionJob>.(DeliverRemoveReactionJob) -> Unit =
         {
             props[id] = value.id
             props[inbox] = value.inbox

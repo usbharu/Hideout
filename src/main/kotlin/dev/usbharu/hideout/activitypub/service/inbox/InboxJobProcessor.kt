@@ -86,6 +86,7 @@ class InboxJobProcessor(
         return verify.success
     }
 
+    @Suppress("TooGenericExceptionCaught")
     private fun parseSignatureHeader(httpHeaders: HttpHeaders): Signature? {
         return try {
             signatureHeaderParser.parse(httpHeaders)
