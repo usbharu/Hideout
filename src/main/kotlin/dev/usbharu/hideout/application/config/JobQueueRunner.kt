@@ -1,6 +1,5 @@
 package dev.usbharu.hideout.application.config
 
-import dev.usbharu.hideout.activitypub.service.common.ApJobService
 import dev.usbharu.hideout.core.external.job.HideoutJob
 import dev.usbharu.hideout.core.service.job.JobQueueParentService
 import dev.usbharu.hideout.core.service.job.JobQueueWorkerService
@@ -11,7 +10,10 @@ import org.springframework.boot.ApplicationRunner
 import org.springframework.stereotype.Component
 
 @Component
-class JobQueueRunner(private val jobQueueParentService: JobQueueParentService, private val jobs: List<HideoutJob>) :
+class JobQueueRunner(
+    private val jobQueueParentService: JobQueueParentService,
+    private val jobs: List<HideoutJob<*, *>>
+) :
     ApplicationRunner {
     override fun run(args: ApplicationArguments?) {
         LOGGER.info("Init job queue. ${jobs.size}")
@@ -26,24 +28,10 @@ class JobQueueRunner(private val jobQueueParentService: JobQueueParentService, p
 @Component
 class JobQueueWorkerRunner(
     private val jobQueueWorkerService: JobQueueWorkerService,
-    private val jobs: List<HideoutJob>,
-    private val apJobService: ApJobService
 ) : ApplicationRunner {
     override fun run(args: ApplicationArguments?) {
         LOGGER.info("Init job queue worker.")
-        jobQueueWorkerService.init(
-            jobs.map {
-                it to {
-                    execute {
-                        LOGGER.debug("excute job ${it.name}")
-                        apJobService.processActivity(
-                            job = this,
-                            hideoutJob = it
-                        )
-                    }
-                }
-            }
-        )
+        jobQueueWorkerService.init<Any?, HideoutJob<*, *>>(emptyList())
     }
 
     companion object {

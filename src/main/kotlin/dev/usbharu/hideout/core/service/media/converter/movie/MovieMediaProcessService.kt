@@ -34,6 +34,7 @@ class MovieMediaProcessService : MediaProcessService {
         TODO("Not yet implemented")
     }
 
+    @Suppress("LongMethod", "NestedBlockDepth", "CognitiveComplexMethod")
     override suspend fun process(
         mimeType: MimeType,
         fileName: String,
