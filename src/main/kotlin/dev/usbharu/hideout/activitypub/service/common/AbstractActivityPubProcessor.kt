@@ -11,7 +11,7 @@ abstract class AbstractActivityPubProcessor<T : Object>(
     private val transaction: Transaction,
     private val allowUnauthorized: Boolean = false
 ) : ActivityPubProcessor<T> {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    protected val logger = LoggerFactory.getLogger(this::class.java)
 
     override suspend fun process(activity: ActivityPubProcessContext<T>) {
         if (activity.isAuthorized.not() && allowUnauthorized.not()) {
