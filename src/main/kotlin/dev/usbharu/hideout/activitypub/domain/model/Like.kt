@@ -5,6 +5,7 @@ import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 import dev.usbharu.hideout.activitypub.domain.model.objects.ObjectDeserializer
 
 open class Like : Object {
+    @Suppress("VariableNaming")
     var `object`: String? = null
     var content: String? = null
 

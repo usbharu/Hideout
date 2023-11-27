@@ -3,9 +3,7 @@ build:
   weights:
     Indentation: 0
     MagicNumber: 0
-    InjectDispatcher: 0
     EnumEntryNameCase: 0
-    ReplaceSafeCallChainWithRun: 0
     VariableNaming: 0
     NoNameShadowing: 0
 
@@ -78,7 +76,7 @@ complexity:
     active: true
 
   ReplaceSafeCallChainWithRun:
-    active: true
+    active: false
 
   StringLiteralDuplication:
     active: false
@@ -171,4 +169,6 @@ potential-bugs:
 
 coroutines:
   RedundantSuspendModifier:
+    active: false
+  InjectDispatcher:
     active: false

@@ -197,7 +197,7 @@ class ExposedOAuth2AuthorizationService(
         }
     }
 
-    @Suppress("LongMethod", "CyclomaticComplexMethod")
+    @Suppress("LongMethod", "CyclomaticComplexMethod", "CastToNullableType", "UNCHECKED_CAST")
     fun ResultRow.toAuthorization(): OAuth2Authorization {
         val registeredClientId = this[Authorization.registeredClientId]
 
@@ -272,7 +272,6 @@ class ExposedOAuth2AuthorizationService(
                 oidcIdTokenValue,
                 oidcTokenIssuedAt,
                 oidcTokenExpiresAt,
-                @Suppress("CastToNullableType")
                 oidcTokenMetadata.getValue(OAuth2Authorization.Token.CLAIMS_METADATA_NAME)
                         as MutableMap<String, Any>?
             )

@@ -74,11 +74,7 @@ class ImageMediaProcessService(private val imageMediaProcessorConfiguration: Ima
                     convertType,
                     it
                 )
-                if (write) {
-                    tempThumbnailFile
-                } else {
-                    null
-                }
+                tempThumbnailFile.takeIf { write }
             }
         } else {
             null

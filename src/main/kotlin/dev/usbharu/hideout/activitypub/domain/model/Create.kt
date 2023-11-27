@@ -6,6 +6,7 @@ import dev.usbharu.hideout.activitypub.domain.model.objects.ObjectDeserializer
 
 open class Create : Object {
     @JsonDeserialize(using = ObjectDeserializer::class)
+    @Suppress("VariableNaming")
     var `object`: Object? = null
     var to: List<String> = emptyList()
     var cc: List<String> = emptyList()

@@ -30,7 +30,8 @@ class KjobMongoJobQueueParentService(private val mongoClient: MongoClient) : Job
     }
 
     override suspend fun <T, J : HideoutJob<T, J>> scheduleTypeSafe(job: J, jobProps: T) {
-        TODO("Not yet implemented")
+        val convert = job.convert(jobProps)
+        kjob.schedule(job, convert)
     }
 
     override fun close() {

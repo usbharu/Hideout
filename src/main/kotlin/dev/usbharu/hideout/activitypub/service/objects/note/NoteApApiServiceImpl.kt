@@ -4,6 +4,7 @@ import dev.usbharu.hideout.activitypub.domain.model.Note
 import dev.usbharu.hideout.activitypub.query.NoteQueryService
 import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
+import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.Visibility
 import dev.usbharu.hideout.core.query.FollowerQueryService
 import org.slf4j.LoggerFactory
@@ -28,18 +29,25 @@ class NoteApApiServiceImpl(
             }
 
             Visibility.FOLLOWERS -> {
-                if (userId == null) {
-                    return@transaction null
-                }
-
-                if (followerQueryService.alreadyFollow(findById.second.userId, userId).not()) {
-                    return@transaction null
-                }
-                return@transaction findById.first
+                return@transaction getFollowersNote(userId, findById)
             }
 
             Visibility.DIRECT -> return@transaction null
         }
+    }
+
+    private suspend fun getFollowersNote(
+        userId: Long?,
+        findById: Pair<Note, Post>
+    ): Note? {
+        if (userId == null) {
+            return null
+        }
+
+        if (followerQueryService.alreadyFollow(findById.second.userId, userId)) {
+            return findById.first
+        }
+        return null
     }
 
     companion object {
