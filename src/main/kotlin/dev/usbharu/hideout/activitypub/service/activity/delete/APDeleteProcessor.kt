@@ -22,7 +22,7 @@ class APDeleteProcessor(
         val post = try {
             postQueryService.findByApId(deleteId)
         } catch (e: FailedToGetResourcesException) {
-            logger.warn("FAILED delete id: {} is not found.", deleteId)
+            logger.warn("FAILED delete id: {} is not found.", deleteId, e)
             return
         }
 

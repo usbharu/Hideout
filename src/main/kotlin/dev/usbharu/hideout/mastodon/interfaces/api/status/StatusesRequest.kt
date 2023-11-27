@@ -1,7 +1,10 @@
 package dev.usbharu.hideout.mastodon.interfaces.api.status
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.usbharu.hideout.core.domain.model.post.Visibility
+import dev.usbharu.hideout.domain.mastodon.model.generated.Status
 import dev.usbharu.hideout.domain.mastodon.model.generated.StatusesRequestPoll
+import dev.usbharu.hideout.mastodon.interfaces.api.status.StatusesRequest.Visibility.*
 
 @Suppress("VariableNaming", "EnumEntryName")
 class StatusesRequest {
@@ -67,11 +70,31 @@ class StatusesRequest {
             " scheduledAt=$scheduled_at)"
     }
 
-    @Suppress("EnumNaming")
+    @Suppress("EnumNaming", "EnumEntryNameCase")
     enum class Visibility {
         `public`,
         unlisted,
         private,
         direct
+    }
+}
+
+fun StatusesRequest.Visibility?.toPostVisibility(): Visibility {
+    return when (this) {
+        public -> Visibility.PUBLIC
+        unlisted -> Visibility.UNLISTED
+        private -> Visibility.FOLLOWERS
+        direct -> Visibility.DIRECT
+        null -> Visibility.PUBLIC
+    }
+}
+
+fun StatusesRequest.Visibility?.toStatusVisibility(): Status.Visibility {
+    return when (this) {
+        public -> Status.Visibility.public
+        unlisted -> Status.Visibility.unlisted
+        private -> Status.Visibility.private
+        direct -> Status.Visibility.direct
+        null -> Status.Visibility.public
     }
 }

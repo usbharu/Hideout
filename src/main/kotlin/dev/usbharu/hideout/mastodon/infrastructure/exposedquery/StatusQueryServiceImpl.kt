@@ -1,22 +1,19 @@
 package dev.usbharu.hideout.mastodon.infrastructure.exposedquery
 
+import dev.usbharu.hideout.core.domain.model.media.toMediaAttachments
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.*
-import dev.usbharu.hideout.core.service.media.FileType
 import dev.usbharu.hideout.domain.mastodon.model.generated.Account
-import dev.usbharu.hideout.domain.mastodon.model.generated.MediaAttachment
 import dev.usbharu.hideout.domain.mastodon.model.generated.Status
 import dev.usbharu.hideout.mastodon.interfaces.api.status.StatusQuery
 import dev.usbharu.hideout.mastodon.query.StatusQueryService
 import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.innerJoin
 import org.jetbrains.exposed.sql.select
 import org.springframework.stereotype.Repository
 import java.time.Instant
 
 @Repository
 class StatusQueryServiceImpl : StatusQueryService {
-    @Suppress("LongMethod")
-    override suspend fun findByPostIds(ids: List<Long>): List<Status> = findByPostIdsWithMediaAttachments(ids)
+    override suspend fun findByPostIds(ids: List<Long>): List<Status> = findByPostIdsWithMedia(ids)
 
     override suspend fun findByPostIdsWithMediaIds(statusQueries: List<StatusQuery>): List<Status> {
         val postIdSet = mutableSetOf<Long>()
@@ -29,23 +26,7 @@ class StatusQueryServiceImpl : StatusQueryService {
             .associate { it[Posts.id] to toStatus(it) }
         val mediaMap = Media.select { Media.id inList mediaIdSet }
             .associate {
-                it[Media.id] to it.toMedia().let {
-                    MediaAttachment(
-                        id = it.id.toString(),
-                        type = when (it.type) {
-                            FileType.Image -> MediaAttachment.Type.image
-                            FileType.Video -> MediaAttachment.Type.video
-                            FileType.Audio -> MediaAttachment.Type.audio
-                            FileType.Unknown -> MediaAttachment.Type.unknown
-                        },
-                        url = it.url,
-                        previewUrl = it.thumbnailUrl,
-                        remoteUrl = it.remoteUrl,
-                        description = "",
-                        blurhash = it.blurHash,
-                        textUrl = it.url
-                    )
-                }
+                it[Media.id] to it.toMedia().toMediaAttachments()
             }
 
         return statusQueries.mapNotNull { statusQuery ->
@@ -56,18 +37,6 @@ class StatusQueryServiceImpl : StatusQueryService {
                 mediaAttachments = statusQuery.mediaIds.mapNotNull { mediaMap[it] }
             )
         }
-    }
-
-    @Suppress("unused")
-    private suspend fun internalFindByPostIds(ids: List<Long>): List<Status> {
-        val pairs = Posts
-            .innerJoin(Users, onColumn = { Posts.userId }, otherColumn = { Users.id })
-            .select { Posts.id inList ids }
-            .map {
-                toStatus(it) to it[Posts.repostId]
-            }
-
-        return resolveReplyAndRepost(pairs)
     }
 
     private fun resolveReplyAndRepost(pairs: List<Pair<Status, Long?>>): List<Status> {
@@ -89,8 +58,7 @@ class StatusQueryServiceImpl : StatusQueryService {
             }
     }
 
-    @Suppress("FunctionMaxLength")
-    private suspend fun findByPostIdsWithMediaAttachments(ids: List<Long>): List<Status> {
+    private suspend fun findByPostIdsWithMedia(ids: List<Long>): List<Status> {
         val pairs = Posts
             .leftJoin(PostsMedia)
             .leftJoin(Users)
@@ -100,24 +68,8 @@ class StatusQueryServiceImpl : StatusQueryService {
             .map { it.value }
             .map {
                 toStatus(it.first()).copy(
-                    mediaAttachments = it.mapNotNull {
-                        it.toMediaOrNull()?.let {
-                            MediaAttachment(
-                                id = it.id.toString(),
-                                type = when (it.type) {
-                                    FileType.Image -> MediaAttachment.Type.image
-                                    FileType.Video -> MediaAttachment.Type.video
-                                    FileType.Audio -> MediaAttachment.Type.audio
-                                    FileType.Unknown -> MediaAttachment.Type.unknown
-                                },
-                                url = it.url,
-                                previewUrl = it.thumbnailUrl,
-                                remoteUrl = it.remoteUrl,
-                                description = "",
-                                blurhash = it.blurHash,
-                                textUrl = it.url
-                            )
-                        }
+                    mediaAttachments = it.mapNotNull { resultRow ->
+                        resultRow.toMediaOrNull()?.toMediaAttachments()
                     }
                 ) to it.first()[Posts.repostId]
             }

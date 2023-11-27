@@ -59,6 +59,7 @@ class UserServiceImpl(
     }
 
     override suspend fun createRemoteUser(user: RemoteUserCreateDto): User {
+        @Suppress("TooGenericExceptionCaught")
         val instance = try {
             instanceService.fetchInstance(user.url, user.sharedInbox)
         } catch (e: Exception) {

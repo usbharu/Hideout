@@ -134,7 +134,7 @@ class APRequestServiceImpl(
         val httpResponse = if (signer?.privateKey == null) {
             apPostNotSign(url, date, digest, requestBody)
         } else {
-            apPostSign(date, u, digest, signer, url, requestBody)
+            apPostSign(date, u, digest, signer, requestBody)
         }
 
         val bodyAsText = httpResponse.bodyAsText()
@@ -167,7 +167,6 @@ class APRequestServiceImpl(
         u: URL,
         digest: String,
         signer: User,
-        url: String,
         requestBody: String?
     ): HttpResponse {
         val headers = headers {
@@ -190,12 +189,11 @@ class APRequestServiceImpl(
             signHeaders = listOf("(request-target)", "date", "host", "digest")
         )
 
-        val httpResponse = httpClient.post(url) {
+        val httpResponse = httpClient.post(u) {
             headers {
                 appendAll(headers)
                 append("Signature", sign.signatureHeader)
                 remove("Host")
-
             }
             setBody(requestBody)
             contentType(ContentType.Application.Activity)
