@@ -37,15 +37,29 @@ class APRequestServiceImpl(
         logger.debug("START ActivityPub Request GET url: {}, signer: {}", url, signer?.url)
         val date = dateTimeFormatter.format(ZonedDateTime.now(ZoneId.of("GMT")))
         val u = URL(url)
-        if (signer?.privateKey == null) {
-            val bodyAsText = httpClient.get(url) {
-                header("Accept", ContentType.Application.Activity)
-                header("Date", date)
-            }.bodyAsText()
-            logBody(bodyAsText, url)
-            return objectMapper.readValue(bodyAsText, responseClass)
+        val httpResponse = if (signer?.privateKey == null) {
+            apGetNotSign(url, date)
+        } else {
+            apGetSign(date, u, signer, url)
         }
 
+        val bodyAsText = httpResponse.bodyAsText()
+        val readValue = objectMapper.readValue(bodyAsText, responseClass)
+        logger.debug(
+            "SUCCESS ActivityPub Request GET status: {} url: {}",
+            httpResponse.status,
+            httpResponse.request.url
+        )
+        logBody(bodyAsText, url)
+        return readValue
+    }
+
+    private suspend fun apGetSign(
+        date: String,
+        u: URL,
+        signer: User,
+        url: String
+    ): HttpResponse {
         val headers = headers {
             append("Accept", ContentType.Application.Activity)
             append("Date", date)
@@ -60,7 +74,7 @@ class APRequestServiceImpl(
             ),
             privateKey = PrivateKey(
                 keyId = "${signer.url}#pubkey",
-                privateKey = RsaUtil.decodeRsaPrivateKeyPem(signer.privateKey),
+                privateKey = RsaUtil.decodeRsaPrivateKeyPem(signer.privateKey!!),
             ),
             signHeaders = listOf("(request-target)", "date", "host", "accept")
         )
@@ -75,15 +89,12 @@ class APRequestServiceImpl(
             }
             contentType(ContentType.Application.Activity)
         }
-        val bodyAsText = httpResponse.bodyAsText()
-        val readValue = objectMapper.readValue(bodyAsText, responseClass)
-        logger.debug(
-            "SUCCESS ActivityPub Request GET status: {} url: {}",
-            httpResponse.status,
-            httpResponse.request.url
-        )
-        logBody(bodyAsText, url)
-        return readValue
+        return httpResponse
+    }
+
+    private suspend fun apGetNotSign(url: String, date: String?) = httpClient.get(url) {
+        header("Accept", ContentType.Application.Activity)
+        header("Date", date)
     }
 
     override suspend fun <T : Object, R : Object> apPost(
@@ -96,18 +107,9 @@ class APRequestServiceImpl(
         return objectMapper.readValue(bodyAsText, responseClass)
     }
 
-    @Suppress("LongMethod")
     override suspend fun <T : Object> apPost(url: String, body: T?, signer: User?): String {
         logger.debug("START ActivityPub Request POST url: {}, signer: {}", url, signer?.url)
-        val requestBody = if (body != null) {
-            val mutableListOf = mutableListOf<String>()
-            mutableListOf.add("https://www.w3.org/ns/activitystreams")
-            mutableListOf.addAll(body.context)
-            body.context = mutableListOf
-            objectMapper.writeValueAsString(body)
-        } else {
-            null
-        }
+        val requestBody = addContextIfNotNull(body)
 
         logger.trace(
             """
@@ -129,20 +131,45 @@ class APRequestServiceImpl(
 
         val date = dateTimeFormatter.format(ZonedDateTime.now(ZoneId.of("GMT")))
         val u = URL(url)
-        if (signer?.privateKey == null) {
-            val bodyAsText = httpClient.post(url) {
-                accept(ContentType.Application.Activity)
-                header("Date", date)
-                header("Digest", "sha-256=$digest")
-                if (requestBody != null) {
-                    setBody(requestBody)
-                    contentType(ContentType.Application.Activity)
-                }
-            }.bodyAsText()
-            logBody(bodyAsText, url)
-            return bodyAsText
+        val httpResponse = if (signer?.privateKey == null) {
+            apPostNotSign(url, date, digest, requestBody)
+        } else {
+            apPostSign(date, u, digest, signer, url, requestBody)
         }
 
+        val bodyAsText = httpResponse.bodyAsText()
+        logger.debug(
+            "SUCCESS ActivityPub Request POST status: {} url: {}",
+            httpResponse.status,
+            httpResponse.request.url
+        )
+        logBody(bodyAsText, url)
+        return bodyAsText
+    }
+
+    private suspend fun apPostNotSign(
+        url: String,
+        date: String?,
+        digest: String,
+        requestBody: String?
+    ) = httpClient.post(url) {
+        accept(ContentType.Application.Activity)
+        header("Date", date)
+        header("Digest", "sha-256=$digest")
+        if (requestBody != null) {
+            setBody(requestBody)
+            contentType(ContentType.Application.Activity)
+        }
+    }
+
+    private suspend fun apPostSign(
+        date: String,
+        u: URL,
+        digest: String,
+        signer: User,
+        url: String,
+        requestBody: String?
+    ): HttpResponse {
         val headers = headers {
             append("Accept", ContentType.Application.Activity)
             append("Date", date)
@@ -158,30 +185,32 @@ class APRequestServiceImpl(
             ),
             privateKey = PrivateKey(
                 keyId = signer.keyId,
-                privateKey = RsaUtil.decodeRsaPrivateKeyPem(signer.privateKey)
+                privateKey = RsaUtil.decodeRsaPrivateKeyPem(signer.privateKey!!)
             ),
             signHeaders = listOf("(request-target)", "date", "host", "digest")
         )
 
         val httpResponse = httpClient.post(url) {
             headers {
-                headers {
-                    appendAll(headers)
-                    append("Signature", sign.signatureHeader)
-                    remove("Host")
-                }
+                appendAll(headers)
+                append("Signature", sign.signatureHeader)
+                remove("Host")
+
             }
             setBody(requestBody)
             contentType(ContentType.Application.Activity)
         }
-        val bodyAsText = httpResponse.bodyAsText()
-        logger.debug(
-            "SUCCESS ActivityPub Request POST status: {} url: {}",
-            httpResponse.status,
-            httpResponse.request.url
-        )
-        logBody(bodyAsText, url)
-        return bodyAsText
+        return httpResponse
+    }
+
+    private fun <T : Object> addContextIfNotNull(body: T?) = if (body != null) {
+        val mutableListOf = mutableListOf<String>()
+        mutableListOf.add("https://www.w3.org/ns/activitystreams")
+        mutableListOf.addAll(body.context)
+        body.context = mutableListOf
+        objectMapper.writeValueAsString(body)
+    } else {
+        null
     }
 
     private fun logBody(bodyAsText: String, url: String) {

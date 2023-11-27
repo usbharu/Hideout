@@ -3,7 +3,6 @@ package dev.usbharu.hideout.core.service.user
 import dev.usbharu.hideout.core.domain.model.user.User
 import org.springframework.stereotype.Service
 
-@Suppress("TooManyFunctions")
 @Service
 interface UserService {
 
