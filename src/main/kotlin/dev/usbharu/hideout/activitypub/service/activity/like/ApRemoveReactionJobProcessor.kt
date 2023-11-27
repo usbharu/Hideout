@@ -21,7 +21,6 @@ class ApRemoveReactionJobProcessor(
     private val applicationConfig: ApplicationConfig
 ) : JobProcessor<DeliverRemoveReactionJobParam, DeliverRemoveReactionJob> {
     override suspend fun process(param: DeliverRemoveReactionJobParam): Unit = transaction.transaction {
-
         val like = objectMapper.readValue<Like>(param.like)
 
         val signer = userQueryService.findByUrl(param.actor)

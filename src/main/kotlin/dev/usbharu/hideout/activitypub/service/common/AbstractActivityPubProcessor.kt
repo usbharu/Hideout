@@ -30,5 +30,4 @@ abstract class AbstractActivityPubProcessor<T : Object>(
     }
 
     abstract suspend fun internalProcess(activity: ActivityPubProcessContext<T>)
-
 }

@@ -29,7 +29,6 @@ class APReceiveFollowJobProcessor(
         val person = apUserService.fetchPerson(param.actor, param.targetActor)
         val follow = objectMapper.readValue<Follow>(param.follow)
 
-
         logger.info("START Follow from: {} to {}", param.targetActor, param.actor)
 
         val signer = userQueryService.findByUrl(param.targetActor)
