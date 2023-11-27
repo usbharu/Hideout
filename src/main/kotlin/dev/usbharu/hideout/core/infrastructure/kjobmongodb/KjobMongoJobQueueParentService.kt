@@ -1,6 +1,7 @@
 package dev.usbharu.hideout.core.infrastructure.kjobmongodb
 
 import com.mongodb.reactivestreams.client.MongoClient
+import dev.usbharu.hideout.core.external.job.HideoutJob
 import dev.usbharu.hideout.core.service.job.JobQueueParentService
 import kjob.core.Job
 import kjob.core.dsl.ScheduleContext
@@ -23,8 +24,13 @@ class KjobMongoJobQueueParentService(private val mongoClient: MongoClient) : Job
 
     override fun init(jobDefines: List<Job>) = Unit
 
+    @Deprecated("use type safe → scheduleTypeSafe")
     override suspend fun <J : Job> schedule(job: J, block: ScheduleContext<J>.(J) -> Unit) {
         kjob.schedule(job, block)
+    }
+
+    override suspend fun <T, J : HideoutJob<T, J>> scheduleTypeSafe(job: J, jobProps: T) {
+        TODO("Not yet implemented")
     }
 
     override fun close() {

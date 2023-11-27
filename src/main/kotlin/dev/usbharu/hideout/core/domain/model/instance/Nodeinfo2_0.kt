@@ -1,3 +1,5 @@
+@file:Suppress("Filename")
+
 package dev.usbharu.hideout.core.domain.model.instance
 
 @Suppress("ClassNaming")

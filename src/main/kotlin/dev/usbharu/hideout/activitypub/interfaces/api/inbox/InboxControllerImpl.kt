@@ -13,14 +13,12 @@ import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import java.net.URL
 
-
 @RestController
 class InboxControllerImpl(private val apService: APService) : InboxController {
     @Suppress("TooGenericExceptionCaught")
     override suspend fun inbox(
         @RequestBody string: String
     ): ResponseEntity<Unit> {
-
         val request = (requireNotNull(RequestContextHolder.getRequestAttributes()) as ServletRequestAttributes).request
 
         val parseActivity = try {
@@ -48,11 +46,14 @@ class InboxControllerImpl(private val apService: APService) : InboxController {
             println(headers)
 
             apService.processActivity(
-                string, parseActivity, HttpRequest(
+                string,
+                parseActivity,
+                HttpRequest(
                     URL(url + request.queryString.orEmpty()),
                     HttpHeaders(headers),
                     method
-                ), headers
+                ),
+                headers
             )
         } catch (e: Exception) {
             LOGGER.warn("FAILED Process Activity $parseActivity", e)

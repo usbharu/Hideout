@@ -2,25 +2,23 @@ package dev.usbharu.hideout.activitypub.service.activity.undo
 
 import dev.usbharu.hideout.activitypub.domain.model.Follow
 import dev.usbharu.hideout.activitypub.domain.model.Undo
+import dev.usbharu.hideout.activitypub.service.common.AbstractActivityPubProcessor
+import dev.usbharu.hideout.activitypub.service.common.ActivityPubProcessContext
+import dev.usbharu.hideout.activitypub.service.common.ActivityType
 import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
 import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.query.UserQueryService
 import dev.usbharu.hideout.core.service.user.UserService
-import org.springframework.stereotype.Service
 
-interface APUndoService {
-    suspend fun receiveUndo(undo: Undo)
-}
-
-@Service
-@Suppress("UnsafeCallOnNullableType")
-class APUndoServiceImpl(
-    private val userService: UserService,
+class APUndoProcessor(
+    transaction: Transaction,
     private val apUserService: APUserService,
     private val userQueryService: UserQueryService,
-    private val transaction: Transaction
-) : APUndoService {
-    override suspend fun receiveUndo(undo: Undo) {
+    private val userService: UserService
+) :
+    AbstractActivityPubProcessor<Undo>(transaction) {
+    override suspend fun internalProcess(activity: ActivityPubProcessContext<Undo>) {
+        val undo = activity.activity
         if (undo.actor == null) {
             return
         }
@@ -37,12 +35,10 @@ class APUndoServiceImpl(
                 if (follow.`object` == null) {
                     return
                 }
-                transaction.transaction {
-                    apUserService.fetchPerson(undo.actor!!, follow.`object`)
-                    val follower = userQueryService.findByUrl(undo.actor!!)
-                    val target = userQueryService.findByUrl(follow.`object`!!)
-                    userService.unfollow(target.id, follower.id)
-                }
+                apUserService.fetchPerson(undo.actor!!, follow.`object`)
+                val follower = userQueryService.findByUrl(undo.actor!!)
+                val target = userQueryService.findByUrl(follow.`object`!!)
+                userService.unfollow(target.id, follower.id)
                 return
             }
 
@@ -50,4 +46,8 @@ class APUndoServiceImpl(
         }
         TODO()
     }
+
+    override fun isSupported(activityType: ActivityType): Boolean = activityType == ActivityType.Undo
+
+    override fun type(): Class<Undo> = Undo::class.java
 }

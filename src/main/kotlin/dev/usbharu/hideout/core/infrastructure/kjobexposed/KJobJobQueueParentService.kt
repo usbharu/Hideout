@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.core.infrastructure.kjobexposed
 
+import dev.usbharu.hideout.core.external.job.HideoutJob
 import dev.usbharu.hideout.core.service.job.JobQueueParentService
 import kjob.core.Job
 import kjob.core.KJob
@@ -28,5 +29,10 @@ class KJobJobQueueParentService() : JobQueueParentService {
     override suspend fun <J : Job> schedule(job: J, block: ScheduleContext<J>.(J) -> Unit) {
         logger.debug("schedule job={}", job.name)
         kjob.schedule(job, block)
+    }
+
+    override suspend fun <T, J : HideoutJob<T, J>> scheduleTypeSafe(job: J, jobProps: T) {
+        val convert: ScheduleContext<J>.(J) -> Unit = job.convert(jobProps)
+        kjob.schedule(job, convert)
     }
 }
