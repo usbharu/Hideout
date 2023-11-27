@@ -35,7 +35,6 @@ class InboxJobProcessor(
     private val transaction: Transaction
 ) : JobProcessor<InboxJobParam, InboxJob> {
     suspend fun process(props: JobProps<InboxJob>) {
-
         val type = ActivityType.valueOf(props[InboxJob.type])
         val jsonString = objectMapper.readTree(props[InboxJob.json])
         val httpRequestString = props[InboxJob.httpRequest]

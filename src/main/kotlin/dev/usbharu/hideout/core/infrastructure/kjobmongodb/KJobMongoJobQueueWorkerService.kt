@@ -23,7 +23,8 @@ class KJobMongoJobQueueWorkerService(private val mongoClient: MongoClient) : Job
         }.start()
     }
 
-    override fun <T, R : HideoutJob<T, R>> init(defines: List<Pair<R, JobRegisterContext<R, JobContextWithProps<R>>.(R) -> KJobFunctions<R, JobContextWithProps<R>>>>) {
+    override fun <T, R : HideoutJob<T, R>> init(defines:
+    List<Pair<R, JobRegisterContext<R, JobContextWithProps<R>>.(R) -> KJobFunctions<R, JobContextWithProps<R>>>>) {
         defines.forEach { job ->
             kjob.register(job.first, job.second)
         }

@@ -29,7 +29,6 @@ object ReceiveFollowJob : HideoutJob<ReceiveFollowJobParam, ReceiveFollowJob>("R
         props[follow] = value.follow
         props[actor] = value.actor
         props[targetActor] = value.targetActor
-
     }
 
     override fun convert(props: JobProps<ReceiveFollowJob>): ReceiveFollowJobParam = ReceiveFollowJobParam(
@@ -78,7 +77,9 @@ object DeliverReactionJob : HideoutJob<DeliverReactionJobParam, DeliverReactionJ
     val actor: Prop<DeliverReactionJob, String> = string("actor")
     val inbox: Prop<DeliverReactionJob, String> = string("inbox")
     val id: Prop<DeliverReactionJob, String> = string("id")
-    override fun convert(value: DeliverReactionJobParam): ScheduleContext<DeliverReactionJob>.(DeliverReactionJob) -> Unit =
+    override fun convert(
+        value: DeliverReactionJobParam
+    ): ScheduleContext<DeliverReactionJob>.(DeliverReactionJob) -> Unit =
         {
             props[reaction] = value.reaction
             props[postUrl] = value.postUrl
