@@ -77,6 +77,7 @@ class APUserServiceImpl(
     override suspend fun fetchPerson(url: String, targetActor: String?): Person =
         fetchPersonWithEntity(url, targetActor).first
 
+    @Suppress("LongMethod")
     override suspend fun fetchPersonWithEntity(url: String, targetActor: String?): Pair<Person, User> {
         return try {
             val userEntity = userQueryService.findByUrl(url)

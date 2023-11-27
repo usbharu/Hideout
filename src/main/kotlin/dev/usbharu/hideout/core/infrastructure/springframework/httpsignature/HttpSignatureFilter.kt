@@ -37,7 +37,7 @@ class HttpSignatureFilter(
             transaction.transaction {
                 try {
                     userQueryService.findByKeyId(signature.keyId)
-                } catch (e: FailedToGetResourcesException) {
+                } catch (_: FailedToGetResourcesException) {
                     apUserService.fetchPerson(signature.keyId)
                 }
             }

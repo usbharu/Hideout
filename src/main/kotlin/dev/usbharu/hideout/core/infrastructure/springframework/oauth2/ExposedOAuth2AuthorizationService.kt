@@ -272,7 +272,9 @@ class ExposedOAuth2AuthorizationService(
                 oidcIdTokenValue,
                 oidcTokenIssuedAt,
                 oidcTokenExpiresAt,
-                oidcTokenMetadata.getValue(OAuth2Authorization.Token.CLAIMS_METADATA_NAME) as MutableMap<String, Any>?
+                @Suppress("CastToNullableType")
+                oidcTokenMetadata.getValue(OAuth2Authorization.Token.CLAIMS_METADATA_NAME)
+                        as MutableMap<String, Any>?
             )
 
             builder.token(oidcIdToken) { it.putAll(oidcTokenMetadata) }
