@@ -218,7 +218,6 @@ class APServiceImpl(
         }
     }
 
-    @Suppress("CyclomaticComplexMethod")
     override suspend fun processActivity(
         json: String,
         type: ActivityType,

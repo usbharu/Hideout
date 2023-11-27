@@ -2,7 +2,6 @@ package dev.usbharu.hideout.core.domain.model.user
 
 import org.springframework.stereotype.Repository
 
-@Suppress("TooManyFunctions")
 @Repository
 interface UserRepository {
     suspend fun save(user: User): User

@@ -15,7 +15,7 @@ class PostQueryMapper(private val postResultRowMapper: ResultRowMapper<Post>) : 
             .map { it.value }
             .map {
                 it.first().let(postResultRowMapper::map)
-                    .copy(mediaIds = it.mapNotNull { it.getOrNull(PostsMedia.mediaId) })
+                    .copy(mediaIds = it.mapNotNull { resultRow -> resultRow.getOrNull(PostsMedia.mediaId) })
             }
     }
 }

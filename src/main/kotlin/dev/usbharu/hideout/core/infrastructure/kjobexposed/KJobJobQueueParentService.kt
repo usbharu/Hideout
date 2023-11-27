@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service
 
 @Service
 @ConditionalOnProperty(name = ["hideout.use-mongodb"], havingValue = "false", matchIfMissing = true)
-class KJobJobQueueParentService() : JobQueueParentService {
+class KJobJobQueueParentService : JobQueueParentService {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 

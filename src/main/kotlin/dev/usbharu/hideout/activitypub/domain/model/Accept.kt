@@ -6,6 +6,7 @@ import dev.usbharu.hideout.activitypub.domain.model.objects.ObjectDeserializer
 
 open class Accept : Object {
     @JsonDeserialize(using = ObjectDeserializer::class)
+    @Suppress("VariableNaming")
     var `object`: Object? = null
 
     protected constructor()

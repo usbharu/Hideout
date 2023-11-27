@@ -9,7 +9,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Repository
 
 @Repository
-@Suppress("InjectDispatcher")
 @ConditionalOnProperty("hideout.use-mongodb", havingValue = "true", matchIfMissing = false)
 class MongoTimelineRepositoryWrapper(
     private val mongoTimelineRepository: MongoTimelineRepository,
