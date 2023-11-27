@@ -10,6 +10,7 @@ import dev.usbharu.hideout.core.service.user.UserService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
+@Deprecated("use activitypub processor")
 interface APAcceptService {
     suspend fun receiveAccept(accept: Accept)
 }
