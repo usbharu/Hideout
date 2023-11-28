@@ -42,7 +42,6 @@ class InboxControllerImpl(private val apService: APService) : InboxController {
         try {
             val url = request.requestURL.toString()
 
-
             val headers =
                 headersList.associateWith { header -> request.getHeaders(header)?.toList().orEmpty() }
 
