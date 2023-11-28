@@ -7,7 +7,9 @@ import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 import dev.usbharu.hideout.application.external.Transaction
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Service
 
+@Service
 abstract class AbstractActivityPubProcessor<T : Object>(
     private val transaction: Transaction,
     private val allowUnauthorized: Boolean = false

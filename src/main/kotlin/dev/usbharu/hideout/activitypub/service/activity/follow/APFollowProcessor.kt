@@ -9,7 +9,9 @@ import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.external.job.ReceiveFollowJob
 import dev.usbharu.hideout.core.external.job.ReceiveFollowJobParam
 import dev.usbharu.hideout.core.service.job.JobQueueParentService
+import org.springframework.stereotype.Service
 
+@Service
 class APFollowProcessor(
     transaction: Transaction,
     private val jobQueueParentService: JobQueueParentService,

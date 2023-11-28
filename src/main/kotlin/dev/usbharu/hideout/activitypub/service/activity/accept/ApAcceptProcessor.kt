@@ -10,7 +10,9 @@ import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.query.FollowerQueryService
 import dev.usbharu.hideout.core.query.UserQueryService
 import dev.usbharu.hideout.core.service.user.UserService
+import org.springframework.stereotype.Service
 
+@Service
 class ApAcceptProcessor(
     transaction: Transaction,
     private val userQueryService: UserQueryService,

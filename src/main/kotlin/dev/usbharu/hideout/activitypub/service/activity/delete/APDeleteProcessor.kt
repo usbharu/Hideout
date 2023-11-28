@@ -10,7 +10,9 @@ import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.query.PostQueryService
+import org.springframework.stereotype.Service
 
+@Service
 class APDeleteProcessor(
     transaction: Transaction,
     private val postQueryService: PostQueryService,

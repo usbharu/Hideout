@@ -5,7 +5,6 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 import dev.usbharu.hideout.activitypub.service.common.ActivityPubProcessContext
 import dev.usbharu.hideout.activitypub.service.common.ActivityPubProcessor
-import dev.usbharu.hideout.activitypub.service.common.ActivityType
 import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
 import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
@@ -20,13 +19,12 @@ import dev.usbharu.httpsignature.common.PublicKey
 import dev.usbharu.httpsignature.verify.HttpSignatureVerifier
 import dev.usbharu.httpsignature.verify.Signature
 import dev.usbharu.httpsignature.verify.SignatureHeaderParser
-import kjob.core.job.JobProps
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
 class InboxJobProcessor(
-    private val activityPubProcessorList: List<ActivityPubProcessor<Object>>,
+    private val activityPubProcessorList: List<ActivityPubProcessor<*>>,
     private val objectMapper: ObjectMapper,
     private val signatureHeaderParser: SignatureHeaderParser,
     private val signatureVerifier: HttpSignatureVerifier,
@@ -34,42 +32,6 @@ class InboxJobProcessor(
     private val apUserService: APUserService,
     private val transaction: Transaction
 ) : JobProcessor<InboxJobParam, InboxJob> {
-    suspend fun process(props: JobProps<InboxJob>) {
-        val type = ActivityType.valueOf(props[InboxJob.type])
-        val jsonString = objectMapper.readTree(props[InboxJob.json])
-        val httpRequestString = props[InboxJob.httpRequest]
-        val headersString = props[InboxJob.headers]
-
-        logger.info("START Process inbox. type: {}", type)
-        logger.trace("type: {} \njson: \n{}", type, jsonString.toPrettyString())
-
-        val map = objectMapper.readValue<Map<String, List<String>>>(headersString)
-
-        val httpRequest =
-            objectMapper.readValue<HttpRequest>(httpRequestString).copy(headers = HttpHeaders(map))
-
-        logger.trace("request: {}\nheaders: {}", httpRequest, map)
-
-        val signature = parseSignatureHeader(httpRequest.headers)
-
-        logger.debug("Has signature? {}", signature != null)
-
-        val verify = signature?.let { verifyHttpSignature(httpRequest, it) } ?: false
-
-        logger.debug("Is verifying success? {}", verify)
-
-        val activityPubProcessor = activityPubProcessorList.firstOrNull { it.isSupported(type) }
-
-        if (activityPubProcessor == null) {
-            logger.warn("ActivityType {} is not support.", type)
-            throw IllegalStateException("ActivityPubProcessor not found.")
-        }
-
-        val value = objectMapper.treeToValue(jsonString, activityPubProcessor.type())
-        activityPubProcessor.process(ActivityPubProcessContext(value, jsonString, httpRequest, signature, verify))
-
-        logger.info("SUCCESS Process inbox. type: {}", type)
-    }
 
     private suspend fun verifyHttpSignature(httpRequest: HttpRequest, signature: Signature): Boolean {
         val user = try {
@@ -116,7 +78,8 @@ class InboxJobProcessor(
 
         logger.debug("Is verifying success? {}", verify)
 
-        val activityPubProcessor = activityPubProcessorList.firstOrNull { it.isSupported(param.type) }
+        val activityPubProcessor =
+            activityPubProcessorList.firstOrNull { it.isSupported(param.type) } as ActivityPubProcessor<Object>?
 
         if (activityPubProcessor == null) {
             logger.warn("ActivityType {} is not support.", param.type)

@@ -11,8 +11,10 @@ import dev.usbharu.hideout.core.external.job.DeliverRemoveReactionJob
 import dev.usbharu.hideout.core.external.job.DeliverRemoveReactionJobParam
 import dev.usbharu.hideout.core.query.UserQueryService
 import dev.usbharu.hideout.core.service.job.JobProcessor
+import org.springframework.stereotype.Service
 import java.time.Instant
 
+@Service
 class ApRemoveReactionJobProcessor(
     private val userQueryService: UserQueryService,
     private val transaction: Transaction,
