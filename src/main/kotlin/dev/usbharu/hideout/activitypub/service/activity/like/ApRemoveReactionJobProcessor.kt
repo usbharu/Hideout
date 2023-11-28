@@ -28,11 +28,10 @@ class ApRemoveReactionJobProcessor(
         apRequestService.apPost(
             param.inbox,
             Undo(
-                name = "Undo Reaction",
                 actor = param.actor,
                 `object` = like,
                 id = "${applicationConfig.url}/undo/like/${param.id}",
-                published = Instant.now()
+                published = Instant.now().toString()
             ),
             signer
         )

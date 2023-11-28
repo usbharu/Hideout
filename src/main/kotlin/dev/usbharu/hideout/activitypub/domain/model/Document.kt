@@ -2,24 +2,18 @@ package dev.usbharu.hideout.activitypub.domain.model
 
 import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 
-open class Document : Object, HasName {
+open class Document(
+    type: List<String> = emptyList(),
+    override val name: String = "",
+    mediaType: String,
+    url: String
+) : Object(
+    type = add(type, "Document")
+),
+    HasName {
 
-    var mediaType: String? = null
-    var url: String? = null
-    override val name: String
-
-    constructor(
-        type: List<String> = emptyList(),
-        name: String,
-        mediaType: String,
-        url: String
-    ) : super(
-        type = add(type, "Document")
-    ) {
-        this.mediaType = mediaType
-        this.url = url
-        this.name = name
-    }
+    var mediaType: String? = mediaType
+    var url: String? = url
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

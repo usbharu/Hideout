@@ -39,7 +39,7 @@ class APRequestServiceImplTest {
                 assertDoesNotThrow {
                     dateTimeFormatter.parse(it.headers["Date"])
                 }
-                respond("{}")
+                respond("""{"type":"Follow","object": "https://example.com","actor": "https://example.com"}""")
             }),
             objectMapper,
             mock(),
@@ -47,7 +47,6 @@ class APRequestServiceImplTest {
         )
 
         val responseClass = Follow(
-            name = "Follow",
             `object` = "https://example.com",
             actor = "https://example.com"
         )
@@ -65,7 +64,7 @@ class APRequestServiceImplTest {
                 assertDoesNotThrow {
                     dateTimeFormatter.parse(it.headers["Date"])
                 }
-                respond("{}")
+                respond("""{"type":"Follow","object": "https://example.com","actor": "https://example.com"}""")
             }),
             objectMapper,
             mock(),
@@ -73,7 +72,6 @@ class APRequestServiceImplTest {
         )
 
         val responseClass = Follow(
-            name = "Follow",
             `object` = "https://example.com",
             actor = "https://example.com"
         )
@@ -106,7 +104,7 @@ class APRequestServiceImplTest {
                 assertDoesNotThrow {
                     dateTimeFormatter.parse(it.headers["Date"])
                 }
-                respond("{}")
+                respond("""{"type":"Follow","object": "https://example.com","actor": "https://example.com"}""")
             }),
             objectMapper,
             httpSignatureSigner,
@@ -114,7 +112,6 @@ class APRequestServiceImplTest {
         )
 
         val responseClass = Follow(
-            name = "Follow",
             `object` = "https://example.com",
             actor = "https://example.com"
         )
@@ -166,7 +163,6 @@ class APRequestServiceImplTest {
         }), objectMapper, mock(), dateTimeFormatter)
 
         val body = Follow(
-            name = "Follow",
             `object` = "https://example.com",
             actor = "https://example.com"
         )
@@ -213,7 +209,6 @@ class APRequestServiceImplTest {
         }), objectMapper, mock(), dateTimeFormatter)
 
         val body = Follow(
-            name = "Follow",
             `object` = "https://example.com",
             actor = "https://example.com"
         )
@@ -244,7 +239,6 @@ class APRequestServiceImplTest {
         }), objectMapper, mock(), dateTimeFormatter)
 
         val body = Follow(
-            name = "Follow",
             `object` = "https://example.com",
             actor = "https://example.com"
         )
@@ -286,7 +280,6 @@ class APRequestServiceImplTest {
         }), objectMapper, httpSignatureSigner, dateTimeFormatter)
 
         val body = Follow(
-            name = "Follow",
             `object` = "https://example.com",
             actor = "https://example.com"
         )
@@ -337,7 +330,6 @@ class APRequestServiceImplTest {
         }), objectMapper, mock(), dateTimeFormatter)
 
         val body = Follow(
-            name = "Follow",
             `object` = "https://example.com",
             actor = "https://example.com"
         )

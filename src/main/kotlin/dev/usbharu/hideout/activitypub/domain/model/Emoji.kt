@@ -2,24 +2,17 @@ package dev.usbharu.hideout.activitypub.domain.model
 
 import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 
-open class Emoji : Object {
-    var updated: String? = null
-    var icon: Image? = null
-
-    protected constructor() : super()
-    constructor(
-        type: List<String>,
-        name: String?,
-        actor: String?,
-        id: String?,
-        updated: String?,
-        icon: Image?
-    ) : super(
-        type = add(type, "Emoji")
-    ) {
-        this.updated = updated
-        this.icon = icon
-    }
+open class Emoji(
+    type: List<String>,
+    override val name: String,
+    override val id: String,
+    var updated: String?,
+    var icon: Image?
+) : Object(
+    type = add(type, "Emoji")
+),
+    HasName,
+    HasId {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

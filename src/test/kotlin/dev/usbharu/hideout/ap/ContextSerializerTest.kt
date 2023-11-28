@@ -13,7 +13,6 @@ class ContextSerializerTest {
             name = "aaa",
             actor = "bbb",
             `object` = Follow(
-                name = "ccc",
                 `object` = "ddd",
                 actor = "aaa"
             )

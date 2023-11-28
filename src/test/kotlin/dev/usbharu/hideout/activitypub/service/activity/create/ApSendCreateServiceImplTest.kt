@@ -52,7 +52,6 @@ class ApSendCreateServiceImplTest {
         val post = PostBuilder.of()
         val user = UserBuilder.localUserOf(id = post.userId)
         val note = Note(
-            name = "Post",
             id = post.apId,
             attributedTo = user.url,
             content = post.text,

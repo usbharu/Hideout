@@ -10,7 +10,6 @@ class NoteSerializeTest {
     @Test
     fun Noteのシリアライズができる() {
         val note = Note(
-            name = "Note",
             id = "https://example.com",
             attributedTo = "https://example.com/actor",
             content = "Hello",
@@ -22,7 +21,7 @@ class NoteSerializeTest {
         val writeValueAsString = objectMapper.writeValueAsString(note)
 
         assertEquals(
-            "{\"type\":\"Note\",\"name\":\"Note\",\"id\":\"https://example.com\",\"attributedTo\":\"https://example.com/actor\",\"content\":\"Hello\",\"published\":\"2023-05-20T10:28:17.308Z\",\"sensitive\":false}",
+            """{"type":"Note","id":"https://example.com","attributedTo":"https://example.com/actor","content":"Hello","published":"2023-05-20T10:28:17.308Z","sensitive":false}""",
             writeValueAsString
         )
     }
@@ -65,7 +64,6 @@ class NoteSerializeTest {
         val readValue = objectMapper.readValue<Note>(json)
 
         val note = Note(
-            name = "",
             id = "https://misskey.usbharu.dev/notes/9f2i9cm88e",
             type = listOf("Note"),
             attributedTo = "https://misskey.usbharu.dev/users/97ws8y3rj6",
@@ -77,7 +75,6 @@ class NoteSerializeTest {
             inReplyTo = "https://calckey.jp/notes/9f2i7ymf1d",
             attachment = emptyList()
         )
-        note.name = null
         assertEquals(note, readValue)
     }
 }
