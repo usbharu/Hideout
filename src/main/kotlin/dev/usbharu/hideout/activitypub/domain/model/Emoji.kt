@@ -15,10 +15,7 @@ open class Emoji : Object {
         updated: String?,
         icon: Image?
     ) : super(
-        type = add(type, "Emoji"),
-        name = name,
-        actor = actor,
-        id = id
+        type = add(type, "Emoji")
     ) {
         this.updated = updated
         this.icon = icon

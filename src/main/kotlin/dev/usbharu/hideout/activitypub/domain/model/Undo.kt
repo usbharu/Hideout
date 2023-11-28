@@ -5,41 +5,53 @@ import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 import dev.usbharu.hideout.activitypub.domain.model.objects.ObjectDeserializer
 import java.time.Instant
 
-open class Undo : Object {
+open class Undo : Object, HasId, HasActor {
 
     @JsonDeserialize(using = ObjectDeserializer::class)
     @Suppress("VariableNaming")
     var `object`: Object? = null
     var published: String? = null
+    override val actor: String
+    override val id: String
 
-    protected constructor() : super()
     constructor(
         type: List<String> = emptyList(),
-        name: String,
         actor: String,
-        id: String?,
+        id: String,
         `object`: Object,
         published: Instant
-    ) : super(add(type, "Undo"), name, actor, id) {
+    ) : super(add(type, "Undo")) {
         this.`object` = `object`
         this.published = published.toString()
+        this.id = id
+        this.actor = actor
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is Undo) return false
+        if (javaClass != other?.javaClass) return false
         if (!super.equals(other)) return false
 
+        other as Undo
+
         if (`object` != other.`object`) return false
-        return published == other.published
+        if (published != other.published) return false
+        if (actor != other.actor) return false
+        if (id != other.id) return false
+
+        return true
     }
 
     override fun hashCode(): Int {
         var result = super.hashCode()
         result = 31 * result + (`object`?.hashCode() ?: 0)
         result = 31 * result + (published?.hashCode() ?: 0)
+        result = 31 * result + actor.hashCode()
+        result = 31 * result + id.hashCode()
         return result
     }
 
-    override fun toString(): String = "Undo(`object`=$`object`, published=$published) ${super.toString()}"
+    override fun toString(): String {
+        return "Undo(`object`=$`object`, published=$published, actor='$actor', id='$id') ${super.toString()}"
+    }
 }

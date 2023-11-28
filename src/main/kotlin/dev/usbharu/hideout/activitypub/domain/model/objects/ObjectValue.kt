@@ -1,16 +1,15 @@
 package dev.usbharu.hideout.activitypub.domain.model.objects
 
+import com.fasterxml.jackson.annotation.JsonCreator
+
 @Suppress("VariableNaming")
 open class ObjectValue : Object {
 
-    var `object`: String? = null
+    lateinit var `object`: String
 
-    protected constructor() : super()
-    constructor(type: List<String>, name: String?, actor: String?, id: String?, `object`: String?) : super(
-        type,
-        name,
-        actor,
-        id
+    @JsonCreator
+    constructor(type: List<String>) : super(
+        type
     ) {
         this.`object` = `object`
     }

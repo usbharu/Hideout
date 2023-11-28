@@ -4,42 +4,47 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 import dev.usbharu.hideout.activitypub.domain.model.objects.ObjectDeserializer
 
-open class Like : Object {
+open class Like : Object, HasId, HasActor {
     @Suppress("VariableNaming")
     var `object`: String? = null
     var content: String? = null
 
     @JsonDeserialize(contentUsing = ObjectDeserializer::class)
     var tag: List<Object> = emptyList()
+    override val actor: String
+    override val id: String
 
-    protected constructor() : super()
     constructor(
         type: List<String> = emptyList(),
-        name: String?,
-        actor: String?,
-        id: String?,
+        actor: String,
+        id: String,
         `object`: String?,
         content: String?,
         tag: List<Object> = emptyList()
     ) : super(
-        type = add(type, "Like"),
-        name = name,
-        actor = actor,
-        id = id
+        type = add(type, "Like")
     ) {
         this.`object` = `object`
         this.content = content
         this.tag = tag
+        this.actor = actor
+        this.id = id
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is Like) return false
+        if (javaClass != other?.javaClass) return false
         if (!super.equals(other)) return false
+
+        other as Like
 
         if (`object` != other.`object`) return false
         if (content != other.content) return false
-        return tag == other.tag
+        if (tag != other.tag) return false
+        if (actor != other.actor) return false
+        if (id != other.id) return false
+
+        return true
     }
 
     override fun hashCode(): Int {
@@ -47,8 +52,12 @@ open class Like : Object {
         result = 31 * result + (`object`?.hashCode() ?: 0)
         result = 31 * result + (content?.hashCode() ?: 0)
         result = 31 * result + tag.hashCode()
+        result = 31 * result + actor.hashCode()
+        result = 31 * result + id.hashCode()
         return result
     }
 
-    override fun toString(): String = "Like(`object`=$`object`, content=$content, tag=$tag) ${super.toString()}"
+    override fun toString(): String {
+        return "Like(`object`=$`object`, content=$content, tag=$tag, actor='$actor', id='$id') ${super.toString()}"
+    }
 }
