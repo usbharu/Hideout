@@ -3,10 +3,10 @@ package dev.usbharu.hideout.activitypub.domain.model
 import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 
 open class Note : Object {
-    var attributedTo: String? = null
+    lateinit var attributedTo: String
     var attachment: List<Document> = emptyList()
-    var content: String? = null
-    var published: String? = null
+    lateinit var content: String
+    lateinit var published: String
     var to: List<String> = emptyList()
     var cc: List<String> = emptyList()
     var sensitive: Boolean = false
@@ -19,9 +19,9 @@ open class Note : Object {
         type: List<String> = emptyList(),
         name: String,
         id: String?,
-        attributedTo: String?,
-        content: String?,
-        published: String?,
+        attributedTo: String,
+        content: String,
+        published: String,
         to: List<String> = emptyList(),
         cc: List<String> = emptyList(),
         sensitive: Boolean = false,
