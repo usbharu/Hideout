@@ -33,7 +33,7 @@ class ApSendCreateServiceImpl(
         val note = noteQueryService.findById(post.id).first
         val create = Create(
             name = "Create Note",
-            `object` = note,
+            apObject = note,
             actor = note.attributedTo,
             id = "${applicationConfig.url}/create/note/${post.id}"
         )

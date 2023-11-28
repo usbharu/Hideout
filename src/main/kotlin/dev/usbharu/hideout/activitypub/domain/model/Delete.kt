@@ -1,13 +1,14 @@
 package dev.usbharu.hideout.activitypub.domain.model
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 import dev.usbharu.hideout.activitypub.domain.model.objects.ObjectDeserializer
 
 open class Delete : Object, HasId, HasActor {
     @JsonDeserialize(using = ObjectDeserializer::class)
-    @Suppress("VariableNaming")
-    val `object`: Object
+    @JsonProperty("object")
+    val apObject: Object
     val published: String
     override val actor: String
     override val id: String
@@ -19,7 +20,7 @@ open class Delete : Object, HasId, HasActor {
         `object`: Object,
         published: String
     ) : super(add(type, "Delete")) {
-        this.`object` = `object`
+        this.apObject = `object`
         this.published = published
         this.actor = actor
         this.id = id
@@ -32,7 +33,7 @@ open class Delete : Object, HasId, HasActor {
 
         other as Delete
 
-        if (`object` != other.`object`) return false
+        if (apObject != other.apObject) return false
         if (published != other.published) return false
         if (actor != other.actor) return false
         if (id != other.id) return false
@@ -42,7 +43,7 @@ open class Delete : Object, HasId, HasActor {
 
     override fun hashCode(): Int {
         var result = super.hashCode()
-        result = 31 * result + (`object`?.hashCode() ?: 0)
+        result = 31 * result + (apObject?.hashCode() ?: 0)
         result = 31 * result + (published?.hashCode() ?: 0)
         result = 31 * result + actor.hashCode()
         result = 31 * result + id.hashCode()
@@ -50,5 +51,5 @@ open class Delete : Object, HasId, HasActor {
     }
 
     override fun toString(): String =
-        "Delete(`object`=$`object`, published=$published, actor='$actor', id='$id') ${super.toString()}"
+        "Delete(`object`=$apObject, published=$published, actor='$actor', id='$id') ${super.toString()}"
 }

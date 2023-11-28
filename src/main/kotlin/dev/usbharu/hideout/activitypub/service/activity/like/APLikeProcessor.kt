@@ -23,7 +23,7 @@ class APLikeProcessor(
         val actor = activity.activity.actor
         val content = activity.activity.content
 
-        val target = activity.activity.`object`
+        val target = activity.activity.apObject
 
         val personWithEntity = apUserService.fetchPersonWithEntity(actor)
 

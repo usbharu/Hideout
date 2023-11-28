@@ -22,7 +22,7 @@ class ApReactionJobProcessor(
             param.inbox,
             Like(
                 actor = param.actor,
-                `object` = param.postUrl,
+                apObject = param.postUrl,
                 id = "${applicationConfig.url}/liek/note/${param.id}",
                 content = param.reaction
             ),

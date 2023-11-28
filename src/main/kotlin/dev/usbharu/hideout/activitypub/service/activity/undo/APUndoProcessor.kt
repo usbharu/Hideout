@@ -32,12 +32,12 @@ class APUndoProcessor(
             "Follow" -> {
                 val follow = undo.`object` as Follow
 
-                if (follow.`object` == null) {
+                if (follow.apObject == null) {
                     return
                 }
-                apUserService.fetchPerson(undo.actor, follow.`object`)
+                apUserService.fetchPerson(undo.actor, follow.apObject)
                 val follower = userQueryService.findByUrl(undo.actor)
-                val target = userQueryService.findByUrl(follow.`object`)
+                val target = userQueryService.findByUrl(follow.apObject)
                 userService.unfollow(target.id, follower.id)
                 return
             }

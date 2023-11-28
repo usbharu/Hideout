@@ -18,7 +18,7 @@ class APDeleteProcessor(
 ) :
     AbstractActivityPubProcessor<Delete>(transaction) {
     override suspend fun internalProcess(activity: ActivityPubProcessContext<Delete>) {
-        val value = activity.activity.`object`
+        val value = activity.activity.apObject
         if (value !is HasId) {
             throw IllegalActivityPubObjectException("object hasn't id")
         }

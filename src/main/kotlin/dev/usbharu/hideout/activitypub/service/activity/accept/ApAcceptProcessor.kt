@@ -20,7 +20,7 @@ class ApAcceptProcessor(
     AbstractActivityPubProcessor<Accept>(transaction) {
 
     override suspend fun internalProcess(activity: ActivityPubProcessContext<Accept>) {
-        val value = activity.activity.`object` ?: throw IllegalActivityPubObjectException("object is null")
+        val value = activity.activity.apObject ?: throw IllegalActivityPubObjectException("object is null")
 
         if (value.type.contains("Follow").not()) {
             logger.warn("FAILED Activity type isn't Follow.")
@@ -29,7 +29,7 @@ class ApAcceptProcessor(
 
         val follow = value as Follow
 
-        val userUrl = follow.`object`
+        val userUrl = follow.apObject
         val followerUrl = follow.actor
 
         val user = userQueryService.findByUrl(userUrl)
