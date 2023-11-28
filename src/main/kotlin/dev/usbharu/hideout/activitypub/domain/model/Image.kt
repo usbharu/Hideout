@@ -7,9 +7,8 @@ open class Image : Object {
     private var url: String? = null
 
     protected constructor() : super()
-    constructor(type: List<String> = emptyList(), name: String, mediaType: String?, url: String?) : super(
-        add(type, "Image"),
-        name
+    constructor(type: List<String> = emptyList(), mediaType: String?, url: String?) : super(
+        add(type, "Image")
     ) {
         this.mediaType = mediaType
         this.url = url
@@ -17,11 +16,15 @@ open class Image : Object {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is Image) return false
+        if (javaClass != other?.javaClass) return false
         if (!super.equals(other)) return false
 
+        other as Image
+
         if (mediaType != other.mediaType) return false
-        return url == other.url
+        if (url != other.url) return false
+
+        return true
     }
 
     override fun hashCode(): Int {
@@ -30,4 +33,6 @@ open class Image : Object {
         result = 31 * result + (url?.hashCode() ?: 0)
         return result
     }
+
+    override fun toString(): String = "Image(mediaType=$mediaType, url=$url) ${super.toString()}"
 }

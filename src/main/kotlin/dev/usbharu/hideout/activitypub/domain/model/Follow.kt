@@ -2,37 +2,42 @@ package dev.usbharu.hideout.activitypub.domain.model
 
 import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 
-open class Follow : Object {
+open class Follow : Object, HasActor {
     @Suppress("VariableNaming")
     var `object`: String? = null
 
-    protected constructor() : super()
+    override val actor: String
+
     constructor(
         type: List<String> = emptyList(),
-        name: String?,
         `object`: String?,
-        actor: String?
+        actor: String
     ) : super(
-        type = add(type, "Follow"),
-        name = name,
-        actor = actor
+        type = add(type, "Follow")
     ) {
         this.`object` = `object`
+        this.actor = actor
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is Follow) return false
+        if (javaClass != other?.javaClass) return false
         if (!super.equals(other)) return false
 
-        return `object` == other.`object`
+        other as Follow
+
+        if (`object` != other.`object`) return false
+        if (actor != other.actor) return false
+
+        return true
     }
 
     override fun hashCode(): Int {
         var result = super.hashCode()
         result = 31 * result + (`object`?.hashCode() ?: 0)
+        result = 31 * result + actor.hashCode()
         return result
     }
 
-    override fun toString(): String = "Follow(`object`=$`object`) ${super.toString()}"
+    override fun toString(): String = "Follow(`object`=$`object`, actor='$actor') ${super.toString()}"
 }
