@@ -45,6 +45,7 @@ class InboxTest {
                 content = "{}"
                 contentType = MediaType.APPLICATION_JSON
             }
+            .asyncDispatch()
             .andExpect { status { isUnauthorized() } }
     }
 
@@ -68,6 +69,7 @@ class InboxTest {
                 content = "{}"
                 contentType = MediaType.APPLICATION_JSON
             }
+            .asyncDispatch()
             .andExpect { status { isUnauthorized() } }
     }
 

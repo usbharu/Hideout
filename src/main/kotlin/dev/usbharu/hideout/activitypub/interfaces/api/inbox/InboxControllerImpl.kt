@@ -5,6 +5,7 @@ import dev.usbharu.httpsignature.common.HttpHeaders
 import dev.usbharu.httpsignature.common.HttpMethod
 import dev.usbharu.httpsignature.common.HttpRequest
 import org.slf4j.LoggerFactory
+import org.springframework.http.HttpHeaders.WWW_AUTHENTICATE
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestBody
@@ -21,6 +22,16 @@ class InboxControllerImpl(private val apService: APService) : InboxController {
     ): ResponseEntity<Unit> {
         val request = (requireNotNull(RequestContextHolder.getRequestAttributes()) as ServletRequestAttributes).request
 
+        val headersList = request.headerNames?.toList().orEmpty()
+        if (headersList.contains("Signature").not()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .header(
+                    WWW_AUTHENTICATE,
+                    "Signature realm=\"Example\",headers=\"(request-target) date host digest\""
+                )
+                .build()
+        }
+
         val parseActivity = try {
             apService.parseActivity(string)
         } catch (e: Exception) {
@@ -31,7 +42,7 @@ class InboxControllerImpl(private val apService: APService) : InboxController {
         try {
             val url = request.requestURL.toString()
 
-            val headersList = request.headerNames?.toList().orEmpty()
+
             val headers =
                 headersList.associateWith { header -> request.getHeaders(header)?.toList().orEmpty() }
 
@@ -42,8 +53,6 @@ class InboxControllerImpl(private val apService: APService) : InboxController {
                     throw IllegalArgumentException("Unsupported method: $method")
                 }
             }
-
-            println(headers)
 
             apService.processActivity(
                 string,
