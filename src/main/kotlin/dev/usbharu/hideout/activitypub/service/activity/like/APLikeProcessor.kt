@@ -1,7 +1,6 @@
 package dev.usbharu.hideout.activitypub.service.activity.like
 
 import dev.usbharu.hideout.activitypub.domain.exception.FailedToGetActivityPubResourceException
-import dev.usbharu.hideout.activitypub.domain.exception.IllegalActivityPubObjectException
 import dev.usbharu.hideout.activitypub.domain.model.Like
 import dev.usbharu.hideout.activitypub.service.common.AbstractActivityPubProcessor
 import dev.usbharu.hideout.activitypub.service.common.ActivityPubProcessContext
@@ -21,10 +20,10 @@ class APLikeProcessor(
 ) :
     AbstractActivityPubProcessor<Like>(transaction) {
     override suspend fun internalProcess(activity: ActivityPubProcessContext<Like>) {
-        val actor = activity.activity.actor ?: throw IllegalActivityPubObjectException("actor is null")
-        val content = activity.activity.content ?: throw IllegalActivityPubObjectException("content is null")
+        val actor = activity.activity.actor
+        val content = activity.activity.content
 
-        val target = activity.activity.`object` ?: throw IllegalActivityPubObjectException("object is null")
+        val target = activity.activity.apObject
 
         val personWithEntity = apUserService.fetchPersonWithEntity(actor)
 

@@ -3,10 +3,10 @@ package dev.usbharu.hideout.util
 import io.ktor.http.*
 
 object HttpUtil {
-    val ContentType.Application.Activity: ContentType
+    val Activity: ContentType
         get() = ContentType("application", "activity+json")
 
-    val ContentType.Application.JsonLd: ContentType
+    val JsonLd: ContentType
         get() {
             return ContentType(
                 contentType = "application",

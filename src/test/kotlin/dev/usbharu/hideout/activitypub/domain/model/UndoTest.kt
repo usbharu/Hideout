@@ -1,8 +1,8 @@
 package dev.usbharu.hideout.activitypub.domain.model
 
+import dev.usbharu.hideout.application.config.ActivityPubConfig
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Test
-import utils.JsonObjectMapper
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneId
@@ -12,18 +12,16 @@ class UndoTest {
     fun Undoのシリアライズができる() {
         val undo = Undo(
             emptyList(),
-            "Undo Follow",
             "https://follower.example.com/",
             "https://follower.example.com/undo/1",
             Follow(
                 emptyList(),
-                null,
                 "https://follower.example.com/users/",
                 actor = "https://follower.exaple.com/users/1"
             ),
-            Instant.now(Clock.tickMillis(ZoneId.systemDefault()))
+            Instant.now(Clock.tickMillis(ZoneId.systemDefault())).toString()
         )
-        val writeValueAsString = JsonObjectMapper.objectMapper.writeValueAsString(undo)
+        val writeValueAsString = ActivityPubConfig().objectMapper().writeValueAsString(undo)
         println(writeValueAsString)
     }
 
@@ -70,7 +68,7 @@ class UndoTest {
   
         """.trimIndent()
 
-        val undo = JsonObjectMapper.objectMapper.readValue(json, Undo::class.java)
+        val undo = ActivityPubConfig().objectMapper().readValue(json, Undo::class.java)
         println(undo)
     }
 }

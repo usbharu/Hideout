@@ -12,41 +12,29 @@ open class Object : JsonLd {
         set(value) {
             field = value.filter { it.isNotBlank() }
         }
-    var name: String? = null
-    var actor: String? = null
-    var id: String? = null
 
     protected constructor()
-    constructor(type: List<String>, name: String? = null, actor: String? = null, id: String? = null) : super() {
+    constructor(type: List<String>) : super() {
         this.type = type.filter { it.isNotBlank() }
-        this.name = name
-        this.actor = actor
-        this.id = id
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is Object) return false
+        if (javaClass != other?.javaClass) return false
         if (!super.equals(other)) return false
 
-        if (type != other.type) return false
-        if (name != other.name) return false
-        if (actor != other.actor) return false
-        if (id != other.id) return false
+        other as Object
 
-        return true
+        return type == other.type
     }
 
     override fun hashCode(): Int {
         var result = super.hashCode()
         result = 31 * result + type.hashCode()
-        result = 31 * result + (name?.hashCode() ?: 0)
-        result = 31 * result + (actor?.hashCode() ?: 0)
-        result = 31 * result + (id?.hashCode() ?: 0)
         return result
     }
 
-    override fun toString(): String = "Object(type=$type, name=$name, actor=$actor, id=$id) ${super.toString()}"
+    override fun toString(): String = "Object(type=$type) ${super.toString()}"
 
     companion object {
         @JvmStatic

@@ -3,43 +3,41 @@ package dev.usbharu.hideout.activitypub.domain.model
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 import dev.usbharu.hideout.activitypub.domain.model.objects.ObjectDeserializer
-import java.time.Instant
 
-open class Undo : Object {
-
+open class Undo(
+    type: List<String> = emptyList(),
+    override val actor: String,
+    override val id: String,
     @JsonDeserialize(using = ObjectDeserializer::class)
-    @Suppress("VariableNaming")
-    var `object`: Object? = null
-    var published: String? = null
-
-    protected constructor() : super()
-    constructor(
-        type: List<String> = emptyList(),
-        name: String,
-        actor: String,
-        id: String?,
-        `object`: Object,
-        published: Instant
-    ) : super(add(type, "Undo"), name, actor, id) {
-        this.`object` = `object`
-        this.published = published.toString()
-    }
+    @Suppress("VariableNaming") val `object`: Object,
+    val published: String
+) : Object(add(type, "Undo")), HasId, HasActor {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is Undo) return false
+        if (javaClass != other?.javaClass) return false
         if (!super.equals(other)) return false
 
+        other as Undo
+
         if (`object` != other.`object`) return false
-        return published == other.published
+        if (published != other.published) return false
+        if (actor != other.actor) return false
+        if (id != other.id) return false
+
+        return true
     }
 
     override fun hashCode(): Int {
         var result = super.hashCode()
         result = 31 * result + (`object`?.hashCode() ?: 0)
         result = 31 * result + (published?.hashCode() ?: 0)
+        result = 31 * result + actor.hashCode()
+        result = 31 * result + id.hashCode()
         return result
     }
 
-    override fun toString(): String = "Undo(`object`=$`object`, published=$published) ${super.toString()}"
+    override fun toString(): String {
+        return "Undo(`object`=$`object`, published=$published, actor='$actor', id='$id') ${super.toString()}"
+    }
 }

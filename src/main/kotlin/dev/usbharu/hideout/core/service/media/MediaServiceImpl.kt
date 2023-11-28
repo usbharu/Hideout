@@ -15,7 +15,7 @@ import dev.usbharu.hideout.core.domain.model.media.Media as EntityMedia
 
 @Service
 @Suppress("TooGenericExceptionCaught")
-open class MediaServiceImpl(
+class MediaServiceImpl(
     private val mediaDataStore: MediaDataStore,
     private val fileTypeDeterminationService: FileTypeDeterminationService,
     private val mediaBlurhashService: MediaBlurhashService,

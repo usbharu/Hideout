@@ -2,6 +2,7 @@ package dev.usbharu.hideout.activitypub.service.activity.delete
 
 import dev.usbharu.hideout.activitypub.domain.exception.IllegalActivityPubObjectException
 import dev.usbharu.hideout.activitypub.domain.model.Delete
+import dev.usbharu.hideout.activitypub.domain.model.HasId
 import dev.usbharu.hideout.activitypub.service.common.AbstractActivityPubProcessor
 import dev.usbharu.hideout.activitypub.service.common.ActivityPubProcessContext
 import dev.usbharu.hideout.activitypub.service.common.ActivityType
@@ -17,7 +18,11 @@ class APDeleteProcessor(
 ) :
     AbstractActivityPubProcessor<Delete>(transaction) {
     override suspend fun internalProcess(activity: ActivityPubProcessContext<Delete>) {
-        val deleteId = activity.activity.`object`?.id ?: throw IllegalActivityPubObjectException("object.id is null")
+        val value = activity.activity.apObject
+        if (value !is HasId) {
+            throw IllegalActivityPubObjectException("object hasn't id")
+        }
+        val deleteId = value.id
 
         val post = try {
             postQueryService.findByApId(deleteId)

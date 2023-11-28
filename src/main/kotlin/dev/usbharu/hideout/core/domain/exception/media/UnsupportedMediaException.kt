@@ -1,5 +1,7 @@
 package dev.usbharu.hideout.core.domain.exception.media
 
+import java.io.Serial
+
 class UnsupportedMediaException : MediaException {
     constructor() : super()
     constructor(message: String?) : super(message)
@@ -11,4 +13,9 @@ class UnsupportedMediaException : MediaException {
         enableSuppression,
         writableStackTrace
     )
+
+    companion object {
+        @Serial
+        private const val serialVersionUID: Long = -116741513216017134L
+    }
 }

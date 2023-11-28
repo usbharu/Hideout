@@ -1,5 +1,7 @@
 package dev.usbharu.hideout.core.domain.exception.media
 
+import java.io.Serial
+
 open class MediaFileSizeException : MediaException {
     constructor() : super()
     constructor(message: String?) : super(message)
@@ -11,4 +13,9 @@ open class MediaFileSizeException : MediaException {
         enableSuppression,
         writableStackTrace
     )
+
+    companion object {
+        @Serial
+        private const val serialVersionUID: Long = 8672626879026555064L
+    }
 }

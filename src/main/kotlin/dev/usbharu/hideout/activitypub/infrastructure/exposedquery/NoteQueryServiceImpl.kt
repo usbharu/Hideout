@@ -64,7 +64,6 @@ class NoteQueryServiceImpl(private val postRepository: PostRepository, private v
                 this[Users.followers]
             )
         return Note(
-            name = "Post",
             id = this[Posts.apId],
             attributedTo = this[Users.url],
             content = this[Posts.text],

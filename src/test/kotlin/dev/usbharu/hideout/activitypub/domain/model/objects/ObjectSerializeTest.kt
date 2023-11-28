@@ -16,10 +16,7 @@ class ObjectSerializeTest {
         val readValue = objectMapper.readValue<Object>(json)
 
         val expected = Object(
-            listOf("Object"),
-            null,
-            null,
-            null
+            listOf("Object")
         )
         assertEquals(expected, readValue)
     }
@@ -34,10 +31,7 @@ class ObjectSerializeTest {
         val readValue = objectMapper.readValue<Object>(json)
 
         val expected = Object(
-            listOf("Hoge", "Object"),
-            null,
-            null,
-            null
+            listOf("Hoge", "Object")
         )
 
         assertEquals(expected, readValue)
@@ -53,10 +47,7 @@ class ObjectSerializeTest {
         val readValue = objectMapper.readValue<Object>(json)
 
         val expected = Object(
-            emptyList(),
-            null,
-            null,
-            null
+            emptyList()
         )
 
         assertEquals(expected, readValue)

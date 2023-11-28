@@ -15,9 +15,6 @@ class ObjectDeserializer : JsonDeserializer<Object>() {
         if (treeNode.isValueNode) {
             return ObjectValue(
                 emptyList(),
-                null,
-                null,
-                null,
                 treeNode.asText()
             )
         } else if (treeNode.isObject) {
