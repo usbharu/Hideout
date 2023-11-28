@@ -8,9 +8,7 @@ import dev.usbharu.hideout.activitypub.domain.model.objects.ObjectDeserializer
 open class Accept @JsonCreator constructor(
     type: List<String> = emptyList(),
     override val name: String,
-    @JsonDeserialize(using = ObjectDeserializer::class)
-    @Suppress("VariableNaming")
-    var `object`: Object?,
+    @JsonDeserialize(using = ObjectDeserializer::class) @Suppress("VariableNaming") var `object`: Object?,
     override val actor: String
 ) : Object(
     type = add(type, "Accept")

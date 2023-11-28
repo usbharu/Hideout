@@ -5,15 +5,12 @@ import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 open class Document(
     type: List<String> = emptyList(),
     override val name: String = "",
-    mediaType: String,
-    url: String
+    val mediaType: String,
+    val url: String
 ) : Object(
     type = add(type, "Document")
 ),
     HasName {
-
-    var mediaType: String? = mediaType
-    var url: String? = url
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

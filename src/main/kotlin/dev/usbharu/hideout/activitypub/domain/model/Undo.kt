@@ -4,27 +4,14 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 import dev.usbharu.hideout.activitypub.domain.model.objects.ObjectDeserializer
 
-open class Undo : Object, HasId, HasActor {
-
+open class Undo(
+    type: List<String> = emptyList(),
+    override val actor: String,
+    override val id: String,
     @JsonDeserialize(using = ObjectDeserializer::class)
-    @Suppress("VariableNaming")
-    var `object`: Object? = null
-    var published: String? = null
-    override val actor: String
-    override val id: String
-
-    constructor(
-        type: List<String> = emptyList(),
-        actor: String,
-        id: String,
-        `object`: Object,
-        published: String
-    ) : super(add(type, "Undo")) {
-        this.`object` = `object`
-        this.published = published
-        this.id = id
-        this.actor = actor
-    }
+    @Suppress("VariableNaming") val `object`: Object,
+    val published: String
+) : Object(add(type, "Undo")), HasId, HasActor {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

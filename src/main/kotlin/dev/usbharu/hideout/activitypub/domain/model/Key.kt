@@ -2,23 +2,15 @@ package dev.usbharu.hideout.activitypub.domain.model
 
 import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 
-open class Key : Object, HasId {
-    var owner: String? = null
-    var publicKeyPem: String? = null
-    override val id: String
-
-    constructor(
-        type: List<String>,
-        id: String,
-        owner: String?,
-        publicKeyPem: String?
-    ) : super(
-        type = add(list = type, type = "Key")
-    ) {
-        this.owner = owner
-        this.publicKeyPem = publicKeyPem
-        this.id = id
-    }
+open class Key(
+    type: List<String>,
+    override val id: String,
+    val owner: String,
+    val publicKeyPem: String
+) : Object(
+    type = add(list = type, type = "Key")
+),
+    HasId {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

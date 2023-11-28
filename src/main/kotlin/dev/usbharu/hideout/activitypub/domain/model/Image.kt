@@ -2,17 +2,13 @@ package dev.usbharu.hideout.activitypub.domain.model
 
 import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 
-open class Image : Object {
-    private var mediaType: String? = null
-    private var url: String? = null
-
-    protected constructor() : super()
-    constructor(type: List<String> = emptyList(), mediaType: String?, url: String?) : super(
-        add(type, "Image")
-    ) {
-        this.mediaType = mediaType
-        this.url = url
-    }
+open class Image(
+    type: List<String> = emptyList(),
+    val mediaType: String,
+    val url: String
+) : Object(
+    add(type, "Image")
+) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

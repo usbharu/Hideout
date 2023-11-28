@@ -2,22 +2,14 @@ package dev.usbharu.hideout.activitypub.domain.model
 
 import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 
-open class Follow : Object, HasActor {
-    @Suppress("VariableNaming")
-    var `object`: String? = null
-
+open class Follow(
+    type: List<String> = emptyList(),
+    @Suppress("VariableNaming") val `object`: String,
     override val actor: String
-
-    constructor(
-        type: List<String> = emptyList(),
-        `object`: String?,
-        actor: String
-    ) : super(
-        type = add(type, "Follow")
-    ) {
-        this.`object` = `object`
-        this.actor = actor
-    }
+) : Object(
+    type = add(type, "Follow")
+),
+    HasActor {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
