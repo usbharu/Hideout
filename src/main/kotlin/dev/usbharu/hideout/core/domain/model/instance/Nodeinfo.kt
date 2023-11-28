@@ -1,15 +1,11 @@
 package dev.usbharu.hideout.core.domain.model.instance
 
-class Nodeinfo {
+class Nodeinfo private constructor() {
 
     var links: List<Links> = emptyList()
-
-    private constructor()
 }
 
-class Links {
+class Links private constructor() {
     var rel: String? = null
     var href: String? = null
-
-    private constructor()
 }

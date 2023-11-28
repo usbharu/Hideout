@@ -26,7 +26,7 @@ open class Follow(
 
     override fun hashCode(): Int {
         var result = super.hashCode()
-        result = 31 * result + (`object`?.hashCode() ?: 0)
+        result = 31 * result + `object`.hashCode()
         result = 31 * result + actor.hashCode()
         return result
     }

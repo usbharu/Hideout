@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.generate
 
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.core.MethodParameter
 import org.springframework.web.bind.support.WebDataBinderFactory
@@ -49,6 +50,6 @@ class JsonOrFormModelMethodProcessor(
     }
 
     companion object {
-        val logger = LoggerFactory.getLogger(JsonOrFormModelMethodProcessor::class.java)
+        val logger: Logger = LoggerFactory.getLogger(JsonOrFormModelMethodProcessor::class.java)
     }
 }

@@ -90,7 +90,7 @@ class APNoteServiceImpl(
         requireNotNull(note.id) { "id is null" }
 
         return try {
-            noteQueryService.findByApid(note.id!!).first
+            noteQueryService.findByApid(note.id).first
         } catch (_: FailedToGetResourcesException) {
             saveNote(note, targetActor, url)
         }
@@ -127,9 +127,9 @@ class APNoteServiceImpl(
             .map {
                 mediaService.uploadRemoteMedia(
                     RemoteMedia(
-                        (it.name ?: it.url)!!,
-                        it.url!!,
-                        it.mediaType ?: "application/octet-stream",
+                        it.name,
+                        it.url,
+                        it.mediaType,
                         description = it.name
                     )
                 )
@@ -144,10 +144,10 @@ class APNoteServiceImpl(
                 text = note.content,
                 createdAt = Instant.parse(note.published).toEpochMilli(),
                 visibility = visibility,
-                url = note.id ?: url,
+                url = note.id,
                 replyId = reply?.id,
                 sensitive = note.sensitive,
-                apId = note.id ?: url,
+                apId = note.id,
                 mediaIds = mediaList
             )
         )
@@ -155,7 +155,7 @@ class APNoteServiceImpl(
     }
 
     override suspend fun fetchNote(note: Note, targetActor: String?): Note =
-        saveIfMissing(note, targetActor, note.id ?: throw IllegalArgumentException("note.id is null"))
+        saveIfMissing(note, targetActor, note.id)
 
     companion object {
         const val public: String = "https://www.w3.org/ns/activitystreams#Public"

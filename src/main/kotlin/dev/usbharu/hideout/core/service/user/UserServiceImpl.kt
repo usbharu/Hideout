@@ -52,8 +52,7 @@ class UserServiceImpl(
             createdAt = Instant.now(),
             following = "$userUrl/following",
             followers = "$userUrl/followers",
-            keyId = "$userUrl#pubkey",
-            instance = null
+            keyId = "$userUrl#pubkey"
         )
         return userRepository.save(userEntity)
     }

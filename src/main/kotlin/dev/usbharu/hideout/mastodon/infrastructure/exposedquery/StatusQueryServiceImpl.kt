@@ -11,6 +11,7 @@ import org.jetbrains.exposed.sql.select
 import org.springframework.stereotype.Repository
 import java.time.Instant
 
+@Suppress("IncompleteDestructuring")
 @Repository
 class StatusQueryServiceImpl : StatusQueryService {
     override suspend fun findByPostIds(ids: List<Long>): List<Status> = findByPostIdsWithMedia(ids)

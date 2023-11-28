@@ -1,7 +1,6 @@
 package dev.usbharu.hideout.activitypub.service.activity.follow
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import dev.usbharu.hideout.activitypub.domain.exception.IllegalActivityPubObjectException
 import dev.usbharu.hideout.activitypub.domain.model.Follow
 import dev.usbharu.hideout.activitypub.service.common.AbstractActivityPubProcessor
 import dev.usbharu.hideout.activitypub.service.common.ActivityPubProcessContext
@@ -22,9 +21,9 @@ class APFollowProcessor(
 
         // inboxをジョブキューに乗せているので既に不要だが、フォロー承認制アカウントを実装する際に必要なので残す
         val jobProps = ReceiveFollowJobParam(
-            activity.activity.actor ?: throw IllegalActivityPubObjectException("actor is null"),
+            activity.activity.actor,
             objectMapper.writeValueAsString(activity.activity),
-            activity.activity.`object` ?: throw IllegalActivityPubObjectException("object is null")
+            activity.activity.`object`
         )
         jobQueueParentService.scheduleTypeSafe(ReceiveFollowJob, jobProps)
     }

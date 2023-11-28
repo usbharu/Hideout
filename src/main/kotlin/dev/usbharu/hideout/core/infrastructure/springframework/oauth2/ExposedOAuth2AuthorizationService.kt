@@ -62,7 +62,7 @@ class ExposedOAuth2AuthorizationService(
                     it[accessTokenMetadata] = accessToken?.metadata?.let { it1 -> mapToJson(it1) }
                     it[accessTokenType] = accessToken?.token?.tokenType?.value
                     it[accessTokenScopes] =
-                        accessToken?.run { token.scopes.joinToString(",").takeIf { it.isNotEmpty() } }
+                        accessToken?.run { token.scopes.joinToString(",").takeIf { s -> s.isNotEmpty() } }
                     it[refreshTokenValue] = refreshToken?.token?.tokenValue
                     it[refreshTokenIssuedAt] = refreshToken?.token?.issuedAt
                     it[refreshTokenExpiresAt] = refreshToken?.token?.expiresAt
