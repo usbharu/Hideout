@@ -4,18 +4,16 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 import dev.usbharu.hideout.activitypub.domain.model.objects.ObjectDeserializer
 
-open class Delete : Object, HasId, HasActor, HasName {
+open class Delete : Object, HasId, HasActor {
     @JsonDeserialize(using = ObjectDeserializer::class)
     @Suppress("VariableNaming")
     var `object`: Object? = null
     var published: String? = null
     override val actor: String
     override val id: String
-    override val name: String
 
     constructor(
         type: List<String> = emptyList(),
-        name: String = "Delete",
         actor: String,
         id: String,
         `object`: Object,
@@ -23,7 +21,6 @@ open class Delete : Object, HasId, HasActor, HasName {
     ) : super(add(type, "Delete")) {
         this.`object` = `object`
         this.published = published
-        this.name = name
         this.actor = actor
         this.id = id
     }
@@ -39,7 +36,6 @@ open class Delete : Object, HasId, HasActor, HasName {
         if (published != other.published) return false
         if (actor != other.actor) return false
         if (id != other.id) return false
-        if (name != other.name) return false
 
         return true
     }
@@ -50,10 +46,9 @@ open class Delete : Object, HasId, HasActor, HasName {
         result = 31 * result + (published?.hashCode() ?: 0)
         result = 31 * result + actor.hashCode()
         result = 31 * result + id.hashCode()
-        result = 31 * result + name.hashCode()
         return result
     }
 
     override fun toString(): String =
-        "Delete(`object`=$`object`, published=$published, actor='$actor', id='$id', name='$name') ${super.toString()}"
+        "Delete(`object`=$`object`, published=$published, actor='$actor', id='$id') ${super.toString()}"
 }

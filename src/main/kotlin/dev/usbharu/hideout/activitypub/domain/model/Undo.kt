@@ -3,7 +3,6 @@ package dev.usbharu.hideout.activitypub.domain.model
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 import dev.usbharu.hideout.activitypub.domain.model.objects.ObjectDeserializer
-import java.time.Instant
 
 open class Undo : Object, HasId, HasActor {
 
@@ -19,10 +18,10 @@ open class Undo : Object, HasId, HasActor {
         actor: String,
         id: String,
         `object`: Object,
-        published: Instant
+        published: String
     ) : super(add(type, "Undo")) {
         this.`object` = `object`
-        this.published = published.toString()
+        this.published = published
         this.id = id
         this.actor = actor
     }

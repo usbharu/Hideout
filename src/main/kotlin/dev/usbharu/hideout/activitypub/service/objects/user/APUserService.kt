@@ -57,13 +57,11 @@ class APUserServiceImpl(
             url = userUrl,
             icon = Image(
                 type = emptyList(),
-                name = "$userUrl/icon.png",
                 mediaType = "image/png",
                 url = "$userUrl/icon.png"
             ),
             publicKey = Key(
                 type = emptyList(),
-                name = "Public Key",
                 id = userEntity.keyId,
                 owner = userUrl,
                 publicKeyPem = userEntity.publicKey
@@ -127,13 +125,11 @@ class APUserServiceImpl(
         url = id,
         icon = Image(
             type = emptyList(),
-            name = "$id/icon.png",
             mediaType = "image/png",
             url = "$id/icon.png"
         ),
         publicKey = Key(
             type = emptyList(),
-            name = "Public Key",
             id = userEntity.keyId,
             owner = id,
             publicKeyPem = userEntity.publicKey

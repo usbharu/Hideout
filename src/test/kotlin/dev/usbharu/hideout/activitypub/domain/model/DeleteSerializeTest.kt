@@ -46,7 +46,6 @@ class DeleteSerializeTest {
         val readValue = objectMapper.readValue<Delete>(json)
 
         val expected = Delete(
-            name = null,
             actor = "https://misskey.usbharu.dev/users/97ws8y3rj6",
             id = "https://misskey.usbharu.dev/4b5b6ed5-9269-45f3-8403-cba1e74b4b69",
             `object` = Tombstone(
@@ -61,7 +60,6 @@ class DeleteSerializeTest {
     @Test
     fun シリアライズできる() {
         val delete = Delete(
-            name = null,
             actor = "https://misskey.usbharu.dev/users/97ws8y3rj6",
             id = "https://misskey.usbharu.dev/4b5b6ed5-9269-45f3-8403-cba1e74b4b69",
             `object` = Tombstone(
@@ -75,7 +73,7 @@ class DeleteSerializeTest {
 
         val actual = objectMapper.writeValueAsString(delete)
         val expected =
-            """{"type":"Delete","actor":"https://misskey.usbharu.dev/users/97ws8y3rj6","id":"https://misskey.usbharu.dev/4b5b6ed5-9269-45f3-8403-cba1e74b4b69","object":{"type":"Tombstone","name":"Tombstone","id":"https://misskey.usbharu.dev/notes/9lkwqnwqk9"},"published":"2023-11-02T15:30:34.160Z"}"""
+            """{"type":"Delete","actor":"https://misskey.usbharu.dev/users/97ws8y3rj6","id":"https://misskey.usbharu.dev/4b5b6ed5-9269-45f3-8403-cba1e74b4b69","object":{"type":"Tombstone","id":"https://misskey.usbharu.dev/notes/9lkwqnwqk9"},"published":"2023-11-02T15:30:34.160Z"}"""
         assertEquals(expected, actual)
     }
 }

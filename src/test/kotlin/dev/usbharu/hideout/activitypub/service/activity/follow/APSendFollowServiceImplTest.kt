@@ -24,7 +24,6 @@ class APSendFollowServiceImplTest {
         apSendFollowServiceImpl.sendFollow(sendFollowDto)
 
         val value = Follow(
-            name = "Follow",
             `object` = sendFollowDto.followTargetUserId.url,
             actor = sendFollowDto.userId.url
         )
