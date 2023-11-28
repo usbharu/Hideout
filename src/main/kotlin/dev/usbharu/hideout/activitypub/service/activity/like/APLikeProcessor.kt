@@ -10,7 +10,9 @@ import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
 import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.query.PostQueryService
 import dev.usbharu.hideout.core.service.reaction.ReactionService
+import org.springframework.stereotype.Service
 
+@Service
 class APLikeProcessor(
     transaction: Transaction,
     private val apUserService: APUserService,

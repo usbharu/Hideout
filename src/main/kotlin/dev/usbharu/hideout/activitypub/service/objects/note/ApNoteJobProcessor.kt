@@ -10,7 +10,9 @@ import dev.usbharu.hideout.core.external.job.DeliverPostJobParam
 import dev.usbharu.hideout.core.query.UserQueryService
 import dev.usbharu.hideout.core.service.job.JobProcessor
 import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Service
 
+@Service
 class ApNoteJobProcessor(
     private val transaction: Transaction,
     private val objectMapper: ObjectMapper,

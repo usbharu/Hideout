@@ -9,7 +9,9 @@ import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
 import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.query.UserQueryService
 import dev.usbharu.hideout.core.service.user.UserService
+import org.springframework.stereotype.Service
 
+@Service
 class APUndoProcessor(
     transaction: Transaction,
     private val apUserService: APUserService,
