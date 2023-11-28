@@ -121,7 +121,7 @@ class SecurityConfig {
         userQueryService: UserQueryService
     ): HttpSignatureFilter {
         val httpSignatureFilter =
-            HttpSignatureFilter(DefaultSignatureHeaderParser(), transaction, apUserService, userQueryService)
+            HttpSignatureFilter(DefaultSignatureHeaderParser())
         httpSignatureFilter.setAuthenticationManager(authenticationManager)
         httpSignatureFilter.setContinueFilterChainOnUnsuccessfulAuthentication(false)
         val authenticationEntryPointFailureHandler =
@@ -134,18 +134,20 @@ class SecurityConfig {
     @Bean
     fun httpSignatureAuthenticationProvider(transaction: Transaction): PreAuthenticatedAuthenticationProvider {
         val provider = PreAuthenticatedAuthenticationProvider()
+        val signatureHeaderParser = DefaultSignatureHeaderParser()
         provider.setPreAuthenticatedUserDetailsService(
             HttpSignatureUserDetailsService(
                 userQueryService,
                 HttpSignatureVerifierComposite(
                     mapOf(
                         "rsa-sha256" to RsaSha256HttpSignatureVerifier(
-                            DefaultSignatureHeaderParser(), RsaSha256HttpSignatureSigner()
+                            signatureHeaderParser, RsaSha256HttpSignatureSigner()
                         )
                     ),
-                    DefaultSignatureHeaderParser()
+                    signatureHeaderParser
                 ),
-                transaction
+                transaction,
+                signatureHeaderParser
             )
         )
         provider.setUserDetailsChecker(AccountStatusUserDetailsChecker())
