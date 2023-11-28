@@ -14,6 +14,7 @@ import dev.usbharu.hideout.core.query.UserQueryService
 import dev.usbharu.hideout.core.service.job.JobProcessor
 import dev.usbharu.hideout.util.RsaUtil
 import dev.usbharu.httpsignature.common.HttpHeaders
+import dev.usbharu.httpsignature.common.HttpMethod
 import dev.usbharu.httpsignature.common.HttpRequest
 import dev.usbharu.httpsignature.common.PublicKey
 import dev.usbharu.httpsignature.verify.HttpSignatureVerifier
@@ -34,6 +35,15 @@ class InboxJobProcessor(
 ) : JobProcessor<InboxJobParam, InboxJob> {
 
     private suspend fun verifyHttpSignature(httpRequest: HttpRequest, signature: Signature): Boolean {
+
+        val requiredHeaders = when (httpRequest.method) {
+            HttpMethod.GET -> getRequiredHeaders
+            HttpMethod.POST -> postRequiredHeaders
+        }
+        if (signature.headers.containsAll(requiredHeaders).not()) {
+            return false
+        }
+
         val user = try {
             userQueryService.findByKeyId(signature.keyId)
         } catch (_: FailedToGetResourcesException) {
@@ -96,5 +106,7 @@ class InboxJobProcessor(
 
     companion object {
         private val logger = LoggerFactory.getLogger(InboxJobProcessor::class.java)
+        private val postRequiredHeaders = listOf("(request-target)", "date", "host", "digest")
+        private val getRequiredHeaders = listOf("(request-target)", "date", "host")
     }
 }
