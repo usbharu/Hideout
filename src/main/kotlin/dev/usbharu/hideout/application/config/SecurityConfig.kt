@@ -81,7 +81,7 @@ class SecurityConfig {
     ): SecurityFilterChain {
         val builder = MvcRequestMatcher.Builder(introspector)
         http
-            .securityMatcher("/inbox", "/outbox", "/users/*/inbox", "/users/*/outbox", "/users/*/posts/*")
+            .securityMatcher("/users/*/posts/*")
             .addFilter(httpSignatureFilter)
             .addFilterBefore(
                 ExceptionTranslationFilter(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)),
