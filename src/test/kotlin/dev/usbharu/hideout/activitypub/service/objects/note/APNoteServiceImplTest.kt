@@ -56,7 +56,6 @@ class APNoteServiceImplTest {
             onBlocking { findById(eq(post.userId)) } doReturn user
         }
         val expected = Note(
-            name = "Post",
             id = post.apId,
             attributedTo = user.url,
             content = post.text,
@@ -98,7 +97,6 @@ class APNoteServiceImplTest {
             onBlocking { findById(eq(post.userId)) } doReturn user
         }
         val note = Note(
-            name = "Post",
             id = post.apId,
             attributedTo = user.url,
             content = post.text,
@@ -124,13 +122,11 @@ class APNoteServiceImplTest {
             url = user.url,
             icon = Image(
                 type = emptyList(),
-                name = user.url + "/icon.png",
                 mediaType = "image/png",
                 url = user.url + "/icon.png"
             ),
             publicKey = Key(
                 type = emptyList(),
-                name = "Public Key",
                 id = user.keyId,
                 owner = user.url,
                 publicKeyPem = user.publicKey
@@ -177,7 +173,6 @@ class APNoteServiceImplTest {
                 onBlocking { findById(eq(post.userId)) } doReturn user
             }
             val note = Note(
-                name = "Post",
                 id = post.apId,
                 attributedTo = user.url,
                 content = post.text,
@@ -246,11 +241,11 @@ class APNoteServiceImplTest {
             outbox = user.outbox,
             url = user.url,
             icon = Image(
-                name = user.url + "/icon.png", mediaType = "image/png", url = user.url + "/icon.png"
+                mediaType = "image/png",
+                url = user.url + "/icon.png"
             ),
             publicKey = Key(
                 type = emptyList(),
-                name = "Public Key",
                 id = user.keyId,
                 owner = user.url,
                 publicKeyPem = user.publicKey
@@ -278,7 +273,6 @@ class APNoteServiceImplTest {
         )
 
         val note = Note(
-            name = "Post",
             id = post.apId,
             attributedTo = user.url,
             content = post.text,
@@ -311,7 +305,6 @@ class APNoteServiceImplTest {
             onBlocking { findById(eq(user.id)) } doReturn user
         }
         val note = Note(
-            name = "Post",
             id = post.apId,
             attributedTo = user.url,
             content = post.text,

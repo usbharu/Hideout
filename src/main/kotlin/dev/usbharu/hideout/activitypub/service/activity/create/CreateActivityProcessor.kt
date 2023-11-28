@@ -11,9 +11,9 @@ import org.springframework.stereotype.Service
 
 @Service
 class CreateActivityProcessor(transaction: Transaction, private val apNoteService: APNoteService) :
-    AbstractActivityPubProcessor<Create>(transaction, false) {
+    AbstractActivityPubProcessor<Create>(transaction) {
     override suspend fun internalProcess(activity: ActivityPubProcessContext<Create>) {
-        apNoteService.fetchNote(activity.activity.`object` as Note)
+        apNoteService.fetchNote(activity.activity.apObject as Note)
     }
 
     override fun isSupported(activityType: ActivityType): Boolean = activityType == ActivityType.Create

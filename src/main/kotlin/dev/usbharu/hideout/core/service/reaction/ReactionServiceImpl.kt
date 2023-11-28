@@ -6,6 +6,7 @@ import dev.usbharu.hideout.core.domain.model.reaction.Reaction
 import dev.usbharu.hideout.core.domain.model.reaction.ReactionRepository
 import dev.usbharu.hideout.core.query.ReactionQueryService
 import org.jetbrains.exposed.exceptions.ExposedSQLException
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -50,6 +51,6 @@ class ReactionServiceImpl(
     }
 
     companion object {
-        val LOGGER = LoggerFactory.getLogger(ReactionServiceImpl::class.java)
+        val LOGGER: Logger = LoggerFactory.getLogger(ReactionServiceImpl::class.java)
     }
 }

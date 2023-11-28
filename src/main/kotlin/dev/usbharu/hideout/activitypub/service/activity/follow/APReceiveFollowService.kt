@@ -18,11 +18,11 @@ class APReceiveFollowServiceImpl(
     @Qualifier("activitypub") private val objectMapper: ObjectMapper
 ) : APReceiveFollowService {
     override suspend fun receiveFollow(follow: Follow) {
-        logger.info("FOLLOW from: {} to: {}", follow.actor, follow.`object`)
+        logger.info("FOLLOW from: {} to: {}", follow.actor, follow.apObject)
         jobQueueParentService.schedule(ReceiveFollowJob) {
             props[ReceiveFollowJob.actor] = follow.actor
             props[ReceiveFollowJob.follow] = objectMapper.writeValueAsString(follow)
-            props[ReceiveFollowJob.targetActor] = follow.`object`
+            props[ReceiveFollowJob.targetActor] = follow.apObject
         }
         return
     }

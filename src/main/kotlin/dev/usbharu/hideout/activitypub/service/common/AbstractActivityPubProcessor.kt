@@ -5,13 +5,14 @@ import dev.usbharu.hideout.activitypub.domain.exception.FailedProcessException
 import dev.usbharu.hideout.activitypub.domain.exception.HttpSignatureUnauthorizedException
 import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 import dev.usbharu.hideout.application.external.Transaction
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 abstract class AbstractActivityPubProcessor<T : Object>(
     private val transaction: Transaction,
     private val allowUnauthorized: Boolean = false
 ) : ActivityPubProcessor<T> {
-    protected val logger = LoggerFactory.getLogger(this::class.java)
+    protected val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     override suspend fun process(activity: ActivityPubProcessContext<T>) {
         if (activity.isAuthorized.not() && allowUnauthorized.not()) {

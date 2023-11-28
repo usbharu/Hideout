@@ -25,6 +25,7 @@ class ActivityPubConfig {
             .enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
             .setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
             .setDefaultSetterInfo(JsonSetter.Value.forContentNulls(Nulls.AS_EMPTY))
+            .setDefaultSetterInfo(JsonSetter.Value.forValueNulls(Nulls.AS_EMPTY))
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .configure(JsonParser.Feature.ALLOW_COMMENTS, true)
             .configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true)
