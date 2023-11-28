@@ -17,13 +17,13 @@ class APFollowProcessor(
 ) :
     AbstractActivityPubProcessor<Follow>(transaction) {
     override suspend fun internalProcess(activity: ActivityPubProcessContext<Follow>) {
-        logger.info("FOLLOW from: {} to {}", activity.activity.actor, activity.activity.`object`)
+        logger.info("FOLLOW from: {} to {}", activity.activity.actor, activity.activity.apObject)
 
         // inboxをジョブキューに乗せているので既に不要だが、フォロー承認制アカウントを実装する際に必要なので残す
         val jobProps = ReceiveFollowJobParam(
             activity.activity.actor,
             objectMapper.writeValueAsString(activity.activity),
-            activity.activity.`object`
+            activity.activity.apObject
         )
         jobQueueParentService.scheduleTypeSafe(ReceiveFollowJob, jobProps)
     }

@@ -39,7 +39,7 @@ class APReceiveFollowJobProcessor(
             url = urlString,
             body = Accept(
                 name = "Follow",
-                `object` = follow,
+                apObject = follow,
                 actor = param.targetActor
             ),
             signer = signer

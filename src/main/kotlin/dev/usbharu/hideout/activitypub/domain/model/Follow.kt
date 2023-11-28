@@ -1,10 +1,11 @@
 package dev.usbharu.hideout.activitypub.domain.model
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 
 open class Follow(
     type: List<String> = emptyList(),
-    @Suppress("VariableNaming") val `object`: String,
+    @JsonProperty("object") val apObject: String,
     override val actor: String
 ) : Object(
     type = add(type, "Follow")
@@ -18,7 +19,7 @@ open class Follow(
 
         other as Follow
 
-        if (`object` != other.`object`) return false
+        if (apObject != other.apObject) return false
         if (actor != other.actor) return false
 
         return true
@@ -26,10 +27,10 @@ open class Follow(
 
     override fun hashCode(): Int {
         var result = super.hashCode()
-        result = 31 * result + `object`.hashCode()
+        result = 31 * result + apObject.hashCode()
         result = 31 * result + actor.hashCode()
         return result
     }
 
-    override fun toString(): String = "Follow(`object`=$`object`, actor='$actor') ${super.toString()}"
+    override fun toString(): String = "Follow(`object`=$apObject, actor='$actor') ${super.toString()}"
 }

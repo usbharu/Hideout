@@ -15,7 +15,7 @@ class APSendFollowServiceImpl(
 ) : APSendFollowService {
     override suspend fun sendFollow(sendFollowDto: SendFollowDto) {
         val follow = Follow(
-            `object` = sendFollowDto.followTargetUserId.url,
+            apObject = sendFollowDto.followTargetUserId.url,
             actor = sendFollowDto.userId.url
         )
 
