@@ -46,12 +46,12 @@ open class Like(
 
     override fun toString(): String {
         return "Like(" +
-                "actor='$actor', " +
-                "id='$id', " +
-                "apObject='$apObject', " +
-                "content='$content', " +
-                "tag=$tag" +
-                ")" +
-                " ${super.toString()}"
+            "actor='$actor', " +
+            "id='$id', " +
+            "apObject='$apObject', " +
+            "content='$content', " +
+            "tag=$tag" +
+            ")" +
+            " ${super.toString()}"
     }
 }

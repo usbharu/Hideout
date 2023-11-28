@@ -15,7 +15,9 @@ open class Accept @JsonCreator constructor(
     override val actor: String
 ) : Object(
     type = add(type, "Accept")
-), HasActor, HasName {
+),
+    HasActor,
+    HasName {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -41,10 +43,10 @@ open class Accept @JsonCreator constructor(
 
     override fun toString(): String {
         return "Accept(" +
-                "name='$name', " +
-                "apObject=$apObject, " +
-                "actor='$actor'" +
-                ")" +
-                " ${super.toString()}"
+            "name='$name', " +
+            "apObject=$apObject, " +
+            "actor='$actor'" +
+            ")" +
+            " ${super.toString()}"
     }
 }
