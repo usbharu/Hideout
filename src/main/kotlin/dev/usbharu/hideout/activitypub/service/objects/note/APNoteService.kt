@@ -1,7 +1,6 @@
 package dev.usbharu.hideout.activitypub.service.objects.note
 
 import dev.usbharu.hideout.activitypub.domain.exception.FailedToGetActivityPubResourceException
-import dev.usbharu.hideout.activitypub.domain.exception.IllegalActivityPubObjectException
 import dev.usbharu.hideout.activitypub.domain.model.Note
 import dev.usbharu.hideout.activitypub.query.NoteQueryService
 import dev.usbharu.hideout.activitypub.service.common.APResourceResolveService
@@ -99,7 +98,7 @@ class APNoteServiceImpl(
 
     private suspend fun saveNote(note: Note, targetActor: String?, url: String): Note {
         val person = apUserService.fetchPersonWithEntity(
-            note.attributedTo ?: throw IllegalActivityPubObjectException("note.attributedTo is null"),
+            note.attributedTo,
             targetActor
         )
 
@@ -142,7 +141,7 @@ class APNoteServiceImpl(
             postBuilder.of(
                 id = postRepository.generateId(),
                 userId = person.second.id,
-                text = note.content.orEmpty(),
+                text = note.content,
                 createdAt = Instant.parse(note.published).toEpochMilli(),
                 visibility = visibility,
                 url = note.id ?: url,
