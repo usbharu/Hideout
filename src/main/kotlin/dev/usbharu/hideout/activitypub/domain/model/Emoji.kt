@@ -25,8 +25,8 @@ open class Emoji(
 
     override fun hashCode(): Int {
         var result = super.hashCode()
-        result = 31 * result + (updated?.hashCode() ?: 0)
-        result = 31 * result + (icon?.hashCode() ?: 0)
+        result = 31 * result + updated.hashCode()
+        result = 31 * result + icon.hashCode()
         return result
     }
 

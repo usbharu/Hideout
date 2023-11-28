@@ -1,5 +1,7 @@
 package dev.usbharu.hideout.activitypub.domain.exception
 
+import java.io.Serial
+
 class FailedProcessException : RuntimeException {
     constructor() : super()
     constructor(message: String?) : super(message)
@@ -11,4 +13,9 @@ class FailedProcessException : RuntimeException {
         enableSuppression,
         writableStackTrace
     )
+
+    companion object {
+        @Serial
+        private const val serialVersionUID: Long = -1305337651143409144L
+    }
 }

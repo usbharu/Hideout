@@ -83,7 +83,7 @@ class APUserServiceImpl(
         } catch (ignore: FailedToGetResourcesException) {
             val person = apResourceResolveService.resolve<Person>(url, null as Long?)
 
-            val id = person.id ?: throw IllegalActivityPubObjectException("id is null")
+            val id = person.id
             try {
                 val userEntity = userQueryService.findByUrl(id)
                 return entityToPerson(userEntity, id) to userEntity
@@ -94,11 +94,11 @@ class APUserServiceImpl(
                     name = person.preferredUsername
                         ?: throw IllegalActivityPubObjectException("preferredUsername is null"),
                     domain = id.substringAfter("://").substringBefore("/"),
-                    screenName = (person.name ?: person.preferredUsername)
+                    screenName = person.name
                         ?: throw IllegalActivityPubObjectException("preferredUsername is null"),
                     description = person.summary.orEmpty(),
-                    inbox = person.inbox ?: throw IllegalActivityPubObjectException("inbox is null"),
-                    outbox = person.outbox ?: throw IllegalActivityPubObjectException("outbox is null"),
+                    inbox = person.inbox,
+                    outbox = person.outbox,
                     url = id,
                     publicKey = person.publicKey?.publicKeyPem
                         ?: throw IllegalActivityPubObjectException("publicKey is null"),

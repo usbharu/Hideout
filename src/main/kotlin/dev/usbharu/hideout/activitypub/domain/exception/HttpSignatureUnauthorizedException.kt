@@ -1,5 +1,7 @@
 package dev.usbharu.hideout.activitypub.domain.exception
 
+import java.io.Serial
+
 class HttpSignatureUnauthorizedException : RuntimeException {
     constructor() : super()
     constructor(message: String?) : super(message)
@@ -11,4 +13,9 @@ class HttpSignatureUnauthorizedException : RuntimeException {
         enableSuppression,
         writableStackTrace
     )
+
+    companion object {
+        @Serial
+        private const val serialVersionUID: Long = -6449793151674654501L
+    }
 }

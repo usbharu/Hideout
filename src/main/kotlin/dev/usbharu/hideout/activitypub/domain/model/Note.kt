@@ -54,6 +54,18 @@ constructor(
         return result
     }
 
-    override fun toString(): String =
-        "Note(id='$id', attributedTo='$attributedTo', content='$content', published='$published', to=$to, cc=$cc, sensitive=$sensitive, inReplyTo=$inReplyTo, attachment=$attachment) ${super.toString()}"
+    override fun toString(): String {
+        return "Note(" +
+                "id='$id', " +
+                "attributedTo='$attributedTo', " +
+                "content='$content', " +
+                "published='$published', " +
+                "to=$to, " +
+                "cc=$cc, " +
+                "sensitive=$sensitive, " +
+                "inReplyTo=$inReplyTo, " +
+                "attachment=$attachment" +
+                ")" +
+                " ${super.toString()}"
+    }
 }

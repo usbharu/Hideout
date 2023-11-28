@@ -28,8 +28,8 @@ open class Key(
 
     override fun hashCode(): Int {
         var result = super.hashCode()
-        result = 31 * result + (owner?.hashCode() ?: 0)
-        result = 31 * result + (publicKeyPem?.hashCode() ?: 0)
+        result = 31 * result + owner.hashCode()
+        result = 31 * result + publicKeyPem.hashCode()
         result = 31 * result + id.hashCode()
         return result
     }

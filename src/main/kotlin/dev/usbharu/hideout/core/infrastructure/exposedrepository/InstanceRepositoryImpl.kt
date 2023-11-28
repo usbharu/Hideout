@@ -54,7 +54,7 @@ class InstanceRepositoryImpl(private val idGenerateService: IdGenerateService) :
     }
 
     override suspend fun delete(instance: InstanceEntity) {
-        Instance.deleteWhere { Instance.id eq instance.id }
+        Instance.deleteWhere { id eq instance.id }
     }
 }
 

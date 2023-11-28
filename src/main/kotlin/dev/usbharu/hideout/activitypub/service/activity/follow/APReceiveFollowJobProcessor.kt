@@ -33,7 +33,7 @@ class APReceiveFollowJobProcessor(
 
         val signer = userQueryService.findByUrl(param.targetActor)
 
-        val urlString = person.inbox ?: throw IllegalArgumentException("inbox is not found.")
+        val urlString = person.inbox
 
         apRequestService.apPost(
             url = urlString,
@@ -47,7 +47,7 @@ class APReceiveFollowJobProcessor(
 
         val targetEntity = userQueryService.findByUrl(param.targetActor)
         val followActorEntity =
-            userQueryService.findByUrl(follow.actor ?: throw IllegalArgumentException("actor is null"))
+            userQueryService.findByUrl(follow.actor)
 
         userService.followRequest(targetEntity.id, followActorEntity.id)
         logger.info("SUCCESS Follow from: {} to: {}", param.targetActor, param.actor)

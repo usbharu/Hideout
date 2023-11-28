@@ -12,7 +12,7 @@ import dev.usbharu.hideout.core.query.UserQueryService
 import dev.usbharu.hideout.core.service.user.UserService
 
 class ApAcceptProcessor(
-    private val transaction: Transaction,
+    transaction: Transaction,
     private val userQueryService: UserQueryService,
     private val followerQueryService: FollowerQueryService,
     private val userService: UserService
@@ -23,14 +23,14 @@ class ApAcceptProcessor(
         val value = activity.activity.`object` ?: throw IllegalActivityPubObjectException("object is null")
 
         if (value.type.contains("Follow").not()) {
-            logger.warn("FAILED Activity type is not Follow.")
+            logger.warn("FAILED Activity type isn't Follow.")
             throw IllegalActivityPubObjectException("Invalid type ${value.type}")
         }
 
         val follow = value as Follow
 
-        val userUrl = follow.`object` ?: throw IllegalActivityPubObjectException("object is null")
-        val followerUrl = follow.actor ?: throw IllegalActivityPubObjectException("actor is null")
+        val userUrl = follow.`object`
+        val followerUrl = follow.actor
 
         val user = userQueryService.findByUrl(userUrl)
         val follower = userQueryService.findByUrl(followerUrl)

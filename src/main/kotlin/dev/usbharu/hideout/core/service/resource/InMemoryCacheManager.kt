@@ -18,7 +18,7 @@ class InMemoryCacheManager : CacheManager {
         keyMutex.withLock {
             cacheKey.filter { Instant.ofEpochMilli(it.value).plusSeconds(300) <= Instant.now() }
 
-            val cached = cacheKey.get(key)
+            val cached = cacheKey[key]
             if (cached == null) {
                 needRunBlock = true
                 cacheKey[key] = Instant.now().toEpochMilli()

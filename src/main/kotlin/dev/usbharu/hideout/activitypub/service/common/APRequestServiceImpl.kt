@@ -61,7 +61,7 @@ class APRequestServiceImpl(
         url: String
     ): HttpResponse {
         val headers = headers {
-            append("Accept", ContentType.Application.Activity)
+            append("Accept", Activity)
             append("Date", date)
             append("Host", u.host)
         }
@@ -87,13 +87,13 @@ class APRequestServiceImpl(
                     remove("Host")
                 }
             }
-            contentType(ContentType.Application.Activity)
+            contentType(Activity)
         }
         return httpResponse
     }
 
     private suspend fun apGetNotSign(url: String, date: String?) = httpClient.get(url) {
-        header("Accept", ContentType.Application.Activity)
+        header("Accept", Activity)
         header("Date", date)
     }
 
@@ -153,12 +153,12 @@ class APRequestServiceImpl(
         digest: String,
         requestBody: String?
     ) = httpClient.post(url) {
-        accept(ContentType.Application.Activity)
+        accept(Activity)
         header("Date", date)
         header("Digest", "sha-256=$digest")
         if (requestBody != null) {
             setBody(requestBody)
-            contentType(ContentType.Application.Activity)
+            contentType(Activity)
         }
     }
 
@@ -170,7 +170,7 @@ class APRequestServiceImpl(
         requestBody: String?
     ): HttpResponse {
         val headers = headers {
-            append("Accept", ContentType.Application.Activity)
+            append("Accept", Activity)
             append("Date", date)
             append("Host", u.host)
             append("Digest", "sha-256=$digest")
@@ -196,7 +196,7 @@ class APRequestServiceImpl(
                 remove("Host")
             }
             setBody(requestBody)
-            contentType(ContentType.Application.Activity)
+            contentType(Activity)
         }
         return httpResponse
     }

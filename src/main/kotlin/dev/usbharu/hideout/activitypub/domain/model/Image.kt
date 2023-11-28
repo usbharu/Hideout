@@ -25,8 +25,8 @@ open class Image(
 
     override fun hashCode(): Int {
         var result = super.hashCode()
-        result = 31 * result + (mediaType?.hashCode() ?: 0)
-        result = 31 * result + (url?.hashCode() ?: 0)
+        result = 31 * result + mediaType.hashCode()
+        result = 31 * result + url.hashCode()
         return result
     }
 

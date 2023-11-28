@@ -35,7 +35,7 @@ object AcctUtil {
             }
 
             else -> {
-                throw IllegalArgumentException("Invalid acct.(Too many @)")
+                throw IllegalArgumentException("Invalid acct. (Too many @)")
             }
         }
     }

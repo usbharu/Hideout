@@ -53,7 +53,7 @@ class InstanceServiceImpl(
                         name = nodeinfo20.metadata?.nodeName,
                         description = nodeinfo20.metadata?.nodeDescription,
                         url = resolveInstanceUrl,
-                        iconUrl = resolveInstanceUrl + "/favicon.ico",
+                        iconUrl = "$resolveInstanceUrl/favicon.ico",
                         sharedInbox = sharedInbox,
                         software = nodeinfo20.software?.name,
                         version = nodeinfo20.software?.version
@@ -72,7 +72,7 @@ class InstanceServiceImpl(
                         name = nodeinfo20.metadata?.nodeName,
                         description = nodeinfo20.metadata?.nodeDescription,
                         url = resolveInstanceUrl,
-                        iconUrl = resolveInstanceUrl + "/favicon.ico",
+                        iconUrl = "$resolveInstanceUrl/favicon.ico",
                         sharedInbox = sharedInbox,
                         software = nodeinfo20.software?.name,
                         version = nodeinfo20.software?.version
