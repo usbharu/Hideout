@@ -7,8 +7,8 @@ import dev.usbharu.hideout.activitypub.domain.model.objects.ObjectDeserializer
 open class Delete : Object, HasId, HasActor {
     @JsonDeserialize(using = ObjectDeserializer::class)
     @Suppress("VariableNaming")
-    var `object`: Object? = null
-    var published: String? = null
+    val `object`: Object
+    val published: String
     override val actor: String
     override val id: String
 
@@ -17,7 +17,7 @@ open class Delete : Object, HasId, HasActor {
         actor: String,
         id: String,
         `object`: Object,
-        published: String?
+        published: String
     ) : super(add(type, "Delete")) {
         this.`object` = `object`
         this.published = published

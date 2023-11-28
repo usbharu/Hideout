@@ -9,11 +9,11 @@ open class Create(
     override val name: String,
     @JsonDeserialize(using = ObjectDeserializer::class)
     @Suppress("VariableNaming")
-    var `object`: Object?,
+    val `object`: Object,
     override val actor: String,
     override val id: String,
-    var to: List<String> = emptyList(),
-    var cc: List<String> = emptyList()
+    val to: List<String> = emptyList(),
+    val cc: List<String> = emptyList()
 ) : Object(
     type = add(type, "Create")
 ),

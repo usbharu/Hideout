@@ -6,8 +6,8 @@ open class Emoji(
     type: List<String>,
     override val name: String,
     override val id: String,
-    var updated: String?,
-    var icon: Image?
+    val updated: String,
+    val icon: Image
 ) : Object(
     type = add(type, "Emoji")
 ),

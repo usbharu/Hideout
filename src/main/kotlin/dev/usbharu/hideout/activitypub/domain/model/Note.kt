@@ -7,14 +7,14 @@ open class Note
 constructor(
     type: List<String> = emptyList(),
     override val id: String,
-    var attributedTo: String,
-    var content: String,
-    var published: String,
-    var to: List<String> = emptyList(),
-    var cc: List<String> = emptyList(),
-    var sensitive: Boolean = false,
-    var inReplyTo: String? = null,
-    var attachment: List<Document> = emptyList()
+    val attributedTo: String,
+    val content: String,
+    val published: String,
+    val to: List<String> = emptyList(),
+    val cc: List<String> = emptyList(),
+    val sensitive: Boolean = false,
+    val inReplyTo: String? = null,
+    val attachment: List<Document> = emptyList()
 ) : Object(
     type = add(type, "Note")
 ),

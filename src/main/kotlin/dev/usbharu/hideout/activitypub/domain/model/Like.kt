@@ -4,32 +4,18 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 import dev.usbharu.hideout.activitypub.domain.model.objects.ObjectDeserializer
 
-open class Like : Object, HasId, HasActor {
-    @Suppress("VariableNaming")
-    var `object`: String? = null
-    var content: String? = null
-
-    @JsonDeserialize(contentUsing = ObjectDeserializer::class)
-    var tag: List<Object> = emptyList()
-    override val actor: String
-    override val id: String
-
-    constructor(
-        type: List<String> = emptyList(),
-        actor: String,
-        id: String,
-        `object`: String?,
-        content: String?,
-        tag: List<Object> = emptyList()
-    ) : super(
-        type = add(type, "Like")
-    ) {
-        this.`object` = `object`
-        this.content = content
-        this.tag = tag
-        this.actor = actor
-        this.id = id
-    }
+open class Like(
+    type: List<String> = emptyList(),
+    override val actor: String,
+    override val id: String,
+    @Suppress("VariableNaming") val `object`: String,
+    val content: String,
+    @JsonDeserialize(contentUsing = ObjectDeserializer::class) val tag: List<Object> = emptyList()
+) : Object(
+    type = add(type, "Like")
+),
+    HasId,
+    HasActor {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
