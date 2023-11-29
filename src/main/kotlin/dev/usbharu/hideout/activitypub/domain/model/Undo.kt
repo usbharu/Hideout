@@ -30,14 +30,13 @@ open class Undo(
 
     override fun hashCode(): Int {
         var result = super.hashCode()
-        result = 31 * result + (`object`?.hashCode() ?: 0)
-        result = 31 * result + (published?.hashCode() ?: 0)
+        result = 31 * result + `object`.hashCode()
+        result = 31 * result + published.hashCode()
         result = 31 * result + actor.hashCode()
         result = 31 * result + id.hashCode()
         return result
     }
 
-    override fun toString(): String {
-        return "Undo(`object`=$`object`, published=$published, actor='$actor', id='$id') ${super.toString()}"
-    }
+    override fun toString(): String =
+        "Undo(`object`=$`object`, published=$published, actor='$actor', id='$id') ${super.toString()}"
 }
