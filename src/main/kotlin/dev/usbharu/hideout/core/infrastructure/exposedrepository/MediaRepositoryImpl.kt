@@ -99,9 +99,9 @@ fun ResultRow.toMediaOrNull(): EntityMedia? {
 object Media : Table("media") {
     val id = long("id")
     val name = varchar("name", 255)
-    val url = varchar("url", 255)
-    val remoteUrl = varchar("remote_url", 255).nullable()
-    val thumbnailUrl = varchar("thumbnail_url", 255).nullable()
+    val url = varchar("url", 255).uniqueIndex()
+    val remoteUrl = varchar("remote_url", 255).uniqueIndex().nullable()
+    val thumbnailUrl = varchar("thumbnail_url", 255).uniqueIndex().nullable()
     val type = integer("type")
     val blurhash = varchar("blurhash", 255).nullable()
     val mimeType = varchar("mime_type", 255)
