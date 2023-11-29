@@ -1,5 +1,4 @@
-import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-import org.gradle.api.tasks.testing.logging.TestLogEvent
+
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
@@ -51,10 +50,6 @@ val integrationTest = task<Test>("integrationTest") {
     shouldRunAfter("test")
 
     useJUnitPlatform()
-
-    testLogging {
-        events("passed")
-    }
 }
 
 tasks.check { dependsOn(integrationTest) }
@@ -68,21 +63,6 @@ tasks.withType<Test> {
         jvmArgs = arrayOf(
             "--add-opens", "java.base/java.lang=ALL-UNNAMED"
         ).toMutableList()
-    }
-    testLogging {
-        events(
-            TestLogEvent.FAILED,
-            TestLogEvent.SKIPPED,
-            TestLogEvent.PASSED,
-            TestLogEvent.STANDARD_OUT,
-            TestLogEvent.STANDARD_ERROR,
-            TestLogEvent.STARTED
-        )
-        exceptionFormat = TestExceptionFormat.FULL
-        showCauses = true
-        showExceptions = true
-        showStackTraces = true
-        setShowStandardStreams(true)
     }
 }
 
