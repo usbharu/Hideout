@@ -180,6 +180,7 @@ dependencies {
     implementation("org.postgresql:postgresql:42.6.0")
     implementation("com.twelvemonkeys.imageio:imageio-webp:3.10.0")
     implementation("org.apache.tika:tika-core:2.9.1")
+    implementation("org.apache.tika:tika-parsers:2.9.1")
     implementation("net.coobird:thumbnailator:0.4.20")
     implementation("org.bytedeco:javacv-platform:1.5.9")
     implementation("org.flywaydb:flyway-core")
@@ -208,6 +209,7 @@ dependencies {
     intTestImplementation("org.springframework.security:spring-security-test")
     intTestImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     intTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
+    intTestImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
 
 }
 
