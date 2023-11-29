@@ -68,4 +68,46 @@ class MediaTest {
             .asyncDispatch()
             .andExpect { status { isOk() } }
     }
+
+    @Test
+    fun write_mediaスコープでメディアをアップロードできる() = runTest {
+        whenever(mediaDataStore.save(any<MediaSaveRequest>())).doReturn(SuccessSavedMedia("", "", ""))
+
+        mockMvc
+            .multipart("/api/v1/media") {
+
+                file(
+                    MockMultipartFile(
+                        "file",
+                        "400x400.png",
+                        "image/png",
+                        String.javaClass.classLoader.getResourceAsStream("media/400x400.png")
+                    )
+                )
+                with(jwt().jwt { it.claim("uid", "1") }.authorities(SimpleGrantedAuthority("SCOPE_write:media")))
+            }
+            .asyncDispatch()
+            .andExpect { status { isOk() } }
+    }
+
+    @Test
+    fun 権限がないと403() = runTest {
+        whenever(mediaDataStore.save(any<MediaSaveRequest>())).doReturn(SuccessSavedMedia("", "", ""))
+
+        mockMvc
+            .multipart("/api/v1/media") {
+
+                file(
+                    MockMultipartFile(
+                        "file",
+                        "400x400.png",
+                        "image/png",
+                        String.javaClass.classLoader.getResourceAsStream("media/400x400.png")
+                    )
+                )
+                with(jwt().jwt { it.claim("uid", "1") }.authorities(SimpleGrantedAuthority("SCOPE_read")))
+            }
+            .andExpect { status { isForbidden() } }
+    }
+
 }
