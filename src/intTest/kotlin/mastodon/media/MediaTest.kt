@@ -1,4 +1,4 @@
-package mastodon
+package mastodon.media
 
 import dev.usbharu.hideout.SpringApplication
 import dev.usbharu.hideout.core.service.media.MediaDataStore
