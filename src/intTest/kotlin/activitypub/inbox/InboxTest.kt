@@ -45,6 +45,7 @@ class InboxTest {
                 content = "{}"
                 contentType = MediaType.APPLICATION_JSON
             }
+            .asyncDispatch()
             .andExpect { status { isUnauthorized() } }
     }
 
@@ -55,6 +56,7 @@ class InboxTest {
             .post("/inbox") {
                 content = "{}"
                 contentType = MediaType.APPLICATION_JSON
+                header("Signature", "")
             }
             .asyncDispatch()
             .andExpect { status { isAccepted() } }
@@ -68,6 +70,7 @@ class InboxTest {
                 content = "{}"
                 contentType = MediaType.APPLICATION_JSON
             }
+            .asyncDispatch()
             .andExpect { status { isUnauthorized() } }
     }
 
@@ -78,6 +81,7 @@ class InboxTest {
             .post("/users/hoge/inbox") {
                 content = "{}"
                 contentType = MediaType.APPLICATION_JSON
+                header("Signature", "")
             }
             .asyncDispatch()
             .andExpect { status { isAccepted() } }

@@ -6,7 +6,6 @@ import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet
 import com.nimbusds.jose.jwk.source.JWKSource
 import com.nimbusds.jose.proc.SecurityContext
-import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
 import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.infrastructure.springframework.httpsignature.HttpSignatureFilter
 import dev.usbharu.hideout.core.infrastructure.springframework.httpsignature.HttpSignatureUserDetailsService
@@ -81,7 +80,7 @@ class SecurityConfig {
     ): SecurityFilterChain {
         val builder = MvcRequestMatcher.Builder(introspector)
         http
-            .securityMatcher("/inbox", "/outbox", "/users/*/inbox", "/users/*/outbox", "/users/*/posts/*")
+            .securityMatcher("/users/*/posts/*")
             .addFilter(httpSignatureFilter)
             .addFilterBefore(
                 ExceptionTranslationFilter(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)),
@@ -116,12 +115,9 @@ class SecurityConfig {
     @Bean
     fun getHttpSignatureFilter(
         authenticationManager: AuthenticationManager,
-        transaction: Transaction,
-        apUserService: APUserService,
-        userQueryService: UserQueryService
     ): HttpSignatureFilter {
         val httpSignatureFilter =
-            HttpSignatureFilter(DefaultSignatureHeaderParser(), transaction, apUserService, userQueryService)
+            HttpSignatureFilter(DefaultSignatureHeaderParser())
         httpSignatureFilter.setAuthenticationManager(authenticationManager)
         httpSignatureFilter.setContinueFilterChainOnUnsuccessfulAuthentication(false)
         val authenticationEntryPointFailureHandler =
@@ -134,18 +130,20 @@ class SecurityConfig {
     @Bean
     fun httpSignatureAuthenticationProvider(transaction: Transaction): PreAuthenticatedAuthenticationProvider {
         val provider = PreAuthenticatedAuthenticationProvider()
+        val signatureHeaderParser = DefaultSignatureHeaderParser()
         provider.setPreAuthenticatedUserDetailsService(
             HttpSignatureUserDetailsService(
                 userQueryService,
                 HttpSignatureVerifierComposite(
                     mapOf(
                         "rsa-sha256" to RsaSha256HttpSignatureVerifier(
-                            DefaultSignatureHeaderParser(), RsaSha256HttpSignatureSigner()
+                            signatureHeaderParser, RsaSha256HttpSignatureSigner()
                         )
                     ),
-                    DefaultSignatureHeaderParser()
+                    signatureHeaderParser
                 ),
-                transaction
+                transaction,
+                signatureHeaderParser
             )
         )
         provider.setUserDetailsChecker(AccountStatusUserDetailsChecker())
