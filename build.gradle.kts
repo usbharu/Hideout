@@ -2,7 +2,6 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
-import kotlin.math.max
 
 val ktor_version: String by project
 val kotlin_version: String by project
@@ -63,8 +62,8 @@ tasks.check { dependsOn(integrationTest) }
 tasks.withType<Test> {
     useJUnitPlatform()
     val cpus = Runtime.getRuntime().availableProcessors()
-    maxParallelForks = max(1, cpus - 1)
-    setForkEvery(4)
+//    maxParallelForks = max(1, cpus - 1)
+//    setForkEvery(4)
     doFirst {
         jvmArgs = arrayOf(
             "--add-opens", "java.base/java.lang=ALL-UNNAMED"
