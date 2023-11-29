@@ -190,6 +190,8 @@ class SecurityConfig {
             it.requestMatchers(builder.pattern("/change-password")).authenticated()
             it.requestMatchers(builder.pattern("/api/v1/accounts/verify_credentials"))
                 .hasAnyAuthority("SCOPE_read", "SCOPE_read:accounts")
+            it.requestMatchers(builder.pattern(HttpMethod.POST, "/api/v1/media"))
+                .hasAnyAuthority("SCOPE_write", "SCOPE_write:media")
             it.anyRequest().permitAll()
         }
         http.oauth2ResourceServer {
