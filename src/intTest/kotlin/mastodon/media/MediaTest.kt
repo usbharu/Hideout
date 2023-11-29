@@ -52,7 +52,7 @@ class MediaTest {
 
     @Test
     fun メディアをアップロードできる() = runTest {
-        whenever(mediaDataStore.save(any<MediaSaveRequest>())).doReturn(SuccessSavedMedia("", "", ""))
+        whenever(mediaDataStore.save(any<MediaSaveRequest>())).doReturn(SuccessSavedMedia("", "a", "a"))
 
         mockMvc
             .multipart("/api/v1/media") {
@@ -73,7 +73,7 @@ class MediaTest {
 
     @Test
     fun write_mediaスコープでメディアをアップロードできる() = runTest {
-        whenever(mediaDataStore.save(any<MediaSaveRequest>())).doReturn(SuccessSavedMedia("", "", ""))
+        whenever(mediaDataStore.save(any<MediaSaveRequest>())).doReturn(SuccessSavedMedia("", "b", "b"))
 
         mockMvc
             .multipart("/api/v1/media") {

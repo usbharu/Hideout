@@ -46,9 +46,9 @@ create table if not exists media
 (
     id            bigint primary key,
     "name"        varchar(255)  not null,
-    url           varchar(255)  not null,
-    remote_url    varchar(255)  null,
-    thumbnail_url varchar(255)  null,
+    url           varchar(255) not null unique,
+    remote_url    varchar(255) null unique,
+    thumbnail_url varchar(255) null unique,
     "type"        int           not null,
     blurhash      varchar(255)  null,
     mime_type     varchar(255)  not null,
