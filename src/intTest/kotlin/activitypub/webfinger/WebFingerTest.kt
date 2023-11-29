@@ -55,7 +55,7 @@ class WebFingerTest {
     @Test
     fun `webfinger 存在しないユーザーに404`() {
         mockMvc
-            .get("/.well-known/webfinger?resource=acct:test-user@example.com")
+            .get("/.well-known/webfinger?resource=acct:invalid-user-notfound-afdjashfal@example.com")
             .andExpect { status { isNotFound() } }
     }
 
