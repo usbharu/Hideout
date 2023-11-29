@@ -6,7 +6,6 @@ import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet
 import com.nimbusds.jose.jwk.source.JWKSource
 import com.nimbusds.jose.proc.SecurityContext
-import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
 import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.infrastructure.springframework.httpsignature.HttpSignatureFilter
 import dev.usbharu.hideout.core.infrastructure.springframework.httpsignature.HttpSignatureUserDetailsService
@@ -116,9 +115,6 @@ class SecurityConfig {
     @Bean
     fun getHttpSignatureFilter(
         authenticationManager: AuthenticationManager,
-        transaction: Transaction,
-        apUserService: APUserService,
-        userQueryService: UserQueryService
     ): HttpSignatureFilter {
         val httpSignatureFilter =
             HttpSignatureFilter(DefaultSignatureHeaderParser())
