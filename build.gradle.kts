@@ -13,7 +13,7 @@ plugins {
     kotlin("jvm") version "1.8.21"
     id("org.graalvm.buildtools.native") version "0.9.21"
     id("io.gitlab.arturbosch.detekt") version "1.23.1"
-    id("org.springframework.boot") version "3.1.3"
+    id("org.springframework.boot") version "3.2.0"
     kotlin("plugin.spring") version "1.8.21"
     id("org.openapi.generator") version "7.0.1"
     id("org.jetbrains.kotlinx.kover") version "0.7.4"
@@ -206,6 +206,8 @@ dependencies {
 
     intTestImplementation("org.springframework.boot:spring-boot-starter-test")
     intTestImplementation("org.springframework.security:spring-security-test")
+    intTestImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+    intTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
 
 }
 
