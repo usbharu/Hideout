@@ -3,7 +3,9 @@ package mastodon.apps
 import dev.usbharu.hideout.SpringApplication
 import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.RegisteredClient
 import org.assertj.core.api.Assertions.assertThat
+import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.select
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -84,5 +86,14 @@ class AppTest {
         assertThat(app[RegisteredClient.clientName]).isEqualTo("test-client-2")
         assertThat(app[RegisteredClient.redirectUris]).isEqualTo("https://example.com")
         assertThat(app[RegisteredClient.scopes]).isEqualTo("read,write")
+    }
+
+    companion object {
+        @JvmStatic
+        @AfterAll
+        fun dropDatabase(@Autowired flyway: Flyway) {
+            flyway.clean()
+            flyway.migrate()
+        }
     }
 }

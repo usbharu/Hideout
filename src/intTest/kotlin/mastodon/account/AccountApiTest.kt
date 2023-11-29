@@ -3,6 +3,8 @@ package mastodon.account
 import dev.usbharu.hideout.SpringApplication
 import dev.usbharu.hideout.core.infrastructure.exposedquery.UserQueryServiceImpl
 import kotlinx.coroutines.test.runTest
+import org.flywaydb.core.Flyway
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -36,7 +38,6 @@ class AccountApiTest {
     private lateinit var context: WebApplicationContext
 
     private lateinit var mockMvc: MockMvc
-
 
     @BeforeEach
     fun setUp() {
@@ -132,5 +133,14 @@ class AccountApiTest {
                 with(SecurityMockMvcRequestPostProcessors.csrf())
             }
             .andExpect { status { isBadRequest() } }
+    }
+
+    companion object {
+        @JvmStatic
+        @AfterAll
+        fun dropDatabase(@Autowired flyway: Flyway) {
+            flyway.clean()
+            flyway.migrate()
+        }
     }
 }

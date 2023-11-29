@@ -5,6 +5,8 @@ import dev.usbharu.hideout.core.service.media.MediaDataStore
 import dev.usbharu.hideout.core.service.media.MediaSaveRequest
 import dev.usbharu.hideout.core.service.media.SuccessSavedMedia
 import kotlinx.coroutines.test.runTest
+import org.flywaydb.core.Flyway
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -108,6 +110,15 @@ class MediaTest {
                 with(jwt().jwt { it.claim("uid", "1") }.authorities(SimpleGrantedAuthority("SCOPE_read")))
             }
             .andExpect { status { isForbidden() } }
+    }
+
+    companion object {
+        @JvmStatic
+        @AfterAll
+        fun dropDatabase(@Autowired flyway: Flyway) {
+            flyway.clean()
+            flyway.migrate()
+        }
     }
 
 }
