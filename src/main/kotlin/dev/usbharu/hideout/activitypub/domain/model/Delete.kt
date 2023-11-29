@@ -43,8 +43,8 @@ open class Delete : Object, HasId, HasActor {
 
     override fun hashCode(): Int {
         var result = super.hashCode()
-        result = 31 * result + (apObject?.hashCode() ?: 0)
-        result = 31 * result + (published?.hashCode() ?: 0)
+        result = 31 * result + apObject.hashCode()
+        result = 31 * result + published.hashCode()
         result = 31 * result + actor.hashCode()
         result = 31 * result + id.hashCode()
         return result
