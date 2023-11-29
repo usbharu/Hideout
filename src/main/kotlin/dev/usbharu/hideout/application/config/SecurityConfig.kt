@@ -180,7 +180,8 @@ class SecurityConfig {
                 builder.pattern("/api/v1/instance/**"),
                 builder.pattern("/.well-known/**"),
                 builder.pattern("/error"),
-                builder.pattern("/nodeinfo/2.0")
+                builder.pattern("/nodeinfo/2.0"),
+                builder.pattern("/api/v1/accounts")
             ).permitAll()
             it.requestMatchers(
                 builder.pattern("/auth/**")
@@ -188,7 +189,11 @@ class SecurityConfig {
             it.requestMatchers(builder.pattern("/change-password")).authenticated()
             it.requestMatchers(builder.pattern("/api/v1/accounts/verify_credentials"))
                 .hasAnyAuthority("SCOPE_read", "SCOPE_read:accounts")
-            it.anyRequest().permitAll()
+            it.requestMatchers(builder.pattern(HttpMethod.POST, "/api/v1/media"))
+                .hasAnyAuthority("SCOPE_write", "SCOPE_write:media")
+            it.requestMatchers(builder.pattern(HttpMethod.POST, "/api/v1/statuses"))
+                .hasAnyAuthority("SCOPE_write", "SCOPE_write:statuses")
+            it.anyRequest().authenticated()
         }
         http.oauth2ResourceServer {
             it.jwt(Customizer.withDefaults())

@@ -1,6 +1,6 @@
+
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
-import kotlin.math.max
 
 val ktor_version: String by project
 val kotlin_version: String by project
@@ -13,7 +13,7 @@ plugins {
     kotlin("jvm") version "1.8.21"
     id("org.graalvm.buildtools.native") version "0.9.21"
     id("io.gitlab.arturbosch.detekt") version "1.23.1"
-    id("org.springframework.boot") version "3.1.3"
+    id("org.springframework.boot") version "3.2.0"
     kotlin("plugin.spring") version "1.8.21"
     id("org.openapi.generator") version "7.0.1"
     id("org.jetbrains.kotlinx.kover") version "0.7.4"
@@ -50,10 +50,6 @@ val integrationTest = task<Test>("integrationTest") {
     shouldRunAfter("test")
 
     useJUnitPlatform()
-
-    testLogging {
-        events("passed")
-    }
 }
 
 tasks.check { dependsOn(integrationTest) }
@@ -61,8 +57,8 @@ tasks.check { dependsOn(integrationTest) }
 tasks.withType<Test> {
     useJUnitPlatform()
     val cpus = Runtime.getRuntime().availableProcessors()
-    maxParallelForks = max(1, cpus - 1)
-    setForkEvery(4)
+//    maxParallelForks = max(1, cpus - 1)
+//    setForkEvery(4)
     doFirst {
         jvmArgs = arrayOf(
             "--add-opens", "java.base/java.lang=ALL-UNNAMED"
@@ -180,6 +176,7 @@ dependencies {
     implementation("org.postgresql:postgresql:42.6.0")
     implementation("com.twelvemonkeys.imageio:imageio-webp:3.10.0")
     implementation("org.apache.tika:tika-core:2.9.1")
+    implementation("org.apache.tika:tika-parsers:2.9.1")
     implementation("net.coobird:thumbnailator:0.4.20")
     implementation("org.bytedeco:javacv-platform:1.5.9")
     implementation("org.flywaydb:flyway-core")
@@ -206,6 +203,9 @@ dependencies {
 
     intTestImplementation("org.springframework.boot:spring-boot-starter-test")
     intTestImplementation("org.springframework.security:spring-security-test")
+    intTestImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+    intTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
+    intTestImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
 
 }
 
