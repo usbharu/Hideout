@@ -13,6 +13,7 @@ import dev.usbharu.hideout.mastodon.interfaces.api.status.StatusesRequest
 import dev.usbharu.hideout.mastodon.interfaces.api.status.toPostVisibility
 import dev.usbharu.hideout.mastodon.interfaces.api.status.toStatusVisibility
 import dev.usbharu.hideout.mastodon.service.account.AccountService
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.Instant
 
@@ -38,12 +39,14 @@ class StatsesApiServiceImpl(
         statusesRequest: StatusesRequest,
         userId: Long
     ): Status = transaction.transaction {
+        logger.debug("START create post by mastodon api. {}", statusesRequest)
+
         val post = postService.createLocal(
             PostCreateDto(
                 text = statusesRequest.status.orEmpty(),
                 overview = statusesRequest.spoiler_text,
                 visibility = statusesRequest.visibility.toPostVisibility(),
-                repolyId = statusesRequest.in_reply_to_id?.toLongOrNull(),
+                repolyId = statusesRequest.in_reply_to_id?.toLong(),
                 userId = userId,
                 mediaIds = statusesRequest.media_ids.map { it.toLong() }
             )
@@ -90,5 +93,9 @@ class StatsesApiServiceImpl(
             text = post.text,
             editedAt = null,
         )
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(StatusesApiService::class.java)
     }
 }

@@ -13,6 +13,8 @@ import net.coobird.thumbnailator.Thumbnails
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
+import java.awt.Color
+import java.awt.image.BufferedImage
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.*
@@ -57,7 +59,14 @@ class ImageMediaProcessService(private val imageMediaProcessorConfiguration: Ima
         filePath: Path,
         thumbnails: Path?
     ): ProcessedMediaPath = withContext(Dispatchers.IO + MDCContext()) {
-        val bufferedImage = ImageIO.read(filePath.inputStream())
+        val read = ImageIO.read(filePath.inputStream())
+
+        val bufferedImage = BufferedImage(read.width, read.height, BufferedImage.TYPE_INT_RGB)
+
+        val graphics = bufferedImage.createGraphics()
+
+        graphics.drawImage(read, 0, 0, Color.BLACK, null)
+
         val tempFileName = UUID.randomUUID().toString()
         val tempFile = Files.createTempFile(tempFileName, "tmp")
 
@@ -67,9 +76,15 @@ class ImageMediaProcessService(private val imageMediaProcessorConfiguration: Ima
             tempThumbnailFile.outputStream().use {
                 val write = ImageIO.write(
                     if (thumbnails != null) {
-                        Thumbnails.of(thumbnails.toFile()).size(width, height).asBufferedImage()
+                        Thumbnails.of(thumbnails.toFile())
+                            .size(width, height)
+                            .imageType(BufferedImage.TYPE_INT_RGB)
+                            .asBufferedImage()
                     } else {
-                        Thumbnails.of(bufferedImage).size(width, height).asBufferedImage()
+                        Thumbnails.of(bufferedImage)
+                            .size(width, height)
+                            .imageType(BufferedImage.TYPE_INT_RGB)
+                            .asBufferedImage()
                     },
                     convertType,
                     it
