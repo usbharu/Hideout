@@ -54,6 +54,7 @@ class InboxControllerImplTest {
             .post("/inbox") {
                 content = json
                 contentType = MediaType.APPLICATION_JSON
+                header("Signature", "")
             }
             .asyncDispatch()
             .andExpect {
@@ -71,6 +72,7 @@ class InboxControllerImplTest {
             .post("/inbox") {
                 content = json
                 contentType = MediaType.APPLICATION_JSON
+                header("Signature", "")
             }
             .asyncDispatch()
             .andExpect {
@@ -96,6 +98,7 @@ class InboxControllerImplTest {
             .post("/inbox") {
                 content = json
                 contentType = MediaType.APPLICATION_JSON
+                header("Signature", "")
             }
             .asyncDispatch()
             .andExpect {
@@ -123,6 +126,7 @@ class InboxControllerImplTest {
             .post("/users/hoge/inbox") {
                 content = json
                 contentType = MediaType.APPLICATION_JSON
+                header("Signature", "")
             }
             .asyncDispatch()
             .andExpect {
@@ -140,6 +144,7 @@ class InboxControllerImplTest {
             .post("/users/hoge/inbox") {
                 content = json
                 contentType = MediaType.APPLICATION_JSON
+                header("Signature", "")
             }
             .asyncDispatch()
             .andExpect {
@@ -165,6 +170,7 @@ class InboxControllerImplTest {
             .post("/users/hoge/inbox") {
                 content = json
                 contentType = MediaType.APPLICATION_JSON
+                header("Signature", "")
             }
             .asyncDispatch()
             .andExpect {
