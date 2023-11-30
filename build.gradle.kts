@@ -1,4 +1,3 @@
-
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
@@ -32,12 +31,24 @@ sourceSets {
         compileClasspath += sourceSets.main.get().output
         runtimeClasspath += sourceSets.main.get().output
     }
+    create("e2eTest") {
+        compileClasspath += sourceSets.main.get().output
+        runtimeClasspath += sourceSets.main.get().output
+    }
 }
 
 val intTestImplementation by configurations.getting {
     extendsFrom(configurations.implementation.get())
 }
 val intTestRuntimeOnly by configurations.getting {
+    extendsFrom(configurations.runtimeOnly.get())
+}
+
+val e2eTestImplementation by configurations.getting {
+    extendsFrom(configurations.implementation.get())
+}
+
+val e2eTestRuntimeOnly by configurations.getting {
     extendsFrom(configurations.runtimeOnly.get())
 }
 
@@ -52,13 +63,24 @@ val integrationTest = task<Test>("integrationTest") {
     useJUnitPlatform()
 }
 
-tasks.check { dependsOn(integrationTest) }
+val e2eTest = task<Test>("e2eTest") {
+    description = "Runs e2e tests."
+    group = "verification"
+
+    testClassesDirs = sourceSets["e2eTest"].output.classesDirs
+    classpath = sourceSets["e2eTest"].runtimeClasspath
+    shouldRunAfter("test")
+
+    useJUnitPlatform()
+}
+
+tasks.check {
+    dependsOn(integrationTest)
+    dependsOn(e2eTest)
+}
 
 tasks.withType<Test> {
     useJUnitPlatform()
-    val cpus = Runtime.getRuntime().availableProcessors()
-//    maxParallelForks = max(1, cpus - 1)
-//    setForkEvery(4)
     doFirst {
         jvmArgs = arrayOf(
             "--add-opens", "java.base/java.lang=ALL-UNNAMED"
@@ -206,6 +228,13 @@ dependencies {
     intTestImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     intTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
     intTestImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
+
+    e2eTestImplementation("org.springframework.boot:spring-boot-starter-test")
+    e2eTestImplementation("org.springframework.security:spring-security-test")
+    e2eTestImplementation("org.springframework.boot:spring-boot-starter-webflux")
+    e2eTestImplementation("org.jsoup:jsoup:1.17.1")
+
+
 
 }
 
