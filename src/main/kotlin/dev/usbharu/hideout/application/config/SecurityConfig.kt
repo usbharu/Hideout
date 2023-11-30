@@ -13,28 +13,29 @@ import dev.usbharu.hideout.core.infrastructure.springframework.httpsignature.Htt
 import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.UserDetailsImpl
 import dev.usbharu.hideout.core.query.UserQueryService
 import dev.usbharu.hideout.util.RsaUtil
+import dev.usbharu.hideout.util.hasAnyScope
 import dev.usbharu.httpsignature.sign.RsaSha256HttpSignatureSigner
 import dev.usbharu.httpsignature.verify.DefaultSignatureHeaderParser
 import dev.usbharu.httpsignature.verify.RsaSha256HttpSignatureVerifier
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import org.springframework.core.annotation.Order
-import org.springframework.http.HttpMethod
+import org.springframework.http.HttpMethod.GET
+import org.springframework.http.HttpMethod.POST
 import org.springframework.http.HttpStatus
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.security.authentication.AccountStatusUserDetailsChecker
 import org.springframework.security.authentication.AuthenticationManager
-import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.config.annotation.web.invoke
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.Authentication
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -51,15 +52,14 @@ import org.springframework.security.web.authentication.AuthenticationEntryPointF
 import org.springframework.security.web.authentication.HttpStatusEntryPoint
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider
-import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher
+import org.springframework.security.web.savedrequest.RequestCacheAwareFilter
 import org.springframework.security.web.util.matcher.AnyRequestMatcher
-import org.springframework.web.servlet.handler.HandlerMappingIntrospector
 import java.security.KeyPairGenerator
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.util.*
 
-@EnableWebSecurity(debug = false)
+@EnableWebSecurity(debug = true)
 @Configuration
 @Suppress("FunctionMaxLength", "TooManyFunctions")
 class SecurityConfig {
@@ -75,40 +75,26 @@ class SecurityConfig {
     @Order(1)
     fun httpSignatureFilterChain(
         http: HttpSecurity,
-        httpSignatureFilter: HttpSignatureFilter,
-        introspector: HandlerMappingIntrospector
+        httpSignatureFilter: HttpSignatureFilter
     ): SecurityFilterChain {
-        val builder = MvcRequestMatcher.Builder(introspector)
-        http
-            .securityMatcher("/users/*/posts/*")
-            .addFilter(httpSignatureFilter)
-            .addFilterBefore(
-                ExceptionTranslationFilter(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)),
-                HttpSignatureFilter::class.java
-            )
-            .authorizeHttpRequests {
-                it.requestMatchers(
-                    builder.pattern("/inbox"),
-                    builder.pattern("/outbox"),
-                    builder.pattern("/users/*/inbox"),
-                    builder.pattern("/users/*/outbox")
-                ).authenticated()
-                it.anyRequest().permitAll()
+        http {
+            securityMatcher("/users/*/posts/*")
+            addFilterAt<RequestCacheAwareFilter>(httpSignatureFilter)
+            addFilterBefore<HttpSignatureFilter>(ExceptionTranslationFilter(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+            authorizeHttpRequests {
+                authorize(anyRequest, permitAll)
             }
-            .csrf {
-                it.disable()
-            }
-            .exceptionHandling {
-                it.authenticationEntryPoint(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
-                it.defaultAuthenticationEntryPointFor(
+            exceptionHandling {
+                authenticationEntryPoint = HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)
+                defaultAuthenticationEntryPointFor(
                     HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
                     AnyRequestMatcher.INSTANCE
                 )
             }
-            .sessionManagement {
-                it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            sessionManagement {
+                sessionCreationPolicy = SessionCreationPolicy.STATELESS
             }
-
+        }
         return http.build()
     }
 
@@ -152,59 +138,65 @@ class SecurityConfig {
 
     @Bean
     @Order(2)
-    fun oauth2SecurityFilterChain(http: HttpSecurity, introspector: HandlerMappingIntrospector): SecurityFilterChain {
-        val builder = MvcRequestMatcher.Builder(introspector)
-
+    fun oauth2SecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http)
-        http.exceptionHandling {
-            it.authenticationEntryPoint(
-                LoginUrlAuthenticationEntryPoint("/login")
-            )
-        }.oauth2ResourceServer {
-            it.jwt(Customizer.withDefaults())
+        http {
+            exceptionHandling {
+                authenticationEntryPoint = LoginUrlAuthenticationEntryPoint("/login")
+            }
+            oauth2ResourceServer {
+                jwt {
+
+                }
+            }
         }
         return http.build()
     }
 
     @Bean
     @Order(4)
-    fun defaultSecurityFilterChain(http: HttpSecurity, introspector: HandlerMappingIntrospector): SecurityFilterChain {
-        val builder = MvcRequestMatcher.Builder(introspector)
+    fun defaultSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
+        http {
+            authorizeHttpRequests {
 
-        http.authorizeHttpRequests {
-            it.requestMatchers(PathRequest.toH2Console()).permitAll()
-            it.requestMatchers(
-                builder.pattern("/inbox"),
-                builder.pattern("/users/*/inbox"),
-                builder.pattern("/api/v1/apps"),
-                builder.pattern("/api/v1/instance/**"),
-                builder.pattern("/.well-known/**"),
-                builder.pattern("/error"),
-                builder.pattern("/nodeinfo/2.0"),
-                builder.pattern("/api/v1/accounts")
-            ).permitAll()
-            it.requestMatchers(
-                builder.pattern("/auth/**")
-            ).anonymous()
-            it.requestMatchers(builder.pattern("/change-password")).authenticated()
-            it.requestMatchers(builder.pattern("/api/v1/accounts/verify_credentials"))
-                .hasAnyAuthority("SCOPE_read", "SCOPE_read:accounts")
-            it.requestMatchers(builder.pattern(HttpMethod.POST, "/api/v1/media"))
-                .hasAnyAuthority("SCOPE_write", "SCOPE_write:media")
-            it.requestMatchers(builder.pattern(HttpMethod.POST, "/api/v1/statuses"))
-                .hasAnyAuthority("SCOPE_write", "SCOPE_write:statuses")
-            it.anyRequest().authenticated()
-        }
-        http.oauth2ResourceServer {
-            it.jwt(Customizer.withDefaults())
-        }.passwordManagement { }.formLogin(Customizer.withDefaults()).csrf {
-            it.ignoringRequestMatchers(builder.pattern("/users/*/inbox"))
-            it.ignoringRequestMatchers(builder.pattern(HttpMethod.POST, "/api/v1/apps"))
-            it.ignoringRequestMatchers(builder.pattern("/inbox"))
-            it.ignoringRequestMatchers(PathRequest.toH2Console())
-        }.headers {
-            it.frameOptions { frameOptionsConfig ->
-                frameOptionsConfig.sameOrigin()
+                authorize("/error", permitAll)
+                authorize("/login", permitAll)
+                authorize(GET, "/.well-known/**", permitAll)
+                authorize(GET, "/nodeinfo/2.0", permitAll)
+
+                authorize(POST, "/inbox", permitAll)
+                authorize(POST, "/users/*/inbox", permitAll)
+
+                authorize(POST, "/api/v1/apps", permitAll)
+                authorize(GET, "/api/v1/instance/**", permitAll)
+                authorize(POST, "/api/v1/accounts", permitAll)
+
+                authorize("/auth/sign_up", hasRole("ANONYMOUS"))
+
+                authorize(GET, "/api/v1/accounts/verify_credentials", hasAnyScope("read", "read:accounts"))
+
+                authorize(POST, "/api/v1/media", hasAnyScope("write", "write:media"))
+                authorize(POST, "/api/v1/statuses", hasAnyScope("write", "write:statuses"))
+
+                authorize(anyRequest, authenticated)
+            }
+
+            oauth2ResourceServer {
+                jwt { }
+            }
+
+            formLogin {
+
+            }
+
+            csrf {
+                ignoringRequestMatchers("/users/*/inbox", "/inbox", "/api/v1/apps", "/api/v1/accounts")
+            }
+
+            headers {
+                frameOptions {
+                    sameOrigin = true
+                }
             }
         }
         return http.build()
