@@ -157,6 +157,11 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: MongoDB in GitHub Actions
+        uses: supercharge/mongodb-github-action@1.10.0
+        with:
+          mongodb-version: latest
+
       - name: Unit Test
         uses: gradle/gradle-build-action@v2.8.1
         with:
@@ -229,6 +234,7 @@ jobs:
 
   report-tests:
     if: success() || failure()
+    needs: [ unit-test,integration-test ]
     runs-on: ubuntu-latest
     steps:
       - name: JUnit Test Report
