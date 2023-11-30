@@ -1,3 +1,5 @@
+name: PullRequest Merge Check
+
 on:
   pull_request:
     branches:
@@ -12,6 +14,7 @@ permissions:
 
 jobs:
   setup:
+    name: Setup
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -61,6 +64,7 @@ jobs:
           arguments: testClasses
 
   unit-test:
+    name: Unit Test
     needs: [ setup ]
     runs-on: ubuntu-latest
     steps:
@@ -118,6 +122,7 @@ jobs:
           key: unit-test-report-${{ github.sha }}
 
   integration-test:
+    name: Integration Test
     needs: [ setup ]
     runs-on: ubuntu-latest
     steps:
@@ -180,6 +185,7 @@ jobs:
           key: integration-test-report-${{ github.sha }}
 
   coverage:
+    name: Coverage
     needs: [ setup ]
     runs-on: ubuntu-latest
     steps:
@@ -245,6 +251,7 @@ jobs:
           coverage-counter-type: LINE
 
   report-tests:
+    name: Report Tests
     if: success() || failure()
     needs: [ unit-test,integration-test ]
     runs-on: ubuntu-latest
@@ -267,6 +274,7 @@ jobs:
           report_paths: '**/TEST-*.xml'
 
   lint:
+    name: Lint
     needs: [ setup ]
     runs-on: ubuntu-latest
     steps:
