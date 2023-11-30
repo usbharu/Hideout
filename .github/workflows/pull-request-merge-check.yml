@@ -111,6 +111,12 @@ jobs:
         with:
           arguments: test
 
+      - name: Save Test Report
+        uses: actions/cache/save@v3
+        with:
+          path: build/test-results
+          key: unit-test-report-${{ github.sha }}
+
   integration-test:
     needs: [ setup ]
     runs-on: ubuntu-latest
@@ -166,6 +172,12 @@ jobs:
         uses: gradle/gradle-build-action@v2.8.1
         with:
           arguments: integrationTest
+
+      - name: Save Test Report
+        uses: actions/cache/save@v3
+        with:
+          path: build/test-results
+          key: integration-test-report-${{ github.sha }}
 
   coverage:
     needs: [ setup ]
@@ -237,12 +249,18 @@ jobs:
     needs: [ unit-test,integration-test ]
     runs-on: ubuntu-latest
     steps:
-      - name: Build Cache
-        uses: actions/cache@v3.3.2
+      - name: Restore Test Report
+        uses: actions/cache/restore@v3
         with:
-          path: |
-            build
-          key: gradle-build-${{ hashFiles('**/*.gradle.kts') }}-${{ hashFiles('src') }}-${{ github.sha }}
+          path: build/test-results
+          key: unit-test-report-${{ github.sha }}
+
+      - name: Restore Test Report
+        uses: actions/cache/restore@v3
+        with:
+          path: build/test-results
+          key: integration-test-report-${{ github.sha }}
+
       - name: JUnit Test Report
         uses: mikepenz/action-junit-report@v2
         with:
