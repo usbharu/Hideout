@@ -56,7 +56,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
       - name: Build
-        uses: gradle/gradle-build-action@2.8.1
+        uses: gradle/gradle-build-action@v2.8.1
         with:
           arguments: testClasses
 
@@ -107,7 +107,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Unit Test
-        uses: gradle/gradle-build-action@2.8.1
+        uses: gradle/gradle-build-action@v2.8.1
         with:
           arguments: test
 
@@ -158,7 +158,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Unit Test
-        uses: gradle/gradle-build-action@2.8.1
+        uses: gradle/gradle-build-action@v2.8.1
         with:
           arguments: integrationTest
 
