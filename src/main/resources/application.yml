@@ -36,7 +36,7 @@ spring:
       max-request-size: 40MB
   h2:
     console:
-      enabled: true
+      enabled: false
 server:
   tomcat:
     basedir: tomcat
