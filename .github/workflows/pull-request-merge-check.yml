@@ -30,8 +30,8 @@ jobs:
             ~/.gradle/cache/jars-*
             ~/.gradle/caches/transforms-*
             ~/.gradle/caches/modules-*
-          key: gradle-dependencies-${{  steps.cache-key.outputs.week }}-${{ hashFiles('**/*.gradle.kts') }}
-          restore-keys: gradle-dependencies-${{ steps.cache-key.outputs.week }}-
+          key: gradle-dependencies-${{ hashFiles('**/*.gradle.kts') }}
+          restore-keys: gradle-dependencies-
 
       - name: Cache
         uses: actions/cache@v3.3.2
@@ -40,8 +40,8 @@ jobs:
             ~/.gradle/caches/build-cache-*
             ~/.gradle/caches/[0-9]*.*
             .gradle
-          key: ${{ runner.os }}-gradle-build-${{ github.workflow }}-${{ steps.cache-key.outputs.week }}-${{ github.sha }}
-          restore-keys: ${{ runner.os }}-gradle-build-${{ github.workflow }}-${{ steps.cache-key.outputs.week }}-
+          key: ${{ runner.os }}-gradle-build-${{ github.workflow }}-${{ github.sha }}
+          restore-keys: ${{ runner.os }}-gradle-build-${{ github.workflow }}-
 
       - name: Build Cache
         uses: actions/cache@v3.3.2
@@ -80,8 +80,8 @@ jobs:
             ~/.gradle/cache/jars-*
             ~/.gradle/caches/transforms-*
             ~/.gradle/caches/modules-*
-          key: gradle-dependencies-${{  steps.cache-key.outputs.week }}-${{ hashFiles('**/*.gradle.kts') }}
-          restore-keys: gradle-dependencies-${{ steps.cache-key.outputs.week }}-
+          key: gradle-dependencies-${{ hashFiles('**/*.gradle.kts') }}
+          restore-keys: gradle-dependencies-
 
       - name: Cache
         uses: actions/cache@v3.3.2
@@ -90,8 +90,8 @@ jobs:
             ~/.gradle/caches/build-cache-*
             ~/.gradle/caches/[0-9]*.*
             .gradle
-          key: ${{ runner.os }}-gradle-build-${{ github.workflow }}-${{ steps.cache-key.outputs.week }}-${{ github.sha }}
-          restore-keys: ${{ runner.os }}-gradle-build-${{ github.workflow }}-${{ steps.cache-key.outputs.week }}-
+          key: ${{ runner.os }}-gradle-build-${{ github.workflow }}-${{ github.sha }}
+          restore-keys: ${{ runner.os }}-gradle-build-${{ github.workflow }}-
 
       - name: Build Cache
         uses: actions/cache@v3.3.2
@@ -137,8 +137,8 @@ jobs:
             ~/.gradle/cache/jars-*
             ~/.gradle/caches/transforms-*
             ~/.gradle/caches/modules-*
-          key: gradle-dependencies-${{  steps.cache-key.outputs.week }}-${{ hashFiles('**/*.gradle.kts') }}
-          restore-keys: gradle-dependencies-${{ steps.cache-key.outputs.week }}-
+          key: gradle-dependencies-${{ hashFiles('**/*.gradle.kts') }}
+          restore-keys: gradle-dependencies-
 
       - name: Cache
         uses: actions/cache@v3.3.2
@@ -147,8 +147,8 @@ jobs:
             ~/.gradle/caches/build-cache-*
             ~/.gradle/caches/[0-9]*.*
             .gradle
-          key: ${{ runner.os }}-gradle-build-${{ github.workflow }}-${{ steps.cache-key.outputs.week }}-${{ github.sha }}
-          restore-keys: ${{ runner.os }}-gradle-build-${{ github.workflow }}-${{ steps.cache-key.outputs.week }}-
+          key: ${{ runner.os }}-gradle-build-${{ github.workflow }}-${{ github.sha }}
+          restore-keys: ${{ runner.os }}-gradle-build-${{ github.workflow }}-
 
       - name: Build Cache
         uses: actions/cache@v3.3.2
@@ -199,8 +199,8 @@ jobs:
             ~/.gradle/cache/jars-*
             ~/.gradle/caches/transforms-*
             ~/.gradle/caches/modules-*
-          key: gradle-dependencies-${{  steps.cache-key.outputs.week }}-${{ hashFiles('**/*.gradle.kts') }}
-          restore-keys: gradle-dependencies-${{ steps.cache-key.outputs.week }}-
+          key: gradle-dependencies-${{ hashFiles('**/*.gradle.kts') }}
+          restore-keys: gradle-dependencies-
 
       - name: Cache
         uses: actions/cache@v3.3.2
@@ -209,8 +209,8 @@ jobs:
             ~/.gradle/caches/build-cache-*
             ~/.gradle/caches/[0-9]*.*
             .gradle
-          key: ${{ runner.os }}-gradle-build-${{ github.workflow }}-${{ steps.cache-key.outputs.week }}-${{ github.sha }}
-          restore-keys: ${{ runner.os }}-gradle-build-${{ github.workflow }}-${{ steps.cache-key.outputs.week }}-
+          key: ${{ runner.os }}-gradle-build-${{ github.workflow }}-${{ github.sha }}
+          restore-keys: ${{ runner.os }}-gradle-build-${{ github.workflow }}-
 
       - name: Build Cache
         uses: actions/cache@v3.3.2
@@ -286,8 +286,8 @@ jobs:
             ~/.gradle/cache/jars-*
             ~/.gradle/caches/transforms-*
             ~/.gradle/caches/modules-*
-          key: gradle-dependencies-${{  steps.cache-key.outputs.week }}-${{ hashFiles('**/*.gradle.kts') }}
-          restore-keys: gradle-dependencies-${{ steps.cache-key.outputs.week }}-
+          key: gradle-dependencies-${{ hashFiles('**/*.gradle.kts') }}
+          restore-keys: gradle-dependencies-
 
       - name: Cache
         uses: actions/cache@v3.3.2
@@ -296,8 +296,8 @@ jobs:
             ~/.gradle/caches/build-cache-*
             ~/.gradle/caches/[0-9]*.*
             .gradle
-          key: ${{ runner.os }}-gradle-build-${{ github.workflow }}-${{ steps.cache-key.outputs.week }}-${{ github.sha }}
-          restore-keys: ${{ runner.os }}-gradle-build-${{ github.workflow }}-${{ steps.cache-key.outputs.week }}-
+          key: ${{ runner.os }}-gradle-build-${{ github.workflow }}-${{ github.sha }}
+          restore-keys: ${{ runner.os }}-gradle-build-${{ github.workflow }}-
 
       - name: Build Cache
         uses: actions/cache@v3.3.2
