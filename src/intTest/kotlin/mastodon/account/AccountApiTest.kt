@@ -129,10 +129,34 @@ class AccountApiTest {
         mockMvc
             .post("/api/v1/accounts") {
                 contentType = MediaType.APPLICATION_FORM_URLENCODED
-                param("username", "api-test-user-3")
+                param("username", "api-test-user-4")
                 with(SecurityMockMvcRequestPostProcessors.csrf())
             }
             .andExpect { status { isBadRequest() } }
+    }
+
+    @Test
+    @WithAnonymousUser
+    fun apiV1AccountsPostでJSONで作ろうとしても400() {
+        mockMvc
+            .post("/api/v1/accounts") {
+                contentType = MediaType.APPLICATION_JSON
+                content = """{"username":"api-test-user-5","password":"very-very-secure-password"}"""
+                with(SecurityMockMvcRequestPostProcessors.csrf())
+            }
+            .andExpect { status { isUnsupportedMediaType() } }
+    }
+
+    @Test
+    @WithAnonymousUser
+    fun apiV1AccountsPostにCSRFトークンは必要() {
+        mockMvc
+            .post("/api/v1/accounts") {
+                contentType = MediaType.APPLICATION_FORM_URLENCODED
+                param("username", "api-test-user-2")
+                param("password", "very-secure-password")
+            }
+            .andExpect { status { isForbidden() } }
     }
 
     companion object {
