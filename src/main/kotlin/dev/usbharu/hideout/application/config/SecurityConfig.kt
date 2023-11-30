@@ -190,7 +190,7 @@ class SecurityConfig {
             }
 
             csrf {
-                ignoringRequestMatchers("/users/*/inbox", "/inbox", "/api/v1/apps", "/api/v1/accounts")
+                ignoringRequestMatchers("/users/*/inbox", "/inbox", "/api/v1/apps")
             }
 
             headers {
