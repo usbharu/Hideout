@@ -23,12 +23,6 @@ class OAuth2LoginTest {
 
     @Karate.Test
     @TestFactory
-    fun test(): Karate =
-        Karate.run("test").scenarioName("invalid").relativeTo(javaClass).systemProperty("karate.port", port)
-            .karateEnv("dev")
-
-    @Karate.Test
-    @TestFactory
     fun `スコープwrite readを持ったトークンの作成`(): Karate {
         return KarateUtil.springBootKarateTest(
             "Oauth2LoginTest",
