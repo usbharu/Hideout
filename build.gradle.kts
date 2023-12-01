@@ -233,6 +233,8 @@ dependencies {
     e2eTestImplementation("org.springframework.security:spring-security-test")
     e2eTestImplementation("org.springframework.boot:spring-boot-starter-webflux")
     e2eTestImplementation("org.jsoup:jsoup:1.17.1")
+    e2eTestImplementation("com.intuit.karate:karate-junit5:1.4.1")
+
 
 
 
