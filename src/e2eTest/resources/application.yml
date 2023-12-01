@@ -40,3 +40,7 @@ spring:
 #    excluded-packages: dev.usbharu.hideout.core.infrastructure.kjobexposed
 server:
   port: 8080
+  tomcat:
+    basedir: tomcat-e2e
+    accesslog:
+      enabled: true
