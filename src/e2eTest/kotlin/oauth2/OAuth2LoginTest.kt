@@ -1,67 +1,49 @@
 package oauth2
 
+import KarateUtil
+import com.intuit.karate.junit5.Karate
 import dev.usbharu.hideout.SpringApplication
-import org.jsoup.Jsoup
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation
-import org.junit.jupiter.api.Order
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestMethodOrder
+import org.flywaydb.core.Flyway
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.TestFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.http.MediaType
-import org.springframework.test.web.reactive.server.WebTestClient
-import org.springframework.web.reactive.function.BodyInserters
+import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.test.context.jdbc.Sql
 
 @SpringBootTest(
     classes = [SpringApplication::class],
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 )
-@TestMethodOrder(OrderAnnotation::class)
+@Sql("/oauth2/user.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 class OAuth2LoginTest {
 
-    @Autowired
-    private lateinit var webTestClient: WebTestClient
+    @LocalServerPort
+    private var port = ""
 
-    @Test
-    @Order(2)
-    fun アカウント作成() {
-        val returnResult = webTestClient.get()
-            .uri("/auth/sign_up")
-            .exchange()
-            .expectStatus()
-            .isOk
-            .returnResult(String::class.java)
+    @Karate.Test
+    @TestFactory
+    fun test(): Karate =
+        Karate.run("test").scenarioName("invalid").relativeTo(javaClass).systemProperty("karate.port", port)
+            .karateEnv("dev")
 
-        val html = returnResult
-            .responseBody
-            .toStream()
-            .toList()
-            .toList()
-            .joinToString("")
-
-        val session = returnResult.responseCookies["JSESSIONID"]?.first()?.value!!
-
-        val attr = Jsoup.parse(html).selectXpath("//input[@name=\"_csrf\"]").attr("value")
-
-        println("CSRF TOKEN = $attr")
-
-        webTestClient
-            .post()
-            .uri("/api/v1/accounts")
-            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-            .body(
-                BodyInserters.fromFormData("username", "oatuh-login-test")
-                    .with("password", "very-secure-password").with("_csrf", attr)
-            )
-            .cookie("JSESSIONID", session)
-            .exchange()
-            .expectStatus().isFound
-            .expectCookie()
-
+    @Karate.Test
+    @TestFactory
+    fun `スコープwrite readを持ったトークンの作成`(): Karate {
+        return KarateUtil.springBootKarateTest(
+            "Oauth2LoginTest",
+            "スコープwrite readを持ったトークンの作成",
+            javaClass,
+            port
+        )
     }
 
-//    @Test
-//    fun `OAuth2で権限read writeを持ったトークンでのログインができる`() {
-////        webTestClient.post().uri("/api/v1/apps")
-//    }
+    companion object {
+        @JvmStatic
+        @AfterAll
+        fun dropDatabase(@Autowired flyway: Flyway) {
+            flyway.clean()
+            flyway.migrate()
+        }
+    }
 }
