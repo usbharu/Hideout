@@ -38,6 +38,17 @@ class OAuth2LoginTest {
         )
     }
 
+    @Karate.Test
+    @TestFactory
+    fun `スコープread_statuses write_statusesを持ったトークンの作成`(): Karate {
+        return KarateUtil.springBootKarateTest(
+            "Oauth2LoginTest",
+            "スコープread:statuses write:statusesを持ったトークンの作成",
+            javaClass,
+            port
+        )
+    }
+
     companion object {
         @JvmStatic
         @AfterAll

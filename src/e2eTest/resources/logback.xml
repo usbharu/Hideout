@@ -16,6 +16,6 @@
         <appender-ref ref="FILE"/>
     </root>
     <logger name="org.springframework.security" level="TRACE"/>
-    <logger name="c.i.k.driver.chrome_" level="DEBUG"/>
+    <logger name="com.intuit.karate.driver" level="INFO"/>
     <logger name="org.thymeleaf.TemplateEngine.CONFIG" level="INFO"/>
 </configuration>
