@@ -40,3 +40,5 @@ out/
 /src/main/web/generated/
 /stats.html
 /tomcat/
+/tomcat-e2e/
+/e2eTest.log
