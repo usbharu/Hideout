@@ -45,15 +45,13 @@ class OAuth2LoginTest {
 
         println("CSRF TOKEN = $attr")
 
-        val csrfToken = attr
-
         webTestClient
             .post()
             .uri("/api/v1/accounts")
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .body(
                 BodyInserters.fromFormData("username", "oatuh-login-test")
-                    .with("password", "very-secure-password").with("_csrf", csrfToken)
+                    .with("password", "very-secure-password").with("_csrf", attr)
             )
             .cookie("JSESSIONID", session)
             .exchange()
