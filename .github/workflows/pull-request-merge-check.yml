@@ -116,6 +116,7 @@ jobs:
           arguments: test
 
       - name: Save Test Report
+        if: always()
         uses: actions/cache/save@v3
         with:
           path: build/test-results
@@ -179,6 +180,7 @@ jobs:
           arguments: integrationTest
 
       - name: Save Test Report
+        if: always()
         uses: actions/cache/save@v3
         with:
           path: build/test-results
@@ -395,6 +397,7 @@ jobs:
           arguments: e2eTest
 
       - name: Save Test Report
+        if: always()
         uses: actions/cache/save@v3
         with:
           path: build/test-results
