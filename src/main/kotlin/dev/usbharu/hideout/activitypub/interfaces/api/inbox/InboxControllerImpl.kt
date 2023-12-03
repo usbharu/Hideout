@@ -23,7 +23,9 @@ class InboxControllerImpl(private val apService: APService) : InboxController {
         val request = (requireNotNull(RequestContextHolder.getRequestAttributes()) as ServletRequestAttributes).request
 
         val headersList = request.headerNames?.toList().orEmpty()
-        if (headersList.contains("Signature").not()) {
+        LOGGER.trace("Inbox Headers {}", headersList)
+
+        if (headersList.map { it.lowercase() }.contains("signature").not()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .header(
                     WWW_AUTHENTICATE,
