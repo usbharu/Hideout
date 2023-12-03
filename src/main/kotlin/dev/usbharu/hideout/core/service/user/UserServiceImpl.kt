@@ -60,6 +60,7 @@ class UserServiceImpl(
 
     @Transactional
     override suspend fun createRemoteUser(user: RemoteUserCreateDto): User {
+        logger.info("START Create New remote user. name: {} url: {}", user.name, user.url)
         @Suppress("TooGenericExceptionCaught")
         val instance = try {
             instanceService.fetchInstance(user.url, user.sharedInbox)
@@ -86,8 +87,11 @@ class UserServiceImpl(
             instance = instance?.id
         )
         return try {
-            userRepository.save(userEntity)
+            val save = userRepository.save(userEntity)
+            logger.warn("SUCCESS Create New remote user. id: {} name: {} url: {}", userEntity.id, user.name, user.url)
+            save
         } catch (_: ExposedSQLException) {
+            logger.warn("FAILED User already exists. name: {} url: {}", user.name, user.url)
             userQueryService.findByUrl(user.url)
         }
     }

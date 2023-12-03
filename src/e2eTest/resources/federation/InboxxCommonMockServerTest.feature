@@ -2,10 +2,13 @@ Feature: InboxCommonMockServer
 
   Background:
     * def assertInbox = Java.type(`federation.InboxCommonTest`)
+    * def req = {req: []}
 
-  Scenario: pathMatches('/users/test-user') && methodIs('get')
+  Scenario: pathMatches('/users/{username}') && methodIs('get')
     * def remoteUrl =  'http://localhost:' + assertInbox.getRemotePort()
-    * def userUrl = remoteUrl + '/users/test-user'
+    * def username = pathParams.username
+    * def userUrl = remoteUrl + '/users/' + username
+
 
     * def person =
     """
@@ -77,16 +80,16 @@ Feature: InboxCommonMockServer
   "outbox": #(userUrl  + '/outbox'),
   "featured": #(userUrl  + '/collections/featured'),
   "featuredTags": #(userUrl  + '/collections/tags'),
-  "preferredUsername": "test-user",
-  "name": "test-user",
+  "preferredUsername": #(username),
+  "name": #(username),
   "summary": "E2E Test User Jaga/Cotlin/Winter Boot/Ktol\nYonTude: https://example.com\nY(Tvvitter): https://example.com\n",
-  "url": #(userUrl + '/@test-user'),
+  "url": #(userUrl + '/@' + username),
   "manuallyApprovesFollowers": false,
   "discoverable": true,
   "published": "2016-03-16T00:00:00Z",
   "devices": #(userUrl  + '/collections/devices'),
   "alsoKnownAs": [
-    "https://example.com/users/test-users"
+     #( 'https://example.com/users/' + username)
   ],
   "publicKey": {
     "id": #(userUrl  + '#main-key'),
@@ -122,5 +125,12 @@ Feature: InboxCommonMockServer
 }
 
     """
-
+    * set req.req[] = '/users/' + username
     * def response = person
+
+  Scenario: pathMatches('/internal-assertion-api/requests') && methodIs('get')
+    * def response = req
+
+  Scenario: pathMatches('/internal-assertion-api/requests/deleteAll') && methodIs('post')
+    * set req.req = []
+    * def responseStatus = 200
