@@ -81,7 +81,6 @@ class InboxJobProcessor(
     }
 
     override suspend fun process(param: InboxJobParam) {
-
         val jsonNode = objectMapper.readTree(param.json)
 
         logger.info("START Process inbox. type: {}", param.type)
