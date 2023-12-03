@@ -126,7 +126,6 @@ class APNoteServiceImplTest {
                 url = user.url + "/icon.png"
             ),
             publicKey = Key(
-                type = emptyList(),
                 id = user.keyId,
                 owner = user.url,
                 publicKeyPem = user.publicKey
@@ -245,7 +244,6 @@ class APNoteServiceImplTest {
                 url = user.url + "/icon.png"
             ),
             publicKey = Key(
-                type = emptyList(),
                 id = user.keyId,
                 owner = user.url,
                 publicKeyPem = user.publicKey
