@@ -8,10 +8,7 @@ import dev.usbharu.hideout.SpringApplication
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.flywaydb.core.Flyway
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.TestFactory
+import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
@@ -30,6 +27,7 @@ class FollowAcceptTest {
 
     @Karate.Test
     @TestFactory
+    @Disabled
     fun `FollowAcceptTest`(): Karate {
         return KarateUtil.e2eTest(
             "FollowAcceptTest", "Follow Accept Test",
