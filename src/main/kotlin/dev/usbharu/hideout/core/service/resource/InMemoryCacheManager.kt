@@ -29,6 +29,7 @@ class InMemoryCacheManager : CacheManager {
             }
         }
         if (needRunBlock) {
+            @Suppress("TooGenericExceptionCaught")
             val processed = try {
                 block()
             } catch (e: Exception) {
