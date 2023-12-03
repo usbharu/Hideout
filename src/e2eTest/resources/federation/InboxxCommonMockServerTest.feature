@@ -72,52 +72,52 @@ Feature: InboxCommonMockServer
   "id": #(userUrl),
   "type": "Person",
   "following": #(userUrl + '/following'),
-  "followers": "https://mastodon.social/users/Gargron/followers",
-  "inbox": "https://mastodon.social/users/Gargron/inbox",
-  "outbox": "https://mastodon.social/users/Gargron/outbox",
-  "featured": "https://mastodon.social/users/Gargron/collections/featured",
-  "featuredTags": "https://mastodon.social/users/Gargron/collections/tags",
+  "followers": #(userUrl  + '/followers'),
+  "inbox": #(userUrl  + '/inbox'),
+  "outbox": #(userUrl  + '/outbox'),
+  "featured": #(userUrl  + '/collections/featured'),
+  "featuredTags": #(userUrl  + '/collections/tags'),
   "preferredUsername": "test-user",
   "name": "test-user",
-  "summary": "\u003cp\u003eFounder, CEO and lead developer \u003cspan class=\"h-card\"\u003e\u003ca href=\"https://mastodon.social/@Mastodon\" class=\"u-url mention\"\u003e@\u003cspan\u003eMastodon\u003c/span\u003e\u003c/a\u003e\u003c/span\u003e, Germany.\u003c/p\u003e",
-  "url": "https://mastodon.social/@Gargron",
+  "summary": "E2E Test User Jaga/Cotlin/Winter Boot/Ktol\nYonTude: https://example.com\nY(Tvvitter): https://example.com\n",
+  "url": #(userUrl + '/@test-user'),
   "manuallyApprovesFollowers": false,
   "discoverable": true,
   "published": "2016-03-16T00:00:00Z",
-  "devices": "https://mastodon.social/users/Gargron/collections/devices",
+  "devices": #(userUrl  + '/collections/devices'),
   "alsoKnownAs": [
-    "https://tooting.ai/users/Gargron"
+    "https://example.com/users/test-users"
   ],
   "publicKey": {
-    "id": "https://mastodon.social/users/Gargron#main-key",
-    "owner": "https://mastodon.social/users/Gargron",
-    "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvXc4vkECU2/CeuSo1wtn\nFoim94Ne1jBMYxTZ9wm2YTdJq1oiZKif06I2fOqDzY/4q/S9uccrE9Bkajv1dnkO\nVm31QjWlhVpSKynVxEWjVBO5Ienue8gND0xvHIuXf87o61poqjEoepvsQFElA5ym\novljWGSA/jpj7ozygUZhCXtaS2W5AD5tnBQUpcO0lhItYPYTjnmzcc4y2NbJV8hz\n2s2G8qKv8fyimE23gY1XrPJg+cRF+g4PqFXujjlJ7MihD9oqtLGxbu7o1cifTn3x\nBfIdPythWu5b4cujNsB3m3awJjVmx+MHQ9SugkSIYXV0Ina77cTNS0M2PYiH1PFR\nTwIDAQAB\n-----END PUBLIC KEY-----\n"
+    "id": #(userUrl  + '#main-key'),
+    "owner": #(userUrl),
+    "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvmtKo0xYGXR4M0LQQhK4\nBkKpRvvUxrqGV6Ew4CBHSyzdnbFsiBqHUWz4JvRiQvAPqQ4jQFpxVZCPr9xx6lJp\nx7EAAKIdVTnBBV4CYfu7QPsRqtjbB5408q+mo5oUXNs8xg2tcC42p2SJ5CRJX/fr\nOgCZwo3LC9pOBdCQZ+tiiPmWNBTNby99JZn4D/xNcwuhV04qcPoHYD9OPuxxGyzc\naVJ2mqJmvi/lewQuR8qnUIbz+Gik+xvyG6LmyuDoa1H2LDQfQXYb62G70HsYdu7a\ndObvZovytp+kkjP/cUaIYkhhOAYqAA4zCwVRY4NHK0MAMq9sMoUfNJa8U+zR9NvD\noQIDAQAB\n-----END PUBLIC KEY-----\n"
   },
   "tag": [],
   "attachment": [
     {
       "type": "PropertyValue",
-      "name": "Patreon",
-      "value": "\u003ca href=\"https://www.patreon.com/mastodon\" target=\"_blank\" rel=\"nofollow noopener noreferrer me\"\u003e\u003cspan class=\"invisible\"\u003ehttps://www.\u003c/span\u003e\u003cspan class=\"\"\u003epatreon.com/mastodon\u003c/span\u003e\u003cspan class=\"invisible\"\u003e\u003c/span\u003e\u003c/a\u003e"
+      "name": "Pixib Fan-Bridge",
+      "value": "\u003ca href=\"https://example.com/hideout\" target=\"_blank\" rel=\"nofollow noopener noreferrer me\"\u003e\u003cspan class=\"invisible\"\u003ehttps://www.\u003c/span\u003e\u003cspan class=\"\"\u003eexample.com/hideout\u003c/span\u003e\u003cspan class=\"invisible\"\u003e\u003c/span\u003e\u003c/a\u003e"
     },
     {
       "type": "PropertyValue",
       "name": "GitHub",
-      "value": "\u003ca href=\"https://github.com/Gargron\" target=\"_blank\" rel=\"nofollow noopener noreferrer me\"\u003e\u003cspan class=\"invisible\"\u003ehttps://\u003c/span\u003e\u003cspan class=\"\"\u003egithub.com/Gargron\u003c/span\u003e\u003cspan class=\"invisible\"\u003e\u003c/span\u003e\u003c/a\u003e"
+      "value": "\u003ca href=\"https://github.com/usbharu/hideout\" target=\"_blank\" rel=\"nofollow noopener noreferrer me\"\u003e\u003cspan class=\"invisible\"\u003ehttps://\u003c/span\u003e\u003cspan class=\"\"\u003egithub.com/usbharu/hideout\u003c/span\u003e\u003cspan class=\"invisible\"\u003e\u003c/span\u003e\u003c/a\u003e"
     }
   ],
   "endpoints": {
-    "sharedInbox": "https://mastodon.social/inbox"
+    "sharedInbox": #(userUrl + 'inbox')
   },
   "icon": {
     "type": "Image",
     "mediaType": "image/jpeg",
-    "url": "https://files.mastodon.social/accounts/avatars/000/000/001/original/dc4286ceb8fab734.jpg"
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Destroyer_Vozbuzhdenyy.jpg/320px-Destroyer_Vozbuzhdenyy.jpg"
   },
   "image": {
     "type": "Image",
     "mediaType": "image/jpeg",
-    "url": "https://files.mastodon.social/accounts/headers/000/000/001/original/3b91c9965d00888b.jpeg"
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Views_of_Mount_Fuji_from_%C5%8Cwakudani_20211202.jpg/320px-Views_of_Mount_Fuji_from_%C5%8Cwakudani_20211202.jpg"
   }
 }
 
