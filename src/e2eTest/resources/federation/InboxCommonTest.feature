@@ -91,3 +91,15 @@ Feature: Inbox Common Test
 
     * print response
     Then match response.req == ['/users/test-user2']
+
+  Scenario: user-inboxにHTTP Signatureがないリクエストがきたら401を返す
+
+    * def inbox =
+    """
+    {"type": "Follow"}
+    """
+
+    Given path '/inbox'
+    And request inbox
+    When method post
+    Then status 401

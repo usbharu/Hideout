@@ -67,6 +67,16 @@ class InboxCommonTest {
         )
     }
 
+    @Karate.Test
+    @TestFactory
+    fun `user-inboxにHTTP Signatureがないリクエストがきたら401を返す`(): Karate {
+        return KarateUtil.e2eTest(
+            "InboxCommonTest",
+            "user-inboxにHTTP Signatureがないリクエストがきたら401を返す",
+            mapOf("karate.port" to port),
+            javaClass
+        )
+    }
 
     companion object {
         lateinit var server: MockServer
