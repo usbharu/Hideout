@@ -234,7 +234,7 @@ jobs:
       - name: Run Kover
         uses: gradle/gradle-build-action@v2.8.1
         with:
-          arguments: koverXmlReport -x integrationTest
+          arguments: koverXmlReport -x integrationTest -x e2eTest
 
       - name: Add coverage report to PR
         if: always()
@@ -267,6 +267,12 @@ jobs:
         with:
           path: build/test-results
           key: integration-test-report-${{ github.sha }}
+
+      - name: Restore Test Report
+        uses: actions/cache/restore@v3
+        with:
+          path: build/test-results
+          key: e2e-test-report-${{ github.sha }}
 
       - name: JUnit Test Report
         uses: mikepenz/action-junit-report@v2
