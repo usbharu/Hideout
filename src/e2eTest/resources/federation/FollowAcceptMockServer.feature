@@ -1,18 +1,18 @@
-Feature: InboxCommonMockServer
+Feature: Follow Accept Mock Server
 
   Background:
-    * def assertInbox = Java.type(`federation.InboxCommonTest`)
+    * def assertInbox = Java.type(`federation.FollowAcceptTest`)
     * def req = {req: []}
 
-  Scenario: pathMatches('/users/{username}') && methodIs('get')
+  Scenario: pathMatches('/users/test-follower') && methodIs('get')
     * def remoteUrl =  'http://localhost:' + assertInbox.getRemotePort()
-    * def username = pathParams.username
+    * def username = 'test-follower'
     * def userUrl = remoteUrl + '/users/' + username
 
 
     * def person =
     """
-{
+    {
   "@context": [
     "https://www.w3.org/ns/activitystreams",
     "https://w3id.org/security/v1",
@@ -123,10 +123,14 @@ Feature: InboxCommonMockServer
     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Views_of_Mount_Fuji_from_%C5%8Cwakudani_20211202.jpg/320px-Views_of_Mount_Fuji_from_%C5%8Cwakudani_20211202.jpg"
   }
 }
-
     """
+
     * set req.req[] = '/users/' + username
     * def response = person
+
+  Scenario: pathMatches('/inbox') && methodIs('post')
+    * set req.req[] = '/inbox'
+    * def responseStatus = 202
 
   Scenario: pathMatches('/internal-assertion-api/requests') && methodIs('get')
     * def response = req

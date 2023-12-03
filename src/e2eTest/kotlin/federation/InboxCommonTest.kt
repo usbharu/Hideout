@@ -16,8 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.transaction.annotation.Transactional
-import java.net.MalformedURLException
-import java.net.URL
 
 @SpringBootTest(
     classes = [SpringApplication::class],
@@ -96,24 +94,17 @@ class InboxCommonTest {
 
         @JvmStatic
         fun assertUserExist(username: String, domain: String) = runBlocking {
-            val s = try {
-                val url = URL(domain)
-                url.host + ":" + url.port.toString().takeIf { it != "-1" }.orEmpty()
-            } catch (e: MalformedURLException) {
-                domain
-            }
-
             var check = false
 
             repeat(10) {
                 delay(1000)
-                check = AssertionUtil.assertUserExist(username, s) or check
+                check = AssertionUtil.assertUserExist(username, domain) or check
                 if (check) {
                     return@repeat
                 }
             }
 
-            assertTrue(check, "User @$username@$s not exist.")
+            assertTrue(check, "User @$username@$domain not exist.")
         }
 
         @JvmStatic
@@ -128,6 +119,7 @@ class InboxCommonTest {
             flyway.clean()
             flyway.migrate()
         }
+
         @AfterAll
         @JvmStatic
         fun afterAll() {
