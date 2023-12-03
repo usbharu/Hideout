@@ -392,6 +392,7 @@ jobs:
           mongodb-version: latest
 
       - name: setup-chrome
+        id: setup-chrome
         uses: browser-actions/setup-chrome@v1.4.0
 
       - name: Add Path
