@@ -78,6 +78,17 @@ class InboxCommonTest {
         )
     }
 
+    @Karate.Test
+    @TestFactory
+    fun `inboxにConetnt-Type application *+json以外が来たら415を返す`(): Karate {
+        return KarateUtil.e2eTest(
+            "InboxCommonTest",
+            "inboxにContent-Type application/json以外が来たら415を返す",
+            mapOf("karate.port" to port),
+            javaClass
+        )
+    }
+
     companion object {
         lateinit var server: MockServer
 
