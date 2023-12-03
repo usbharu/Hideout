@@ -63,7 +63,6 @@ import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.util.*
 
-
 @EnableWebSecurity(debug = false)
 @Configuration
 @Suppress("FunctionMaxLength", "TooManyFunctions")
@@ -284,7 +283,6 @@ data class JwkConfig(
     val publicKey: String,
     val privateKey: String
 )
-
 
 @Configuration
 class PostSecurityConfig(
