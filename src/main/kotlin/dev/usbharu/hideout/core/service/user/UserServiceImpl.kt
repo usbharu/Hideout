@@ -12,6 +12,7 @@ import dev.usbharu.hideout.core.service.instance.InstanceService
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
 
 @Service
@@ -57,6 +58,7 @@ class UserServiceImpl(
         return userRepository.save(userEntity)
     }
 
+    @Transactional
     override suspend fun createRemoteUser(user: RemoteUserCreateDto): User {
         @Suppress("TooGenericExceptionCaught")
         val instance = try {
