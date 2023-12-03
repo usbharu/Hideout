@@ -391,6 +391,9 @@ jobs:
         with:
           mongodb-version: latest
 
+      - name: Setup Chrome
+        uses: browser-actions/setup-chrome@v1.4.0
+
       - name: E2E Test
         uses: gradle/gradle-build-action@v2.8.1
         with:
