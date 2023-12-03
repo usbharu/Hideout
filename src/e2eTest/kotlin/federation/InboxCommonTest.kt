@@ -42,9 +42,35 @@ class InboxCommonTest {
         )
     }
 
-    companion object {
+    @Karate.Test
+    @TestFactory
+    fun `user-inboxにHTTP Signature付きのリクエストがあったらリモートに取得しに行く`(): Karate {
+        return KarateUtil.e2eTest(
+            "InboxCommonTest",
+            "user-inboxにHTTP Signature付きのリクエストがあったらリモートに取得しに行く",
+            mapOf(
+                "karate.port" to port,
+                "karate.remotePort" to _remotePort
+            ),
+            javaClass
+        )
+    }
 
+    @Karate.Test
+    @TestFactory
+    fun `inboxにHTTP Signatureがないリクエストがきたら401を返す`(): Karate {
+        return KarateUtil.e2eTest(
+            "InboxCommonTest",
+            "inboxにHTTP Signatureがないリクエストがきたら401を返す",
+            mapOf("karate.port" to port),
+            javaClass
+        )
+    }
+
+
+    companion object {
         lateinit var server: MockServer
+
         lateinit var _remotePort: String
 
         @JvmStatic
@@ -81,7 +107,6 @@ class InboxCommonTest {
             flyway.clean()
             flyway.migrate()
         }
-
         @AfterAll
         @JvmStatic
         fun afterAll() {
