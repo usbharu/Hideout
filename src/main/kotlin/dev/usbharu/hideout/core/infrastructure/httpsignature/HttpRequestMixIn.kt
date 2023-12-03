@@ -11,17 +11,13 @@ import dev.usbharu.httpsignature.common.HttpMethod
 import dev.usbharu.httpsignature.common.HttpRequest
 import java.net.URL
 
-
 @JsonDeserialize(using = HttpRequestDeserializer::class)
 @JsonSubTypes
 abstract class HttpRequestMixIn
 
 class HttpRequestDeserializer : JsonDeserializer<HttpRequest>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext?): HttpRequest {
-
         val readTree: JsonNode = p.codec.readTree(p)
-
-
 
         return HttpRequest(
             URL(readTree["url"].textValue()),
@@ -29,5 +25,4 @@ class HttpRequestDeserializer : JsonDeserializer<HttpRequest>() {
             HttpMethod.valueOf(readTree["method"].textValue())
         )
     }
-
 }
