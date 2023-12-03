@@ -2,6 +2,7 @@ package dev.usbharu.hideout.core.infrastructure.kjobmongodb
 
 import com.mongodb.reactivestreams.client.MongoClient
 import dev.usbharu.hideout.core.external.job.HideoutJob
+import dev.usbharu.hideout.core.service.job.JobProcessor
 import dev.usbharu.hideout.core.service.job.JobQueueWorkerService
 import kjob.core.dsl.JobContextWithProps
 import kjob.core.dsl.JobRegisterContext
@@ -13,7 +14,10 @@ import org.springframework.stereotype.Service
 
 @Service
 @ConditionalOnProperty(name = ["hideout.use-mongodb"], havingValue = "true", matchIfMissing = false)
-class KJobMongoJobQueueWorkerService(private val mongoClient: MongoClient) : JobQueueWorkerService, AutoCloseable {
+class KJobMongoJobQueueWorkerService(
+    private val mongoClient: MongoClient,
+    private val jobQueueProcessorList: List<JobProcessor<*, *>>
+) : JobQueueWorkerService, AutoCloseable {
     val kjob by lazy {
         kjob(Mongo) {
             client = mongoClient
@@ -29,6 +33,14 @@ class KJobMongoJobQueueWorkerService(private val mongoClient: MongoClient) : Job
     ) {
         defines.forEach { job ->
             kjob.register(job.first, job.second)
+        }
+        for (jobProcessor in jobQueueProcessorList) {
+            kjob.register(jobProcessor.job()) {
+                execute {
+                    val param = it.convertUnsafe(props)
+                    jobProcessor.process(param)
+                }
+            }
         }
     }
 
