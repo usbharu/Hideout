@@ -95,15 +95,13 @@ class APUserServiceImpl(
                     name = person.preferredUsername
                         ?: throw IllegalActivityPubObjectException("preferredUsername is null"),
                     domain = id.substringAfter("://").substringBefore("/"),
-                    screenName = person.name
-                        ?: throw IllegalActivityPubObjectException("preferredUsername is null"),
+                    screenName = person.name,
                     description = person.summary.orEmpty(),
                     inbox = person.inbox,
                     outbox = person.outbox,
                     url = id,
-                    publicKey = person.publicKey?.publicKeyPem
-                        ?: throw IllegalActivityPubObjectException("publicKey is null"),
-                    keyId = person.publicKey?.id ?: throw IllegalActivityPubObjectException("publicKey keyId is null"),
+                    publicKey = person.publicKey.publicKeyPem,
+                    keyId = person.publicKey.id,
                     following = person.following,
                     followers = person.followers,
                     sharedInbox = person.endpoints["sharedInbox"]

@@ -7,7 +7,6 @@ import org.springframework.security.web.access.intercept.RequestAuthorizationCon
 fun AuthorizeHttpRequestsDsl.hasScope(scope: String): AuthorizationManager<RequestAuthorizationContext> =
     hasAuthority("SCOPE_$scope")
 
+@Suppress("SpreadOperator")
 fun AuthorizeHttpRequestsDsl.hasAnyScope(vararg scopes: String): AuthorizationManager<RequestAuthorizationContext> =
-    hasAnyAuthority(
-        *scopes.map { "SCOPE_$it" }.toTypedArray()
-    )
+    hasAnyAuthority(*scopes.map { "SCOPE_$it" }.toTypedArray())

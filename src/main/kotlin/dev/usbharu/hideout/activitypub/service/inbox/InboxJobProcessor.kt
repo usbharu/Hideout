@@ -56,6 +56,7 @@ class InboxJobProcessor(
             }
         }
 
+        @Suppress("TooGenericExceptionCaught")
         val verify = try {
             signatureVerifier.verify(
                 httpRequest,

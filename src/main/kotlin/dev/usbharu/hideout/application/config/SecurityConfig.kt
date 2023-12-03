@@ -84,7 +84,9 @@ class SecurityConfig {
         http {
             securityMatcher("/users/*/posts/*")
             addFilterAt<RequestCacheAwareFilter>(httpSignatureFilter)
-            addFilterBefore<HttpSignatureFilter>(ExceptionTranslationFilter(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+            addFilterBefore<HttpSignatureFilter>(
+                ExceptionTranslationFilter(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+            )
             authorizeHttpRequests {
                 authorize(anyRequest, permitAll)
             }
@@ -160,7 +162,6 @@ class SecurityConfig {
             }
             oauth2ResourceServer {
                 jwt {
-
                 }
             }
         }
@@ -172,7 +173,6 @@ class SecurityConfig {
     fun defaultSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http {
             authorizeHttpRequests {
-
                 authorize("/error", permitAll)
                 authorize("/login", permitAll)
                 authorize(GET, "/.well-known/**", permitAll)
@@ -200,7 +200,6 @@ class SecurityConfig {
             }
 
             formLogin {
-
             }
 
             csrf {
