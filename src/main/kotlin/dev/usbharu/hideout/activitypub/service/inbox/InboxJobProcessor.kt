@@ -34,25 +34,37 @@ class InboxJobProcessor(
     private val transaction: Transaction
 ) : JobProcessor<InboxJobParam, InboxJob> {
 
-    private suspend fun verifyHttpSignature(httpRequest: HttpRequest, signature: Signature): Boolean {
+    private suspend fun verifyHttpSignature(
+        httpRequest: HttpRequest,
+        signature: Signature,
+        transaction: Transaction
+    ): Boolean {
         val requiredHeaders = when (httpRequest.method) {
             HttpMethod.GET -> getRequiredHeaders
             HttpMethod.POST -> postRequiredHeaders
         }
         if (signature.headers.containsAll(requiredHeaders).not()) {
+            logger.warn("FAILED Invalid signature. require: {}", requiredHeaders)
             return false
         }
 
-        val user = try {
-            userQueryService.findByKeyId(signature.keyId)
-        } catch (_: FailedToGetResourcesException) {
-            apUserService.fetchPersonWithEntity(signature.keyId).second
+        val user = transaction.transaction {
+            try {
+                userQueryService.findByKeyId(signature.keyId)
+            } catch (_: FailedToGetResourcesException) {
+                apUserService.fetchPersonWithEntity(signature.keyId).second
+            }
         }
 
-        val verify = signatureVerifier.verify(
-            httpRequest,
-            PublicKey(RsaUtil.decodeRsaPublicKeyPem(user.publicKey), signature.keyId)
-        )
+        val verify = try {
+            signatureVerifier.verify(
+                httpRequest,
+                PublicKey(RsaUtil.decodeRsaPublicKeyPem(user.publicKey), signature.keyId)
+            )
+        } catch (e: Exception) {
+            logger.warn("FAILED Verify Http Signature", e)
+            return false
+        }
 
         return verify.success
     }
@@ -60,6 +72,7 @@ class InboxJobProcessor(
     @Suppress("TooGenericExceptionCaught")
     private fun parseSignatureHeader(httpHeaders: HttpHeaders): Signature? {
         return try {
+            println("Signature Header =" + httpHeaders.get("Signature").single())
             signatureHeaderParser.parse(httpHeaders)
         } catch (e: RuntimeException) {
             logger.trace("FAILED parse signature header", e)
@@ -67,7 +80,8 @@ class InboxJobProcessor(
         }
     }
 
-    override suspend fun process(param: InboxJobParam) = transaction.transaction {
+    override suspend fun process(param: InboxJobParam) {
+
         val jsonNode = objectMapper.readTree(param.json)
 
         logger.info("START Process inbox. type: {}", param.type)
@@ -83,22 +97,24 @@ class InboxJobProcessor(
 
         logger.debug("Has signature? {}", signature != null)
 
-        val verify = signature?.let { verifyHttpSignature(httpRequest, it) } ?: false
+        val verify = signature?.let { verifyHttpSignature(httpRequest, it, transaction) } ?: false
 
-        logger.debug("Is verifying success? {}", verify)
+        transaction.transaction {
+            logger.debug("Is verifying success? {}", verify)
 
-        val activityPubProcessor =
-            activityPubProcessorList.firstOrNull { it.isSupported(param.type) } as ActivityPubProcessor<Object>?
+            val activityPubProcessor =
+                activityPubProcessorList.firstOrNull { it.isSupported(param.type) } as ActivityPubProcessor<Object>?
 
-        if (activityPubProcessor == null) {
-            logger.warn("ActivityType {} is not support.", param.type)
-            throw IllegalStateException("ActivityPubProcessor not found.")
+            if (activityPubProcessor == null) {
+                logger.warn("ActivityType {} is not support.", param.type)
+                throw IllegalStateException("ActivityPubProcessor not found.")
+            }
+
+            val value = objectMapper.treeToValue(jsonNode, activityPubProcessor.type())
+            activityPubProcessor.process(ActivityPubProcessContext(value, jsonNode, httpRequest, signature, verify))
+
+            logger.info("SUCCESS Process inbox. type: {}", param.type)
         }
-
-        val value = objectMapper.treeToValue(jsonNode, activityPubProcessor.type())
-        activityPubProcessor.process(ActivityPubProcessContext(value, jsonNode, httpRequest, signature, verify))
-
-        logger.info("SUCCESS Process inbox. type: {}", param.type)
     }
 
     override fun job(): InboxJob = InboxJob
