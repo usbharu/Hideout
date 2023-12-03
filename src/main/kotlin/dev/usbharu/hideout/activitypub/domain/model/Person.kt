@@ -14,7 +14,7 @@ constructor(
     var outbox: String,
     var url: String,
     private var icon: Image?,
-    var publicKey: Key?,
+    var publicKey: Key,
     var endpoints: Map<String, String> = emptyMap(),
     var followers: String?,
     var following: String?
