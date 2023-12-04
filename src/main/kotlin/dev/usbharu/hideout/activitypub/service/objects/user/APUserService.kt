@@ -14,6 +14,7 @@ import dev.usbharu.hideout.core.query.UserQueryService
 import dev.usbharu.hideout.core.service.user.RemoteUserCreateDto
 import dev.usbharu.hideout.core.service.user.UserService
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 interface APUserService {
     suspend fun getPersonByName(name: String): Person
@@ -61,7 +62,6 @@ class APUserServiceImpl(
                 url = "$userUrl/icon.png"
             ),
             publicKey = Key(
-                type = emptyList(),
                 id = userEntity.keyId,
                 owner = userUrl,
                 publicKeyPem = userEntity.publicKey
@@ -75,6 +75,7 @@ class APUserServiceImpl(
     override suspend fun fetchPerson(url: String, targetActor: String?): Person =
         fetchPersonWithEntity(url, targetActor).first
 
+    @Transactional
     override suspend fun fetchPersonWithEntity(url: String, targetActor: String?): Pair<Person, User> {
         return try {
             val userEntity = userQueryService.findByUrl(url)
@@ -94,15 +95,13 @@ class APUserServiceImpl(
                     name = person.preferredUsername
                         ?: throw IllegalActivityPubObjectException("preferredUsername is null"),
                     domain = id.substringAfter("://").substringBefore("/"),
-                    screenName = person.name
-                        ?: throw IllegalActivityPubObjectException("preferredUsername is null"),
+                    screenName = person.name,
                     description = person.summary.orEmpty(),
                     inbox = person.inbox,
                     outbox = person.outbox,
                     url = id,
-                    publicKey = person.publicKey?.publicKeyPem
-                        ?: throw IllegalActivityPubObjectException("publicKey is null"),
-                    keyId = person.publicKey?.id ?: throw IllegalActivityPubObjectException("publicKey keyId is null"),
+                    publicKey = person.publicKey.publicKeyPem,
+                    keyId = person.publicKey.id,
                     following = person.following,
                     followers = person.followers,
                     sharedInbox = person.endpoints["sharedInbox"]
@@ -129,7 +128,6 @@ class APUserServiceImpl(
             url = "$id/icon.png"
         ),
         publicKey = Key(
-            type = emptyList(),
             id = userEntity.keyId,
             owner = id,
             publicKeyPem = userEntity.publicKey

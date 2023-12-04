@@ -14,7 +14,7 @@ constructor(
     var outbox: String,
     var url: String,
     private var icon: Image?,
-    var publicKey: Key?,
+    var publicKey: Key,
     var endpoints: Map<String, String> = emptyMap(),
     var followers: String?,
     var following: String?
@@ -22,9 +22,13 @@ constructor(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is Person) return false
+        if (javaClass != other?.javaClass) return false
         if (!super.equals(other)) return false
 
+        other as Person
+
+        if (name != other.name) return false
+        if (id != other.id) return false
         if (preferredUsername != other.preferredUsername) return false
         if (summary != other.summary) return false
         if (inbox != other.inbox) return false
@@ -33,20 +37,26 @@ constructor(
         if (icon != other.icon) return false
         if (publicKey != other.publicKey) return false
         if (endpoints != other.endpoints) return false
+        if (followers != other.followers) return false
+        if (following != other.following) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = super.hashCode()
+        result = 31 * result + name.hashCode()
+        result = 31 * result + id.hashCode()
         result = 31 * result + (preferredUsername?.hashCode() ?: 0)
         result = 31 * result + (summary?.hashCode() ?: 0)
         result = 31 * result + inbox.hashCode()
         result = 31 * result + outbox.hashCode()
         result = 31 * result + url.hashCode()
         result = 31 * result + (icon?.hashCode() ?: 0)
-        result = 31 * result + (publicKey?.hashCode() ?: 0)
+        result = 31 * result + publicKey.hashCode()
         result = 31 * result + endpoints.hashCode()
+        result = 31 * result + (followers?.hashCode() ?: 0)
+        result = 31 * result + (following?.hashCode() ?: 0)
         return result
     }
 }
