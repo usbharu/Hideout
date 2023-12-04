@@ -32,7 +32,10 @@ class KJobJobQueueParentService : JobQueueParentService {
     }
 
     override suspend fun <T, J : HideoutJob<T, J>> scheduleTypeSafe(job: J, jobProps: T) {
+        logger.debug("SCHEDULE Job: {}", job.name)
+        logger.trace("Job props: {}", jobProps)
         val convert: ScheduleContext<J>.(J) -> Unit = job.convert(jobProps)
         kjob.schedule(job, convert)
+        logger.debug("SUCCESS Schedule Job: {}", job.name)
     }
 }

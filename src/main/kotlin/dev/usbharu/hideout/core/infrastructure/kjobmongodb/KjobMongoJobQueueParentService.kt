@@ -7,6 +7,7 @@ import kjob.core.Job
 import kjob.core.dsl.ScheduleContext
 import kjob.core.kjob
 import kjob.mongo.Mongo
+import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Service
 
@@ -26,15 +27,23 @@ class KjobMongoJobQueueParentService(private val mongoClient: MongoClient) : Job
 
     @Deprecated("use type safe → scheduleTypeSafe")
     override suspend fun <J : Job> schedule(job: J, block: ScheduleContext<J>.(J) -> Unit) {
+        logger.debug("SCHEDULE Job: {}", job.name)
         kjob.schedule(job, block)
     }
 
     override suspend fun <T, J : HideoutJob<T, J>> scheduleTypeSafe(job: J, jobProps: T) {
+        logger.debug("SCHEDULE Job: {}", job.name)
+        logger.trace("Job props: {}", jobProps)
         val convert = job.convert(jobProps)
         kjob.schedule(job, convert)
+        logger.debug("SUCCESS Job: {}", job.name)
     }
 
     override fun close() {
         kjob.shutdown()
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(KjobMongoJobQueueParentService::class.java)
     }
 }

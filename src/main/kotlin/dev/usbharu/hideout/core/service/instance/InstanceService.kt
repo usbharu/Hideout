@@ -81,7 +81,7 @@ class InstanceServiceImpl(
                 }
 
                 else -> {
-                    TODO()
+                    throw IllegalStateException("Unknown nodeinfo versions: $key url: $value")
                 }
             }
         }

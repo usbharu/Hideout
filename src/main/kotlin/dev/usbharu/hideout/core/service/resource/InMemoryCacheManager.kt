@@ -29,7 +29,13 @@ class InMemoryCacheManager : CacheManager {
             }
         }
         if (needRunBlock) {
-            val processed = block()
+            @Suppress("TooGenericExceptionCaught")
+            val processed = try {
+                block()
+            } catch (e: Exception) {
+                cacheKey.remove(key)
+                throw e
+            }
 
             if (cacheKey.containsKey(key)) {
                 valueStore[key] = processed

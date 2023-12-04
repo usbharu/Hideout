@@ -12,6 +12,7 @@ import dev.usbharu.hideout.core.service.instance.InstanceService
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
 
 @Service
@@ -57,7 +58,9 @@ class UserServiceImpl(
         return userRepository.save(userEntity)
     }
 
+    @Transactional
     override suspend fun createRemoteUser(user: RemoteUserCreateDto): User {
+        logger.info("START Create New remote user. name: {} url: {}", user.name, user.url)
         @Suppress("TooGenericExceptionCaught")
         val instance = try {
             instanceService.fetchInstance(user.url, user.sharedInbox)
@@ -84,8 +87,11 @@ class UserServiceImpl(
             instance = instance?.id
         )
         return try {
-            userRepository.save(userEntity)
+            val save = userRepository.save(userEntity)
+            logger.warn("SUCCESS Create New remote user. id: {} name: {} url: {}", userEntity.id, user.name, user.url)
+            save
         } catch (_: ExposedSQLException) {
+            logger.warn("FAILED User already exists. name: {} url: {}", user.name, user.url)
             userQueryService.findByUrl(user.url)
         }
     }

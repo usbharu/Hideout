@@ -7,6 +7,8 @@ import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import dev.usbharu.hideout.core.infrastructure.httpsignature.HttpRequestMixIn
+import dev.usbharu.httpsignature.common.HttpRequest
 import dev.usbharu.httpsignature.sign.HttpSignatureSigner
 import dev.usbharu.httpsignature.sign.RsaSha256HttpSignatureSigner
 import org.springframework.beans.factory.annotation.Qualifier
@@ -24,12 +26,13 @@ class ActivityPubConfig {
         val objectMapper = jacksonObjectMapper()
             .enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
             .setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
-            .setDefaultSetterInfo(JsonSetter.Value.forContentNulls(Nulls.AS_EMPTY))
-            .setDefaultSetterInfo(JsonSetter.Value.forValueNulls(Nulls.AS_EMPTY))
+            .setDefaultSetterInfo(JsonSetter.Value.forContentNulls(Nulls.SKIP))
+            .setDefaultSetterInfo(JsonSetter.Value.forValueNulls(Nulls.SKIP))
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .configure(JsonParser.Feature.ALLOW_COMMENTS, true)
             .configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true)
             .configure(JsonParser.Feature.ALLOW_TRAILING_COMMA, true)
+            .addMixIn(HttpRequest::class.java, HttpRequestMixIn::class.java)
         return objectMapper
     }
 

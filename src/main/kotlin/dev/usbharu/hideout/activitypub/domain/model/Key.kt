@@ -3,12 +3,11 @@ package dev.usbharu.hideout.activitypub.domain.model
 import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 
 open class Key(
-    type: List<String>,
     override val id: String,
     val owner: String,
     val publicKeyPem: String
 ) : Object(
-    type = add(list = type, type = "Key")
+    type = add(list = emptyList(), type = "Key")
 ),
     HasId {
 

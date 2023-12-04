@@ -11,12 +11,14 @@ import dev.usbharu.hideout.core.infrastructure.springframework.httpsignature.Htt
 import dev.usbharu.hideout.core.infrastructure.springframework.httpsignature.HttpSignatureUserDetailsService
 import dev.usbharu.hideout.core.infrastructure.springframework.httpsignature.HttpSignatureVerifierComposite
 import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.UserDetailsImpl
+import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.UserDetailsServiceImpl
 import dev.usbharu.hideout.core.query.UserQueryService
 import dev.usbharu.hideout.util.RsaUtil
 import dev.usbharu.hideout.util.hasAnyScope
 import dev.usbharu.httpsignature.sign.RsaSha256HttpSignatureSigner
 import dev.usbharu.httpsignature.verify.DefaultSignatureHeaderParser
 import dev.usbharu.httpsignature.verify.RsaSha256HttpSignatureVerifier
+import jakarta.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
@@ -32,6 +34,8 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.security.authentication.AccountStatusUserDetailsChecker
 import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -59,7 +63,7 @@ import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.util.*
 
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity(debug = false)
 @Configuration
 @Suppress("FunctionMaxLength", "TooManyFunctions")
 class SecurityConfig {
@@ -80,7 +84,9 @@ class SecurityConfig {
         http {
             securityMatcher("/users/*/posts/*")
             addFilterAt<RequestCacheAwareFilter>(httpSignatureFilter)
-            addFilterBefore<HttpSignatureFilter>(ExceptionTranslationFilter(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+            addFilterBefore<HttpSignatureFilter>(
+                ExceptionTranslationFilter(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+            )
             authorizeHttpRequests {
                 authorize(anyRequest, permitAll)
             }
@@ -114,6 +120,16 @@ class SecurityConfig {
     }
 
     @Bean
+    @Order(2)
+    fun daoAuthenticationProvider(userDetailsServiceImpl: UserDetailsServiceImpl): DaoAuthenticationProvider {
+        val daoAuthenticationProvider = DaoAuthenticationProvider()
+        daoAuthenticationProvider.setUserDetailsService(userDetailsServiceImpl)
+
+        return daoAuthenticationProvider
+    }
+
+    @Bean
+    @Order(1)
     fun httpSignatureAuthenticationProvider(transaction: Transaction): PreAuthenticatedAuthenticationProvider {
         val provider = PreAuthenticatedAuthenticationProvider()
         val signatureHeaderParser = DefaultSignatureHeaderParser()
@@ -146,7 +162,6 @@ class SecurityConfig {
             }
             oauth2ResourceServer {
                 jwt {
-
                 }
             }
         }
@@ -158,7 +173,6 @@ class SecurityConfig {
     fun defaultSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http {
             authorizeHttpRequests {
-
                 authorize("/error", permitAll)
                 authorize("/login", permitAll)
                 authorize(GET, "/.well-known/**", permitAll)
@@ -186,11 +200,10 @@ class SecurityConfig {
             }
 
             formLogin {
-
             }
 
             csrf {
-                ignoringRequestMatchers("/users/*/inbox", "/inbox", "/api/v1/apps", "/api/v1/accounts")
+                ignoringRequestMatchers("/users/*/inbox", "/inbox", "/api/v1/apps")
             }
 
             headers {
@@ -269,3 +282,17 @@ data class JwkConfig(
     val publicKey: String,
     val privateKey: String
 )
+
+@Configuration
+class PostSecurityConfig(
+    val auth: AuthenticationManagerBuilder,
+    val daoAuthenticationProvider: DaoAuthenticationProvider,
+    val httpSignatureAuthenticationProvider: PreAuthenticatedAuthenticationProvider
+) {
+
+    @PostConstruct
+    fun config() {
+        auth.authenticationProvider(daoAuthenticationProvider)
+        auth.authenticationProvider(httpSignatureAuthenticationProvider)
+    }
+}

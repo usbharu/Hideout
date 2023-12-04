@@ -55,8 +55,7 @@ class UserAPControllerImplTest {
             publicKey = Key(
                 id = "https://example.com/users/hoge#pubkey",
                 owner = "https://example.com/users/hoge",
-                publicKeyPem = "-----BEGIN PUBLIC KEY-----...-----END PUBLIC KEY-----",
-                type = emptyList()
+                publicKeyPem = "-----BEGIN PUBLIC KEY-----...-----END PUBLIC KEY-----"
             ),
             endpoints = mapOf("sharedInbox" to "https://example.com/inbox"),
             followers = "https://example.com/users/hoge/followers",

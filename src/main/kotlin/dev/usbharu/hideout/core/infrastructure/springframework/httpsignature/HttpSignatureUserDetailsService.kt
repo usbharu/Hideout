@@ -27,13 +27,10 @@ class HttpSignatureUserDetailsService(
 ) :
     AuthenticationUserDetailsService<PreAuthenticatedAuthenticationToken> {
     override fun loadUserDetails(token: PreAuthenticatedAuthenticationToken): UserDetails = runBlocking {
-        if (token.principal !is String) {
-            throw IllegalStateException("Token is not String")
-        }
+        check(token.principal is String) { "Token is not String" }
         val credentials = token.credentials
-        if (credentials !is HttpRequest) {
-            throw IllegalStateException("Credentials is not HttpRequest")
-        }
+
+        check(credentials is HttpRequest) { "Credentials is not HttpRequest" }
 
         val keyId = token.principal as String
         val findByKeyId = transaction.transaction {
