@@ -2,7 +2,7 @@ Feature: OAuth2 Login Test
 
   Background:
     * url baseUrl
-    * configure driver = { type: 'chrome' }
+    * configure driver = { type: 'chrome',start: true, headless: true, showDriverLog: true, addOptions: [ '--headless=new' ] }
 
   Scenario: スコープwrite readを持ったトークンの作成
 
