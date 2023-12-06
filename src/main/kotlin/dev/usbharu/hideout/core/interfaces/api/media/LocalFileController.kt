@@ -25,7 +25,6 @@ class LocalFileController(
 
     @GetMapping("/files/{id}")
     fun files(@PathVariable("id") id: String): ResponseEntity<Resource> {
-
         val name = Path.of(id).name
         val path = savePath.resolve(name)
 
@@ -41,7 +40,6 @@ class LocalFileController(
 
     @GetMapping("/users/{user}/icon.jpg", "/users/{user}/header.jpg")
     fun icons(): ResponseEntity<Resource> {
-
         val pathResource = ClassPathResource("icon.png")
         return ResponseEntity
             .ok()
