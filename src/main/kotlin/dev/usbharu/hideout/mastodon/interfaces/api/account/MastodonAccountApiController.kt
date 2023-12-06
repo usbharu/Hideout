@@ -3,11 +3,11 @@ package dev.usbharu.hideout.mastodon.interfaces.api.account
 import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.controller.mastodon.generated.AccountApi
 import dev.usbharu.hideout.core.service.user.UserCreateDto
-import dev.usbharu.hideout.domain.mastodon.model.generated.Account
-import dev.usbharu.hideout.domain.mastodon.model.generated.CredentialAccount
-import dev.usbharu.hideout.domain.mastodon.model.generated.FollowRequestBody
-import dev.usbharu.hideout.domain.mastodon.model.generated.Relationship
+import dev.usbharu.hideout.domain.mastodon.model.generated.*
 import dev.usbharu.hideout.mastodon.service.account.AccountApiService
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.runBlocking
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -57,5 +57,50 @@ class MastodonAccountApiController(
         val httpHeaders = HttpHeaders()
         httpHeaders.location = URI("/users/$username")
         return ResponseEntity(Unit, httpHeaders, HttpStatus.FOUND)
+    }
+
+    override fun apiV1AccountsIdStatusesGet(
+        id: String,
+        maxId: String?,
+        sinceId: String?,
+        minId: String?,
+        limit: Int,
+        onlyMedia: Boolean,
+        excludeReplies: Boolean,
+        excludeReblogs: Boolean,
+        pinned: Boolean,
+        tagged: String?
+    ): ResponseEntity<Flow<Status>> = runBlocking {
+        val principal = SecurityContextHolder.getContext().getAuthentication().principal as Jwt
+
+        val userid = principal.getClaim<String>("uid").toLong()
+        val statusFlow = accountApiService.accountsStatuses(
+            id.toLong(),
+            maxId?.toLongOrNull(),
+            sinceId?.toLongOrNull(),
+            minId?.toLongOrNull(),
+            limit,
+            onlyMedia,
+            excludeReplies,
+            excludeReblogs,
+            pinned,
+            tagged,
+            userid
+        ).asFlow()
+        ResponseEntity.ok(statusFlow)
+    }
+
+    override fun apiV1AccountsRelationshipsGet(
+        id: List<String>?,
+        withSuspended: Boolean
+    ): ResponseEntity<Flow<Relationship>> = runBlocking {
+        val principal = SecurityContextHolder.getContext().getAuthentication().principal as Jwt
+
+        val userid = principal.getClaim<String>("uid").toLong()
+
+        ResponseEntity.ok(
+            accountApiService.relationships(userid, id.orEmpty().mapNotNull { it.toLongOrNull() }, withSuspended)
+                .asFlow()
+        )
     }
 }

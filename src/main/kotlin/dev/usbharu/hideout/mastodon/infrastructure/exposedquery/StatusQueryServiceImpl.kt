@@ -4,9 +4,11 @@ import dev.usbharu.hideout.core.domain.model.media.toMediaAttachments
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.*
 import dev.usbharu.hideout.domain.mastodon.model.generated.Account
 import dev.usbharu.hideout.domain.mastodon.model.generated.Status
+import dev.usbharu.hideout.domain.mastodon.model.generated.Status.Visibility.*
 import dev.usbharu.hideout.mastodon.interfaces.api.status.StatusQuery
 import dev.usbharu.hideout.mastodon.query.StatusQueryService
 import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.andWhere
 import org.jetbrains.exposed.sql.select
 import org.springframework.stereotype.Repository
 import java.time.Instant
@@ -38,6 +40,62 @@ class StatusQueryServiceImpl : StatusQueryService {
                 mediaAttachments = statusQuery.mediaIds.mapNotNull { mediaMap[it] }
             )
         }
+    }
+
+    override suspend fun accountsStatus(
+        accountId: Long,
+        maxId: Long?,
+        sinceId: Long?,
+        minId: Long?,
+        limit: Int,
+        onlyMedia: Boolean,
+        excludeReplies: Boolean,
+        excludeReblogs: Boolean,
+        pinned: Boolean,
+        tagged: String?,
+        includeFollowers: Boolean
+    ): List<Status> {
+        val query = Posts
+            .leftJoin(PostsMedia)
+            .leftJoin(Users)
+            .leftJoin(Media)
+            .select { Posts.userId eq accountId }.limit(20)
+
+        if (maxId != null) {
+            query.andWhere { Posts.id eq maxId }
+        }
+        if (sinceId != null) {
+            query.andWhere { Posts.id eq sinceId }
+        }
+        if (minId != null) {
+            query.andWhere { Posts.id eq minId }
+        }
+        if (onlyMedia) {
+            query.andWhere { PostsMedia.mediaId.isNotNull() }
+        }
+        if (excludeReplies) {
+            query.andWhere { Posts.replyId.isNotNull() }
+        }
+        if (excludeReblogs) {
+            query.andWhere { Posts.repostId.isNotNull() }
+        }
+        if (includeFollowers) {
+            query.andWhere { Posts.visibility inList listOf(public.ordinal, unlisted.ordinal, private.ordinal) }
+        } else {
+            query.andWhere { Posts.visibility inList listOf(public.ordinal, unlisted.ordinal) }
+        }
+
+        val pairs = query.groupBy { it[Posts.id] }
+            .map { it.value }
+            .map {
+                toStatus(it.first()).copy(
+                    mediaAttachments = it.mapNotNull { resultRow ->
+                        resultRow.toMediaOrNull()?.toMediaAttachments()
+                    }
+                ) to it.first()[Posts.repostId]
+            }
+
+        return resolveReplyAndRepost(pairs)
     }
 
     private fun resolveReplyAndRepost(pairs: List<Pair<Status, Long?>>): List<Status> {
@@ -111,11 +169,11 @@ private fun toStatus(it: ResultRow) = Status(
     ),
     content = it[Posts.text],
     visibility = when (it[Posts.visibility]) {
-        0 -> Status.Visibility.public
-        1 -> Status.Visibility.unlisted
-        2 -> Status.Visibility.private
-        3 -> Status.Visibility.direct
-        else -> Status.Visibility.public
+        0 -> public
+        1 -> unlisted
+        2 -> private
+        3 -> direct
+        else -> public
     },
     sensitive = it[Posts.sensitive],
     spoilerText = it[Posts.overview].orEmpty(),
