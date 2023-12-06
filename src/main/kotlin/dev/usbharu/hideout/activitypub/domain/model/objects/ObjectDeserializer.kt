@@ -15,9 +15,6 @@ class ObjectDeserializer : JsonDeserializer<Object>() {
         if (treeNode.isValueNode) {
             return ObjectValue(
                 emptyList(),
-                null,
-                null,
-                null,
                 treeNode.asText()
             )
         } else if (treeNode.isObject) {
@@ -33,15 +30,8 @@ class ObjectDeserializer : JsonDeserializer<Object>() {
             }
 
             return when (activityType) {
-                ExtendedActivityVocabulary.Follow -> {
-                    val readValue = p.codec.treeToValue(treeNode, Follow::class.java)
-                    readValue
-                }
-
-                ExtendedActivityVocabulary.Note -> {
-                    p.codec.treeToValue(treeNode, Note::class.java)
-                }
-
+                ExtendedActivityVocabulary.Follow -> p.codec.treeToValue(treeNode, Follow::class.java)
+                ExtendedActivityVocabulary.Note -> p.codec.treeToValue(treeNode, Note::class.java)
                 ExtendedActivityVocabulary.Object -> p.codec.treeToValue(treeNode, Object::class.java)
                 ExtendedActivityVocabulary.Link -> TODO()
                 ExtendedActivityVocabulary.Activity -> TODO()

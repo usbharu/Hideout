@@ -2,6 +2,8 @@ package activitypub.webfinger
 
 import dev.usbharu.hideout.SpringApplication
 import dev.usbharu.hideout.application.external.Transaction
+import org.flywaydb.core.Flyway
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -24,6 +26,7 @@ class WebFingerTest {
 
     @Test
     @Sql("/sql/test-user.sql")
+
     fun `webfinger 存在するユーザーを取得`() {
         mockMvc
             .get("/.well-known/webfinger?resource=acct:test-user@example.com")
@@ -52,7 +55,7 @@ class WebFingerTest {
     @Test
     fun `webfinger 存在しないユーザーに404`() {
         mockMvc
-            .get("/.well-known/webfinger?resource=acct:test-user@example.com")
+            .get("/.well-known/webfinger?resource=acct:invalid-user-notfound-afdjashfal@example.com")
             .andExpect { status { isNotFound() } }
     }
 
@@ -79,5 +82,14 @@ class WebFingerTest {
 
         @Bean
         fun testTransaction(): Transaction = TestTransaction
+    }
+
+    companion object {
+        @JvmStatic
+        @AfterAll
+        fun dropDatabase(@Autowired flyway: Flyway) {
+            flyway.clean()
+            flyway.migrate()
+        }
     }
 }

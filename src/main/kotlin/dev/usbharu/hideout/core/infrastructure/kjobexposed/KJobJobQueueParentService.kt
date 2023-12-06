@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.core.infrastructure.kjobexposed
 
+import dev.usbharu.hideout.core.external.job.HideoutJob
 import dev.usbharu.hideout.core.service.job.JobQueueParentService
 import kjob.core.Job
 import kjob.core.KJob
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Service
 
 @Service
 @ConditionalOnProperty(name = ["hideout.use-mongodb"], havingValue = "false", matchIfMissing = true)
-class KJobJobQueueParentService() : JobQueueParentService {
+class KJobJobQueueParentService : JobQueueParentService {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -28,5 +29,13 @@ class KJobJobQueueParentService() : JobQueueParentService {
     override suspend fun <J : Job> schedule(job: J, block: ScheduleContext<J>.(J) -> Unit) {
         logger.debug("schedule job={}", job.name)
         kjob.schedule(job, block)
+    }
+
+    override suspend fun <T, J : HideoutJob<T, J>> scheduleTypeSafe(job: J, jobProps: T) {
+        logger.debug("SCHEDULE Job: {}", job.name)
+        logger.trace("Job props: {}", jobProps)
+        val convert: ScheduleContext<J>.(J) -> Unit = job.convert(jobProps)
+        kjob.schedule(job, convert)
+        logger.debug("SUCCESS Schedule Job: {}", job.name)
     }
 }

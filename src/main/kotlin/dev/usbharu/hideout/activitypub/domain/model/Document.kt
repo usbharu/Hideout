@@ -2,44 +2,37 @@ package dev.usbharu.hideout.activitypub.domain.model
 
 import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 
-open class Document : Object {
-
-    var mediaType: String? = null
-    var url: String? = null
-
-    protected constructor() : super()
-    constructor(
-        type: List<String> = emptyList(),
-        name: String? = null,
-        mediaType: String,
-        url: String
-    ) : super(
-        type = add(type, "Document"),
-        name = name,
-        actor = null,
-        id = null
-    ) {
-        this.mediaType = mediaType
-        this.url = url
-    }
+open class Document(
+    type: List<String> = emptyList(),
+    override val name: String = "",
+    val mediaType: String,
+    val url: String
+) : Object(
+    type = add(type, "Document")
+),
+    HasName {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is Document) return false
+        if (javaClass != other?.javaClass) return false
         if (!super.equals(other)) return false
+
+        other as Document
 
         if (mediaType != other.mediaType) return false
         if (url != other.url) return false
+        if (name != other.name) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = super.hashCode()
-        result = 31 * result + (mediaType?.hashCode() ?: 0)
-        result = 31 * result + (url?.hashCode() ?: 0)
+        result = 31 * result + mediaType.hashCode()
+        result = 31 * result + url.hashCode()
+        result = 31 * result + name.hashCode()
         return result
     }
 
-    override fun toString(): String = "Document(mediaType=$mediaType, url=$url) ${super.toString()}"
+    override fun toString(): String = "Document(mediaType=$mediaType, url=$url, name='$name') ${super.toString()}"
 }

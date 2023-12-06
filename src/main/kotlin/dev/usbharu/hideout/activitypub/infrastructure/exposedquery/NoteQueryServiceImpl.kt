@@ -64,7 +64,6 @@ class NoteQueryServiceImpl(private val postRepository: PostRepository, private v
                 this[Users.followers]
             )
         return Note(
-            name = "Post",
             id = this[Posts.apId],
             attributedTo = this[Users.url],
             content = this[Posts.text],
@@ -80,7 +79,7 @@ class NoteQueryServiceImpl(private val postRepository: PostRepository, private v
     private suspend fun Query.toNote(): Note {
         return this.groupBy { it[Posts.id] }
             .map { it.value }
-            .map { it.first().toNote(it.mapNotNull { it.toMediaOrNull() }) }
+            .map { it.first().toNote(it.mapNotNull { resultRow -> resultRow.toMediaOrNull() }) }
             .singleOr { FailedToGetResourcesException("resource does not exist.") }
     }
 

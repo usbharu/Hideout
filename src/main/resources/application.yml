@@ -1,6 +1,6 @@
 hideout:
   url: "https://test-hideout.usbharu.dev"
-  use-mongodb: true
+  use-mongodb: false
   security:
     jwt:
       generate: true
@@ -18,18 +18,16 @@ spring:
       WRITE_DATES_AS_TIMESTAMPS: false
     default-property-inclusion: always
   datasource:
-    hikari:
-      transaction-isolation: "TRANSACTION_SERIALIZABLE"
     driver-class-name: org.postgresql.Driver
     url: "jdbc:postgresql:hideout2"
     username: "postgres"
     password: ""
-    data:
-      mongodb:
-        auto-index-creation: true
-        host: localhost
-        port: 27017
-        database: hideout
+  #  data:
+  #    mongodb:
+  #      auto-index-creation: true
+  #      host: localhost
+  #      port: 27017
+  #      database: hideout
   #      username: hideoutuser
   #      password: hideoutpass
   servlet:

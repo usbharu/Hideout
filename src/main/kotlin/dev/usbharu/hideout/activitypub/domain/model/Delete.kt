@@ -1,45 +1,55 @@
 package dev.usbharu.hideout.activitypub.domain.model
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 import dev.usbharu.hideout.activitypub.domain.model.objects.ObjectDeserializer
 
-open class Delete : Object {
+open class Delete : Object, HasId, HasActor {
     @JsonDeserialize(using = ObjectDeserializer::class)
-    var `object`: Object? = null
-    var published: String? = null
+    @JsonProperty("object")
+    val apObject: Object
+    val published: String
+    override val actor: String
+    override val id: String
 
     constructor(
         type: List<String> = emptyList(),
-        name: String? = "Delete",
         actor: String,
         id: String,
         `object`: Object,
-        published: String?
-    ) : super(add(type, "Delete"), name, actor, id) {
-        this.`object` = `object`
+        published: String
+    ) : super(add(type, "Delete")) {
+        this.apObject = `object`
         this.published = published
+        this.actor = actor
+        this.id = id
     }
-
-    protected constructor() : super()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is Delete) return false
+        if (javaClass != other?.javaClass) return false
         if (!super.equals(other)) return false
 
-        if (`object` != other.`object`) return false
+        other as Delete
+
+        if (apObject != other.apObject) return false
         if (published != other.published) return false
+        if (actor != other.actor) return false
+        if (id != other.id) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = super.hashCode()
-        result = 31 * result + (`object`?.hashCode() ?: 0)
-        result = 31 * result + (published?.hashCode() ?: 0)
+        result = 31 * result + apObject.hashCode()
+        result = 31 * result + published.hashCode()
+        result = 31 * result + actor.hashCode()
+        result = 31 * result + id.hashCode()
         return result
     }
 
-    override fun toString(): String = "Delete(`object`=$`object`, published=$published) ${super.toString()}"
+    override fun toString(): String =
+        "Delete(`object`=$apObject, published=$published, actor='$actor', id='$id') ${super.toString()}"
 }

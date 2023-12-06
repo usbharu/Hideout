@@ -1,48 +1,64 @@
 package dev.usbharu.hideout.activitypub.domain.model
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 import dev.usbharu.hideout.activitypub.domain.model.objects.ObjectDeserializer
 
-open class Create : Object {
+open class Create(
+    type: List<String> = emptyList(),
+    override val name: String,
     @JsonDeserialize(using = ObjectDeserializer::class)
-    var `object`: Object? = null
-    var to: List<String> = emptyList()
-    var cc: List<String> = emptyList()
-
-    protected constructor() : super()
-    constructor(
-        type: List<String> = emptyList(),
-        name: String? = null,
-        `object`: Object?,
-        actor: String? = null,
-        id: String? = null,
-        to: List<String> = emptyList(),
-        cc: List<String> = emptyList()
-    ) : super(
-        type = add(type, "Create"),
-        name = name,
-        actor = actor,
-        id = id
-    ) {
-        this.`object` = `object`
-        this.to = to
-        this.cc = cc
-    }
+    @JsonProperty("object")
+    val apObject: Object,
+    override val actor: String,
+    override val id: String,
+    val to: List<String> = emptyList(),
+    val cc: List<String> = emptyList()
+) : Object(
+    type = add(type, "Create")
+),
+    HasId,
+    HasName,
+    HasActor {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is Create) return false
+        if (javaClass != other?.javaClass) return false
         if (!super.equals(other)) return false
 
-        return `object` == other.`object`
+        other as Create
+
+        if (name != other.name) return false
+        if (apObject != other.apObject) return false
+        if (actor != other.actor) return false
+        if (id != other.id) return false
+        if (to != other.to) return false
+        if (cc != other.cc) return false
+
+        return true
     }
 
     override fun hashCode(): Int {
         var result = super.hashCode()
-        result = 31 * result + (`object`?.hashCode() ?: 0)
+        result = 31 * result + name.hashCode()
+        result = 31 * result + apObject.hashCode()
+        result = 31 * result + actor.hashCode()
+        result = 31 * result + id.hashCode()
+        result = 31 * result + to.hashCode()
+        result = 31 * result + cc.hashCode()
         return result
     }
 
-    override fun toString(): String = "Create(`object`=$`object`) ${super.toString()}"
+    override fun toString(): String {
+        return "Create(" +
+            "name='$name', " +
+            "apObject=$apObject, " +
+            "actor='$actor', " +
+            "id='$id', " +
+            "to=$to, " +
+            "cc=$cc" +
+            ")" +
+            " ${super.toString()}"
+    }
 }

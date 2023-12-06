@@ -25,7 +25,6 @@ class MediaApiServiceImpl(private val mediaService: MediaService, private val tr
                 type = type,
                 url = uploadLocalMedia.url,
                 previewUrl = uploadLocalMedia.thumbnailUrl,
-                remoteUrl = null,
                 description = mediaRequest.description,
                 blurhash = uploadLocalMedia.blurHash,
                 textUrl = uploadLocalMedia.url

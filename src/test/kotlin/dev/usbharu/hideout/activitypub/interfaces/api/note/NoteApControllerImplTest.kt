@@ -53,7 +53,6 @@ class NoteApControllerImplTest {
     fun `postAP 匿名で取得できる`() = runTest {
         SecurityContextHolder.clearContext()
         val note = Note(
-            name = "Note",
             id = "https://example.com/users/hoge/posts/1234",
             attributedTo = "https://example.com/users/hoge",
             content = "Hello",
@@ -90,7 +89,6 @@ class NoteApControllerImplTest {
     @Test
     fun `postAP 認証に成功している場合userIdがnullでない`() = runTest {
         val note = Note(
-            name = "Note",
             id = "https://example.com/users/hoge/posts/1234",
             attributedTo = "https://example.com/users/hoge",
             content = "Hello",
