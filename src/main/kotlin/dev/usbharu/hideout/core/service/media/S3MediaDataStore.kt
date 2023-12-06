@@ -1,11 +1,12 @@
 package dev.usbharu.hideout.core.service.media
 
-import dev.usbharu.hideout.application.config.StorageConfig
+import dev.usbharu.hideout.application.config.S3StorageConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Service
 import software.amazon.awssdk.core.sync.RequestBody
 import software.amazon.awssdk.services.s3.S3Client
@@ -14,16 +15,17 @@ import software.amazon.awssdk.services.s3.model.GetUrlRequest
 import software.amazon.awssdk.services.s3.model.PutObjectRequest
 
 @Service
-class S3MediaDataStore(private val s3Client: S3Client, private val storageConfig: StorageConfig) : MediaDataStore {
+@ConditionalOnProperty("hideout.storage.type", havingValue = "s3")
+class S3MediaDataStore(private val s3Client: S3Client, private val s3StorageConfig: S3StorageConfig) : MediaDataStore {
     override suspend fun save(dataMediaSave: MediaSave): SavedMedia {
         val fileUploadRequest = PutObjectRequest.builder()
-            .bucket(storageConfig.bucket)
+            .bucket(s3StorageConfig.bucket)
             .key(dataMediaSave.name)
             .build()
 
         val thumbnailKey = "thumbnail-${dataMediaSave.name}"
         val thumbnailUploadRequest = PutObjectRequest.builder()
-            .bucket(storageConfig.bucket)
+            .bucket(s3StorageConfig.bucket)
             .key(thumbnailKey)
             .build()
 
@@ -36,7 +38,7 @@ class S3MediaDataStore(private val s3Client: S3Client, private val storageConfig
                             RequestBody.fromBytes(dataMediaSave.thumbnailInputStream)
                         )
                         s3Client.utilities()
-                            .getUrl(GetUrlRequest.builder().bucket(storageConfig.bucket).key(thumbnailKey).build())
+                            .getUrl(GetUrlRequest.builder().bucket(s3StorageConfig.bucket).key(thumbnailKey).build())
                     } else {
                         null
                     }
@@ -44,14 +46,14 @@ class S3MediaDataStore(private val s3Client: S3Client, private val storageConfig
                 async {
                     s3Client.putObject(fileUploadRequest, RequestBody.fromBytes(dataMediaSave.fileInputStream))
                     s3Client.utilities()
-                        .getUrl(GetUrlRequest.builder().bucket(storageConfig.bucket).key(dataMediaSave.name).build())
+                        .getUrl(GetUrlRequest.builder().bucket(s3StorageConfig.bucket).key(dataMediaSave.name).build())
                 }
             )
         }
         return SuccessSavedMedia(
             name = dataMediaSave.name,
-            url = "${storageConfig.publicUrl}/${storageConfig.bucket}/${dataMediaSave.name}",
-            thumbnailUrl = "${storageConfig.publicUrl}/${storageConfig.bucket}/$thumbnailKey"
+            url = "${s3StorageConfig.publicUrl}/${s3StorageConfig.bucket}/${dataMediaSave.name}",
+            thumbnailUrl = "${s3StorageConfig.publicUrl}/${s3StorageConfig.bucket}/$thumbnailKey"
         )
     }
 
@@ -59,19 +61,19 @@ class S3MediaDataStore(private val s3Client: S3Client, private val storageConfig
         logger.info("MEDIA upload. {}", dataSaveRequest.name)
 
         val fileUploadRequest = PutObjectRequest.builder()
-            .bucket(storageConfig.bucket)
+            .bucket(s3StorageConfig.bucket)
             .key(dataSaveRequest.name)
             .build()
 
-        logger.info("MEDIA upload. bucket: {} key: {}", storageConfig.bucket, dataSaveRequest.name)
+        logger.info("MEDIA upload. bucket: {} key: {}", s3StorageConfig.bucket, dataSaveRequest.name)
 
         val thumbnailKey = "thumbnail-${dataSaveRequest.name}"
         val thumbnailUploadRequest = PutObjectRequest.builder()
-            .bucket(storageConfig.bucket)
+            .bucket(s3StorageConfig.bucket)
             .key(thumbnailKey)
             .build()
 
-        logger.info("MEDIA upload. bucket: {} key: {}", storageConfig.bucket, thumbnailKey)
+        logger.info("MEDIA upload. bucket: {} key: {}", s3StorageConfig.bucket, thumbnailKey)
 
         withContext(Dispatchers.IO) {
             awaitAll(
@@ -92,8 +94,8 @@ class S3MediaDataStore(private val s3Client: S3Client, private val storageConfig
         }
         val successSavedMedia = SuccessSavedMedia(
             name = dataSaveRequest.name,
-            url = "${storageConfig.publicUrl}/${storageConfig.bucket}/${dataSaveRequest.name}",
-            thumbnailUrl = "${storageConfig.publicUrl}/${storageConfig.bucket}/$thumbnailKey"
+            url = "${s3StorageConfig.publicUrl}/${s3StorageConfig.bucket}/${dataSaveRequest.name}",
+            thumbnailUrl = "${s3StorageConfig.publicUrl}/${s3StorageConfig.bucket}/$thumbnailKey"
         )
 
         logger.info("SUCCESS Media upload. {}", dataSaveRequest.name)
@@ -108,9 +110,9 @@ class S3MediaDataStore(private val s3Client: S3Client, private val storageConfig
     }
 
     override suspend fun delete(id: String) {
-        val fileDeleteRequest = DeleteObjectRequest.builder().bucket(storageConfig.bucket).key(id).build()
+        val fileDeleteRequest = DeleteObjectRequest.builder().bucket(s3StorageConfig.bucket).key(id).build()
         val thumbnailDeleteRequest =
-            DeleteObjectRequest.builder().bucket(storageConfig.bucket).key("thumbnail-$id").build()
+            DeleteObjectRequest.builder().bucket(s3StorageConfig.bucket).key("thumbnail-$id").build()
         s3Client.deleteObject(fileDeleteRequest)
         s3Client.deleteObject(thumbnailDeleteRequest)
     }
