@@ -180,6 +180,8 @@ class SecurityConfig {
 
                 authorize(POST, "/inbox", permitAll)
                 authorize(POST, "/users/*/inbox", permitAll)
+                authorize(GET, "/users/*", permitAll)
+                authorize(GET, "/users/*/posts/*", permitAll)
 
                 authorize(POST, "/api/v1/apps", permitAll)
                 authorize(GET, "/api/v1/instance/**", permitAll)
