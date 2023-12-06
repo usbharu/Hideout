@@ -99,22 +99,22 @@ class InboxJobProcessor(
 
         val verify = signature?.let { verifyHttpSignature(httpRequest, it, transaction) } ?: false
 
-        transaction.transaction {
-            logger.debug("Is verifying success? {}", verify)
 
-            val activityPubProcessor =
-                activityPubProcessorList.firstOrNull { it.isSupported(param.type) } as ActivityPubProcessor<Object>?
+        logger.debug("Is verifying success? {}", verify)
 
-            if (activityPubProcessor == null) {
-                logger.warn("ActivityType {} is not support.", param.type)
-                throw IllegalStateException("ActivityPubProcessor not found.")
-            }
+        val activityPubProcessor =
+            activityPubProcessorList.firstOrNull { it.isSupported(param.type) } as ActivityPubProcessor<Object>?
 
-            val value = objectMapper.treeToValue(jsonNode, activityPubProcessor.type())
-            activityPubProcessor.process(ActivityPubProcessContext(value, jsonNode, httpRequest, signature, verify))
-
-            logger.info("SUCCESS Process inbox. type: {}", param.type)
+        if (activityPubProcessor == null) {
+            logger.warn("ActivityType {} is not support.", param.type)
+            throw IllegalStateException("ActivityPubProcessor not found.")
         }
+
+        val value = objectMapper.treeToValue(jsonNode, activityPubProcessor.type())
+        activityPubProcessor.process(ActivityPubProcessContext(value, jsonNode, httpRequest, signature, verify))
+
+        logger.info("SUCCESS Process inbox. type: {}", param.type)
+
     }
 
     override fun job(): InboxJob = InboxJob
