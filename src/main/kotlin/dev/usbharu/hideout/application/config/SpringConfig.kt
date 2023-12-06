@@ -42,7 +42,6 @@ data class S3StorageConfig(
     val secretKey: String
 )
 
-
 /**
  * メディアの保存にローカルファイルシステムを使用する際のコンフィグ
  *
