@@ -5,7 +5,9 @@ import dev.usbharu.hideout.application.config.LocalStorageConfig
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.nio.file.Path
+import java.nio.file.StandardOpenOption
 import kotlin.io.path.copyTo
+import kotlin.io.path.createDirectories
 import kotlin.io.path.deleteIfExists
 import kotlin.io.path.outputStream
 
@@ -20,28 +22,43 @@ import kotlin.io.path.outputStream
  * @param localStorageConfig LocalStorageConfig
  */
 class LocalFileSystemMediaDataStore(
-    applicationConfig: ApplicationConfig,
-    localStorageConfig: LocalStorageConfig
+    applicationConfig: ApplicationConfig, localStorageConfig: LocalStorageConfig
 ) : MediaDataStore {
 
-    private val savePath: Path = Path.of(localStorageConfig.path)
+    private val savePath: Path = Path.of(localStorageConfig.path).toAbsolutePath()
 
     private val publicUrl = localStorageConfig.publicUrl ?: "${applicationConfig.url}/files/"
+
+    init {
+        savePath.createDirectories()
+    }
 
     override suspend fun save(dataMediaSave: MediaSave): SavedMedia {
         val fileSavePath = buildSavePath(savePath, dataMediaSave.name)
         val thumbnailSavePath = buildSavePath(savePath, "thumbnail-" + dataMediaSave.name)
 
 
+        dataMediaSave.thumbnailInputStream?.inputStream()?.use {
+            it.buffered().use { bufferedInputStream ->
+                thumbnailSavePath.outputStream(StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE)
+                    .use { outputStream ->
+                        outputStream.buffered().use {
+                            bufferedInputStream.transferTo(it)
+                        }
+                    }
+            }
+        }
 
-        dataMediaSave.thumbnailInputStream?.inputStream()?.buffered()
-            ?.transferTo(thumbnailSavePath.outputStream().buffered())
-        dataMediaSave.fileInputStream.inputStream().buffered().transferTo(fileSavePath.outputStream().buffered())
+
+        dataMediaSave.fileInputStream.inputStream().use {
+            it.buffered().use { bufferedInputStream ->
+                fileSavePath.outputStream(StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE)
+                    .use { outputStream -> outputStream.buffered().use { bufferedInputStream.transferTo(it) } }
+            }
+        }
 
         return SuccessSavedMedia(
-            dataMediaSave.name,
-            publicUrl + dataMediaSave.name,
-            publicUrl + "thumbnail-" + dataMediaSave.name
+            dataMediaSave.name, publicUrl + dataMediaSave.name, publicUrl + "thumbnail-" + dataMediaSave.name
         )
     }
 
@@ -63,9 +80,7 @@ class LocalFileSystemMediaDataStore(
 
         logger.info("SUCCESS Media upload. {}", dataSaveRequest.name)
         return SuccessSavedMedia(
-            dataSaveRequest.name,
-            publicUrl + dataSaveRequest.name,
-            publicUrl + "thumbnail-" + dataSaveRequest.name
+            dataSaveRequest.name, publicUrl + dataSaveRequest.name, publicUrl + "thumbnail-" + dataSaveRequest.name
         )
     }
 
