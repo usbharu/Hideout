@@ -12,8 +12,6 @@ import kotlin.io.path.createDirectories
 import kotlin.io.path.deleteIfExists
 import kotlin.io.path.outputStream
 
-@Service
-@ConditionalOnProperty("hideout.storage.type", havingValue = "local", matchIfMissing = true)
 /**
  * ローカルファイルシステムにメディアを保存します
  *
@@ -23,8 +21,11 @@ import kotlin.io.path.outputStream
  * @param applicationConfig ApplicationConfig
  * @param localStorageConfig LocalStorageConfig
  */
+@Service
+@ConditionalOnProperty("hideout.storage.type", havingValue = "local", matchIfMissing = true)
 class LocalFileSystemMediaDataStore(
-    applicationConfig: ApplicationConfig, localStorageConfig: LocalStorageConfig
+    applicationConfig: ApplicationConfig,
+    localStorageConfig: LocalStorageConfig
 ) : MediaDataStore {
 
     private val savePath: Path = Path.of(localStorageConfig.path).toAbsolutePath()
@@ -39,7 +40,6 @@ class LocalFileSystemMediaDataStore(
         val fileSavePath = buildSavePath(savePath, dataMediaSave.name)
         val thumbnailSavePath = buildSavePath(savePath, "thumbnail-" + dataMediaSave.name)
 
-
         dataMediaSave.thumbnailInputStream?.inputStream()?.use {
             it.buffered().use { bufferedInputStream ->
                 thumbnailSavePath.outputStream(StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE)
@@ -51,7 +51,6 @@ class LocalFileSystemMediaDataStore(
             }
         }
 
-
         dataMediaSave.fileInputStream.inputStream().use {
             it.buffered().use { bufferedInputStream ->
                 fileSavePath.outputStream(StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE)
@@ -60,7 +59,9 @@ class LocalFileSystemMediaDataStore(
         }
 
         return SuccessSavedMedia(
-            dataMediaSave.name, publicUrl + dataMediaSave.name, publicUrl + "thumbnail-" + dataMediaSave.name
+            dataMediaSave.name,
+            publicUrl + dataMediaSave.name,
+            publicUrl + "thumbnail-" + dataMediaSave.name
         )
     }
 
@@ -82,7 +83,9 @@ class LocalFileSystemMediaDataStore(
 
         logger.info("SUCCESS Media upload. {}", dataSaveRequest.name)
         return SuccessSavedMedia(
-            dataSaveRequest.name, publicUrl + dataSaveRequest.name, publicUrl + "thumbnail-" + dataSaveRequest.name
+            dataSaveRequest.name,
+            publicUrl + dataSaveRequest.name,
+            publicUrl + "thumbnail-" + dataSaveRequest.name
         )
     }
 
