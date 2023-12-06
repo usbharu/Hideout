@@ -1,6 +1,5 @@
 package dev.usbharu.hideout.application.config
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
@@ -11,8 +10,7 @@ import java.net.URI
 @Configuration
 class AwsConfig {
     @Bean
-    @ConditionalOnProperty("hideout.storage.type", havingValue = "s3")
-    fun s3Client(awsConfig: S3StorageConfig): S3Client {
+    fun s3Client(awsConfig: StorageConfig): S3Client {
         return S3Client.builder()
             .endpointOverride(URI.create(awsConfig.endpoint))
             .region(Region.of(awsConfig.region))
