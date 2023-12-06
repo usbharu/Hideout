@@ -6,6 +6,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Service
 import software.amazon.awssdk.core.sync.RequestBody
 import software.amazon.awssdk.services.s3.S3Client
@@ -14,6 +15,7 @@ import software.amazon.awssdk.services.s3.model.GetUrlRequest
 import software.amazon.awssdk.services.s3.model.PutObjectRequest
 
 @Service
+@ConditionalOnProperty("hideout.storage.type", havingValue = "s3")
 class S3MediaDataStore(private val s3Client: S3Client, private val s3StorageConfig: S3StorageConfig) : MediaDataStore {
     override suspend fun save(dataMediaSave: MediaSave): SavedMedia {
         val fileUploadRequest = PutObjectRequest.builder()
