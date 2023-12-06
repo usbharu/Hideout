@@ -84,7 +84,7 @@ class APRequestServiceImpl(
                 headers {
                     appendAll(headers)
                     append("Signature", sign.signatureHeader)
-                    remove("Host")
+//                    remove("Host")
                 }
             }
             contentType(Activity)
@@ -173,7 +173,7 @@ class APRequestServiceImpl(
             append("Accept", Activity)
             append("Date", date)
             append("Host", u.host)
-            append("Digest", "sha-256=$digest")
+            append("Digest", "SHA-256=$digest")
         }
 
         val sign = httpSignatureSigner.sign(
@@ -193,7 +193,7 @@ class APRequestServiceImpl(
             headers {
                 appendAll(headers)
                 append("Signature", sign.signatureHeader)
-                remove("Host")
+//                remove("Host")
             }
             setBody(requestBody)
             contentType(Activity)
