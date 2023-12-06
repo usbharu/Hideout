@@ -187,6 +187,8 @@ class SecurityConfig {
 
                 authorize("/auth/sign_up", hasRole("ANONYMOUS"))
                 authorize(GET, "/files", permitAll)
+                authorize(GET, "/users/*/icon.jpg", permitAll)
+                authorize(GET, "/users/*/header.jpg", permitAll)
 
                 authorize(GET, "/api/v1/accounts/verify_credentials", hasAnyScope("read", "read:accounts"))
 
