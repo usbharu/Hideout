@@ -9,6 +9,15 @@ import kotlin.io.path.deleteIfExists
 import kotlin.io.path.outputStream
 
 @Service
+/**
+ * ローカルファイルシステムにメディアを保存します
+ *
+ * @constructor
+ * ApplicationConfigとLocalStorageConfigをもとに作成
+ *
+ * @param applicationConfig ApplicationConfig
+ * @param localStorageConfig LocalStorageConfig
+ */
 class LocalFileSystemMediaDataStore(
     applicationConfig: ApplicationConfig,
     localStorageConfig: LocalStorageConfig
@@ -49,6 +58,11 @@ class LocalFileSystemMediaDataStore(
         )
     }
 
+    /**
+     * メディアを削除します。サムネイルも削除されます。
+     *
+     * @param id 削除するメディアのid [SuccessSavedMedia.name]を指定します。
+     */
     override suspend fun delete(id: String) {
         buildSavePath(savePath, id).deleteIfExists()
         buildSavePath(savePath, "thumbnail-$id").deleteIfExists()
