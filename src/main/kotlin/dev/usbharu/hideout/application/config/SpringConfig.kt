@@ -43,6 +43,13 @@ data class S3StorageConfig(
     val secretKey: String
 )
 
+
+/**
+ * メディアの保存にローカルファイルシステムを使用する際のコンフィグ
+ *
+ * @property path フォゾンする場所へのパス。 /から始めると絶対パスとなります。
+ * @property publicUrl 公開用URL 省略可能 指定するとHideoutがファイルを配信しなくなります。
+ */
 @ConfigurationProperties("hideout.storage.local")
 data class LocalStorageConfig(
     val path: String,
