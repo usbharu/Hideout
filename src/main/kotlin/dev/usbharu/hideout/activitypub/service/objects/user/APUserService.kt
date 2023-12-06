@@ -58,8 +58,8 @@ class APUserServiceImpl(
             url = userUrl,
             icon = Image(
                 type = emptyList(),
-                mediaType = "image/png",
-                url = "$userUrl/icon.png"
+                mediaType = "image/jpeg",
+                url = "$userUrl/icon.jpg"
             ),
             publicKey = Key(
                 id = userEntity.keyId,
@@ -124,8 +124,8 @@ class APUserServiceImpl(
         url = id,
         icon = Image(
             type = emptyList(),
-            mediaType = "image/png",
-            url = "$id/icon.png"
+            mediaType = "image/jpeg",
+            url = "$id/icon.jpg"
         ),
         publicKey = Key(
             id = userEntity.keyId,
