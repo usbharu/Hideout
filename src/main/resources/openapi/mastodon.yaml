@@ -215,7 +215,7 @@ paths:
             - "read:follows"
       parameters:
         - in: query
-          name: id
+          name: id[]
           required: false
           schema:
             type: array

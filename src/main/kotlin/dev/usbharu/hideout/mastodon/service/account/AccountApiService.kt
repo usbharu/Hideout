@@ -9,6 +9,7 @@ import dev.usbharu.hideout.domain.mastodon.model.generated.*
 import dev.usbharu.hideout.mastodon.query.StatusQueryService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import kotlin.math.min
 
 @Service
 interface AccountApiService {
@@ -126,17 +127,18 @@ class AccountApiServiceImpl(
         return@transaction accountService.findById(id)
     }
 
-    override suspend fun relationships(userid: Long, id: List<Long>, withSuspended: Boolean): List<Relationship> {
+    override suspend fun relationships(userid: Long, id: List<Long>, withSuspended: Boolean): List<Relationship> =
+        transaction.transaction {
         if (id.isEmpty()) {
-            return emptyList()
+            return@transaction emptyList()
         }
 
 
         logger.warn("id is too long! ({}) truncate to 20", id.size)
 
-        val subList = id.subList(0, 20)
+            val subList = id.subList(0, min(id.size, 20))
 
-        return subList.map {
+            return@transaction subList.map {
 
             val alreadyFollow = followerQueryService.alreadyFollow(userid, it)
 

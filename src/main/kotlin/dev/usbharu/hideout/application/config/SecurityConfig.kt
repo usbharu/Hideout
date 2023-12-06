@@ -186,11 +186,13 @@ class SecurityConfig {
                 authorize(POST, "/api/v1/accounts", permitAll)
 
                 authorize("/auth/sign_up", hasRole("ANONYMOUS"))
-                authorize(GET, "/files", permitAll)
+                authorize(GET, "/files/*", permitAll)
                 authorize(GET, "/users/*/icon.jpg", permitAll)
                 authorize(GET, "/users/*/header.jpg", permitAll)
 
                 authorize(GET, "/api/v1/accounts/verify_credentials", hasAnyScope("read", "read:accounts"))
+                authorize(GET, "/api/v1/accounts/*", permitAll)
+                authorize(GET, "/api/v1/accounts/*/statuses", permitAll)
 
                 authorize(POST, "/api/v1/media", hasAnyScope("write", "write:media"))
                 authorize(POST, "/api/v1/statuses", hasAnyScope("write", "write:statuses"))
