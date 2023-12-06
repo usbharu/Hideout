@@ -1,37 +1,36 @@
 package dev.usbharu.hideout.activitypub.domain.model
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 
-open class Follow : Object {
-    var `object`: String? = null
-
-    protected constructor() : super()
-    constructor(
-        type: List<String> = emptyList(),
-        name: String?,
-        `object`: String?,
-        actor: String?
-    ) : super(
-        type = add(type, "Follow"),
-        name = name,
-        actor = actor
-    ) {
-        this.`object` = `object`
-    }
+open class Follow(
+    type: List<String> = emptyList(),
+    @JsonProperty("object") val apObject: String,
+    override val actor: String
+) : Object(
+    type = add(type, "Follow")
+),
+    HasActor {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is Follow) return false
+        if (javaClass != other?.javaClass) return false
         if (!super.equals(other)) return false
 
-        return `object` == other.`object`
+        other as Follow
+
+        if (apObject != other.apObject) return false
+        if (actor != other.actor) return false
+
+        return true
     }
 
     override fun hashCode(): Int {
         var result = super.hashCode()
-        result = 31 * result + (`object`?.hashCode() ?: 0)
+        result = 31 * result + apObject.hashCode()
+        result = 31 * result + actor.hashCode()
         return result
     }
 
-    override fun toString(): String = "Follow(`object`=$`object`) ${super.toString()}"
+    override fun toString(): String = "Follow(`object`=$apObject, actor='$actor') ${super.toString()}"
 }

@@ -31,7 +31,7 @@ class InstanceServiceImpl(
         val resolveInstanceUrl = u.protocol + "://" + u.host
 
         try {
-            return instanceQueryService.findByUrl(url)
+            return instanceQueryService.findByUrl(resolveInstanceUrl)
         } catch (e: FailedToGetResourcesException) {
             logger.info("Instance not found. try fetch instance info. url: {}", resolveInstanceUrl)
             logger.debug("Failed to get resources. url: {}", resolveInstanceUrl, e)
@@ -53,7 +53,7 @@ class InstanceServiceImpl(
                         name = nodeinfo20.metadata?.nodeName,
                         description = nodeinfo20.metadata?.nodeDescription,
                         url = resolveInstanceUrl,
-                        iconUrl = resolveInstanceUrl + "/favicon.ico",
+                        iconUrl = "$resolveInstanceUrl/favicon.ico",
                         sharedInbox = sharedInbox,
                         software = nodeinfo20.software?.name,
                         version = nodeinfo20.software?.version
@@ -72,7 +72,7 @@ class InstanceServiceImpl(
                         name = nodeinfo20.metadata?.nodeName,
                         description = nodeinfo20.metadata?.nodeDescription,
                         url = resolveInstanceUrl,
-                        iconUrl = resolveInstanceUrl + "/favicon.ico",
+                        iconUrl = "$resolveInstanceUrl/favicon.ico",
                         sharedInbox = sharedInbox,
                         software = nodeinfo20.software?.name,
                         version = nodeinfo20.software?.version
@@ -81,7 +81,7 @@ class InstanceServiceImpl(
                 }
 
                 else -> {
-                    TODO()
+                    throw IllegalStateException("Unknown nodeinfo versions: $key url: $value")
                 }
             }
         }

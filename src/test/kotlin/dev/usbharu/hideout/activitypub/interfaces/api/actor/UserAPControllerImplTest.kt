@@ -49,16 +49,13 @@ class UserAPControllerImplTest {
             outbox = "https://example.com/users/hoge/outbox",
             url = "https://example.com/users/hoge",
             icon = Image(
-                name = "icon",
                 mediaType = "image/jpeg",
                 url = "https://example.com/users/hoge/icon.jpg"
             ),
             publicKey = Key(
-                name = "Public Key",
                 id = "https://example.com/users/hoge#pubkey",
                 owner = "https://example.com/users/hoge",
-                publicKeyPem = "-----BEGIN PUBLIC KEY-----...-----END PUBLIC KEY-----",
-                type = emptyList()
+                publicKeyPem = "-----BEGIN PUBLIC KEY-----...-----END PUBLIC KEY-----"
             ),
             endpoints = mapOf("sharedInbox" to "https://example.com/inbox"),
             followers = "https://example.com/users/hoge/followers",

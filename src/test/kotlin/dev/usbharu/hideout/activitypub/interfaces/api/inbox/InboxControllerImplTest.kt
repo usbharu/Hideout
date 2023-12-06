@@ -1,11 +1,9 @@
 package dev.usbharu.hideout.activitypub.interfaces.api.inbox
 
 import dev.usbharu.hideout.activitypub.domain.exception.JsonParseException
-import dev.usbharu.hideout.activitypub.interfaces.api.common.ActivityPubStringResponse
 import dev.usbharu.hideout.activitypub.service.common.APService
 import dev.usbharu.hideout.activitypub.service.common.ActivityType
 import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
-import io.ktor.http.*
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -13,10 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.doThrow
-import org.mockito.kotlin.eq
-import org.mockito.kotlin.whenever
+import org.mockito.kotlin.*
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
@@ -45,16 +40,21 @@ class InboxControllerImplTest {
 
         val json = """{"type":"Follow"}"""
         whenever(apService.parseActivity(eq(json))).doReturn(ActivityType.Follow)
-        whenever(apService.processActivity(eq(json), eq(ActivityType.Follow))).doReturn(
-            ActivityPubStringResponse(
-                HttpStatusCode.Accepted, ""
+        whenever(
+            apService.processActivity(
+                eq(json),
+                eq(ActivityType.Follow),
+                any(),
+                any()
+
             )
-        )
+        ).doReturn(Unit)
 
         mockMvc
             .post("/inbox") {
                 content = json
                 contentType = MediaType.APPLICATION_JSON
+                header("Signature", "")
             }
             .asyncDispatch()
             .andExpect {
@@ -72,6 +72,7 @@ class InboxControllerImplTest {
             .post("/inbox") {
                 content = json
                 contentType = MediaType.APPLICATION_JSON
+                header("Signature", "")
             }
             .asyncDispatch()
             .andExpect {
@@ -87,7 +88,9 @@ class InboxControllerImplTest {
         whenever(
             apService.processActivity(
                 eq(json),
-                eq(ActivityType.Follow)
+                eq(ActivityType.Follow),
+                any(),
+                any()
             )
         ).doThrow(FailedToGetResourcesException::class)
 
@@ -95,6 +98,7 @@ class InboxControllerImplTest {
             .post("/inbox") {
                 content = json
                 contentType = MediaType.APPLICATION_JSON
+                header("Signature", "")
             }
             .asyncDispatch()
             .andExpect {
@@ -114,16 +118,15 @@ class InboxControllerImplTest {
 
         val json = """{"type":"Follow"}"""
         whenever(apService.parseActivity(eq(json))).doReturn(ActivityType.Follow)
-        whenever(apService.processActivity(eq(json), eq(ActivityType.Follow))).doReturn(
-            ActivityPubStringResponse(
-                HttpStatusCode.Accepted, ""
-            )
+        whenever(apService.processActivity(eq(json), eq(ActivityType.Follow), any(), any())).doReturn(
+            Unit
         )
 
         mockMvc
             .post("/users/hoge/inbox") {
                 content = json
                 contentType = MediaType.APPLICATION_JSON
+                header("Signature", "")
             }
             .asyncDispatch()
             .andExpect {
@@ -141,6 +144,7 @@ class InboxControllerImplTest {
             .post("/users/hoge/inbox") {
                 content = json
                 contentType = MediaType.APPLICATION_JSON
+                header("Signature", "")
             }
             .asyncDispatch()
             .andExpect {
@@ -156,7 +160,9 @@ class InboxControllerImplTest {
         whenever(
             apService.processActivity(
                 eq(json),
-                eq(ActivityType.Follow)
+                eq(ActivityType.Follow),
+                any(),
+                any()
             )
         ).doThrow(FailedToGetResourcesException::class)
 
@@ -164,6 +170,7 @@ class InboxControllerImplTest {
             .post("/users/hoge/inbox") {
                 content = json
                 contentType = MediaType.APPLICATION_JSON
+                header("Signature", "")
             }
             .asyncDispatch()
             .andExpect {

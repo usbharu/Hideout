@@ -18,7 +18,7 @@ class InMemoryCacheManager : CacheManager {
         keyMutex.withLock {
             cacheKey.filter { Instant.ofEpochMilli(it.value).plusSeconds(300) <= Instant.now() }
 
-            val cached = cacheKey.get(key)
+            val cached = cacheKey[key]
             if (cached == null) {
                 needRunBlock = true
                 cacheKey[key] = Instant.now().toEpochMilli()
@@ -29,7 +29,13 @@ class InMemoryCacheManager : CacheManager {
             }
         }
         if (needRunBlock) {
-            val processed = block()
+            @Suppress("TooGenericExceptionCaught")
+            val processed = try {
+                block()
+            } catch (e: Exception) {
+                cacheKey.remove(key)
+                throw e
+            }
 
             if (cacheKey.containsKey(key)) {
                 valueStore[key] = processed

@@ -12,9 +12,8 @@ class ContextSerializerTest {
         val accept = Accept(
             name = "aaa",
             actor = "bbb",
-            `object` = Follow(
-                name = "ccc",
-                `object` = "ddd",
+            apObject = Follow(
+                apObject = "ddd",
                 actor = "aaa"
             )
         )

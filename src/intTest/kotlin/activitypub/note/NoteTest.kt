@@ -1,6 +1,8 @@
 package activitypub.note
 
 import dev.usbharu.hideout.SpringApplication
+import org.flywaydb.core.Flyway
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -177,5 +179,14 @@ class NoteTest {
             .andExpect { jsonPath("\$.attachment[0].url") { value("https://example.com/media/test-media.png") } }
             .andExpect { jsonPath("\$.attachment[1].type") { value("Document") } }
             .andExpect { jsonPath("\$.attachment[1].url") { value("https://example.com/media/test-media2.png") } }
+    }
+
+    companion object {
+        @JvmStatic
+        @AfterAll
+        fun dropDatabase(@Autowired flyway: Flyway) {
+            flyway.clean()
+            flyway.migrate()
+        }
     }
 }

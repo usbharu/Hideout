@@ -5,10 +5,12 @@ import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.domain.exception.HttpSignatureVerifyException
 import dev.usbharu.hideout.core.query.UserQueryService
 import dev.usbharu.hideout.util.RsaUtil
+import dev.usbharu.httpsignature.common.HttpMethod
 import dev.usbharu.httpsignature.common.HttpRequest
 import dev.usbharu.httpsignature.common.PublicKey
 import dev.usbharu.httpsignature.verify.FailedVerification
 import dev.usbharu.httpsignature.verify.HttpSignatureVerifier
+import dev.usbharu.httpsignature.verify.SignatureHeaderParser
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.BadCredentialsException
@@ -20,16 +22,15 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 class HttpSignatureUserDetailsService(
     private val userQueryService: UserQueryService,
     private val httpSignatureVerifier: HttpSignatureVerifier,
-    private val transaction: Transaction
+    private val transaction: Transaction,
+    private val httpSignatureHeaderParser: SignatureHeaderParser
 ) :
     AuthenticationUserDetailsService<PreAuthenticatedAuthenticationToken> {
     override fun loadUserDetails(token: PreAuthenticatedAuthenticationToken): UserDetails = runBlocking {
-        if (token.principal !is String) {
-            throw IllegalStateException("Token is not String")
-        }
-        if (token.credentials !is HttpRequest) {
-            throw IllegalStateException("Credentials is not HttpRequest")
-        }
+        check(token.principal is String) { "Token is not String" }
+        val credentials = token.credentials
+
+        check(credentials is HttpRequest) { "Credentials is not HttpRequest" }
 
         val keyId = token.principal as String
         val findByKeyId = transaction.transaction {
@@ -41,10 +42,25 @@ class HttpSignatureUserDetailsService(
             }
         }
 
+        val signature = httpSignatureHeaderParser.parse(credentials.headers)
+
+        val requiredHeaders = when (credentials.method) {
+            HttpMethod.GET -> getRequiredHeaders
+            HttpMethod.POST -> postRequiredHeaders
+        }
+        if (signature.headers.containsAll(requiredHeaders).not()) {
+            logger.warn(
+                "FAILED Verify HTTP Signature. required headers: {} but actual: {}",
+                requiredHeaders,
+                signature.headers
+            )
+            throw BadCredentialsException("HTTP Signature. required headers: $requiredHeaders")
+        }
+
         @Suppress("TooGenericExceptionCaught")
         val verify = try {
             httpSignatureVerifier.verify(
-                token.credentials as HttpRequest,
+                credentials,
                 PublicKey(RsaUtil.decodeRsaPublicKeyPem(findByKeyId.publicKey), keyId)
             )
         } catch (e: RuntimeException) {
@@ -68,5 +84,7 @@ class HttpSignatureUserDetailsService(
 
     companion object {
         private val logger = LoggerFactory.getLogger(HttpSignatureUserDetailsService::class.java)
+        private val postRequiredHeaders = listOf("(request-target)", "date", "host", "digest")
+        private val getRequiredHeaders = listOf("(request-target)", "date", "host")
     }
 }

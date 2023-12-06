@@ -39,7 +39,7 @@ class APRequestServiceImplTest {
                 assertDoesNotThrow {
                     dateTimeFormatter.parse(it.headers["Date"])
                 }
-                respond("{}")
+                respond("""{"type":"Follow","object": "https://example.com","actor": "https://example.com"}""")
             }),
             objectMapper,
             mock(),
@@ -47,8 +47,7 @@ class APRequestServiceImplTest {
         )
 
         val responseClass = Follow(
-            name = "Follow",
-            `object` = "https://example.com",
+            apObject = "https://example.com",
             actor = "https://example.com"
         )
         apRequestServiceImpl.apGet("https://example.com", responseClass = responseClass::class.java)
@@ -65,7 +64,7 @@ class APRequestServiceImplTest {
                 assertDoesNotThrow {
                     dateTimeFormatter.parse(it.headers["Date"])
                 }
-                respond("{}")
+                respond("""{"type":"Follow","object": "https://example.com","actor": "https://example.com"}""")
             }),
             objectMapper,
             mock(),
@@ -73,8 +72,7 @@ class APRequestServiceImplTest {
         )
 
         val responseClass = Follow(
-            name = "Follow",
-            `object` = "https://example.com",
+            apObject = "https://example.com",
             actor = "https://example.com"
         )
         apRequestServiceImpl.apGet(
@@ -106,7 +104,7 @@ class APRequestServiceImplTest {
                 assertDoesNotThrow {
                     dateTimeFormatter.parse(it.headers["Date"])
                 }
-                respond("{}")
+                respond("""{"type":"Follow","object": "https://example.com","actor": "https://example.com"}""")
             }),
             objectMapper,
             httpSignatureSigner,
@@ -114,8 +112,7 @@ class APRequestServiceImplTest {
         )
 
         val responseClass = Follow(
-            name = "Follow",
-            `object` = "https://example.com",
+            apObject = "https://example.com",
             actor = "https://example.com"
         )
         apRequestServiceImpl.apGet(
@@ -166,8 +163,7 @@ class APRequestServiceImplTest {
         }), objectMapper, mock(), dateTimeFormatter)
 
         val body = Follow(
-            name = "Follow",
-            `object` = "https://example.com",
+            apObject = "https://example.com",
             actor = "https://example.com"
         )
         apRequestServiceImpl.apPost("https://example.com", body, null)
@@ -213,8 +209,7 @@ class APRequestServiceImplTest {
         }), objectMapper, mock(), dateTimeFormatter)
 
         val body = Follow(
-            name = "Follow",
-            `object` = "https://example.com",
+            apObject = "https://example.com",
             actor = "https://example.com"
         )
         apRequestServiceImpl.apPost("https://example.com", body, null)
@@ -244,8 +239,7 @@ class APRequestServiceImplTest {
         }), objectMapper, mock(), dateTimeFormatter)
 
         val body = Follow(
-            name = "Follow",
-            `object` = "https://example.com",
+            apObject = "https://example.com",
             actor = "https://example.com"
         )
         apRequestServiceImpl.apPost("https://example.com", body, UserBuilder.remoteUserOf())
@@ -286,8 +280,7 @@ class APRequestServiceImplTest {
         }), objectMapper, httpSignatureSigner, dateTimeFormatter)
 
         val body = Follow(
-            name = "Follow",
-            `object` = "https://example.com",
+            apObject = "https://example.com",
             actor = "https://example.com"
         )
         apRequestServiceImpl.apPost(
@@ -337,8 +330,7 @@ class APRequestServiceImplTest {
         }), objectMapper, mock(), dateTimeFormatter)
 
         val body = Follow(
-            name = "Follow",
-            `object` = "https://example.com",
+            apObject = "https://example.com",
             actor = "https://example.com"
         )
         val actual = apRequestServiceImpl.apPost("https://example.com", body, null, body::class.java)

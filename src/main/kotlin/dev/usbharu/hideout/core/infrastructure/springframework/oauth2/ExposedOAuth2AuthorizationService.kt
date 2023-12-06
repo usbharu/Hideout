@@ -62,7 +62,7 @@ class ExposedOAuth2AuthorizationService(
                     it[accessTokenMetadata] = accessToken?.metadata?.let { it1 -> mapToJson(it1) }
                     it[accessTokenType] = accessToken?.token?.tokenType?.value
                     it[accessTokenScopes] =
-                        accessToken?.run { token.scopes.joinToString(",").takeIf { it.isNotEmpty() } }
+                        accessToken?.run { token.scopes.joinToString(",").takeIf { s -> s.isNotEmpty() } }
                     it[refreshTokenValue] = refreshToken?.token?.tokenValue
                     it[refreshTokenIssuedAt] = refreshToken?.token?.issuedAt
                     it[refreshTokenExpiresAt] = refreshToken?.token?.expiresAt
@@ -197,7 +197,7 @@ class ExposedOAuth2AuthorizationService(
         }
     }
 
-    @Suppress("LongMethod", "CyclomaticComplexMethod")
+    @Suppress("LongMethod", "CyclomaticComplexMethod", "CastToNullableType", "UNCHECKED_CAST")
     fun ResultRow.toAuthorization(): OAuth2Authorization {
         val registeredClientId = this[Authorization.registeredClientId]
 
@@ -272,7 +272,8 @@ class ExposedOAuth2AuthorizationService(
                 oidcIdTokenValue,
                 oidcTokenIssuedAt,
                 oidcTokenExpiresAt,
-                oidcTokenMetadata.getValue(OAuth2Authorization.Token.CLAIMS_METADATA_NAME) as MutableMap<String, Any>?
+                oidcTokenMetadata.getValue(OAuth2Authorization.Token.CLAIMS_METADATA_NAME)
+                        as MutableMap<String, Any>?
             )
 
             builder.token(oidcIdToken) { it.putAll(oidcTokenMetadata) }

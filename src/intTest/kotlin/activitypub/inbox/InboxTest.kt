@@ -1,6 +1,8 @@
 package activitypub.inbox
 
 import dev.usbharu.hideout.SpringApplication
+import org.flywaydb.core.Flyway
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -45,6 +47,7 @@ class InboxTest {
                 content = "{}"
                 contentType = MediaType.APPLICATION_JSON
             }
+            .asyncDispatch()
             .andExpect { status { isUnauthorized() } }
     }
 
@@ -55,6 +58,7 @@ class InboxTest {
             .post("/inbox") {
                 content = "{}"
                 contentType = MediaType.APPLICATION_JSON
+                header("Signature", "")
             }
             .asyncDispatch()
             .andExpect { status { isAccepted() } }
@@ -68,6 +72,7 @@ class InboxTest {
                 content = "{}"
                 contentType = MediaType.APPLICATION_JSON
             }
+            .asyncDispatch()
             .andExpect { status { isUnauthorized() } }
     }
 
@@ -78,6 +83,7 @@ class InboxTest {
             .post("/users/hoge/inbox") {
                 content = "{}"
                 contentType = MediaType.APPLICATION_JSON
+                header("Signature", "")
             }
             .asyncDispatch()
             .andExpect { status { isAccepted() } }
@@ -87,5 +93,14 @@ class InboxTest {
     class Configuration {
         @Bean
         fun testTransaction() = TestTransaction
+    }
+
+    companion object {
+        @JvmStatic
+        @AfterAll
+        fun dropDatabase(@Autowired flyway: Flyway) {
+            flyway.clean()
+            flyway.migrate()
+        }
     }
 }

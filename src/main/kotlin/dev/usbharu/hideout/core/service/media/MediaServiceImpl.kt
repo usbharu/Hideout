@@ -1,9 +1,11 @@
 package dev.usbharu.hideout.core.service.media
 
+import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.domain.exception.media.MediaSaveException
 import dev.usbharu.hideout.core.domain.exception.media.UnsupportedMediaException
 import dev.usbharu.hideout.core.domain.model.media.Media
 import dev.usbharu.hideout.core.domain.model.media.MediaRepository
+import dev.usbharu.hideout.core.query.MediaQueryService
 import dev.usbharu.hideout.core.service.media.converter.MediaProcessService
 import dev.usbharu.hideout.mastodon.interfaces.api.media.MediaRequest
 import dev.usbharu.hideout.util.withDelete
@@ -15,14 +17,15 @@ import dev.usbharu.hideout.core.domain.model.media.Media as EntityMedia
 
 @Service
 @Suppress("TooGenericExceptionCaught")
-open class MediaServiceImpl(
+class MediaServiceImpl(
     private val mediaDataStore: MediaDataStore,
     private val fileTypeDeterminationService: FileTypeDeterminationService,
     private val mediaBlurhashService: MediaBlurhashService,
     private val mediaRepository: MediaRepository,
     private val mediaProcessServices: List<MediaProcessService>,
     private val remoteMediaDownloadService: RemoteMediaDownloadService,
-    private val renameService: MediaFileRenameService
+    private val renameService: MediaFileRenameService,
+    private val mediaQueryService: MediaQueryService
 ) : MediaService {
     @Suppress("LongMethod", "NestedBlockDepth")
     override suspend fun uploadLocalMedia(mediaRequest: MediaRequest): EntityMedia {
@@ -98,6 +101,13 @@ open class MediaServiceImpl(
     @Suppress("LongMethod", "NestedBlockDepth")
     override suspend fun uploadRemoteMedia(remoteMedia: RemoteMedia): Media {
         logger.info("MEDIA Remote media. filename:${remoteMedia.name} url:${remoteMedia.url}")
+
+        try {
+            val findByRemoteUrl = mediaQueryService.findByRemoteUrl(remoteMedia.url)
+            logger.warn("DUPLICATED Remote media is duplicated. url: {}", remoteMedia.url)
+            return findByRemoteUrl
+        } catch (_: FailedToGetResourcesException) {
+        }
 
         remoteMediaDownloadService.download(remoteMedia.url).withDelete().use {
             val mimeType = fileTypeDeterminationService.fileType(it.path, remoteMedia.name)

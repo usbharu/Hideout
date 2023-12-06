@@ -1,7 +1,6 @@
 package dev.usbharu.hideout.activitypub.service.objects.note
 
 import dev.usbharu.hideout.activitypub.domain.exception.FailedToGetActivityPubResourceException
-import dev.usbharu.hideout.activitypub.domain.exception.IllegalActivityPubObjectException
 import dev.usbharu.hideout.activitypub.domain.model.Note
 import dev.usbharu.hideout.activitypub.query.NoteQueryService
 import dev.usbharu.hideout.activitypub.service.common.APResourceResolveService
@@ -91,7 +90,7 @@ class APNoteServiceImpl(
         requireNotNull(note.id) { "id is null" }
 
         return try {
-            noteQueryService.findByApid(note.id!!).first
+            noteQueryService.findByApid(note.id).first
         } catch (_: FailedToGetResourcesException) {
             saveNote(note, targetActor, url)
         }
@@ -99,7 +98,7 @@ class APNoteServiceImpl(
 
     private suspend fun saveNote(note: Note, targetActor: String?, url: String): Note {
         val person = apUserService.fetchPersonWithEntity(
-            note.attributedTo ?: throw IllegalActivityPubObjectException("note.attributedTo is null"),
+            note.attributedTo,
             targetActor
         )
 
@@ -128,9 +127,9 @@ class APNoteServiceImpl(
             .map {
                 mediaService.uploadRemoteMedia(
                     RemoteMedia(
-                        (it.name ?: it.url)!!,
-                        it.url!!,
-                        it.mediaType ?: "application/octet-stream",
+                        it.name,
+                        it.url,
+                        it.mediaType,
                         description = it.name
                     )
                 )
@@ -142,13 +141,13 @@ class APNoteServiceImpl(
             postBuilder.of(
                 id = postRepository.generateId(),
                 userId = person.second.id,
-                text = note.content.orEmpty(),
+                text = note.content,
                 createdAt = Instant.parse(note.published).toEpochMilli(),
                 visibility = visibility,
-                url = note.id ?: url,
+                url = note.id,
                 replyId = reply?.id,
                 sensitive = note.sensitive,
-                apId = note.id ?: url,
+                apId = note.id,
                 mediaIds = mediaList
             )
         )
@@ -156,7 +155,7 @@ class APNoteServiceImpl(
     }
 
     override suspend fun fetchNote(note: Note, targetActor: String?): Note =
-        saveIfMissing(note, targetActor, note.id ?: throw IllegalArgumentException("note.id is null"))
+        saveIfMissing(note, targetActor, note.id)
 
     companion object {
         const val public: String = "https://www.w3.org/ns/activitystreams#Public"
