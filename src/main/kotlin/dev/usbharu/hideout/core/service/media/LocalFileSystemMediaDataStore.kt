@@ -1,0 +1,58 @@
+package dev.usbharu.hideout.core.service.media
+
+import dev.usbharu.hideout.application.config.ApplicationConfig
+import dev.usbharu.hideout.application.config.LocalStorageConfig
+import org.springframework.stereotype.Service
+import java.nio.file.Path
+import kotlin.io.path.copyTo
+import kotlin.io.path.deleteIfExists
+import kotlin.io.path.outputStream
+
+@Service
+class LocalFileSystemMediaDataStore(
+    applicationConfig: ApplicationConfig,
+    localStorageConfig: LocalStorageConfig
+) : MediaDataStore {
+
+    private val savePath: Path = Path.of(localStorageConfig.path)
+
+    private val publicUrl = localStorageConfig.publicUrl ?: "${applicationConfig.url}/files/"
+
+    override suspend fun save(dataMediaSave: MediaSave): SavedMedia {
+        val fileSavePath = buildSavePath(savePath, dataMediaSave.name)
+        val thumbnailSavePath = buildSavePath(savePath, "thumbnail-" + dataMediaSave.name)
+
+
+
+        dataMediaSave.thumbnailInputStream?.inputStream()?.buffered()
+            ?.transferTo(thumbnailSavePath.outputStream().buffered())
+        dataMediaSave.fileInputStream.inputStream().buffered().transferTo(fileSavePath.outputStream().buffered())
+
+        return SuccessSavedMedia(
+            dataMediaSave.name,
+            publicUrl + dataMediaSave.name,
+            publicUrl + "thumbnail-" + dataMediaSave.name
+        )
+    }
+
+    override suspend fun save(dataSaveRequest: MediaSaveRequest): SavedMedia {
+        val fileSavePath = buildSavePath(savePath, dataSaveRequest.name)
+        val thumbnailSavePath = buildSavePath(savePath, "thumbnail-" + dataSaveRequest.name)
+
+        dataSaveRequest.filePath.copyTo(fileSavePath)
+        dataSaveRequest.thumbnailPath?.copyTo(thumbnailSavePath)
+
+        return SuccessSavedMedia(
+            dataSaveRequest.name,
+            publicUrl + dataSaveRequest.name,
+            publicUrl + "thumbnail-" + dataSaveRequest.name
+        )
+    }
+
+    override suspend fun delete(id: String) {
+        buildSavePath(savePath, id).deleteIfExists()
+        buildSavePath(savePath, "thumbnail-$id").deleteIfExists()
+    }
+
+    private fun buildSavePath(savePath: Path, name: String): Path = savePath.resolve(name)
+}
