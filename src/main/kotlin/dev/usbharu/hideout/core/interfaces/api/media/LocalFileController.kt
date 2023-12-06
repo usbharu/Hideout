@@ -3,6 +3,7 @@ package dev.usbharu.hideout.core.interfaces.api.media
 import dev.usbharu.hideout.application.config.LocalStorageConfig
 import dev.usbharu.hideout.core.service.media.FileTypeDeterminationService
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.PathResource
 import org.springframework.core.io.Resource
 import org.springframework.http.MediaType
@@ -34,6 +35,17 @@ class LocalFileController(
         return ResponseEntity
             .ok()
             .contentType(MediaType(mimeType.type, mimeType.subtype))
+            .contentLength(pathResource.contentLength())
+            .body(pathResource)
+    }
+
+    @GetMapping("/users/{user}/icon.jpg", "/users/{user}/header.jpg")
+    fun icons(): ResponseEntity<Resource> {
+
+        val pathResource = ClassPathResource("icon.png")
+        return ResponseEntity
+            .ok()
+            .contentType(MediaType.IMAGE_PNG)
             .contentLength(pathResource.contentLength())
             .body(pathResource)
     }
