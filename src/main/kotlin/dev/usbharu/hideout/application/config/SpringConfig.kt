@@ -14,7 +14,7 @@ class SpringConfig {
     lateinit var config: ApplicationConfig
 
     @Autowired
-    lateinit var storageConfig: StorageConfig
+    lateinit var s3StorageConfig: S3StorageConfig
 
     @Bean
     fun requestLoggingFilter(): CommonsRequestLoggingFilter {
@@ -33,15 +33,20 @@ data class ApplicationConfig(
     val url: URL
 )
 
-@ConfigurationProperties("hideout.storage")
-data class StorageConfig(
-    val useS3: Boolean,
+@ConfigurationProperties("hideout.storage.s3")
+data class S3StorageConfig(
     val endpoint: String,
     val publicUrl: String,
     val bucket: String,
     val region: String,
     val accessKey: String,
     val secretKey: String
+)
+
+@ConfigurationProperties("hideout.storage.local")
+data class LocalStorageConfig(
+    val path: String,
+    val publicUrl: String?
 )
 
 @ConfigurationProperties("hideout.character-limit")
