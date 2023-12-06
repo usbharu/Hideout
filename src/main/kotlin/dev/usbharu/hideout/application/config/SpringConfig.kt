@@ -1,6 +1,7 @@
 package dev.usbharu.hideout.application.config
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -12,9 +13,6 @@ class SpringConfig {
 
     @Autowired
     lateinit var config: ApplicationConfig
-
-    @Autowired
-    lateinit var s3StorageConfig: S3StorageConfig
 
     @Bean
     fun requestLoggingFilter(): CommonsRequestLoggingFilter {
@@ -34,6 +32,7 @@ data class ApplicationConfig(
 )
 
 @ConfigurationProperties("hideout.storage.s3")
+@ConditionalOnProperty("hideout.storage.type", havingValue = "s3")
 data class S3StorageConfig(
     val endpoint: String,
     val publicUrl: String,
@@ -51,8 +50,9 @@ data class S3StorageConfig(
  * @property publicUrl 公開用URL 省略可能 指定するとHideoutがファイルを配信しなくなります。
  */
 @ConfigurationProperties("hideout.storage.local")
+@ConditionalOnProperty("hideout.storage.type", havingValue = "local", matchIfMissing = true)
 data class LocalStorageConfig(
-    val path: String,
+    val path: String = "files",
     val publicUrl: String?
 )
 

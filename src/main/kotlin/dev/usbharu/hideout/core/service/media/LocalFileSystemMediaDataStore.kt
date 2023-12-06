@@ -3,6 +3,7 @@ package dev.usbharu.hideout.core.service.media
 import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.application.config.LocalStorageConfig
 import org.slf4j.LoggerFactory
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Service
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
@@ -12,6 +13,7 @@ import kotlin.io.path.deleteIfExists
 import kotlin.io.path.outputStream
 
 @Service
+@ConditionalOnProperty("hideout.storage.type", havingValue = "local", matchIfMissing = true)
 /**
  * ローカルファイルシステムにメディアを保存します
  *
