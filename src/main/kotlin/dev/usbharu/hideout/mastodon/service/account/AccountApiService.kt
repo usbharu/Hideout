@@ -92,9 +92,7 @@ class AccountApiServiceImpl(
     }
 
     override suspend fun follow(userid: Long, followeeId: Long): Relationship = transaction.transaction {
-
         val alreadyFollow = followerQueryService.alreadyFollow(followeeId, userid)
-
 
         val followRequest = if (alreadyFollow) {
             true
@@ -129,40 +127,38 @@ class AccountApiServiceImpl(
 
     override suspend fun relationships(userid: Long, id: List<Long>, withSuspended: Boolean): List<Relationship> =
         transaction.transaction {
-        if (id.isEmpty()) {
-            return@transaction emptyList()
-        }
+            if (id.isEmpty()) {
+                return@transaction emptyList()
+            }
 
-
-        logger.warn("id is too long! ({}) truncate to 20", id.size)
+            logger.warn("id is too long! ({}) truncate to 20", id.size)
 
             val subList = id.subList(0, min(id.size, 20))
 
             return@transaction subList.map {
+                val alreadyFollow = followerQueryService.alreadyFollow(userid, it)
 
-            val alreadyFollow = followerQueryService.alreadyFollow(userid, it)
+                val followed = followerQueryService.alreadyFollow(it, userid)
 
-            val followed = followerQueryService.alreadyFollow(it, userid)
+                val requested = userRepository.findFollowRequestsById(it, userid)
 
-            val requested = userRepository.findFollowRequestsById(it, userid)
-
-            Relationship(
-                id = it.toString(),
-                following = alreadyFollow,
-                showingReblogs = true,
-                notifying = false,
-                followedBy = followed,
-                blocking = false,
-                blockedBy = false,
-                muting = false,
-                mutingNotifications = false,
-                requested = requested,
-                domainBlocking = false,
-                endorsed = false,
-                note = ""
-            )
+                Relationship(
+                    id = it.toString(),
+                    following = alreadyFollow,
+                    showingReblogs = true,
+                    notifying = false,
+                    followedBy = followed,
+                    blocking = false,
+                    blockedBy = false,
+                    muting = false,
+                    mutingNotifications = false,
+                    requested = requested,
+                    domainBlocking = false,
+                    endorsed = false,
+                    note = ""
+                )
+            }
         }
-    }
 
     private fun from(account: Account): CredentialAccount {
         return CredentialAccount(
