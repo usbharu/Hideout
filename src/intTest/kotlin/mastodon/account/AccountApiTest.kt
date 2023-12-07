@@ -100,7 +100,7 @@ class AccountApiTest {
             .asyncDispatch()
             .andExpect { status { isFound() } }
 
-        userQueryServiceImpl.findByNameAndDomain("api-test-user-1", "localhost")
+        userQueryServiceImpl.findByNameAndDomain("api-test-user-1", "example.com")
     }
 
     @Test
@@ -116,7 +116,7 @@ class AccountApiTest {
             .asyncDispatch()
             .andExpect { status { isFound() } }
 
-        userQueryServiceImpl.findByNameAndDomain("api-test-user-2", "localhost")
+        userQueryServiceImpl.findByNameAndDomain("api-test-user-2", "example.com")
     }
 
     @Test
