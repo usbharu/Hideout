@@ -14,6 +14,7 @@ import org.springframework.http.MediaType
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.test.context.support.WithAnonymousUser
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
 import org.springframework.test.context.jdbc.Sql
@@ -29,6 +30,7 @@ import org.springframework.web.context.WebApplicationContext
 @AutoConfigureMockMvc
 @Transactional
 @Sql("/sql/test-user.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
+@Sql("/sql/test-user2.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 class AccountApiTest {
 
     @Autowired
@@ -155,6 +157,104 @@ class AccountApiTest {
                 contentType = MediaType.APPLICATION_FORM_URLENCODED
                 param("username", "api-test-user-2")
                 param("password", "very-secure-password")
+            }
+            .andExpect { status { isForbidden() } }
+    }
+
+    @Test
+    @WithAnonymousUser
+    fun `apiV1AccountsIdGet 匿名でアカウント情報を取得できる`() {
+        mockMvc
+            .get("/api/v1/accounts/1")
+            .asyncDispatch()
+            .andExpect { status { isOk() } }
+    }
+
+    @Test
+    fun `apiV1AccountsIdFollowPost write_follows権限でPOSTでフォローできる`() {
+        mockMvc
+            .post("/api/v1/accounts/2/follow") {
+                contentType = MediaType.APPLICATION_JSON
+                with(jwt().jwt { it.claim("uid", "1") }.authorities(SimpleGrantedAuthority("SCOPE_write:follows")))
+            }
+            .asyncDispatch()
+            .andExpect { status { isOk() } }
+    }
+
+    @Test
+    fun `apiV1AccountsIdFollowPost write権限でPOSTでフォローできる`() {
+        mockMvc
+            .post("/api/v1/accounts/2/follow") {
+                contentType = MediaType.APPLICATION_JSON
+                with(jwt().jwt { it.claim("uid", "1") }.authorities(SimpleGrantedAuthority("SCOPE_write")))
+            }
+            .asyncDispatch()
+            .andExpect { status { isOk() } }
+    }
+
+    @Test
+    fun `apiV1AccountsIdFollowPost read権限でだと403`() {
+        mockMvc
+            .post("/api/v1/accounts/2/follow") {
+                contentType = MediaType.APPLICATION_JSON
+                with(jwt().jwt { it.claim("uid", "1") }.authorities(SimpleGrantedAuthority("SCOPE_read")))
+            }
+            .andExpect { status { isForbidden() } }
+    }
+
+    @Test
+    @WithAnonymousUser
+    fun `apiV1AAccountsIdFollowPost 匿名だと401`() {
+        mockMvc
+            .post("/api/v1/accounts/2/follow") {
+                contentType = MediaType.APPLICATION_JSON
+                with(csrf())
+            }
+            .andExpect { status { isUnauthorized() } }
+    }
+
+    @Test
+    @WithAnonymousUser
+    fun `apiV1AAccountsIdFollowPost 匿名の場合通常csrfトークンは持ってないので403`() {
+        mockMvc
+            .post("/api/v1/accounts/2/follow") {
+                contentType = MediaType.APPLICATION_JSON
+            }
+            .andExpect { status { isForbidden() } }
+    }
+
+    @Test
+    fun `apiV1AccountsRelationshipsGet 匿名だと401`() {
+        mockMvc
+            .get("/api/v1/accounts/relationships")
+            .andExpect { status { isUnauthorized() } }
+    }
+
+    @Test
+    fun `apiV1AccountsRelationshipsGet read_follows権限を持っていたら取得できる`() {
+        mockMvc
+            .get("/api/v1/accounts/relationships") {
+                with(jwt().jwt { it.claim("uid", "1") }.authorities(SimpleGrantedAuthority("SCOPE_read:follows")))
+            }
+            .asyncDispatch()
+            .andExpect { status { isOk() } }
+    }
+
+    @Test
+    fun `apiV1AccountsRelationshipsGet read権限を持っていたら取得できる`() {
+        mockMvc
+            .get("/api/v1/accounts/relationships") {
+                with(jwt().jwt { it.claim("uid", "1") }.authorities(SimpleGrantedAuthority("SCOPE_read")))
+            }
+            .asyncDispatch()
+            .andExpect { status { isOk() } }
+    }
+
+    @Test
+    fun `apiV1AccountsRelationshipsGet write権限だと403`() {
+        mockMvc
+            .get("/api/v1/accounts/relationships") {
+                with(jwt().jwt { it.claim("uid", "1") }.authorities(SimpleGrantedAuthority("SCOPE_write")))
             }
             .andExpect { status { isForbidden() } }
     }
