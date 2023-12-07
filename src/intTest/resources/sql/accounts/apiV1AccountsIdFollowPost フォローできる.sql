@@ -1,0 +1,18 @@
+insert into "USERS" (id, name, domain, screen_name, description, password, inbox, outbox, url, public_key, private_key,
+                     created_at, key_id, following, followers, instance)
+VALUES (3733363, 'follow-test-user-1', 'example.com', 'follow-test-user-1-name', '',
+        '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8',
+        'https://example.com/users/follow-test-user-1/inbox',
+        'https://example.com/users/follow-test-user-1/outbox', 'https://example.com/users/follow-test-user-1',
+        '-----BEGIN PUBLIC KEY-----...-----END PUBLIC KEY-----',
+        '-----BEGIN PRIVATE KEY-----...-----END PRIVATE KEY-----', 12345678,
+        'https://example.com/users/follow-test-user-1#pubkey', 'https://example.com/users/follow-test-user-1/following',
+        'https://example.com/users/follow-test-user-1/followers', null),
+       (37335363, 'follow-test-user-2', 'example.com', 'follow-test-user-2-name', '',
+        '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8',
+        'https://example.com/users/follow-test-user-2/inbox',
+        'https://example.com/users/follow-test-user-2/outbox', 'https://example.com/users/follow-test-user-2',
+        '-----BEGIN PUBLIC KEY-----...-----END PUBLIC KEY-----',
+        '-----BEGIN PRIVATE KEY-----...-----END PRIVATE KEY-----', 12345678,
+        'https://example.com/users/follow-test-user-2#pubkey', 'https://example.com/users/follow-test-user-2/following',
+        'https://example.com/users/follow-test-user-2/followers', null);

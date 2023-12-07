@@ -13,7 +13,6 @@ import org.springframework.security.oauth2.server.authorization.settings.ClientS
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings
 import org.springframework.stereotype.Service
 import java.time.Duration
-import java.time.Instant
 import java.util.*
 
 @Service
@@ -46,7 +45,7 @@ class AppApiServiceImpl(
                 .tokenSettings(
                     TokenSettings.builder()
                         .accessTokenTimeToLive(
-                            Duration.ofSeconds((Instant.MAX.epochSecond - Instant.now().epochSecond - 10000) / 1000)
+                            Duration.ofSeconds(31536000000)
                         )
                         .build()
                 )
@@ -60,7 +59,8 @@ class AppApiServiceImpl(
                 "invalid-vapid-key",
                 appsRequest.website,
                 id,
-                clientSecret
+                clientSecret,
+                appsRequest.redirectUris
             )
         }
     }

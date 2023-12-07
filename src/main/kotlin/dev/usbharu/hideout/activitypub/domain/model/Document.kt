@@ -1,9 +1,12 @@
 package dev.usbharu.hideout.activitypub.domain.model
 
+import com.fasterxml.jackson.annotation.JsonSetter
+import com.fasterxml.jackson.annotation.Nulls
 import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 
 open class Document(
     type: List<String> = emptyList(),
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     override val name: String = "",
     val mediaType: String,
     val url: String

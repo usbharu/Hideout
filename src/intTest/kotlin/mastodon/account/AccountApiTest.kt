@@ -1,8 +1,10 @@
 package mastodon.account
 
 import dev.usbharu.hideout.SpringApplication
+import dev.usbharu.hideout.core.infrastructure.exposedquery.FollowerQueryServiceImpl
 import dev.usbharu.hideout.core.infrastructure.exposedquery.UserQueryServiceImpl
 import kotlinx.coroutines.test.runTest
+import org.assertj.core.api.Assertions.assertThat
 import org.flywaydb.core.Flyway
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
@@ -14,6 +16,7 @@ import org.springframework.http.MediaType
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.test.context.support.WithAnonymousUser
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
 import org.springframework.test.context.jdbc.Sql
@@ -29,10 +32,15 @@ import org.springframework.web.context.WebApplicationContext
 @AutoConfigureMockMvc
 @Transactional
 @Sql("/sql/test-user.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
+@Sql("/sql/test-user2.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 class AccountApiTest {
 
     @Autowired
+    private lateinit var followerQueryServiceImpl: FollowerQueryServiceImpl
+
+    @Autowired
     private lateinit var userQueryServiceImpl: UserQueryServiceImpl
+
 
     @Autowired
     private lateinit var context: WebApplicationContext
@@ -92,7 +100,7 @@ class AccountApiTest {
             .asyncDispatch()
             .andExpect { status { isFound() } }
 
-        userQueryServiceImpl.findByNameAndDomain("api-test-user-1", "localhost")
+        userQueryServiceImpl.findByNameAndDomain("api-test-user-1", "example.com")
     }
 
     @Test
@@ -108,7 +116,7 @@ class AccountApiTest {
             .asyncDispatch()
             .andExpect { status { isFound() } }
 
-        userQueryServiceImpl.findByNameAndDomain("api-test-user-2", "localhost")
+        userQueryServiceImpl.findByNameAndDomain("api-test-user-2", "example.com")
     }
 
     @Test
@@ -157,6 +165,120 @@ class AccountApiTest {
                 param("password", "very-secure-password")
             }
             .andExpect { status { isForbidden() } }
+    }
+
+    @Test
+    @WithAnonymousUser
+    fun `apiV1AccountsIdGet 匿名でアカウント情報を取得できる`() {
+        mockMvc
+            .get("/api/v1/accounts/1")
+            .asyncDispatch()
+            .andExpect { status { isOk() } }
+    }
+
+    @Test
+    fun `apiV1AccountsIdFollowPost write_follows権限でPOSTでフォローできる`() {
+        mockMvc
+            .post("/api/v1/accounts/2/follow") {
+                contentType = MediaType.APPLICATION_JSON
+                with(jwt().jwt { it.claim("uid", "1") }.authorities(SimpleGrantedAuthority("SCOPE_write:follows")))
+            }
+            .asyncDispatch()
+            .andExpect { status { isOk() } }
+    }
+
+    @Test
+    fun `apiV1AccountsIdFollowPost write権限でPOSTでフォローできる`() {
+        mockMvc
+            .post("/api/v1/accounts/2/follow") {
+                contentType = MediaType.APPLICATION_JSON
+                with(jwt().jwt { it.claim("uid", "1") }.authorities(SimpleGrantedAuthority("SCOPE_write")))
+            }
+            .asyncDispatch()
+            .andExpect { status { isOk() } }
+    }
+
+    @Test
+    fun `apiV1AccountsIdFollowPost read権限でだと403`() {
+        mockMvc
+            .post("/api/v1/accounts/2/follow") {
+                contentType = MediaType.APPLICATION_JSON
+                with(jwt().jwt { it.claim("uid", "1") }.authorities(SimpleGrantedAuthority("SCOPE_read")))
+            }
+            .andExpect { status { isForbidden() } }
+    }
+
+    @Test
+    @WithAnonymousUser
+    fun `apiV1AAccountsIdFollowPost 匿名だと401`() {
+        mockMvc
+            .post("/api/v1/accounts/2/follow") {
+                contentType = MediaType.APPLICATION_JSON
+                with(csrf())
+            }
+            .andExpect { status { isUnauthorized() } }
+    }
+
+    @Test
+    @WithAnonymousUser
+    fun `apiV1AAccountsIdFollowPost 匿名の場合通常csrfトークンは持ってないので403`() {
+        mockMvc
+            .post("/api/v1/accounts/2/follow") {
+                contentType = MediaType.APPLICATION_JSON
+            }
+            .andExpect { status { isForbidden() } }
+    }
+
+    @Test
+    fun `apiV1AccountsRelationshipsGet 匿名だと401`() {
+        mockMvc
+            .get("/api/v1/accounts/relationships")
+            .andExpect { status { isUnauthorized() } }
+    }
+
+    @Test
+    fun `apiV1AccountsRelationshipsGet read_follows権限を持っていたら取得できる`() {
+        mockMvc
+            .get("/api/v1/accounts/relationships") {
+                with(jwt().jwt { it.claim("uid", "1") }.authorities(SimpleGrantedAuthority("SCOPE_read:follows")))
+            }
+            .asyncDispatch()
+            .andExpect { status { isOk() } }
+    }
+
+    @Test
+    fun `apiV1AccountsRelationshipsGet read権限を持っていたら取得できる`() {
+        mockMvc
+            .get("/api/v1/accounts/relationships") {
+                with(jwt().jwt { it.claim("uid", "1") }.authorities(SimpleGrantedAuthority("SCOPE_read")))
+            }
+            .asyncDispatch()
+            .andExpect { status { isOk() } }
+    }
+
+    @Test
+    fun `apiV1AccountsRelationshipsGet write権限だと403`() {
+        mockMvc
+            .get("/api/v1/accounts/relationships") {
+                with(jwt().jwt { it.claim("uid", "1") }.authorities(SimpleGrantedAuthority("SCOPE_write")))
+            }
+            .andExpect { status { isForbidden() } }
+    }
+
+    @Test
+    @Sql("/sql/accounts/apiV1AccountsIdFollowPost フォローできる.sql")
+    fun `apiV1AccountsIdFollowPost フォローできる`() = runTest {
+        mockMvc
+            .post("/api/v1/accounts/3733363/follow") {
+                contentType = MediaType.APPLICATION_JSON
+                with(jwt().jwt { it.claim("uid", "37335363") }.authorities(SimpleGrantedAuthority("SCOPE_write")))
+            }
+            .asyncDispatch()
+            .andExpect { status { isOk() } }
+
+        val alreadyFollow = followerQueryServiceImpl.alreadyFollow(3733363, 37335363)
+
+        assertThat(alreadyFollow).isTrue()
     }
 
     companion object {

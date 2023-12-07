@@ -8,9 +8,7 @@ import jakarta.servlet.http.HttpServletRequest
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter
 import java.net.URL
 
-class HttpSignatureFilter(
-    private val httpSignatureHeaderParser: SignatureHeaderParser
-) :
+class HttpSignatureFilter(private val httpSignatureHeaderParser: SignatureHeaderParser) :
     AbstractPreAuthenticatedProcessingFilter() {
     override fun getPreAuthenticatedPrincipal(request: HttpServletRequest?): Any? {
         val headersList = request?.headerNames?.toList().orEmpty()
