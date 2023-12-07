@@ -31,7 +31,7 @@ create table if not exists users
     "following" varchar(1000)  null,
     followers   varchar(1000)  null,
     "instance"  bigint         null,
-    unique (name, domain),
+    unique ("name", "domain"),
     constraint fk_users_instance__id foreign key ("instance") references instance (id) on delete restrict on update restrict
 );
 create table if not exists follow_requests

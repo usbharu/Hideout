@@ -1,8 +1,10 @@
 package mastodon.account
 
 import dev.usbharu.hideout.SpringApplication
+import dev.usbharu.hideout.core.infrastructure.exposedquery.FollowerQueryServiceImpl
 import dev.usbharu.hideout.core.infrastructure.exposedquery.UserQueryServiceImpl
 import kotlinx.coroutines.test.runTest
+import org.assertj.core.api.Assertions.assertThat
 import org.flywaydb.core.Flyway
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
@@ -34,7 +36,11 @@ import org.springframework.web.context.WebApplicationContext
 class AccountApiTest {
 
     @Autowired
+    private lateinit var followerQueryServiceImpl: FollowerQueryServiceImpl
+
+    @Autowired
     private lateinit var userQueryServiceImpl: UserQueryServiceImpl
+
 
     @Autowired
     private lateinit var context: WebApplicationContext
@@ -257,6 +263,22 @@ class AccountApiTest {
                 with(jwt().jwt { it.claim("uid", "1") }.authorities(SimpleGrantedAuthority("SCOPE_write")))
             }
             .andExpect { status { isForbidden() } }
+    }
+
+    @Test
+    @Sql("/sql/accounts/apiV1AccountsIdFollowPost フォローできる.sql")
+    fun `apiV1AccountsIdFollowPost フォローできる`() = runTest {
+        mockMvc
+            .post("/api/v1/accounts/3733363/follow") {
+                contentType = MediaType.APPLICATION_JSON
+                with(jwt().jwt { it.claim("uid", "37335363") }.authorities(SimpleGrantedAuthority("SCOPE_write")))
+            }
+            .asyncDispatch()
+            .andExpect { status { isOk() } }
+
+        val alreadyFollow = followerQueryServiceImpl.alreadyFollow(3733363, 37335363)
+
+        assertThat(alreadyFollow).isTrue()
     }
 
     companion object {
