@@ -217,7 +217,6 @@ dependencies {
     testImplementation("org.mockito:mockito-inline:5.2.0")
     testImplementation("nl.jqno.equalsverifier:equalsverifier:3.15.3")
     testImplementation("com.jparams:to-string-verifier:1.4.8")
-    testImplementation("com.toomuchcoding.jsonassert:jsonassert:0.7.0")
 
     implementation("org.drewcarlson:kjob-core:0.6.0")
     implementation("org.drewcarlson:kjob-mongo:0.6.0")
