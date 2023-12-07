@@ -106,7 +106,7 @@ class InboxJobProcessor(
 
         if (activityPubProcessor == null) {
             logger.warn("ActivityType {} is not support.", param.type)
-            throw IllegalStateException("ActivityPubProcessor not found.")
+            throw IllegalStateException("ActivityPubProcessor not found. type: ${param.type}")
         }
 
         val value = objectMapper.treeToValue(jsonNode, activityPubProcessor.type())
