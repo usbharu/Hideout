@@ -206,6 +206,161 @@ paths:
         200:
           description: 成功
 
+  /api/v1/accounts/relationships:
+    get:
+      tags:
+        - account
+      security:
+        - OAuth2:
+            - "read:follows"
+      parameters:
+        - in: query
+          name: id[]
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+        - in: query
+          name: with_suspended
+          required: false
+          schema:
+            type: boolean
+            default: false
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Relationship"
+
+  /api/v1/accounts/{id}:
+    get:
+      tags:
+        - account
+      security:
+        - { }
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+
+  /api/v1/accounts/{id}/follow:
+    post:
+      tags:
+        - account
+      security:
+        - OAuth2:
+            - "write:follows"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FollowRequestBody"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/FollowRequestBody"
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Relationship"
+
+  /api/v1/accounts/{id}/statuses:
+    get:
+      tags:
+        - account
+      security:
+        - OAuth2:
+            - "read:statuses"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: max_id
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: since_id
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: min_id
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - in: query
+          name: only_media
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - in: query
+          name: exclude_replies
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - in: query
+          name: exclude_reblogs
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - in: query
+          name: pinned
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - in: query
+          required: false
+          name: tagged
+          schema:
+            type: string
+
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Status"
+
   /api/v1/timelines/public:
     get:
       tags:
@@ -1314,6 +1469,8 @@ components:
           type: string
         client_secret:
           type: string
+        redirect_uri:
+          type: string
       required:
         - name
         - vapid_key
@@ -1332,6 +1489,65 @@ components:
       required:
         - client_name
         - redirect_uris
+
+    Relationship:
+      type: object
+      properties:
+        id:
+          type: string
+        following:
+          type: boolean
+        showing_reblogs:
+          type: boolean
+        notifying:
+          type: boolean
+        followed_by:
+          type: boolean
+        blocking:
+          type: boolean
+        blocked_by:
+          type: boolean
+        muting:
+          type: boolean
+        muting_notifications:
+          type: boolean
+        requested:
+          type: boolean
+        domain_blocking:
+          type: boolean
+        endorsed:
+          type: boolean
+        note:
+          type: string
+      required:
+        - id
+        - following
+        - showing_reblogs
+        - notifying
+        - followed_by
+        - blocking
+        - blocked_by
+        - muting
+        - muting_notifications
+        - requested
+        - domain_blocking
+        - endorsed
+        - note
+
+
+    FollowRequestBody:
+      type: object
+      properties:
+        reblogs:
+          type: boolean
+          default: true
+        notify:
+          type: boolean
+          default: false
+        languages:
+          type: array
+          items:
+            type: string
 
   securitySchemes:
     OAuth2:

@@ -8,6 +8,7 @@ import kjob.core.dsl.JobRegisterContext
 import kjob.core.dsl.KJobFunctions
 import kjob.core.kjob
 import org.jetbrains.exposed.sql.transactions.TransactionManager
+import org.slf4j.MDC
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Service
 
@@ -35,8 +36,13 @@ class KJobJobQueueWorkerService(private val jobQueueProcessorList: List<JobProce
         for (jobProcessor in jobQueueProcessorList) {
             kjob.register(jobProcessor.job()) {
                 execute {
-                    val param = it.convertUnsafe(props)
-                    jobProcessor.process(param)
+                    try {
+                        MDC.put("x-job-id", this.jobId)
+                        val param = it.convertUnsafe(props)
+                        jobProcessor.process(param)
+                    } finally {
+                        MDC.remove("x-job-id")
+                    }
                 }
             }
         }
