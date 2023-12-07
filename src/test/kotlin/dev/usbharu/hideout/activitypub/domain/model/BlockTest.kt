@@ -72,6 +72,7 @@ class BlockTest {
             .isEqualTo("https://misskey.usbharu.dev/blocks/9myf6e40vm")
         assertThat(from).extractingJsonPathStringValue("$.object")
             .isEqualTo("https://test-hideout.usbharu.dev/users/test-user2")
+        assertThat(from).extractingJsonPathStringValue("$.type").isEqualTo("Block")
 
     }
 }
