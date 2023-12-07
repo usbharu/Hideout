@@ -44,7 +44,7 @@ class ObjectDeserializer : JsonDeserializer<Object>() {
                 ExtendedActivityVocabulary.Add -> TODO()
                 ExtendedActivityVocabulary.Announce -> TODO()
                 ExtendedActivityVocabulary.Arrive -> TODO()
-                ExtendedActivityVocabulary.Block -> TODO()
+                ExtendedActivityVocabulary.Block -> p.codec.treeToValue(treeNode, Block::class.java)
                 ExtendedActivityVocabulary.Create -> p.codec.treeToValue(treeNode, Create::class.java)
                 ExtendedActivityVocabulary.Delete -> p.codec.treeToValue(treeNode, Delete::class.java)
                 ExtendedActivityVocabulary.Dislike -> TODO()
