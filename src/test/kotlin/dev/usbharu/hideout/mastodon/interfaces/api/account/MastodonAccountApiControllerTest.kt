@@ -125,4 +125,20 @@ class MastodonAccountApiControllerTest {
             .andExpect { header { string("location", "/users/hoge") } }
             .andExpect { status { isFound() } }
     }
+
+    @Test
+    fun `apiV1AccountsIdFollowPost フォロー成功時は200が返ってくる`() {
+        val createEmptyContext = SecurityContextHolder.createEmptyContext()
+        createEmptyContext.authentication = JwtAuthenticationToken(
+            Jwt.withTokenValue("a").header("alg", "RS236").claim("uid", "1234").build()
+        )
+        SecurityContextHolder.setContext(createEmptyContext)
+        mockMvc
+            .post("/api/v1/accounts/1/follow") {
+                contentType = MediaType.APPLICATION_JSON
+            }
+            .asyncDispatch()
+            .andExpect { status { isOk() } }
+
+    }
 }
