@@ -31,11 +31,9 @@ open class Image(
 
     override fun toString(): String {
         return "Image(" +
-                "mediaType=$mediaType, " +
-                "url='$url'" +
-                ")" +
-                " ${super.toString()}"
+            "mediaType=$mediaType, " +
+            "url='$url'" +
+            ")" +
+            " ${super.toString()}"
     }
-
-
 }
