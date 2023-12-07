@@ -99,7 +99,6 @@ class InboxJobProcessor(
 
         val verify = signature?.let { verifyHttpSignature(httpRequest, it, transaction) } ?: false
 
-
         logger.debug("Is verifying success? {}", verify)
 
         val activityPubProcessor =
@@ -114,7 +113,6 @@ class InboxJobProcessor(
         activityPubProcessor.process(ActivityPubProcessContext(value, jsonNode, httpRequest, signature, verify))
 
         logger.info("SUCCESS Process inbox. type: {}", param.type)
-
     }
 
     override fun job(): InboxJob = InboxJob
