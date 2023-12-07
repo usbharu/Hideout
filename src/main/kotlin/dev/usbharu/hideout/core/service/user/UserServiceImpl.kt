@@ -114,10 +114,13 @@ class UserServiceImpl(
     }
 
     override suspend fun follow(id: Long, followerId: Long) {
+        logger.debug("START Follow id: {} → target: {}", followerId, id)
         followerQueryService.appendFollower(id, followerId)
         if (userRepository.findFollowRequestsById(id, followerId)) {
+            logger.debug("Follow request is accepted! ")
             userRepository.deleteFollowRequest(id, followerId)
         }
+        logger.debug("SUCCESS Follow id: {} → target: {}", followerId, id)
     }
 
     override suspend fun unfollow(id: Long, followerId: Long): Boolean {

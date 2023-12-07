@@ -1,5 +1,5 @@
 hideout:
-  url: "https://localhost:8080"
+  url: "https://example.com"
   use-mongodb: true
   security:
     jwt:
