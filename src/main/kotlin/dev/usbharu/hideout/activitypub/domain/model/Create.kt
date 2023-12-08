@@ -7,7 +7,7 @@ import dev.usbharu.hideout.activitypub.domain.model.objects.ObjectDeserializer
 
 open class Create(
     type: List<String> = emptyList(),
-    override val name: String,
+    val name: String? = null,
     @JsonDeserialize(using = ObjectDeserializer::class)
     @JsonProperty("object")
     val apObject: Object,
@@ -19,7 +19,6 @@ open class Create(
     type = add(type, "Create")
 ),
     HasId,
-    HasName,
     HasActor {
 
     override fun equals(other: Any?): Boolean {
@@ -41,7 +40,7 @@ open class Create(
 
     override fun hashCode(): Int {
         var result = super.hashCode()
-        result = 31 * result + name.hashCode()
+        result = 31 * result + (name?.hashCode() ?: 0)
         result = 31 * result + apObject.hashCode()
         result = 31 * result + actor.hashCode()
         result = 31 * result + id.hashCode()
@@ -52,13 +51,13 @@ open class Create(
 
     override fun toString(): String {
         return "Create(" +
-            "name='$name', " +
-            "apObject=$apObject, " +
-            "actor='$actor', " +
-            "id='$id', " +
-            "to=$to, " +
-            "cc=$cc" +
-            ")" +
-            " ${super.toString()}"
+                "name=$name, " +
+                "apObject=$apObject, " +
+                "actor='$actor', " +
+                "id='$id', " +
+                "to=$to, " +
+                "cc=$cc" +
+                ")" +
+                " ${super.toString()}"
     }
 }
