@@ -30,21 +30,28 @@ class BlockServiceImpl(
     BlockService {
     override suspend fun block(userId: Long, target: Long) {
         logger.debug("Block userId: {} → target: {}", userId, target)
+
+        val user = userRepository.findById(userId) ?: throw IllegalStateException("Block user was not found.")
+
+        val targetEntity = userRepository.findById(target) ?: throw IllegalStateException("Block use was not found.")
+
+        if (user.domain != applicationConfig.url.host && targetEntity.domain != applicationConfig.url.host) {
+            logger.warn("Invalid Block activity. Both user and target are remote users.")
+            return
+        }
+
         blockRepository.save(Block(userId, target))
         if (followerQueryService.alreadyFollow(userId, target)) {
             logger.debug("Unfollow (Block) userId: {} → target: {}", userId, target)
             userService.unfollow(userId, target)
         }
 
-        val user = userRepository.findById(userId) ?: throw IllegalStateException("Block user was not found.")
 
         if (user.domain == applicationConfig.url.host) {
             return
         }
 
-        val target = userRepository.findById(target) ?: throw IllegalStateException("Block use was not found.")
-
-        if (target.domain == applicationConfig.url.host) {
+        if (targetEntity.domain == applicationConfig.url.host) {
             return
         }
 
@@ -52,18 +59,18 @@ class BlockServiceImpl(
             user.id,
             dev.usbharu.hideout.activitypub.domain.model.Block(
                 user.url,
-                "${applicationConfig.url}/block/${user.id}/${target.id}",
-                target.url
+                "${applicationConfig.url}/block/${user.id}/${targetEntity.id}",
+                targetEntity.url
             ),
             Reject(
                 user.url,
-                "${applicationConfig.url}/reject/${user.id}/${target.id}",
+                "${applicationConfig.url}/reject/${user.id}/${targetEntity.id}",
                 Follow(
                     apObject = user.url,
-                    actor = target.url
+                    actor = targetEntity.url
                 )
             ),
-            target.inbox
+            targetEntity.inbox
         )
         jobQueueParentService.scheduleTypeSafe(deliverBlockJob, blockJobParam)
     }
