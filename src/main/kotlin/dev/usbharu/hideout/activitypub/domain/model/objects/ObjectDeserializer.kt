@@ -58,7 +58,7 @@ class ObjectDeserializer : JsonDeserializer<Object>() {
                 ExtendedActivityVocabulary.Move -> TODO()
                 ExtendedActivityVocabulary.Offer -> TODO()
                 ExtendedActivityVocabulary.Question -> TODO()
-                ExtendedActivityVocabulary.Reject -> TODO()
+                ExtendedActivityVocabulary.Reject -> p.codec.treeToValue(treeNode, Reject::class.java)
                 ExtendedActivityVocabulary.Read -> TODO()
                 ExtendedActivityVocabulary.Remove -> TODO()
                 ExtendedActivityVocabulary.TentativeReject -> TODO()
