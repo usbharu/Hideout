@@ -103,4 +103,14 @@ class MastodonAccountApiController(
                 .asFlow()
         )
     }
+
+    override suspend fun apiV1AccountsIdBlockPost(id: String): ResponseEntity<Relationship> {
+        val principal = SecurityContextHolder.getContext().getAuthentication().principal as Jwt
+
+        val userid = principal.getClaim<String>("uid").toLong()
+
+        val block = accountApiService.block(userid, id.toLong())
+
+        return ResponseEntity.ok(block)
+    }
 }

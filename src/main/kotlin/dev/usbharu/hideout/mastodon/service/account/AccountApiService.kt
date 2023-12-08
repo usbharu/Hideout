@@ -1,8 +1,11 @@
 package dev.usbharu.hideout.mastodon.service.account
 
 import dev.usbharu.hideout.application.external.Transaction
+import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
+import dev.usbharu.hideout.core.domain.model.block.BlockRepository
 import dev.usbharu.hideout.core.domain.model.user.UserRepository
 import dev.usbharu.hideout.core.query.FollowerQueryService
+import dev.usbharu.hideout.core.service.block.BlockService
 import dev.usbharu.hideout.core.service.user.UserCreateDto
 import dev.usbharu.hideout.core.service.user.UserService
 import dev.usbharu.hideout.domain.mastodon.model.generated.*
@@ -32,6 +35,7 @@ interface AccountApiService {
     suspend fun follow(userid: Long, followeeId: Long): Relationship
     suspend fun account(id: Long): Account
     suspend fun relationships(userid: Long, id: List<Long>, withSuspended: Boolean): List<Relationship>
+    suspend fun block(userid: Long, target: Long): Relationship
 }
 
 @Service
@@ -41,7 +45,9 @@ class AccountApiServiceImpl(
     private val userService: UserService,
     private val followerQueryService: FollowerQueryService,
     private val userRepository: UserRepository,
-    private val statusQueryService: StatusQueryService
+    private val statusQueryService: StatusQueryService,
+    private val blockService: BlockService,
+    private val blockRepository: BlockRepository
 ) :
     AccountApiService {
     override suspend fun accountsStatuses(
@@ -159,6 +165,35 @@ class AccountApiServiceImpl(
                 )
             }
         }
+
+    override suspend fun block(userid: Long, target: Long): Relationship = transaction.transaction {
+        blockService.block(userid, target)
+
+        val blocked = try {
+            blockRepository.findByUserIdAndTarget(target, userid)
+            true
+        } catch (e: FailedToGetResourcesException) {
+            false
+        }
+
+        val requested = userRepository.findFollowRequestsById(target, userid)
+
+        Relationship(
+            target.toString(),
+            false,
+            true,
+            false,
+            false,
+            true,
+            blocked,
+            false,
+            false,
+            requested,
+            false,
+            false,
+            ""
+        )
+    }
 
     private fun from(account: Account): CredentialAccount {
         return CredentialAccount(

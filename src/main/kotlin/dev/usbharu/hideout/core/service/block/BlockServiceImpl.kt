@@ -28,7 +28,7 @@ class BlockServiceImpl(
     private val applicationConfig: ApplicationConfig
 ) :
     BlockService {
-    override suspend fun block(userId: Long, target: Long): Unit = transaction.transaction {
+    override suspend fun block(userId: Long, target: Long) {
         logger.debug("Block userId: {} → target: {}", userId, target)
         blockRepository.save(Block(userId, target))
         if (followerQueryService.alreadyFollow(userId, target)) {
@@ -39,13 +39,13 @@ class BlockServiceImpl(
         val user = userRepository.findById(userId) ?: throw IllegalStateException("Block user was not found.")
 
         if (user.domain == applicationConfig.url.host) {
-            return@transaction
+            return
         }
 
         val target = userRepository.findById(target) ?: throw IllegalStateException("Block use was not found.")
 
         if (target.domain == applicationConfig.url.host) {
-            return@transaction
+            return
         }
 
         val blockJobParam = DeliverBlockJobParam(
