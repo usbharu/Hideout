@@ -10,6 +10,9 @@ import dev.usbharu.hideout.core.service.block.BlockService
 import org.springframework.stereotype.Service
 
 
+/**
+ * ブロックアクティビティを処理します
+ */
 @Service
 class BlockActivityPubProcessor(
     private val blockService: BlockService,

@@ -9,6 +9,14 @@ import kjob.core.job.JobProps
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
 
+/**
+ * ブロックアクティビティ配送のジョブパラメーター
+ *
+ * @property signer ブロック操作を行ったユーザーid
+ * @property block 配送するブロックアクティビティ
+ * @property reject 配送するフォロー解除アクティビティ
+ * @property inbox 配送先url
+ */
 data class DeliverBlockJobParam(
     val signer: Long,
     val block: Block,
@@ -16,6 +24,9 @@ data class DeliverBlockJobParam(
     val inbox: String
 )
 
+/**
+ * ブロックアクティビティ配送のジョブ
+ */
 @Component
 class DeliverBlockJob(@Qualifier("activitypub") private val objectMapper: ObjectMapper) :
     HideoutJob<DeliverBlockJobParam, DeliverBlockJob>("DeliverBlockJob") {

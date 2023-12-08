@@ -35,6 +35,14 @@ interface AccountApiService {
     suspend fun follow(userid: Long, followeeId: Long): Relationship
     suspend fun account(id: Long): Account
     suspend fun relationships(userid: Long, id: List<Long>, withSuspended: Boolean): List<Relationship>
+
+    /**
+     * ブロック操作を行う
+     *
+     * @param userid ブロック操作を行ったユーザーid
+     * @param target ブロック対象のユーザーid
+     * @return ブロック後のブロック対象ユーザーとの[Relationship]
+     */
     suspend fun block(userid: Long, target: Long): Relationship
 }
 

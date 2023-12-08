@@ -8,6 +8,9 @@ import dev.usbharu.hideout.core.external.job.DeliverBlockJobParam
 import dev.usbharu.hideout.core.service.job.JobProcessor
 import org.springframework.stereotype.Service
 
+/**
+ * ブロックアクティビティ配送を処理します
+ */
 @Service
 class APDeliverBlockJobProcessor(
     private val apRequestService: APRequestService,
