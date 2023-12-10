@@ -37,8 +37,6 @@ class UserServiceTest {
                 userRepository,
                 userAuthService,
                 mock(),
-                mock(),
-                mock(),
                 userBuilder,
                 testApplicationConfig,
                 mock()
@@ -68,7 +66,7 @@ class UserServiceTest {
             onBlocking { nextId() } doReturn 113345L
         }
         val userService =
-            UserServiceImpl(userRepository, mock(), mock(), mock(), mock(), userBuilder, testApplicationConfig, mock())
+            UserServiceImpl(userRepository, mock(), mock(), userBuilder, testApplicationConfig, mock())
         val user = RemoteUserCreateDto(
             name = "test",
             domain = "remote.example.com",

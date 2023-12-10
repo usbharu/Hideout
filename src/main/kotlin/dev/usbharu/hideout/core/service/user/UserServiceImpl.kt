@@ -1,10 +1,8 @@
 package dev.usbharu.hideout.core.service.user
 
-import dev.usbharu.hideout.activitypub.service.activity.follow.APSendFollowService
 import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.core.domain.model.user.User
 import dev.usbharu.hideout.core.domain.model.user.UserRepository
-import dev.usbharu.hideout.core.query.FollowerQueryService
 import dev.usbharu.hideout.core.query.UserQueryService
 import dev.usbharu.hideout.core.service.instance.InstanceService
 import org.jetbrains.exposed.exceptions.ExposedSQLException
@@ -17,9 +15,7 @@ import java.time.Instant
 class UserServiceImpl(
     private val userRepository: UserRepository,
     private val userAuthService: UserAuthService,
-    private val apSendFollowService: APSendFollowService,
     private val userQueryService: UserQueryService,
-    private val followerQueryService: FollowerQueryService,
     private val userBuilder: User.UserBuilder,
     private val applicationConfig: ApplicationConfig,
     private val instanceService: InstanceService

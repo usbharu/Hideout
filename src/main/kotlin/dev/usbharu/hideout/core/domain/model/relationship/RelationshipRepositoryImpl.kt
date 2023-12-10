@@ -60,13 +60,13 @@ class RelationshipRepositoryImpl : RelationshipRepository {
 }
 
 fun ResultRow.toRelationships(): Relationship = Relationship(
-    this[Relationships.userId],
-    this[Relationships.targetUserId],
-    this[Relationships.following],
-    this[Relationships.blocking],
-    this[Relationships.muting],
-    this[Relationships.followRequest],
-    this[Relationships.ignoreFollowRequestFromTarget]
+    userId = this[Relationships.userId],
+    targetUserId = this[Relationships.targetUserId],
+    following = this[Relationships.following],
+    blocking = this[Relationships.blocking],
+    muting = this[Relationships.muting],
+    followRequest = this[Relationships.followRequest],
+    ignoreFollowRequestFromTarget = this[Relationships.ignoreFollowRequestFromTarget]
 )
 
 object Relationships : LongIdTable("relationships") {

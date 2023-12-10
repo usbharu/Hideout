@@ -55,12 +55,12 @@ class AppApiServiceImpl(
             registeredClientRepository.save(registeredClient)
 
             Application(
-                appsRequest.clientName,
-                "invalid-vapid-key",
-                appsRequest.website,
-                id,
-                clientSecret,
-                appsRequest.redirectUris
+                name = appsRequest.clientName,
+                vapidKey = "invalid-vapid-key",
+                website = appsRequest.website,
+                clientId = id,
+                clientSecret = clientSecret,
+                redirectUri = appsRequest.redirectUris
             )
         }
     }

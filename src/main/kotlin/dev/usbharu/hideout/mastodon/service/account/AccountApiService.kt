@@ -13,6 +13,7 @@ import kotlin.math.min
 
 @Service
 interface AccountApiService {
+    @Suppress("LongParameterList")
     suspend fun accountsStatuses(
         userid: Long,
         maxId: Long?,
@@ -76,17 +77,17 @@ class AccountApiServiceImpl(
 
         return transaction.transaction {
             statusQueryService.accountsStatus(
-                userid,
-                maxId,
-                sinceId,
-                minId,
-                limit,
-                onlyMedia,
-                excludeReplies,
-                excludeReblogs,
-                pinned,
-                tagged,
-                canViewFollowers
+                accountId = userid,
+                maxId = maxId,
+                sinceId = sinceId,
+                minId = minId,
+                limit = limit,
+                onlyMedia = onlyMedia,
+                excludeReplies = excludeReplies,
+                excludeReblogs = excludeReblogs,
+                pinned = pinned,
+                tagged = tagged,
+                includeFollowers = canViewFollowers
             )
         }
     }

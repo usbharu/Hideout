@@ -36,6 +36,7 @@ class LocalFileSystemMediaDataStore(
         savePath.createDirectories()
     }
 
+    @Suppress("NestedBlockDepth")
     override suspend fun save(dataMediaSave: MediaSave): SavedMedia {
         val fileSavePath = buildSavePath(savePath, dataMediaSave.name)
         val thumbnailSavePath = buildSavePath(savePath, "thumbnail-" + dataMediaSave.name)
