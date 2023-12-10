@@ -36,6 +36,7 @@ class KJobJobQueueWorkerService(private val jobQueueProcessorList: List<JobProce
         for (jobProcessor in jobQueueProcessorList) {
             kjob.register(jobProcessor.job()) {
                 execute {
+                    @Suppress("TooGenericExceptionCaught")
                     try {
                         MDC.put("x-job-id", this.jobId)
                         val param = it.convertUnsafe(props)

@@ -75,17 +75,17 @@ class MastodonAccountApiController(
 
         val userid = principal.getClaim<String>("uid").toLong()
         val statusFlow = accountApiService.accountsStatuses(
-            id.toLong(),
-            maxId?.toLongOrNull(),
-            sinceId?.toLongOrNull(),
-            minId?.toLongOrNull(),
-            limit,
-            onlyMedia,
-            excludeReplies,
-            excludeReblogs,
-            pinned,
-            tagged,
-            userid
+            userid = id.toLong(),
+            maxId = maxId?.toLongOrNull(),
+            sinceId = sinceId?.toLongOrNull(),
+            minId = minId?.toLongOrNull(),
+            limit = limit,
+            onlyMedia = onlyMedia,
+            excludeReplies = excludeReplies,
+            excludeReblogs = excludeReblogs,
+            pinned = pinned,
+            tagged = tagged,
+            loginUser = userid
         ).asFlow()
         ResponseEntity.ok(statusFlow)
     }
