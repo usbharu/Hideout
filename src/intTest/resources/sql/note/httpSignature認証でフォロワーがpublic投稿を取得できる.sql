@@ -21,8 +21,9 @@ VALUES (5, 'test-user5', 'follower.example.com', 'Im test user5.', 'THis account
         'https://follower.example.com/users/test-user5/following',
         'https://follower.example.com/users/test-user5/followers', null);
 
-insert into USERS_FOLLOWERS (USER_ID, FOLLOWER_ID)
-VALUES (4, 5);
+insert into relationships (user_id, target_user_id, following, blocking, muting, follow_request,
+                           ignore_follow_request)
+VALUES (5, 4, true, false, false, false, false);
 
 insert into POSTS (ID, "USER_ID", OVERVIEW, TEXT, "CREATED_AT", VISIBILITY, URL, "REPOST_ID", "REPLY_ID", SENSITIVE,
                    AP_ID)
