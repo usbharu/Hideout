@@ -28,13 +28,13 @@ class APUndoProcessor(
         }
 
         val type =
-            undo.`object`.type.orEmpty()
+            undo.apObject.type.orEmpty()
                 .firstOrNull { it == "Block" || it == "Follow" || it == "Like" || it == "Announce" || it == "Accept" }
                 ?: return
 
         when (type) {
             "Follow" -> {
-                val follow = undo.`object` as Follow
+                val follow = undo.apObject as Follow
 
                 apUserService.fetchPerson(undo.actor, follow.apObject)
                 val follower = userQueryService.findByUrl(undo.actor)
