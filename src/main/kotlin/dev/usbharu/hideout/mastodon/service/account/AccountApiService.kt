@@ -29,7 +29,7 @@ interface AccountApiService {
 
     suspend fun verifyCredentials(userid: Long): CredentialAccount
     suspend fun registerAccount(userCreateDto: UserCreateDto): Unit
-    suspend fun follow2(loginUser: Long, followTargetUserId: Long): Relationship
+    suspend fun follow(loginUser: Long, followTargetUserId: Long): Relationship
     suspend fun account(id: Long): Account
     suspend fun relationships(userid: Long, id: List<Long>, withSuspended: Boolean): List<Relationship>
 
@@ -100,7 +100,7 @@ class AccountApiServiceImpl(
         userService.createLocalUser(UserCreateDto(userCreateDto.name, userCreateDto.name, "", userCreateDto.password))
     }
 
-    override suspend fun follow2(loginUser: Long, followTargetUserId: Long): Relationship {
+    override suspend fun follow(loginUser: Long, followTargetUserId: Long): Relationship {
         relationshipService.followRequest(loginUser, followTargetUserId)
 
         return fetchRelationship(loginUser, followTargetUserId)

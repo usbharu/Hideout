@@ -7,8 +7,8 @@ import dev.usbharu.hideout.activitypub.service.common.AbstractActivityPubProcess
 import dev.usbharu.hideout.activitypub.service.common.ActivityPubProcessContext
 import dev.usbharu.hideout.activitypub.service.common.ActivityType
 import dev.usbharu.hideout.application.external.Transaction
-import dev.usbharu.hideout.core.query.FollowerQueryService
 import dev.usbharu.hideout.core.query.UserQueryService
+import dev.usbharu.hideout.core.service.relationship.RelationshipService
 import dev.usbharu.hideout.core.service.user.UserService
 import org.springframework.stereotype.Service
 
@@ -16,13 +16,13 @@ import org.springframework.stereotype.Service
 class ApAcceptProcessor(
     transaction: Transaction,
     private val userQueryService: UserQueryService,
-    private val followerQueryService: FollowerQueryService,
-    private val userService: UserService
+    private val userService: UserService,
+    private val relationshipService: RelationshipService
 ) :
     AbstractActivityPubProcessor<Accept>(transaction) {
 
     override suspend fun internalProcess(activity: ActivityPubProcessContext<Accept>) {
-        val value = activity.activity.apObject ?: throw IllegalActivityPubObjectException("object is null")
+        val value = activity.activity.apObject
 
         if (value.type.contains("Follow").not()) {
             logger.warn("FAILED Activity type isn't Follow.")
@@ -37,12 +37,7 @@ class ApAcceptProcessor(
         val user = userQueryService.findByUrl(userUrl)
         val follower = userQueryService.findByUrl(followerUrl)
 
-        if (followerQueryService.alreadyFollow(user.id, follower.id)) {
-            logger.debug("END User already follow from ${follower.url} to ${user.url}.")
-            return
-        }
-
-        userService.follow(user.id, follower.id)
+        relationshipService.acceptFollowRequest(follower.id, user.id)
         logger.debug("SUCCESS Follow from ${follower.url} to ${user.url}.")
     }
 
