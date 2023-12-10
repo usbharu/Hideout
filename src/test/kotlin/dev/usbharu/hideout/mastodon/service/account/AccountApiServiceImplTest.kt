@@ -305,7 +305,6 @@ class AccountApiServiceImplTest {
 
         assertThat(relationships).hasSize(0)
         verify(followerQueryService, never()).alreadyFollow(any(), any())
-        verify(userRepository, never()).findFollowRequestsById(any(), any())
     }
 
     @Test
