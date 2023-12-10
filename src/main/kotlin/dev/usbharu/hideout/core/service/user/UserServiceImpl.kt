@@ -2,12 +2,10 @@ package dev.usbharu.hideout.core.service.user
 
 import dev.usbharu.hideout.activitypub.service.activity.follow.APSendFollowService
 import dev.usbharu.hideout.application.config.ApplicationConfig
-import dev.usbharu.hideout.core.domain.exception.UserNotFoundException
 import dev.usbharu.hideout.core.domain.model.user.User
 import dev.usbharu.hideout.core.domain.model.user.UserRepository
 import dev.usbharu.hideout.core.query.FollowerQueryService
 import dev.usbharu.hideout.core.query.UserQueryService
-import dev.usbharu.hideout.core.service.follow.SendFollowDto
 import dev.usbharu.hideout.core.service.instance.InstanceService
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.slf4j.LoggerFactory
@@ -94,38 +92,6 @@ class UserServiceImpl(
             logger.warn("FAILED User already exists. name: {} url: {}", user.name, user.url)
             userQueryService.findByUrl(user.url)
         }
-    }
-
-    // TODO APのフォロー処理を作る
-    override suspend fun followRequest(id: Long, followerId: Long): Boolean {
-        val user = userRepository.findById(id) ?: throw UserNotFoundException("$id was not found.")
-        val follower = userRepository.findById(followerId) ?: throw UserNotFoundException("$followerId was not found.")
-        return if (user.domain == applicationConfig.url.host) {
-            follow(id, followerId)
-            true
-        } else {
-            if (userRepository.findFollowRequestsById(id, followerId)) {
-                // do-nothing
-            } else {
-                apSendFollowService.sendFollow(SendFollowDto(follower, user))
-            }
-            false
-        }
-    }
-
-    override suspend fun follow(id: Long, followerId: Long) {
-        logger.debug("START Follow id: {} → target: {}", followerId, id)
-        followerQueryService.appendFollower(id, followerId)
-        if (userRepository.findFollowRequestsById(id, followerId)) {
-            logger.debug("Follow request is accepted! ")
-            userRepository.deleteFollowRequest(id, followerId)
-        }
-        logger.debug("SUCCESS Follow id: {} → target: {}", followerId, id)
-    }
-
-    override suspend fun unfollow(id: Long, followerId: Long): Boolean {
-        followerQueryService.removeFollower(id, followerId)
-        return false
     }
 
     companion object {

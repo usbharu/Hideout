@@ -8,6 +8,7 @@ import dev.usbharu.hideout.activitypub.service.common.ActivityType
 import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
 import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.query.UserQueryService
+import dev.usbharu.hideout.core.service.relationship.RelationshipService
 import dev.usbharu.hideout.core.service.user.UserService
 import org.springframework.stereotype.Service
 
@@ -16,7 +17,8 @@ class APUndoProcessor(
     transaction: Transaction,
     private val apUserService: APUserService,
     private val userQueryService: UserQueryService,
-    private val userService: UserService
+    private val userService: UserService,
+    private val relationshipService: RelationshipService
 ) :
     AbstractActivityPubProcessor<Undo>(transaction) {
     override suspend fun internalProcess(activity: ActivityPubProcessContext<Undo>) {
@@ -34,13 +36,11 @@ class APUndoProcessor(
             "Follow" -> {
                 val follow = undo.`object` as Follow
 
-                if (follow.apObject == null) {
-                    return
-                }
                 apUserService.fetchPerson(undo.actor, follow.apObject)
                 val follower = userQueryService.findByUrl(undo.actor)
                 val target = userQueryService.findByUrl(follow.apObject)
-                userService.unfollow(target.id, follower.id)
+
+                relationshipService.unfollow(follower.id, target.id)
                 return
             }
 
