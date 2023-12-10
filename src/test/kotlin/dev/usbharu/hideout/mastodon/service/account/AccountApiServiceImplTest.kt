@@ -1,8 +1,10 @@
 package dev.usbharu.hideout.mastodon.service.account
 
 import dev.usbharu.hideout.application.external.Transaction
+import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
 import dev.usbharu.hideout.core.domain.model.user.UserRepository
 import dev.usbharu.hideout.core.query.FollowerQueryService
+import dev.usbharu.hideout.core.service.relationship.RelationshipService
 import dev.usbharu.hideout.core.service.user.UserService
 import dev.usbharu.hideout.domain.mastodon.model.generated.Account
 import dev.usbharu.hideout.domain.mastodon.model.generated.Relationship
@@ -39,6 +41,12 @@ class AccountApiServiceImplTest {
 
     @Spy
     private val transaction: Transaction = TestTransaction
+
+    @Mock
+    private lateinit var relationshipService: RelationshipService
+
+    @Mock
+    private lateinit var relationshipRepository: RelationshipRepository
 
     @InjectMocks
     private lateinit var accountApiServiceImpl: AccountApiServiceImpl
@@ -157,9 +165,6 @@ class AccountApiServiceImplTest {
             )
         ).doReturn(statusList)
 
-        whenever(followerQueryService.alreadyFollow(eq(userId), eq(loginUser))).doReturn(false)
-
-
         val accountsStatuses = accountApiServiceImpl.accountsStatuses(
             userid = userId,
             maxId = null,
@@ -197,7 +202,17 @@ class AccountApiServiceImplTest {
             )
         ).doReturn(statusList)
 
-        whenever(followerQueryService.alreadyFollow(eq(userId), eq(loginUser))).doReturn(true)
+        whenever(relationshipRepository.findByUserIdAndTargetUserId(eq(loginUser), eq(userId))).doReturn(
+            dev.usbharu.hideout.core.domain.model.relationship.Relationship(
+                userId = loginUser,
+                targetUserId = userId,
+                following = true,
+                blocking = false,
+                muting = false,
+                followRequest = false,
+                ignoreFollowRequestFromTarget = false
+            )
+        )
 
 
         val accountsStatuses = accountApiServiceImpl.accountsStatuses(
@@ -218,50 +233,33 @@ class AccountApiServiceImplTest {
     }
 
     @Test
-    fun `follow 既にフォローしている場合は何もしない`() = runTest {
-        val userId = 1234L
-        val followeeId = 1L
-
-        whenever(followerQueryService.alreadyFollow(eq(followeeId), eq(userId))).doReturn(true)
-
-        whenever(followerQueryService.alreadyFollow(eq(userId), eq(followeeId))).doReturn(true)
-
-        whenever(userRepository.findFollowRequestsById(eq(followeeId), eq(userId))).doReturn(false)
-
-        val follow = accountApiServiceImpl.follow(userId, followeeId)
-
-        val expected = Relationship(
-            id = followeeId.toString(),
-            following = true,
-            showingReblogs = true,
-            notifying = false,
-            followedBy = true,
-            blocking = false,
-            blockedBy = false,
-            muting = false,
-            mutingNotifications = false,
-            requested = false,
-            domainBlocking = false,
-            endorsed = false,
-            note = ""
-        )
-        assertThat(follow).isEqualTo(expected)
-
-        verify(userService, never()).followRequest(any(), any())
-    }
-
-    @Test
     fun `follow 未フォローの場合フォローリクエストが発生する`() = runTest {
         val userId = 1234L
         val followeeId = 1L
 
-        whenever(followerQueryService.alreadyFollow(eq(followeeId), eq(userId))).doReturn(false)
+        whenever(relationshipRepository.findByUserIdAndTargetUserId(eq(followeeId), eq(userId))).doReturn(
+            dev.usbharu.hideout.core.domain.model.relationship.Relationship(
+                userId = followeeId,
+                targetUserId = userId,
+                following = true,
+                blocking = false,
+                muting = false,
+                followRequest = false,
+                ignoreFollowRequestFromTarget = false
+            )
+        )
+        whenever(relationshipRepository.findByUserIdAndTargetUserId(eq(userId), eq(followeeId))).doReturn(
+            dev.usbharu.hideout.core.domain.model.relationship.Relationship(
+                userId = userId,
+                targetUserId = followeeId,
+                following = true,
+                blocking = false,
+                muting = false,
+                followRequest = false,
+                ignoreFollowRequestFromTarget = false
+            )
+        )
 
-        whenever(userService.followRequest(eq(followeeId), eq(userId))).doReturn(true)
-
-        whenever(followerQueryService.alreadyFollow(eq(userId), eq(followeeId))).doReturn(true)
-
-        whenever(userRepository.findFollowRequestsById(eq(followeeId), eq(userId))).doReturn(false)
 
         val follow = accountApiServiceImpl.follow(userId, followeeId)
 
@@ -282,14 +280,11 @@ class AccountApiServiceImplTest {
         )
         assertThat(follow).isEqualTo(expected)
 
-        verify(userService, times(1)).followRequest(eq(followeeId), eq(userId))
+        verify(relationshipService, times(1)).followRequest(eq(userId), eq(followeeId))
     }
 
     @Test
     fun `relationships idが長すぎたら省略する`() = runTest {
-        whenever(followerQueryService.alreadyFollow(any(), any())).doReturn(true)
-
-        whenever(userRepository.findFollowRequestsById(any(), any())).doReturn(true)
 
         val relationships = accountApiServiceImpl.relationships(
             userid = 1234L,
@@ -297,7 +292,7 @@ class AccountApiServiceImplTest {
             withSuspended = false
         )
 
-        assertThat(relationships).hasSizeLessThanOrEqualTo(20)
+        assertThat(relationships).hasSize(20)
     }
 
     @Test
@@ -315,9 +310,6 @@ class AccountApiServiceImplTest {
 
     @Test
     fun `relationships idに指定されたアカウントの関係を取得する`() = runTest {
-        whenever(followerQueryService.alreadyFollow(any(), any())).doReturn(true)
-
-        whenever(userRepository.findFollowRequestsById(any(), any())).doReturn(true)
 
         val relationships = accountApiServiceImpl.relationships(
             userid = 1234L,
