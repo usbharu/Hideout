@@ -1,6 +1,7 @@
 package dev.usbharu.hideout.activitypub.service.activity.undo
 
 import dev.usbharu.hideout.activitypub.service.common.APRequestService
+import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.external.job.DeliverUndoJob
 import dev.usbharu.hideout.core.external.job.DeliverUndoJobParam
 import dev.usbharu.hideout.core.query.UserQueryService
@@ -11,9 +12,10 @@ import org.springframework.stereotype.Service
 class APDeliverUndoJobProcessor(
     private val deliverUndoJob: DeliverUndoJob,
     private val apRequestService: APRequestService,
-    private val userQueryService: UserQueryService
+    private val userQueryService: UserQueryService,
+    private val transaction: Transaction
 ) : JobProcessor<DeliverUndoJobParam, DeliverUndoJob> {
-    override suspend fun process(param: DeliverUndoJobParam) {
+    override suspend fun process(param: DeliverUndoJobParam): Unit = transaction.transaction {
         apRequestService.apPost(param.inbox, param.undo, userQueryService.findById(param.signer))
     }
 

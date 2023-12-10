@@ -16,7 +16,7 @@ data class DeliverUndoJobParam(
 
 @Component
 class DeliverUndoJob(@Qualifier("activitypub") private val objectMapper: ObjectMapper) :
-    HideoutJob<DeliverUndoJobParam, DeliverUndoJob>() {
+    HideoutJob<DeliverUndoJobParam, DeliverUndoJob>("DeliverUndoJob") {
 
     val undo = string("undo")
     val inbox = string("inbox")

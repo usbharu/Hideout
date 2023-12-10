@@ -27,6 +27,8 @@ class RelationshipServiceImpl(
     private val apSendUndoService: APSendUndoService
 ) : RelationshipService {
     override suspend fun followRequest(userId: Long, targetId: Long) {
+        logger.info("START Follow Request userId: {} targetId: {}", userId, targetId)
+
         val relationship =
             relationshipRepository.findByUserIdAndTargetUserId(userId, targetId)?.copy(followRequest = true)
                 ?: Relationship(
@@ -65,7 +67,7 @@ class RelationshipServiceImpl(
 
         if (relationship.following) {
             logger.debug("SUCCESS User already follow. userId: {} targetId: {}", userId, targetId)
-            acceptFollowRequest(userId, targetId, true)
+            acceptFollowRequest(targetId, userId, true)
             return
         }
 
@@ -78,9 +80,10 @@ class RelationshipServiceImpl(
             apSendFollowService.sendFollow(SendFollowDto(user, remoteUser))
         } else {
             //TODO: フォロー許可制ユーザーを実装したら消す
-            acceptFollowRequest(userId, targetId)
+            acceptFollowRequest(targetId, userId)
         }
 
+        logger.info("SUCCESS Follow Request userId: {} targetId: {}", userId, targetId)
     }
 
     override suspend fun block(userId: Long, targetId: Long) {
@@ -106,9 +109,11 @@ class RelationshipServiceImpl(
     }
 
     override suspend fun acceptFollowRequest(userId: Long, targetId: Long, force: Boolean) {
-        val relationship = relationshipRepository.findByUserIdAndTargetUserId(userId, targetId)
+        logger.info("START Accept follow request userId: {} targetId: {}", userId, targetId)
 
-        val inverseRelationship = relationshipRepository.findByUserIdAndTargetUserId(targetId, userId) ?: Relationship(
+        val relationship = relationshipRepository.findByUserIdAndTargetUserId(targetId, userId)
+
+        val inverseRelationship = relationshipRepository.findByUserIdAndTargetUserId(userId, targetId) ?: Relationship(
             userId = targetId,
             targetUserId = userId,
             following = false,
@@ -267,6 +272,7 @@ class RelationshipServiceImpl(
     }
 
     private suspend fun isRemoteUser(userId: Long): User? {
+        logger.trace("isRemoteUser({})", userId)
         val user = try {
             userQueryService.findById(userId)
         } catch (e: FailedToGetResourcesException) {
@@ -274,9 +280,13 @@ class RelationshipServiceImpl(
             throw IllegalStateException("User not found.", e)
         }
 
+        logger.trace("user info {}", user)
+
         if (user.domain == applicationConfig.url.host) {
+            logger.trace("user: {} is local user", userId)
             return null
         }
+        logger.trace("user: {} is remote user", userId)
         return user
     }
 

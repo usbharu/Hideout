@@ -21,8 +21,8 @@ class ApSendAcceptServiceImpl(
         val deliverAcceptJobParam = DeliverAcceptJobParam(
             Accept(
                 apObject = Follow(
-                    apObject = target.url,
-                    actor = user.url
+                    apObject = user.url,
+                    actor = target.url
                 ),
                 actor = user.url
             ),

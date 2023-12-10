@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.activitypub.service.activity.undo
 
+import dev.usbharu.hideout.activitypub.domain.model.Block
 import dev.usbharu.hideout.activitypub.domain.model.Follow
 import dev.usbharu.hideout.activitypub.domain.model.Undo
 import dev.usbharu.hideout.activitypub.service.common.AbstractActivityPubProcessor
@@ -41,6 +42,16 @@ class APUndoProcessor(
                 val target = userQueryService.findByUrl(follow.apObject)
 
                 relationshipService.unfollow(follower.id, target.id)
+                return
+            }
+
+            "Block" -> {
+                val block = undo.apObject as Block
+
+                val blocker = apUserService.fetchPersonWithEntity(undo.actor, block.apObject).second
+                val target = userQueryService.findByUrl(block.apObject)
+
+                relationshipService.unblock(blocker.id, target.id)
                 return
             }
 

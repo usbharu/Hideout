@@ -14,7 +14,8 @@ data class DeliverAcceptJobParam(
 )
 
 @Component
-class DeliverAcceptJob(private val objectMapper: ObjectMapper) : HideoutJob<DeliverAcceptJobParam, DeliverAcceptJob>() {
+class DeliverAcceptJob(private val objectMapper: ObjectMapper) :
+    HideoutJob<DeliverAcceptJobParam, DeliverAcceptJob>("DeliverAcceptJob") {
 
     val accept = string("accept")
     val inbox = string("inbox")

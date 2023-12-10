@@ -16,7 +16,7 @@ data class DeliverRejectJobParam(
 
 @Component
 class DeliverRejectJob(@Qualifier("activitypub") private val objectMapper: ObjectMapper) :
-    HideoutJob<DeliverRejectJobParam, DeliverRejectJob>() {
+    HideoutJob<DeliverRejectJobParam, DeliverRejectJob>("DeliverRejectJob") {
     val reject = string("reject")
     val inbox = string("inbox")
     val signer = long("signer")
