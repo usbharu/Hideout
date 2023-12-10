@@ -63,6 +63,11 @@ class RelationshipServiceImpl(
             return
         }
 
+        if (relationship.following) {
+            logger.debug("SUCCESS User already follow. userId: {} targetId: {}", userId, targetId)
+            acceptFollowRequest(userId, targetId, true)
+            return
+        }
 
         relationshipRepository.save(relationship)
 
@@ -100,15 +105,25 @@ class RelationshipServiceImpl(
         }
     }
 
-    override suspend fun acceptFollowRequest(userId: Long, targetId: Long) {
+    override suspend fun acceptFollowRequest(userId: Long, targetId: Long, force: Boolean) {
         val relationship = relationshipRepository.findByUserIdAndTargetUserId(userId, targetId)
+
+        val inverseRelationship = relationshipRepository.findByUserIdAndTargetUserId(targetId, userId) ?: Relationship(
+            userId = targetId,
+            targetUserId = userId,
+            following = false,
+            blocking = false,
+            muting = false,
+            followRequest = false,
+            ignoreFollowRequestFromTarget = false
+        )
 
         if (relationship == null) {
             logger.warn("FAILED Follow Request Not Found. (Relationship) userId: {} targetId: {}", userId, targetId)
             return
         }
 
-        if (relationship.followRequest.not()) {
+        if (relationship.followRequest.not() && force.not()) {
             logger.warn("FAILED Follow Request Not Found. (Follow Request) userId: {} targetId: {}", userId, targetId)
             return
         }
@@ -116,6 +131,11 @@ class RelationshipServiceImpl(
         if (relationship.blocking) {
             logger.warn("FAILED Blocking user userId: {} targetId: {}", userId, targetId)
             throw IllegalStateException("Cannot accept a follow request from a blocked user. userId: $userId targetId: $targetId")
+        }
+
+        if (inverseRelationship.blocking) {
+            logger.warn("FAILED BLocked by user userId: {} targetId: {}", userId, targetId)
+            throw IllegalStateException("Cannot accept a follow request from a blocking user. userId: $userId targetId: $targetId")
         }
 
         val copy = relationship.copy(followRequest = false, following = true, blocking = false)
@@ -143,7 +163,7 @@ class RelationshipServiceImpl(
             return
         }
 
-        val copy = relationship.copy(followRequest = false, following = false, blocking = false)
+        val copy = relationship.copy(followRequest = false, following = false)
 
         relationshipRepository.save(copy)
 
@@ -214,9 +234,9 @@ class RelationshipServiceImpl(
 
 
         val remoteUser = isRemoteUser(targetId)
-        if (remoteUser == null) {
+        if (remoteUser != null) {
             val user = userQueryService.findById(userId)
-            apSendUndoService.sendUndoBlock(user, targetId)
+            apSendUndoService.sendUndoBlock(user, remoteUser)
         }
     }
 
