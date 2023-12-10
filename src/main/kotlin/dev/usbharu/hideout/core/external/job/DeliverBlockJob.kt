@@ -49,6 +49,4 @@ class DeliverBlockJob(@Qualifier("activitypub") private val objectMapper: Object
         objectMapper.readValue(props[reject]),
         props[inbox]
     )
-
-
 }

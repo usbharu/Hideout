@@ -16,7 +16,6 @@ class ApSendRejectServiceImpl(
     private val deliverRejectJob: DeliverRejectJob
 ) : ApSendRejectService {
     override suspend fun sendRejectFollow(user: User, target: User) {
-
         val deliverRejectJobParam = DeliverRejectJobParam(
             Reject(
                 user.url,

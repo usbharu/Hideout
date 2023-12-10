@@ -57,7 +57,6 @@ class RelationshipRepositoryImpl : RelationshipRepository {
         }.singleOrNull()
             ?.toRelationships()
     }
-
 }
 
 fun ResultRow.toRelationships(): Relationship = Relationship(

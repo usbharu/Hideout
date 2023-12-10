@@ -15,7 +15,8 @@ class FollowerQueryServiceImpl(
 ) : FollowerQueryService {
     override suspend fun findFollowersById(id: Long): List<User> {
         return userQueryService.findByIds(
-            relationshipQueryService.findByTargetIdAndFollowing(id, true).map { it.userId })
+            relationshipQueryService.findByTargetIdAndFollowing(id, true).map { it.userId }
+        )
     }
 
     override suspend fun alreadyFollow(userId: Long, followerId: Long): Boolean =

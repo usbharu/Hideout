@@ -34,12 +34,10 @@ open class Block(
 
     override fun toString(): String {
         return "Block(" +
-                "actor='$actor', " +
-                "id='$id', " +
-                "apObject='$apObject'" +
-                ")" +
-                " ${super.toString()}"
+            "actor='$actor', " +
+            "id='$id', " +
+            "apObject='$apObject'" +
+            ")" +
+            " ${super.toString()}"
     }
-
-
 }

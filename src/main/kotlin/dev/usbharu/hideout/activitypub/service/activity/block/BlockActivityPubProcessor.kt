@@ -9,7 +9,6 @@ import dev.usbharu.hideout.core.query.UserQueryService
 import dev.usbharu.hideout.core.service.relationship.RelationshipService
 import org.springframework.stereotype.Service
 
-
 /**
  * ブロックアクティビティを処理します
  */

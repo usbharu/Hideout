@@ -38,9 +38,9 @@ open class Accept @JsonCreator constructor(
 
     override fun toString(): String {
         return "Accept(" +
-                "apObject=$apObject, " +
-                "actor='$actor'" +
-                ")" +
-                " ${super.toString()}"
+            "apObject=$apObject, " +
+            "actor='$actor'" +
+            ")" +
+            " ${super.toString()}"
     }
 }

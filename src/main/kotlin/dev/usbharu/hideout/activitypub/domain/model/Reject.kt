@@ -34,12 +34,10 @@ open class Reject(
 
     override fun toString(): String {
         return "Reject(" +
-                "actor='$actor', " +
-                "id='$id', " +
-                "apObject=$apObject" +
-                ")" +
-                " ${super.toString()}"
+            "actor='$actor', " +
+            "id='$id', " +
+            "apObject=$apObject" +
+            ")" +
+            " ${super.toString()}"
     }
-
-
 }
