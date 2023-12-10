@@ -31,7 +31,7 @@ class ApRemoveReactionJobProcessor(
             param.inbox,
             Undo(
                 actor = param.actor,
-                `object` = like,
+                apObject = like,
                 id = "${applicationConfig.url}/undo/like/${param.id}",
                 published = Instant.now().toString()
             ),

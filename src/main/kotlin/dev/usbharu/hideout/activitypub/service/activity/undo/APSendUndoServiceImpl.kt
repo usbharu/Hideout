@@ -22,7 +22,7 @@ class APSendUndoServiceImpl(
             Undo(
                 actor = user.url,
                 id = "${applicationConfig.url}/undo/follow/${user.id}/${target.url}",
-                `object` = Follow(
+                apObject = Follow(
                     apObject = user.url,
                     actor = target.url
                 ),
@@ -40,7 +40,7 @@ class APSendUndoServiceImpl(
             Undo(
                 actor = user.url,
                 id = "${applicationConfig.url}/undo/block/${user.id}/${target.url}",
-                `object` = Block(
+                apObject = Block(
                     apObject = user.url,
                     actor = target.url,
                     id = "${applicationConfig.url}/block/${user.id}/${target.id}"

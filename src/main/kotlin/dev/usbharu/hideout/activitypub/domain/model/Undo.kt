@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.activitypub.domain.model
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 import dev.usbharu.hideout.activitypub.domain.model.objects.ObjectDeserializer
@@ -9,7 +10,7 @@ open class Undo(
     override val actor: String,
     override val id: String,
     @JsonDeserialize(using = ObjectDeserializer::class)
-    @Suppress("VariableNaming") val `object`: Object,
+    @JsonProperty("object") val apObject: Object,
     val published: String
 ) : Object(add(type, "Undo")), HasId, HasActor {
 
@@ -20,7 +21,7 @@ open class Undo(
 
         other as Undo
 
-        if (`object` != other.`object`) return false
+        if (apObject != other.apObject) return false
         if (published != other.published) return false
         if (actor != other.actor) return false
         if (id != other.id) return false
@@ -30,7 +31,7 @@ open class Undo(
 
     override fun hashCode(): Int {
         var result = super.hashCode()
-        result = 31 * result + `object`.hashCode()
+        result = 31 * result + apObject.hashCode()
         result = 31 * result + published.hashCode()
         result = 31 * result + actor.hashCode()
         result = 31 * result + id.hashCode()
@@ -38,5 +39,5 @@ open class Undo(
     }
 
     override fun toString(): String =
-        "Undo(`object`=$`object`, published=$published, actor='$actor', id='$id') ${super.toString()}"
+        "Undo(`object`=$apObject, published=$published, actor='$actor', id='$id') ${super.toString()}"
 }
