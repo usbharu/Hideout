@@ -10,7 +10,6 @@ class ContextSerializerTest {
     @Test
     fun serialize() {
         val accept = Accept(
-            name = "aaa",
             actor = "bbb",
             apObject = Follow(
                 apObject = "ddd",

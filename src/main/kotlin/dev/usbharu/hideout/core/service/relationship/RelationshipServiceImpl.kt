@@ -146,7 +146,7 @@ class RelationshipServiceImpl(
 
         if (remoteUser != null) {
             val user = userQueryService.findById(userId)
-            apSendAcceptService.sendAccept(user, remoteUser)
+            apSendAcceptService.sendAcceptFollow(user, remoteUser)
         }
     }
 
@@ -171,7 +171,7 @@ class RelationshipServiceImpl(
 
         if (remoteUser != null) {
             val user = userQueryService.findById(userId)
-            apSendRejectService.sendReject(user, remoteUser)
+            apSendRejectService.sendRejectFollow(user, remoteUser)
         }
     }
 

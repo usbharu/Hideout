@@ -8,7 +8,6 @@ import dev.usbharu.hideout.activitypub.domain.model.objects.ObjectDeserializer
 
 open class Accept @JsonCreator constructor(
     type: List<String> = emptyList(),
-    override val name: String,
     @JsonDeserialize(using = ObjectDeserializer::class)
     @JsonProperty("object")
     val apObject: Object,
@@ -16,9 +15,7 @@ open class Accept @JsonCreator constructor(
 ) : Object(
     type = add(type, "Accept")
 ),
-    HasActor,
-    HasName {
-
+    HasActor {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -26,7 +23,6 @@ open class Accept @JsonCreator constructor(
 
         other as Accept
 
-        if (name != other.name) return false
         if (apObject != other.apObject) return false
         if (actor != other.actor) return false
 
@@ -35,7 +31,6 @@ open class Accept @JsonCreator constructor(
 
     override fun hashCode(): Int {
         var result = super.hashCode()
-        result = 31 * result + name.hashCode()
         result = 31 * result + apObject.hashCode()
         result = 31 * result + actor.hashCode()
         return result
@@ -43,10 +38,9 @@ open class Accept @JsonCreator constructor(
 
     override fun toString(): String {
         return "Accept(" +
-            "name='$name', " +
-            "apObject=$apObject, " +
-            "actor='$actor'" +
-            ")" +
-            " ${super.toString()}"
+                "apObject=$apObject, " +
+                "actor='$actor'" +
+                ")" +
+                " ${super.toString()}"
     }
 }

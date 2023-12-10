@@ -1,16 +1,36 @@
 package dev.usbharu.hideout.activitypub.service.activity.accept
 
+import dev.usbharu.hideout.activitypub.domain.model.Accept
+import dev.usbharu.hideout.activitypub.domain.model.Follow
 import dev.usbharu.hideout.core.domain.model.user.User
+import dev.usbharu.hideout.core.external.job.DeliverAcceptJob
+import dev.usbharu.hideout.core.external.job.DeliverAcceptJobParam
+import dev.usbharu.hideout.core.service.job.JobQueueParentService
 import org.springframework.stereotype.Service
 
 interface ApSendAcceptService {
-    suspend fun sendAccept(user: User, target: User)
+    suspend fun sendAcceptFollow(user: User, target: User)
 }
 
 @Service
-class ApSendAcceptServiceImpl : ApSendAcceptService {
-    override suspend fun sendAccept(user: User, target: User) {
-        TODO("Not yet implemented")
+class ApSendAcceptServiceImpl(
+    private val jobQueueParentService: JobQueueParentService,
+    private val deliverAcceptJob: DeliverAcceptJob
+) : ApSendAcceptService {
+    override suspend fun sendAcceptFollow(user: User, target: User) {
+        val deliverAcceptJobParam = DeliverAcceptJobParam(
+            Accept(
+                apObject = Follow(
+                    apObject = target.url,
+                    actor = user.url
+                ),
+                actor = user.url
+            ),
+            target.inbox,
+            user.id
+        )
+
+        jobQueueParentService.scheduleTypeSafe(deliverAcceptJob, deliverAcceptJobParam)
     }
 
 }
