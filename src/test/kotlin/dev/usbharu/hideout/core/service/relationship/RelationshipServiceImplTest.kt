@@ -172,7 +172,7 @@ class RelationshipServiceImplTest {
             )
         )
 
-        verify(apSendAcceptService, times(1)).sendAccept(eq(localUser), eq(remoteUser))
+        verify(apSendAcceptService, times(1)).sendAcceptFollow(eq(localUser), eq(remoteUser))
         verify(apSendFollowService, never()).sendFollow(any())
     }
 
@@ -284,7 +284,7 @@ class RelationshipServiceImplTest {
             )
         )
 
-        verify(apSendAcceptService, never()).sendAccept(any(), any())
+        verify(apSendAcceptService, never()).sendAcceptFollow(any(), any())
     }
 
     @Test
@@ -322,14 +322,14 @@ class RelationshipServiceImplTest {
             )
         )
 
-        verify(apSendAcceptService, times(1)).sendAccept(eq(localUser), eq(remoteUser))
+        verify(apSendAcceptService, times(1)).sendAcceptFollow(eq(localUser), eq(remoteUser))
     }
 
     @Test
     fun `acceptFollowRequest Relationshipが存在しないときは何もしない`() = runTest {
         relationshipServiceImpl.acceptFollowRequest(1234, 5678, false)
 
-        verify(apSendAcceptService, never()).sendAccept(any(), any())
+        verify(apSendAcceptService, never()).sendAcceptFollow(any(), any())
     }
 
     @Test
@@ -342,7 +342,7 @@ class RelationshipServiceImplTest {
 
         relationshipServiceImpl.acceptFollowRequest(1234, 5678, false)
 
-        verify(apSendAcceptService, never()).sendAccept(any(), any())
+        verify(apSendAcceptService, never()).sendAcceptFollow(any(), any())
     }
 
     @Test
@@ -440,7 +440,7 @@ class RelationshipServiceImplTest {
             )
         )
 
-        verify(apSendRejectService, never()).sendReject(any(), any())
+        verify(apSendRejectService, never()).sendRejectFollow(any(), any())
     }
 
     @Test
@@ -479,7 +479,7 @@ class RelationshipServiceImplTest {
             )
         )
 
-        verify(apSendRejectService, times(1)).sendReject(eq(localUser), eq(remoteUser))
+        verify(apSendRejectService, times(1)).sendRejectFollow(eq(localUser), eq(remoteUser))
     }
 
     @Test
