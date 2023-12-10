@@ -34,14 +34,7 @@ create table if not exists users
     unique ("name", "domain"),
     constraint fk_users_instance__id foreign key ("instance") references instance (id) on delete restrict on update restrict
 );
-create table if not exists follow_requests
-(
-    id          bigserial primary key,
-    user_id     bigint not null,
-    follower_id bigint not null,
-    constraint fk_follow_requests_user_id__id foreign key (user_id) references users (id) on delete restrict on update restrict,
-    constraint fk_follow_requests_follower_id__id foreign key (follower_id) references users (id) on delete restrict on update restrict
-);
+
 create table if not exists media
 (
     id            bigint primary key,
@@ -119,14 +112,7 @@ create table if not exists timelines
     is_pure_repost boolean      not null,
     media_ids      varchar(255) not null
 );
-create table if not exists users_followers
-(
-    id          bigserial primary key,
-    user_id     bigint not null,
-    follower_id bigint not null,
-    constraint fk_users_followers_user_id__id foreign key (user_id) references users (id) on delete restrict on update restrict,
-    constraint fk_users_followers_follower_id__id foreign key (follower_id) references users (id) on delete restrict on update restrict
-);
+
 create table if not exists application_authorization
 (
     id                            varchar(255) primary key,
@@ -186,4 +172,19 @@ create table if not exists registered_client
     scopes                        varchar(1000)                           not null,
     client_settings               varchar(2000)                           not null,
     token_settings                varchar(2000)                           not null
+);
+
+create table if not exists relationships
+(
+    id                    bigserial primary key,
+    user_id               bigint  not null,
+    target_user_id        bigint  not null,
+    following             boolean not null,
+    blocking              boolean not null,
+    muting                boolean not null,
+    follow_request        boolean not null,
+    ignore_follow_request boolean not null,
+    constraint fk_relationships_user_id__id foreign key (user_id) references users (id) on delete restrict on update restrict,
+    constraint fk_relationships_target_user_id__id foreign key (target_user_id) references users (id) on delete restrict on update restrict,
+    unique (user_id, target_user_id)
 )
