@@ -4,7 +4,6 @@ import dev.usbharu.hideout.application.infrastructure.exposed.ResultRowMapper
 import dev.usbharu.hideout.application.service.id.IdGenerateService
 import dev.usbharu.hideout.core.domain.model.user.User
 import dev.usbharu.hideout.core.domain.model.user.UserRepository
-import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.springframework.stereotype.Repository
@@ -62,15 +61,6 @@ class UserRepositoryImpl(
     override suspend fun findById(id: Long): User? =
         Users.select { Users.id eq id }.singleOrNull()?.let(userResultRowMapper::map)
 
-    override suspend fun deleteFollowRequest(id: Long, follower: Long) {
-        FollowRequests.deleteWhere { userId.eq(id) and followerId.eq(follower) }
-    }
-
-    override suspend fun findFollowRequestsById(id: Long, follower: Long): Boolean {
-        return FollowRequests.select { (FollowRequests.userId eq id) and (FollowRequests.followerId eq follower) }
-            .singleOrNull() != null
-    }
-
     override suspend fun delete(id: Long) {
         Users.deleteWhere { Users.id.eq(id) }
     }
@@ -106,23 +96,5 @@ object Users : Table("users") {
 
     init {
         uniqueIndex(name, domain)
-    }
-}
-
-object UsersFollowers : LongIdTable("users_followers") {
-    val userId: Column<Long> = long("user_id").references(Users.id).index()
-    val followerId: Column<Long> = long("follower_id").references(Users.id)
-
-    init {
-        uniqueIndex(userId, followerId)
-    }
-}
-
-object FollowRequests : LongIdTable("follow_requests") {
-    val userId: Column<Long> = long("user_id").references(Users.id)
-    val followerId: Column<Long> = long("follower_id").references(Users.id)
-
-    init {
-        uniqueIndex(userId, followerId)
     }
 }
