@@ -32,5 +32,4 @@ class ApSendAcceptServiceImpl(
 
         jobQueueParentService.scheduleTypeSafe(deliverAcceptJob, deliverAcceptJobParam)
     }
-
 }

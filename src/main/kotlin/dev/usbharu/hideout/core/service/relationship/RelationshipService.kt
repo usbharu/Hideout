@@ -19,5 +19,4 @@ interface RelationshipService {
     suspend fun unblock(userId: Long, targetId: Long)
     suspend fun mute(userId: Long, targetId: Long)
     suspend fun unmute(userId: Long, targetId: Long)
-
 }

@@ -79,7 +79,7 @@ class RelationshipServiceImpl(
             val user = userQueryService.findById(userId)
             apSendFollowService.sendFollow(SendFollowDto(user, remoteUser))
         } else {
-            //TODO: フォロー許可制ユーザーを実装したら消す
+            // TODO: フォロー許可制ユーザーを実装したら消す
             acceptFollowRequest(targetId, userId)
         }
 
@@ -135,12 +135,16 @@ class RelationshipServiceImpl(
 
         if (relationship.blocking) {
             logger.warn("FAILED Blocking user userId: {} targetId: {}", userId, targetId)
-            throw IllegalStateException("Cannot accept a follow request from a blocked user. userId: $userId targetId: $targetId")
+            throw IllegalStateException(
+                "Cannot accept a follow request from a blocked user. userId: $userId targetId: $targetId"
+            )
         }
 
         if (inverseRelationship.blocking) {
             logger.warn("FAILED BLocked by user userId: {} targetId: {}", userId, targetId)
-            throw IllegalStateException("Cannot accept a follow request from a blocking user. userId: $userId targetId: $targetId")
+            throw IllegalStateException(
+                "Cannot accept a follow request from a blocking user. userId: $userId targetId: $targetId"
+            )
         }
 
         val copy = relationship.copy(followRequest = false, following = true, blocking = false)
@@ -236,7 +240,6 @@ class RelationshipServiceImpl(
 
         val copy = relationship.copy(blocking = false)
         relationshipRepository.save(copy)
-
 
         val remoteUser = isRemoteUser(targetId)
         if (remoteUser != null) {

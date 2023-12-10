@@ -19,7 +19,6 @@ class APDeliverBlockJobProcessor(
     private val deliverBlockJob: DeliverBlockJob
 ) : JobProcessor<DeliverBlockJobParam, DeliverBlockJob> {
     override suspend fun process(param: DeliverBlockJobParam): Unit = transaction.transaction {
-
         val signer = userRepository.findById(param.signer)
         apRequestService.apPost(
             param.inbox,
