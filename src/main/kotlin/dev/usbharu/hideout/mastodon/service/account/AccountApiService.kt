@@ -1,11 +1,8 @@
 package dev.usbharu.hideout.mastodon.service.account
 
 import dev.usbharu.hideout.application.external.Transaction
-import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
-import dev.usbharu.hideout.core.domain.model.block.BlockRepository
-import dev.usbharu.hideout.core.domain.model.user.UserRepository
-import dev.usbharu.hideout.core.query.FollowerQueryService
-import dev.usbharu.hideout.core.service.block.BlockService
+import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
+import dev.usbharu.hideout.core.service.relationship.RelationshipService
 import dev.usbharu.hideout.core.service.user.UserCreateDto
 import dev.usbharu.hideout.core.service.user.UserService
 import dev.usbharu.hideout.domain.mastodon.model.generated.*
@@ -32,7 +29,7 @@ interface AccountApiService {
 
     suspend fun verifyCredentials(userid: Long): CredentialAccount
     suspend fun registerAccount(userCreateDto: UserCreateDto): Unit
-    suspend fun follow(userid: Long, followeeId: Long): Relationship
+    suspend fun follow2(loginUser: Long, followTargetUserId: Long): Relationship
     suspend fun account(id: Long): Account
     suspend fun relationships(userid: Long, id: List<Long>, withSuspended: Boolean): List<Relationship>
 
@@ -51,11 +48,9 @@ class AccountApiServiceImpl(
     private val accountService: AccountService,
     private val transaction: Transaction,
     private val userService: UserService,
-    private val followerQueryService: FollowerQueryService,
-    private val userRepository: UserRepository,
     private val statusQueryService: StatusQueryService,
-    private val blockService: BlockService,
-    private val blockRepository: BlockRepository
+    private val relationshipService: RelationshipService,
+    private val relationshipRepository: RelationshipRepository
 ) :
     AccountApiService {
     override suspend fun accountsStatuses(
@@ -75,7 +70,7 @@ class AccountApiServiceImpl(
             false
         } else {
             transaction.transaction {
-                followerQueryService.alreadyFollow(userid, loginUser)
+                isFollowing(loginUser, userid)
             }
         }
 
@@ -105,34 +100,10 @@ class AccountApiServiceImpl(
         userService.createLocalUser(UserCreateDto(userCreateDto.name, userCreateDto.name, "", userCreateDto.password))
     }
 
-    override suspend fun follow(userid: Long, followeeId: Long): Relationship = transaction.transaction {
-        val alreadyFollow = followerQueryService.alreadyFollow(followeeId, userid)
+    override suspend fun follow2(loginUser: Long, followTargetUserId: Long): Relationship {
+        relationshipService.followRequest(loginUser, followTargetUserId)
 
-        val followRequest = if (alreadyFollow) {
-            true
-        } else {
-            userService.followRequest(followeeId, userid)
-        }
-
-        val alreadyFollow1 = followerQueryService.alreadyFollow(userid, followeeId)
-
-        val followRequestsById = userRepository.findFollowRequestsById(followeeId, userid)
-
-        return@transaction Relationship(
-            followeeId.toString(),
-            followRequest,
-            true,
-            false,
-            alreadyFollow1,
-            false,
-            false,
-            false,
-            false,
-            followRequestsById,
-            false,
-            false,
-            ""
-        )
+        return fetchRelationship(loginUser, followTargetUserId)
     }
 
     override suspend fun account(id: Long): Account = transaction.transaction {
@@ -150,57 +121,14 @@ class AccountApiServiceImpl(
             val subList = id.subList(0, min(id.size, 20))
 
             return@transaction subList.map {
-                val alreadyFollow = followerQueryService.alreadyFollow(userid, it)
-
-                val followed = followerQueryService.alreadyFollow(it, userid)
-
-                val requested = userRepository.findFollowRequestsById(it, userid)
-
-                Relationship(
-                    id = it.toString(),
-                    following = alreadyFollow,
-                    showingReblogs = true,
-                    notifying = false,
-                    followedBy = followed,
-                    blocking = false,
-                    blockedBy = false,
-                    muting = false,
-                    mutingNotifications = false,
-                    requested = requested,
-                    domainBlocking = false,
-                    endorsed = false,
-                    note = ""
-                )
+                fetchRelationship(userid, it)
             }
         }
 
     override suspend fun block(userid: Long, target: Long): Relationship = transaction.transaction {
-        blockService.block(userid, target)
+        relationshipService.block(userid, target)
 
-        val blocked = try {
-            blockRepository.findByUserIdAndTarget(target, userid)
-            true
-        } catch (e: FailedToGetResourcesException) {
-            false
-        }
-
-        val requested = userRepository.findFollowRequestsById(target, userid)
-
-        Relationship(
-            target.toString(),
-            false,
-            true,
-            false,
-            false,
-            true,
-            blocked,
-            false,
-            false,
-            requested,
-            false,
-            false,
-            ""
-        )
+        fetchRelationship(userid, target)
     }
 
     private fun from(account: Account): CredentialAccount {
@@ -240,6 +168,49 @@ class AccountApiServiceImpl(
             role = Role(0, "Admin", "", 32)
         )
     }
+
+    private suspend fun fetchRelationship(userid: Long, targetId: Long): Relationship {
+        val relationship = relationshipRepository.findByUserIdAndTargetUserId(userid, targetId)
+            ?: dev.usbharu.hideout.core.domain.model.relationship.Relationship(
+                userId = userid,
+                targetUserId = targetId,
+                following = false,
+                blocking = false,
+                muting = false,
+                followRequest = false,
+                ignoreFollowRequestFromTarget = false
+            )
+
+        val inverseRelationship = relationshipRepository.findByUserIdAndTargetUserId(targetId, userid)
+            ?: dev.usbharu.hideout.core.domain.model.relationship.Relationship(
+                userId = targetId,
+                targetUserId = userid,
+                following = false,
+                blocking = false,
+                muting = false,
+                followRequest = false,
+                ignoreFollowRequestFromTarget = false
+            )
+
+        return Relationship(
+            id = targetId.toString(),
+            following = relationship.following,
+            showingReblogs = true,
+            notifying = false,
+            followedBy = inverseRelationship.following,
+            blocking = relationship.blocking,
+            blockedBy = inverseRelationship.blocking,
+            muting = relationship.muting,
+            mutingNotifications = relationship.muting,
+            requested = relationship.followRequest,
+            domainBlocking = false,
+            endorsed = false,
+            note = ""
+        )
+    }
+
+    private suspend fun isFollowing(userid: Long, target: Long): Boolean =
+        relationshipRepository.findByUserIdAndTargetUserId(userid, target)?.following ?: false
 
     companion object {
         private val logger = LoggerFactory.getLogger(AccountApiServiceImpl::class.java)

@@ -28,7 +28,7 @@ class MastodonAccountApiController(
     ): ResponseEntity<Relationship> {
         val principal = SecurityContextHolder.getContext().getAuthentication().principal as Jwt
 
-        return ResponseEntity.ok(accountApiService.follow(principal.getClaim<String>("uid").toLong(), id.toLong()))
+        return ResponseEntity.ok(accountApiService.follow2(principal.getClaim<String>("uid").toLong(), id.toLong()))
     }
 
     override suspend fun apiV1AccountsIdGet(id: String): ResponseEntity<Account> =
