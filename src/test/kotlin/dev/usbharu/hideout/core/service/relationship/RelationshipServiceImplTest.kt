@@ -140,10 +140,10 @@ class RelationshipServiceImplTest {
 
     @Test
     fun `followRequest 既にフォローしている場合は念の為フォロー承認を自動で行う`() = runTest {
-        val localUser = UserBuilder.localUserOf(domain = "example.com")
-        whenever(userQueryService.findById(eq(1234))).doReturn(localUser)
         val remoteUser = UserBuilder.remoteUserOf(domain = "remote.example.com")
-        whenever(userQueryService.findById(eq(5678))).doReturn(remoteUser)
+        whenever(userQueryService.findById(eq(1234))).doReturn(remoteUser)
+        val localUser = UserBuilder.localUserOf(domain = "example.com")
+        whenever(userQueryService.findById(eq(5678))).doReturn(localUser)
         whenever(relationshipRepository.findByUserIdAndTargetUserId(eq(1234), eq(5678))).doReturn(
             Relationship(
                 userId = 1234,
@@ -258,10 +258,10 @@ class RelationshipServiceImplTest {
     fun `acceptFollowRequest ローカルユーザーの場合永続化される`() = runTest {
         whenever(userQueryService.findById(eq(5678))).doReturn(UserBuilder.localUserOf(domain = "example.com"))
 
-        whenever(relationshipRepository.findByUserIdAndTargetUserId(eq(1234), eq(5678))).doReturn(
+        whenever(relationshipRepository.findByUserIdAndTargetUserId(eq(5678), eq(1234))).doReturn(
             Relationship(
-                userId = 1234,
-                targetUserId = 5678,
+                userId = 5678,
+                targetUserId = 1234,
                 following = false,
                 blocking = false,
                 muting = false,
@@ -274,8 +274,8 @@ class RelationshipServiceImplTest {
 
         verify(relationshipRepository, times(1)).save(
             Relationship(
-                userId = 1234,
-                targetUserId = 5678,
+                userId = 5678,
+                targetUserId = 1234,
                 following = true,
                 blocking = false,
                 muting = false,
@@ -294,10 +294,10 @@ class RelationshipServiceImplTest {
         val remoteUser = UserBuilder.remoteUserOf(domain = "remote.example.com")
         whenever(userQueryService.findById(eq(5678))).doReturn(remoteUser)
 
-        whenever(relationshipRepository.findByUserIdAndTargetUserId(eq(1234), eq(5678))).doReturn(
+        whenever(relationshipRepository.findByUserIdAndTargetUserId(eq(5678), eq(1234))).doReturn(
             Relationship(
-                userId = 1234,
-                targetUserId = 5678,
+                userId = 5678,
+                targetUserId = 1234,
                 following = false,
                 blocking = false,
                 muting = false,
@@ -311,8 +311,8 @@ class RelationshipServiceImplTest {
         verify(relationshipRepository, times(1)).save(
             eq(
                 Relationship(
-                    userId = 1234,
-                    targetUserId = 5678,
+                    userId = 5678,
+                    targetUserId = 1234,
                     following = true,
                     blocking = false,
                     muting = false,
@@ -334,9 +334,9 @@ class RelationshipServiceImplTest {
 
     @Test
     fun `acceptFollowRequest フォローリクエストが存在せずforceがfalseのとき何もしない`() = runTest {
-        whenever(relationshipRepository.findByUserIdAndTargetUserId(eq(1234), eq(5678))).doReturn(
+        whenever(relationshipRepository.findByUserIdAndTargetUserId(eq(5678), eq(1234))).doReturn(
             Relationship(
-                1234, 5678, false, false, false, false, false
+                5678, 1234, false, false, false, false, false
             )
         )
 
@@ -349,9 +349,9 @@ class RelationshipServiceImplTest {
     fun `acceptFollowRequest フォローリクエストが存在せずforceがtrueのときフォローを承認する`() = runTest {
         whenever(userQueryService.findById(eq(5678))).doReturn(UserBuilder.remoteUserOf(domain = "remote.example.com"))
 
-        whenever(relationshipRepository.findByUserIdAndTargetUserId(eq(1234), eq(5678))).doReturn(
+        whenever(relationshipRepository.findByUserIdAndTargetUserId(eq(5678), eq(1234))).doReturn(
             Relationship(
-                1234, 5678, false, false, false, false, false
+                5678, 1234, false, false, false, false, false
             )
         )
 
@@ -360,8 +360,8 @@ class RelationshipServiceImplTest {
         verify(relationshipRepository, times(1)).save(
             eq(
                 Relationship(
-                    userId = 1234,
-                    targetUserId = 5678,
+                    userId = 5678,
+                    targetUserId = 1234,
                     following = true,
                     blocking = false,
                     muting = false,
@@ -374,9 +374,9 @@ class RelationshipServiceImplTest {
 
     @Test
     fun `acceptFollowRequest ブロックしている場合は何もしない`() = runTest {
-        whenever(relationshipRepository.findByUserIdAndTargetUserId(eq(1234), eq(5678))).doReturn(
+        whenever(relationshipRepository.findByUserIdAndTargetUserId(eq(5678), eq(1234))).doReturn(
             Relationship(
-                1234, 5678, false, true, false, true, false
+                5678, 1234, false, true, false, true, false
             )
         )
 

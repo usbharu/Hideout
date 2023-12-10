@@ -40,6 +40,9 @@ class KJobJobQueueWorkerService(private val jobQueueProcessorList: List<JobProce
                         MDC.put("x-job-id", this.jobId)
                         val param = it.convertUnsafe(props)
                         jobProcessor.process(param)
+                    } catch (e: Exception) {
+                        logger.warn("FAILED Execute Job. job name: {} job id: {}", it.name, this.jobId, e)
+                        throw e
                     } finally {
                         MDC.remove("x-job-id")
                     }
