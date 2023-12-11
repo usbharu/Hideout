@@ -98,7 +98,13 @@ class RelationshipServiceImpl(
             ignoreFollowRequestFromTarget = false
         )
 
+        val inverseRelationship = relationshipRepository.findByUserIdAndTargetUserId(targetId, userId)
+            ?.copy(followRequest = false, following = false)
+
         relationshipRepository.save(relationship)
+        if (inverseRelationship != null) {
+            relationshipRepository.save(inverseRelationship)
+        }
 
         val remoteUser = isRemoteUser(targetId)
 

@@ -23,7 +23,7 @@ class RelationshipRepositoryImpl : RelationshipRepository {
                 it[targetUserId] = relationship.targetUserId
                 it[following] = relationship.following
                 it[blocking] = relationship.blocking
-                it[muting] = relationship.blocking
+                it[muting] = relationship.muting
                 it[followRequest] = relationship.followRequest
                 it[ignoreFollowRequestFromTarget] = relationship.ignoreFollowRequestFromTarget
             }
@@ -35,7 +35,7 @@ class RelationshipRepositoryImpl : RelationshipRepository {
                 }) {
                     it[following] = relationship.following
                     it[blocking] = relationship.blocking
-                    it[muting] = relationship.blocking
+                    it[muting] = relationship.muting
                     it[followRequest] = relationship.followRequest
                     it[ignoreFollowRequestFromTarget] = relationship.ignoreFollowRequestFromTarget
                 }
