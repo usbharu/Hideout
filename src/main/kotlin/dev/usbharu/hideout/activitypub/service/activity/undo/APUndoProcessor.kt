@@ -55,7 +55,6 @@ class APUndoProcessor(
             "Accept" -> {
                 val accept = undo.apObject as Accept
 
-
                 val acceptObject = if (accept.apObject is ObjectValue) {
                     accept.apObject.`object`
                 } else if (accept.apObject is Follow) {
