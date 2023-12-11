@@ -35,8 +35,8 @@ class ApAcceptProcessor(
         val user = userQueryService.findByUrl(userUrl)
         val follower = userQueryService.findByUrl(followerUrl)
 
-        relationshipService.acceptFollowRequest(follower.id, user.id)
-        logger.debug("SUCCESS Follow from ${follower.url} to ${user.url}.")
+        relationshipService.acceptFollowRequest(user.id, follower.id)
+        logger.debug("SUCCESS Follow from ${user.url} to ${follower.url}.")
     }
 
     override fun isSupported(activityType: ActivityType): Boolean = activityType == ActivityType.Accept
