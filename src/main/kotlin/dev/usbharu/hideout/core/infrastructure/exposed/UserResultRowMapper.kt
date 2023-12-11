@@ -16,7 +16,6 @@ class UserResultRowMapper(private val actorBuilder: Actor.UserBuilder) : ResultR
             domain = resultRow[Actors.domain],
             screenName = resultRow[Actors.screenName],
             description = resultRow[Actors.description],
-            password = resultRow[Actors.password],
             inbox = resultRow[Actors.inbox],
             outbox = resultRow[Actors.outbox],
             url = resultRow[Actors.url],

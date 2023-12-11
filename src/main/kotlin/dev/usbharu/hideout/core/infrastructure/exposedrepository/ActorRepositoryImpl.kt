@@ -24,7 +24,6 @@ class ActorRepositoryImpl(
                 it[domain] = actor.domain
                 it[screenName] = actor.screenName
                 it[description] = actor.description
-                it[password] = actor.password
                 it[inbox] = actor.inbox
                 it[outbox] = actor.outbox
                 it[url] = actor.url
@@ -42,7 +41,6 @@ class ActorRepositoryImpl(
                 it[domain] = actor.domain
                 it[screenName] = actor.screenName
                 it[description] = actor.description
-                it[password] = actor.password
                 it[inbox] = actor.inbox
                 it[outbox] = actor.outbox
                 it[url] = actor.url
@@ -68,7 +66,7 @@ class ActorRepositoryImpl(
     override suspend fun nextId(): Long = idGenerateService.generateId()
 }
 
-object Actors : Table("users") {
+object Actors : Table("actors") {
     val id: Column<Long> = long("id")
     val name: Column<String> = varchar("name", length = 300)
     val domain: Column<String> = varchar("domain", length = 1000)
@@ -77,7 +75,6 @@ object Actors : Table("users") {
         "description",
         length = 10000
     )
-    val password: Column<String?> = varchar("password", length = 255).nullable()
     val inbox: Column<String> = varchar("inbox", length = 1000).uniqueIndex()
     val outbox: Column<String> = varchar("outbox", length = 1000).uniqueIndex()
     val url: Column<String> = varchar("url", length = 1000).uniqueIndex()
