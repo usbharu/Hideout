@@ -1,6 +1,8 @@
 package mastodon.timelines
 
 import dev.usbharu.hideout.SpringApplication
+import org.flywaydb.core.Flyway
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -100,5 +102,14 @@ class TimelineApiTest {
             .get("/api/v1/timelines/public")
             .asyncDispatch()
             .andExpect { status { isOk() } }
+    }
+
+    companion object {
+        @JvmStatic
+        @AfterAll
+        fun dropDatabase(@Autowired flyway: Flyway) {
+            flyway.clean()
+            flyway.migrate()
+        }
     }
 }
