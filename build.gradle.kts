@@ -287,7 +287,7 @@ project.gradle.taskGraph.whenReady {
 kover {
 
     excludeSourceSets {
-        names("aot")
+        names("aot", "e2eTest", "intTest")
     }
 }
 

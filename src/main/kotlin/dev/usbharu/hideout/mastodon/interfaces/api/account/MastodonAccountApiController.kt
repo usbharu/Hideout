@@ -75,17 +75,17 @@ class MastodonAccountApiController(
 
         val userid = principal.getClaim<String>("uid").toLong()
         val statusFlow = accountApiService.accountsStatuses(
-            id.toLong(),
-            maxId?.toLongOrNull(),
-            sinceId?.toLongOrNull(),
-            minId?.toLongOrNull(),
-            limit,
-            onlyMedia,
-            excludeReplies,
-            excludeReblogs,
-            pinned,
-            tagged,
-            userid
+            userid = id.toLong(),
+            maxId = maxId?.toLongOrNull(),
+            sinceId = sinceId?.toLongOrNull(),
+            minId = minId?.toLongOrNull(),
+            limit = limit,
+            onlyMedia = onlyMedia,
+            excludeReplies = excludeReplies,
+            excludeReblogs = excludeReblogs,
+            pinned = pinned,
+            tagged = tagged,
+            loginUser = userid
         ).asFlow()
         ResponseEntity.ok(statusFlow)
     }
@@ -102,5 +102,45 @@ class MastodonAccountApiController(
             accountApiService.relationships(userid, id.orEmpty().mapNotNull { it.toLongOrNull() }, withSuspended)
                 .asFlow()
         )
+    }
+
+    override suspend fun apiV1AccountsIdBlockPost(id: String): ResponseEntity<Relationship> {
+        val principal = SecurityContextHolder.getContext().getAuthentication().principal as Jwt
+
+        val userid = principal.getClaim<String>("uid").toLong()
+
+        val block = accountApiService.block(userid, id.toLong())
+
+        return ResponseEntity.ok(block)
+    }
+
+    override suspend fun apiV1AccountsIdUnblockPost(id: String): ResponseEntity<Relationship> {
+        val principal = SecurityContextHolder.getContext().getAuthentication().principal as Jwt
+
+        val userid = principal.getClaim<String>("uid").toLong()
+
+        val unblock = accountApiService.unblock(userid, id.toLong())
+
+        return ResponseEntity.ok(unblock)
+    }
+
+    override suspend fun apiV1AccountsIdUnfollowPost(id: String): ResponseEntity<Relationship> {
+        val principal = SecurityContextHolder.getContext().getAuthentication().principal as Jwt
+
+        val userid = principal.getClaim<String>("uid").toLong()
+
+        val unfollow = accountApiService.unfollow(userid, id.toLong())
+
+        return ResponseEntity.ok(unfollow)
+    }
+
+    override suspend fun apiV1AccountsIdRemoveFromFollowersPost(id: String): ResponseEntity<Relationship> {
+        val principal = SecurityContextHolder.getContext().getAuthentication().principal as Jwt
+
+        val userid = principal.getClaim<String>("uid").toLong()
+
+        val removeFromFollowers = accountApiService.removeFromFollowers(userid, id.toLong())
+
+        return ResponseEntity.ok(removeFromFollowers)
     }
 }
