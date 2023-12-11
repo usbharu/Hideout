@@ -30,6 +30,7 @@ create table if not exists actors
     "following" varchar(1000)  null,
     followers   varchar(1000)  null,
     "instance"  bigint         null,
+    locked boolean       not null,
     unique ("name", "domain"),
     constraint fk_actors_instance__id foreign key ("instance") references instance (id) on delete restrict on update restrict
 );

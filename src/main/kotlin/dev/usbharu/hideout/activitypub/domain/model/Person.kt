@@ -17,10 +17,10 @@ constructor(
     var publicKey: Key,
     var endpoints: Map<String, String> = emptyMap(),
     var followers: String?,
-    var following: String?
+    var following: String?,
+    val manuallyApprovesFollowers: Boolean? = false
 ) : Object(add(type, "Person")), HasId, HasName {
 
-    @Suppress("CyclomaticComplexMethod", "CognitiveComplexMethod")
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -40,11 +40,11 @@ constructor(
         if (endpoints != other.endpoints) return false
         if (followers != other.followers) return false
         if (following != other.following) return false
+        if (manuallyApprovesFollowers != other.manuallyApprovesFollowers) return false
 
         return true
     }
 
-    @Suppress("CyclomaticComplexMethod")
     override fun hashCode(): Int {
         var result = super.hashCode()
         result = 31 * result + name.hashCode()
@@ -59,6 +59,26 @@ constructor(
         result = 31 * result + endpoints.hashCode()
         result = 31 * result + (followers?.hashCode() ?: 0)
         result = 31 * result + (following?.hashCode() ?: 0)
+        result = 31 * result + manuallyApprovesFollowers.hashCode()
         return result
+    }
+
+    override fun toString(): String {
+        return "Person(" +
+                "name='$name', " +
+                "id='$id', " +
+                "preferredUsername=$preferredUsername, " +
+                "summary=$summary, " +
+                "inbox='$inbox', " +
+                "outbox='$outbox', " +
+                "url='$url', " +
+                "icon=$icon, " +
+                "publicKey=$publicKey, " +
+                "endpoints=$endpoints, " +
+                "followers=$followers, " +
+                "following=$following, " +
+                "manuallyApprovesFollowers=$manuallyApprovesFollowers" +
+                ")" +
+                " ${super.toString()}"
     }
 }
