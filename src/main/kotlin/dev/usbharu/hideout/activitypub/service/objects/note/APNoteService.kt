@@ -140,7 +140,7 @@ class APNoteServiceImpl(
         postService.createRemote(
             postBuilder.of(
                 id = postRepository.generateId(),
-                userId = person.second.id,
+                actorId = person.second.id,
                 text = note.content,
                 createdAt = Instant.parse(note.published).toEpochMilli(),
                 visibility = visibility,

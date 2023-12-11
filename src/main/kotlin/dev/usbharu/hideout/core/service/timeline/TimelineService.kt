@@ -4,22 +4,22 @@ import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.Visibility
 import dev.usbharu.hideout.core.domain.model.timeline.Timeline
 import dev.usbharu.hideout.core.domain.model.timeline.TimelineRepository
+import dev.usbharu.hideout.core.query.ActorQueryService
 import dev.usbharu.hideout.core.query.FollowerQueryService
-import dev.usbharu.hideout.core.query.UserQueryService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
 class TimelineService(
     private val followerQueryService: FollowerQueryService,
-    private val userQueryService: UserQueryService,
+    private val actorQueryService: ActorQueryService,
     private val timelineRepository: TimelineRepository
 ) {
     suspend fun publishTimeline(post: Post, isLocal: Boolean) {
-        val findFollowersById = followerQueryService.findFollowersById(post.userId).toMutableList()
+        val findFollowersById = followerQueryService.findFollowersById(post.actorId).toMutableList()
         if (isLocal) {
             // 自分自身も含める必要がある
-            val user = userQueryService.findById(post.userId)
+            val user = actorQueryService.findById(post.actorId)
             findFollowersById.add(user)
         }
         val timelines = findFollowersById.map {
@@ -28,7 +28,7 @@ class TimelineService(
                 userId = it.id,
                 timelineId = 0,
                 postId = post.id,
-                postUserId = post.userId,
+                postActorId = post.actorId,
                 createdAt = post.createdAt,
                 replyId = post.replyId,
                 repostId = post.repostId,
@@ -46,7 +46,7 @@ class TimelineService(
                     userId = 0,
                     timelineId = 0,
                     postId = post.id,
-                    postUserId = post.userId,
+                    postActorId = post.actorId,
                     createdAt = post.createdAt,
                     replyId = post.replyId,
                     repostId = post.repostId,

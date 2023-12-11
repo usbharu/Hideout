@@ -6,8 +6,8 @@ import dev.usbharu.hideout.activitypub.query.NoteQueryService
 import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.external.job.DeliverPostJob
+import dev.usbharu.hideout.core.query.ActorQueryService
 import dev.usbharu.hideout.core.query.FollowerQueryService
-import dev.usbharu.hideout.core.query.UserQueryService
 import dev.usbharu.hideout.core.service.job.JobQueueParentService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -17,7 +17,7 @@ class ApSendCreateServiceImpl(
     private val followerQueryService: FollowerQueryService,
     private val objectMapper: ObjectMapper,
     private val jobQueueParentService: JobQueueParentService,
-    private val userQueryService: UserQueryService,
+    private val actorQueryService: ActorQueryService,
     private val noteQueryService: NoteQueryService,
     private val applicationConfig: ApplicationConfig
 ) : ApSendCreateService {
@@ -25,11 +25,11 @@ class ApSendCreateServiceImpl(
         logger.info("CREATE Create Local Note ${post.url}")
         logger.debug("START Create Local Note ${post.url}")
         logger.trace("{}", post)
-        val followers = followerQueryService.findFollowersById(post.userId)
+        val followers = followerQueryService.findFollowersById(post.actorId)
 
         logger.debug("DELIVER Deliver Note Create ${followers.size} accounts.")
 
-        val userEntity = userQueryService.findById(post.userId)
+        val userEntity = actorQueryService.findById(post.actorId)
         val note = noteQueryService.findById(post.id).first
         val create = Create(
             name = "Create Note",

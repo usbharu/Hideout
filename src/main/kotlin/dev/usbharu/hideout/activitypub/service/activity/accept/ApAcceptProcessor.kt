@@ -7,14 +7,14 @@ import dev.usbharu.hideout.activitypub.service.common.AbstractActivityPubProcess
 import dev.usbharu.hideout.activitypub.service.common.ActivityPubProcessContext
 import dev.usbharu.hideout.activitypub.service.common.ActivityType
 import dev.usbharu.hideout.application.external.Transaction
-import dev.usbharu.hideout.core.query.UserQueryService
+import dev.usbharu.hideout.core.query.ActorQueryService
 import dev.usbharu.hideout.core.service.relationship.RelationshipService
 import org.springframework.stereotype.Service
 
 @Service
 class ApAcceptProcessor(
     transaction: Transaction,
-    private val userQueryService: UserQueryService,
+    private val actorQueryService: ActorQueryService,
     private val relationshipService: RelationshipService
 ) :
     AbstractActivityPubProcessor<Accept>(transaction) {
@@ -32,8 +32,8 @@ class ApAcceptProcessor(
         val userUrl = follow.apObject
         val followerUrl = follow.actor
 
-        val user = userQueryService.findByUrl(userUrl)
-        val follower = userQueryService.findByUrl(followerUrl)
+        val user = actorQueryService.findByUrl(userUrl)
+        val follower = actorQueryService.findByUrl(followerUrl)
 
         relationshipService.acceptFollowRequest(user.id, follower.id)
         logger.debug("SUCCESS Follow from ${user.url} to ${follower.url}.")

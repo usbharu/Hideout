@@ -1,8 +1,8 @@
 package dev.usbharu.hideout.mastodon.service.account
 
 import dev.usbharu.hideout.application.external.Transaction
+import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
-import dev.usbharu.hideout.core.domain.model.user.UserRepository
 import dev.usbharu.hideout.core.query.FollowerQueryService
 import dev.usbharu.hideout.core.service.relationship.RelationshipService
 import dev.usbharu.hideout.core.service.user.UserService
@@ -31,7 +31,7 @@ class AccountApiServiceImplTest {
     private lateinit var userService: UserService
 
     @Mock
-    private lateinit var userRepository: UserRepository
+    private lateinit var actorRepository: ActorRepository
 
     @Mock
     private lateinit var followerQueryService: FollowerQueryService
@@ -204,8 +204,8 @@ class AccountApiServiceImplTest {
 
         whenever(relationshipRepository.findByUserIdAndTargetUserId(eq(loginUser), eq(userId))).doReturn(
             dev.usbharu.hideout.core.domain.model.relationship.Relationship(
-                userId = loginUser,
-                targetUserId = userId,
+                actorId = loginUser,
+                targetActorId = userId,
                 following = true,
                 blocking = false,
                 muting = false,
@@ -239,8 +239,8 @@ class AccountApiServiceImplTest {
 
         whenever(relationshipRepository.findByUserIdAndTargetUserId(eq(followeeId), eq(userId))).doReturn(
             dev.usbharu.hideout.core.domain.model.relationship.Relationship(
-                userId = followeeId,
-                targetUserId = userId,
+                actorId = followeeId,
+                targetActorId = userId,
                 following = true,
                 blocking = false,
                 muting = false,
@@ -250,8 +250,8 @@ class AccountApiServiceImplTest {
         )
         whenever(relationshipRepository.findByUserIdAndTargetUserId(eq(userId), eq(followeeId))).doReturn(
             dev.usbharu.hideout.core.domain.model.relationship.Relationship(
-                userId = userId,
-                targetUserId = followeeId,
+                actorId = userId,
+                targetActorId = followeeId,
                 following = true,
                 blocking = false,
                 muting = false,

@@ -23,7 +23,7 @@ import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
 @ExtendWith(MockitoExtension::class)
-class UserAPControllerImplTest {
+class ActorAPControllerImplTest {
 
     private lateinit var mockMvc: MockMvc
 

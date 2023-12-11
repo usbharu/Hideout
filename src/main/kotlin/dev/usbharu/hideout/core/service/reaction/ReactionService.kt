@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service
 
 @Service
 interface ReactionService {
-    suspend fun receiveReaction(name: String, domain: String, userId: Long, postId: Long)
-    suspend fun sendReaction(name: String, userId: Long, postId: Long)
-    suspend fun removeReaction(userId: Long, postId: Long)
+    suspend fun receiveReaction(name: String, domain: String, actorId: Long, postId: Long)
+    suspend fun sendReaction(name: String, actorId: Long, postId: Long)
+    suspend fun removeReaction(actorId: Long, postId: Long)
 }

@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import dev.usbharu.hideout.core.domain.model.reaction.Reaction
 import dev.usbharu.hideout.core.external.job.DeliverReactionJob
 import dev.usbharu.hideout.core.external.job.DeliverRemoveReactionJob
+import dev.usbharu.hideout.core.query.ActorQueryService
 import dev.usbharu.hideout.core.query.FollowerQueryService
 import dev.usbharu.hideout.core.query.PostQueryService
-import dev.usbharu.hideout.core.query.UserQueryService
 import dev.usbharu.hideout.core.service.job.JobQueueParentService
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
@@ -19,14 +19,14 @@ interface APReactionService {
 @Service
 class APReactionServiceImpl(
     private val jobQueueParentService: JobQueueParentService,
-    private val userQueryService: UserQueryService,
+    private val actorQueryService: ActorQueryService,
     private val followerQueryService: FollowerQueryService,
     private val postQueryService: PostQueryService,
     @Qualifier("activitypub") private val objectMapper: ObjectMapper
 ) : APReactionService {
     override suspend fun reaction(like: Reaction) {
-        val followers = followerQueryService.findFollowersById(like.userId)
-        val user = userQueryService.findById(like.userId)
+        val followers = followerQueryService.findFollowersById(like.actorId)
+        val user = actorQueryService.findById(like.actorId)
         val post =
             postQueryService.findById(like.postId)
         followers.forEach { follower ->
@@ -41,8 +41,8 @@ class APReactionServiceImpl(
     }
 
     override suspend fun removeReaction(like: Reaction) {
-        val followers = followerQueryService.findFollowersById(like.userId)
-        val user = userQueryService.findById(like.userId)
+        val followers = followerQueryService.findFollowersById(like.actorId)
+        val user = actorQueryService.findById(like.actorId)
         val post =
             postQueryService.findById(like.postId)
         followers.forEach { follower ->

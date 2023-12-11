@@ -2,9 +2,9 @@ package dev.usbharu.hideout.core.service.post
 
 import dev.usbharu.hideout.activitypub.service.activity.create.ApSendCreateService
 import dev.usbharu.hideout.application.config.CharacterLimit
+import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
-import dev.usbharu.hideout.core.domain.model.user.UserRepository
 import dev.usbharu.hideout.core.query.PostQueryService
 import dev.usbharu.hideout.core.service.timeline.TimelineService
 import kotlinx.coroutines.test.runTest
@@ -31,7 +31,7 @@ class PostServiceImplTest {
     private lateinit var postRepository: PostRepository
 
     @Mock
-    private lateinit var userRepository: UserRepository
+    private lateinit var actorRepository: ActorRepository
 
     @Mock
     private lateinit var timelineService: TimelineService
@@ -56,7 +56,7 @@ class PostServiceImplTest {
 
         whenever(postRepository.save(eq(post))).doReturn(true)
         whenever(postRepository.generateId()).doReturn(post.id)
-        whenever(userRepository.findById(eq(post.userId))).doReturn(UserBuilder.localUserOf(id = post.userId))
+        whenever(actorRepository.findById(eq(post.actorId))).doReturn(UserBuilder.localUserOf(id = post.actorId))
         whenever(timelineService.publishTimeline(eq(post), eq(true))).doReturn(Unit)
 
         mockStatic(Instant::class.java, Mockito.CALLS_REAL_METHODS).use {
@@ -69,7 +69,7 @@ class PostServiceImplTest {
                     post.visibility,
                     post.repostId,
                     post.replyId,
-                    post.userId,
+                    post.actorId,
                     post.mediaIds
                 )
             )

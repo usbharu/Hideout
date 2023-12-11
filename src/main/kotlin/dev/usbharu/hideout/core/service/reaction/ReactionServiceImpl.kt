@@ -16,34 +16,34 @@ class ReactionServiceImpl(
     private val apReactionService: APReactionService,
     private val reactionQueryService: ReactionQueryService
 ) : ReactionService {
-    override suspend fun receiveReaction(name: String, domain: String, userId: Long, postId: Long) {
-        if (reactionQueryService.reactionAlreadyExist(postId, userId, 0).not()) {
+    override suspend fun receiveReaction(name: String, domain: String, actorId: Long, postId: Long) {
+        if (reactionQueryService.reactionAlreadyExist(postId, actorId, 0).not()) {
             try {
                 reactionRepository.save(
-                    Reaction(reactionRepository.generateId(), 0, postId, userId)
+                    Reaction(reactionRepository.generateId(), 0, postId, actorId)
                 )
             } catch (_: ExposedSQLException) {
             }
         }
     }
 
-    override suspend fun sendReaction(name: String, userId: Long, postId: Long) {
+    override suspend fun sendReaction(name: String, actorId: Long, postId: Long) {
         try {
             val findByPostIdAndUserIdAndEmojiId =
-                reactionQueryService.findByPostIdAndUserIdAndEmojiId(postId, userId, 0)
+                reactionQueryService.findByPostIdAndActorIdAndEmojiId(postId, actorId, 0)
             apReactionService.removeReaction(findByPostIdAndUserIdAndEmojiId)
             reactionRepository.delete(findByPostIdAndUserIdAndEmojiId)
         } catch (_: FailedToGetResourcesException) {
         }
-        val reaction = Reaction(reactionRepository.generateId(), 0, postId, userId)
+        val reaction = Reaction(reactionRepository.generateId(), 0, postId, actorId)
         reactionRepository.save(reaction)
         apReactionService.reaction(reaction)
     }
 
-    override suspend fun removeReaction(userId: Long, postId: Long) {
+    override suspend fun removeReaction(actorId: Long, postId: Long) {
         try {
             val findByPostIdAndUserIdAndEmojiId =
-                reactionQueryService.findByPostIdAndUserIdAndEmojiId(postId, userId, 0)
+                reactionQueryService.findByPostIdAndActorIdAndEmojiId(postId, actorId, 0)
             reactionRepository.delete(findByPostIdAndUserIdAndEmojiId)
             apReactionService.removeReaction(findByPostIdAndUserIdAndEmojiId)
         } catch (_: FailedToGetResourcesException) {

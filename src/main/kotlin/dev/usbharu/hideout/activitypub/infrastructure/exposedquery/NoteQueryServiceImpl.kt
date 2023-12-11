@@ -23,7 +23,7 @@ class NoteQueryServiceImpl(private val postRepository: PostRepository, private v
     NoteQueryService {
     override suspend fun findById(id: Long): Pair<Note, Post> {
         return Posts
-            .leftJoin(Users)
+            .leftJoin(Actors)
             .leftJoin(PostsMedia)
             .leftJoin(Media)
             .select { Posts.id eq id }
@@ -35,7 +35,7 @@ class NoteQueryServiceImpl(private val postRepository: PostRepository, private v
 
     override suspend fun findByApid(apId: String): Pair<Note, Post> {
         return Posts
-            .leftJoin(Users)
+            .leftJoin(Actors)
             .leftJoin(PostsMedia)
             .leftJoin(Media)
             .select { Posts.apId eq apId }
@@ -61,11 +61,11 @@ class NoteQueryServiceImpl(private val postRepository: PostRepository, private v
         val visibility1 =
             visibility(
                 Visibility.values().first { visibility -> visibility.ordinal == this[Posts.visibility] },
-                this[Users.followers]
+                this[Actors.followers]
             )
         return Note(
             id = this[Posts.apId],
-            attributedTo = this[Users.url],
+            attributedTo = this[Actors.url],
             content = this[Posts.text],
             published = Instant.ofEpochMilli(this[Posts.createdAt]).toString(),
             to = visibility1.first,

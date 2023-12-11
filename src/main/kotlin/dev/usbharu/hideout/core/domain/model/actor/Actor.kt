@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.core.domain.model.user
+package dev.usbharu.hideout.core.domain.model.actor
 
 import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.application.config.CharacterLimit
@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.time.Instant
 
-data class User private constructor(
+data class Actor private constructor(
     val id: Long,
     val name: String,
     val domain: String,
@@ -53,7 +53,7 @@ data class User private constructor(
             following: String? = null,
             followers: String? = null,
             instance: Long? = null
-        ): User {
+        ): Actor {
             // idは0未満ではいけない
             require(id >= 0) { "id must be greater than or equal to 0." }
 
@@ -129,7 +129,7 @@ data class User private constructor(
                 "keyId must contain non-blank characters."
             }
 
-            return User(
+            return Actor(
                 id = id,
                 name = limitedName,
                 domain = domain,

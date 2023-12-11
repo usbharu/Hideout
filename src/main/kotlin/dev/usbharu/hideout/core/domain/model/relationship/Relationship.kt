@@ -3,8 +3,8 @@ package dev.usbharu.hideout.core.domain.model.relationship
 /**
  * ユーザーとの関係を表します
  *
- * @property userId ユーザー
- * @property targetUserId 相手ユーザー
+ * @property actorId ユーザー
+ * @property targetActorId 相手ユーザー
  * @property following フォローしているか
  * @property blocking ブロックしているか
  * @property muting ミュートしているか
@@ -12,8 +12,8 @@ package dev.usbharu.hideout.core.domain.model.relationship
  * @property ignoreFollowRequestFromTarget フォローリクエストを無視しているか
  */
 data class Relationship(
-    val userId: Long,
-    val targetUserId: Long,
+    val actorId: Long,
+    val targetActorId: Long,
     val following: Boolean,
     val blocking: Boolean,
     val muting: Boolean,

@@ -12,7 +12,7 @@ import dev.usbharu.hideout.core.infrastructure.springframework.httpsignature.Htt
 import dev.usbharu.hideout.core.infrastructure.springframework.httpsignature.HttpSignatureVerifierComposite
 import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.UserDetailsImpl
 import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.UserDetailsServiceImpl
-import dev.usbharu.hideout.core.query.UserQueryService
+import dev.usbharu.hideout.core.query.ActorQueryService
 import dev.usbharu.hideout.util.RsaUtil
 import dev.usbharu.hideout.util.hasAnyScope
 import dev.usbharu.httpsignature.sign.RsaSha256HttpSignatureSigner
@@ -69,7 +69,7 @@ import java.util.*
 class SecurityConfig {
 
     @Autowired
-    private lateinit var userQueryService: UserQueryService
+    private lateinit var actorQueryService: ActorQueryService
 
     @Bean
     fun authenticationManager(authenticationConfiguration: AuthenticationConfiguration): AuthenticationManager? =
@@ -135,7 +135,7 @@ class SecurityConfig {
         val signatureHeaderParser = DefaultSignatureHeaderParser()
         provider.setPreAuthenticatedUserDetailsService(
             HttpSignatureUserDetailsService(
-                userQueryService,
+                actorQueryService,
                 HttpSignatureVerifierComposite(
                     mapOf(
                         "rsa-sha256" to RsaSha256HttpSignatureVerifier(

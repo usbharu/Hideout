@@ -3,7 +3,7 @@ package dev.usbharu.hideout.core.infrastructure.springframework.httpsignature
 import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.domain.exception.HttpSignatureVerifyException
-import dev.usbharu.hideout.core.query.UserQueryService
+import dev.usbharu.hideout.core.query.ActorQueryService
 import dev.usbharu.hideout.util.RsaUtil
 import dev.usbharu.httpsignature.common.HttpMethod
 import dev.usbharu.httpsignature.common.HttpRequest
@@ -20,7 +20,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken
 
 class HttpSignatureUserDetailsService(
-    private val userQueryService: UserQueryService,
+    private val actorQueryService: ActorQueryService,
     private val httpSignatureVerifier: HttpSignatureVerifier,
     private val transaction: Transaction,
     private val httpSignatureHeaderParser: SignatureHeaderParser
@@ -35,7 +35,7 @@ class HttpSignatureUserDetailsService(
         val keyId = token.principal as String
         val findByKeyId = transaction.transaction {
             try {
-                userQueryService.findByKeyId(keyId)
+                actorQueryService.findByKeyId(keyId)
             } catch (e: FailedToGetResourcesException) {
                 throw UsernameNotFoundException("User not found", e)
             }

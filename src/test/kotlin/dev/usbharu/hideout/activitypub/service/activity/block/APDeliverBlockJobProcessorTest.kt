@@ -4,7 +4,7 @@ import dev.usbharu.hideout.activitypub.domain.model.Block
 import dev.usbharu.hideout.activitypub.domain.model.Follow
 import dev.usbharu.hideout.activitypub.domain.model.Reject
 import dev.usbharu.hideout.activitypub.service.common.APRequestService
-import dev.usbharu.hideout.core.domain.model.user.UserRepository
+import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.external.job.DeliverBlockJob
 import dev.usbharu.hideout.core.external.job.DeliverBlockJobParam
 import kotlinx.coroutines.test.runTest
@@ -26,7 +26,7 @@ class APDeliverBlockJobProcessorTest {
     private lateinit var apRequestService: APRequestService
 
     @Mock
-    private lateinit var userRepository: UserRepository
+    private lateinit var actorRepository: ActorRepository
 
     @Spy
     private val transaction = TestTransaction
@@ -40,7 +40,7 @@ class APDeliverBlockJobProcessorTest {
     @Test
     fun `process rejectとblockがapPostされる`() = runTest {
         val user = UserBuilder.localUserOf()
-        whenever(userRepository.findById(eq(user.id))).doReturn(user)
+        whenever(actorRepository.findById(eq(user.id))).doReturn(user)
 
 
         val block = Block(

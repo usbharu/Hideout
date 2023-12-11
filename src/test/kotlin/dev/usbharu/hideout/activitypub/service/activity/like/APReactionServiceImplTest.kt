@@ -35,7 +35,7 @@ class APReactionServiceImplTest {
         val jobQueueParentService = mock<JobQueueParentService>()
         val apReactionServiceImpl = APReactionServiceImpl(
             jobQueueParentService = jobQueueParentService,
-            userQueryService = mock(),
+            actorQueryService = mock(),
             followerQueryService = followerQueryService,
             postQueryService = postQueryService,
             objectMapper = objectMapper
@@ -46,7 +46,7 @@ class APReactionServiceImplTest {
                 id = TwitterSnowflakeIdGenerateService.generateId(),
                 emojiId = 0,
                 postId = post.id,
-                userId = user.id
+                actorId = user.id
             )
         )
 
@@ -72,7 +72,7 @@ class APReactionServiceImplTest {
         val jobQueueParentService = mock<JobQueueParentService>()
         val apReactionServiceImpl = APReactionServiceImpl(
             jobQueueParentService = jobQueueParentService,
-            userQueryService = mock(),
+            actorQueryService = mock(),
             followerQueryService = followerQueryService,
             postQueryService = postQueryService,
             objectMapper = objectMapper
@@ -83,7 +83,7 @@ class APReactionServiceImplTest {
                 id = TwitterSnowflakeIdGenerateService.generateId(),
                 emojiId = 0,
                 postId = post.id,
-                userId = user.id
+                actorId = user.id
             )
         )
 

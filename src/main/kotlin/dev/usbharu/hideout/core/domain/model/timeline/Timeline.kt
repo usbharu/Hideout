@@ -13,7 +13,7 @@ data class Timeline(
     val userId: Long,
     val timelineId: Long,
     val postId: Long,
-    val postUserId: Long,
+    val postActorId: Long,
     val createdAt: Long,
     val replyId: Long?,
     val repostId: Long?,
