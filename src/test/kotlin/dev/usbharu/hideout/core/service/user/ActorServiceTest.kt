@@ -39,6 +39,7 @@ class ActorServiceTest {
                 mock(),
                 actorBuilder,
                 testApplicationConfig,
+                mock(),
                 mock()
             )
         userService.createLocalUser(UserCreateDto("test", "testUser", "XXXXXXXXXXXXX", "test"))
@@ -48,7 +49,6 @@ class ActorServiceTest {
             assertEquals("test", firstValue.name)
             assertEquals("testUser", firstValue.screenName)
             assertEquals("XXXXXXXXXXXXX", firstValue.description)
-            assertEquals("hashedPassword", firstValue.password)
             assertEquals(110001L, firstValue.id)
             assertEquals("https://example.com/users/test", firstValue.url)
             assertEquals("example.com", firstValue.domain)
@@ -66,7 +66,7 @@ class ActorServiceTest {
             onBlocking { nextId() } doReturn 113345L
         }
         val userService =
-            UserServiceImpl(actorRepository, mock(), mock(), actorBuilder, testApplicationConfig, mock())
+            UserServiceImpl(actorRepository, mock(), mock(), actorBuilder, testApplicationConfig, mock(), mock())
         val user = RemoteUserCreateDto(
             name = "test",
             domain = "remote.example.com",
@@ -88,7 +88,6 @@ class ActorServiceTest {
             assertEquals("test", firstValue.name)
             assertEquals("testUser", firstValue.screenName)
             assertEquals("test user", firstValue.description)
-            assertNull(firstValue.password)
             assertEquals(113345L, firstValue.id)
             assertEquals("https://remote.example.com", firstValue.url)
             assertEquals("remote.example.com", firstValue.domain)
