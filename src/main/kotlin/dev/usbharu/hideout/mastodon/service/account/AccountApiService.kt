@@ -44,6 +44,7 @@ interface AccountApiService {
     suspend fun block(userid: Long, target: Long): Relationship
     suspend fun unblock(userid: Long, target: Long): Relationship
     suspend fun unfollow(userid: Long, target: Long): Relationship
+    suspend fun removeFromFollowers(userid: Long, target: Long): Relationship
 }
 
 @Service
@@ -142,6 +143,12 @@ class AccountApiServiceImpl(
 
     override suspend fun unfollow(userid: Long, target: Long): Relationship = transaction.transaction {
         relationshipService.unfollow(userid, target)
+
+        return@transaction fetchRelationship(userid, target)
+    }
+
+    override suspend fun removeFromFollowers(userid: Long, target: Long): Relationship = transaction.transaction {
+        relationshipService.rejectFollowRequest(userid, target)
 
         return@transaction fetchRelationship(userid, target)
     }

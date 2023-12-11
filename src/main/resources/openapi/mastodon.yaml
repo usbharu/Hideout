@@ -349,7 +349,26 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Relationship"
-
+  /api/v1/accounts/{id}/remove_from_followers:
+    post:
+      tags:
+        - account
+      security:
+        - OAuth2:
+            - "write:follows"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Relationship"
 
   /api/v1/accounts/{id}/statuses:
     get:

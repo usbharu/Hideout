@@ -166,7 +166,7 @@ class RelationshipServiceImpl(
     }
 
     override suspend fun rejectFollowRequest(userId: Long, targetId: Long) {
-        val relationship = relationshipRepository.findByUserIdAndTargetUserId(userId, targetId)
+        val relationship = relationshipRepository.findByUserIdAndTargetUserId(targetId, userId)
 
         if (relationship == null) {
             logger.warn("FAILED Follow Request Not Found. (Relationship) userId: {} targetId: {}", userId, targetId)
