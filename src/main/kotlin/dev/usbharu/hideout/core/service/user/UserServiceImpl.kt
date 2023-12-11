@@ -94,6 +94,27 @@ class UserServiceImpl(
         }
     }
 
+    override suspend fun updateUser(userId: Long, updateUserDto: UpdateUserDto) {
+        val userDetail = userDetailRepository.findByActorId(userId)
+            ?: throw IllegalArgumentException("userId: $userId was not found.")
+
+        val actor = actorRepository.findById(userId) ?: throw IllegalArgumentException("userId $userId was not found.")
+
+        actorRepository.save(
+            actor.copy(
+                screenName = updateUserDto.screenName,
+                description = updateUserDto.description,
+            )
+        )
+
+        userDetailRepository.save(
+            userDetail.copy(
+                autoAcceptFollowRequest = updateUserDto.autoAcceptFollowRequest,
+                autoAcceptFolloweeFollowRequest = updateUserDto.autoAcceptFolloweeFollowRequest
+            )
+        )
+    }
+
     companion object {
         private val logger = LoggerFactory.getLogger(UserServiceImpl::class.java)
     }
