@@ -113,4 +113,24 @@ class MastodonAccountApiController(
 
         return ResponseEntity.ok(block)
     }
+
+    override suspend fun apiV1AccountsIdUnblockPost(id: String): ResponseEntity<Relationship> {
+        val principal = SecurityContextHolder.getContext().getAuthentication().principal as Jwt
+
+        val userid = principal.getClaim<String>("uid").toLong()
+
+        val unblock = accountApiService.unblock(userid, id.toLong())
+
+        return ResponseEntity.ok(unblock)
+    }
+
+    override suspend fun apiV1AccountsIdUnfollowPost(id: String): ResponseEntity<Relationship> {
+        val principal = SecurityContextHolder.getContext().getAuthentication().principal as Jwt
+
+        val userid = principal.getClaim<String>("uid").toLong()
+
+        val unfollow = accountApiService.unfollow(userid, id.toLong())
+
+        return ResponseEntity.ok(unfollow)
+    }
 }

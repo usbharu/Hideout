@@ -42,6 +42,8 @@ interface AccountApiService {
      * @return ブロック後のブロック対象ユーザーとの[Relationship]
      */
     suspend fun block(userid: Long, target: Long): Relationship
+    suspend fun unblock(userid: Long, target: Long): Relationship
+    suspend fun unfollow(userid: Long, target: Long): Relationship
 }
 
 @Service
@@ -101,10 +103,10 @@ class AccountApiServiceImpl(
         userService.createLocalUser(UserCreateDto(userCreateDto.name, userCreateDto.name, "", userCreateDto.password))
     }
 
-    override suspend fun follow(loginUser: Long, followTargetUserId: Long): Relationship {
+    override suspend fun follow(loginUser: Long, followTargetUserId: Long): Relationship = transaction.transaction {
         relationshipService.followRequest(loginUser, followTargetUserId)
 
-        return fetchRelationship(loginUser, followTargetUserId)
+        return@transaction fetchRelationship(loginUser, followTargetUserId)
     }
 
     override suspend fun account(id: Long): Account = transaction.transaction {
@@ -130,6 +132,18 @@ class AccountApiServiceImpl(
         relationshipService.block(userid, target)
 
         fetchRelationship(userid, target)
+    }
+
+    override suspend fun unblock(userid: Long, target: Long): Relationship = transaction.transaction {
+        relationshipService.unblock(userid, target)
+
+        return@transaction fetchRelationship(userid, target)
+    }
+
+    override suspend fun unfollow(userid: Long, target: Long): Relationship = transaction.transaction {
+        relationshipService.unfollow(userid, target)
+
+        return@transaction fetchRelationship(userid, target)
     }
 
     private fun from(account: Account): CredentialAccount {
