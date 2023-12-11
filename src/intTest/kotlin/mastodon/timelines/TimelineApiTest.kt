@@ -21,7 +21,7 @@ import org.springframework.web.context.WebApplicationContext
 
 @SpringBootTest(classes = [SpringApplication::class])
 @Transactional
-@Sql("/sql/test-user.sql")
+@Sql("/sql/test-user.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 class TimelineApiTest {
     @Autowired
     private lateinit var context: WebApplicationContext
