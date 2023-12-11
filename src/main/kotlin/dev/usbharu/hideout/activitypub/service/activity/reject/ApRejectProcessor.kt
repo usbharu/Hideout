@@ -10,7 +10,6 @@ import dev.usbharu.hideout.core.query.UserQueryService
 import dev.usbharu.hideout.core.service.relationship.RelationshipService
 import org.springframework.stereotype.Service
 
-
 @Service
 class ApRejectProcessor(
     private val relationshipService: RelationshipService,
@@ -19,7 +18,6 @@ class ApRejectProcessor(
 ) :
     AbstractActivityPubProcessor<Reject>(transaction) {
     override suspend fun internalProcess(activity: ActivityPubProcessContext<Reject>) {
-
         val activityType = activity.activity.apObject.type.firstOrNull { it == "Follow" }
 
         if (activityType == null) {
