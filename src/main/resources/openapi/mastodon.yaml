@@ -287,6 +287,89 @@ paths:
               schema:
                 $ref: "#/components/schemas/Relationship"
 
+  /api/v1/accounts/{id}/block:
+    post:
+      tags:
+        - account
+      security:
+        - OAuth2:
+            - "write:blocks"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Relationship"
+
+  /api/v1/accounts/{id}/unfollow:
+    post:
+      tags:
+        - account
+      security:
+        - OAuth2:
+            - "write:follows"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Relationship"
+
+  /api/v1/accounts/{id}/unblock:
+    post:
+      tags:
+        - account
+      security:
+        - OAuth2:
+            - "write:blocks"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Relationship"
+  /api/v1/accounts/{id}/remove_from_followers:
+    post:
+      tags:
+        - account
+      security:
+        - OAuth2:
+            - "write:follows"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Relationship"
+
   /api/v1/accounts/{id}/statuses:
     get:
       tags:

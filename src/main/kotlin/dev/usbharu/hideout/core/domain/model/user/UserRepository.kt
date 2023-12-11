@@ -10,9 +10,5 @@ interface UserRepository {
 
     suspend fun delete(id: Long)
 
-    suspend fun deleteFollowRequest(id: Long, follower: Long)
-
-    suspend fun findFollowRequestsById(id: Long, follower: Long): Boolean
-
     suspend fun nextId(): Long
 }
