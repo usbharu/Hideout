@@ -3,6 +3,8 @@ package dev.usbharu.hideout.core.service.user
 import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
+import dev.usbharu.hideout.core.domain.model.userdetails.UserDetail
+import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
 import dev.usbharu.hideout.core.query.ActorQueryService
 import dev.usbharu.hideout.core.service.instance.InstanceService
 import org.jetbrains.exposed.exceptions.ExposedSQLException
@@ -18,7 +20,8 @@ class UserServiceImpl(
     private val actorQueryService: ActorQueryService,
     private val actorBuilder: Actor.UserBuilder,
     private val applicationConfig: ApplicationConfig,
-    private val instanceService: InstanceService
+    private val instanceService: InstanceService,
+    private val userDetailRepository: UserDetailRepository
 ) :
     UserService {
 
@@ -38,7 +41,6 @@ class UserServiceImpl(
             domain = applicationConfig.url.host,
             screenName = user.screenName,
             description = user.description,
-            password = hashedPassword,
             inbox = "$userUrl/inbox",
             outbox = "$userUrl/outbox",
             url = userUrl,
@@ -49,7 +51,9 @@ class UserServiceImpl(
             followers = "$userUrl/followers",
             keyId = "$userUrl#pubkey"
         )
-        return actorRepository.save(userEntity)
+        val save = actorRepository.save(userEntity)
+        userDetailRepository.save(UserDetail(nextId, hashedPassword, true, true))
+        return save
     }
 
     @Transactional

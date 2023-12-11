@@ -12,7 +12,6 @@ data class Actor private constructor(
     val domain: String,
     val screenName: String,
     val description: String,
-    val password: String? = null,
     val inbox: String,
     val outbox: String,
     val url: String,
@@ -24,11 +23,7 @@ data class Actor private constructor(
     val following: String? = null,
     val instance: Long? = null
 ) {
-    override fun toString(): String =
-        "User(id=$id, name='$name', domain='$domain', screenName='$screenName', description='$description'," +
-            " password=$password, inbox='$inbox', outbox='$outbox', url='$url', publicKey='$publicKey', " +
-            "privateKey=$privateKey, createdAt=$createdAt, keyId='$keyId', followers=$followers," +
-            " following=$following, instance=$instance)"
+
 
     @Component
     class UserBuilder(private val characterLimit: CharacterLimit, private val applicationConfig: ApplicationConfig) {
@@ -42,7 +37,6 @@ data class Actor private constructor(
             domain: String,
             screenName: String,
             description: String,
-            password: String? = null,
             inbox: String,
             outbox: String,
             url: String,
@@ -97,7 +91,6 @@ data class Actor private constructor(
 
             // ローカルユーザーはpasswordとprivateKeyをnullにしてはいけない
             if (domain == applicationConfig.url.host) {
-                requireNotNull(password) { "password and privateKey must not be null for local users." }
                 requireNotNull(privateKey) { "password and privateKey must not be null for local users." }
             }
 
@@ -135,7 +128,6 @@ data class Actor private constructor(
                 domain = domain,
                 screenName = limitedScreenName,
                 description = limitedDescription,
-                password = password,
                 inbox = inbox,
                 outbox = outbox,
                 url = url,
@@ -148,5 +140,25 @@ data class Actor private constructor(
                 instance = instance
             )
         }
+    }
+
+    override fun toString(): String {
+        return "Actor(" +
+                "id=$id, " +
+                "name='$name', " +
+                "domain='$domain', " +
+                "screenName='$screenName', " +
+                "description='$description', " +
+                "inbox='$inbox', " +
+                "outbox='$outbox', " +
+                "url='$url', " +
+                "publicKey='$publicKey', " +
+                "privateKey=$privateKey, " +
+                "createdAt=$createdAt, " +
+                "keyId='$keyId', " +
+                "followers=$followers, " +
+                "following=$following, " +
+                "instance=$instance" +
+                ")"
     }
 }
