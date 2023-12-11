@@ -133,4 +133,14 @@ class MastodonAccountApiController(
 
         return ResponseEntity.ok(unfollow)
     }
+
+    override suspend fun apiV1AccountsIdRemoveFromFollowersPost(id: String): ResponseEntity<Relationship> {
+        val principal = SecurityContextHolder.getContext().getAuthentication().principal as Jwt
+
+        val userid = principal.getClaim<String>("uid").toLong()
+
+        val removeFromFollowers = accountApiService.removeFromFollowers(userid, id.toLong())
+
+        return ResponseEntity.ok(removeFromFollowers)
+    }
 }
