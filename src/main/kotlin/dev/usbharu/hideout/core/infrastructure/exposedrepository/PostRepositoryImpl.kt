@@ -23,7 +23,7 @@ class PostRepositoryImpl(
         if (singleOrNull == null) {
             Posts.insert {
                 it[id] = post.id
-                it[userId] = post.userId
+                it[actorId] = post.actorId
                 it[overview] = post.overview
                 it[text] = post.text
                 it[createdAt] = post.createdAt
@@ -47,7 +47,7 @@ class PostRepositoryImpl(
                 this[PostsMedia.mediaId] = it
             }
             Posts.update({ Posts.id eq post.id }) {
-                it[userId] = post.userId
+                it[actorId] = post.actorId
                 it[overview] = post.overview
                 it[text] = post.text
                 it[createdAt] = post.createdAt
@@ -75,7 +75,7 @@ class PostRepositoryImpl(
 
 object Posts : Table() {
     val id: Column<Long> = long("id")
-    val userId: Column<Long> = long("user_id").references(Users.id)
+    val actorId: Column<Long> = long("actor_id").references(Actors.id)
     val overview: Column<String?> = varchar("overview", 100).nullable()
     val text: Column<String> = varchar("text", 3000)
     val createdAt: Column<Long> = long("created_at")

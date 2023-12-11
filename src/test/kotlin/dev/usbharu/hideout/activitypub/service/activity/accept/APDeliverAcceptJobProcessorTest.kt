@@ -5,7 +5,7 @@ import dev.usbharu.hideout.activitypub.domain.model.Follow
 import dev.usbharu.hideout.activitypub.service.common.APRequestService
 import dev.usbharu.hideout.core.external.job.DeliverAcceptJob
 import dev.usbharu.hideout.core.external.job.DeliverAcceptJobParam
-import dev.usbharu.hideout.core.query.UserQueryService
+import dev.usbharu.hideout.core.query.ActorQueryService
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -25,7 +25,7 @@ class APDeliverAcceptJobProcessorTest {
     private lateinit var apRequestService: APRequestService
 
     @Mock
-    private lateinit var userQueryService: UserQueryService
+    private lateinit var actorQueryService: ActorQueryService
 
     @Mock
     private lateinit var deliverAcceptJob: DeliverAcceptJob
@@ -40,7 +40,7 @@ class APDeliverAcceptJobProcessorTest {
     fun `process apPostが発行される`() = runTest {
         val user = UserBuilder.localUserOf()
 
-        whenever(userQueryService.findById(eq(1))).doReturn(user)
+        whenever(actorQueryService.findById(eq(1))).doReturn(user)
 
         val accept = Accept(
             apObject = Follow(

@@ -11,6 +11,6 @@ import org.springframework.stereotype.Service
 @Service
 class RelationshipQueryServiceImpl : RelationshipQueryService {
     override suspend fun findByTargetIdAndFollowing(targetId: Long, following: Boolean): List<Relationship> =
-        Relationships.select { Relationships.targetUserId eq targetId and (Relationships.following eq following) }
+        Relationships.select { Relationships.targetActorId eq targetId and (Relationships.following eq following) }
             .map { it.toRelationships() }
 }

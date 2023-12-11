@@ -9,8 +9,8 @@ import dev.usbharu.hideout.activitypub.service.common.resolve
 import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
-import dev.usbharu.hideout.core.domain.model.user.User
-import dev.usbharu.hideout.core.query.UserQueryService
+import dev.usbharu.hideout.core.domain.model.actor.Actor
+import dev.usbharu.hideout.core.query.ActorQueryService
 import dev.usbharu.hideout.core.service.user.RemoteUserCreateDto
 import dev.usbharu.hideout.core.service.user.UserService
 import org.springframework.stereotype.Service
@@ -28,13 +28,13 @@ interface APUserService {
      */
     suspend fun fetchPerson(url: String, targetActor: String? = null): Person
 
-    suspend fun fetchPersonWithEntity(url: String, targetActor: String? = null): Pair<Person, User>
+    suspend fun fetchPersonWithEntity(url: String, targetActor: String? = null): Pair<Person, Actor>
 }
 
 @Service
 class APUserServiceImpl(
     private val userService: UserService,
-    private val userQueryService: UserQueryService,
+    private val actorQueryService: ActorQueryService,
     private val transaction: Transaction,
     private val applicationConfig: ApplicationConfig,
     private val apResourceResolveService: APResourceResolveService
@@ -43,7 +43,7 @@ class APUserServiceImpl(
 
     override suspend fun getPersonByName(name: String): Person {
         val userEntity = transaction.transaction {
-            userQueryService.findByNameAndDomain(name, applicationConfig.url.host)
+            actorQueryService.findByNameAndDomain(name, applicationConfig.url.host)
         }
         // TODO: JOINで書き直し
         val userUrl = "${applicationConfig.url}/users/$name"
@@ -76,9 +76,9 @@ class APUserServiceImpl(
         fetchPersonWithEntity(url, targetActor).first
 
     @Transactional
-    override suspend fun fetchPersonWithEntity(url: String, targetActor: String?): Pair<Person, User> {
+    override suspend fun fetchPersonWithEntity(url: String, targetActor: String?): Pair<Person, Actor> {
         return try {
-            val userEntity = userQueryService.findByUrl(url)
+            val userEntity = actorQueryService.findByUrl(url)
             val id = userEntity.url
             return entityToPerson(userEntity, id) to userEntity
         } catch (ignore: FailedToGetResourcesException) {
@@ -86,7 +86,7 @@ class APUserServiceImpl(
 
             val id = person.id
             try {
-                val userEntity = userQueryService.findByUrl(id)
+                val userEntity = actorQueryService.findByUrl(id)
                 return entityToPerson(userEntity, id) to userEntity
             } catch (_: FailedToGetResourcesException) {
             }
@@ -111,14 +111,14 @@ class APUserServiceImpl(
     }
 
     private fun entityToPerson(
-        userEntity: User,
+        actorEntity: Actor,
         id: String
     ) = Person(
         type = emptyList(),
-        name = userEntity.name,
+        name = actorEntity.name,
         id = id,
-        preferredUsername = userEntity.name,
-        summary = userEntity.description,
+        preferredUsername = actorEntity.name,
+        summary = actorEntity.description,
         inbox = "$id/inbox",
         outbox = "$id/outbox",
         url = id,
@@ -128,12 +128,12 @@ class APUserServiceImpl(
             url = "$id/icon.jpg"
         ),
         publicKey = Key(
-            id = userEntity.keyId,
+            id = actorEntity.keyId,
             owner = id,
-            publicKeyPem = userEntity.publicKey
+            publicKeyPem = actorEntity.publicKey
         ),
         endpoints = mapOf("sharedInbox" to "${applicationConfig.url}/inbox"),
-        followers = userEntity.followers,
-        following = userEntity.following
+        followers = actorEntity.followers,
+        following = actorEntity.following
     )
 }

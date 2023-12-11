@@ -2,7 +2,7 @@ package dev.usbharu.hideout.core.infrastructure.springframework.oauth2
 
 import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.application.external.Transaction
-import dev.usbharu.hideout.core.query.UserQueryService
+import dev.usbharu.hideout.core.query.ActorQueryService
 import kotlinx.coroutines.runBlocking
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class UserDetailsServiceImpl(
-    private val userQueryService: UserQueryService,
+    private val actorQueryService: ActorQueryService,
     private val applicationConfig: ApplicationConfig,
     private val transaction: Transaction
 ) :
@@ -21,7 +21,7 @@ class UserDetailsServiceImpl(
             throw UsernameNotFoundException("$username not found")
         }
         transaction.transaction {
-            val findById = userQueryService.findByNameAndDomain(username, applicationConfig.url.host)
+            val findById = actorQueryService.findByNameAndDomain(username, applicationConfig.url.host)
             UserDetailsImpl(
                 id = findById.id,
                 username = findById.name,

@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component
 
 data class Post private constructor(
     val id: Long,
-    val userId: Long,
+    val actorId: Long,
     val overview: String? = null,
     val text: String,
     val createdAt: Long,
@@ -23,7 +23,7 @@ data class Post private constructor(
         @Suppress("FunctionMinLength", "LongParameterList")
         fun of(
             id: Long,
-            userId: Long,
+            actorId: Long,
             overview: String? = null,
             text: String,
             createdAt: Long,
@@ -37,7 +37,7 @@ data class Post private constructor(
         ): Post {
             require(id >= 0) { "id must be greater than or equal to 0." }
 
-            require(userId >= 0) { "userId must be greater than or equal to 0." }
+            require(actorId >= 0) { "actorId must be greater than or equal to 0." }
 
             val limitedOverview = if ((overview?.length ?: 0) >= characterLimit.post.overview) {
                 overview?.substring(0, characterLimit.post.overview)
@@ -61,7 +61,7 @@ data class Post private constructor(
 
             return Post(
                 id = id,
-                userId = userId,
+                actorId = actorId,
                 overview = limitedOverview,
                 text = limitedText,
                 createdAt = createdAt,

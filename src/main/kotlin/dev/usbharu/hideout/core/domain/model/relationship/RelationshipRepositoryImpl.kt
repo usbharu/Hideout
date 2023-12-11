@@ -1,6 +1,6 @@
 package dev.usbharu.hideout.core.domain.model.relationship
 
-import dev.usbharu.hideout.core.infrastructure.exposedrepository.Users
+import dev.usbharu.hideout.core.infrastructure.exposedrepository.Actors
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -12,15 +12,15 @@ class RelationshipRepositoryImpl : RelationshipRepository {
         val singleOrNull =
             Relationships
                 .select {
-                    (Relationships.userId eq relationship.userId)
-                        .and(Relationships.targetUserId eq relationship.targetUserId)
+                    (Relationships.actorId eq relationship.actorId)
+                        .and(Relationships.targetActorId eq relationship.targetActorId)
                 }
                 .singleOrNull()
 
         if (singleOrNull == null) {
             Relationships.insert {
-                it[userId] = relationship.userId
-                it[targetUserId] = relationship.targetUserId
+                it[actorId] = relationship.actorId
+                it[targetActorId] = relationship.targetActorId
                 it[following] = relationship.following
                 it[blocking] = relationship.blocking
                 it[muting] = relationship.muting
@@ -30,8 +30,8 @@ class RelationshipRepositoryImpl : RelationshipRepository {
         } else {
             Relationships
                 .update({
-                    (Relationships.userId eq relationship.userId)
-                        .and(Relationships.targetUserId eq relationship.targetUserId)
+                    (Relationships.actorId eq relationship.actorId)
+                        .and(Relationships.targetActorId eq relationship.targetActorId)
                 }) {
                     it[following] = relationship.following
                     it[blocking] = relationship.blocking
@@ -45,23 +45,23 @@ class RelationshipRepositoryImpl : RelationshipRepository {
 
     override suspend fun delete(relationship: Relationship) {
         Relationships.deleteWhere {
-            (Relationships.userId eq relationship.userId)
-                .and(Relationships.targetUserId eq relationship.targetUserId)
+            (Relationships.actorId eq relationship.actorId)
+                .and(Relationships.targetActorId eq relationship.targetActorId)
         }
     }
 
-    override suspend fun findByUserIdAndTargetUserId(userId: Long, targetUserId: Long): Relationship? {
+    override suspend fun findByUserIdAndTargetUserId(actorId: Long, targetActorId: Long): Relationship? {
         return Relationships.select {
-            (Relationships.userId eq userId)
-                .and(Relationships.targetUserId eq targetUserId)
+            (Relationships.actorId eq actorId)
+                .and(Relationships.targetActorId eq targetActorId)
         }.singleOrNull()
             ?.toRelationships()
     }
 }
 
 fun ResultRow.toRelationships(): Relationship = Relationship(
-    userId = this[Relationships.userId],
-    targetUserId = this[Relationships.targetUserId],
+    actorId = this[Relationships.actorId],
+    targetActorId = this[Relationships.targetActorId],
     following = this[Relationships.following],
     blocking = this[Relationships.blocking],
     muting = this[Relationships.muting],
@@ -70,8 +70,8 @@ fun ResultRow.toRelationships(): Relationship = Relationship(
 )
 
 object Relationships : LongIdTable("relationships") {
-    val userId = long("user_id").references(Users.id)
-    val targetUserId = long("target_user_id").references(Users.id)
+    val actorId = long("actor_id").references(Actors.id)
+    val targetActorId = long("target_actor_id").references(Actors.id)
     val following = bool("following")
     val blocking = bool("blocking")
     val muting = bool("muting")
@@ -79,6 +79,6 @@ object Relationships : LongIdTable("relationships") {
     val ignoreFollowRequestFromTarget = bool("ignore_follow_request")
 
     init {
-        uniqueIndex(userId, targetUserId)
+        uniqueIndex(actorId, targetActorId)
     }
 }

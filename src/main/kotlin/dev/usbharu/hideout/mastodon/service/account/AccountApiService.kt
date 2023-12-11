@@ -194,8 +194,8 @@ class AccountApiServiceImpl(
     private suspend fun fetchRelationship(userid: Long, targetId: Long): Relationship {
         val relationship = relationshipRepository.findByUserIdAndTargetUserId(userid, targetId)
             ?: dev.usbharu.hideout.core.domain.model.relationship.Relationship(
-                userId = userid,
-                targetUserId = targetId,
+                actorId = userid,
+                targetActorId = targetId,
                 following = false,
                 blocking = false,
                 muting = false,
@@ -205,8 +205,8 @@ class AccountApiServiceImpl(
 
         val inverseRelationship = relationshipRepository.findByUserIdAndTargetUserId(targetId, userid)
             ?: dev.usbharu.hideout.core.domain.model.relationship.Relationship(
-                userId = targetId,
-                targetUserId = userid,
+                actorId = targetId,
+                targetActorId = userid,
                 following = false,
                 blocking = false,
                 muting = false,

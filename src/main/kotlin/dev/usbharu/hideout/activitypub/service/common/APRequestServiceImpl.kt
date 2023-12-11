@@ -2,7 +2,7 @@ package dev.usbharu.hideout.activitypub.service.common
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import dev.usbharu.hideout.activitypub.domain.model.objects.Object
-import dev.usbharu.hideout.core.domain.model.user.User
+import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.util.Base64Util
 import dev.usbharu.hideout.util.HttpUtil.Activity
 import dev.usbharu.hideout.util.RsaUtil
@@ -33,7 +33,7 @@ class APRequestServiceImpl(
     @Qualifier("http") private val dateTimeFormatter: DateTimeFormatter,
 ) : APRequestService {
 
-    override suspend fun <R : Object> apGet(url: String, signer: User?, responseClass: Class<R>): R {
+    override suspend fun <R : Object> apGet(url: String, signer: Actor?, responseClass: Class<R>): R {
         logger.debug("START ActivityPub Request GET url: {}, signer: {}", url, signer?.url)
         val date = dateTimeFormatter.format(ZonedDateTime.now(ZoneId.of("GMT")))
         val u = URL(url)
@@ -57,7 +57,7 @@ class APRequestServiceImpl(
     private suspend fun apGetSign(
         date: String,
         u: URL,
-        signer: User,
+        signer: Actor,
         url: String
     ): HttpResponse {
         val headers = headers {
@@ -100,14 +100,14 @@ class APRequestServiceImpl(
     override suspend fun <T : Object, R : Object> apPost(
         url: String,
         body: T?,
-        signer: User?,
+        signer: Actor?,
         responseClass: Class<R>
     ): R {
         val bodyAsText = apPost(url, body, signer)
         return objectMapper.readValue(bodyAsText, responseClass)
     }
 
-    override suspend fun <T : Object> apPost(url: String, body: T?, signer: User?): String {
+    override suspend fun <T : Object> apPost(url: String, body: T?, signer: Actor?): String {
         logger.debug("START ActivityPub Request POST url: {}, signer: {}", url, signer?.url)
         val requestBody = addContextIfNotNull(body)
 
@@ -166,7 +166,7 @@ class APRequestServiceImpl(
         date: String,
         u: URL,
         digest: String,
-        signer: User,
+        signer: Actor,
         requestBody: String?
     ): HttpResponse {
         val headers = headers {

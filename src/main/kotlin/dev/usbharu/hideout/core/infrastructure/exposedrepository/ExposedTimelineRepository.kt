@@ -22,7 +22,7 @@ class ExposedTimelineRepository(private val idGenerateService: IdGenerateService
                 it[userId] = timeline.userId
                 it[timelineId] = timeline.timelineId
                 it[postId] = timeline.postId
-                it[postUserId] = timeline.postUserId
+                it[postUserId] = timeline.postActorId
                 it[createdAt] = timeline.createdAt
                 it[replyId] = timeline.replyId
                 it[repostId] = timeline.repostId
@@ -37,7 +37,7 @@ class ExposedTimelineRepository(private val idGenerateService: IdGenerateService
                 it[userId] = timeline.userId
                 it[timelineId] = timeline.timelineId
                 it[postId] = timeline.postId
-                it[postUserId] = timeline.postUserId
+                it[postUserId] = timeline.postActorId
                 it[createdAt] = timeline.createdAt
                 it[replyId] = timeline.replyId
                 it[repostId] = timeline.repostId
@@ -57,7 +57,7 @@ class ExposedTimelineRepository(private val idGenerateService: IdGenerateService
             this[Timelines.userId] = it.userId
             this[Timelines.timelineId] = it.timelineId
             this[Timelines.postId] = it.postId
-            this[Timelines.postUserId] = it.postUserId
+            this[Timelines.postUserId] = it.postActorId
             this[Timelines.createdAt] = it.createdAt
             this[Timelines.replyId] = it.replyId
             this[Timelines.repostId] = it.repostId
@@ -84,7 +84,7 @@ fun ResultRow.toTimeline(): Timeline {
         userId = this[Timelines.userId],
         timelineId = this[Timelines.timelineId],
         postId = this[Timelines.postId],
-        postUserId = this[Timelines.postUserId],
+        postActorId = this[Timelines.postUserId],
         createdAt = this[Timelines.createdAt],
         replyId = this[Timelines.replyId],
         repostId = this[Timelines.repostId],

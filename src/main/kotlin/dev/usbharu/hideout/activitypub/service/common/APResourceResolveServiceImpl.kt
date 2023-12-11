@@ -1,8 +1,8 @@
 package dev.usbharu.hideout.activitypub.service.common
 
 import dev.usbharu.hideout.activitypub.domain.model.objects.Object
-import dev.usbharu.hideout.core.domain.model.user.User
-import dev.usbharu.hideout.core.domain.model.user.UserRepository
+import dev.usbharu.hideout.core.domain.model.actor.Actor
+import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.service.resource.CacheManager
 import dev.usbharu.hideout.core.service.resource.ResolveResponse
 import org.springframework.stereotype.Service
@@ -11,7 +11,7 @@ import java.io.InputStream
 @Service
 class APResourceResolveServiceImpl(
     private val apRequestService: APRequestService,
-    private val userRepository: UserRepository,
+    private val actorRepository: ActorRepository,
     private val cacheManager: CacheManager
 ) :
     APResourceResolveService {
@@ -19,19 +19,19 @@ class APResourceResolveServiceImpl(
     override suspend fun <T : Object> resolve(url: String, clazz: Class<T>, singerId: Long?): T =
         internalResolve(url, singerId, clazz)
 
-    override suspend fun <T : Object> resolve(url: String, clazz: Class<T>, singer: User?): T =
+    override suspend fun <T : Object> resolve(url: String, clazz: Class<T>, singer: Actor?): T =
         internalResolve(url, singer, clazz)
 
     private suspend fun <T : Object> internalResolve(url: String, singerId: Long?, clazz: Class<T>): T {
         val key = genCacheKey(url, singerId)
 
         cacheManager.putCache(key) {
-            runResolve(url, singerId?.let { userRepository.findById(it) }, clazz)
+            runResolve(url, singerId?.let { actorRepository.findById(it) }, clazz)
         }
         return (cacheManager.getOrWait(key) as APResolveResponse<T>).objects
     }
 
-    private suspend fun <T : Object> internalResolve(url: String, singer: User?, clazz: Class<T>): T {
+    private suspend fun <T : Object> internalResolve(url: String, singer: Actor?, clazz: Class<T>): T {
         val key = genCacheKey(url, singer?.id)
         cacheManager.putCache(key) {
             runResolve(url, singer, clazz)
@@ -39,7 +39,7 @@ class APResourceResolveServiceImpl(
         return (cacheManager.getOrWait(key) as APResolveResponse<T>).objects
     }
 
-    private suspend fun <T : Object> runResolve(url: String, singer: User?, clazz: Class<T>): ResolveResponse =
+    private suspend fun <T : Object> runResolve(url: String, singer: Actor?, clazz: Class<T>): ResolveResponse =
         APResolveResponse(apRequestService.apGet(url, singer, clazz))
 
     private fun genCacheKey(url: String, singerId: Long?): String {
