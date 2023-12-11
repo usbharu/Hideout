@@ -143,4 +143,14 @@ class MastodonAccountApiController(
 
         return ResponseEntity.ok(removeFromFollowers)
     }
+
+    override suspend fun apiV1AccountsUpdateCredentialsPatch(updateCredentials: UpdateCredentials?): ResponseEntity<Account> {
+        val principal = SecurityContextHolder.getContext().getAuthentication().principal as Jwt
+
+        val userid = principal.getClaim<String>("uid").toLong()
+
+        val removeFromFollowers = accountApiService.updateProfile(userid, updateCredentials)
+
+        return ResponseEntity.ok(removeFromFollowers)
+    }
 }
