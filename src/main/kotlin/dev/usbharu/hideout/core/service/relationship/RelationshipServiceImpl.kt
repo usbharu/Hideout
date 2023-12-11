@@ -167,7 +167,7 @@ class RelationshipServiceImpl(
             return
         }
 
-        if (relationship.followRequest.not()) {
+        if (relationship.followRequest.not() && relationship.following.not()) {
             logger.warn("FAILED Follow Request Not Found. (Follow Request) userId: {} targetId: {}", userId, targetId)
             return
         }
