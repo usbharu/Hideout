@@ -21,7 +21,8 @@ data class Actor private constructor(
     val keyId: String,
     val followers: String? = null,
     val following: String? = null,
-    val instance: Long? = null
+    val instance: Long? = null,
+    val locked: Boolean
 ) {
 
 
@@ -46,7 +47,8 @@ data class Actor private constructor(
             keyId: String,
             following: String? = null,
             followers: String? = null,
-            instance: Long? = null
+            instance: Long? = null,
+            locked: Boolean
         ): Actor {
             // idは0未満ではいけない
             require(id >= 0) { "id must be greater than or equal to 0." }
@@ -137,7 +139,8 @@ data class Actor private constructor(
                 keyId = keyId,
                 followers = followers,
                 following = following,
-                instance = instance
+                instance = instance,
+                locked
             )
         }
     }
@@ -158,7 +161,10 @@ data class Actor private constructor(
                 "keyId='$keyId', " +
                 "followers=$followers, " +
                 "following=$following, " +
-                "instance=$instance" +
+                "instance=$instance, " +
+                "locked=$locked" +
                 ")"
     }
+
+
 }

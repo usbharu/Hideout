@@ -49,7 +49,8 @@ class UserServiceImpl(
             createdAt = Instant.now(),
             following = "$userUrl/following",
             followers = "$userUrl/followers",
-            keyId = "$userUrl#pubkey"
+            keyId = "$userUrl#pubkey",
+            locked = false
         )
         val save = actorRepository.save(userEntity)
         userDetailRepository.save(UserDetail(nextId, hashedPassword, true, true))
@@ -82,7 +83,8 @@ class UserServiceImpl(
             followers = user.followers,
             following = user.following,
             keyId = user.keyId,
-            instance = instance?.id
+            instance = instance?.id,
+            locked = user.locked ?: false
         )
         return try {
             val save = actorRepository.save(userEntity)
