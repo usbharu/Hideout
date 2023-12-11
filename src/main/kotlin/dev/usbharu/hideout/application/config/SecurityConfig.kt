@@ -204,6 +204,9 @@ class SecurityConfig {
                 authorize(POST, "/api/v1/media", hasAnyScope("write", "write:media"))
                 authorize(POST, "/api/v1/statuses", hasAnyScope("write", "write:statuses"))
 
+                authorize(GET, "/api/v1/timelines/public", permitAll)
+                authorize(GET, "/api/v1/timelines/home", hasAnyScope("read", "read:statuses"))
+
                 authorize(anyRequest, authenticated)
             }
 
