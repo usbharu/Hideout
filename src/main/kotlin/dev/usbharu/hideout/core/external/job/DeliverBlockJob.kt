@@ -39,14 +39,14 @@ class DeliverBlockJob(@Qualifier("activitypub") private val objectMapper: Object
     override fun convert(value: DeliverBlockJobParam): ScheduleContext<DeliverBlockJob>.(DeliverBlockJob) -> Unit = {
         props[block] = objectMapper.writeValueAsString(value.block)
         props[reject] = objectMapper.writeValueAsString(value.reject)
-        props[reject] = value.inbox
+        props[inbox] = value.inbox
         props[signer] = value.signer
     }
 
     override fun convert(props: JobProps<DeliverBlockJob>): DeliverBlockJobParam = DeliverBlockJobParam(
-        props[signer],
-        objectMapper.readValue(props[block]),
-        objectMapper.readValue(props[reject]),
-        props[inbox]
+        signer = props[signer],
+        block = objectMapper.readValue(props[block]),
+        reject = objectMapper.readValue(props[reject]),
+        inbox = props[inbox]
     )
 }
