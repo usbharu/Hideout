@@ -22,7 +22,7 @@ class ExposedTimelineRepository(private val idGenerateService: IdGenerateService
                 it[userId] = timeline.userId
                 it[timelineId] = timeline.timelineId
                 it[postId] = timeline.postId
-                it[postUserId] = timeline.postUserId
+                it[postActorId] = timeline.postActorId
                 it[createdAt] = timeline.createdAt
                 it[replyId] = timeline.replyId
                 it[repostId] = timeline.repostId
@@ -37,7 +37,7 @@ class ExposedTimelineRepository(private val idGenerateService: IdGenerateService
                 it[userId] = timeline.userId
                 it[timelineId] = timeline.timelineId
                 it[postId] = timeline.postId
-                it[postUserId] = timeline.postUserId
+                it[postActorId] = timeline.postActorId
                 it[createdAt] = timeline.createdAt
                 it[replyId] = timeline.replyId
                 it[repostId] = timeline.repostId
@@ -57,7 +57,7 @@ class ExposedTimelineRepository(private val idGenerateService: IdGenerateService
             this[Timelines.userId] = it.userId
             this[Timelines.timelineId] = it.timelineId
             this[Timelines.postId] = it.postId
-            this[Timelines.postUserId] = it.postUserId
+            this[Timelines.postActorId] = it.postActorId
             this[Timelines.createdAt] = it.createdAt
             this[Timelines.replyId] = it.replyId
             this[Timelines.repostId] = it.repostId
@@ -84,7 +84,7 @@ fun ResultRow.toTimeline(): Timeline {
         userId = this[Timelines.userId],
         timelineId = this[Timelines.timelineId],
         postId = this[Timelines.postId],
-        postUserId = this[Timelines.postUserId],
+        postActorId = this[Timelines.postActorId],
         createdAt = this[Timelines.createdAt],
         replyId = this[Timelines.replyId],
         repostId = this[Timelines.repostId],
@@ -101,7 +101,7 @@ object Timelines : Table("timelines") {
     val userId = long("user_id")
     val timelineId = long("timeline_id")
     val postId = long("post_id")
-    val postUserId = long("post_user_id")
+    val postActorId = long("post_actor_id")
     val createdAt = long("created_at")
     val replyId = long("reply_id").nullable()
     val repostId = long("repost_id").nullable()

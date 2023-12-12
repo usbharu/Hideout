@@ -1,8 +1,8 @@
 package mastodon.account
 
 import dev.usbharu.hideout.SpringApplication
+import dev.usbharu.hideout.core.infrastructure.exposedquery.ActorQueryServiceImpl
 import dev.usbharu.hideout.core.infrastructure.exposedquery.FollowerQueryServiceImpl
-import dev.usbharu.hideout.core.infrastructure.exposedquery.UserQueryServiceImpl
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.flywaydb.core.Flyway
@@ -39,7 +39,7 @@ class AccountApiTest {
     private lateinit var followerQueryServiceImpl: FollowerQueryServiceImpl
 
     @Autowired
-    private lateinit var userQueryServiceImpl: UserQueryServiceImpl
+    private lateinit var userQueryServiceImpl: ActorQueryServiceImpl
 
 
     @Autowired

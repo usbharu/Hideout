@@ -2,16 +2,21 @@ package dev.usbharu.hideout.mastodon.service.account
 
 import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
+import dev.usbharu.hideout.core.query.RelationshipQueryService
+import dev.usbharu.hideout.core.service.media.MediaService
 import dev.usbharu.hideout.core.service.relationship.RelationshipService
+import dev.usbharu.hideout.core.service.user.UpdateUserDto
 import dev.usbharu.hideout.core.service.user.UserCreateDto
 import dev.usbharu.hideout.core.service.user.UserService
 import dev.usbharu.hideout.domain.mastodon.model.generated.*
+import dev.usbharu.hideout.mastodon.interfaces.api.media.MediaRequest
 import dev.usbharu.hideout.mastodon.query.StatusQueryService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import kotlin.math.min
 
 @Service
+@Suppress("TooManyFunctions")
 interface AccountApiService {
     @Suppress("LongParameterList")
     suspend fun accountsStatuses(
@@ -45,6 +50,17 @@ interface AccountApiService {
     suspend fun unblock(userid: Long, target: Long): Relationship
     suspend fun unfollow(userid: Long, target: Long): Relationship
     suspend fun removeFromFollowers(userid: Long, target: Long): Relationship
+    suspend fun updateProfile(userid: Long, updateCredentials: UpdateCredentials?): Account
+    suspend fun followRequests(
+        loginUser: Long,
+        maxId: Long?,
+        sinceId: Long?,
+        limit: Int = 20,
+        withIgnore: Boolean
+    ): List<Account>
+
+    suspend fun acceptFollowRequest(loginUser: Long, target: Long): Relationship
+    suspend fun rejectFollowRequest(loginUser: Long, target: Long): Relationship
 }
 
 @Service
@@ -54,7 +70,9 @@ class AccountApiServiceImpl(
     private val userService: UserService,
     private val statusQueryService: StatusQueryService,
     private val relationshipService: RelationshipService,
-    private val relationshipRepository: RelationshipRepository
+    private val relationshipRepository: RelationshipRepository,
+    private val mediaService: MediaService,
+    private val relationshipQueryService: RelationshipQueryService
 ) :
     AccountApiService {
     override suspend fun accountsStatuses(
@@ -153,6 +171,82 @@ class AccountApiServiceImpl(
         return@transaction fetchRelationship(userid, target)
     }
 
+    override suspend fun updateProfile(userid: Long, updateCredentials: UpdateCredentials?): Account =
+        transaction.transaction {
+            val avatarMedia = if (updateCredentials?.avatar != null) {
+                mediaService.uploadLocalMedia(
+                    MediaRequest(
+                        updateCredentials.avatar,
+                        null,
+                        null,
+                        null
+                    )
+                )
+            } else {
+                null
+            }
+
+            val headerMedia = if (updateCredentials?.header != null) {
+                mediaService.uploadLocalMedia(
+                    MediaRequest(
+                        updateCredentials.header,
+                        null,
+                        null,
+                        null
+                    )
+                )
+            } else {
+                null
+            }
+
+            val account = accountService.findById(userid)
+
+            val updateUserDto = UpdateUserDto(
+                screenName = updateCredentials?.displayName ?: account.displayName,
+                description = updateCredentials?.note ?: account.note,
+                avatarMedia = avatarMedia,
+                headerMedia = headerMedia,
+                locked = updateCredentials?.locked ?: account.locked,
+                autoAcceptFolloweeFollowRequest = false
+            )
+            userService.updateUser(userid, updateUserDto)
+
+            accountService.findById(userid)
+        }
+
+    override suspend fun followRequests(
+        loginUser: Long,
+        maxId: Long?,
+        sinceId: Long?,
+        limit: Int,
+        withIgnore: Boolean
+    ): List<Account> = transaction.transaction {
+        val actorIdList = relationshipQueryService
+            .findByTargetIdAndFollowRequestAndIgnoreFollowRequest(
+                maxId = maxId,
+                sinceId = sinceId,
+                limit = limit,
+                targetId = loginUser,
+                followRequest = true,
+                ignoreFollowRequest = withIgnore
+            )
+            .map { it.actorId }
+
+        return@transaction accountService.findByIds(actorIdList)
+    }
+
+    override suspend fun acceptFollowRequest(loginUser: Long, target: Long): Relationship = transaction.transaction {
+        relationshipService.acceptFollowRequest(loginUser, target)
+
+        return@transaction fetchRelationship(loginUser, target)
+    }
+
+    override suspend fun rejectFollowRequest(loginUser: Long, target: Long): Relationship = transaction.transaction {
+        relationshipService.rejectFollowRequest(loginUser, target)
+
+        return@transaction fetchRelationship(loginUser, target)
+    }
+
     private fun from(account: Account): CredentialAccount {
         return CredentialAccount(
             id = account.id,
@@ -180,10 +274,10 @@ class AccountApiServiceImpl(
             suspendex = account.suspendex,
             limited = account.limited,
             followingCount = account.followingCount,
-            source = CredentialAccountSource(
+            source = AccountSource(
                 account.note,
                 account.fields,
-                CredentialAccountSource.Privacy.public,
+                AccountSource.Privacy.public,
                 false,
                 0
             ),
@@ -194,24 +288,24 @@ class AccountApiServiceImpl(
     private suspend fun fetchRelationship(userid: Long, targetId: Long): Relationship {
         val relationship = relationshipRepository.findByUserIdAndTargetUserId(userid, targetId)
             ?: dev.usbharu.hideout.core.domain.model.relationship.Relationship(
-                userId = userid,
-                targetUserId = targetId,
+                actorId = userid,
+                targetActorId = targetId,
                 following = false,
                 blocking = false,
                 muting = false,
                 followRequest = false,
-                ignoreFollowRequestFromTarget = false
+                ignoreFollowRequestToTarget = false
             )
 
         val inverseRelationship = relationshipRepository.findByUserIdAndTargetUserId(targetId, userid)
             ?: dev.usbharu.hideout.core.domain.model.relationship.Relationship(
-                userId = targetId,
-                targetUserId = userid,
+                actorId = targetId,
+                targetActorId = userid,
                 following = false,
                 blocking = false,
                 muting = false,
                 followRequest = false,
-                ignoreFollowRequestFromTarget = false
+                ignoreFollowRequestToTarget = false
             )
 
         return Relationship(

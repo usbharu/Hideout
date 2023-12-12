@@ -1,15 +1,14 @@
-insert into "USERS" (ID, NAME, DOMAIN, SCREEN_NAME, DESCRIPTION, PASSWORD, INBOX, OUTBOX, URL, PUBLIC_KEY, PRIVATE_KEY,
-                     CREATED_AT, KEY_ID, FOLLOWING, FOLLOWERS, INSTANCE)
+insert into "actors" (ID, NAME, DOMAIN, SCREEN_NAME, DESCRIPTION, INBOX, OUTBOX, URL, PUBLIC_KEY, PRIVATE_KEY,
+                      CREATED_AT, KEY_ID, FOLLOWING, FOLLOWERS, INSTANCE, LOCKED)
 VALUES (11, 'test-user11', 'example.com', 'Im test-user11.', 'THis account is test-user11.',
-        '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8',
         'https://example.com/users/test-user11/inbox',
         'https://example.com/users/test-user11/outbox', 'https://example.com/users/test-user11',
         '-----BEGIN PUBLIC KEY-----...-----END PUBLIC KEY-----',
         '-----BEGIN PRIVATE KEY-----...-----END PRIVATE KEY-----', 12345678,
         'https://example.com/users/test-user11#pubkey', 'https://example.com/users/test-user11/following',
-        'https://example.com/users/test-user11/followers', null);
+        'https://example.com/users/test-user11/followers', null, false);
 
-insert into POSTS (ID, "USER_ID", OVERVIEW, TEXT, "CREATED_AT", VISIBILITY, URL, "REPOST_ID", "REPLY_ID", SENSITIVE,
+insert into POSTS (ID, actor_id, OVERVIEW, TEXT, "CREATED_AT", VISIBILITY, URL, "REPOST_ID", "REPLY_ID", SENSITIVE,
                    AP_ID)
 VALUES (1242, 11, null, 'test post', 12345680, 0, 'https://example.com/users/test-user11/posts/1242', null, null, false,
         'https://example.com/users/test-user11/posts/1242');

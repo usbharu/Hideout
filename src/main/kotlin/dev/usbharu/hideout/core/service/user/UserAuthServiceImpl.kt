@@ -1,6 +1,6 @@
 package dev.usbharu.hideout.core.service.user
 
-import dev.usbharu.hideout.core.query.UserQueryService
+import dev.usbharu.hideout.core.query.ActorQueryService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import java.security.*
@@ -8,13 +8,13 @@ import java.util.*
 
 @Service
 class UserAuthServiceImpl(
-    val userQueryService: UserQueryService
+    val actorQueryService: ActorQueryService
 ) : UserAuthService {
 
     override fun hash(password: String): String = BCryptPasswordEncoder().encode(password)
 
     override suspend fun usernameAlreadyUse(username: String): Boolean {
-        userQueryService.findByName(username)
+        actorQueryService.findByName(username)
         return true
     }
 

@@ -154,6 +154,9 @@ performance:
   UnnecessaryTemporaryInstantiation:
     active: true
 
+  SpreadOperator:
+    active: false
+
 potential-bugs:
   CastToNullableType:
     active: true

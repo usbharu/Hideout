@@ -237,6 +237,27 @@ paths:
                 items:
                   $ref: "#/components/schemas/Relationship"
 
+  /api/v1/accounts/update_credentials:
+    patch:
+      tags:
+        - account
+      security:
+        - OAuth2:
+            - "write:accounts"
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCredentials"
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+
   /api/v1/accounts/{id}:
     get:
       tags:
@@ -555,6 +576,86 @@ paths:
               schema:
                 $ref: "#/components/schemas/MediaAttachment"
 
+  /api/v1/follow_requests:
+    get:
+      tags:
+        - account
+      security:
+        - OAuth2:
+            - "read:follows"
+      parameters:
+        - in: query
+          name: max_id
+          schema:
+            type: string
+          required: false
+        - in: query
+          name: since_id
+          schema:
+            type: string
+          required: false
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          required: false
+      responses:
+        200:
+          description: 成功
+          headers:
+            Link:
+              schema:
+                type: string
+              description: ページネーション
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Account"
+
+  /api/v1/follow_requests/{account_id}/authorize:
+    post:
+      tags:
+        - account
+      security:
+        - OAuth2:
+            - "write:follows"
+      parameters:
+        - in: path
+          name: account_id
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Relationship"
+
+  /api/v1/follow_requests/{account_id}/reject:
+    post:
+      tags:
+        - account
+      security:
+        - OAuth2:
+            - "write:follows"
+      parameters:
+        - in: path
+          name: account_id
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Relationship"
+
 components:
   schemas:
     V1MediaRequest:
@@ -664,6 +765,9 @@ components:
           type: integer
         following_count:
           type: integer
+        source:
+          $ref: "#/components/schemas/AccountSource"
+
       required:
         - id
         - username
@@ -747,7 +851,7 @@ components:
         following_count:
           type: integer
         source:
-          $ref: "#/components/schemas/CredentialAccountSource"
+          $ref: "#/components/schemas/AccountSource"
         role:
           $ref: "#/components/schemas/Role"
       required:
@@ -774,7 +878,7 @@ components:
         - followers_count
         - source
 
-    CredentialAccountSource:
+    AccountSource:
       type: object
       properties:
         note:
@@ -1631,6 +1735,58 @@ components:
           type: array
           items:
             type: string
+
+    UpdateCredentials:
+      type: object
+      properties:
+        display_name:
+          type: string
+        note:
+          type: string
+        avatar:
+          type: string
+          format: binary
+        header:
+          type: string
+          format: binary
+        locked:
+          type: boolean
+        bot:
+          type: boolean
+        discoverable:
+          type: boolean
+        hide_collections:
+          type: boolean
+        indexable:
+          type: boolean
+        fields_attributes:
+          type: object
+          additionalProperties:
+            $ref: "#/components/schemas/UpdateCredentialsFieldsAttributes"
+        source:
+          $ref: "#/components/schemas/UpdateCredentialsSource"
+
+    UpdateCredentialsSource:
+      type: object
+      properties:
+        privacy:
+          type: string
+          enum:
+            - public
+            - unlisted
+            - private
+        sensitive:
+          type: boolean
+        language:
+          type: string
+
+    UpdateCredentialsFieldsAttributes:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
 
   securitySchemes:
     OAuth2:

@@ -2,7 +2,7 @@ package util
 
 import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.infrastructure.springframework.httpsignature.HttpSignatureUser
-import dev.usbharu.hideout.core.query.UserQueryService
+import dev.usbharu.hideout.core.query.ActorQueryService
 import dev.usbharu.httpsignature.common.HttpHeaders
 import dev.usbharu.httpsignature.common.HttpMethod
 import dev.usbharu.httpsignature.common.HttpRequest
@@ -14,7 +14,7 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 import java.net.URL
 
 class WithHttpSignatureSecurityContextFactory(
-    private val userQueryService: UserQueryService,
+    private val actorQueryService: ActorQueryService,
     private val transaction: Transaction
 ) : WithSecurityContextFactory<WithHttpSignature> {
 
@@ -28,7 +28,7 @@ class WithHttpSignatureSecurityContextFactory(
             )
         )
         val httpSignatureUser = transaction.transaction {
-            val findByKeyId = userQueryService.findByKeyId(annotation.keyId)
+            val findByKeyId = actorQueryService.findByKeyId(annotation.keyId)
             HttpSignatureUser(
                 findByKeyId.name,
                 findByKeyId.domain,

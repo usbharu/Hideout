@@ -1,4 +1,4 @@
-import dev.usbharu.hideout.core.infrastructure.exposedrepository.Users
+import dev.usbharu.hideout.core.infrastructure.exposedrepository.Actors
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
@@ -16,13 +16,13 @@ object AssertionUtil {
             domain
         }
 
-        val selectAll = Users.selectAll()
+        val selectAll = Actors.selectAll()
         println(selectAll.fetchSize)
 
         println(selectAll.toList().size)
 
-        selectAll.map { "@${it[Users.name]}@${it[Users.domain]}" }.forEach { println(it) }
+        selectAll.map { "@${it[Actors.name]}@${it[Actors.domain]}" }.forEach { println(it) }
 
-        return Users.select { Users.name eq username and (Users.domain eq s) }.empty().not()
+        return Actors.select { Actors.name eq username and (Actors.domain eq s) }.empty().not()
     }
 }

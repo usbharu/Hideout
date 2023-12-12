@@ -1,6 +1,6 @@
 package dev.usbharu.hideout.util
 
-import dev.usbharu.hideout.core.domain.model.user.Acct
+import dev.usbharu.hideout.core.domain.model.actor.Acct
 
 object AcctUtil {
     fun parse(string: String): Acct {

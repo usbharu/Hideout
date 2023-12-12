@@ -23,9 +23,9 @@ interface RelationshipRepository {
     /**
      * userIdとtargetUserIdで[Relationship]を取得します
      *
-     * @param userId 取得するユーザーID
-     * @param targetUserId 対象ユーザーID
+     * @param actorId 取得するユーザーID
+     * @param targetActorId 対象ユーザーID
      * @return 取得された[Relationship] 存在しない場合nullが返ります
      */
-    suspend fun findByUserIdAndTargetUserId(userId: Long, targetUserId: Long): Relationship?
+    suspend fun findByUserIdAndTargetUserId(actorId: Long, targetActorId: Long): Relationship?
 }

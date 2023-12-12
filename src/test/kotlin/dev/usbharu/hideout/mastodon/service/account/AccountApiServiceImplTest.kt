@@ -1,9 +1,11 @@
 package dev.usbharu.hideout.mastodon.service.account
 
 import dev.usbharu.hideout.application.external.Transaction
+import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
-import dev.usbharu.hideout.core.domain.model.user.UserRepository
 import dev.usbharu.hideout.core.query.FollowerQueryService
+import dev.usbharu.hideout.core.query.RelationshipQueryService
+import dev.usbharu.hideout.core.service.media.MediaService
 import dev.usbharu.hideout.core.service.relationship.RelationshipService
 import dev.usbharu.hideout.core.service.user.UserService
 import dev.usbharu.hideout.domain.mastodon.model.generated.Account
@@ -31,7 +33,7 @@ class AccountApiServiceImplTest {
     private lateinit var userService: UserService
 
     @Mock
-    private lateinit var userRepository: UserRepository
+    private lateinit var actorRepository: ActorRepository
 
     @Mock
     private lateinit var followerQueryService: FollowerQueryService
@@ -47,6 +49,12 @@ class AccountApiServiceImplTest {
 
     @Mock
     private lateinit var relationshipRepository: RelationshipRepository
+
+    @Mock
+    private lateinit var relationshipQueryService: RelationshipQueryService
+
+    @Mock
+    private lateinit var mediaService: MediaService
 
     @InjectMocks
     private lateinit var accountApiServiceImpl: AccountApiServiceImpl
@@ -204,13 +212,13 @@ class AccountApiServiceImplTest {
 
         whenever(relationshipRepository.findByUserIdAndTargetUserId(eq(loginUser), eq(userId))).doReturn(
             dev.usbharu.hideout.core.domain.model.relationship.Relationship(
-                userId = loginUser,
-                targetUserId = userId,
+                actorId = loginUser,
+                targetActorId = userId,
                 following = true,
                 blocking = false,
                 muting = false,
                 followRequest = false,
-                ignoreFollowRequestFromTarget = false
+                ignoreFollowRequestToTarget = false
             )
         )
 
@@ -239,24 +247,24 @@ class AccountApiServiceImplTest {
 
         whenever(relationshipRepository.findByUserIdAndTargetUserId(eq(followeeId), eq(userId))).doReturn(
             dev.usbharu.hideout.core.domain.model.relationship.Relationship(
-                userId = followeeId,
-                targetUserId = userId,
+                actorId = followeeId,
+                targetActorId = userId,
                 following = true,
                 blocking = false,
                 muting = false,
                 followRequest = false,
-                ignoreFollowRequestFromTarget = false
+                ignoreFollowRequestToTarget = false
             )
         )
         whenever(relationshipRepository.findByUserIdAndTargetUserId(eq(userId), eq(followeeId))).doReturn(
             dev.usbharu.hideout.core.domain.model.relationship.Relationship(
-                userId = userId,
-                targetUserId = followeeId,
+                actorId = userId,
+                targetActorId = followeeId,
                 following = true,
                 blocking = false,
                 muting = false,
                 followRequest = false,
-                ignoreFollowRequestFromTarget = false
+                ignoreFollowRequestToTarget = false
             )
         )
 

@@ -12,7 +12,7 @@ class PostResultRowMapper(private val postBuilder: Post.PostBuilder) : ResultRow
     override fun map(resultRow: ResultRow): Post {
         return postBuilder.of(
             id = resultRow[Posts.id],
-            userId = resultRow[Posts.userId],
+            actorId = resultRow[Posts.actorId],
             overview = resultRow[Posts.overview],
             text = resultRow[Posts.text],
             createdAt = resultRow[Posts.createdAt],

@@ -4,8 +4,8 @@ import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.domain.model.media.MediaRepository
 import dev.usbharu.hideout.core.domain.model.media.toMediaAttachments
+import dev.usbharu.hideout.core.query.ActorQueryService
 import dev.usbharu.hideout.core.query.PostQueryService
-import dev.usbharu.hideout.core.query.UserQueryService
 import dev.usbharu.hideout.core.service.post.PostCreateDto
 import dev.usbharu.hideout.core.service.post.PostService
 import dev.usbharu.hideout.domain.mastodon.model.generated.Status
@@ -30,7 +30,7 @@ class StatsesApiServiceImpl(
     private val postService: PostService,
     private val accountService: AccountService,
     private val postQueryService: PostQueryService,
-    private val userQueryService: UserQueryService,
+    private val actorQueryService: ActorQueryService,
     private val mediaRepository: MediaRepository,
     private val transaction: Transaction
 ) :
@@ -55,7 +55,7 @@ class StatsesApiServiceImpl(
 
         val replyUser = if (post.replyId != null) {
             try {
-                userQueryService.findById(postQueryService.findById(post.replyId).userId).id
+                actorQueryService.findById(postQueryService.findById(post.replyId).actorId).id
             } catch (ignore: FailedToGetResourcesException) {
                 null
             }

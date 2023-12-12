@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.core.domain.model.user
+package dev.usbharu.hideout.core.domain.model.actor
 
 import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.application.config.CharacterLimit
@@ -6,13 +6,12 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.time.Instant
 
-data class User private constructor(
+data class Actor private constructor(
     val id: Long,
     val name: String,
     val domain: String,
     val screenName: String,
     val description: String,
-    val password: String? = null,
     val inbox: String,
     val outbox: String,
     val url: String,
@@ -22,13 +21,9 @@ data class User private constructor(
     val keyId: String,
     val followers: String? = null,
     val following: String? = null,
-    val instance: Long? = null
+    val instance: Long? = null,
+    val locked: Boolean
 ) {
-    override fun toString(): String =
-        "User(id=$id, name='$name', domain='$domain', screenName='$screenName', description='$description'," +
-            " password=$password, inbox='$inbox', outbox='$outbox', url='$url', publicKey='$publicKey', " +
-            "privateKey=$privateKey, createdAt=$createdAt, keyId='$keyId', followers=$followers," +
-            " following=$following, instance=$instance)"
 
     @Component
     class UserBuilder(private val characterLimit: CharacterLimit, private val applicationConfig: ApplicationConfig) {
@@ -42,7 +37,6 @@ data class User private constructor(
             domain: String,
             screenName: String,
             description: String,
-            password: String? = null,
             inbox: String,
             outbox: String,
             url: String,
@@ -52,8 +46,9 @@ data class User private constructor(
             keyId: String,
             following: String? = null,
             followers: String? = null,
-            instance: Long? = null
-        ): User {
+            instance: Long? = null,
+            locked: Boolean
+        ): Actor {
             // idは0未満ではいけない
             require(id >= 0) { "id must be greater than or equal to 0." }
 
@@ -97,7 +92,6 @@ data class User private constructor(
 
             // ローカルユーザーはpasswordとprivateKeyをnullにしてはいけない
             if (domain == applicationConfig.url.host) {
-                requireNotNull(password) { "password and privateKey must not be null for local users." }
                 requireNotNull(privateKey) { "password and privateKey must not be null for local users." }
             }
 
@@ -129,13 +123,12 @@ data class User private constructor(
                 "keyId must contain non-blank characters."
             }
 
-            return User(
+            return Actor(
                 id = id,
                 name = limitedName,
                 domain = domain,
                 screenName = limitedScreenName,
                 description = limitedDescription,
-                password = password,
                 inbox = inbox,
                 outbox = outbox,
                 url = url,
@@ -145,8 +138,30 @@ data class User private constructor(
                 keyId = keyId,
                 followers = followers,
                 following = following,
-                instance = instance
+                instance = instance,
+                locked
             )
         }
+    }
+
+    override fun toString(): String {
+        return "Actor(" +
+            "id=$id, " +
+            "name='$name', " +
+            "domain='$domain', " +
+            "screenName='$screenName', " +
+            "description='$description', " +
+            "inbox='$inbox', " +
+            "outbox='$outbox', " +
+            "url='$url', " +
+            "publicKey='$publicKey', " +
+            "privateKey=$privateKey, " +
+            "createdAt=$createdAt, " +
+            "keyId='$keyId', " +
+            "followers=$followers, " +
+            "following=$following, " +
+            "instance=$instance, " +
+            "locked=$locked" +
+            ")"
     }
 }

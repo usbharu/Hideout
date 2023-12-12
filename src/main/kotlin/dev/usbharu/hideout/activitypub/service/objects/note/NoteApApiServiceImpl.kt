@@ -44,7 +44,7 @@ class NoteApApiServiceImpl(
             return null
         }
 
-        if (followerQueryService.alreadyFollow(findById.second.userId, userId)) {
+        if (followerQueryService.alreadyFollow(findById.second.actorId, userId)) {
             return findById.first
         }
         return null

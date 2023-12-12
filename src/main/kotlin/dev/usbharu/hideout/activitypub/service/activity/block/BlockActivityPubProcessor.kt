@@ -5,7 +5,7 @@ import dev.usbharu.hideout.activitypub.service.common.AbstractActivityPubProcess
 import dev.usbharu.hideout.activitypub.service.common.ActivityPubProcessContext
 import dev.usbharu.hideout.activitypub.service.common.ActivityType
 import dev.usbharu.hideout.application.external.Transaction
-import dev.usbharu.hideout.core.query.UserQueryService
+import dev.usbharu.hideout.core.query.ActorQueryService
 import dev.usbharu.hideout.core.service.relationship.RelationshipService
 import org.springframework.stereotype.Service
 
@@ -14,14 +14,14 @@ import org.springframework.stereotype.Service
  */
 @Service
 class BlockActivityPubProcessor(
-    private val userQueryService: UserQueryService,
+    private val actorQueryService: ActorQueryService,
     private val relationshipService: RelationshipService,
     transaction: Transaction
 ) :
     AbstractActivityPubProcessor<Block>(transaction) {
     override suspend fun internalProcess(activity: ActivityPubProcessContext<Block>) {
-        val user = userQueryService.findByUrl(activity.activity.actor)
-        val target = userQueryService.findByUrl(activity.activity.apObject)
+        val user = actorQueryService.findByUrl(activity.activity.actor)
+        val target = actorQueryService.findByUrl(activity.activity.apObject)
         relationshipService.block(user.id, target.id)
     }
 

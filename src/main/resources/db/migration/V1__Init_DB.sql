@@ -13,14 +13,13 @@ create table if not exists instance
     moderation_note varchar(10000) not null,
     created_at      timestamp      not null
 );
-create table if not exists users
+create table if not exists actors
 (
     id          bigint primary key,
     "name"      varchar(300)   not null,
     "domain"    varchar(1000)  not null,
     screen_name varchar(300)   not null,
     description varchar(10000) not null,
-    password    varchar(255)   null,
     inbox  varchar(1000) not null unique,
     outbox varchar(1000) not null unique,
     url    varchar(1000) not null unique,
@@ -31,8 +30,18 @@ create table if not exists users
     "following" varchar(1000)  null,
     followers   varchar(1000)  null,
     "instance"  bigint         null,
+    locked boolean       not null,
     unique ("name", "domain"),
-    constraint fk_users_instance__id foreign key ("instance") references instance (id) on delete restrict on update restrict
+    constraint fk_actors_instance__id foreign key ("instance") references instance (id) on delete restrict on update restrict
+);
+
+create table if not exists user_details
+(
+    id                                  bigserial primary key,
+    actor_id                            bigint       not null unique,
+    password varchar(255) not null,
+    auto_accept_followee_follow_request boolean      not null,
+    constraint fk_user_details_actor_id__id foreign key (actor_id) references actors (id) on delete restrict on update restrict
 );
 
 create table if not exists media
@@ -58,7 +67,7 @@ create table if not exists meta_info
 create table if not exists posts
 (
     id          bigint primary key,
-    user_id     bigint                not null,
+    actor_id bigint       not null,
     overview    varchar(100)          null,
     text        varchar(3000)         not null,
     created_at  bigint                not null,
@@ -67,10 +76,10 @@ create table if not exists posts
     repost_id   bigint                null,
     reply_id    bigint                null,
     "sensitive" boolean default false not null,
-    ap_id varchar(100) not null unique
+    ap_id    varchar(100) not null unique
 );
 alter table posts
-    add constraint fk_posts_userid__id foreign key (user_id) references users (id) on delete restrict on update restrict;
+    add constraint fk_posts_actor_id__id foreign key (actor_id) references actors (id) on delete restrict on update restrict;
 alter table posts
     add constraint fk_posts_repostid__id foreign key (repost_id) references posts (id) on delete restrict on update restrict;
 alter table posts
@@ -90,19 +99,19 @@ create table if not exists reactions
     id       bigserial primary key,
     emoji_id bigint not null,
     post_id  bigint not null,
-    user_id  bigint not null
+    actor_id bigint not null
 );
 alter table reactions
     add constraint fk_reactions_post_id__id foreign key (post_id) references posts (id) on delete restrict on update restrict;
 alter table reactions
-    add constraint fk_reactions_user_id__id foreign key (user_id) references users (id) on delete restrict on update restrict;
+    add constraint fk_reactions_actor_id__id foreign key (actor_id) references actors (id) on delete restrict on update restrict;
 create table if not exists timelines
 (
     id             bigint primary key,
     user_id        bigint       not null,
     timeline_id    bigint       not null,
     post_id        bigint       not null,
-    post_user_id   bigint       not null,
+    post_actor_id bigint not null,
     created_at     bigint       not null,
     reply_id       bigint       null,
     repost_id      bigint       null,
@@ -177,14 +186,14 @@ create table if not exists registered_client
 create table if not exists relationships
 (
     id                    bigserial primary key,
-    user_id               bigint  not null,
-    target_user_id        bigint  not null,
+    actor_id        bigint not null,
+    target_actor_id bigint not null,
     following             boolean not null,
     blocking              boolean not null,
     muting                boolean not null,
     follow_request        boolean not null,
     ignore_follow_request boolean not null,
-    constraint fk_relationships_user_id__id foreign key (user_id) references users (id) on delete restrict on update restrict,
-    constraint fk_relationships_target_user_id__id foreign key (target_user_id) references users (id) on delete restrict on update restrict,
-    unique (user_id, target_user_id)
+    constraint fk_relationships_actor_id__id foreign key (actor_id) references actors (id) on delete restrict on update restrict,
+    constraint fk_relationships_target_actor_id__id foreign key (target_actor_id) references actors (id) on delete restrict on update restrict,
+    unique (actor_id, target_actor_id)
 )

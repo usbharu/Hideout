@@ -2,9 +2,9 @@ package dev.usbharu.hideout.core.service.post
 
 import dev.usbharu.hideout.activitypub.service.activity.create.ApSendCreateService
 import dev.usbharu.hideout.core.domain.exception.UserNotFoundException
+import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
-import dev.usbharu.hideout.core.domain.model.user.UserRepository
 import dev.usbharu.hideout.core.query.PostQueryService
 import dev.usbharu.hideout.core.service.timeline.TimelineService
 import org.jetbrains.exposed.exceptions.ExposedSQLException
@@ -16,7 +16,7 @@ import java.time.Instant
 @Service
 class PostServiceImpl(
     private val postRepository: PostRepository,
-    private val userRepository: UserRepository,
+    private val actorRepository: ActorRepository,
     private val timelineService: TimelineService,
     private val postQueryService: PostQueryService,
     private val postBuilder: Post.PostBuilder,
@@ -32,7 +32,7 @@ class PostServiceImpl(
     }
 
     override suspend fun createRemote(post: Post): Post {
-        logger.info("START Create Remote Post user: {}, remote url: {}", post.userId, post.apId)
+        logger.info("START Create Remote Post user: {}, remote url: {}", post.actorId, post.apId)
         val createdPost = internalCreate(post, false)
         logger.info("SUCCESS Create Remote Post url: {}", createdPost.url)
         return createdPost
@@ -55,11 +55,11 @@ class PostServiceImpl(
     }
 
     private suspend fun internalCreate(post: PostCreateDto, isLocal: Boolean): Post {
-        val user = userRepository.findById(post.userId) ?: throw UserNotFoundException("${post.userId} was not found")
+        val user = actorRepository.findById(post.userId) ?: throw UserNotFoundException("${post.userId} was not found")
         val id = postRepository.generateId()
         val createPost = postBuilder.of(
             id = id,
-            userId = post.userId,
+            actorId = post.userId,
             overview = post.overview,
             text = post.text,
             createdAt = Instant.now().toEpochMilli(),
