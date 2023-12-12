@@ -27,7 +27,7 @@ class UserDetailsServiceImpl(
             val findById = try {
                 actorQueryService.findByNameAndDomain(username, applicationConfig.url.host)
             } catch (e: FailedToGetResourcesException) {
-                throw UsernameNotFoundException("$username not found")
+                throw UsernameNotFoundException("$username not found", e)
             }
             val userDetails = userDetailRepository.findByActorId(findById.id)
                 ?: throw UsernameNotFoundException("${findById.id} not found.")

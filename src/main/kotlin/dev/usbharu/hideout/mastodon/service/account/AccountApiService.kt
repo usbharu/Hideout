@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service
 import kotlin.math.min
 
 @Service
+@Suppress("TooManyFunctions")
 interface AccountApiService {
     @Suppress("LongParameterList")
     suspend fun accountsStatuses(

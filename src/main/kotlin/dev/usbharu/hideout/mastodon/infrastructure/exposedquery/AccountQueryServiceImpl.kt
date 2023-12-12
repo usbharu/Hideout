@@ -32,7 +32,11 @@ class AccountQueryServiceImpl(private val applicationConfig: ApplicationConfig) 
                 lastCreated,
                 postsCount
             )
-            .select { Actors.id eq accountId and (Relationships.following eq true or (Relationships.following.isNull())) }
+            .select {
+                (Actors.id.eq(accountId)).and(
+                    Relationships.following.eq(true).or(Relationships.following.isNull())
+                )
+            }
             .groupBy(Actors.id)
 
         return query
@@ -57,7 +61,10 @@ class AccountQueryServiceImpl(private val applicationConfig: ApplicationConfig) 
                 lastCreated,
                 postsCount
             )
-            .select { Actors.id inList accountIds and (Relationships.following eq true or (Relationships.following.isNull())) }
+            .select {
+                Actors.id.inList(accountIds)
+                    .and(Relationships.following.eq(true).or(Relationships.following.isNull()))
+            }
             .groupBy(Actors.id)
 
         return query
