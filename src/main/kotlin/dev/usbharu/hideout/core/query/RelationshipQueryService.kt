@@ -6,6 +6,9 @@ interface RelationshipQueryService {
 
     suspend fun findByTargetIdAndFollowing(targetId: Long, following: Boolean): List<Relationship>
     suspend fun findByTargetIdAndFollowRequestAndIgnoreFollowRequest(
+        maxId: Long?,
+        sinceId: Long?,
+        limit: Int,
         targetId: Long,
         followRequest: Boolean,
         ignoreFollowRequest: Boolean

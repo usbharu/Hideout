@@ -73,14 +73,17 @@ class RelationshipServiceImpl(
 
         relationshipRepository.save(relationship)
 
+
         val remoteUser = isRemoteUser(targetId)
 
         if (remoteUser != null) {
             val user = actorQueryService.findById(actorId)
             apSendFollowService.sendFollow(SendFollowDto(user, remoteUser))
         } else {
-            // TODO: フォロー許可制ユーザーを実装したら消す
-            acceptFollowRequest(targetId, actorId)
+            val target = actorQueryService.findById(targetId)
+            if (target.locked.not()) {
+                acceptFollowRequest(targetId, actorId)
+            }
         }
 
         logger.info("SUCCESS Follow Request userId: {} targetId: {}", actorId, targetId)
