@@ -50,7 +50,14 @@ interface AccountApiService {
     suspend fun unfollow(userid: Long, target: Long): Relationship
     suspend fun removeFromFollowers(userid: Long, target: Long): Relationship
     suspend fun updateProfile(userid: Long, updateCredentials: UpdateCredentials?): Account
-    suspend fun followRequests(loginUser: Long): List<Account>
+    suspend fun followRequests(
+        loginUser: Long,
+        maxId: Long?,
+        sinceId: Long?,
+        limit: Int = 20,
+        withIgnore: Boolean
+    ): List<Account>
+
     suspend fun acceptFollowRequest(loginUser: Long, target: Long): Relationship
     suspend fun rejectFollowRequest(loginUser: Long, target: Long): Relationship
 }
@@ -208,9 +215,22 @@ class AccountApiServiceImpl(
             accountService.findById(userid)
         }
 
-    override suspend fun followRequests(loginUser: Long): List<Account> = transaction.transaction {
+    override suspend fun followRequests(
+        loginUser: Long,
+        maxId: Long?,
+        sinceId: Long?,
+        limit: Int,
+        withIgnore: Boolean
+    ): List<Account> = transaction.transaction {
         val actorIdList = relationshipQueryService
-            .findByTargetIdAndFollowRequestAndIgnoreFollowRequest(loginUser, true, true)
+            .findByTargetIdAndFollowRequestAndIgnoreFollowRequest(
+                maxId = maxId,
+                sinceId = sinceId,
+                limit = limit,
+                targetId = loginUser,
+                followRequest = true,
+                ignoreFollowRequest = withIgnore
+            )
             .map { it.actorId }
 
         return@transaction accountService.findByIds(actorIdList)

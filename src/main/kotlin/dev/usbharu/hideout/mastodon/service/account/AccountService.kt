@@ -36,7 +36,7 @@ class AccountServiceImpl(
             avatarStatic = "$userUrl/icon.jpg",
             header = "$userUrl/header.jpg",
             headerStatic = "$userUrl/header.jpg",
-            locked = false,
+            locked = findById.locked,
             fields = emptyList(),
             emojis = emptyList(),
             bot = false,

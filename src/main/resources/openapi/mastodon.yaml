@@ -579,7 +579,7 @@ paths:
   /api/v1/follow_requests:
     get:
       tags:
-        - accounts
+        - account
       security:
         - OAuth2:
             - "read:follows"
@@ -587,12 +587,12 @@ paths:
         - in: query
           name: max_id
           schema:
-            type: integer
+            type: string
           required: false
         - in: query
           name: since_id
           schema:
-            type: integer
+            type: string
           required: false
         - in: query
           name: limit
@@ -617,7 +617,7 @@ paths:
   /api/v1/follow_requests/{account_id}/authorize:
     post:
       tags:
-        - accounts
+        - account
       security:
         - OAuth2:
             - "write:follows"
@@ -638,7 +638,7 @@ paths:
   /api/v1/follow_requests/{account_id}/reject:
     post:
       tags:
-        - accounts
+        - account
       security:
         - OAuth2:
             - "write:follows"
