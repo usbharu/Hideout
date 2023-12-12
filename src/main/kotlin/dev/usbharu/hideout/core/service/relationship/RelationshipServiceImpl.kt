@@ -73,7 +73,6 @@ class RelationshipServiceImpl(
 
         relationshipRepository.save(relationship)
 
-
         val remoteUser = isRemoteUser(targetId)
 
         if (remoteUser != null) {

@@ -21,6 +21,7 @@ constructor(
     val manuallyApprovesFollowers: Boolean? = false
 ) : Object(add(type, "Person")), HasId, HasName {
 
+    @Suppress("CyclomaticComplexMethod", "CognitiveComplexMethod")
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -45,6 +46,7 @@ constructor(
         return true
     }
 
+    @Suppress("CyclomaticComplexMethod")
     override fun hashCode(): Int {
         var result = super.hashCode()
         result = 31 * result + name.hashCode()

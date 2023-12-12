@@ -14,11 +14,7 @@ interface AccountService {
 class AccountServiceImpl(
     private val accountQueryService: AccountQueryService
 ) : AccountService {
-    override suspend fun findById(id: Long): Account {
-        return accountQueryService.findById(id)
-    }
+    override suspend fun findById(id: Long): Account = accountQueryService.findById(id)
 
-    override suspend fun findByIds(ids: List<Long>): List<Account> {
-        return accountQueryService.findByIds(ids)
-    }
+    override suspend fun findByIds(ids: List<Long>): List<Account> = accountQueryService.findByIds(ids)
 }
