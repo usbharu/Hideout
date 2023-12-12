@@ -53,7 +53,7 @@ class UserServiceImpl(
             locked = false
         )
         val save = actorRepository.save(userEntity)
-        userDetailRepository.save(UserDetail(nextId, hashedPassword, true, true))
+        userDetailRepository.save(UserDetail(nextId, hashedPassword, true))
         return save
     }
 
@@ -106,12 +106,12 @@ class UserServiceImpl(
             actor.copy(
                 screenName = updateUserDto.screenName,
                 description = updateUserDto.description,
+                locked = updateUserDto.locked
             )
         )
 
         userDetailRepository.save(
             userDetail.copy(
-                autoAcceptFollowRequest = updateUserDto.autoAcceptFollowRequest,
                 autoAcceptFolloweeFollowRequest = updateUserDto.autoAcceptFolloweeFollowRequest
             )
         )

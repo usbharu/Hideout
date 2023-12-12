@@ -195,7 +195,7 @@ class AccountApiServiceImpl(
                 description = updateCredentials?.note ?: account.note,
                 avatarMedia = avatarMedia,
                 headerMedia = headerMedia,
-                autoAcceptFollowRequest = updateCredentials?.locked ?: account.locked,
+                locked = updateCredentials?.locked ?: account.locked,
                 autoAcceptFolloweeFollowRequest = false
             )
             userService.updateUser(userid, updateUserDto)

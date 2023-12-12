@@ -7,6 +7,6 @@ data class UpdateUserDto(
     val description: String,
     val avatarMedia: Media?,
     val headerMedia: Media?,
-    val autoAcceptFollowRequest: Boolean,
+    val locked: Boolean,
     val autoAcceptFolloweeFollowRequest: Boolean
 )
