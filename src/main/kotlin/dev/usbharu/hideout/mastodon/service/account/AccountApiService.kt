@@ -172,7 +172,6 @@ class AccountApiServiceImpl(
 
     override suspend fun updateProfile(userid: Long, updateCredentials: UpdateCredentials?): Account =
         transaction.transaction {
-
             val avatarMedia = if (updateCredentials?.avatar != null) {
                 mediaService.uploadLocalMedia(
                     MediaRequest(
@@ -198,7 +197,6 @@ class AccountApiServiceImpl(
             } else {
                 null
             }
-
 
             val account = accountService.findById(userid)
 

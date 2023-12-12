@@ -45,9 +45,7 @@ class UserDetailRepositoryImpl : UserDetailRepository {
                 )
             }
     }
-
 }
-
 
 object UserDetails : LongIdTable("user_details") {
     val actorId = long("actor_id").references(Actors.id)

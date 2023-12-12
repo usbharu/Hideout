@@ -25,7 +25,6 @@ data class Actor private constructor(
     val locked: Boolean
 ) {
 
-
     @Component
     class UserBuilder(private val characterLimit: CharacterLimit, private val applicationConfig: ApplicationConfig) {
 
@@ -147,24 +146,22 @@ data class Actor private constructor(
 
     override fun toString(): String {
         return "Actor(" +
-                "id=$id, " +
-                "name='$name', " +
-                "domain='$domain', " +
-                "screenName='$screenName', " +
-                "description='$description', " +
-                "inbox='$inbox', " +
-                "outbox='$outbox', " +
-                "url='$url', " +
-                "publicKey='$publicKey', " +
-                "privateKey=$privateKey, " +
-                "createdAt=$createdAt, " +
-                "keyId='$keyId', " +
-                "followers=$followers, " +
-                "following=$following, " +
-                "instance=$instance, " +
-                "locked=$locked" +
-                ")"
+            "id=$id, " +
+            "name='$name', " +
+            "domain='$domain', " +
+            "screenName='$screenName', " +
+            "description='$description', " +
+            "inbox='$inbox', " +
+            "outbox='$outbox', " +
+            "url='$url', " +
+            "publicKey='$publicKey', " +
+            "privateKey=$privateKey, " +
+            "createdAt=$createdAt, " +
+            "keyId='$keyId', " +
+            "followers=$followers, " +
+            "following=$following, " +
+            "instance=$instance, " +
+            "locked=$locked" +
+            ")"
     }
-
-
 }
