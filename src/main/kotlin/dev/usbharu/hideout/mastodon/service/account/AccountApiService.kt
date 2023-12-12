@@ -2,6 +2,7 @@ package dev.usbharu.hideout.mastodon.service.account
 
 import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
+import dev.usbharu.hideout.core.query.RelationshipQueryService
 import dev.usbharu.hideout.core.service.media.MediaService
 import dev.usbharu.hideout.core.service.relationship.RelationshipService
 import dev.usbharu.hideout.core.service.user.UpdateUserDto
@@ -49,6 +50,9 @@ interface AccountApiService {
     suspend fun unfollow(userid: Long, target: Long): Relationship
     suspend fun removeFromFollowers(userid: Long, target: Long): Relationship
     suspend fun updateProfile(userid: Long, updateCredentials: UpdateCredentials?): Account
+    suspend fun followRequests(loginUser: Long): List<Account>
+    suspend fun acceptFollowRequest(loginUser: Long, target: Long): Relationship
+    suspend fun rejectFollowRequest(loginUser: Long, target: Long): Relationship
 }
 
 @Service
@@ -59,7 +63,8 @@ class AccountApiServiceImpl(
     private val statusQueryService: StatusQueryService,
     private val relationshipService: RelationshipService,
     private val relationshipRepository: RelationshipRepository,
-    private val mediaService: MediaService
+    private val mediaService: MediaService,
+    private val relationshipQueryService: RelationshipQueryService
 ) :
     AccountApiService {
     override suspend fun accountsStatuses(
@@ -203,6 +208,26 @@ class AccountApiServiceImpl(
             accountService.findById(userid)
         }
 
+    override suspend fun followRequests(loginUser: Long): List<Account> = transaction.transaction {
+        val actorIdList = relationshipQueryService
+            .findByTargetIdAndFollowRequestAndIgnoreFollowRequest(loginUser, true, true)
+            .map { it.actorId }
+
+        return@transaction accountService.findByIds(actorIdList)
+    }
+
+    override suspend fun acceptFollowRequest(loginUser: Long, target: Long): Relationship = transaction.transaction {
+        relationshipService.acceptFollowRequest(loginUser, target)
+
+        return@transaction fetchRelationship(loginUser, target)
+    }
+
+    override suspend fun rejectFollowRequest(loginUser: Long, target: Long): Relationship = transaction.transaction {
+        relationshipService.rejectFollowRequest(loginUser, target)
+
+        return@transaction fetchRelationship(loginUser, target)
+    }
+
     private fun from(account: Account): CredentialAccount {
         return CredentialAccount(
             id = account.id,
@@ -250,7 +275,7 @@ class AccountApiServiceImpl(
                 blocking = false,
                 muting = false,
                 followRequest = false,
-                ignoreFollowRequestFromTarget = false
+                ignoreFollowRequestToTarget = false
             )
 
         val inverseRelationship = relationshipRepository.findByUserIdAndTargetUserId(targetId, userid)
@@ -261,7 +286,7 @@ class AccountApiServiceImpl(
                 blocking = false,
                 muting = false,
                 followRequest = false,
-                ignoreFollowRequestFromTarget = false
+                ignoreFollowRequestToTarget = false
             )
 
         return Relationship(

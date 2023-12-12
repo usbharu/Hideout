@@ -1,6 +1,7 @@
 package dev.usbharu.hideout.mastodon.service.account
 
 import dev.usbharu.hideout.application.config.ApplicationConfig
+import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.query.ActorQueryService
 import dev.usbharu.hideout.domain.mastodon.model.generated.Account
 import org.springframework.stereotype.Service
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service
 @Service
 interface AccountService {
     suspend fun findById(id: Long): Account
+    suspend fun findByIds(ids: List<Long>): List<Account>
 }
 
 @Service
@@ -17,6 +19,10 @@ class AccountServiceImpl(
 ) : AccountService {
     override suspend fun findById(id: Long): Account {
         val findById = actorQueryService.findById(id)
+        return toAccount(findById)
+    }
+
+    private fun toAccount(findById: Actor): Account {
         val userUrl = applicationConfig.url.toString() + "/users/" + findById.id.toString()
 
         return Account(
@@ -42,4 +48,7 @@ class AccountServiceImpl(
             followersCount = 0,
         )
     }
+
+    override suspend fun findByIds(ids: List<Long>): List<Account> =
+        actorQueryService.findByIds(ids).map { toAccount(it) }
 }
