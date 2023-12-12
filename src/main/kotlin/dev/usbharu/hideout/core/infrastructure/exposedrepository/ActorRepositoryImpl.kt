@@ -34,6 +34,7 @@ class ActorRepositoryImpl(
                 it[following] = actor.following
                 it[followers] = actor.followers
                 it[instance] = actor.instance
+                it[locked] = actor.locked
             }
         } else {
             Actors.update({ Actors.id eq actor.id }) {
@@ -51,6 +52,7 @@ class ActorRepositoryImpl(
                 it[following] = actor.following
                 it[followers] = actor.followers
                 it[instance] = actor.instance
+                it[locked] = actor.locked
             }
         }
         return actor
@@ -88,6 +90,7 @@ object Actors : Table("actors") {
     val following = varchar("following", length = 1000).nullable()
     val followers = varchar("followers", length = 1000).nullable()
     val instance = long("instance").references(Instance.id).nullable()
+    val locked = bool("locked")
 
     override val primaryKey: PrimaryKey = PrimaryKey(id)
 

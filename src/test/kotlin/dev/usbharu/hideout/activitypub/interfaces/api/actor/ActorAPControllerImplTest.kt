@@ -59,7 +59,8 @@ class ActorAPControllerImplTest {
             ),
             endpoints = mapOf("sharedInbox" to "https://example.com/inbox"),
             followers = "https://example.com/users/hoge/followers",
-            following = "https://example.com/users/hoge/following"
+            following = "https://example.com/users/hoge/following",
+            manuallyApprovesFollowers = false
         )
         whenever(apUserService.getPersonByName(eq("hoge"))).doReturn(person)
 

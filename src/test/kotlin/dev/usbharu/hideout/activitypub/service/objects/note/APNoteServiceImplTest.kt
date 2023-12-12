@@ -133,6 +133,7 @@ class APNoteServiceImplTest {
             endpoints = mapOf("sharedInbox" to "https://example.com/inbox"),
             followers = user.followers,
             following = user.following,
+            manuallyApprovesFollowers = false
 
             )
         val apUserService = mock<APUserService> {

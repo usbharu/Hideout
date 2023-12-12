@@ -68,7 +68,8 @@ class APUserServiceImpl(
             ),
             endpoints = mapOf("sharedInbox" to "${applicationConfig.url}/inbox"),
             followers = userEntity.followers,
-            following = userEntity.following
+            following = userEntity.following,
+            manuallyApprovesFollowers = userEntity.locked
         )
     }
 
@@ -104,7 +105,8 @@ class APUserServiceImpl(
                     keyId = person.publicKey.id,
                     following = person.following,
                     followers = person.followers,
-                    sharedInbox = person.endpoints["sharedInbox"]
+                    sharedInbox = person.endpoints["sharedInbox"],
+                    locked = person.manuallyApprovesFollowers
                 )
             )
         }
@@ -134,6 +136,7 @@ class APUserServiceImpl(
         ),
         endpoints = mapOf("sharedInbox" to "${applicationConfig.url}/inbox"),
         followers = actorEntity.followers,
-        following = actorEntity.following
+        following = actorEntity.following,
+        manuallyApprovesFollowers = actorEntity.locked
     )
 }

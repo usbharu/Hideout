@@ -1,16 +1,16 @@
 insert into "actors" (id, name, domain, screen_name, description, inbox, outbox, url, public_key, private_key,
-                      created_at, key_id, following, followers, instance)
+                      created_at, key_id, following, followers, instance, locked)
 VALUES (3733363, 'follow-test-user-1', 'example.com', 'follow-test-user-1-name', '',
         'https://example.com/users/follow-test-user-1/inbox',
         'https://example.com/users/follow-test-user-1/outbox', 'https://example.com/users/follow-test-user-1',
         '-----BEGIN PUBLIC KEY-----...-----END PUBLIC KEY-----',
         '-----BEGIN PRIVATE KEY-----...-----END PRIVATE KEY-----', 12345678,
         'https://example.com/users/follow-test-user-1#pubkey', 'https://example.com/users/follow-test-user-1/following',
-        'https://example.com/users/follow-test-user-1/followers', null),
+        'https://example.com/users/follow-test-user-1/followers', null, false),
        (37335363, 'follow-test-user-2', 'example.com', 'follow-test-user-2-name', '',
         'https://example.com/users/follow-test-user-2/inbox',
         'https://example.com/users/follow-test-user-2/outbox', 'https://example.com/users/follow-test-user-2',
         '-----BEGIN PUBLIC KEY-----...-----END PUBLIC KEY-----',
         '-----BEGIN PRIVATE KEY-----...-----END PRIVATE KEY-----', 12345678,
         'https://example.com/users/follow-test-user-2#pubkey', 'https://example.com/users/follow-test-user-2/following',
-        'https://example.com/users/follow-test-user-2/followers', null);
+        'https://example.com/users/follow-test-user-2/followers', null, false);

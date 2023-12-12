@@ -19,7 +19,6 @@ object UserBuilder {
         domain: String = "example.com",
         screenName: String = name,
         description: String = "This user is test user.",
-        password: String = "password-$id",
         inbox: String = "https://$domain/users/$id/inbox",
         outbox: String = "https://$domain/users/$id/outbox",
         url: String = "https://$domain/users/$id",
@@ -44,7 +43,8 @@ object UserBuilder {
             createdAt = createdAt,
             keyId = keyId,
             followers = followers,
-            following = following
+            following = following,
+            locked = false
         )
     }
 
@@ -77,7 +77,8 @@ object UserBuilder {
             createdAt = createdAt,
             keyId = keyId,
             followers = followers,
-            following = following
+            following = following,
+            locked = false
         )
     }
 

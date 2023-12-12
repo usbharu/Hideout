@@ -38,7 +38,7 @@ class RelationshipServiceImpl(
                     blocking = false,
                     muting = false,
                     followRequest = true,
-                    ignoreFollowRequestFromTarget = false
+                    ignoreFollowRequestToTarget = false
                 )
 
         val inverseRelationship = relationshipRepository.findByUserIdAndTargetUserId(targetId, actorId) ?: Relationship(
@@ -48,7 +48,7 @@ class RelationshipServiceImpl(
             blocking = false,
             muting = false,
             followRequest = false,
-            ignoreFollowRequestFromTarget = false
+            ignoreFollowRequestToTarget = false
         )
 
         if (inverseRelationship.blocking) {
@@ -60,7 +60,7 @@ class RelationshipServiceImpl(
             logger.debug("FAILED Blocking user. userId: {} targetId: {}", actorId, targetId)
             return
         }
-        if (inverseRelationship.ignoreFollowRequestFromTarget) {
+        if (relationship.ignoreFollowRequestToTarget) {
             logger.debug("SUCCESS Ignore Follow Request. userId: {} targetId: {}", actorId, targetId)
             return
         }
@@ -73,14 +73,17 @@ class RelationshipServiceImpl(
 
         relationshipRepository.save(relationship)
 
+
         val remoteUser = isRemoteUser(targetId)
 
         if (remoteUser != null) {
             val user = actorQueryService.findById(actorId)
             apSendFollowService.sendFollow(SendFollowDto(user, remoteUser))
         } else {
-            // TODO: フォロー許可制ユーザーを実装したら消す
-            acceptFollowRequest(targetId, actorId)
+            val target = actorQueryService.findById(targetId)
+            if (target.locked.not()) {
+                acceptFollowRequest(targetId, actorId)
+            }
         }
 
         logger.info("SUCCESS Follow Request userId: {} targetId: {}", actorId, targetId)
@@ -95,7 +98,7 @@ class RelationshipServiceImpl(
             blocking = true,
             muting = false,
             followRequest = false,
-            ignoreFollowRequestFromTarget = false
+            ignoreFollowRequestToTarget = false
         )
 
         val inverseRelationship = relationshipRepository.findByUserIdAndTargetUserId(targetId, actorId)
@@ -126,7 +129,7 @@ class RelationshipServiceImpl(
             blocking = false,
             muting = false,
             followRequest = false,
-            ignoreFollowRequestFromTarget = false
+            ignoreFollowRequestToTarget = false
         )
 
         if (relationship == null) {
@@ -191,16 +194,16 @@ class RelationshipServiceImpl(
     }
 
     override suspend fun ignoreFollowRequest(actorId: Long, targetId: Long) {
-        val relationship = relationshipRepository.findByUserIdAndTargetUserId(actorId, targetId)
-            ?.copy(ignoreFollowRequestFromTarget = true)
+        val relationship = relationshipRepository.findByUserIdAndTargetUserId(targetId, actorId)
+            ?.copy(ignoreFollowRequestToTarget = true)
             ?: Relationship(
-                actorId = actorId,
-                targetActorId = targetId,
+                actorId = targetId,
+                targetActorId = actorId,
                 following = false,
                 blocking = false,
                 muting = false,
                 followRequest = false,
-                ignoreFollowRequestFromTarget = true
+                ignoreFollowRequestToTarget = true
             )
 
         relationshipRepository.save(relationship)
@@ -263,7 +266,7 @@ class RelationshipServiceImpl(
                 blocking = false,
                 muting = true,
                 followRequest = false,
-                ignoreFollowRequestFromTarget = false
+                ignoreFollowRequestToTarget = false
             )
 
         relationshipRepository.save(relationship)
