@@ -1,6 +1,6 @@
 package dev.usbharu.hideout.activitypub.service.common
 
-import dev.usbharu.hideout.core.domain.model.user.UserRepository
+import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.service.resource.InMemoryCacheManager
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -20,10 +20,10 @@ class APResourceResolveServiceImplTest {
     fun `単純な一回のリクエスト`() = runTest {
 
 
-        val userRepository = mock<UserRepository>()
+        val actorRepository = mock<ActorRepository>()
 
         val user = UserBuilder.localUserOf()
-        whenever(userRepository.findById(any())) doReturn user
+        whenever(actorRepository.findById(any())) doReturn user
 
         val apRequestService = mock<APRequestService> {
             onBlocking {
@@ -37,7 +37,7 @@ class APResourceResolveServiceImplTest {
             )
         }
         val apResourceResolveService =
-            APResourceResolveServiceImpl(apRequestService, userRepository, InMemoryCacheManager())
+            APResourceResolveServiceImpl(apRequestService, actorRepository, InMemoryCacheManager())
 
         apResourceResolveService.resolve<APObject>("https", 0)
 
@@ -48,10 +48,10 @@ class APResourceResolveServiceImplTest {
     fun 複数回の同じリクエストが重複して発行されない() = runTest {
 
 
-        val userRepository = mock<UserRepository>()
+        val actorRepository = mock<ActorRepository>()
 
         val user = UserBuilder.localUserOf()
-        whenever(userRepository.findById(any())) doReturn user
+        whenever(actorRepository.findById(any())) doReturn user
 
         val apRequestService = mock<APRequestService> {
             onBlocking {
@@ -65,7 +65,7 @@ class APResourceResolveServiceImplTest {
             )
         }
         val apResourceResolveService =
-            APResourceResolveServiceImpl(apRequestService, userRepository, InMemoryCacheManager())
+            APResourceResolveServiceImpl(apRequestService, actorRepository, InMemoryCacheManager())
 
         apResourceResolveService.resolve<APObject>("https", 0)
         apResourceResolveService.resolve<APObject>("https", 0)
@@ -83,10 +83,10 @@ class APResourceResolveServiceImplTest {
     fun 複数回の同じリクエストが同時に発行されても重複して発行されない() = runTest {
 
 
-        val userRepository = mock<UserRepository>()
+        val actorRepository = mock<ActorRepository>()
         val user = UserBuilder.localUserOf()
 
-        whenever(userRepository.findById(any())) doReturn user
+        whenever(actorRepository.findById(any())) doReturn user
 
 
         val apRequestService = mock<APRequestService> {
@@ -101,7 +101,7 @@ class APResourceResolveServiceImplTest {
             )
         }
         val apResourceResolveService =
-            APResourceResolveServiceImpl(apRequestService, userRepository, InMemoryCacheManager())
+            APResourceResolveServiceImpl(apRequestService, actorRepository, InMemoryCacheManager())
 
         repeat(10) {
             awaitAll(
@@ -129,10 +129,10 @@ class APResourceResolveServiceImplTest {
     @Test
     fun 関係のないリクエストは発行する() = runTest {
 
-        val userRepository = mock<UserRepository>()
+        val actorRepository = mock<ActorRepository>()
 
         val user = UserBuilder.localUserOf()
-        whenever(userRepository.findById(any())).doReturn(
+        whenever(actorRepository.findById(any())).doReturn(
             user
         )
 
@@ -149,7 +149,7 @@ class APResourceResolveServiceImplTest {
         }
 
         val apResourceResolveService =
-            APResourceResolveServiceImpl(apRequestService, userRepository, InMemoryCacheManager())
+            APResourceResolveServiceImpl(apRequestService, actorRepository, InMemoryCacheManager())
 
         apResourceResolveService.resolve<APObject>("abcd", 0)
         apResourceResolveService.resolve<APObject>("1234", 0)

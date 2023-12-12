@@ -23,7 +23,7 @@ import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
 @ExtendWith(MockitoExtension::class)
-class UserAPControllerImplTest {
+class ActorAPControllerImplTest {
 
     private lateinit var mockMvc: MockMvc
 
@@ -59,7 +59,8 @@ class UserAPControllerImplTest {
             ),
             endpoints = mapOf("sharedInbox" to "https://example.com/inbox"),
             followers = "https://example.com/users/hoge/followers",
-            following = "https://example.com/users/hoge/following"
+            following = "https://example.com/users/hoge/following",
+            manuallyApprovesFollowers = false
         )
         whenever(apUserService.getPersonByName(eq("hoge"))).doReturn(person)
 

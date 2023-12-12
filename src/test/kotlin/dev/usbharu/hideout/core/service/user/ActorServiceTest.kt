@@ -4,9 +4,9 @@ package dev.usbharu.hideout.core.service.user
 
 import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.application.config.CharacterLimit
+import dev.usbharu.hideout.core.domain.model.actor.Actor
+import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.post.Post
-import dev.usbharu.hideout.core.domain.model.user.User
-import dev.usbharu.hideout.core.domain.model.user.UserRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
@@ -18,13 +18,13 @@ import java.security.KeyPairGenerator
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
-class UserServiceTest {
-    val userBuilder = User.UserBuilder(CharacterLimit(), ApplicationConfig(URL("https://example.com")))
+class ActorServiceTest {
+    val actorBuilder = Actor.UserBuilder(CharacterLimit(), ApplicationConfig(URL("https://example.com")))
     val postBuilder = Post.PostBuilder(CharacterLimit())
     @Test
     fun `createLocalUser ローカルユーザーを作成できる`() = runTest {
 
-        val userRepository = mock<UserRepository> {
+        val actorRepository = mock<ActorRepository> {
             onBlocking { nextId() } doReturn 110001L
         }
         val generateKeyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair()
@@ -34,21 +34,21 @@ class UserServiceTest {
         }
         val userService =
             UserServiceImpl(
-                userRepository,
+                actorRepository,
                 userAuthService,
                 mock(),
-                userBuilder,
+                actorBuilder,
                 testApplicationConfig,
+                mock(),
                 mock()
             )
         userService.createLocalUser(UserCreateDto("test", "testUser", "XXXXXXXXXXXXX", "test"))
-        verify(userRepository, times(1)).save(any())
-        argumentCaptor<User> {
-            verify(userRepository, times(1)).save(capture())
+        verify(actorRepository, times(1)).save(any())
+        argumentCaptor<Actor> {
+            verify(actorRepository, times(1)).save(capture())
             assertEquals("test", firstValue.name)
             assertEquals("testUser", firstValue.screenName)
             assertEquals("XXXXXXXXXXXXX", firstValue.description)
-            assertEquals("hashedPassword", firstValue.password)
             assertEquals(110001L, firstValue.id)
             assertEquals("https://example.com/users/test", firstValue.url)
             assertEquals("example.com", firstValue.domain)
@@ -62,11 +62,11 @@ class UserServiceTest {
     @Test
     fun `createRemoteUser リモートユーザーを作成できる`() = runTest {
 
-        val userRepository = mock<UserRepository> {
+        val actorRepository = mock<ActorRepository> {
             onBlocking { nextId() } doReturn 113345L
         }
         val userService =
-            UserServiceImpl(userRepository, mock(), mock(), userBuilder, testApplicationConfig, mock())
+            UserServiceImpl(actorRepository, mock(), mock(), actorBuilder, testApplicationConfig, mock(), mock())
         val user = RemoteUserCreateDto(
             name = "test",
             domain = "remote.example.com",
@@ -79,16 +79,16 @@ class UserServiceTest {
             keyId = "a",
             following = "",
             followers = "",
-            sharedInbox = null
+            sharedInbox = null,
+            locked = false
         )
         userService.createRemoteUser(user)
-        verify(userRepository, times(1)).save(any())
-        argumentCaptor<User> {
-            verify(userRepository, times(1)).save(capture())
+        verify(actorRepository, times(1)).save(any())
+        argumentCaptor<Actor> {
+            verify(actorRepository, times(1)).save(capture())
             assertEquals("test", firstValue.name)
             assertEquals("testUser", firstValue.screenName)
             assertEquals("test user", firstValue.description)
-            assertNull(firstValue.password)
             assertEquals(113345L, firstValue.id)
             assertEquals("https://remote.example.com", firstValue.url)
             assertEquals("remote.example.com", firstValue.domain)

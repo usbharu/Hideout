@@ -3,13 +3,13 @@ package utils
 import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.application.config.CharacterLimit
 import dev.usbharu.hideout.application.service.id.TwitterSnowflakeIdGenerateService
-import dev.usbharu.hideout.core.domain.model.user.User
+import dev.usbharu.hideout.core.domain.model.actor.Actor
 import kotlinx.coroutines.runBlocking
 import java.net.URL
 import java.time.Instant
 
 object UserBuilder {
-    private val userBuilder = User.UserBuilder(CharacterLimit(), ApplicationConfig(URL("https://example.com")))
+    private val actorBuilder = Actor.UserBuilder(CharacterLimit(), ApplicationConfig(URL("https://example.com")))
 
     private val idGenerator = TwitterSnowflakeIdGenerateService
 
@@ -19,7 +19,6 @@ object UserBuilder {
         domain: String = "example.com",
         screenName: String = name,
         description: String = "This user is test user.",
-        password: String = "password-$id",
         inbox: String = "https://$domain/users/$id/inbox",
         outbox: String = "https://$domain/users/$id/outbox",
         url: String = "https://$domain/users/$id",
@@ -29,14 +28,13 @@ object UserBuilder {
         keyId: String = "https://$domain/users/$id#pubkey",
         followers: String = "https://$domain/users/$id/followers",
         following: String = "https://$domain/users/$id/following"
-    ): User {
-        return userBuilder.of(
+    ): Actor {
+        return actorBuilder.of(
             id = id,
             name = name,
             domain = domain,
             screenName = screenName,
             description = description,
-            password = password,
             inbox = inbox,
             outbox = outbox,
             url = url,
@@ -45,7 +43,8 @@ object UserBuilder {
             createdAt = createdAt,
             keyId = keyId,
             followers = followers,
-            following = following
+            following = following,
+            locked = false
         )
     }
 
@@ -63,14 +62,13 @@ object UserBuilder {
         keyId: String = "https://$domain/$id#pubkey",
         followers: String = "https://$domain/$id/followers",
         following: String = "https://$domain/$id/following"
-    ): User {
-        return userBuilder.of(
+    ): Actor {
+        return actorBuilder.of(
             id = id,
             name = name,
             domain = domain,
             screenName = screenName,
             description = description,
-            password = null,
             inbox = inbox,
             outbox = outbox,
             url = url,
@@ -79,7 +77,8 @@ object UserBuilder {
             createdAt = createdAt,
             keyId = keyId,
             followers = followers,
-            following = following
+            following = following,
+            locked = false
         )
     }
 

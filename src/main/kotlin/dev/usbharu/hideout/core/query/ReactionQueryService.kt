@@ -5,12 +5,12 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface ReactionQueryService {
-    suspend fun findByPostId(postId: Long, userId: Long? = null): List<Reaction>
+    suspend fun findByPostId(postId: Long, actorId: Long? = null): List<Reaction>
 
     @Suppress("FunctionMaxLength")
-    suspend fun findByPostIdAndUserIdAndEmojiId(postId: Long, userId: Long, emojiId: Long): Reaction
+    suspend fun findByPostIdAndActorIdAndEmojiId(postId: Long, actorId: Long, emojiId: Long): Reaction
 
-    suspend fun reactionAlreadyExist(postId: Long, userId: Long, emojiId: Long): Boolean
+    suspend fun reactionAlreadyExist(postId: Long, actorId: Long, emojiId: Long): Boolean
 
-    suspend fun deleteByPostIdAndUserId(postId: Long, userId: Long)
+    suspend fun deleteByPostIdAndActorId(postId: Long, actorId: Long)
 }

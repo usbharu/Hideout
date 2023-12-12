@@ -24,7 +24,7 @@ class StatusQueryServiceImpl : StatusQueryService {
         val mediaIdSet = mutableSetOf<Long>()
         mediaIdSet.addAll(statusQueries.flatMap { it.mediaIds })
         val postMap = Posts
-            .leftJoin(Users)
+            .leftJoin(Actors)
             .select { Posts.id inList postIdSet }
             .associate { it[Posts.id] to toStatus(it) }
         val mediaMap = Media.select { Media.id inList mediaIdSet }
@@ -57,9 +57,9 @@ class StatusQueryServiceImpl : StatusQueryService {
     ): List<Status> {
         val query = Posts
             .leftJoin(PostsMedia)
-            .leftJoin(Users)
+            .leftJoin(Actors)
             .leftJoin(Media)
-            .select { Posts.userId eq accountId }.limit(20)
+            .select { Posts.actorId eq accountId }.limit(20)
 
         if (maxId != null) {
             query.andWhere { Posts.id eq maxId }
@@ -120,7 +120,7 @@ class StatusQueryServiceImpl : StatusQueryService {
     private suspend fun findByPostIdsWithMedia(ids: List<Long>): List<Status> {
         val pairs = Posts
             .leftJoin(PostsMedia)
-            .leftJoin(Users)
+            .leftJoin(Actors)
             .leftJoin(Media)
             .select { Posts.id inList ids }
             .groupBy { it[Posts.id] }
@@ -141,24 +141,24 @@ private fun toStatus(it: ResultRow) = Status(
     uri = it[Posts.apId],
     createdAt = Instant.ofEpochMilli(it[Posts.createdAt]).toString(),
     account = Account(
-        id = it[Users.id].toString(),
-        username = it[Users.name],
-        acct = "${it[Users.name]}@${it[Users.domain]}",
-        url = it[Users.url],
-        displayName = it[Users.screenName],
-        note = it[Users.description],
-        avatar = it[Users.url] + "/icon.jpg",
-        avatarStatic = it[Users.url] + "/icon.jpg",
-        header = it[Users.url] + "/header.jpg",
-        headerStatic = it[Users.url] + "/header.jpg",
+        id = it[Actors.id].toString(),
+        username = it[Actors.name],
+        acct = "${it[Actors.name]}@${it[Actors.domain]}",
+        url = it[Actors.url],
+        displayName = it[Actors.screenName],
+        note = it[Actors.description],
+        avatar = it[Actors.url] + "/icon.jpg",
+        avatarStatic = it[Actors.url] + "/icon.jpg",
+        header = it[Actors.url] + "/header.jpg",
+        headerStatic = it[Actors.url] + "/header.jpg",
         locked = false,
         fields = emptyList(),
         emojis = emptyList(),
         bot = false,
         group = false,
         discoverable = true,
-        createdAt = Instant.ofEpochMilli(it[Users.createdAt]).toString(),
-        lastStatusAt = Instant.ofEpochMilli(it[Users.createdAt]).toString(),
+        createdAt = Instant.ofEpochMilli(it[Actors.createdAt]).toString(),
+        lastStatusAt = Instant.ofEpochMilli(it[Actors.createdAt]).toString(),
         statusesCount = 0,
         followersCount = 0,
         followingCount = 0,

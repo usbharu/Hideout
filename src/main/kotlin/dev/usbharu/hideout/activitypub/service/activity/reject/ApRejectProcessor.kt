@@ -6,14 +6,14 @@ import dev.usbharu.hideout.activitypub.service.common.AbstractActivityPubProcess
 import dev.usbharu.hideout.activitypub.service.common.ActivityPubProcessContext
 import dev.usbharu.hideout.activitypub.service.common.ActivityType
 import dev.usbharu.hideout.application.external.Transaction
-import dev.usbharu.hideout.core.query.UserQueryService
+import dev.usbharu.hideout.core.query.ActorQueryService
 import dev.usbharu.hideout.core.service.relationship.RelationshipService
 import org.springframework.stereotype.Service
 
 @Service
 class ApRejectProcessor(
     private val relationshipService: RelationshipService,
-    private val userQueryService: UserQueryService,
+    private val actorQueryService: ActorQueryService,
     transaction: Transaction
 ) :
     AbstractActivityPubProcessor<Reject>(transaction) {
@@ -26,13 +26,13 @@ class ApRejectProcessor(
         }
         when (activityType) {
             "Follow" -> {
-                val user = userQueryService.findByUrl(activity.activity.actor)
+                val user = actorQueryService.findByUrl(activity.activity.actor)
 
                 activity.activity.apObject as Follow
 
                 val actor = activity.activity.apObject.actor
 
-                val target = userQueryService.findByUrl(actor)
+                val target = actorQueryService.findByUrl(actor)
 
                 logger.debug("REJECT Follow user {} target {}", user.url, target.url)
 

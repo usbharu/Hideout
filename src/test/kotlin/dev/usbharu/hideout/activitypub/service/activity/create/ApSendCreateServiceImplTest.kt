@@ -7,8 +7,8 @@ import dev.usbharu.hideout.activitypub.service.objects.note.APNoteServiceImpl
 import dev.usbharu.hideout.application.config.ActivityPubConfig
 import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.core.external.job.DeliverPostJob
+import dev.usbharu.hideout.core.query.ActorQueryService
 import dev.usbharu.hideout.core.query.FollowerQueryService
-import dev.usbharu.hideout.core.query.UserQueryService
 import dev.usbharu.hideout.core.service.job.JobQueueParentService
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
@@ -36,7 +36,7 @@ class ApSendCreateServiceImplTest {
     private lateinit var jobQueueParentService: JobQueueParentService
 
     @Mock
-    private lateinit var userQueryService: UserQueryService
+    private lateinit var actorQueryService: ActorQueryService
 
     @Mock
     private lateinit var noteQueryService: NoteQueryService
@@ -50,7 +50,7 @@ class ApSendCreateServiceImplTest {
     @Test
     fun `createNote 正常なPostでCreateのジョブを発行できる`() = runTest {
         val post = PostBuilder.of()
-        val user = UserBuilder.localUserOf(id = post.userId)
+        val user = UserBuilder.localUserOf(id = post.actorId)
         val note = Note(
             id = post.apId,
             attributedTo = user.url,
@@ -67,8 +67,8 @@ class ApSendCreateServiceImplTest {
             UserBuilder.remoteUserOf()
         )
 
-        whenever(followerQueryService.findFollowersById(eq(post.userId))).doReturn(followers)
-        whenever(userQueryService.findById(eq(post.userId))).doReturn(user)
+        whenever(followerQueryService.findFollowersById(eq(post.actorId))).doReturn(followers)
+        whenever(actorQueryService.findById(eq(post.actorId))).doReturn(user)
         whenever(noteQueryService.findById(eq(post.id))).doReturn(note to post)
 
         apSendCreateServiceImpl.createNote(post)

@@ -1,8 +1,8 @@
 package dev.usbharu.hideout.mastodon.interfaces.api.account
 
 import dev.usbharu.hideout.application.config.ActivityPubConfig
+import dev.usbharu.hideout.domain.mastodon.model.generated.AccountSource
 import dev.usbharu.hideout.domain.mastodon.model.generated.CredentialAccount
-import dev.usbharu.hideout.domain.mastodon.model.generated.CredentialAccountSource
 import dev.usbharu.hideout.domain.mastodon.model.generated.Role
 import dev.usbharu.hideout.mastodon.service.account.AccountApiService
 import kotlinx.coroutines.test.runTest
@@ -74,10 +74,10 @@ class MastodonAccountApiControllerTest {
             lastStatusAt = "",
             statusesCount = 0,
             followersCount = 0,
-            source = CredentialAccountSource(
+            source = AccountSource(
                 note = "",
                 fields = emptyList(),
-                privacy = CredentialAccountSource.Privacy.public,
+                privacy = AccountSource.Privacy.public,
                 sensitive = false,
                 followRequestsCount = 0
             ),

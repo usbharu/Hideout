@@ -21,13 +21,13 @@ class ReactionRepositoryImpl(
                 it[id] = reaction.id
                 it[emojiId] = reaction.emojiId
                 it[postId] = reaction.postId
-                it[userId] = reaction.userId
+                it[actorId] = reaction.actorId
             }
         } else {
             Reactions.update({ Reactions.id eq reaction.id }) {
                 it[emojiId] = reaction.emojiId
                 it[postId] = reaction.postId
-                it[userId] = reaction.userId
+                it[actorId] = reaction.actorId
             }
         }
         return reaction
@@ -37,7 +37,7 @@ class ReactionRepositoryImpl(
         Reactions.deleteWhere {
             id.eq(reaction.id)
                 .and(postId.eq(reaction.postId))
-                .and(userId.eq(reaction.postId))
+                .and(actorId.eq(reaction.postId))
                 .and(emojiId.eq(reaction.emojiId))
         }
         return reaction
@@ -49,16 +49,16 @@ fun ResultRow.toReaction(): Reaction {
         this[Reactions.id].value,
         this[Reactions.emojiId],
         this[Reactions.postId],
-        this[Reactions.userId]
+        this[Reactions.actorId]
     )
 }
 
 object Reactions : LongIdTable("reactions") {
     val emojiId: Column<Long> = long("emoji_id")
     val postId: Column<Long> = long("post_id").references(Posts.id)
-    val userId: Column<Long> = long("user_id").references(Users.id)
+    val actorId: Column<Long> = long("actor_id").references(Actors.id)
 
     init {
-        uniqueIndex(emojiId, postId, userId)
+        uniqueIndex(emojiId, postId, actorId)
     }
 }

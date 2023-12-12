@@ -24,7 +24,7 @@ object PostBuilder {
     ): Post {
         return postBuilder.of(
             id = id,
-            userId = userId,
+            actorId = userId,
             overview = overview,
             text = text,
             createdAt = createdAt,

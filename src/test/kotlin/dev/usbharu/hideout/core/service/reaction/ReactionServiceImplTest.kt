@@ -37,20 +37,20 @@ class ReactionServiceImplTest {
 
         val post = PostBuilder.of()
 
-        whenever(reactionQueryService.reactionAlreadyExist(eq(post.id), eq(post.userId), eq(0))).doReturn(false)
+        whenever(reactionQueryService.reactionAlreadyExist(eq(post.id), eq(post.actorId), eq(0))).doReturn(false)
         val generateId = TwitterSnowflakeIdGenerateService.generateId()
         whenever(reactionRepository.generateId()).doReturn(generateId)
 
-        reactionServiceImpl.receiveReaction("❤", "example.com", post.userId, post.id)
+        reactionServiceImpl.receiveReaction("❤", "example.com", post.actorId, post.id)
 
-        verify(reactionRepository, times(1)).save(eq(Reaction(generateId, 0, post.id, post.userId)))
+        verify(reactionRepository, times(1)).save(eq(Reaction(generateId, 0, post.id, post.actorId)))
     }
 
     @Test
     fun `receiveReaction リアクションが既に作成されていることを検知出来ずに例外が発生した場合は何もしない`() = runTest {
         val post = PostBuilder.of()
 
-        whenever(reactionQueryService.reactionAlreadyExist(eq(post.id), eq(post.userId), eq(0))).doReturn(false)
+        whenever(reactionQueryService.reactionAlreadyExist(eq(post.id), eq(post.actorId), eq(0))).doReturn(false)
         val generateId = TwitterSnowflakeIdGenerateService.generateId()
         whenever(
             reactionRepository.save(
@@ -59,7 +59,7 @@ class ReactionServiceImplTest {
                         id = generateId,
                         emojiId = 0,
                         postId = post.id,
-                        userId = post.userId
+                        actorId = post.actorId
                     )
                 )
             )
@@ -71,17 +71,17 @@ class ReactionServiceImplTest {
         }
         whenever(reactionRepository.generateId()).doReturn(generateId)
 
-        reactionServiceImpl.receiveReaction("❤", "example.com", post.userId, post.id)
+        reactionServiceImpl.receiveReaction("❤", "example.com", post.actorId, post.id)
 
-        verify(reactionRepository, times(1)).save(eq(Reaction(generateId, 0, post.id, post.userId)))
+        verify(reactionRepository, times(1)).save(eq(Reaction(generateId, 0, post.id, post.actorId)))
     }
 
     @Test
     fun `receiveReaction リアクションが既に作成されている場合は何もしない`() = runTest() {
         val post = PostBuilder.of()
-        whenever(reactionQueryService.reactionAlreadyExist(eq(post.id), eq(post.userId), eq(0))).doReturn(true)
+        whenever(reactionQueryService.reactionAlreadyExist(eq(post.id), eq(post.actorId), eq(0))).doReturn(true)
 
-        reactionServiceImpl.receiveReaction("❤", "example.com", post.userId, post.id)
+        reactionServiceImpl.receiveReaction("❤", "example.com", post.actorId, post.id)
 
         verify(reactionRepository, never()).save(any())
     }
@@ -89,47 +89,47 @@ class ReactionServiceImplTest {
     @Test
     fun `sendReaction リアクションが存在しないとき保存して配送する`() = runTest {
         val post = PostBuilder.of()
-        whenever(reactionQueryService.findByPostIdAndUserIdAndEmojiId(eq(post.id), eq(post.userId), eq(0))).doThrow(
+        whenever(reactionQueryService.findByPostIdAndActorIdAndEmojiId(eq(post.id), eq(post.actorId), eq(0))).doThrow(
             FailedToGetResourcesException::class
         )
         val generateId = TwitterSnowflakeIdGenerateService.generateId()
         whenever(reactionRepository.generateId()).doReturn(generateId)
 
-        reactionServiceImpl.sendReaction("❤", post.userId, post.id)
+        reactionServiceImpl.sendReaction("❤", post.actorId, post.id)
 
-        verify(reactionRepository, times(1)).save(eq(Reaction(generateId, 0, post.id, post.userId)))
-        verify(apReactionService, times(1)).reaction(eq(Reaction(generateId, 0, post.id, post.userId)))
+        verify(reactionRepository, times(1)).save(eq(Reaction(generateId, 0, post.id, post.actorId)))
+        verify(apReactionService, times(1)).reaction(eq(Reaction(generateId, 0, post.id, post.actorId)))
     }
 
     @Test
     fun `sendReaction リアクションが存在するときは削除して保存して配送する`() = runTest {
         val post = PostBuilder.of()
         val id = TwitterSnowflakeIdGenerateService.generateId()
-        whenever(reactionQueryService.findByPostIdAndUserIdAndEmojiId(eq(post.id), eq(post.userId), eq(0))).doReturn(
-            Reaction(id, 0, post.id, post.userId)
+        whenever(reactionQueryService.findByPostIdAndActorIdAndEmojiId(eq(post.id), eq(post.actorId), eq(0))).doReturn(
+            Reaction(id, 0, post.id, post.actorId)
         )
         val generateId = TwitterSnowflakeIdGenerateService.generateId()
         whenever(reactionRepository.generateId()).doReturn(generateId)
 
-        reactionServiceImpl.sendReaction("❤", post.userId, post.id)
+        reactionServiceImpl.sendReaction("❤", post.actorId, post.id)
 
 
-        verify(reactionRepository, times(1)).delete(eq(Reaction(id, 0, post.id, post.userId)))
-        verify(reactionRepository, times(1)).save(eq(Reaction(generateId, 0, post.id, post.userId)))
-        verify(apReactionService, times(1)).removeReaction(eq(Reaction(id, 0, post.id, post.userId)))
-        verify(apReactionService, times(1)).reaction(eq(Reaction(generateId, 0, post.id, post.userId)))
+        verify(reactionRepository, times(1)).delete(eq(Reaction(id, 0, post.id, post.actorId)))
+        verify(reactionRepository, times(1)).save(eq(Reaction(generateId, 0, post.id, post.actorId)))
+        verify(apReactionService, times(1)).removeReaction(eq(Reaction(id, 0, post.id, post.actorId)))
+        verify(apReactionService, times(1)).reaction(eq(Reaction(generateId, 0, post.id, post.actorId)))
     }
 
     @Test
     fun `removeReaction リアクションが存在する場合削除して配送`() = runTest {
         val post = PostBuilder.of()
-        whenever(reactionQueryService.findByPostIdAndUserIdAndEmojiId(eq(post.id), eq(post.userId), eq(0))).doReturn(
-            Reaction(0, 0, post.id, post.userId)
+        whenever(reactionQueryService.findByPostIdAndActorIdAndEmojiId(eq(post.id), eq(post.actorId), eq(0))).doReturn(
+            Reaction(0, 0, post.id, post.actorId)
         )
 
-        reactionServiceImpl.removeReaction(post.userId, post.id)
+        reactionServiceImpl.removeReaction(post.actorId, post.id)
 
-        verify(reactionRepository, times(1)).delete(eq(Reaction(0, 0, post.id, post.userId)))
-        verify(apReactionService, times(1)).removeReaction(eq(Reaction(0, 0, post.id, post.userId)))
+        verify(reactionRepository, times(1)).delete(eq(Reaction(0, 0, post.id, post.actorId)))
+        verify(apReactionService, times(1)).removeReaction(eq(Reaction(0, 0, post.id, post.actorId)))
     }
 }

@@ -10,7 +10,7 @@ import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.external.job.InboxJob
 import dev.usbharu.hideout.core.external.job.InboxJobParam
-import dev.usbharu.hideout.core.query.UserQueryService
+import dev.usbharu.hideout.core.query.ActorQueryService
 import dev.usbharu.hideout.core.service.job.JobProcessor
 import dev.usbharu.hideout.util.RsaUtil
 import dev.usbharu.httpsignature.common.HttpHeaders
@@ -29,7 +29,7 @@ class InboxJobProcessor(
     private val objectMapper: ObjectMapper,
     private val signatureHeaderParser: SignatureHeaderParser,
     private val signatureVerifier: HttpSignatureVerifier,
-    private val userQueryService: UserQueryService,
+    private val actorQueryService: ActorQueryService,
     private val apUserService: APUserService,
     private val transaction: Transaction
 ) : JobProcessor<InboxJobParam, InboxJob> {
@@ -50,7 +50,7 @@ class InboxJobProcessor(
 
         val user = transaction.transaction {
             try {
-                userQueryService.findByKeyId(signature.keyId)
+                actorQueryService.findByKeyId(signature.keyId)
             } catch (_: FailedToGetResourcesException) {
                 apUserService.fetchPersonWithEntity(signature.keyId).second
             }

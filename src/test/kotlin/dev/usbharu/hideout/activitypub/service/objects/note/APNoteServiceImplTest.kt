@@ -16,8 +16,8 @@ import dev.usbharu.hideout.application.service.id.TwitterSnowflakeIdGenerateServ
 import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
+import dev.usbharu.hideout.core.query.ActorQueryService
 import dev.usbharu.hideout.core.query.PostQueryService
-import dev.usbharu.hideout.core.query.UserQueryService
 import dev.usbharu.hideout.core.service.post.PostService
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -51,9 +51,9 @@ class APNoteServiceImplTest {
         val url = "https://example.com/note"
         val post = PostBuilder.of()
 
-        val user = UserBuilder.localUserOf(id = post.userId)
-        val userQueryService = mock<UserQueryService> {
-            onBlocking { findById(eq(post.userId)) } doReturn user
+        val user = UserBuilder.localUserOf(id = post.actorId)
+        val actorQueryService = mock<ActorQueryService> {
+            onBlocking { findById(eq(post.actorId)) } doReturn user
         }
         val expected = Note(
             id = post.apId,
@@ -92,9 +92,9 @@ class APNoteServiceImplTest {
         val postQueryService = mock<PostQueryService> {
             onBlocking { findByApId(eq(post.apId)) } doReturn post
         }
-        val user = UserBuilder.localUserOf(id = post.userId)
-        val userQueryService = mock<UserQueryService> {
-            onBlocking { findById(eq(post.userId)) } doReturn user
+        val user = UserBuilder.localUserOf(id = post.actorId)
+        val actorQueryService = mock<ActorQueryService> {
+            onBlocking { findById(eq(post.actorId)) } doReturn user
         }
         val note = Note(
             id = post.apId,
@@ -133,6 +133,7 @@ class APNoteServiceImplTest {
             endpoints = mapOf("sharedInbox" to "https://example.com/inbox"),
             followers = user.followers,
             following = user.following,
+            manuallyApprovesFollowers = false
 
             )
         val apUserService = mock<APUserService> {
@@ -167,9 +168,9 @@ class APNoteServiceImplTest {
             val postQueryService = mock<PostQueryService> {
                 onBlocking { findByApId(eq(post.apId)) } doReturn post
             }
-            val user = UserBuilder.localUserOf(id = post.userId)
-            val userQueryService = mock<UserQueryService> {
-                onBlocking { findById(eq(post.userId)) } doReturn user
+            val user = UserBuilder.localUserOf(id = post.actorId)
+            val actorQueryService = mock<ActorQueryService> {
+                onBlocking { findById(eq(post.actorId)) } doReturn user
             }
             val note = Note(
                 id = post.apId,
@@ -299,7 +300,7 @@ class APNoteServiceImplTest {
         val user = UserBuilder.localUserOf()
         val post = PostBuilder.of(userId = user.id)
 
-        val userQueryService = mock<UserQueryService> {
+        val actorQueryService = mock<ActorQueryService> {
             onBlocking { findById(eq(user.id)) } doReturn user
         }
         val note = Note(
