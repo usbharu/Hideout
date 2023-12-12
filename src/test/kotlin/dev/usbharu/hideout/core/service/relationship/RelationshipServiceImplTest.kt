@@ -67,7 +67,7 @@ class RelationshipServiceImplTest {
                     blocking = false,
                     muting = false,
                     followRequest = true,
-                    ignoreFollowRequestFromTarget = false
+                    ignoreFollowRequestToTarget = false
                 )
             )
         )
@@ -91,7 +91,7 @@ class RelationshipServiceImplTest {
                     blocking = false,
                     muting = false,
                     followRequest = true,
-                    ignoreFollowRequestFromTarget = false
+                    ignoreFollowRequestToTarget = false
                 )
             )
         )
@@ -110,7 +110,7 @@ class RelationshipServiceImplTest {
                 blocking = true,
                 muting = false,
                 followRequest = false,
-                ignoreFollowRequestFromTarget = false
+                ignoreFollowRequestToTarget = false
             )
         )
 
@@ -129,7 +129,7 @@ class RelationshipServiceImplTest {
                 blocking = true,
                 muting = false,
                 followRequest = false,
-                ignoreFollowRequestFromTarget = false
+                ignoreFollowRequestToTarget = false
             )
         )
 
@@ -152,7 +152,7 @@ class RelationshipServiceImplTest {
                 blocking = false,
                 muting = false,
                 followRequest = false,
-                ignoreFollowRequestFromTarget = false
+                ignoreFollowRequestToTarget = false
             )
         )
 
@@ -167,7 +167,7 @@ class RelationshipServiceImplTest {
                     blocking = false,
                     muting = false,
                     followRequest = false,
-                    ignoreFollowRequestFromTarget = false
+                    ignoreFollowRequestToTarget = false
                 )
             )
         )
@@ -186,7 +186,7 @@ class RelationshipServiceImplTest {
                 blocking = false,
                 muting = false,
                 followRequest = false,
-                ignoreFollowRequestFromTarget = false
+                ignoreFollowRequestToTarget = true
             )
         )
 
@@ -198,7 +198,7 @@ class RelationshipServiceImplTest {
                 blocking = false,
                 muting = false,
                 followRequest = false,
-                ignoreFollowRequestFromTarget = true
+                ignoreFollowRequestToTarget = false
             )
         )
 
@@ -222,7 +222,7 @@ class RelationshipServiceImplTest {
                     blocking = true,
                     muting = false,
                     followRequest = false,
-                    ignoreFollowRequestFromTarget = false
+                    ignoreFollowRequestToTarget = false
                 )
             )
         )
@@ -246,7 +246,7 @@ class RelationshipServiceImplTest {
                     blocking = true,
                     muting = false,
                     followRequest = false,
-                    ignoreFollowRequestFromTarget = false
+                    ignoreFollowRequestToTarget = false
                 )
             )
         )
@@ -266,7 +266,7 @@ class RelationshipServiceImplTest {
                 blocking = false,
                 muting = false,
                 followRequest = true,
-                ignoreFollowRequestFromTarget = false
+                ignoreFollowRequestToTarget = false
             )
         )
 
@@ -280,7 +280,7 @@ class RelationshipServiceImplTest {
                 blocking = false,
                 muting = false,
                 followRequest = false,
-                ignoreFollowRequestFromTarget = false
+                ignoreFollowRequestToTarget = false
             )
         )
 
@@ -302,7 +302,7 @@ class RelationshipServiceImplTest {
                 blocking = false,
                 muting = false,
                 followRequest = true,
-                ignoreFollowRequestFromTarget = false
+                ignoreFollowRequestToTarget = false
             )
         )
 
@@ -317,7 +317,7 @@ class RelationshipServiceImplTest {
                     blocking = false,
                     muting = false,
                     followRequest = false,
-                    ignoreFollowRequestFromTarget = false
+                    ignoreFollowRequestToTarget = false
                 )
             )
         )
@@ -366,7 +366,7 @@ class RelationshipServiceImplTest {
                     blocking = false,
                     muting = false,
                     followRequest = false,
-                    ignoreFollowRequestFromTarget = false
+                    ignoreFollowRequestToTarget = false
                 )
             )
         )
@@ -420,7 +420,7 @@ class RelationshipServiceImplTest {
                 blocking = false,
                 muting = false,
                 followRequest = true,
-                ignoreFollowRequestFromTarget = false
+                ignoreFollowRequestToTarget = false
             )
         )
 
@@ -435,7 +435,7 @@ class RelationshipServiceImplTest {
                     blocking = false,
                     muting = false,
                     followRequest = false,
-                    ignoreFollowRequestFromTarget = false
+                    ignoreFollowRequestToTarget = false
                 )
             )
         )
@@ -459,7 +459,7 @@ class RelationshipServiceImplTest {
                 blocking = false,
                 muting = false,
                 followRequest = true,
-                ignoreFollowRequestFromTarget = false
+                ignoreFollowRequestToTarget = false
             )
         )
 
@@ -474,7 +474,7 @@ class RelationshipServiceImplTest {
                     blocking = false,
                     muting = false,
                     followRequest = false,
-                    ignoreFollowRequestFromTarget = false
+                    ignoreFollowRequestToTarget = false
                 )
             )
         )
@@ -500,7 +500,7 @@ class RelationshipServiceImplTest {
                 blocking = false,
                 muting = false,
                 followRequest = false,
-                ignoreFollowRequestFromTarget = false
+                ignoreFollowRequestToTarget = false
             )
         )
 
@@ -516,13 +516,13 @@ class RelationshipServiceImplTest {
         verify(relationshipRepository, times(1)).save(
             eq(
                 Relationship(
-                    actorId = 1234,
-                    targetActorId = 5678,
+                    actorId = 5678,
+                    targetActorId = 1234,
                     following = false,
                     blocking = false,
                     muting = false,
                     followRequest = false,
-                    ignoreFollowRequestFromTarget = true
+                    ignoreFollowRequestToTarget = true
                 )
             )
         )
@@ -539,7 +539,7 @@ class RelationshipServiceImplTest {
                 blocking = false,
                 muting = false,
                 followRequest = false,
-                ignoreFollowRequestFromTarget = false
+                ignoreFollowRequestToTarget = false
             )
         )
 
@@ -554,7 +554,7 @@ class RelationshipServiceImplTest {
                     blocking = false,
                     muting = false,
                     followRequest = false,
-                    ignoreFollowRequestFromTarget = false
+                    ignoreFollowRequestToTarget = false
                 )
             )
         )
@@ -578,7 +578,7 @@ class RelationshipServiceImplTest {
                 blocking = false,
                 muting = false,
                 followRequest = false,
-                ignoreFollowRequestFromTarget = false
+                ignoreFollowRequestToTarget = false
             )
         )
 
@@ -593,7 +593,7 @@ class RelationshipServiceImplTest {
                     blocking = false,
                     muting = false,
                     followRequest = false,
-                    ignoreFollowRequestFromTarget = false
+                    ignoreFollowRequestToTarget = false
                 )
             )
         )
@@ -618,7 +618,7 @@ class RelationshipServiceImplTest {
                 blocking = false,
                 muting = false,
                 followRequest = false,
-                ignoreFollowRequestFromTarget = false
+                ignoreFollowRequestToTarget = false
             )
         )
 
@@ -638,7 +638,7 @@ class RelationshipServiceImplTest {
                 blocking = true,
                 muting = false,
                 followRequest = false,
-                ignoreFollowRequestFromTarget = false
+                ignoreFollowRequestToTarget = false
             )
         )
 
@@ -653,7 +653,7 @@ class RelationshipServiceImplTest {
                     blocking = false,
                     muting = false,
                     followRequest = false,
-                    ignoreFollowRequestFromTarget = false
+                    ignoreFollowRequestToTarget = false
                 )
             )
         )
@@ -677,7 +677,7 @@ class RelationshipServiceImplTest {
                 blocking = true,
                 muting = false,
                 followRequest = false,
-                ignoreFollowRequestFromTarget = false
+                ignoreFollowRequestToTarget = false
             )
         )
 
@@ -717,7 +717,7 @@ class RelationshipServiceImplTest {
                 blocking = false,
                 muting = false,
                 followRequest = false,
-                ignoreFollowRequestFromTarget = false
+                ignoreFollowRequestToTarget = false
             )
         )
 
@@ -739,7 +739,7 @@ class RelationshipServiceImplTest {
                     blocking = false,
                     muting = true,
                     followRequest = false,
-                    ignoreFollowRequestFromTarget = false
+                    ignoreFollowRequestToTarget = false
                 )
             )
         )
@@ -756,7 +756,7 @@ class RelationshipServiceImplTest {
                 blocking = false,
                 muting = true,
                 followRequest = false,
-                ignoreFollowRequestFromTarget = false
+                ignoreFollowRequestToTarget = false
             )
         )
 
@@ -771,7 +771,7 @@ class RelationshipServiceImplTest {
                     blocking = false,
                     muting = false,
                     followRequest = false,
-                    ignoreFollowRequestFromTarget = false
+                    ignoreFollowRequestToTarget = false
                 )
             )
         )

@@ -25,7 +25,7 @@ class RelationshipRepositoryImpl : RelationshipRepository {
                 it[blocking] = relationship.blocking
                 it[muting] = relationship.muting
                 it[followRequest] = relationship.followRequest
-                it[ignoreFollowRequestFromTarget] = relationship.ignoreFollowRequestFromTarget
+                it[ignoreFollowRequestFromTarget] = relationship.ignoreFollowRequestToTarget
             }
         } else {
             Relationships
@@ -37,7 +37,7 @@ class RelationshipRepositoryImpl : RelationshipRepository {
                     it[blocking] = relationship.blocking
                     it[muting] = relationship.muting
                     it[followRequest] = relationship.followRequest
-                    it[ignoreFollowRequestFromTarget] = relationship.ignoreFollowRequestFromTarget
+                    it[ignoreFollowRequestFromTarget] = relationship.ignoreFollowRequestToTarget
                 }
         }
         return relationship
@@ -66,7 +66,7 @@ fun ResultRow.toRelationships(): Relationship = Relationship(
     blocking = this[Relationships.blocking],
     muting = this[Relationships.muting],
     followRequest = this[Relationships.followRequest],
-    ignoreFollowRequestFromTarget = this[Relationships.ignoreFollowRequestFromTarget]
+    ignoreFollowRequestToTarget = this[Relationships.ignoreFollowRequestFromTarget]
 )
 
 object Relationships : LongIdTable("relationships") {
