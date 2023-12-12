@@ -1,5 +1,5 @@
 insert into actors (ID, NAME, DOMAIN, SCREEN_NAME, DESCRIPTION, INBOX, OUTBOX, URL, PUBLIC_KEY, PRIVATE_KEY,
-                    CREATED_AT, KEY_ID, FOLLOWING, FOLLOWERS, INSTANCE)
+                    CREATED_AT, KEY_ID, FOLLOWING, FOLLOWERS, INSTANCE, LOCKED)
 VALUES (1730415786666758144, 'test-user', 'localhost', 'Im test user.', 'THis account is test user.',
         'http://localhost/users/test-user/inbox',
         'http://localhost/users/test-user/outbox', 'http://localhost/users/test-user',
@@ -43,8 +43,8 @@ Ja15+ZWbOA4vJA9pOh3x4XM=
 -----END PRIVATE KEY-----
 ', 1701398248417,
         'http://localhost/users/test-user#pubkey', 'http://localhost/users/test-user/following',
-        'http://localhost/users/test-users/followers', null);
+        'http://localhost/users/test-users/followers', null, false);
 
-insert into user_details (actor_id, password, auto_accept_follow_request, auto_accept_followee_follow_request)
+insert into user_details (actor_id, password, auto_accept_followee_follow_request)
 values ( 1730415786666758144
-       , '$2a$10$/mWC/n7nC7X3l9qCEOKnredxne2zewoqEsJWTOdlKfg2zXKJ0F9Em', true, true)
+       , '$2a$10$/mWC/n7nC7X3l9qCEOKnredxne2zewoqEsJWTOdlKfg2zXKJ0F9Em', true)

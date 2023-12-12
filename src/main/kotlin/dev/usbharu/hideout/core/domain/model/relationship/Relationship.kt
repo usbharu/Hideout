@@ -9,7 +9,7 @@ package dev.usbharu.hideout.core.domain.model.relationship
  * @property blocking ブロックしているか
  * @property muting ミュートしているか
  * @property followRequest フォローリクエストを送っているか
- * @property ignoreFollowRequestFromTarget フォローリクエストを無視しているか
+ * @property ignoreFollowRequestToTarget フォローリクエストを無視しているか
  */
 data class Relationship(
     val actorId: Long,
@@ -18,5 +18,5 @@ data class Relationship(
     val blocking: Boolean,
     val muting: Boolean,
     val followRequest: Boolean,
-    val ignoreFollowRequestFromTarget: Boolean
+    val ignoreFollowRequestToTarget: Boolean
 )

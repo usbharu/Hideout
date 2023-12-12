@@ -79,7 +79,8 @@ class ActorServiceTest {
             keyId = "a",
             following = "",
             followers = "",
-            sharedInbox = null
+            sharedInbox = null,
+            locked = false
         )
         userService.createRemoteUser(user)
         verify(actorRepository, times(1)).save(any())

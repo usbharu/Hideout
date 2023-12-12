@@ -30,6 +30,7 @@ create table if not exists actors
     "following" varchar(1000)  null,
     followers   varchar(1000)  null,
     "instance"  bigint         null,
+    locked boolean       not null,
     unique ("name", "domain"),
     constraint fk_actors_instance__id foreign key ("instance") references instance (id) on delete restrict on update restrict
 );
@@ -39,7 +40,6 @@ create table if not exists user_details
     id                                  bigserial primary key,
     actor_id                            bigint       not null unique,
     password varchar(255) not null,
-    auto_accept_follow_request          boolean      not null,
     auto_accept_followee_follow_request boolean      not null,
     constraint fk_user_details_actor_id__id foreign key (actor_id) references actors (id) on delete restrict on update restrict
 );

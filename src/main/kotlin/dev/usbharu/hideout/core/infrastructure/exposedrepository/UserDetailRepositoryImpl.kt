@@ -18,13 +18,11 @@ class UserDetailRepositoryImpl : UserDetailRepository {
             UserDetails.insert {
                 it[actorId] = userDetail.actorId
                 it[password] = userDetail.password
-                it[autoAcceptFollowRequest] = userDetail.autoAcceptFollowRequest
                 it[autoAcceptFolloweeFollowRequest] = userDetail.autoAcceptFolloweeFollowRequest
             }
         } else {
             UserDetails.update({ UserDetails.actorId eq userDetail.actorId }) {
                 it[password] = userDetail.password
-                it[autoAcceptFollowRequest] = userDetail.autoAcceptFollowRequest
                 it[autoAcceptFolloweeFollowRequest] = userDetail.autoAcceptFolloweeFollowRequest
             }
         }
@@ -43,7 +41,6 @@ class UserDetailRepositoryImpl : UserDetailRepository {
                 UserDetail(
                     it[UserDetails.actorId],
                     it[UserDetails.password],
-                    it[UserDetails.autoAcceptFollowRequest],
                     it[UserDetails.autoAcceptFolloweeFollowRequest]
                 )
             }
@@ -55,6 +52,5 @@ class UserDetailRepositoryImpl : UserDetailRepository {
 object UserDetails : LongIdTable("user_details") {
     val actorId = long("actor_id").references(Actors.id)
     val password = varchar("password", 255)
-    val autoAcceptFollowRequest = bool("auto_accept_follow_request")
     val autoAcceptFolloweeFollowRequest = bool("auto_accept_followee_follow_request")
 }

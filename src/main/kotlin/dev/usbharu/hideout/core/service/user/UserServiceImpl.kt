@@ -49,10 +49,11 @@ class UserServiceImpl(
             createdAt = Instant.now(),
             following = "$userUrl/following",
             followers = "$userUrl/followers",
-            keyId = "$userUrl#pubkey"
+            keyId = "$userUrl#pubkey",
+            locked = false
         )
         val save = actorRepository.save(userEntity)
-        userDetailRepository.save(UserDetail(nextId, hashedPassword, true, true))
+        userDetailRepository.save(UserDetail(nextId, hashedPassword, true))
         return save
     }
 
@@ -82,7 +83,8 @@ class UserServiceImpl(
             followers = user.followers,
             following = user.following,
             keyId = user.keyId,
-            instance = instance?.id
+            instance = instance?.id,
+            locked = user.locked ?: false
         )
         return try {
             val save = actorRepository.save(userEntity)
@@ -92,6 +94,27 @@ class UserServiceImpl(
             logger.warn("FAILED User already exists. name: {} url: {}", user.name, user.url)
             actorQueryService.findByUrl(user.url)
         }
+    }
+
+    override suspend fun updateUser(userId: Long, updateUserDto: UpdateUserDto) {
+        val userDetail = userDetailRepository.findByActorId(userId)
+            ?: throw IllegalArgumentException("userId: $userId was not found.")
+
+        val actor = actorRepository.findById(userId) ?: throw IllegalArgumentException("userId $userId was not found.")
+
+        actorRepository.save(
+            actor.copy(
+                screenName = updateUserDto.screenName,
+                description = updateUserDto.description,
+                locked = updateUserDto.locked
+            )
+        )
+
+        userDetailRepository.save(
+            userDetail.copy(
+                autoAcceptFolloweeFollowRequest = updateUserDto.autoAcceptFolloweeFollowRequest
+            )
+        )
     }
 
     companion object {

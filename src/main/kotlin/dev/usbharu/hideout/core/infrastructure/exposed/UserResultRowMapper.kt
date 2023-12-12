@@ -25,7 +25,8 @@ class UserResultRowMapper(private val actorBuilder: Actor.UserBuilder) : ResultR
             keyId = resultRow[Actors.keyId],
             followers = resultRow[Actors.followers],
             following = resultRow[Actors.following],
-            instance = resultRow[Actors.instance]
+            instance = resultRow[Actors.instance],
+            locked = resultRow[Actors.locked]
         )
     }
 }

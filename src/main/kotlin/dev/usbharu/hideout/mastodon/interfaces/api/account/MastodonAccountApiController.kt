@@ -143,4 +143,46 @@ class MastodonAccountApiController(
 
         return ResponseEntity.ok(removeFromFollowers)
     }
+
+    override suspend fun apiV1AccountsUpdateCredentialsPatch(updateCredentials: UpdateCredentials?): ResponseEntity<Account> {
+        val principal = SecurityContextHolder.getContext().getAuthentication().principal as Jwt
+
+        val userid = principal.getClaim<String>("uid").toLong()
+
+        val removeFromFollowers = accountApiService.updateProfile(userid, updateCredentials)
+
+        return ResponseEntity.ok(removeFromFollowers)
+    }
+
+    override suspend fun apiV1FollowRequestsAccountIdAuthorizePost(accountId: String): ResponseEntity<Relationship> {
+        val principal = SecurityContextHolder.getContext().getAuthentication().principal as Jwt
+
+        val userid = principal.getClaim<String>("uid").toLong()
+
+        val acceptFollowRequest = accountApiService.acceptFollowRequest(userid, accountId.toLong())
+
+        return ResponseEntity.ok(acceptFollowRequest)
+    }
+
+    override suspend fun apiV1FollowRequestsAccountIdRejectPost(accountId: String): ResponseEntity<Relationship> {
+        val principal = SecurityContextHolder.getContext().getAuthentication().principal as Jwt
+
+        val userid = principal.getClaim<String>("uid").toLong()
+
+        val rejectFollowRequest = accountApiService.rejectFollowRequest(userid, accountId.toLong())
+
+        return ResponseEntity.ok(rejectFollowRequest)
+    }
+
+    override fun apiV1FollowRequestsGet(maxId: String?, sinceId: String?, limit: Int?): ResponseEntity<Flow<Account>> =
+        runBlocking {
+            val principal = SecurityContextHolder.getContext().getAuthentication().principal as Jwt
+
+            val userid = principal.getClaim<String>("uid").toLong()
+
+            val accountFlow =
+                accountApiService.followRequests(userid, maxId?.toLong(), sinceId?.toLong(), limit ?: 20, false)
+                    .asFlow()
+            ResponseEntity.ok(accountFlow)
+        }
 }

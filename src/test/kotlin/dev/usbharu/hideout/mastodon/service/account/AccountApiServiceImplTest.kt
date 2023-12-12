@@ -4,6 +4,8 @@ import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
 import dev.usbharu.hideout.core.query.FollowerQueryService
+import dev.usbharu.hideout.core.query.RelationshipQueryService
+import dev.usbharu.hideout.core.service.media.MediaService
 import dev.usbharu.hideout.core.service.relationship.RelationshipService
 import dev.usbharu.hideout.core.service.user.UserService
 import dev.usbharu.hideout.domain.mastodon.model.generated.Account
@@ -47,6 +49,12 @@ class AccountApiServiceImplTest {
 
     @Mock
     private lateinit var relationshipRepository: RelationshipRepository
+
+    @Mock
+    private lateinit var relationshipQueryService: RelationshipQueryService
+
+    @Mock
+    private lateinit var mediaService: MediaService
 
     @InjectMocks
     private lateinit var accountApiServiceImpl: AccountApiServiceImpl
@@ -210,7 +218,7 @@ class AccountApiServiceImplTest {
                 blocking = false,
                 muting = false,
                 followRequest = false,
-                ignoreFollowRequestFromTarget = false
+                ignoreFollowRequestToTarget = false
             )
         )
 
@@ -245,7 +253,7 @@ class AccountApiServiceImplTest {
                 blocking = false,
                 muting = false,
                 followRequest = false,
-                ignoreFollowRequestFromTarget = false
+                ignoreFollowRequestToTarget = false
             )
         )
         whenever(relationshipRepository.findByUserIdAndTargetUserId(eq(userId), eq(followeeId))).doReturn(
@@ -256,7 +264,7 @@ class AccountApiServiceImplTest {
                 blocking = false,
                 muting = false,
                 followRequest = false,
-                ignoreFollowRequestFromTarget = false
+                ignoreFollowRequestToTarget = false
             )
         )
 
