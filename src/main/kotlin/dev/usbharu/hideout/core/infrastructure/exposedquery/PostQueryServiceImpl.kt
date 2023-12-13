@@ -33,4 +33,7 @@ class PostQueryServiceImpl(
             .select { Posts.apId eq string }
             .let(postQueryMapper::map)
             .singleOr { FailedToGetResourcesException("apId: $string is duplicate or does not exist.", it) }
+
+    override suspend fun findByActorId(actorId: Long): List<Post> =
+        Posts.leftJoin(PostsMedia).select { Posts.actorId eq actorId }.let(postQueryMapper::map)
 }

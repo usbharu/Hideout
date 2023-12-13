@@ -5,6 +5,7 @@ import dev.usbharu.hideout.application.config.CharacterLimit
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
+import dev.usbharu.hideout.core.domain.model.reaction.ReactionRepository
 import dev.usbharu.hideout.core.query.PostQueryService
 import dev.usbharu.hideout.core.service.timeline.TimelineService
 import kotlinx.coroutines.test.runTest
@@ -44,6 +45,9 @@ class PostServiceImplTest {
 
     @Mock
     private lateinit var apSendCreateService: ApSendCreateService
+
+    @Mock
+    private lateinit var reactionRepository: ReactionRepository
 
     @InjectMocks
     private lateinit var postServiceImpl: PostServiceImpl

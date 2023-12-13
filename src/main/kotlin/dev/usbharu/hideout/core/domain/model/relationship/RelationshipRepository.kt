@@ -28,4 +28,6 @@ interface RelationshipRepository {
      * @return 取得された[Relationship] 存在しない場合nullが返ります
      */
     suspend fun findByUserIdAndTargetUserId(actorId: Long, targetActorId: Long): Relationship?
+
+    suspend fun deleteByActorIdOrTargetActorId(actorId: Long, targetActorId: Long)
 }
