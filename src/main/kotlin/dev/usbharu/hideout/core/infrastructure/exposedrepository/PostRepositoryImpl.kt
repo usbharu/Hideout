@@ -85,6 +85,7 @@ object Posts : Table() {
     val replyId: Column<Long?> = long("reply_id").references(id).nullable()
     val sensitive: Column<Boolean> = bool("sensitive").default(false)
     val apId: Column<String> = varchar("ap_id", 100).uniqueIndex()
+    val deleted = bool("deleted").default(false)
     override val primaryKey: PrimaryKey = PrimaryKey(id)
 }
 

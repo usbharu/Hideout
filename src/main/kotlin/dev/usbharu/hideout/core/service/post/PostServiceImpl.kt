@@ -5,6 +5,7 @@ import dev.usbharu.hideout.core.domain.exception.UserNotFoundException
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
+import dev.usbharu.hideout.core.domain.model.reaction.ReactionRepository
 import dev.usbharu.hideout.core.query.PostQueryService
 import dev.usbharu.hideout.core.service.timeline.TimelineService
 import org.jetbrains.exposed.exceptions.ExposedSQLException
@@ -20,7 +21,8 @@ class PostServiceImpl(
     private val timelineService: TimelineService,
     private val postQueryService: PostQueryService,
     private val postBuilder: Post.PostBuilder,
-    private val apSendCreateService: ApSendCreateService
+    private val apSendCreateService: ApSendCreateService,
+    private val reactionRepository: ReactionRepository
 ) : PostService {
 
     override suspend fun createLocal(post: PostCreateDto): Post {
@@ -36,6 +38,16 @@ class PostServiceImpl(
         val createdPost = internalCreate(post, false)
         logger.info("SUCCESS Create Remote Post url: {}", createdPost.url)
         return createdPost
+    }
+
+    override suspend fun deleteLocal(post: Post) {
+        reactionRepository.deleteByPostId(post.id)
+        postRepository.save(post.delete())
+    }
+
+    override suspend fun deleteRemote(post: Post) {
+        reactionRepository.deleteByPostId(post.id)
+        postRepository.save(post.delete())
     }
 
     private suspend fun internalCreate(post: Post, isLocal: Boolean): Post {

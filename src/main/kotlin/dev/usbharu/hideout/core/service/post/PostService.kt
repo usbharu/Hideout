@@ -7,4 +7,6 @@ import org.springframework.stereotype.Service
 interface PostService {
     suspend fun createLocal(post: PostCreateDto): Post
     suspend fun createRemote(post: Post): Post
+    suspend fun deleteLocal(post: Post)
+    suspend fun deleteRemote(post: Post)
 }

@@ -2,6 +2,7 @@ package dev.usbharu.hideout.core.domain.model.post
 
 import dev.usbharu.hideout.application.config.CharacterLimit
 import org.springframework.stereotype.Component
+import java.time.Instant
 
 data class Post private constructor(
     val id: Long,
@@ -15,7 +16,8 @@ data class Post private constructor(
     val replyId: Long? = null,
     val sensitive: Boolean = false,
     val apId: String = url,
-    val mediaIds: List<Long> = emptyList()
+    val mediaIds: List<Long> = emptyList(),
+    val delted: Boolean = false
 ) {
 
     @Component
@@ -71,8 +73,52 @@ data class Post private constructor(
                 replyId = replyId,
                 sensitive = sensitive,
                 apId = apId,
-                mediaIds = mediaIds
+                mediaIds = mediaIds,
+                delted = false
             )
         }
+
+        fun deleteOf(
+            id: Long,
+            visibility: Visibility,
+            url: String,
+            repostId: Long?,
+            replyId: Long?,
+            apId: String
+        ): Post {
+            return Post(
+                id = id,
+                actorId = 0,
+                overview = null,
+                text = "",
+                createdAt = Instant.EPOCH.toEpochMilli(),
+                visibility = visibility,
+                url = url,
+                repostId = repostId,
+                replyId = replyId,
+                sensitive = false,
+                apId = apId,
+                mediaIds = emptyList(),
+                delted = true
+            )
+        }
+    }
+
+    fun delete(): Post {
+        return Post(
+            id = this.id,
+            actorId = 0,
+            overview = null,
+            text = "",
+            createdAt = Instant.EPOCH.toEpochMilli(),
+            visibility = visibility,
+            url = url,
+            repostId = repostId,
+            replyId = replyId,
+            sensitive = false,
+            apId = apId,
+            mediaIds = emptyList(),
+            delted = true
+        )
     }
 }
