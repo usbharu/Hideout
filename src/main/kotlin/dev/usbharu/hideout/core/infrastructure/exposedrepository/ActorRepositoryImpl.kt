@@ -6,6 +6,7 @@ import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.javatime.timestamp
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -35,6 +36,10 @@ class ActorRepositoryImpl(
                 it[followers] = actor.followers
                 it[instance] = actor.instance
                 it[locked] = actor.locked
+                it[followersCount] = actor.followersCount
+                it[followingCount] = actor.followingCount
+                it[postsCount] = actor.postsCount
+                it[lastPostAt] = actor.lastPostDate
             }
         } else {
             Actors.update({ Actors.id eq actor.id }) {
@@ -53,6 +58,10 @@ class ActorRepositoryImpl(
                 it[followers] = actor.followers
                 it[instance] = actor.instance
                 it[locked] = actor.locked
+                it[followersCount] = actor.followersCount
+                it[followingCount] = actor.followingCount
+                it[postsCount] = actor.postsCount
+                it[lastPostAt] = actor.lastPostDate
             }
         }
         return actor
@@ -91,6 +100,10 @@ object Actors : Table("actors") {
     val followers = varchar("followers", length = 1000).nullable()
     val instance = long("instance").references(Instance.id).nullable()
     val locked = bool("locked")
+    val followingCount = integer("following_count")
+    val followersCount = integer("followers_count")
+    val postsCount = integer("posts_count")
+    val lastPostAt = timestamp("last_post_at").nullable()
 
     override val primaryKey: PrimaryKey = PrimaryKey(id)
 
