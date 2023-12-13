@@ -52,10 +52,10 @@ data class Actor private constructor(
             followers: String? = null,
             instance: Long? = null,
             locked: Boolean,
-            followersCount: Int,
-            followingCount: Int,
-            postsCount: Int,
-            lastPostDate: Instant?
+            followersCount: Int = 0,
+            followingCount: Int = 0,
+            postsCount: Int = 0,
+            lastPostDate: Instant? = null
         ): Actor {
             // idは0未満ではいけない
             require(id >= 0) { "id must be greater than or equal to 0." }
