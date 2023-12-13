@@ -14,7 +14,6 @@ import java.time.Instant
 @Repository
 class AccountQueryServiceImpl(private val applicationConfig: ApplicationConfig) : AccountQueryService {
     override suspend fun findById(accountId: Long): Account {
-
         val query = Actors.select { Actors.id eq accountId }
 
         return query

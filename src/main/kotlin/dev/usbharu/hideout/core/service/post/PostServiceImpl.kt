@@ -72,7 +72,7 @@ class PostServiceImpl(
         postQueryService.findByActorId(actorId).filterNot { it.delted }.forEach { postRepository.save(it.delete()) }
 
         val actor = actorRepository.findById(actorId)
-            ?: throw IllegalStateException("actor: ${actorId} was not found.")
+            ?: throw IllegalStateException("actor: $actorId was not found.")
 
         actorRepository.save(actor.copy(postsCount = 0, lastPostDate = null))
     }
