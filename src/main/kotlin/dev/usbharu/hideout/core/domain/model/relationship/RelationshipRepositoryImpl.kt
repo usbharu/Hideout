@@ -50,7 +50,6 @@ class RelationshipRepositoryImpl : RelationshipRepository {
         }
     }
 
-
     override suspend fun findByUserIdAndTargetUserId(actorId: Long, targetActorId: Long): Relationship? {
         return Relationships.select {
             (Relationships.actorId eq actorId)
