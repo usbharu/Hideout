@@ -41,11 +41,17 @@ class PostServiceImpl(
     }
 
     override suspend fun deleteLocal(post: Post) {
+        if (post.delted) {
+            return
+        }
         reactionRepository.deleteByPostId(post.id)
         postRepository.save(post.delete())
     }
 
     override suspend fun deleteRemote(post: Post) {
+        if (post.delted) {
+            return
+        }
         reactionRepository.deleteByPostId(post.id)
         postRepository.save(post.delete())
     }

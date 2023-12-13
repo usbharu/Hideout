@@ -202,3 +202,13 @@ create table if not exists relationships
 insert into actors (id, name, domain, screen_name, description, inbox, outbox, url, public_key, private_key, created_at,
                     key_id, following, followers, instance, locked)
 values (0, 'ghost', '', '', '', '', '', '', '', null, 0, '', '', '', null, true);
+
+create table if not exists deleted_actors
+(
+    id         bigint primary key,
+    "name"     varchar(300)   not null,
+    domain     varchar(255)   not null,
+    public_key varchar(10000) not null,
+    deleted_at timestamp      not null,
+    unique ("name", domain)
+)
