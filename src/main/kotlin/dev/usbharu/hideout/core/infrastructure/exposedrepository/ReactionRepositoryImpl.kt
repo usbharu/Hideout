@@ -37,7 +37,7 @@ class ReactionRepositoryImpl(
         Reactions.deleteWhere {
             id.eq(reaction.id)
                 .and(postId.eq(reaction.postId))
-                .and(actorId.eq(reaction.postId))
+                .and(actorId.eq(reaction.actorId))
                 .and(emojiId.eq(reaction.emojiId))
         }
         return reaction

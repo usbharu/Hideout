@@ -1,9 +1,6 @@
 package dev.usbharu.hideout.activitypub.service.activity.undo
 
-import dev.usbharu.hideout.activitypub.domain.model.Accept
-import dev.usbharu.hideout.activitypub.domain.model.Block
-import dev.usbharu.hideout.activitypub.domain.model.Follow
-import dev.usbharu.hideout.activitypub.domain.model.Undo
+import dev.usbharu.hideout.activitypub.domain.model.*
 import dev.usbharu.hideout.activitypub.domain.model.objects.ObjectValue
 import dev.usbharu.hideout.activitypub.service.common.AbstractActivityPubProcessor
 import dev.usbharu.hideout.activitypub.service.common.ActivityPubProcessContext
@@ -11,6 +8,8 @@ import dev.usbharu.hideout.activitypub.service.common.ActivityType
 import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
 import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.query.ActorQueryService
+import dev.usbharu.hideout.core.query.PostQueryService
+import dev.usbharu.hideout.core.service.reaction.ReactionService
 import dev.usbharu.hideout.core.service.relationship.RelationshipService
 import org.springframework.stereotype.Service
 
@@ -19,7 +18,9 @@ class APUndoProcessor(
     transaction: Transaction,
     private val apUserService: APUserService,
     private val actorQueryService: ActorQueryService,
-    private val relationshipService: RelationshipService
+    private val relationshipService: RelationshipService,
+    private val postQueryService: PostQueryService,
+    private val reactionService: ReactionService
 ) :
     AbstractActivityPubProcessor<Undo>(transaction) {
     override suspend fun internalProcess(activity: ActivityPubProcessContext<Undo>) {
@@ -68,6 +69,18 @@ class APUndoProcessor(
                 val target = actorQueryService.findByUrl(acceptObject)
 
                 relationshipService.rejectFollowRequest(accepter.id, target.id)
+                return
+            }
+
+            "Like" -> {
+                val like = undo.apObject as Like
+
+                val post = postQueryService.findByUrl(like.apObject)
+
+                val actor = actorQueryService.findByUrl(like.actor)
+
+                reactionService.receiveRemoveReaction(actor.id, post.id)
+                return
             }
 
             else -> {}
