@@ -34,7 +34,6 @@ class APDeleteProcessor(
             throw IllegalActivityPubObjectException("object hasn't id or object")
         }
 
-
         try {
             val actor = actorQueryService.findByUrl(deleteId)
             userService.deleteRemoteActor(actor.id)
