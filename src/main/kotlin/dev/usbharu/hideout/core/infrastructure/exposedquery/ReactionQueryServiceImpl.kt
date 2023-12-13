@@ -47,5 +47,4 @@ class ReactionQueryServiceImpl : ReactionQueryService {
         return Reactions.select { Reactions.postId eq postId and (Reactions.actorId eq actorId) }
             .map { it.toReaction() }
     }
-
 }
