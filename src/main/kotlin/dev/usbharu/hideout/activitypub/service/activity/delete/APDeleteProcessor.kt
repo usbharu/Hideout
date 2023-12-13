@@ -47,8 +47,6 @@ class APDeleteProcessor(
         } catch (e: FailedToGetResourcesException) {
             logger.warn("FAILED delete id: {} is not found.", deleteId, e)
         }
-
-
     }
 
     override fun isSupported(activityType: ActivityType): Boolean = activityType == ActivityType.Delete

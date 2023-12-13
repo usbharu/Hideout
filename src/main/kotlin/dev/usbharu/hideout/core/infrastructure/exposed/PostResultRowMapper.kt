@@ -12,8 +12,8 @@ class PostResultRowMapper(private val postBuilder: Post.PostBuilder) : ResultRow
     override fun map(resultRow: ResultRow): Post {
         if (resultRow[Posts.deleted]) {
             return postBuilder.deleteOf(
-                resultRow[Posts.id],
-                Visibility.values().first { it.ordinal == resultRow[Posts.visibility] },
+                id = resultRow[Posts.id],
+                visibility = Visibility.values().first { it.ordinal == resultRow[Posts.visibility] },
                 url = resultRow[Posts.url],
                 repostId = resultRow[Posts.repostId],
                 replyId = resultRow[Posts.replyId],

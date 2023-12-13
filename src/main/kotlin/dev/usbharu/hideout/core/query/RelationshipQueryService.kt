@@ -6,7 +6,7 @@ interface RelationshipQueryService {
 
     suspend fun findByTargetIdAndFollowing(targetId: Long, following: Boolean): List<Relationship>
 
-    @Suppress("LongParameterList")
+    @Suppress("LongParameterList", "FunctionMaxLength")
     suspend fun findByTargetIdAndFollowRequestAndIgnoreFollowRequest(
         maxId: Long?,
         sinceId: Long?,
