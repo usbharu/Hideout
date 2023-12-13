@@ -33,6 +33,7 @@ class PostRepositoryImpl(
                 it[replyId] = post.replyId
                 it[sensitive] = post.sensitive
                 it[apId] = post.apId
+                it[deleted] = post.delted
             }
             PostsMedia.batchInsert(post.mediaIds) {
                 this[PostsMedia.postId] = post.id
@@ -57,6 +58,7 @@ class PostRepositoryImpl(
                 it[replyId] = post.replyId
                 it[sensitive] = post.sensitive
                 it[apId] = post.apId
+                it[deleted] = post.delted
             }
         }
         return singleOrNull == null
