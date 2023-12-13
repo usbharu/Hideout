@@ -8,15 +8,15 @@ import dev.usbharu.hideout.activitypub.service.common.ActivityPubProcessContext
 import dev.usbharu.hideout.activitypub.service.common.ActivityType
 import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
-import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.query.PostQueryService
+import dev.usbharu.hideout.core.service.post.PostService
 import org.springframework.stereotype.Service
 
 @Service
 class APDeleteProcessor(
     transaction: Transaction,
     private val postQueryService: PostQueryService,
-    private val postRepository: PostRepository
+    private val postService: PostService
 ) :
     AbstractActivityPubProcessor<Delete>(transaction) {
     override suspend fun internalProcess(activity: ActivityPubProcessContext<Delete>) {
@@ -33,7 +33,7 @@ class APDeleteProcessor(
             return
         }
 
-        postRepository.delete(post.id)
+        postService.deleteRemote(post)
     }
 
     override fun isSupported(activityType: ActivityType): Boolean = activityType == ActivityType.Delete

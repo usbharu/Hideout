@@ -42,6 +42,18 @@ class ReactionRepositoryImpl(
         }
         return reaction
     }
+
+    override suspend fun deleteByPostId(postId: Long): Int {
+        return Reactions.deleteWhere {
+            Reactions.postId eq postId
+        }
+    }
+
+    override suspend fun deleteByActorId(actorId: Long): Int {
+        return Reactions.deleteWhere {
+            Reactions.actorId eq actorId
+        }
+    }
 }
 
 fun ResultRow.toReaction(): Reaction {
@@ -55,8 +67,10 @@ fun ResultRow.toReaction(): Reaction {
 
 object Reactions : LongIdTable("reactions") {
     val emojiId: Column<Long> = long("emoji_id")
-    val postId: Column<Long> = long("post_id").references(Posts.id)
-    val actorId: Column<Long> = long("actor_id").references(Actors.id)
+    val postId: Column<Long> = long("post_id")
+        .references(Posts.id, onDelete = ReferenceOption.CASCADE, onUpdate = ReferenceOption.CASCADE)
+    val actorId: Column<Long> = long("actor_id")
+        .references(Actors.id, onDelete = ReferenceOption.CASCADE, onUpdate = ReferenceOption.CASCADE)
 
     init {
         uniqueIndex(emojiId, postId, actorId)
