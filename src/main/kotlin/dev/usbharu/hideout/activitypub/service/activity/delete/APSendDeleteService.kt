@@ -28,8 +28,6 @@ class APSendDeleteServiceImpl(
     private val applicationConfig: ApplicationConfig
 ) : APSendDeleteService {
     override suspend fun sendDeleteNote(deletedPost: Post) {
-
-
         val actor = actorQueryService.findById(deletedPost.actorId)
         val followersById = followerQueryService.findFollowersById(deletedPost.actorId)
 
