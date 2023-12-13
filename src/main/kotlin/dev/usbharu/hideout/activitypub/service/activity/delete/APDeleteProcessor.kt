@@ -46,7 +46,6 @@ class APDeleteProcessor(
             postService.deleteRemote(post)
         } catch (e: FailedToGetResourcesException) {
             logger.warn("FAILED delete id: {} is not found.", deleteId, e)
-
         }
 
 
