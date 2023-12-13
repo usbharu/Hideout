@@ -22,7 +22,11 @@ data class Actor private constructor(
     val followers: String? = null,
     val following: String? = null,
     val instance: Long? = null,
-    val locked: Boolean
+    val locked: Boolean,
+    val followersCount: Int = 0,
+    val followingCount: Int = 0,
+    val postsCount: Int = 0,
+    val lastPostDate: Instant? = null
 ) {
 
     @Component
@@ -47,7 +51,11 @@ data class Actor private constructor(
             following: String? = null,
             followers: String? = null,
             instance: Long? = null,
-            locked: Boolean
+            locked: Boolean,
+            followersCount: Int,
+            followingCount: Int,
+            postsCount: Int,
+            lastPostDate: Instant?
         ): Actor {
             // idは0未満ではいけない
             require(id >= 0) { "id must be greater than or equal to 0." }
@@ -123,6 +131,18 @@ data class Actor private constructor(
                 "keyId must contain non-blank characters."
             }
 
+            require(postsCount >= 0) {
+                "postsCount must be greater than or equal to 0"
+            }
+
+            require(followersCount >= 0) {
+                "followersCount must be greater than or equal to 0"
+            }
+
+            require(followingCount >= 0) {
+                "followingCount must be greater than or equal to 0"
+            }
+
             return Actor(
                 id = id,
                 name = limitedName,
@@ -139,29 +159,47 @@ data class Actor private constructor(
                 followers = followers,
                 following = following,
                 instance = instance,
-                locked
+                locked = locked,
+                followersCount = followersCount,
+                followingCount = followingCount,
+                postsCount = postsCount,
+                lastPostDate = lastPostDate
             )
         }
     }
 
+    fun incrementFollowing(): Actor = this.copy(followingCount = this.followingCount + 1)
+
+    fun decrementFollowing(): Actor = this.copy(followingCount = this.followingCount - 1)
+
+    fun incrementFollowers(): Actor = this.copy(followersCount = this.followersCount + 1)
+
+    fun decrementFollowers(): Actor = this.copy(followersCount = this.followersCount - 1)
+
+    fun incrementPostsCount(): Actor = this.copy(postsCount = this.postsCount + 1)
+
+    fun decrementPostsCount(): Actor = this.copy(postsCount = this.postsCount - 1)
+
+    fun withLastPostAt(lastPostDate: Instant): Actor = this.copy(lastPostDate = lastPostDate)
+
     override fun toString(): String {
         return "Actor(" +
-            "id=$id, " +
-            "name='$name', " +
-            "domain='$domain', " +
-            "screenName='$screenName', " +
-            "description='$description', " +
-            "inbox='$inbox', " +
-            "outbox='$outbox', " +
-            "url='$url', " +
-            "publicKey='$publicKey', " +
-            "privateKey=$privateKey, " +
-            "createdAt=$createdAt, " +
-            "keyId='$keyId', " +
-            "followers=$followers, " +
-            "following=$following, " +
-            "instance=$instance, " +
-            "locked=$locked" +
-            ")"
+                "id=$id, " +
+                "name='$name', " +
+                "domain='$domain', " +
+                "screenName='$screenName', " +
+                "description='$description', " +
+                "inbox='$inbox', " +
+                "outbox='$outbox', " +
+                "url='$url', " +
+                "publicKey='$publicKey', " +
+                "privateKey=$privateKey, " +
+                "createdAt=$createdAt, " +
+                "keyId='$keyId', " +
+                "followers=$followers, " +
+                "following=$following, " +
+                "instance=$instance, " +
+                "locked=$locked" +
+                ")"
     }
 }
