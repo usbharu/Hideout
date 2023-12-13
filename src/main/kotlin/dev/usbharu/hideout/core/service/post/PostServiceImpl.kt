@@ -56,6 +56,10 @@ class PostServiceImpl(
         postRepository.save(post.delete())
     }
 
+    override suspend fun deleteByActor(actorId: Long) {
+        postQueryService.findByActorId(actorId).filterNot { it.delted }.forEach { postRepository.save(it.delete()) }
+    }
+
     private suspend fun internalCreate(post: Post, isLocal: Boolean): Post {
         return try {
             if (postRepository.save(post)) {

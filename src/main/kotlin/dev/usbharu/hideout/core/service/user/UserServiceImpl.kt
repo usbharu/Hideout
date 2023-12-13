@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.core.service.user
 
+import dev.usbharu.hideout.activitypub.service.activity.delete.APSendDeleteService
 import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.domain.model.actor.Actor
@@ -13,6 +14,7 @@ import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
 import dev.usbharu.hideout.core.query.ActorQueryService
 import dev.usbharu.hideout.core.query.DeletedActorQueryService
 import dev.usbharu.hideout.core.service.instance.InstanceService
+import dev.usbharu.hideout.core.service.post.PostService
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -31,7 +33,9 @@ class UserServiceImpl(
     private val deletedActorRepository: DeletedActorRepository,
     private val deletedActorQueryService: DeletedActorQueryService,
     private val reactionRepository: ReactionRepository,
-    private val relationshipRepository: RelationshipRepository
+    private val relationshipRepository: RelationshipRepository,
+    private val postService: PostService,
+    private val apSendDeleteService: APSendDeleteService
 
 ) :
     UserService {
@@ -149,11 +153,33 @@ class UserServiceImpl(
 
         reactionRepository.deleteByActorId(actorId)
 
+        postService.deleteByActor(actorId)
+
+        actorRepository.delete(actor.id)
         deletedActorRepository.save(deletedActor)
     }
 
     override suspend fun deleteLocalUser(userId: Long) {
-        TODO("Not yet implemented")
+        val actor = actorQueryService.findById(userId)
+        apSendDeleteService.sendDeleteActor(actor)
+        val deletedActor = DeletedActor(
+            actor.id,
+            actor.name,
+            actor.domain,
+            actor.publicKey,
+            Instant.now()
+        )
+        relationshipRepository.deleteByActorIdOrTargetActorId(userId, userId)
+
+        reactionRepository.deleteByActorId(actor.id)
+
+        postService.deleteByActor(actor.id)
+        actorRepository.delete(actor.id)
+        val userDetail =
+            userDetailRepository.findByActorId(actor.id) ?: throw IllegalStateException("user detail not found.")
+        userDetailRepository.delete(userDetail)
+        deletedActorRepository.save(deletedActor)
+
     }
 
     companion object {
