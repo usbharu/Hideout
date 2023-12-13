@@ -2,7 +2,9 @@ package dev.usbharu.hideout.activitypub.service.activity.delete
 
 import dev.usbharu.hideout.activitypub.domain.model.Delete
 import dev.usbharu.hideout.activitypub.domain.model.Tombstone
+import dev.usbharu.hideout.activitypub.domain.model.objects.ObjectValue
 import dev.usbharu.hideout.application.config.ApplicationConfig
+import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.external.job.DeliverDeleteJob
 import dev.usbharu.hideout.core.external.job.DeliverDeleteJobParam
@@ -14,6 +16,7 @@ import java.time.Instant
 
 interface APSendDeleteService {
     suspend fun sendDeleteNote(deletedPost: Post)
+    suspend fun sendDeleteActor(deletedActor: Actor)
 }
 
 @Service
@@ -44,6 +47,25 @@ class APSendDeleteServiceImpl(
                 actor.id
             )
             jobQueueParentService.scheduleTypeSafe(delverDeleteJob, jobProps)
+        }
+    }
+
+    override suspend fun sendDeleteActor(deletedActor: Actor) {
+        val followers = followerQueryService.findFollowersById(deletedActor.id)
+
+        val delete = Delete(
+            actor = deletedActor.url,
+            `object` = ObjectValue(emptyList(), `object` = deletedActor.url),
+            id = "${applicationConfig.url}/delete/actor/${deletedActor.id}",
+            published = Instant.now().toString()
+        )
+
+        followers.forEach {
+            DeliverDeleteJobParam(
+                delete = delete,
+                it.inbox,
+                deletedActor.id
+            )
         }
     }
 
