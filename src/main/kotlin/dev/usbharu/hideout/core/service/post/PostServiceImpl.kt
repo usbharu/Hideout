@@ -2,6 +2,7 @@ package dev.usbharu.hideout.core.service.post
 
 import dev.usbharu.hideout.activitypub.service.activity.create.ApSendCreateService
 import dev.usbharu.hideout.core.domain.exception.UserNotFoundException
+import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
@@ -35,7 +36,9 @@ class PostServiceImpl(
 
     override suspend fun createRemote(post: Post): Post {
         logger.info("START Create Remote Post user: {}, remote url: {}", post.actorId, post.apId)
-        val createdPost = internalCreate(post, false)
+        val actor =
+            actorRepository.findById(post.actorId) ?: throw UserNotFoundException("${post.actorId} was not found.")
+        val createdPost = internalCreate(post, false, actor)
         logger.info("SUCCESS Create Remote Post url: {}", createdPost.url)
         return createdPost
     }
@@ -46,6 +49,10 @@ class PostServiceImpl(
         }
         reactionRepository.deleteByPostId(post.id)
         postRepository.save(post.delete())
+        val actor = actorRepository.findById(post.actorId)
+            ?: throw IllegalStateException("actor: ${post.actorId} was not found.")
+
+        actorRepository.save(actor.decrementPostsCount())
     }
 
     override suspend fun deleteRemote(post: Post) {
@@ -54,17 +61,28 @@ class PostServiceImpl(
         }
         reactionRepository.deleteByPostId(post.id)
         postRepository.save(post.delete())
+
+        val actor = actorRepository.findById(post.actorId)
+            ?: throw IllegalStateException("actor: ${post.actorId} was not found.")
+
+        actorRepository.save(actor.decrementPostsCount())
     }
 
     override suspend fun deleteByActor(actorId: Long) {
         postQueryService.findByActorId(actorId).filterNot { it.delted }.forEach { postRepository.save(it.delete()) }
+
+        val actor = actorRepository.findById(actorId)
+            ?: throw IllegalStateException("actor: ${actorId} was not found.")
+
+        actorRepository.save(actor.copy(postsCount = 0, lastPostDate = null))
     }
 
-    private suspend fun internalCreate(post: Post, isLocal: Boolean): Post {
+    private suspend fun internalCreate(post: Post, isLocal: Boolean, actor: Actor): Post {
         return try {
             if (postRepository.save(post)) {
                 try {
                     timelineService.publishTimeline(post, isLocal)
+                    actorRepository.save(actor.incrementPostsCount())
                 } catch (e: DuplicateKeyException) {
                     logger.trace("Timeline already exists.", e)
                 }
@@ -91,7 +109,7 @@ class PostServiceImpl(
             replyId = post.repolyId,
             repostId = post.repostId,
         )
-        return internalCreate(createPost, isLocal)
+        return internalCreate(createPost, isLocal, user)
     }
 
     companion object {
