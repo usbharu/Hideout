@@ -6,9 +6,9 @@ open class Person
 @Suppress("LongParameterList")
 constructor(
     type: List<String> = emptyList(),
-    override val name: String,
+    val name: String?,
     override val id: String,
-    var preferredUsername: String?,
+    var preferredUsername: String,
     var summary: String?,
     var inbox: String,
     var outbox: String,
@@ -19,7 +19,7 @@ constructor(
     var followers: String?,
     var following: String?,
     val manuallyApprovesFollowers: Boolean? = false
-) : Object(add(type, "Person")), HasId, HasName {
+) : Object(add(type, "Person")), HasId {
 
     @Suppress("CyclomaticComplexMethod", "CognitiveComplexMethod")
     override fun equals(other: Any?): Boolean {
@@ -67,20 +67,20 @@ constructor(
 
     override fun toString(): String {
         return "Person(" +
-            "name='$name', " +
-            "id='$id', " +
-            "preferredUsername=$preferredUsername, " +
-            "summary=$summary, " +
-            "inbox='$inbox', " +
-            "outbox='$outbox', " +
-            "url='$url', " +
-            "icon=$icon, " +
-            "publicKey=$publicKey, " +
-            "endpoints=$endpoints, " +
-            "followers=$followers, " +
-            "following=$following, " +
-            "manuallyApprovesFollowers=$manuallyApprovesFollowers" +
-            ")" +
-            " ${super.toString()}"
+                "name='$name', " +
+                "id='$id', " +
+                "preferredUsername=$preferredUsername, " +
+                "summary=$summary, " +
+                "inbox='$inbox', " +
+                "outbox='$outbox', " +
+                "url='$url', " +
+                "icon=$icon, " +
+                "publicKey=$publicKey, " +
+                "endpoints=$endpoints, " +
+                "followers=$followers, " +
+                "following=$following, " +
+                "manuallyApprovesFollowers=$manuallyApprovesFollowers" +
+                ")" +
+                " ${super.toString()}"
     }
 }
