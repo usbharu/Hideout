@@ -67,20 +67,20 @@ constructor(
 
     override fun toString(): String {
         return "Person(" +
-                "name='$name', " +
-                "id='$id', " +
-                "preferredUsername=$preferredUsername, " +
-                "summary=$summary, " +
-                "inbox='$inbox', " +
-                "outbox='$outbox', " +
-                "url='$url', " +
-                "icon=$icon, " +
-                "publicKey=$publicKey, " +
-                "endpoints=$endpoints, " +
-                "followers=$followers, " +
-                "following=$following, " +
-                "manuallyApprovesFollowers=$manuallyApprovesFollowers" +
-                ")" +
-                " ${super.toString()}"
+            "name='$name', " +
+            "id='$id', " +
+            "preferredUsername=$preferredUsername, " +
+            "summary=$summary, " +
+            "inbox='$inbox', " +
+            "outbox='$outbox', " +
+            "url='$url', " +
+            "icon=$icon, " +
+            "publicKey=$publicKey, " +
+            "endpoints=$endpoints, " +
+            "followers=$followers, " +
+            "following=$following, " +
+            "manuallyApprovesFollowers=$manuallyApprovesFollowers" +
+            ")" +
+            " ${super.toString()}"
     }
 }
