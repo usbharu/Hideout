@@ -78,6 +78,7 @@ data class Post private constructor(
             )
         }
 
+        @Suppress("LongParameterList")
         fun deleteOf(
             id: Long,
             visibility: Visibility,

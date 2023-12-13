@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
 
 @Service
+@Suppress("LongParameterList")
 class UserServiceImpl(
     private val actorRepository: ActorRepository,
     private val userAuthService: UserAuthService,
