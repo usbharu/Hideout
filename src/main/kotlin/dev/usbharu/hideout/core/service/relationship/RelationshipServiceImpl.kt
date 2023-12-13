@@ -113,8 +113,6 @@ class RelationshipServiceImpl(
 
         val inverseRelationship = relationshipRepository.findByUserIdAndTargetUserId(targetId, actorId)
 
-
-
         if (inverseRelationship?.following == true) {
             actorRepository.save(targetActor.decrementFollowing())
             actorRepository.save(user.decrementFollowers())
@@ -131,7 +129,6 @@ class RelationshipServiceImpl(
         val remoteUser = isRemoteUser(targetId)
 
         if (remoteUser != null) {
-
             apSendBlockService.sendBlock(user, remoteUser)
         }
     }
@@ -261,7 +258,6 @@ class RelationshipServiceImpl(
         val remoteUser = isRemoteUser(targetId)
 
         if (remoteUser != null) {
-
             apSendUndoService.sendUndoFollow(user, remoteUser)
         }
     }
