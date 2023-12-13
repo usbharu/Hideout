@@ -96,7 +96,7 @@ class APUserServiceImpl(
                     name = person.preferredUsername
                         ?: throw IllegalActivityPubObjectException("preferredUsername is null"),
                     domain = id.substringAfter("://").substringBefore("/"),
-                    screenName = person.name,
+                    screenName = person.name ?: person.preferredUsername,
                     description = person.summary.orEmpty(),
                     inbox = person.inbox,
                     outbox = person.outbox,

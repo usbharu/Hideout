@@ -10,6 +10,17 @@ import org.springframework.stereotype.Component
 @Component
 class PostResultRowMapper(private val postBuilder: Post.PostBuilder) : ResultRowMapper<Post> {
     override fun map(resultRow: ResultRow): Post {
+        if (resultRow[Posts.deleted]) {
+            return postBuilder.deleteOf(
+                id = resultRow[Posts.id],
+                visibility = Visibility.values().first { it.ordinal == resultRow[Posts.visibility] },
+                url = resultRow[Posts.url],
+                repostId = resultRow[Posts.repostId],
+                replyId = resultRow[Posts.replyId],
+                apId = resultRow[Posts.apId]
+            )
+        }
+
         return postBuilder.of(
             id = resultRow[Posts.id],
             actorId = resultRow[Posts.actorId],

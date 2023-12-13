@@ -67,7 +67,7 @@ create table if not exists meta_info
 create table if not exists posts
 (
     id          bigint primary key,
-    actor_id bigint       not null,
+    actor_id bigint                not null,
     overview    varchar(100)          null,
     text        varchar(3000)         not null,
     created_at  bigint                not null,
@@ -76,7 +76,8 @@ create table if not exists posts
     repost_id   bigint                null,
     reply_id    bigint                null,
     "sensitive" boolean default false not null,
-    ap_id    varchar(100) not null unique
+    ap_id    varchar(100)          not null unique,
+    deleted  boolean default false not null
 );
 alter table posts
     add constraint fk_posts_actor_id__id foreign key (actor_id) references actors (id) on delete restrict on update restrict;
@@ -196,4 +197,18 @@ create table if not exists relationships
     constraint fk_relationships_actor_id__id foreign key (actor_id) references actors (id) on delete restrict on update restrict,
     constraint fk_relationships_target_actor_id__id foreign key (target_actor_id) references actors (id) on delete restrict on update restrict,
     unique (actor_id, target_actor_id)
+);
+
+insert into actors (id, name, domain, screen_name, description, inbox, outbox, url, public_key, private_key, created_at,
+                    key_id, following, followers, instance, locked)
+values (0, 'ghost', '', '', '', '', '', '', '', null, 0, '', '', '', null, true);
+
+create table if not exists deleted_actors
+(
+    id         bigint primary key,
+    "name"     varchar(300)   not null,
+    domain     varchar(255)   not null,
+    public_key varchar(10000) not null,
+    deleted_at timestamp      not null,
+    unique ("name", domain)
 )

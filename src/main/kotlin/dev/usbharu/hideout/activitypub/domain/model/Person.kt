@@ -6,9 +6,9 @@ open class Person
 @Suppress("LongParameterList")
 constructor(
     type: List<String> = emptyList(),
-    override val name: String,
+    val name: String?,
     override val id: String,
-    var preferredUsername: String?,
+    var preferredUsername: String,
     var summary: String?,
     var inbox: String,
     var outbox: String,
@@ -19,7 +19,7 @@ constructor(
     var followers: String?,
     var following: String?,
     val manuallyApprovesFollowers: Boolean? = false
-) : Object(add(type, "Person")), HasId, HasName {
+) : Object(add(type, "Person")), HasId {
 
     @Suppress("CyclomaticComplexMethod", "CognitiveComplexMethod")
     override fun equals(other: Any?): Boolean {

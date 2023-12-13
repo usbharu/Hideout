@@ -57,6 +57,12 @@ class RelationshipRepositoryImpl : RelationshipRepository {
         }.singleOrNull()
             ?.toRelationships()
     }
+
+    override suspend fun deleteByActorIdOrTargetActorId(actorId: Long, targetActorId: Long) {
+        Relationships.deleteWhere {
+            Relationships.actorId.eq(actorId).or(Relationships.targetActorId.eq(targetActorId))
+        }
+    }
 }
 
 fun ResultRow.toRelationships(): Relationship = Relationship(

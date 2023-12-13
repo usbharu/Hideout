@@ -33,6 +33,7 @@ class PostRepositoryImpl(
                 it[replyId] = post.replyId
                 it[sensitive] = post.sensitive
                 it[apId] = post.apId
+                it[deleted] = post.delted
             }
             PostsMedia.batchInsert(post.mediaIds) {
                 this[PostsMedia.postId] = post.id
@@ -57,6 +58,7 @@ class PostRepositoryImpl(
                 it[replyId] = post.replyId
                 it[sensitive] = post.sensitive
                 it[apId] = post.apId
+                it[deleted] = post.delted
             }
         }
         return singleOrNull == null
@@ -85,6 +87,7 @@ object Posts : Table() {
     val replyId: Column<Long?> = long("reply_id").references(id).nullable()
     val sensitive: Column<Boolean> = bool("sensitive").default(false)
     val apId: Column<String> = varchar("ap_id", 100).uniqueIndex()
+    val deleted = bool("deleted").default(false)
     override val primaryKey: PrimaryKey = PrimaryKey(id)
 }
 
