@@ -179,7 +179,6 @@ class UserServiceImpl(
             userDetailRepository.findByActorId(actor.id) ?: throw IllegalStateException("user detail not found.")
         userDetailRepository.delete(userDetail)
         deletedActorRepository.save(deletedActor)
-
     }
 
     companion object {
