@@ -12,5 +12,5 @@ interface ReactionQueryService {
 
     suspend fun reactionAlreadyExist(postId: Long, actorId: Long, emojiId: Long): Boolean
 
-    suspend fun deleteByPostIdAndActorId(postId: Long, actorId: Long)
+    suspend fun findByPostIdAndActorId(postId: Long, actorId: Long): List<Reaction>
 }

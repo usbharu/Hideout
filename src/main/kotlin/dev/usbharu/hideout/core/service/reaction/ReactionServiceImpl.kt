@@ -27,6 +27,11 @@ class ReactionServiceImpl(
         }
     }
 
+    override suspend fun receiveRemoveReaction(actorId: Long, postId: Long) {
+        val reaction = reactionQueryService.findByPostIdAndActorIdAndEmojiId(postId, actorId, 0)
+        reactionRepository.delete(reaction)
+    }
+
     override suspend fun sendReaction(name: String, actorId: Long, postId: Long) {
         try {
             val findByPostIdAndUserIdAndEmojiId =

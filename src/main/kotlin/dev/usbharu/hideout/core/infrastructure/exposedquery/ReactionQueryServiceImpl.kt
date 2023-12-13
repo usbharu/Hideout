@@ -6,9 +6,7 @@ import dev.usbharu.hideout.core.infrastructure.exposedrepository.Reactions
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.toReaction
 import dev.usbharu.hideout.core.query.ReactionQueryService
 import dev.usbharu.hideout.util.singleOr
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.select
 import org.springframework.stereotype.Repository
 
@@ -45,7 +43,8 @@ class ReactionQueryServiceImpl : ReactionQueryService {
         }.empty().not()
     }
 
-    override suspend fun deleteByPostIdAndActorId(postId: Long, actorId: Long) {
-        Reactions.deleteWhere { Reactions.postId.eq(postId).and(Reactions.actorId.eq(actorId)) }
+    override suspend fun findByPostIdAndActorId(postId: Long, actorId: Long): List<Reaction> {
+        return Reactions.select { Reactions.postId eq postId and (Reactions.actorId eq actorId) }
+            .map { it.toReaction() }
     }
 }
