@@ -50,12 +50,19 @@ class RelationshipRepositoryImpl : RelationshipRepository {
         }
     }
 
+
     override suspend fun findByUserIdAndTargetUserId(actorId: Long, targetActorId: Long): Relationship? {
         return Relationships.select {
             (Relationships.actorId eq actorId)
                 .and(Relationships.targetActorId eq targetActorId)
         }.singleOrNull()
             ?.toRelationships()
+    }
+
+    override suspend fun deleteByActorIdOrTargetActorId(actorId: Long, targetActorId: Long) {
+        Relationships.deleteWhere {
+            Relationships.actorId.eq(actorId).or(Relationships.targetActorId.eq(targetActorId))
+        }
     }
 }
 
