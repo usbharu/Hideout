@@ -19,4 +19,24 @@ class HttpSignatureVerifierComposite(
 
         throw IllegalArgumentException("Unsupported algorithm. ${signature.algorithm}")
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as HttpSignatureVerifierComposite
+
+        if (map != other.map) return false
+        if (httpSignatureHeaderParser != other.httpSignatureHeaderParser) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = map.hashCode()
+        result = 31 * result + httpSignatureHeaderParser.hashCode()
+        return result
+    }
+
+
 }
