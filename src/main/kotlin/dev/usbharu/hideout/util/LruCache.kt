@@ -5,6 +5,12 @@ import java.io.Serial
 class LruCache<K, V>(private val maxSize: Int) : LinkedHashMap<K, V>(15, 0.75f, true) {
 
     override fun removeEldestEntry(eldest: MutableMap.MutableEntry<K, V>?): Boolean = size > maxSize
+    override fun toString(): String {
+        return "LruCache(" +
+                "maxSize=$maxSize" +
+                ")" +
+                " ${super.toString()}"
+    }
 
     companion object {
         @Serial

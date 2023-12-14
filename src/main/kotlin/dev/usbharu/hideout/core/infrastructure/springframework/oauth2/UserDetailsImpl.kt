@@ -30,6 +30,29 @@ class UserDetailsImpl(
         @Serial
         private const val serialVersionUID: Long = -899168205656607781L
     }
+
+    override fun toString(): String {
+        return "UserDetailsImpl(" +
+                "id=$id" +
+                ")" +
+                " ${super.toString()}"
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        if (!super.equals(other)) return false
+
+        other as UserDetailsImpl
+
+        return id == other.id
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + id.hashCode()
+        return result
+    }
 }
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
