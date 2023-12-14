@@ -43,4 +43,27 @@ open class SnowflakeIdGenerateService(private val baseTime: Long) : IdGenerateSe
     }
 
     private fun getTime(): Long = Instant.now().toEpochMilli()
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as SnowflakeIdGenerateService
+
+        if (baseTime != other.baseTime) return false
+        if (lastTimeStamp != other.lastTimeStamp) return false
+        if (sequenceId != other.sequenceId) return false
+        if (mutex != other.mutex) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = baseTime.hashCode()
+        result = 31 * result + lastTimeStamp.hashCode()
+        result = 31 * result + sequenceId
+        result = 31 * result + mutex.hashCode()
+        return result
+    }
+
+
 }
