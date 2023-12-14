@@ -90,8 +90,10 @@ class PostServiceImplTest {
     fun `createRemote 正常にリモートのpostを作成できる`() = runTest {
         val post = PostBuilder.of()
 
+        whenever(actorRepository.findById(eq(post.actorId))).doReturn(UserBuilder.remoteUserOf(id = post.actorId))
         whenever(postRepository.save(eq(post))).doReturn(true)
         whenever(timelineService.publishTimeline(eq(post), eq(false))).doReturn(Unit)
+
 
         val createLocal = postServiceImpl.createRemote(post)
 
@@ -106,6 +108,7 @@ class PostServiceImplTest {
     fun `createRemote 既に作成されていた場合はそのまま帰す`() = runTest {
         val post = PostBuilder.of()
 
+        whenever(actorRepository.findById(eq(post.actorId))).doReturn(UserBuilder.remoteUserOf(id = post.actorId))
         whenever(postRepository.save(eq(post))).doReturn(false)
 
         val createLocal = postServiceImpl.createRemote(post)
@@ -120,6 +123,7 @@ class PostServiceImplTest {
     fun `createRemote 既に作成されていることを検知できず例外が発生した場合はDBから取得して返す`() = runTest {
         val post = PostBuilder.of()
 
+        whenever(actorRepository.findById(eq(post.actorId))).doReturn(UserBuilder.remoteUserOf(id = post.actorId))
         whenever(postRepository.save(eq(post))).doAnswer { throw ExposedSQLException(null, emptyList(), mock()) }
         whenever(postQueryService.findByApId(eq(post.apId))).doReturn(post)
 
@@ -135,6 +139,7 @@ class PostServiceImplTest {
     fun `createRemote 既に作成されていることを検知出来ずタイムラインにpush出来なかった場合何もしない`() = runTest {
         val post = PostBuilder.of()
 
+        whenever(actorRepository.findById(eq(post.actorId))).doReturn(UserBuilder.remoteUserOf(id = post.actorId))
         whenever(postRepository.save(eq(post))).doReturn(true)
         whenever(timelineService.publishTimeline(eq(post), eq(false))).doThrow(DuplicateKeyException::class)
 
