@@ -22,6 +22,4 @@ class TempFile<T : Path?>(val path: T) : AutoCloseable {
     override fun hashCode(): Int {
         return path?.hashCode() ?: 0
     }
-
-
 }

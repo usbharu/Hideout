@@ -53,8 +53,6 @@ class UserDetailsImpl(
         result = 31 * result + id.hashCode()
         return result
     }
-
-
 }
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)

@@ -47,6 +47,4 @@ open class Undo(
                 ")" +
                 " ${super.toString()}"
     }
-
-
 }

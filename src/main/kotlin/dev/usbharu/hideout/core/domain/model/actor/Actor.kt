@@ -181,7 +181,7 @@ data class Actor private constructor(
     fun decrementPostsCount(): Actor = this.copy(postsCount = this.postsCount - 1)
 
     fun withLastPostAt(lastPostDate: Instant): Actor = this.copy(lastPostDate = lastPostDate)
-    
+
     override fun toString(): String {
         return "Actor(" +
                 "id=$id, " +
@@ -206,6 +206,4 @@ data class Actor private constructor(
                 "lastPostDate=$lastPostDate" +
                 ")"
     }
-
-
 }

@@ -47,6 +47,4 @@ class KtorResolveResponse(val ktorHttpResponse: HttpResponse) : ResolveResponse 
         result = 31 * result + _bodyAsBytes.contentHashCode()
         return result
     }
-
-
 }

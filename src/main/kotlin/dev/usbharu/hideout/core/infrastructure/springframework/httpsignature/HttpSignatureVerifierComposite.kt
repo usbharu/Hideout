@@ -37,6 +37,4 @@ class HttpSignatureVerifierComposite(
         result = 31 * result + httpSignatureHeaderParser.hashCode()
         return result
     }
-
-
 }

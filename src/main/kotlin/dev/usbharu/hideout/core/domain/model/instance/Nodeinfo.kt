@@ -15,8 +15,6 @@ class Nodeinfo private constructor() {
     override fun hashCode(): Int {
         return links.hashCode()
     }
-
-
 }
 
 class Links private constructor() {
@@ -39,6 +37,4 @@ class Links private constructor() {
         result = 31 * result + (href?.hashCode() ?: 0)
         return result
     }
-
-
 }

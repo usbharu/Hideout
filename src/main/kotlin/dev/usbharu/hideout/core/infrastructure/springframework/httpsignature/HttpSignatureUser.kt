@@ -51,6 +51,4 @@ class HttpSignatureUser(
         @Serial
         private const val serialVersionUID: Long = -3330552099960982997L
     }
-
-
 }

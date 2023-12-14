@@ -23,8 +23,6 @@ class Nodeinfo2_0 {
         result = 31 * result + (software?.hashCode() ?: 0)
         return result
     }
-
-
 }
 
 class Metadata {
@@ -47,8 +45,6 @@ class Metadata {
         result = 31 * result + (nodeDescription?.hashCode() ?: 0)
         return result
     }
-
-
 }
 
 class Software {
@@ -72,5 +68,4 @@ class Software {
         result = 31 * result + (version?.hashCode() ?: 0)
         return result
     }
-
 }
