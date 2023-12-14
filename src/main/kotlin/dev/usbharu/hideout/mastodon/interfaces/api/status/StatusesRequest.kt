@@ -78,7 +78,6 @@ class StatusesRequest {
                 ")"
     }
 
-
     @Suppress("EnumNaming", "EnumEntryNameCase")
     enum class Visibility {
         `public`,

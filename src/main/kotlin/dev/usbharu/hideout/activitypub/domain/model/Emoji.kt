@@ -14,7 +14,6 @@ open class Emoji(
     HasName,
     HasId {
 
-
     override fun toString(): String {
         return "Emoji(" +
                 "name='$name', " +
@@ -48,6 +47,4 @@ open class Emoji(
         result = 31 * result + icon.hashCode()
         return result
     }
-
-
 }

@@ -39,6 +39,4 @@ open class Follow(
                 ")" +
                 " ${super.toString()}"
     }
-
-
 }

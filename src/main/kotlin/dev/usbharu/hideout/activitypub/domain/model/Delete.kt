@@ -59,6 +59,4 @@ open class Delete : Object, HasId, HasActor {
                 ")" +
                 " ${super.toString()}"
     }
-
-
 }

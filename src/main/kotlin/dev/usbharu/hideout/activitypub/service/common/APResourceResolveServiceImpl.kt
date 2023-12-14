@@ -86,7 +86,5 @@ class APResourceResolveServiceImpl(
         override fun hashCode(): Int {
             return objects.hashCode()
         }
-
-
     }
 }
