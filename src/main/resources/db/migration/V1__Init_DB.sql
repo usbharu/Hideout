@@ -15,22 +15,26 @@ create table if not exists instance
 );
 create table if not exists actors
 (
-    id          bigint primary key,
-    "name"      varchar(300)   not null,
-    "domain"    varchar(1000)  not null,
-    screen_name varchar(300)   not null,
-    description varchar(10000) not null,
-    inbox  varchar(1000) not null unique,
-    outbox varchar(1000) not null unique,
-    url    varchar(1000) not null unique,
-    public_key  varchar(10000) not null,
-    private_key varchar(10000) null,
-    created_at  bigint         not null,
-    key_id      varchar(1000)  not null,
-    "following" varchar(1000)  null,
-    followers   varchar(1000)  null,
-    "instance"  bigint         null,
-    locked boolean       not null,
+    id              bigint primary key,
+    "name"          varchar(300)   not null,
+    "domain"        varchar(1000)  not null,
+    screen_name     varchar(300)   not null,
+    description     varchar(10000) not null,
+    inbox           varchar(1000)  not null unique,
+    outbox          varchar(1000)  not null unique,
+    url             varchar(1000)  not null unique,
+    public_key      varchar(10000) not null,
+    private_key     varchar(10000) null,
+    created_at      bigint         not null,
+    key_id          varchar(1000)  not null,
+    "following"     varchar(1000)  null,
+    followers       varchar(1000)  null,
+    "instance"      bigint         null,
+    locked          boolean        not null,
+    following_count int            not null,
+    followers_count int            not null,
+    posts_count     int            not null,
+    last_post_at    timestamp      null default null,
     unique ("name", "domain"),
     constraint fk_actors_instance__id foreign key ("instance") references instance (id) on delete restrict on update restrict
 );
@@ -200,8 +204,9 @@ create table if not exists relationships
 );
 
 insert into actors (id, name, domain, screen_name, description, inbox, outbox, url, public_key, private_key, created_at,
-                    key_id, following, followers, instance, locked)
-values (0, 'ghost', '', '', '', '', '', '', '', null, 0, '', '', '', null, true);
+                    key_id, following, followers, instance, locked, following_count, followers_count, posts_count,
+                    last_post_at)
+values (0, 'ghost', '', '', '', '', '', '', '', null, 0, '', '', '', null, true, 0, 0, 0, null);
 
 create table if not exists deleted_actors
 (

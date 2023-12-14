@@ -8,6 +8,7 @@ import dev.usbharu.hideout.activitypub.service.activity.undo.APSendUndoService
 import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.domain.model.actor.Actor
+import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.relationship.Relationship
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
 import dev.usbharu.hideout.core.query.ActorQueryService
@@ -24,7 +25,8 @@ class RelationshipServiceImpl(
     private val apSendBlockService: APSendBlockService,
     private val apSendAcceptService: ApSendAcceptService,
     private val apSendRejectService: ApSendRejectService,
-    private val apSendUndoService: APSendUndoService
+    private val apSendUndoService: APSendUndoService,
+    private val actorRepository: ActorRepository
 ) : RelationshipService {
     override suspend fun followRequest(actorId: Long, targetId: Long) {
         logger.info("START Follow Request userId: {} targetId: {}", actorId, targetId)
@@ -90,6 +92,15 @@ class RelationshipServiceImpl(
 
     override suspend fun block(actorId: Long, targetId: Long) {
         val relationship = relationshipRepository.findByUserIdAndTargetUserId(actorId, targetId)
+
+        val user = actorQueryService.findById(actorId)
+        val targetActor = actorQueryService.findById(targetId)
+        if (relationship?.following == true) {
+            actorRepository.save(user.decrementFollowing())
+            actorRepository.save(targetActor.decrementFollowers())
+        }
+
+        val blockedRelationship = relationship
             ?.copy(blocking = true, followRequest = false, following = false) ?: Relationship(
             actorId = actorId,
             targetActorId = targetId,
@@ -101,17 +112,23 @@ class RelationshipServiceImpl(
         )
 
         val inverseRelationship = relationshipRepository.findByUserIdAndTargetUserId(targetId, actorId)
+
+        if (inverseRelationship?.following == true) {
+            actorRepository.save(targetActor.decrementFollowing())
+            actorRepository.save(user.decrementFollowers())
+        }
+
+        val blockedInverseRelationship = inverseRelationship
             ?.copy(followRequest = false, following = false)
 
-        relationshipRepository.save(relationship)
-        if (inverseRelationship != null) {
-            relationshipRepository.save(inverseRelationship)
+        relationshipRepository.save(blockedRelationship)
+        if (blockedInverseRelationship != null) {
+            relationshipRepository.save(blockedInverseRelationship)
         }
 
         val remoteUser = isRemoteUser(targetId)
 
         if (remoteUser != null) {
-            val user = actorQueryService.findById(actorId)
             apSendBlockService.sendBlock(user, remoteUser)
         }
     }
@@ -157,13 +174,18 @@ class RelationshipServiceImpl(
 
         val copy = relationship.copy(followRequest = false, following = true, blocking = false)
 
+        val user = actorQueryService.findById(actorId)
+
+        actorRepository.save(user.incrementFollowers())
+
         relationshipRepository.save(copy)
 
-        val remoteUser = isRemoteUser(targetId)
+        val remoteActor = actorQueryService.findById(targetId)
 
-        if (remoteUser != null) {
-            val user = actorQueryService.findById(actorId)
-            apSendAcceptService.sendAcceptFollow(user, remoteUser)
+        actorRepository.save(remoteActor.incrementFollowing())
+
+        if (isRemoteActor(remoteActor)) {
+            apSendAcceptService.sendAcceptFollow(user, remoteActor)
         }
     }
 
@@ -216,6 +238,14 @@ class RelationshipServiceImpl(
             return
         }
 
+        val user = actorQueryService.findById(actorId)
+        val targetActor = actorQueryService.findById(targetId)
+
+        if (relationship.following) {
+            actorRepository.save(user.decrementFollowing())
+            actorRepository.save(targetActor.decrementFollowers())
+        }
+
         if (relationship.following.not()) {
             logger.warn("SUCCESS User already unfollow. userId: {} targetId: {}", actorId, targetId)
             return
@@ -228,7 +258,6 @@ class RelationshipServiceImpl(
         val remoteUser = isRemoteUser(targetId)
 
         if (remoteUser != null) {
-            val user = actorQueryService.findById(actorId)
             apSendUndoService.sendUndoFollow(user, remoteUser)
         }
     }
@@ -281,6 +310,8 @@ class RelationshipServiceImpl(
 
         relationshipRepository.save(relationship)
     }
+
+    private fun isRemoteActor(actor: Actor): Boolean = actor.domain != applicationConfig.url.host
 
     private suspend fun isRemoteUser(userId: Long): Actor? {
         logger.trace("isRemoteUser({})", userId)

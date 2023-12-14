@@ -6,6 +6,7 @@ import dev.usbharu.hideout.activitypub.service.activity.follow.APSendFollowServi
 import dev.usbharu.hideout.activitypub.service.activity.reject.ApSendRejectService
 import dev.usbharu.hideout.activitypub.service.activity.undo.APSendUndoService
 import dev.usbharu.hideout.application.config.ApplicationConfig
+import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.relationship.Relationship
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
 import dev.usbharu.hideout.core.query.ActorQueryService
@@ -48,6 +49,9 @@ class RelationshipServiceImplTest {
 
     @Mock
     private lateinit var apSendUndoService: APSendUndoService
+
+    @Mock
+    private lateinit var actorRepository: ActorRepository
 
     @InjectMocks
     private lateinit var relationshipServiceImpl: RelationshipServiceImpl
@@ -209,6 +213,7 @@ class RelationshipServiceImplTest {
 
     @Test
     fun `block ローカルユーザーの場合永続化される`() = runTest {
+        whenever(actorQueryService.findById(eq(1234))).doReturn(UserBuilder.localUserOf(domain = "example.com"))
         whenever(actorQueryService.findById(eq(5678))).doReturn(UserBuilder.localUserOf(domain = "example.com"))
 
         relationshipServiceImpl.block(1234, 5678)
@@ -256,6 +261,7 @@ class RelationshipServiceImplTest {
 
     @Test
     fun `acceptFollowRequest ローカルユーザーの場合永続化される`() = runTest {
+        whenever(actorQueryService.findById(eq(1234))).doReturn(UserBuilder.localUserOf(domain = "example.com"))
         whenever(actorQueryService.findById(eq(5678))).doReturn(UserBuilder.localUserOf(domain = "example.com"))
 
         whenever(relationshipRepository.findByUserIdAndTargetUserId(eq(5678), eq(1234))).doReturn(
@@ -347,6 +353,7 @@ class RelationshipServiceImplTest {
 
     @Test
     fun `acceptFollowRequest フォローリクエストが存在せずforceがtrueのときフォローを承認する`() = runTest {
+        whenever(actorQueryService.findById(eq(1234))).doReturn(UserBuilder.localUserOf(domain = "example.com"))
         whenever(actorQueryService.findById(eq(5678))).doReturn(UserBuilder.remoteUserOf(domain = "remote.example.com"))
 
         whenever(relationshipRepository.findByUserIdAndTargetUserId(eq(5678), eq(1234))).doReturn(
@@ -530,6 +537,7 @@ class RelationshipServiceImplTest {
 
     @Test
     fun `unfollow ローカルユーザーの場合永続化される`() = runTest {
+        whenever(actorQueryService.findById(eq(1234))).doReturn(UserBuilder.remoteUserOf(domain = "remote.example.com"))
         whenever(actorQueryService.findById(eq(5678))).doReturn(UserBuilder.localUserOf(domain = "example.com"))
         whenever(relationshipRepository.findByUserIdAndTargetUserId(eq(1234), eq(5678))).doReturn(
             Relationship(
