@@ -50,6 +50,15 @@ open class Delete : Object, HasId, HasActor {
         return result
     }
 
-    override fun toString(): String =
-        "Delete(`object`=$apObject, published=$published, actor='$actor', id='$id') ${super.toString()}"
+    override fun toString(): String {
+        return "Delete(" +
+                "apObject=$apObject, " +
+                "published='$published', " +
+                "actor='$actor', " +
+                "id='$id'" +
+                ")" +
+                " ${super.toString()}"
+    }
+
+
 }

@@ -39,8 +39,18 @@ class HttpSignatureUser(
         return result
     }
 
+    override fun toString(): String {
+        return "HttpSignatureUser(" +
+                "domain='$domain', " +
+                "id=$id" +
+                ")" +
+                " ${super.toString()}"
+    }
+
     companion object {
         @Serial
         private const val serialVersionUID: Long = -3330552099960982997L
     }
+
+
 }

@@ -181,25 +181,31 @@ data class Actor private constructor(
     fun decrementPostsCount(): Actor = this.copy(postsCount = this.postsCount - 1)
 
     fun withLastPostAt(lastPostDate: Instant): Actor = this.copy(lastPostDate = lastPostDate)
-
+    
     override fun toString(): String {
         return "Actor(" +
-            "id=$id, " +
-            "name='$name', " +
-            "domain='$domain', " +
-            "screenName='$screenName', " +
-            "description='$description', " +
-            "inbox='$inbox', " +
-            "outbox='$outbox', " +
-            "url='$url', " +
-            "publicKey='$publicKey', " +
-            "privateKey=$privateKey, " +
-            "createdAt=$createdAt, " +
-            "keyId='$keyId', " +
-            "followers=$followers, " +
-            "following=$following, " +
-            "instance=$instance, " +
-            "locked=$locked" +
-            ")"
+                "id=$id, " +
+                "name='$name', " +
+                "domain='$domain', " +
+                "screenName='$screenName', " +
+                "description='$description', " +
+                "inbox='$inbox', " +
+                "outbox='$outbox', " +
+                "url='$url', " +
+                "publicKey='$publicKey', " +
+                "privateKey=$privateKey, " +
+                "createdAt=$createdAt, " +
+                "keyId='$keyId', " +
+                "followers=$followers, " +
+                "following=$following, " +
+                "instance=$instance, " +
+                "locked=$locked, " +
+                "followersCount=$followersCount, " +
+                "followingCount=$followingCount, " +
+                "postsCount=$postsCount, " +
+                "lastPostDate=$lastPostDate" +
+                ")"
     }
+
+
 }
