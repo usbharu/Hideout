@@ -30,5 +30,15 @@ open class Emoji(
         return result
     }
 
-    override fun toString(): String = "Emoji(updated=$updated, icon=$icon) ${super.toString()}"
+    override fun toString(): String {
+        return "Emoji(" +
+                "name='$name', " +
+                "id='$id', " +
+                "updated='$updated', " +
+                "icon=$icon" +
+                ")" +
+                " ${super.toString()}"
+    }
+
+
 }

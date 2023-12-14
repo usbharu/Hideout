@@ -30,6 +30,15 @@ class UserDetailsImpl(
         @Serial
         private const val serialVersionUID: Long = -899168205656607781L
     }
+
+    override fun toString(): String {
+        return "UserDetailsImpl(" +
+                "id=$id" +
+                ")" +
+                " ${super.toString()}"
+    }
+
+
 }
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
