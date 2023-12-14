@@ -32,5 +32,11 @@ open class Follow(
         return result
     }
 
-    override fun toString(): String = "Follow(`object`=$apObject, actor='$actor') ${super.toString()}"
+    override fun toString(): String {
+        return "Follow(" +
+                "apObject='$apObject', " +
+                "actor='$actor'" +
+                ")" +
+                " ${super.toString()}"
+    }
 }
