@@ -7,7 +7,6 @@ import dev.usbharu.hideout.activitypub.domain.model.Like
 import dev.usbharu.hideout.activitypub.service.common.ActivityPubProcessContext
 import dev.usbharu.hideout.activitypub.service.common.ActivityType
 import dev.usbharu.hideout.application.config.ActivityPubConfig
-import dev.usbharu.hideout.core.query.ActorQueryService
 import dev.usbharu.hideout.core.service.relationship.RelationshipService
 import dev.usbharu.httpsignature.common.HttpHeaders
 import dev.usbharu.httpsignature.common.HttpMethod

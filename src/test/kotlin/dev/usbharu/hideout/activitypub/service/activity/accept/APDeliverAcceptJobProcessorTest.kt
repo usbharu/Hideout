@@ -5,7 +5,6 @@ import dev.usbharu.hideout.activitypub.domain.model.Follow
 import dev.usbharu.hideout.activitypub.service.common.APRequestService
 import dev.usbharu.hideout.core.external.job.DeliverAcceptJob
 import dev.usbharu.hideout.core.external.job.DeliverAcceptJobParam
-import dev.usbharu.hideout.core.query.ActorQueryService
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

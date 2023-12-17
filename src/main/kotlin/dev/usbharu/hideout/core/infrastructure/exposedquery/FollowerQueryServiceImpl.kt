@@ -1,8 +1,8 @@
 package dev.usbharu.hideout.core.infrastructure.exposedquery
 
 import dev.usbharu.hideout.core.domain.model.actor.Actor
+import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
-import dev.usbharu.hideout.core.query.ActorQueryService
 import dev.usbharu.hideout.core.query.FollowerQueryService
 import dev.usbharu.hideout.core.query.RelationshipQueryService
 import org.springframework.stereotype.Repository
@@ -10,11 +10,11 @@ import org.springframework.stereotype.Repository
 @Repository
 class FollowerQueryServiceImpl(
     private val relationshipQueryService: RelationshipQueryService,
-    private val actorQueryService: ActorQueryService,
-    private val relationshipRepository: RelationshipRepository
+    private val relationshipRepository: RelationshipRepository,
+    private val actorRepository: ActorRepository
 ) : FollowerQueryService {
     override suspend fun findFollowersById(id: Long): List<Actor> {
-        return actorQueryService.findByIds(
+        return actorRepository.findByIds(
             relationshipQueryService.findByTargetIdAndFollowing(id, true).map { it.actorId }
         )
     }

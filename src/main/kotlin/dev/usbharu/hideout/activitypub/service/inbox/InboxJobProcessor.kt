@@ -7,10 +7,8 @@ import dev.usbharu.hideout.activitypub.service.common.ActivityPubProcessContext
 import dev.usbharu.hideout.activitypub.service.common.ActivityPubProcessor
 import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
 import dev.usbharu.hideout.application.external.Transaction
-import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.external.job.InboxJob
 import dev.usbharu.hideout.core.external.job.InboxJobParam
-import dev.usbharu.hideout.core.query.ActorQueryService
 import dev.usbharu.hideout.core.service.job.JobProcessor
 import dev.usbharu.hideout.util.RsaUtil
 import dev.usbharu.httpsignature.common.HttpHeaders
@@ -29,7 +27,6 @@ class InboxJobProcessor(
     private val objectMapper: ObjectMapper,
     private val signatureHeaderParser: SignatureHeaderParser,
     private val signatureVerifier: HttpSignatureVerifier,
-    private val actorQueryService: ActorQueryService,
     private val apUserService: APUserService,
     private val transaction: Transaction
 ) : JobProcessor<InboxJobParam, InboxJob> {
@@ -37,7 +34,8 @@ class InboxJobProcessor(
     private suspend fun verifyHttpSignature(
         httpRequest: HttpRequest,
         signature: Signature,
-        transaction: Transaction
+        transaction: Transaction,
+        actor: String
     ): Boolean {
         val requiredHeaders = when (httpRequest.method) {
             HttpMethod.GET -> getRequiredHeaders
@@ -49,11 +47,7 @@ class InboxJobProcessor(
         }
 
         val user = transaction.transaction {
-            try {
-                actorQueryService.findByKeyId(signature.keyId)
-            } catch (_: FailedToGetResourcesException) {
-                apUserService.fetchPersonWithEntity(signature.keyId).second
-            }
+            apUserService.fetchPersonWithEntity(actor).second
         }
 
         @Suppress("TooGenericExceptionCaught")
@@ -97,7 +91,10 @@ class InboxJobProcessor(
 
         logger.debug("Has signature? {}", signature != null)
 
-        val verify = signature?.let { verifyHttpSignature(httpRequest, it, transaction) } ?: false
+
+        //todo 不正なactorを取得してしまわないようにする
+        val verify =
+            signature?.let { verifyHttpSignature(httpRequest, it, transaction, jsonNode["actor"].textValue()) } ?: false
 
         logger.debug("Is verifying success? {}", verify)
 
