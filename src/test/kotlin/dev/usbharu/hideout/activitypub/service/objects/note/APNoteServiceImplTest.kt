@@ -16,7 +16,6 @@ import dev.usbharu.hideout.application.service.id.TwitterSnowflakeIdGenerateServ
 import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
-import dev.usbharu.hideout.core.query.ActorQueryService
 import dev.usbharu.hideout.core.query.PostQueryService
 import dev.usbharu.hideout.core.service.post.PostService
 import io.ktor.client.*

@@ -5,7 +5,6 @@ import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.post.Visibility
 import dev.usbharu.hideout.core.domain.model.timeline.Timeline
 import dev.usbharu.hideout.core.domain.model.timeline.TimelineRepository
-import dev.usbharu.hideout.core.query.ActorQueryService
 import dev.usbharu.hideout.core.query.FollowerQueryService
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat

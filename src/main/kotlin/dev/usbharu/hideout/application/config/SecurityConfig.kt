@@ -7,19 +7,18 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet
 import com.nimbusds.jose.jwk.source.JWKSource
 import com.nimbusds.jose.proc.SecurityContext
 import dev.usbharu.hideout.application.external.Transaction
+import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.infrastructure.springframework.httpsignature.HttpSignatureFilter
 import dev.usbharu.hideout.core.infrastructure.springframework.httpsignature.HttpSignatureUserDetailsService
 import dev.usbharu.hideout.core.infrastructure.springframework.httpsignature.HttpSignatureVerifierComposite
 import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.UserDetailsImpl
 import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.UserDetailsServiceImpl
-import dev.usbharu.hideout.core.query.ActorQueryService
 import dev.usbharu.hideout.util.RsaUtil
 import dev.usbharu.hideout.util.hasAnyScope
 import dev.usbharu.httpsignature.sign.RsaSha256HttpSignatureSigner
 import dev.usbharu.httpsignature.verify.DefaultSignatureHeaderParser
 import dev.usbharu.httpsignature.verify.RsaSha256HttpSignatureVerifier
 import jakarta.annotation.PostConstruct
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -67,9 +66,6 @@ import java.util.*
 @Configuration
 @Suppress("FunctionMaxLength", "TooManyFunctions")
 class SecurityConfig {
-
-    @Autowired
-    private lateinit var actorQueryService: ActorQueryService
 
     @Bean
     fun authenticationManager(authenticationConfiguration: AuthenticationConfiguration): AuthenticationManager? =
@@ -130,12 +126,14 @@ class SecurityConfig {
 
     @Bean
     @Order(1)
-    fun httpSignatureAuthenticationProvider(transaction: Transaction): PreAuthenticatedAuthenticationProvider {
+    fun httpSignatureAuthenticationProvider(
+        transaction: Transaction,
+        actorRepository: ActorRepository
+    ): PreAuthenticatedAuthenticationProvider {
         val provider = PreAuthenticatedAuthenticationProvider()
         val signatureHeaderParser = DefaultSignatureHeaderParser()
         provider.setPreAuthenticatedUserDetailsService(
             HttpSignatureUserDetailsService(
-                actorQueryService,
                 HttpSignatureVerifierComposite(
                     mapOf(
                         "rsa-sha256" to RsaSha256HttpSignatureVerifier(
@@ -145,7 +143,8 @@ class SecurityConfig {
                     signatureHeaderParser
                 ),
                 transaction,
-                signatureHeaderParser
+                signatureHeaderParser,
+                actorRepository
             )
         )
         provider.setUserDetailsChecker(AccountStatusUserDetailsChecker())

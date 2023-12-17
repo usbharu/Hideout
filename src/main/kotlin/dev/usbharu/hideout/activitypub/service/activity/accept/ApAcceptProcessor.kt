@@ -7,15 +7,16 @@ import dev.usbharu.hideout.activitypub.service.common.AbstractActivityPubProcess
 import dev.usbharu.hideout.activitypub.service.common.ActivityPubProcessContext
 import dev.usbharu.hideout.activitypub.service.common.ActivityType
 import dev.usbharu.hideout.application.external.Transaction
-import dev.usbharu.hideout.core.query.ActorQueryService
+import dev.usbharu.hideout.core.domain.exception.resource.UserNotFoundException
+import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.service.relationship.RelationshipService
 import org.springframework.stereotype.Service
 
 @Service
 class ApAcceptProcessor(
     transaction: Transaction,
-    private val actorQueryService: ActorQueryService,
-    private val relationshipService: RelationshipService
+    private val relationshipService: RelationshipService,
+    private val actorRepository: ActorRepository
 ) :
     AbstractActivityPubProcessor<Accept>(transaction) {
 
@@ -32,8 +33,8 @@ class ApAcceptProcessor(
         val userUrl = follow.apObject
         val followerUrl = follow.actor
 
-        val user = actorQueryService.findByUrl(userUrl)
-        val follower = actorQueryService.findByUrl(followerUrl)
+        val user = actorRepository.findByUrl(userUrl) ?: throw UserNotFoundException.withUrl(userUrl)
+        val follower = actorRepository.findByUrl(followerUrl) ?: throw UserNotFoundException.withUrl(followerUrl)
 
         relationshipService.acceptFollowRequest(user.id, follower.id)
         logger.debug("SUCCESS Follow from ${user.url} to ${follower.url}.")

@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.core.infrastructure.exposedrepository
 
+import dev.usbharu.hideout.application.infrastructure.exposed.QueryMapper
 import dev.usbharu.hideout.application.infrastructure.exposed.ResultRowMapper
 import dev.usbharu.hideout.application.service.id.IdGenerateService
 import dev.usbharu.hideout.core.domain.model.actor.Actor
@@ -12,12 +13,13 @@ import org.springframework.stereotype.Repository
 @Repository
 class ActorRepositoryImpl(
     private val idGenerateService: IdGenerateService,
-    private val actorResultRowMapper: ResultRowMapper<Actor>
+    private val actorResultRowMapper: ResultRowMapper<Actor>,
+    private val actorQueryMapper: QueryMapper<Actor>
 ) :
     ActorRepository {
 
     override suspend fun save(actor: Actor): Actor {
-        val singleOrNull = Actors.select { Actors.id eq actor.id }.empty()
+        val singleOrNull = Actors.select { Actors.id eq actor.id }.forUpdate().empty()
         if (singleOrNull) {
             Actors.insert {
                 it[id] = actor.id
@@ -69,6 +71,41 @@ class ActorRepositoryImpl(
 
     override suspend fun findById(id: Long): Actor? =
         Actors.select { Actors.id eq id }.singleOrNull()?.let(actorResultRowMapper::map)
+
+    override suspend fun findByIdWithLock(id: Long): Actor? =
+        Actors.select { Actors.id eq id }.forUpdate().singleOrNull()?.let(actorResultRowMapper::map)
+
+    override suspend fun findAll(limit: Int, offset: Long): List<Actor> =
+        Actors.selectAll().limit(limit, offset).let(actorQueryMapper::map)
+
+    override suspend fun findByName(name: String): List<Actor> =
+        Actors.select { Actors.name eq name }.let(actorQueryMapper::map)
+
+    override suspend fun findByNameAndDomain(name: String, domain: String): Actor? = Actors
+        .select { Actors.name eq name and (Actors.domain eq domain) }
+        .singleOrNull()
+        ?.let(actorResultRowMapper::map)
+
+    override suspend fun findByNameAndDomainWithLock(name: String, domain: String): Actor? = Actors
+        .select { Actors.name eq name and (Actors.domain eq domain) }
+        .forUpdate()
+        .singleOrNull()
+        ?.let(actorResultRowMapper::map)
+
+    override suspend fun findByUrl(url: String): Actor? = Actors.select { Actors.url eq url }
+        .singleOrNull()
+        ?.let(actorResultRowMapper::map)
+
+    override suspend fun findByUrlWithLock(url: String): Actor? = Actors.select { Actors.url eq url }.forUpdate()
+        .singleOrNull()
+        ?.let(actorResultRowMapper::map)
+
+    override suspend fun findByIds(ids: List<Long>): List<Actor> =
+        Actors.select { Actors.id inList ids }.let(actorQueryMapper::map)
+
+    override suspend fun findByKeyId(keyId: String): Actor? = Actors.select { Actors.keyId eq keyId }
+        .singleOrNull()
+        ?.let(actorResultRowMapper::map)
 
     override suspend fun delete(id: Long) {
         Actors.deleteWhere { Actors.id.eq(id) }

@@ -7,7 +7,9 @@ import dev.usbharu.hideout.activitypub.service.common.ActivityPubProcessContext
 import dev.usbharu.hideout.activitypub.service.common.ActivityType
 import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
 import dev.usbharu.hideout.application.external.Transaction
-import dev.usbharu.hideout.core.query.ActorQueryService
+import dev.usbharu.hideout.core.domain.exception.resource.UserNotFoundException
+import dev.usbharu.hideout.core.domain.exception.resource.local.LocalUserNotFoundException
+import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.query.PostQueryService
 import dev.usbharu.hideout.core.service.reaction.ReactionService
 import dev.usbharu.hideout.core.service.relationship.RelationshipService
@@ -17,10 +19,10 @@ import org.springframework.stereotype.Service
 class APUndoProcessor(
     transaction: Transaction,
     private val apUserService: APUserService,
-    private val actorQueryService: ActorQueryService,
     private val relationshipService: RelationshipService,
     private val postQueryService: PostQueryService,
-    private val reactionService: ReactionService
+    private val reactionService: ReactionService,
+    private val actorRepository: ActorRepository
 ) :
     AbstractActivityPubProcessor<Undo>(transaction) {
     override suspend fun internalProcess(activity: ActivityPubProcessContext<Undo>) {
@@ -35,9 +37,9 @@ class APUndoProcessor(
             "Follow" -> {
                 val follow = undo.apObject as Follow
 
-                apUserService.fetchPerson(undo.actor, follow.apObject)
-                val follower = actorQueryService.findByUrl(undo.actor)
-                val target = actorQueryService.findByUrl(follow.apObject)
+                val follower = apUserService.fetchPersonWithEntity(undo.actor, follow.apObject).second
+                val target =
+                    actorRepository.findByUrl(follow.apObject) ?: throw UserNotFoundException.withUrl(follow.apObject)
 
                 relationshipService.unfollow(follower.id, target.id)
                 return
@@ -47,7 +49,8 @@ class APUndoProcessor(
                 val block = undo.apObject as Block
 
                 val blocker = apUserService.fetchPersonWithEntity(undo.actor, block.apObject).second
-                val target = actorQueryService.findByUrl(block.apObject)
+                val target =
+                    actorRepository.findByUrl(block.apObject) ?: throw UserNotFoundException.withUrl(block.apObject)
 
                 relationshipService.unblock(blocker.id, target.id)
                 return
@@ -66,7 +69,8 @@ class APUndoProcessor(
                 }
 
                 val accepter = apUserService.fetchPersonWithEntity(undo.actor, acceptObject).second
-                val target = actorQueryService.findByUrl(acceptObject)
+                val target =
+                    actorRepository.findByUrl(acceptObject) ?: throw UserNotFoundException.withUrl(acceptObject)
 
                 relationshipService.rejectFollowRequest(accepter.id, target.id)
                 return
@@ -77,7 +81,9 @@ class APUndoProcessor(
 
                 val post = postQueryService.findByUrl(like.apObject)
 
-                val actor = actorQueryService.findByUrl(like.actor)
+                val signer =
+                    actorRepository.findById(post.actorId) ?: throw LocalUserNotFoundException.withId(post.actorId)
+                val actor = apUserService.fetchPersonWithEntity(like.actor, signer.url).second
 
                 reactionService.receiveRemoveReaction(actor.id, post.id)
                 return

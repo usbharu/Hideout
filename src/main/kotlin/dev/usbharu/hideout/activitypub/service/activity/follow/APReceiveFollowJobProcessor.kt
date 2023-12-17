@@ -5,9 +5,10 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.activitypub.domain.model.Follow
 import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
 import dev.usbharu.hideout.application.external.Transaction
+import dev.usbharu.hideout.core.domain.exception.resource.UserNotFoundException
+import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.external.job.ReceiveFollowJob
 import dev.usbharu.hideout.core.external.job.ReceiveFollowJobParam
-import dev.usbharu.hideout.core.query.ActorQueryService
 import dev.usbharu.hideout.core.service.job.JobProcessor
 import dev.usbharu.hideout.core.service.relationship.RelationshipService
 import org.slf4j.LoggerFactory
@@ -16,10 +17,10 @@ import org.springframework.stereotype.Service
 @Service
 class APReceiveFollowJobProcessor(
     private val transaction: Transaction,
-    private val actorQueryService: ActorQueryService,
     private val apUserService: APUserService,
     private val objectMapper: ObjectMapper,
-    private val relationshipService: RelationshipService
+    private val relationshipService: RelationshipService,
+    private val actorRepository: ActorRepository
 ) :
     JobProcessor<ReceiveFollowJobParam, ReceiveFollowJob> {
     override suspend fun process(param: ReceiveFollowJobParam) = transaction.transaction {
@@ -28,9 +29,10 @@ class APReceiveFollowJobProcessor(
 
         logger.info("START Follow from: {} to {}", param.targetActor, param.actor)
 
-        val targetEntity = actorQueryService.findByUrl(param.targetActor)
+        val targetEntity =
+            actorRepository.findByUrl(param.targetActor) ?: throw UserNotFoundException.withUrl(param.targetActor)
         val followActorEntity =
-            actorQueryService.findByUrl(follow.actor)
+            actorRepository.findByUrl(follow.actor) ?: throw UserNotFoundException.withUrl(follow.actor)
 
         relationshipService.followRequest(followActorEntity.id, targetEntity.id)
 

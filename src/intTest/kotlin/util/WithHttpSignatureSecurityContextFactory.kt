@@ -1,8 +1,9 @@
 package util
 
 import dev.usbharu.hideout.application.external.Transaction
+import dev.usbharu.hideout.core.domain.exception.resource.UserNotFoundException
+import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.infrastructure.springframework.httpsignature.HttpSignatureUser
-import dev.usbharu.hideout.core.query.ActorQueryService
 import dev.usbharu.httpsignature.common.HttpHeaders
 import dev.usbharu.httpsignature.common.HttpMethod
 import dev.usbharu.httpsignature.common.HttpRequest
@@ -14,7 +15,7 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 import java.net.URL
 
 class WithHttpSignatureSecurityContextFactory(
-    private val actorQueryService: ActorQueryService,
+    private val actorRepository: ActorRepository,
     private val transaction: Transaction
 ) : WithSecurityContextFactory<WithHttpSignature> {
 
@@ -28,7 +29,8 @@ class WithHttpSignatureSecurityContextFactory(
             )
         )
         val httpSignatureUser = transaction.transaction {
-            val findByKeyId = actorQueryService.findByKeyId(annotation.keyId)
+            val findByKeyId =
+                actorRepository.findByKeyId(annotation.keyId) ?: throw UserNotFoundException.withKeyId(annotation.keyId)
             HttpSignatureUser(
                 findByKeyId.name,
                 findByKeyId.domain,

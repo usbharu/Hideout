@@ -3,6 +3,7 @@ package dev.usbharu.hideout.core.service.user
 import dev.usbharu.hideout.activitypub.service.activity.delete.APSendDeleteService
 import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
+import dev.usbharu.hideout.core.domain.exception.resource.UserNotFoundException
 import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.deletedActor.DeletedActor
@@ -11,7 +12,6 @@ import dev.usbharu.hideout.core.domain.model.reaction.ReactionRepository
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetail
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
-import dev.usbharu.hideout.core.query.ActorQueryService
 import dev.usbharu.hideout.core.query.DeletedActorQueryService
 import dev.usbharu.hideout.core.service.instance.InstanceService
 import dev.usbharu.hideout.core.service.post.PostService
@@ -26,7 +26,6 @@ import java.time.Instant
 class UserServiceImpl(
     private val actorRepository: ActorRepository,
     private val userAuthService: UserAuthService,
-    private val actorQueryService: ActorQueryService,
     private val actorBuilder: Actor.UserBuilder,
     private val applicationConfig: ApplicationConfig,
     private val instanceService: InstanceService,
@@ -42,7 +41,7 @@ class UserServiceImpl(
     UserService {
 
     override suspend fun usernameAlreadyUse(username: String): Boolean {
-        val findByNameAndDomain = actorQueryService.findByNameAndDomain(username, applicationConfig.url.host)
+        val findByNameAndDomain = actorRepository.findByNameAndDomain(username, applicationConfig.url.host)
         return findByNameAndDomain != null
     }
 
@@ -116,7 +115,7 @@ class UserServiceImpl(
             save
         } catch (_: ExposedSQLException) {
             logger.warn("FAILED User already exists. name: {} url: {}", user.name, user.url)
-            actorQueryService.findByUrl(user.url)
+            actorRepository.findByUrl(user.url)!!
         }
     }
 
@@ -142,7 +141,7 @@ class UserServiceImpl(
     }
 
     override suspend fun deleteRemoteActor(actorId: Long) {
-        val actor = actorQueryService.findById(actorId)
+        val actor = actorRepository.findByIdWithLock(actorId) ?: throw UserNotFoundException.withId(actorId)
         val deletedActor = DeletedActor(
             actor.id,
             actor.name,
@@ -161,7 +160,7 @@ class UserServiceImpl(
     }
 
     override suspend fun deleteLocalUser(userId: Long) {
-        val actor = actorQueryService.findById(userId)
+        val actor = actorRepository.findByIdWithLock(userId) ?: throw UserNotFoundException.withId(userId)
         apSendDeleteService.sendDeleteActor(actor)
         val deletedActor = DeletedActor(
             actor.id,

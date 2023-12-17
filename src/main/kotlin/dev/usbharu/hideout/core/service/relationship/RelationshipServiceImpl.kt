@@ -6,12 +6,11 @@ import dev.usbharu.hideout.activitypub.service.activity.follow.APSendFollowServi
 import dev.usbharu.hideout.activitypub.service.activity.reject.ApSendRejectService
 import dev.usbharu.hideout.activitypub.service.activity.undo.APSendUndoService
 import dev.usbharu.hideout.application.config.ApplicationConfig
-import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
+import dev.usbharu.hideout.core.domain.exception.resource.UserNotFoundException
 import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.relationship.Relationship
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
-import dev.usbharu.hideout.core.query.ActorQueryService
 import dev.usbharu.hideout.core.service.follow.SendFollowDto
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Service
 @Service
 class RelationshipServiceImpl(
     private val applicationConfig: ApplicationConfig,
-    private val actorQueryService: ActorQueryService,
     private val relationshipRepository: RelationshipRepository,
     private val apSendFollowService: APSendFollowService,
     private val apSendBlockService: APSendBlockService,
@@ -78,10 +76,10 @@ class RelationshipServiceImpl(
         val remoteUser = isRemoteUser(targetId)
 
         if (remoteUser != null) {
-            val user = actorQueryService.findById(actorId)
+            val user = actorRepository.findById(actorId) ?: throw UserNotFoundException.withId(actorId)
             apSendFollowService.sendFollow(SendFollowDto(user, remoteUser))
         } else {
-            val target = actorQueryService.findById(targetId)
+            val target = actorRepository.findById(targetId) ?: throw UserNotFoundException.withId(targetId)
             if (target.locked.not()) {
                 acceptFollowRequest(targetId, actorId)
             }
@@ -93,8 +91,8 @@ class RelationshipServiceImpl(
     override suspend fun block(actorId: Long, targetId: Long) {
         val relationship = relationshipRepository.findByUserIdAndTargetUserId(actorId, targetId)
 
-        val user = actorQueryService.findById(actorId)
-        val targetActor = actorQueryService.findById(targetId)
+        val user = actorRepository.findById(actorId) ?: throw UserNotFoundException.withId(actorId)
+        val targetActor = actorRepository.findById(targetId) ?: throw UserNotFoundException.withId(targetId)
         if (relationship?.following == true) {
             actorRepository.save(user.decrementFollowing())
             actorRepository.save(targetActor.decrementFollowers())
@@ -174,13 +172,13 @@ class RelationshipServiceImpl(
 
         val copy = relationship.copy(followRequest = false, following = true, blocking = false)
 
-        val user = actorQueryService.findById(actorId)
+        val user = actorRepository.findById(actorId) ?: throw UserNotFoundException.withId(actorId)
 
         actorRepository.save(user.incrementFollowers())
 
         relationshipRepository.save(copy)
 
-        val remoteActor = actorQueryService.findById(targetId)
+        val remoteActor = actorRepository.findById(targetId) ?: throw UserNotFoundException.withId(targetId)
 
         actorRepository.save(remoteActor.incrementFollowing())
 
@@ -209,7 +207,7 @@ class RelationshipServiceImpl(
         val remoteUser = isRemoteUser(targetId)
 
         if (remoteUser != null) {
-            val user = actorQueryService.findById(actorId)
+            val user = actorRepository.findById(actorId) ?: throw UserNotFoundException.withId(actorId)
             apSendRejectService.sendRejectFollow(user, remoteUser)
         }
     }
@@ -238,8 +236,8 @@ class RelationshipServiceImpl(
             return
         }
 
-        val user = actorQueryService.findById(actorId)
-        val targetActor = actorQueryService.findById(targetId)
+        val user = actorRepository.findById(actorId) ?: throw UserNotFoundException.withId(actorId)
+        val targetActor = actorRepository.findById(targetId) ?: throw UserNotFoundException.withId(targetId)
 
         if (relationship.following) {
             actorRepository.save(user.decrementFollowing())
@@ -280,7 +278,7 @@ class RelationshipServiceImpl(
 
         val remoteUser = isRemoteUser(targetId)
         if (remoteUser != null) {
-            val user = actorQueryService.findById(actorId)
+            val user = actorRepository.findById(actorId) ?: throw UserNotFoundException.withId(actorId)
             apSendUndoService.sendUndoBlock(user, remoteUser)
         }
     }
@@ -315,12 +313,8 @@ class RelationshipServiceImpl(
 
     private suspend fun isRemoteUser(userId: Long): Actor? {
         logger.trace("isRemoteUser({})", userId)
-        val user = try {
-            actorQueryService.findById(userId)
-        } catch (e: FailedToGetResourcesException) {
-            logger.warn("User not found.", e)
-            throw IllegalStateException("User not found.", e)
-        }
+        val user =
+            actorRepository.findById(userId) ?: throw UserNotFoundException.withId(userId)
 
         logger.trace("user info {}", user)
 

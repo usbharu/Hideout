@@ -7,7 +7,6 @@ import dev.usbharu.hideout.activitypub.service.objects.note.APNoteServiceImpl
 import dev.usbharu.hideout.application.config.ActivityPubConfig
 import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.core.external.job.DeliverPostJob
-import dev.usbharu.hideout.core.query.ActorQueryService
 import dev.usbharu.hideout.core.query.FollowerQueryService
 import dev.usbharu.hideout.core.service.job.JobQueueParentService
 import kotlinx.coroutines.test.runTest

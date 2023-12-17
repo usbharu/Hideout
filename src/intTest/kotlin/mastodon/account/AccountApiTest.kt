@@ -1,7 +1,7 @@
 package mastodon.account
 
 import dev.usbharu.hideout.SpringApplication
-import dev.usbharu.hideout.core.infrastructure.exposedquery.ActorQueryServiceImpl
+import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.infrastructure.exposedquery.FollowerQueryServiceImpl
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
@@ -39,7 +39,7 @@ class AccountApiTest {
     private lateinit var followerQueryServiceImpl: FollowerQueryServiceImpl
 
     @Autowired
-    private lateinit var userQueryServiceImpl: ActorQueryServiceImpl
+    private lateinit var actorRepository: ActorRepository
 
 
     @Autowired
@@ -100,7 +100,7 @@ class AccountApiTest {
             .asyncDispatch()
             .andExpect { status { isFound() } }
 
-        userQueryServiceImpl.findByNameAndDomain("api-test-user-1", "example.com")
+        actorRepository.findByNameAndDomain("api-test-user-1", "example.com")
     }
 
     @Test
@@ -116,7 +116,7 @@ class AccountApiTest {
             .asyncDispatch()
             .andExpect { status { isFound() } }
 
-        userQueryServiceImpl.findByNameAndDomain("api-test-user-2", "example.com")
+        actorRepository.findByNameAndDomain("api-test-user-2", "example.com")
     }
 
     @Test

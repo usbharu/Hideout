@@ -38,7 +38,6 @@ class ActorServiceTest {
             UserServiceImpl(
                 actorRepository = actorRepository,
                 userAuthService = userAuthService,
-                actorQueryService = mock(),
                 actorBuilder = actorBuilder,
                 applicationConfig = testApplicationConfig,
                 instanceService = mock(),
@@ -85,7 +84,6 @@ class ActorServiceTest {
             UserServiceImpl(
                 actorRepository = actorRepository,
                 userAuthService = mock(),
-                actorQueryService = mock(),
                 actorBuilder = actorBuilder,
                 applicationConfig = testApplicationConfig,
                 instanceService = mock(),

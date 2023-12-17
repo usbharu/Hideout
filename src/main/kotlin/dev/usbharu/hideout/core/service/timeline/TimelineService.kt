@@ -1,10 +1,11 @@
 package dev.usbharu.hideout.core.service.timeline
 
+import dev.usbharu.hideout.core.domain.exception.resource.UserNotFoundException
+import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.Visibility
 import dev.usbharu.hideout.core.domain.model.timeline.Timeline
 import dev.usbharu.hideout.core.domain.model.timeline.TimelineRepository
-import dev.usbharu.hideout.core.query.ActorQueryService
 import dev.usbharu.hideout.core.query.FollowerQueryService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -12,14 +13,14 @@ import org.springframework.stereotype.Service
 @Service
 class TimelineService(
     private val followerQueryService: FollowerQueryService,
-    private val actorQueryService: ActorQueryService,
-    private val timelineRepository: TimelineRepository
+    private val timelineRepository: TimelineRepository,
+    private val actorRepository: ActorRepository
 ) {
     suspend fun publishTimeline(post: Post, isLocal: Boolean) {
         val findFollowersById = followerQueryService.findFollowersById(post.actorId).toMutableList()
         if (isLocal) {
             // 自分自身も含める必要がある
-            val user = actorQueryService.findById(post.actorId)
+            val user = actorRepository.findById(post.actorId) ?: throw UserNotFoundException.withId(post.actorId)
             findFollowersById.add(user)
         }
         val timelines = findFollowersById.map {

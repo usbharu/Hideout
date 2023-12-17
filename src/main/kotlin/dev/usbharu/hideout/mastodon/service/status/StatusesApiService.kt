@@ -1,10 +1,9 @@
 package dev.usbharu.hideout.mastodon.service.status
 
 import dev.usbharu.hideout.application.external.Transaction
-import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
+import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.media.MediaRepository
 import dev.usbharu.hideout.core.domain.model.media.toMediaAttachments
-import dev.usbharu.hideout.core.query.ActorQueryService
 import dev.usbharu.hideout.core.query.PostQueryService
 import dev.usbharu.hideout.core.service.post.PostCreateDto
 import dev.usbharu.hideout.core.service.post.PostService
@@ -30,9 +29,9 @@ class StatsesApiServiceImpl(
     private val postService: PostService,
     private val accountService: AccountService,
     private val postQueryService: PostQueryService,
-    private val actorQueryService: ActorQueryService,
     private val mediaRepository: MediaRepository,
-    private val transaction: Transaction
+    private val transaction: Transaction,
+    private val actorRepository: ActorRepository
 ) :
     StatusesApiService {
     override suspend fun postStatus(
@@ -54,11 +53,7 @@ class StatsesApiServiceImpl(
         val account = accountService.findById(userId)
 
         val replyUser = if (post.replyId != null) {
-            try {
-                actorQueryService.findById(postQueryService.findById(post.replyId).actorId).id
-            } catch (ignore: FailedToGetResourcesException) {
-                null
-            }
+            actorRepository.findById(postQueryService.findById(post.replyId).actorId)?.id
         } else {
             null
         }
