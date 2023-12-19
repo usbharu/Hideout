@@ -12,8 +12,8 @@ import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.service.user.RemoteUserCreateDto
 import dev.usbharu.hideout.core.service.user.UserService
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 interface APUserService {
     suspend fun getPersonByName(name: String): Person
@@ -76,7 +76,6 @@ class APUserServiceImpl(
     override suspend fun fetchPerson(url: String, targetActor: String?): Person =
         fetchPersonWithEntity(url, targetActor).first
 
-    @Transactional
     override suspend fun fetchPersonWithEntity(url: String, targetActor: String?): Pair<Person, Actor> {
         val userEntity = actorRepository.findByUrl(url)
 
@@ -142,4 +141,8 @@ class APUserServiceImpl(
         following = actorEntity.following,
         manuallyApprovesFollowers = actorEntity.locked
     )
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(APUserServiceImpl::class.java)
+    }
 }

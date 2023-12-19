@@ -1,6 +1,8 @@
 package dev.usbharu.hideout.core.domain.exception.resource
 
-open class NotFoundException : ResourceAccessException {
+import dev.usbharu.hideout.core.domain.exception.HideoutException
+
+open class ResourceAccessException : HideoutException {
     constructor() : super()
     constructor(message: String?) : super(message)
     constructor(message: String?, cause: Throwable?) : super(message, cause)

@@ -18,7 +18,7 @@ abstract class AbstractActivityPubProcessor<T : Object>(
         if (activity.isAuthorized.not() && allowUnauthorized.not()) {
             throw HttpSignatureUnauthorizedException()
         }
-        logger.info("START ActivityPub process")
+        logger.info("START ActivityPub process. {}", this.type())
         try {
             transaction.transaction {
                 internalProcess(activity)
@@ -27,7 +27,7 @@ abstract class AbstractActivityPubProcessor<T : Object>(
             logger.warn("FAILED ActivityPub process", e)
             throw FailedProcessException("Failed process", e)
         }
-        logger.info("SUCCESS ActivityPub process")
+        logger.info("SUCCESS ActivityPub process. {}", this.type())
     }
 
     abstract suspend fun internalProcess(activity: ActivityPubProcessContext<T>)

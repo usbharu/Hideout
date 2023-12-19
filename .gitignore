@@ -43,3 +43,5 @@ out/
 /tomcat-e2e/
 /e2eTest.log
 /files/
+
+*.log

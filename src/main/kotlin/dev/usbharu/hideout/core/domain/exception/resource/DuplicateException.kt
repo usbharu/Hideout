@@ -1,6 +1,8 @@
 package dev.usbharu.hideout.core.domain.exception.resource
 
-open class NotFoundException : ResourceAccessException {
+import java.io.Serial
+
+class DuplicateException : ResourceAccessException {
     constructor() : super()
     constructor(message: String?) : super(message)
     constructor(message: String?, cause: Throwable?) : super(message, cause)
@@ -11,4 +13,9 @@ open class NotFoundException : ResourceAccessException {
         enableSuppression,
         writableStackTrace
     )
+
+    companion object {
+        @Serial
+        private const val serialVersionUID: Long = 7092046653037974417L
+    }
 }

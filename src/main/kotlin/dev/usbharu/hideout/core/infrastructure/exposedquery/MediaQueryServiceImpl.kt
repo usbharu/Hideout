@@ -24,7 +24,7 @@ class MediaQueryServiceImpl : MediaQueryService {
     }
 
     override suspend fun findByRemoteUrl(remoteUrl: String): MediaEntity {
-        return Media.select { Media.remoteUrl eq remoteUrl }
+        return Media.select { Media.remoteUrl eq remoteUrl }.forUpdate()
             .singleOr { FailedToGetResourcesException("remoteUrl: $remoteUrl is duplicate or not exist.", it) }
             .toMedia()
     }
