@@ -3,7 +3,7 @@ package dev.usbharu.hideout.activitypub.interfaces.api.webfinger
 import dev.usbharu.hideout.activitypub.domain.model.webfinger.WebFinger
 import dev.usbharu.hideout.activitypub.service.webfinger.WebFingerApiService
 import dev.usbharu.hideout.application.config.ApplicationConfig
-import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
+import dev.usbharu.hideout.core.domain.exception.resource.UserNotFoundException
 import dev.usbharu.hideout.util.AcctUtil
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
@@ -29,7 +29,7 @@ class WebFingerController(
         }
         val user = try {
             webFingerApiService.findByNameAndDomain(acct.username, acct.domain ?: applicationConfig.url.host)
-        } catch (_: FailedToGetResourcesException) {
+        } catch (_: UserNotFoundException) {
             return@runBlocking ResponseEntity.notFound().build()
         }
         val webFinger = WebFinger(

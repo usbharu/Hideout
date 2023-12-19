@@ -1,18 +1,18 @@
 package dev.usbharu.hideout.core.infrastructure.exposedrepository
 
-import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.domain.model.deletedActor.DeletedActor
 import dev.usbharu.hideout.core.domain.model.deletedActor.DeletedActorRepository
-import dev.usbharu.hideout.util.singleOr
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.javatime.timestamp
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 
 @Repository
-class DeletedActorRepositoryImpl : DeletedActorRepository {
-    override suspend fun save(deletedActor: DeletedActor): DeletedActor {
-        val singleOrNull = DeletedActors.select { DeletedActors.id eq deletedActor.id }.singleOrNull()
+class DeletedActorRepositoryImpl : DeletedActorRepository, AbstractRepository() {
+    override suspend fun save(deletedActor: DeletedActor): DeletedActor = query {
+        val singleOrNull = DeletedActors.select { DeletedActors.id eq deletedActor.id }.forUpdate().singleOrNull()
 
         if (singleOrNull == null) {
             DeletedActors.insert {
@@ -30,18 +30,24 @@ class DeletedActorRepositoryImpl : DeletedActorRepository {
                 it[DeletedActors.deletedAt] = deletedActor.deletedAt
             }
         }
-        return deletedActor
+        return@query deletedActor
     }
 
-    override suspend fun delete(deletedActor: DeletedActor) {
+    override suspend fun delete(deletedActor: DeletedActor): Unit = query {
         DeletedActors.deleteWhere { DeletedActors.id eq deletedActor.id }
     }
 
-    override suspend fun findById(id: Long): DeletedActor {
-        val singleOr = DeletedActors.select { DeletedActors.id eq id }
-            .singleOr { FailedToGetResourcesException("id: $id was not exist or duplicate", it) }
+    override suspend fun findById(id: Long): DeletedActor? = query {
+        return@query DeletedActors.select { DeletedActors.id eq id }
+            .singleOrNull()
+            ?.let { it.toDeletedActor() }
+    }
 
-        return deletedActor(singleOr)
+    override val logger: Logger
+        get() = Companion.logger
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(DeletedActorRepositoryImpl::class.java)
     }
 }
 

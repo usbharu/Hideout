@@ -1,7 +1,6 @@
 package dev.usbharu.hideout.core.service.instance
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.domain.model.instance.Instance
 import dev.usbharu.hideout.core.domain.model.instance.InstanceRepository
 import dev.usbharu.hideout.core.domain.model.instance.Nodeinfo
@@ -30,12 +29,13 @@ class InstanceServiceImpl(
         val u = URL(url)
         val resolveInstanceUrl = u.protocol + "://" + u.host
 
-        try {
-            return instanceQueryService.findByUrl(resolveInstanceUrl)
-        } catch (e: FailedToGetResourcesException) {
-            logger.info("Instance not found. try fetch instance info. url: {}", resolveInstanceUrl)
-            logger.debug("Failed to get resources. url: {}", resolveInstanceUrl, e)
+        val instance = instanceQueryService.findByUrl(resolveInstanceUrl)
+
+        if (instance != null) {
+            return instance
         }
+
+        logger.info("Instance not found. try fetch instance info. url: {}", resolveInstanceUrl)
 
         val nodeinfoJson = resourceResolveService.resolve("$resolveInstanceUrl/.well-known/nodeinfo").bodyAsText()
         val nodeinfo = objectMapper.readValue(nodeinfoJson, Nodeinfo::class.java)

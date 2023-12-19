@@ -1,11 +1,9 @@
 package dev.usbharu.hideout.core.infrastructure.exposedquery
 
-import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.domain.model.reaction.Reaction
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Reactions
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.toReaction
 import dev.usbharu.hideout.core.query.ReactionQueryService
-import dev.usbharu.hideout.util.singleOr
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.select
 import org.springframework.stereotype.Repository
@@ -19,20 +17,15 @@ class ReactionQueryServiceImpl : ReactionQueryService {
     }
 
     @Suppress("FunctionMaxLength")
-    override suspend fun findByPostIdAndActorIdAndEmojiId(postId: Long, actorId: Long, emojiId: Long): Reaction {
+    override suspend fun findByPostIdAndActorIdAndEmojiId(postId: Long, actorId: Long, emojiId: Long): Reaction? {
         return Reactions
             .select {
                 Reactions.postId.eq(postId).and(Reactions.actorId.eq(actorId)).and(
                     Reactions.emojiId.eq(emojiId)
                 )
             }
-            .singleOr {
-                FailedToGetResourcesException(
-                    "postId: $postId,userId: $actorId,emojiId: $emojiId is duplicate or does not exist.",
-                    it
-                )
-            }
-            .toReaction()
+            .singleOrNull()
+            ?.toReaction()
     }
 
     override suspend fun reactionAlreadyExist(postId: Long, actorId: Long, emojiId: Long): Boolean {

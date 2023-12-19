@@ -6,7 +6,6 @@ import dev.usbharu.hideout.activitypub.query.NoteQueryService
 import dev.usbharu.hideout.activitypub.service.common.APResourceResolveService
 import dev.usbharu.hideout.activitypub.service.common.resolve
 import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
-import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.domain.model.post.Visibility
@@ -20,8 +19,9 @@ import org.springframework.stereotype.Service
 import java.time.Instant
 
 interface APNoteService {
-    suspend fun fetchNote(url: String, targetActor: String? = null): Note
+    suspend fun fetchNote(url: String, targetActor: String? = null): Note = fetchNoteWithEntity(url, targetActor).first
     suspend fun fetchNote(note: Note, targetActor: String? = null): Note
+    suspend fun fetchNoteWithEntity(url: String, targetActor: String? = null): Pair<Note, Post>
 }
 
 @Service
@@ -40,13 +40,14 @@ class APNoteServiceImpl(
 
     private val logger = LoggerFactory.getLogger(APNoteServiceImpl::class.java)
 
-    override suspend fun fetchNote(url: String, targetActor: String?): Note {
+    override suspend fun fetchNoteWithEntity(url: String, targetActor: String?): Pair<Note, Post> {
         logger.debug("START Fetch Note url: {}", url)
-        try {
-            val post = noteQueryService.findByApid(url)
+
+        val post = noteQueryService.findByApid(url)
+
+        if (post != null) {
             logger.debug("SUCCESS Found in local url: {}", url)
-            return post.first
-        } catch (_: FailedToGetResourcesException) {
+            return post
         }
 
         logger.info("AP GET url: {}", url)
@@ -54,9 +55,7 @@ class APNoteServiceImpl(
             apResourceResolveService.resolve<Note>(url, null as Long?)
         } catch (e: ClientRequestException) {
             logger.warn(
-                "FAILED Failed to retrieve ActivityPub resource. HTTP Status Code: {} url: {}",
-                e.response.status,
-                url
+                "FAILED Failed to retrieve ActivityPub resource. HTTP Status Code: {} url: {}", e.response.status, url
             )
             throw FailedToGetActivityPubResourceException("Could not retrieve $url.", e)
         }
@@ -66,45 +65,33 @@ class APNoteServiceImpl(
     }
 
     private suspend fun saveIfMissing(
-        note: Note,
-        targetActor: String?,
-        url: String
-    ): Note {
-        requireNotNull(note.id) { "id is null" }
-
-
-
-        return try {
-            noteQueryService.findByApid(note.id).first
-        } catch (e: FailedToGetResourcesException) {
-            saveNote(note, targetActor, url)
-        }
-
-
+        note: Note, targetActor: String?, url: String
+    ): Pair<Note, Post> {
+        return noteQueryService.findByApid(note.id) ?: saveNote(note, targetActor, url)
     }
 
-    private suspend fun saveNote(note: Note, targetActor: String?, url: String): Note {
+    private suspend fun saveNote(note: Note, targetActor: String?, url: String): Pair<Note, Post> {
         val person = apUserService.fetchPersonWithEntity(
-            note.attributedTo,
-            targetActor
+            note.attributedTo, targetActor
         )
 
-        if (postRepository.existByApIdWithLock(note.id)) {
-            return note
+        val post = postRepository.findByApId(note.id)
+
+        if (post != null) {
+            return note to post
         }
 
         logger.debug("VISIBILITY url: {} to: {} cc: {}", note.id, note.to, note.cc)
 
-        val visibility =
-            if (note.to.contains(public)) {
-                Visibility.PUBLIC
-            } else if (note.to.contains(person.second.followers) && note.cc.contains(public)) {
-                Visibility.UNLISTED
-            } else if (note.to.contains(person.second.followers)) {
-                Visibility.FOLLOWERS
-            } else {
-                Visibility.DIRECT
-            }
+        val visibility = if (note.to.contains(public)) {
+            Visibility.PUBLIC
+        } else if (note.to.contains(person.second.followers) && note.cc.contains(public)) {
+            Visibility.UNLISTED
+        } else if (note.to.contains(person.second.followers)) {
+            Visibility.FOLLOWERS
+        } else {
+            Visibility.DIRECT
+        }
 
         logger.debug("VISIBILITY is {} url: {}", visibility.name, note.id)
 
@@ -113,22 +100,15 @@ class APNoteServiceImpl(
             postQueryService.findByUrl(it)
         }
 
-        val mediaList = note.attachment
-            .filter { it.url != null }
-            .map {
-                mediaService.uploadRemoteMedia(
-                    RemoteMedia(
-                        it.name,
-                        it.url,
-                        it.mediaType,
-                        description = it.name
-                    )
+        val mediaList = note.attachment.map {
+            mediaService.uploadRemoteMedia(
+                RemoteMedia(
+                    it.name, it.url, it.mediaType, description = it.name
                 )
-            }
-            .map { it.id }
+            )
+        }.map { it.id }
 
-        // TODO: リモートのメディア処理を追加
-        postService.createRemote(
+        val createRemote = postService.createRemote(
             postBuilder.of(
                 id = postRepository.generateId(),
                 actorId = person.second.id,
@@ -142,11 +122,11 @@ class APNoteServiceImpl(
                 mediaIds = mediaList
             )
         )
-        return note
+        return note to createRemote
     }
 
     override suspend fun fetchNote(note: Note, targetActor: String?): Note =
-        saveIfMissing(note, targetActor, note.id)
+        saveIfMissing(note, targetActor, note.id).first
 
     companion object {
         const val public: String = "https://www.w3.org/ns/activitystreams#Public"

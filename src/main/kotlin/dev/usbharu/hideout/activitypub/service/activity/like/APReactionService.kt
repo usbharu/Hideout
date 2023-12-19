@@ -1,6 +1,7 @@
 package dev.usbharu.hideout.activitypub.service.activity.like
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import dev.usbharu.hideout.core.domain.exception.resource.PostNotFoundException
 import dev.usbharu.hideout.core.domain.exception.resource.UserNotFoundException
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.reaction.Reaction
@@ -29,7 +30,7 @@ class APReactionServiceImpl(
         val followers = followerQueryService.findFollowersById(like.actorId)
         val user = actorRepository.findById(like.actorId) ?: throw UserNotFoundException.withId(like.actorId)
         val post =
-            postQueryService.findById(like.postId)
+            postQueryService.findById(like.postId) ?: throw PostNotFoundException.withId(like.postId)
         followers.forEach { follower ->
             jobQueueParentService.schedule(DeliverReactionJob) {
                 props[DeliverReactionJob.actor] = user.url
@@ -45,7 +46,7 @@ class APReactionServiceImpl(
         val followers = followerQueryService.findFollowersById(like.actorId)
         val user = actorRepository.findById(like.actorId) ?: throw UserNotFoundException.withId(like.actorId)
         val post =
-            postQueryService.findById(like.postId)
+            postQueryService.findById(like.postId) ?: throw PostNotFoundException.withId(like.postId)
         followers.forEach { follower ->
             jobQueueParentService.schedule(DeliverRemoveReactionJob) {
                 props[DeliverRemoveReactionJob.actor] = user.url

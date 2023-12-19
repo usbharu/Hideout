@@ -1,9 +1,7 @@
 package dev.usbharu.hideout.core.infrastructure.exposedrepository
 
 import dev.usbharu.hideout.application.service.id.IdGenerateService
-import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.domain.model.instance.InstanceRepository
-import dev.usbharu.hideout.util.singleOr
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.javatime.timestamp
@@ -48,9 +46,9 @@ class InstanceRepositoryImpl(private val idGenerateService: IdGenerateService) :
         return instance
     }
 
-    override suspend fun findById(id: Long): InstanceEntity {
+    override suspend fun findById(id: Long): InstanceEntity? {
         return Instance.select { Instance.id eq id }
-            .singleOr { FailedToGetResourcesException("id: $id doesn't exist.") }.toInstance()
+            .singleOrNull()?.toInstance()
     }
 
     override suspend fun delete(instance: InstanceEntity) {

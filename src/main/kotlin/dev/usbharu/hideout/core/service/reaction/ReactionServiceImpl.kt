@@ -1,7 +1,6 @@
 package dev.usbharu.hideout.core.service.reaction
 
 import dev.usbharu.hideout.activitypub.service.activity.like.APReactionService
-import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.domain.model.reaction.Reaction
 import dev.usbharu.hideout.core.domain.model.reaction.ReactionRepository
 import dev.usbharu.hideout.core.query.ReactionQueryService
@@ -29,30 +28,38 @@ class ReactionServiceImpl(
 
     override suspend fun receiveRemoveReaction(actorId: Long, postId: Long) {
         val reaction = reactionQueryService.findByPostIdAndActorIdAndEmojiId(postId, actorId, 0)
+        if (reaction == null) {
+            LOGGER.warn("FAILED receive Remove Reaction. $actorId $postId")
+            return
+        }
         reactionRepository.delete(reaction)
     }
 
     override suspend fun sendReaction(name: String, actorId: Long, postId: Long) {
-        try {
-            val findByPostIdAndUserIdAndEmojiId =
-                reactionQueryService.findByPostIdAndActorIdAndEmojiId(postId, actorId, 0)
-            apReactionService.removeReaction(findByPostIdAndUserIdAndEmojiId)
-            reactionRepository.delete(findByPostIdAndUserIdAndEmojiId)
-        } catch (_: FailedToGetResourcesException) {
+        val findByPostIdAndUserIdAndEmojiId =
+            reactionQueryService.findByPostIdAndActorIdAndEmojiId(postId, actorId, 0)
+
+        if (findByPostIdAndUserIdAndEmojiId == null) {
+            LOGGER.warn("FAILED Send reaction. $postId $actorId")
+            return
         }
+
+        apReactionService.removeReaction(findByPostIdAndUserIdAndEmojiId)
+        reactionRepository.delete(findByPostIdAndUserIdAndEmojiId)
         val reaction = Reaction(reactionRepository.generateId(), 0, postId, actorId)
         reactionRepository.save(reaction)
         apReactionService.reaction(reaction)
     }
 
     override suspend fun removeReaction(actorId: Long, postId: Long) {
-        try {
-            val findByPostIdAndUserIdAndEmojiId =
-                reactionQueryService.findByPostIdAndActorIdAndEmojiId(postId, actorId, 0)
-            reactionRepository.delete(findByPostIdAndUserIdAndEmojiId)
-            apReactionService.removeReaction(findByPostIdAndUserIdAndEmojiId)
-        } catch (_: FailedToGetResourcesException) {
+        val findByPostIdAndUserIdAndEmojiId =
+            reactionQueryService.findByPostIdAndActorIdAndEmojiId(postId, actorId, 0)
+        if (findByPostIdAndUserIdAndEmojiId == null) {
+            LOGGER.warn("FAILED Remove reaction. actorId: $actorId postId: $postId")
+            return
         }
+        reactionRepository.delete(findByPostIdAndUserIdAndEmojiId)
+        apReactionService.removeReaction(findByPostIdAndUserIdAndEmojiId)
     }
 
     companion object {

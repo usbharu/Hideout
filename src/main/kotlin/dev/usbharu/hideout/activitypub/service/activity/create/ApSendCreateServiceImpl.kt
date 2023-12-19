@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import dev.usbharu.hideout.activitypub.domain.model.Create
 import dev.usbharu.hideout.activitypub.query.NoteQueryService
 import dev.usbharu.hideout.application.config.ApplicationConfig
+import dev.usbharu.hideout.core.domain.exception.resource.PostNotFoundException
 import dev.usbharu.hideout.core.domain.exception.resource.UserNotFoundException
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.post.Post
@@ -31,7 +32,7 @@ class ApSendCreateServiceImpl(
         logger.debug("DELIVER Deliver Note Create ${followers.size} accounts.")
 
         val userEntity = actorRepository.findById(post.actorId) ?: throw UserNotFoundException.withId(post.actorId)
-        val note = noteQueryService.findById(post.id).first
+        val note = noteQueryService.findById(post.id)?.first ?: throw PostNotFoundException.withId(post.id)
         val create = Create(
             name = "Create Note",
             apObject = note,

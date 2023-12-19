@@ -7,6 +7,7 @@ import dev.usbharu.hideout.activitypub.service.common.ActivityPubProcessContext
 import dev.usbharu.hideout.activitypub.service.common.ActivityType
 import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
 import dev.usbharu.hideout.application.external.Transaction
+import dev.usbharu.hideout.core.domain.exception.resource.PostNotFoundException
 import dev.usbharu.hideout.core.domain.exception.resource.UserNotFoundException
 import dev.usbharu.hideout.core.domain.exception.resource.local.LocalUserNotFoundException
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
@@ -79,7 +80,8 @@ class APUndoProcessor(
             "Like" -> {
                 val like = undo.apObject as Like
 
-                val post = postQueryService.findByUrl(like.apObject)
+                val post =
+                    postQueryService.findByUrl(like.apObject) ?: throw PostNotFoundException.withUrl(like.apObject)
 
                 val signer =
                     actorRepository.findById(post.actorId) ?: throw LocalUserNotFoundException.withId(post.actorId)
