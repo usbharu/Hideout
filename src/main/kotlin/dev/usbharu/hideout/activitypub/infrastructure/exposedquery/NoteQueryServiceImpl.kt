@@ -49,7 +49,7 @@ class NoteQueryServiceImpl(private val postRepository: PostRepository, private v
         val replyId = this[Posts.replyId]
         val replyTo = if (replyId != null) {
             try {
-                postRepository.findById(replyId).url
+                postRepository.findById(replyId)?.url ?: throw FailedToGetResourcesException()
             } catch (e: FailedToGetResourcesException) {
                 logger.warn("Failed to get replyId: $replyId", e)
                 null

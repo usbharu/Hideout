@@ -30,7 +30,7 @@ class APLikeProcessor(
         val personWithEntity = apUserService.fetchPersonWithEntity(actor)
 
         try {
-            apNoteService.fetchNoteAsync(target).await()
+            apNoteService.fetchNote(target)
         } catch (e: FailedToGetActivityPubResourceException) {
             logger.debug("FAILED failed to get {}", target)
             logger.trace("", e)

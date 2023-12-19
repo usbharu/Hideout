@@ -3,6 +3,7 @@ package dev.usbharu.hideout.core.service.user
 import dev.usbharu.hideout.activitypub.service.activity.delete.APSendDeleteService
 import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
+import dev.usbharu.hideout.core.domain.exception.resource.DuplicateException
 import dev.usbharu.hideout.core.domain.exception.resource.UserNotFoundException
 import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
@@ -15,10 +16,8 @@ import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
 import dev.usbharu.hideout.core.query.DeletedActorQueryService
 import dev.usbharu.hideout.core.service.instance.InstanceService
 import dev.usbharu.hideout.core.service.post.PostService
-import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
 
 @Service
@@ -72,7 +71,6 @@ class UserServiceImpl(
         return save
     }
 
-    @Transactional
     override suspend fun createRemoteUser(user: RemoteUserCreateDto): Actor {
         logger.info("START Create New remote user. name: {} url: {}", user.name, user.url)
 
@@ -113,8 +111,7 @@ class UserServiceImpl(
             val save = actorRepository.save(userEntity)
             logger.warn("SUCCESS Create New remote user. id: {} name: {} url: {}", userEntity.id, user.name, user.url)
             save
-        } catch (_: ExposedSQLException) {
-            logger.warn("FAILED User already exists. name: {} url: {}", user.name, user.url)
+        } catch (_: DuplicateException) {
             actorRepository.findByUrl(user.url)!!
         }
     }

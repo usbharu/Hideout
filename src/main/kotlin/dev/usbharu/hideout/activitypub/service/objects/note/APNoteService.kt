@@ -15,28 +15,11 @@ import dev.usbharu.hideout.core.service.media.MediaService
 import dev.usbharu.hideout.core.service.media.RemoteMedia
 import dev.usbharu.hideout.core.service.post.PostService
 import io.ktor.client.plugins.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.slf4j.MDCContext
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.slf4j.LoggerFactory
-import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import java.time.Instant
 
 interface APNoteService {
-
-    @Cacheable("fetchNote")
-    fun fetchNoteAsync(url: String, targetActor: String? = null): Deferred<Note> {
-        return CoroutineScope(Dispatchers.IO + MDCContext()).async {
-            newSuspendedTransaction(MDCContext()) {
-                fetchNote(url, targetActor)
-            }
-        }
-    }
-
     suspend fun fetchNote(url: String, targetActor: String? = null): Note
     suspend fun fetchNote(note: Note, targetActor: String? = null): Note
 }
@@ -77,7 +60,7 @@ class APNoteServiceImpl(
             )
             throw FailedToGetActivityPubResourceException("Could not retrieve $url.", e)
         }
-        val savedNote = saveNote(note, targetActor, url)
+        val savedNote = saveIfMissing(note, targetActor, url)
         logger.debug("SUCCESS Fetch Note url: {}", url)
         return savedNote
     }
@@ -89,11 +72,15 @@ class APNoteServiceImpl(
     ): Note {
         requireNotNull(note.id) { "id is null" }
 
+
+
         return try {
             noteQueryService.findByApid(note.id).first
-        } catch (_: FailedToGetResourcesException) {
+        } catch (e: FailedToGetResourcesException) {
             saveNote(note, targetActor, url)
         }
+
+
     }
 
     private suspend fun saveNote(note: Note, targetActor: String?, url: String): Note {
@@ -101,6 +88,10 @@ class APNoteServiceImpl(
             note.attributedTo,
             targetActor
         )
+
+        if (postRepository.existByApIdWithLock(note.id)) {
+            return note
+        }
 
         logger.debug("VISIBILITY url: {} to: {} cc: {}", note.id, note.to, note.cc)
 

@@ -229,7 +229,6 @@ class APServiceImpl(
             props[it.json] = json
             props[it.type] = type.name
             val writeValueAsString = objectMapper.writeValueAsString(httpRequest)
-            println(writeValueAsString)
             props[it.httpRequest] = writeValueAsString
             props[it.headers] = objectMapper.writeValueAsString(map)
         }

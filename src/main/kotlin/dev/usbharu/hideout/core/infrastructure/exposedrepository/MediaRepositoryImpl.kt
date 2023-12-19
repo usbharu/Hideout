@@ -19,7 +19,7 @@ class MediaRepositoryImpl(private val idGenerateService: IdGenerateService) : Me
     override suspend fun save(media: EntityMedia): EntityMedia {
         if (Media.select {
                 Media.id eq media.id
-            }.singleOrNull() != null
+            }.forUpdate().singleOrNull() != null
         ) {
             Media.update({ Media.id eq media.id }) {
                 it[name] = media.name
