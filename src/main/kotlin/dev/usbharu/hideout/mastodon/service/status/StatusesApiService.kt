@@ -53,13 +53,19 @@ class StatsesApiServiceImpl(
         val account = accountService.findById(userId)
 
         val replyUser = if (post.replyId != null) {
-            actorRepository.findById(postQueryService.findById(post.replyId).actorId)?.id
+            val findById = postQueryService.findById(post.replyId)
+            if (findById == null) {
+                null
+            } else {
+                actorRepository.findById(findById.actorId)?.id
+            }
+
         } else {
             null
         }
 
         // TODO: n+1解消
-        val mediaAttachment = post.mediaIds.map { mediaId ->
+        val mediaAttachment = post.mediaIds.mapNotNull { mediaId ->
             mediaRepository.findById(mediaId)
         }.map {
             it.toMediaAttachments()

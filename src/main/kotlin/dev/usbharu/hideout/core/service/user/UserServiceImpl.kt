@@ -2,7 +2,6 @@ package dev.usbharu.hideout.core.service.user
 
 import dev.usbharu.hideout.activitypub.service.activity.delete.APSendDeleteService
 import dev.usbharu.hideout.application.config.ApplicationConfig
-import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.domain.exception.resource.DuplicateException
 import dev.usbharu.hideout.core.domain.exception.resource.UserNotFoundException
 import dev.usbharu.hideout.core.domain.model.actor.Actor
@@ -74,11 +73,11 @@ class UserServiceImpl(
     override suspend fun createRemoteUser(user: RemoteUserCreateDto): Actor {
         logger.info("START Create New remote user. name: {} url: {}", user.name, user.url)
 
-        try {
-            deletedActorQueryService.findByNameAndDomain(user.name, user.domain)
+        val deletedActor = deletedActorQueryService.findByNameAndDomain(user.name, user.domain)
+
+        if (deletedActor != null) {
             logger.warn("FAILED Deleted actor. user: ${user.name} domain: ${user.domain}")
             throw IllegalStateException("Cannot create Deleted actor.")
-        } catch (_: FailedToGetResourcesException) {
         }
 
         @Suppress("TooGenericExceptionCaught")

@@ -19,5 +19,9 @@ class PostNotFoundException : NotFoundException {
         private const val serialVersionUID: Long = 1315818410686905717L
 
         fun withApId(apId: String): PostNotFoundException = PostNotFoundException("apId: $apId was not found.")
+
+        fun withId(id: Long): PostNotFoundException = PostNotFoundException("id: $id was not found.")
+
+        fun withUrl(url: String): PostNotFoundException = PostNotFoundException("url: $url was not found.")
     }
 }

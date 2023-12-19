@@ -1,12 +1,10 @@
 package dev.usbharu.hideout.core.infrastructure.exposedrepository
 
 import dev.usbharu.hideout.application.service.id.IdGenerateService
-import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.domain.model.media.MediaRepository
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Media.mimeType
 import dev.usbharu.hideout.core.service.media.FileType
 import dev.usbharu.hideout.core.service.media.MimeType
-import dev.usbharu.hideout.util.singleOr
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.springframework.stereotype.Repository
@@ -47,14 +45,13 @@ class MediaRepositoryImpl(private val idGenerateService: IdGenerateService) : Me
         return media
     }
 
-    override suspend fun findById(id: Long): EntityMedia {
+    override suspend fun findById(id: Long): EntityMedia? {
         return Media
             .select {
                 Media.id eq id
             }
-            .singleOr {
-                FailedToGetResourcesException("id: $id was not found.")
-            }.toMedia()
+            .singleOrNull()
+            ?.toMedia()
     }
 
     override suspend fun delete(id: Long) {

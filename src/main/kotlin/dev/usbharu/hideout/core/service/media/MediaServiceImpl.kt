@@ -1,6 +1,5 @@
 package dev.usbharu.hideout.core.service.media
 
-import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.domain.exception.media.MediaSaveException
 import dev.usbharu.hideout.core.domain.exception.media.UnsupportedMediaException
 import dev.usbharu.hideout.core.domain.model.media.Media
@@ -102,11 +101,11 @@ class MediaServiceImpl(
     override suspend fun uploadRemoteMedia(remoteMedia: RemoteMedia): Media {
         logger.info("MEDIA Remote media. filename:${remoteMedia.name} url:${remoteMedia.url}")
 
-        try {
-            val findByRemoteUrl = mediaQueryService.findByRemoteUrl(remoteMedia.url)
+
+        val findByRemoteUrl = mediaQueryService.findByRemoteUrl(remoteMedia.url)
+        if (findByRemoteUrl != null) {
             logger.warn("DUPLICATED Remote media is duplicated. url: {}", remoteMedia.url)
             return findByRemoteUrl
-        } catch (_: FailedToGetResourcesException) {
         }
 
         remoteMediaDownloadService.download(remoteMedia.url).withDelete().use {
