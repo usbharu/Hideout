@@ -132,15 +132,19 @@ alter table posts_emojis
 
 create table if not exists reactions
 (
-    id       bigserial primary key,
-    emoji_id bigint not null,
-    post_id  bigint not null,
-    actor_id bigint not null
+    id              bigserial primary key,
+    unicode_emoji   varchar(255) null default null,
+    custom_emoji_id bigint       null default null,
+    post_id         bigint       not null,
+    actor_id        bigint       not null
 );
 alter table reactions
     add constraint fk_reactions_post_id__id foreign key (post_id) references posts (id) on delete restrict on update restrict;
 alter table reactions
     add constraint fk_reactions_actor_id__id foreign key (actor_id) references actors (id) on delete restrict on update restrict;
+alter table reactions
+    add constraint fk_reactions_emoji_id__id foreign key (emoji_id) references emojis (id) on delete cascade on update cascade;
+
 create table if not exists timelines
 (
     id             bigint primary key,

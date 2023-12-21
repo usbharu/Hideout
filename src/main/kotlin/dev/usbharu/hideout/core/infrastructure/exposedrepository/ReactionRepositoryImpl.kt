@@ -1,6 +1,8 @@
 package dev.usbharu.hideout.core.infrastructure.exposedrepository
 
 import dev.usbharu.hideout.application.service.id.IdGenerateService
+import dev.usbharu.hideout.core.domain.model.emoji.CustomEmoji
+import dev.usbharu.hideout.core.domain.model.emoji.UnicodeEmoji
 import dev.usbharu.hideout.core.domain.model.reaction.Reaction
 import dev.usbharu.hideout.core.domain.model.reaction.ReactionRepository
 import org.jetbrains.exposed.dao.id.LongIdTable
@@ -23,13 +25,25 @@ class ReactionRepositoryImpl(
         if (Reactions.select { Reactions.id eq reaction.id }.forUpdate().empty()) {
             Reactions.insert {
                 it[id] = reaction.id
-                it[emojiId] = reaction.emojiId
+                if (reaction.emoji is CustomEmoji) {
+                    it[customEmojiId] = reaction.emoji.id
+                    it[unicodeEmoji] = null
+                } else {
+                    it[customEmojiId] = null
+                    it[unicodeEmoji] = reaction.emoji.name
+                }
                 it[postId] = reaction.postId
                 it[actorId] = reaction.actorId
             }
         } else {
             Reactions.update({ Reactions.id eq reaction.id }) {
-                it[emojiId] = reaction.emojiId
+                if (reaction.emoji is CustomEmoji) {
+                    it[customEmojiId] = reaction.emoji.id
+                    it[unicodeEmoji] = null
+                } else {
+                    it[customEmojiId] = null
+                    it[unicodeEmoji] = reaction.emoji.name
+                }
                 it[postId] = reaction.postId
                 it[actorId] = reaction.actorId
             }
@@ -38,9 +52,16 @@ class ReactionRepositoryImpl(
     }
 
     override suspend fun delete(reaction: Reaction): Reaction = query {
-        Reactions.deleteWhere {
-            id.eq(reaction.id).and(postId.eq(reaction.postId)).and(actorId.eq(reaction.actorId))
-                .and(emojiId.eq(reaction.emojiId))
+        if (reaction.emoji is CustomEmoji) {
+            Reactions.deleteWhere {
+                id.eq(reaction.id).and(postId.eq(reaction.postId)).and(actorId.eq(reaction.actorId))
+                    .and(customEmojiId.eq(reaction.emoji.id))
+            }
+        } else {
+            Reactions.deleteWhere {
+                id.eq(reaction.id).and(postId.eq(reaction.postId)).and(actorId.eq(reaction.actorId))
+                    .and(unicodeEmoji.eq(reaction.emoji.name))
+            }
         }
         return@query reaction
     }
@@ -58,14 +79,14 @@ class ReactionRepositoryImpl(
     }
 
     override suspend fun findByPostId(postId: Long): List<Reaction> = query {
-        return@query Reactions.select { Reactions.postId eq postId }.map { it.toReaction() }
+        return@query Reactions.leftJoin(CustomEmojis).select { Reactions.postId eq postId }.map { it.toReaction() }
     }
 
     override suspend fun findByPostIdAndActorIdAndEmojiId(postId: Long, actorId: Long, emojiId: Long): Reaction? =
         query {
-            return@query Reactions.select {
+            return@query Reactions.leftJoin(CustomEmojis).select {
                 Reactions.postId eq postId and (Reactions.actorId eq actorId).and(
-                    Reactions.emojiId.eq(
+                    Reactions.customEmojiId.eq(
                         emojiId
                     )
                 )
@@ -78,12 +99,13 @@ class ReactionRepositoryImpl(
                 Reactions.postId
                     .eq(postId)
                     .and(Reactions.actorId.eq(actorId))
-                    .and(Reactions.emojiId.eq(emojiId))
+                    .and(Reactions.customEmojiId.eq(emojiId))
             }.empty().not()
         }
 
     override suspend fun findByPostIdAndActorId(postId: Long, actorId: Long): List<Reaction> = query {
-        return@query Reactions.select { Reactions.postId eq postId and (Reactions.actorId eq actorId) }
+        return@query Reactions.leftJoin(CustomEmojis)
+            .select { Reactions.postId eq postId and (Reactions.actorId eq actorId) }
             .map { it.toReaction() }
     }
 
@@ -93,22 +115,39 @@ class ReactionRepositoryImpl(
 }
 
 fun ResultRow.toReaction(): Reaction {
+    val emoji = if (this[Reactions.customEmojiId] != null) {
+        CustomEmoji(
+            this[Reactions.customEmojiId]!!,
+            this[CustomEmojis.name],
+            this[CustomEmojis.domain],
+            this[CustomEmojis.instanceId],
+            this[CustomEmojis.url],
+            this[CustomEmojis.category],
+            this[CustomEmojis.createdAt]
+        )
+    } else if (this[Reactions.unicodeEmoji] != null) {
+        UnicodeEmoji(this[Reactions.unicodeEmoji]!!)
+    } else {
+        throw IllegalStateException("customEmojiId and unicodeEmoji is null.")
+    }
+
     return Reaction(
         this[Reactions.id].value,
-        this[Reactions.emojiId],
+        emoji,
         this[Reactions.postId],
         this[Reactions.actorId]
     )
 }
 
 object Reactions : LongIdTable("reactions") {
-    val emojiId: Column<Long> = long("emoji_id")
+    val customEmojiId = long("custom_emoji_id").references(CustomEmojis.id).nullable()
+    val unicodeEmoji = varchar("unicode_emoji", 255).nullable()
     val postId: Column<Long> =
         long("post_id").references(Posts.id, onDelete = ReferenceOption.CASCADE, onUpdate = ReferenceOption.CASCADE)
     val actorId: Column<Long> =
         long("actor_id").references(Actors.id, onDelete = ReferenceOption.CASCADE, onUpdate = ReferenceOption.CASCADE)
 
     init {
-        uniqueIndex(emojiId, postId, actorId)
+        uniqueIndex(customEmojiId, postId, actorId)
     }
 }

@@ -12,9 +12,9 @@ data class CustomEmoji(
     val id: Long,
     override val name: String,
     override val domain: String,
-    val instanceId: Long,
+    val instanceId: Long?,
     val url: String,
-    val category: String,
+    val category: String?,
     val createdAt: Instant
 ) : Emoji() {
     override fun id(): String {
