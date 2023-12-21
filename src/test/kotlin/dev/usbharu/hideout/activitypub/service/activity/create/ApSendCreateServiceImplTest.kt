@@ -6,8 +6,8 @@ import dev.usbharu.hideout.activitypub.query.NoteQueryService
 import dev.usbharu.hideout.activitypub.service.objects.note.APNoteServiceImpl
 import dev.usbharu.hideout.application.config.ActivityPubConfig
 import dev.usbharu.hideout.application.config.ApplicationConfig
+import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.external.job.DeliverPostJob
-import dev.usbharu.hideout.core.query.ActorQueryService
 import dev.usbharu.hideout.core.query.FollowerQueryService
 import dev.usbharu.hideout.core.service.job.JobQueueParentService
 import kotlinx.coroutines.test.runTest
@@ -36,7 +36,7 @@ class ApSendCreateServiceImplTest {
     private lateinit var jobQueueParentService: JobQueueParentService
 
     @Mock
-    private lateinit var actorQueryService: ActorQueryService
+    private lateinit var actorRepository: ActorRepository
 
     @Mock
     private lateinit var noteQueryService: NoteQueryService
@@ -68,7 +68,7 @@ class ApSendCreateServiceImplTest {
         )
 
         whenever(followerQueryService.findFollowersById(eq(post.actorId))).doReturn(followers)
-        whenever(actorQueryService.findById(eq(post.actorId))).doReturn(user)
+        whenever(actorRepository.findById(eq(post.actorId))).doReturn(user)
         whenever(noteQueryService.findById(eq(post.id))).doReturn(note to post)
 
         apSendCreateServiceImpl.createNote(post)

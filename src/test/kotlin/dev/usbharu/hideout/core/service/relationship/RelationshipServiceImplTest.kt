@@ -9,7 +9,6 @@ import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.relationship.Relationship
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
-import dev.usbharu.hideout.core.query.ActorQueryService
 import dev.usbharu.hideout.core.service.follow.SendFollowDto
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
@@ -28,9 +27,6 @@ class RelationshipServiceImplTest {
 
     @Spy
     private val applicationConfig = ApplicationConfig(URL("https://example.com"))
-
-    @Mock
-    private lateinit var actorQueryService: ActorQueryService
 
     @Mock
     private lateinit var relationshipRepository: RelationshipRepository
@@ -58,7 +54,7 @@ class RelationshipServiceImplTest {
 
     @Test
     fun `followRequest ローカルの場合followRequestフラグがtrueで永続化される`() = runTest {
-        whenever(actorQueryService.findById(eq(5678))).doReturn(UserBuilder.localUserOf(domain = "example.com"))
+        whenever(actorRepository.findById(eq(5678))).doReturn(UserBuilder.localUserOf(domain = "example.com"))
 
         relationshipServiceImpl.followRequest(1234, 5678)
 
@@ -80,9 +76,9 @@ class RelationshipServiceImplTest {
     @Test
     fun `followRequest リモートの場合Followアクティビティが配送される`() = runTest {
         val localUser = UserBuilder.localUserOf(domain = "example.com")
-        whenever(actorQueryService.findById(eq(1234))).doReturn(localUser)
+        whenever(actorRepository.findById(eq(1234))).doReturn(localUser)
         val remoteUser = UserBuilder.remoteUserOf(domain = "remote.example.com")
-        whenever(actorQueryService.findById(eq(5678))).doReturn(remoteUser)
+        whenever(actorRepository.findById(eq(5678))).doReturn(remoteUser)
 
         relationshipServiceImpl.followRequest(1234, 5678)
 
@@ -145,9 +141,9 @@ class RelationshipServiceImplTest {
     @Test
     fun `followRequest 既にフォローしている場合は念の為フォロー承認を自動で行う`() = runTest {
         val remoteUser = UserBuilder.remoteUserOf(domain = "remote.example.com")
-        whenever(actorQueryService.findById(eq(1234))).doReturn(remoteUser)
+        whenever(actorRepository.findById(eq(1234))).doReturn(remoteUser)
         val localUser = UserBuilder.localUserOf(domain = "example.com")
-        whenever(actorQueryService.findById(eq(5678))).doReturn(localUser)
+        whenever(actorRepository.findById(eq(5678))).doReturn(localUser)
         whenever(relationshipRepository.findByUserIdAndTargetUserId(eq(1234), eq(5678))).doReturn(
             Relationship(
                 actorId = 1234,
@@ -213,8 +209,8 @@ class RelationshipServiceImplTest {
 
     @Test
     fun `block ローカルユーザーの場合永続化される`() = runTest {
-        whenever(actorQueryService.findById(eq(1234))).doReturn(UserBuilder.localUserOf(domain = "example.com"))
-        whenever(actorQueryService.findById(eq(5678))).doReturn(UserBuilder.localUserOf(domain = "example.com"))
+        whenever(actorRepository.findById(eq(1234))).doReturn(UserBuilder.localUserOf(domain = "example.com"))
+        whenever(actorRepository.findById(eq(5678))).doReturn(UserBuilder.localUserOf(domain = "example.com"))
 
         relationshipServiceImpl.block(1234, 5678)
 
@@ -236,9 +232,9 @@ class RelationshipServiceImplTest {
     @Test
     fun `block リモートユーザーの場合永続化されて配送される`() = runTest {
         val localUser = UserBuilder.localUserOf(domain = "example.com")
-        whenever(actorQueryService.findById(eq(1234))).doReturn(localUser)
+        whenever(actorRepository.findById(eq(1234))).doReturn(localUser)
         val remoteUser = UserBuilder.remoteUserOf(domain = "remote.example.com")
-        whenever(actorQueryService.findById(eq(5678))).doReturn(remoteUser)
+        whenever(actorRepository.findById(eq(5678))).doReturn(remoteUser)
 
         relationshipServiceImpl.block(1234, 5678)
 
@@ -261,8 +257,8 @@ class RelationshipServiceImplTest {
 
     @Test
     fun `acceptFollowRequest ローカルユーザーの場合永続化される`() = runTest {
-        whenever(actorQueryService.findById(eq(1234))).doReturn(UserBuilder.localUserOf(domain = "example.com"))
-        whenever(actorQueryService.findById(eq(5678))).doReturn(UserBuilder.localUserOf(domain = "example.com"))
+        whenever(actorRepository.findById(eq(1234))).doReturn(UserBuilder.localUserOf(domain = "example.com"))
+        whenever(actorRepository.findById(eq(5678))).doReturn(UserBuilder.localUserOf(domain = "example.com"))
 
         whenever(relationshipRepository.findByUserIdAndTargetUserId(eq(5678), eq(1234))).doReturn(
             Relationship(
@@ -296,9 +292,9 @@ class RelationshipServiceImplTest {
     @Test
     fun `acceptFollowRequest リモートユーザーの場合永続化されて配送される`() = runTest {
         val localUser = UserBuilder.localUserOf(domain = "example.com")
-        whenever(actorQueryService.findById(eq(1234))).doReturn(localUser)
+        whenever(actorRepository.findById(eq(1234))).doReturn(localUser)
         val remoteUser = UserBuilder.remoteUserOf(domain = "remote.example.com")
-        whenever(actorQueryService.findById(eq(5678))).doReturn(remoteUser)
+        whenever(actorRepository.findById(eq(5678))).doReturn(remoteUser)
 
         whenever(relationshipRepository.findByUserIdAndTargetUserId(eq(5678), eq(1234))).doReturn(
             Relationship(
@@ -353,8 +349,8 @@ class RelationshipServiceImplTest {
 
     @Test
     fun `acceptFollowRequest フォローリクエストが存在せずforceがtrueのときフォローを承認する`() = runTest {
-        whenever(actorQueryService.findById(eq(1234))).doReturn(UserBuilder.localUserOf(domain = "example.com"))
-        whenever(actorQueryService.findById(eq(5678))).doReturn(UserBuilder.remoteUserOf(domain = "remote.example.com"))
+        whenever(actorRepository.findById(eq(1234))).doReturn(UserBuilder.localUserOf(domain = "example.com"))
+        whenever(actorRepository.findById(eq(5678))).doReturn(UserBuilder.remoteUserOf(domain = "remote.example.com"))
 
         whenever(relationshipRepository.findByUserIdAndTargetUserId(eq(5678), eq(1234))).doReturn(
             Relationship(
@@ -417,7 +413,7 @@ class RelationshipServiceImplTest {
 
     @Test
     fun `rejectFollowRequest ローカルユーザーの場合永続化される`() = runTest {
-        whenever(actorQueryService.findById(eq(5678))).doReturn(UserBuilder.localUserOf(domain = "example.com"))
+        whenever(actorRepository.findById(eq(5678))).doReturn(UserBuilder.localUserOf(domain = "example.com"))
 
         whenever(relationshipRepository.findByUserIdAndTargetUserId(eq(5678), eq(1234))).doReturn(
             Relationship(
@@ -453,10 +449,10 @@ class RelationshipServiceImplTest {
     @Test
     fun `rejectFollowRequest リモートユーザーの場合永続化されて配送される`() = runTest {
         val localUser = UserBuilder.localUserOf(domain = "example.com")
-        whenever(actorQueryService.findById(eq(1234))).doReturn(localUser)
+        whenever(actorRepository.findById(eq(1234))).doReturn(localUser)
 
         val remoteUser = UserBuilder.remoteUserOf(domain = "remote.example.com")
-        whenever(actorQueryService.findById(eq(5678))).doReturn(remoteUser)
+        whenever(actorRepository.findById(eq(5678))).doReturn(remoteUser)
 
         whenever(relationshipRepository.findByUserIdAndTargetUserId(eq(5678), eq(1234))).doReturn(
             Relationship(
@@ -537,8 +533,8 @@ class RelationshipServiceImplTest {
 
     @Test
     fun `unfollow ローカルユーザーの場合永続化される`() = runTest {
-        whenever(actorQueryService.findById(eq(1234))).doReturn(UserBuilder.remoteUserOf(domain = "remote.example.com"))
-        whenever(actorQueryService.findById(eq(5678))).doReturn(UserBuilder.localUserOf(domain = "example.com"))
+        whenever(actorRepository.findById(eq(1234))).doReturn(UserBuilder.remoteUserOf(domain = "remote.example.com"))
+        whenever(actorRepository.findById(eq(5678))).doReturn(UserBuilder.localUserOf(domain = "example.com"))
         whenever(relationshipRepository.findByUserIdAndTargetUserId(eq(1234), eq(5678))).doReturn(
             Relationship(
                 actorId = 1234,
@@ -573,10 +569,10 @@ class RelationshipServiceImplTest {
     @Test
     fun `unfollow リモートユーザー場合永続化されて配送される`() = runTest {
         val localUser = UserBuilder.localUserOf(domain = "example.com")
-        whenever(actorQueryService.findById(eq(1234))).doReturn(localUser)
+        whenever(actorRepository.findById(eq(1234))).doReturn(localUser)
 
         val remoteUser = UserBuilder.remoteUserOf(domain = "remote.example.com")
-        whenever(actorQueryService.findById(eq(5678))).doReturn(remoteUser)
+        whenever(actorRepository.findById(eq(5678))).doReturn(remoteUser)
 
         whenever(relationshipRepository.findByUserIdAndTargetUserId(eq(1234), eq(5678))).doReturn(
             Relationship(
@@ -618,6 +614,9 @@ class RelationshipServiceImplTest {
 
     @Test
     fun `unfollow フォローしていなかった場合は何もしない`() = runTest {
+        whenever(actorRepository.findById(eq(1234))).doReturn(UserBuilder.localUserOf(id = 1234))
+        whenever(actorRepository.findById(eq(5678))).doReturn(UserBuilder.localUserOf(id = 5678))
+
         whenever(relationshipRepository.findByUserIdAndTargetUserId(eq(1234), eq(5678))).doReturn(
             Relationship(
                 actorId = 1234,
@@ -637,7 +636,7 @@ class RelationshipServiceImplTest {
 
     @Test
     fun `unblock ローカルユーザーの場合永続化される`() = runTest {
-        whenever(actorQueryService.findById(eq(5678))).doReturn(UserBuilder.localUserOf(domain = "example.com"))
+        whenever(actorRepository.findById(eq(5678))).doReturn(UserBuilder.localUserOf(domain = "example.com"))
         whenever(relationshipRepository.findByUserIdAndTargetUserId(eq(1234), eq(5678))).doReturn(
             Relationship(
                 actorId = 1234,
@@ -672,10 +671,10 @@ class RelationshipServiceImplTest {
     @Test
     fun `unblock リモートユーザーの場合永続化されて配送される`() = runTest {
         val localUser = UserBuilder.localUserOf(domain = "example.com")
-        whenever(actorQueryService.findById(eq(1234))).doReturn(localUser)
+        whenever(actorRepository.findById(eq(1234))).doReturn(localUser)
 
         val remoteUser = UserBuilder.remoteUserOf(domain = "remote.example.com")
-        whenever(actorQueryService.findById(eq(5678))).doReturn(remoteUser)
+        whenever(actorRepository.findById(eq(5678))).doReturn(remoteUser)
 
         whenever(relationshipRepository.findByUserIdAndTargetUserId(eq(1234), eq(5678))).doReturn(
             Relationship(

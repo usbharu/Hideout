@@ -2,7 +2,6 @@ package dev.usbharu.hideout.mastodon.service.account
 
 import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
-import dev.usbharu.hideout.core.query.RelationshipQueryService
 import dev.usbharu.hideout.core.service.media.MediaService
 import dev.usbharu.hideout.core.service.relationship.RelationshipService
 import dev.usbharu.hideout.core.service.user.UpdateUserDto
@@ -71,8 +70,7 @@ class AccountApiServiceImpl(
     private val statusQueryService: StatusQueryService,
     private val relationshipService: RelationshipService,
     private val relationshipRepository: RelationshipRepository,
-    private val mediaService: MediaService,
-    private val relationshipQueryService: RelationshipQueryService
+    private val mediaService: MediaService
 ) :
     AccountApiService {
     override suspend fun accountsStatuses(
@@ -221,7 +219,7 @@ class AccountApiServiceImpl(
         limit: Int,
         withIgnore: Boolean
     ): List<Account> = transaction.transaction {
-        val actorIdList = relationshipQueryService
+        val actorIdList = relationshipRepository
             .findByTargetIdAndFollowRequestAndIgnoreFollowRequest(
                 maxId = maxId,
                 sinceId = sinceId,

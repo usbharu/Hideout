@@ -2,16 +2,15 @@ package dev.usbharu.hideout.core.service.post
 
 import dev.usbharu.hideout.activitypub.service.activity.create.ApSendCreateService
 import dev.usbharu.hideout.core.domain.exception.UserNotFoundException
+import dev.usbharu.hideout.core.domain.exception.resource.DuplicateException
+import dev.usbharu.hideout.core.domain.exception.resource.PostNotFoundException
 import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.domain.model.reaction.ReactionRepository
-import dev.usbharu.hideout.core.query.PostQueryService
 import dev.usbharu.hideout.core.service.timeline.TimelineService
-import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.slf4j.LoggerFactory
-import org.springframework.dao.DuplicateKeyException
 import org.springframework.stereotype.Service
 import java.time.Instant
 
@@ -20,7 +19,6 @@ class PostServiceImpl(
     private val postRepository: PostRepository,
     private val actorRepository: ActorRepository,
     private val timelineService: TimelineService,
-    private val postQueryService: PostQueryService,
     private val postBuilder: Post.PostBuilder,
     private val apSendCreateService: ApSendCreateService,
     private val reactionRepository: ReactionRepository
@@ -69,7 +67,7 @@ class PostServiceImpl(
     }
 
     override suspend fun deleteByActor(actorId: Long) {
-        postQueryService.findByActorId(actorId).filterNot { it.delted }.forEach { postRepository.save(it.delete()) }
+        postRepository.findByActorId(actorId).filterNot { it.delted }.forEach { postRepository.save(it.delete()) }
 
         val actor = actorRepository.findById(actorId)
             ?: throw IllegalStateException("actor: $actorId was not found.")
@@ -79,18 +77,12 @@ class PostServiceImpl(
 
     private suspend fun internalCreate(post: Post, isLocal: Boolean, actor: Actor): Post {
         return try {
-            if (postRepository.save(post)) {
-                try {
-                    timelineService.publishTimeline(post, isLocal)
-                    actorRepository.save(actor.incrementPostsCount())
-                } catch (e: DuplicateKeyException) {
-                    logger.trace("Timeline already exists.", e)
-                }
-            }
-            post
-        } catch (e: ExposedSQLException) {
-            logger.warn("FAILED Save to post. url: ${post.apId}", e)
-            postQueryService.findByApId(post.apId)
+            val save = postRepository.save(post)
+            timelineService.publishTimeline(post, isLocal)
+            actorRepository.save(actor.incrementPostsCount())
+            save
+        } catch (_: DuplicateException) {
+            postRepository.findByApId(post.apId) ?: throw PostNotFoundException.withApId(post.apId)
         }
     }
 

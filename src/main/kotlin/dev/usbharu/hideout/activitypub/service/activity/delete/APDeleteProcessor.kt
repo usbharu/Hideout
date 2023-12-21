@@ -8,9 +8,8 @@ import dev.usbharu.hideout.activitypub.service.common.AbstractActivityPubProcess
 import dev.usbharu.hideout.activitypub.service.common.ActivityPubProcessContext
 import dev.usbharu.hideout.activitypub.service.common.ActivityType
 import dev.usbharu.hideout.application.external.Transaction
-import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
-import dev.usbharu.hideout.core.query.ActorQueryService
-import dev.usbharu.hideout.core.query.PostQueryService
+import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
+import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.service.post.PostService
 import dev.usbharu.hideout.core.service.user.UserService
 import org.springframework.stereotype.Service
@@ -18,10 +17,10 @@ import org.springframework.stereotype.Service
 @Service
 class APDeleteProcessor(
     transaction: Transaction,
-    private val postQueryService: PostQueryService,
-    private val actorQueryService: ActorQueryService,
     private val userService: UserService,
-    private val postService: PostService
+    private val postService: PostService,
+    private val actorRepository: ActorRepository,
+    private val postRepository: PostRepository
 ) :
     AbstractActivityPubProcessor<Delete>(transaction) {
     override suspend fun internalProcess(activity: ActivityPubProcessContext<Delete>) {
@@ -34,19 +33,15 @@ class APDeleteProcessor(
             throw IllegalActivityPubObjectException("object hasn't id or object")
         }
 
-        try {
-            val actor = actorQueryService.findByUrl(deleteId)
-            userService.deleteRemoteActor(actor.id)
-        } catch (e: Exception) {
-            logger.warn("FAILED delete id: {} is not found.", deleteId, e)
-        }
+        val actor = actorRepository.findByUrl(deleteId)
+        actor?.let { userService.deleteRemoteActor(it.id) }
 
-        try {
-            val post = postQueryService.findByApId(deleteId)
-            postService.deleteRemote(post)
-        } catch (e: FailedToGetResourcesException) {
-            logger.warn("FAILED delete id: {} is not found.", deleteId, e)
+        val post = postRepository.findByApId(deleteId)
+        if (post == null) {
+            logger.warn("FAILED Delete id: {} is not found.", deleteId)
+            return
         }
+        postService.deleteRemote(post)
     }
 
     override fun isSupported(activityType: ActivityType): Boolean = activityType == ActivityType.Delete

@@ -5,6 +5,8 @@ import dev.usbharu.hideout.core.domain.model.post.Visibility
 import dev.usbharu.hideout.core.domain.model.timeline.Timeline
 import dev.usbharu.hideout.core.domain.model.timeline.TimelineRepository
 import org.jetbrains.exposed.sql.*
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Repository
@@ -12,11 +14,15 @@ import org.springframework.stereotype.Repository
 @Repository
 @Qualifier("jdbc")
 @ConditionalOnProperty("hideout.use-mongodb", havingValue = "false", matchIfMissing = true)
-class ExposedTimelineRepository(private val idGenerateService: IdGenerateService) : TimelineRepository {
+class ExposedTimelineRepository(private val idGenerateService: IdGenerateService) : TimelineRepository,
+    AbstractRepository() {
+    override val logger: Logger
+        get() = Companion.logger
+
     override suspend fun generateId(): Long = idGenerateService.generateId()
 
-    override suspend fun save(timeline: Timeline): Timeline {
-        if (Timelines.select { Timelines.id eq timeline.id }.singleOrNull() == null) {
+    override suspend fun save(timeline: Timeline): Timeline = query {
+        if (Timelines.select { Timelines.id eq timeline.id }.forUpdate().singleOrNull() == null) {
             Timelines.insert {
                 it[id] = timeline.id
                 it[userId] = timeline.userId
@@ -48,10 +54,10 @@ class ExposedTimelineRepository(private val idGenerateService: IdGenerateService
                 it[mediaIds] = timeline.mediaIds.joinToString(",")
             }
         }
-        return timeline
+        return@query timeline
     }
 
-    override suspend fun saveAll(timelines: List<Timeline>): List<Timeline> {
+    override suspend fun saveAll(timelines: List<Timeline>): List<Timeline> = query {
         Timelines.batchInsert(timelines, true, false) {
             this[Timelines.id] = it.id
             this[Timelines.userId] = it.userId
@@ -67,15 +73,21 @@ class ExposedTimelineRepository(private val idGenerateService: IdGenerateService
             this[Timelines.isPureRepost] = it.isPureRepost
             this[Timelines.mediaIds] = it.mediaIds.joinToString(",")
         }
-        return timelines
+        return@query timelines
     }
 
-    override suspend fun findByUserId(id: Long): List<Timeline> =
-        Timelines.select { Timelines.userId eq id }.map { it.toTimeline() }
+    override suspend fun findByUserId(id: Long): List<Timeline> = query {
+        return@query Timelines.select { Timelines.userId eq id }.map { it.toTimeline() }
+    }
 
-    override suspend fun findByUserIdAndTimelineId(userId: Long, timelineId: Long): List<Timeline> =
-        Timelines.select { Timelines.userId eq userId and (Timelines.timelineId eq timelineId) }
+    override suspend fun findByUserIdAndTimelineId(userId: Long, timelineId: Long): List<Timeline> = query {
+        return@query Timelines.select { Timelines.userId eq userId and (Timelines.timelineId eq timelineId) }
             .map { it.toTimeline() }
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(ExposedTimelineRepository::class.java)
+    }
 }
 
 fun ResultRow.toTimeline(): Timeline {

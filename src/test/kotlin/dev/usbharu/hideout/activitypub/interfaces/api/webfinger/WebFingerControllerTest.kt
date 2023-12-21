@@ -5,7 +5,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.activitypub.domain.model.webfinger.WebFinger
 import dev.usbharu.hideout.activitypub.service.webfinger.WebFingerApiService
 import dev.usbharu.hideout.application.config.ApplicationConfig
-import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
+import dev.usbharu.hideout.core.domain.exception.resource.UserNotFoundException
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -82,9 +82,12 @@ class WebFingerControllerTest {
 
     @Test
     fun `webfinger 存在しないacctを指定したとき404 Not Foundが返ってくる`() = runTest {
-        whenever(webFingerApiService.findByNameAndDomain(eq("fuga"), eq("example.com"))).doThrow(
-            FailedToGetResourcesException::class
-        )
+        whenever(
+            webFingerApiService.findByNameAndDomain(
+                eq("fuga"),
+                eq("example.com")
+            )
+        ).doThrow(UserNotFoundException::class)
 
         mockMvc.perform(get("/.well-known/webfinger?resource=acct:fuga@example.com"))
             .andDo(print())

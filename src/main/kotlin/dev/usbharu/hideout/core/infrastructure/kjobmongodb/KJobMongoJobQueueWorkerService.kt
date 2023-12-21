@@ -7,8 +7,11 @@ import dev.usbharu.hideout.core.service.job.JobQueueWorkerService
 import kjob.core.dsl.JobContextWithProps
 import kjob.core.dsl.JobRegisterContext
 import kjob.core.dsl.KJobFunctions
+import kjob.core.job.JobExecutionType
 import kjob.core.kjob
 import kjob.mongo.Mongo
+import kotlinx.coroutines.CancellationException
+import org.slf4j.MDC
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Service
 
@@ -24,6 +27,8 @@ class KJobMongoJobQueueWorkerService(
             nonBlockingMaxJobs = 10
             blockingMaxJobs = 10
             jobExecutionPeriodInSeconds = 1
+            maxRetries = 3
+            defaultJobExecutor = JobExecutionType.NON_BLOCKING
         }.start()
     }
 
@@ -37,8 +42,21 @@ class KJobMongoJobQueueWorkerService(
         for (jobProcessor in jobQueueProcessorList) {
             kjob.register(jobProcessor.job()) {
                 execute {
-                    val param = it.convertUnsafe(props)
-                    jobProcessor.process(param)
+                    @Suppress("TooGenericExceptionCaught")
+                    try {
+                        MDC.put("x-job-id", this.jobId)
+                        val param = it.convertUnsafe(props)
+                        jobProcessor.process(param)
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (e: Exception) {
+                        logger.warn("FAILED Excute Job. job name: {} job id: {}", it.name, this.jobId, e)
+                        throw e
+                    } finally {
+                        MDC.remove("x-job-id")
+                    }
+                }.onError {
+                    logger.warn("FAILED Excute Job. job name: {} job id: {}", this.jobName, this.jobId, error)
                 }
             }
         }

@@ -2,9 +2,9 @@ package dev.usbharu.hideout.core.infrastructure.springframework.oauth2
 
 import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.application.external.Transaction
-import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
+import dev.usbharu.hideout.core.domain.exception.resource.UserNotFoundException
+import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
-import dev.usbharu.hideout.core.query.ActorQueryService
 import kotlinx.coroutines.runBlocking
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
@@ -13,10 +13,10 @@ import org.springframework.stereotype.Service
 
 @Service
 class UserDetailsServiceImpl(
-    private val actorQueryService: ActorQueryService,
     private val applicationConfig: ApplicationConfig,
     private val userDetailRepository: UserDetailRepository,
-    private val transaction: Transaction
+    private val transaction: Transaction,
+    private val actorRepository: ActorRepository
 ) :
     UserDetailsService {
     override fun loadUserByUsername(username: String?): UserDetails = runBlocking {
@@ -24,11 +24,10 @@ class UserDetailsServiceImpl(
             throw UsernameNotFoundException("$username not found")
         }
         transaction.transaction {
-            val findById = try {
-                actorQueryService.findByNameAndDomain(username, applicationConfig.url.host)
-            } catch (e: FailedToGetResourcesException) {
-                throw UsernameNotFoundException("$username not found", e)
-            }
+            val findById =
+                actorRepository.findByNameAndDomain(username, applicationConfig.url.host)
+                    ?: throw UserNotFoundException.withNameAndDomain(username, applicationConfig.url.host)
+
             val userDetails = userDetailRepository.findByActorId(findById.id)
                 ?: throw UsernameNotFoundException("${findById.id} not found.")
             UserDetailsImpl(

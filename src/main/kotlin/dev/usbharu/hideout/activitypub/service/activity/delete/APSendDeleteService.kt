@@ -4,11 +4,12 @@ import dev.usbharu.hideout.activitypub.domain.model.Delete
 import dev.usbharu.hideout.activitypub.domain.model.Tombstone
 import dev.usbharu.hideout.activitypub.domain.model.objects.ObjectValue
 import dev.usbharu.hideout.application.config.ApplicationConfig
+import dev.usbharu.hideout.core.domain.exception.resource.UserNotFoundException
 import dev.usbharu.hideout.core.domain.model.actor.Actor
+import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.external.job.DeliverDeleteJob
 import dev.usbharu.hideout.core.external.job.DeliverDeleteJobParam
-import dev.usbharu.hideout.core.query.ActorQueryService
 import dev.usbharu.hideout.core.query.FollowerQueryService
 import dev.usbharu.hideout.core.service.job.JobQueueParentService
 import org.springframework.stereotype.Service
@@ -24,11 +25,12 @@ class APSendDeleteServiceImpl(
     private val jobQueueParentService: JobQueueParentService,
     private val delverDeleteJob: DeliverDeleteJob,
     private val followerQueryService: FollowerQueryService,
-    private val actorQueryService: ActorQueryService,
-    private val applicationConfig: ApplicationConfig
+    private val applicationConfig: ApplicationConfig,
+    private val actorRepository: ActorRepository
 ) : APSendDeleteService {
     override suspend fun sendDeleteNote(deletedPost: Post) {
-        val actor = actorQueryService.findById(deletedPost.actorId)
+        val actor =
+            actorRepository.findById(deletedPost.actorId) ?: throw UserNotFoundException.withId(deletedPost.actorId)
         val followersById = followerQueryService.findFollowersById(deletedPost.actorId)
 
         val delete = Delete(
