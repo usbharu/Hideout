@@ -37,13 +37,12 @@ class ReactionServiceImpl(
         val findByPostIdAndUserIdAndEmojiId =
             reactionRepository.findByPostIdAndActorIdAndEmojiId(postId, actorId, 0)
 
-        if (findByPostIdAndUserIdAndEmojiId == null) {
-            LOGGER.warn("FAILED Send reaction. $postId $actorId")
-            return
+        if (findByPostIdAndUserIdAndEmojiId != null) {
+            apReactionService.removeReaction(findByPostIdAndUserIdAndEmojiId)
+            reactionRepository.delete(findByPostIdAndUserIdAndEmojiId)
         }
 
-        apReactionService.removeReaction(findByPostIdAndUserIdAndEmojiId)
-        reactionRepository.delete(findByPostIdAndUserIdAndEmojiId)
+
         val reaction = Reaction(reactionRepository.generateId(), 0, postId, actorId)
         reactionRepository.save(reaction)
         apReactionService.reaction(reaction)

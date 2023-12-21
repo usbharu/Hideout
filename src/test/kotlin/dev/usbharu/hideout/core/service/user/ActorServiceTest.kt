@@ -4,7 +4,6 @@ package dev.usbharu.hideout.core.service.user
 
 import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.application.config.CharacterLimit
-import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.post.Post
@@ -70,14 +69,7 @@ class ActorServiceTest {
         val actorRepository = mock<ActorRepository> {
             onBlocking { nextId() } doReturn 113345L
         }
-        val deletedActorQueryService = mock<DeletedActorQueryService> {
-            onBlocking {
-                findByNameAndDomain(
-                    eq("test"),
-                    eq("remote.example.com")
-                )
-            } doAnswer { throw FailedToGetResourcesException() }
-        }
+
         val userService =
             UserServiceImpl(
                 actorRepository = actorRepository,

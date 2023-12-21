@@ -7,6 +7,7 @@ import dev.usbharu.hideout.activitypub.domain.model.Like
 import dev.usbharu.hideout.activitypub.service.common.ActivityPubProcessContext
 import dev.usbharu.hideout.activitypub.service.common.ActivityType
 import dev.usbharu.hideout.application.config.ActivityPubConfig
+import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.service.relationship.RelationshipService
 import dev.usbharu.httpsignature.common.HttpHeaders
 import dev.usbharu.httpsignature.common.HttpMethod
@@ -33,7 +34,7 @@ import java.net.URL
 class ApAcceptProcessorTest {
 
     @Mock
-    private lateinit var actorQueryService: ActorQueryService
+    private lateinit var actorRepository: ActorRepository
 
     @Mock
     private lateinit var relationshipService: RelationshipService
@@ -66,9 +67,9 @@ class ApAcceptProcessorTest {
         )
 
         val user = UserBuilder.localUserOf()
-        whenever(actorQueryService.findByUrl(eq("https://example.com"))).doReturn(user)
+        whenever(actorRepository.findByUrl(eq("https://example.com"))).doReturn(user)
         val remoteUser = UserBuilder.remoteUserOf()
-        whenever(actorQueryService.findByUrl(eq("https://remote.example.com"))).doReturn(remoteUser)
+        whenever(actorRepository.findByUrl(eq("https://remote.example.com"))).doReturn(remoteUser)
 
         apAcceptProcessor.internalProcess(activity)
 

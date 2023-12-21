@@ -5,7 +5,7 @@ import dev.usbharu.hideout.activitypub.domain.model.Key
 import dev.usbharu.hideout.activitypub.domain.model.Person
 import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
 import dev.usbharu.hideout.application.config.ActivityPubConfig
-import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
+import dev.usbharu.hideout.core.domain.exception.resource.UserNotFoundException
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -75,7 +75,7 @@ class ActorAPControllerImplTest {
 
     @Test
     fun `userAP 存在しないユーザーにGETすると404が返ってくる`() = runTest {
-        whenever(apUserService.getPersonByName(eq("fuga"))).doThrow(FailedToGetResourcesException::class)
+        whenever(apUserService.getPersonByName(eq("fuga"))).doThrow(UserNotFoundException::class)
 
         mockMvc
             .get("/users/fuga")

@@ -2,6 +2,7 @@ package dev.usbharu.hideout.core.service.timeline
 
 import dev.usbharu.hideout.application.service.id.TwitterSnowflakeIdGenerateService
 import dev.usbharu.hideout.core.domain.model.actor.Actor
+import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.post.Visibility
 import dev.usbharu.hideout.core.domain.model.timeline.Timeline
 import dev.usbharu.hideout.core.domain.model.timeline.TimelineRepository
@@ -26,7 +27,7 @@ class TimelineServiceTest {
     private lateinit var followerQueryService: FollowerQueryService
 
     @Mock
-    private lateinit var actorQueryService: ActorQueryService
+    private lateinit var actorRepository: ActorRepository
 
     @Mock
     private lateinit var timelineRepository: TimelineRepository
@@ -44,7 +45,7 @@ class TimelineServiceTest {
         val localUserOf = UserBuilder.localUserOf(id = post.actorId)
 
         whenever(followerQueryService.findFollowersById(eq(post.actorId))).doReturn(listOf)
-        whenever(actorQueryService.findById(eq(post.actorId))).doReturn(localUserOf)
+        whenever(actorRepository.findById(eq(post.actorId))).doReturn(localUserOf)
         whenever(timelineRepository.generateId()).doReturn(TwitterSnowflakeIdGenerateService.generateId())
 
 
