@@ -5,15 +5,18 @@ import dev.usbharu.hideout.core.domain.model.instance.InstanceRepository
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.javatime.timestamp
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 import dev.usbharu.hideout.core.domain.model.instance.Instance as InstanceEntity
 
 @Repository
-class InstanceRepositoryImpl(private val idGenerateService: IdGenerateService) : InstanceRepository {
+class InstanceRepositoryImpl(private val idGenerateService: IdGenerateService) : InstanceRepository,
+    AbstractRepository() {
     override suspend fun generateId(): Long = idGenerateService.generateId()
 
-    override suspend fun save(instance: InstanceEntity): InstanceEntity {
-        if (Instance.select { Instance.id.eq(instance.id) }.empty()) {
+    override suspend fun save(instance: InstanceEntity): InstanceEntity = query {
+        if (Instance.select { Instance.id.eq(instance.id) }.forUpdate().empty()) {
             Instance.insert {
                 it[id] = instance.id
                 it[name] = instance.name
@@ -43,20 +46,27 @@ class InstanceRepositoryImpl(private val idGenerateService: IdGenerateService) :
                 it[createdAt] = instance.createdAt
             }
         }
-        return instance
+        return@query instance
     }
 
-    override suspend fun findById(id: Long): InstanceEntity? {
-        return Instance.select { Instance.id eq id }
+    override suspend fun findById(id: Long): InstanceEntity? = query {
+        return@query Instance.select { Instance.id eq id }
             .singleOrNull()?.toInstance()
     }
 
-    override suspend fun delete(instance: InstanceEntity) {
+    override suspend fun delete(instance: InstanceEntity): Unit = query {
         Instance.deleteWhere { id eq instance.id }
     }
 
-    override suspend fun findByUrl(url: String): dev.usbharu.hideout.core.domain.model.instance.Instance? {
-        return Instance.select { Instance.url eq url }.singleOrNull()?.toInstance()
+    override suspend fun findByUrl(url: String): dev.usbharu.hideout.core.domain.model.instance.Instance? = query {
+        return@query Instance.select { Instance.url eq url }.singleOrNull()?.toInstance()
+    }
+
+    override val logger: Logger
+        get() = Companion.logger
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(InstanceRepositoryImpl::class.java)
     }
 }
 
