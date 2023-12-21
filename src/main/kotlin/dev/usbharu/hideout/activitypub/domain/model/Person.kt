@@ -67,9 +67,9 @@ constructor(
 
     override fun toString(): String {
         return "Person(" +
-                "name=$name, " +
+            "name=$name, " +
             "id='$id', " +
-                "preferredUsername='$preferredUsername', " +
+            "preferredUsername='$preferredUsername', " +
             "summary=$summary, " +
             "inbox='$inbox', " +
             "outbox='$outbox', " +
