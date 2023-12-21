@@ -8,12 +8,17 @@ import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.update
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 
 @Repository
-class UserDetailRepositoryImpl : UserDetailRepository {
-    override suspend fun save(userDetail: UserDetail): UserDetail {
-        val singleOrNull = UserDetails.select { UserDetails.actorId eq userDetail.actorId }.singleOrNull()
+class UserDetailRepositoryImpl : UserDetailRepository, AbstractRepository() {
+    override val logger: Logger
+        get() = Companion.logger
+
+    override suspend fun save(userDetail: UserDetail): UserDetail = query {
+        val singleOrNull = UserDetails.select { UserDetails.actorId eq userDetail.actorId }.forUpdate().singleOrNull()
         if (singleOrNull == null) {
             UserDetails.insert {
                 it[actorId] = userDetail.actorId
@@ -26,15 +31,15 @@ class UserDetailRepositoryImpl : UserDetailRepository {
                 it[autoAcceptFolloweeFollowRequest] = userDetail.autoAcceptFolloweeFollowRequest
             }
         }
-        return userDetail
+        return@query userDetail
     }
 
-    override suspend fun delete(userDetail: UserDetail) {
+    override suspend fun delete(userDetail: UserDetail): Unit = query {
         UserDetails.deleteWhere { UserDetails.actorId eq userDetail.actorId }
     }
 
-    override suspend fun findByActorId(actorId: Long): UserDetail? {
-        return UserDetails
+    override suspend fun findByActorId(actorId: Long): UserDetail? = query {
+        return@query UserDetails
             .select { UserDetails.actorId eq actorId }
             .singleOrNull()
             ?.let {
@@ -44,6 +49,10 @@ class UserDetailRepositoryImpl : UserDetailRepository {
                     it[UserDetails.autoAcceptFolloweeFollowRequest]
                 )
             }
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(UserDetailRepositoryImpl::class.java)
     }
 }
 

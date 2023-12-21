@@ -46,7 +46,7 @@ class InMemoryCacheManager : CacheManager {
     override suspend fun getOrWait(key: String): ResolveResponse {
         while (valueStore.contains(key).not()) {
             if (cacheKey.containsKey(key).not()) {
-                throw IllegalStateException("Invalid cache key.")
+                throw IllegalStateException("Invalid cache key. $key")
             }
             delay(1)
         }

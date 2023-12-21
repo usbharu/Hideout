@@ -13,6 +13,7 @@ import java.net.URL
 
 @JsonDeserialize(using = HttpRequestDeserializer::class)
 @JsonSubTypes
+@Suppress("UnnecessaryAbstractClass")
 abstract class HttpRequestMixIn
 
 class HttpRequestDeserializer : JsonDeserializer<HttpRequest>() {

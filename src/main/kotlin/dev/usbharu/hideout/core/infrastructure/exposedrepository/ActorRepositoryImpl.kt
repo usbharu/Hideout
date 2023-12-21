@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.core.infrastructure.exposedrepository
 
+import dev.usbharu.hideout.application.infrastructure.exposed.QueryMapper
 import dev.usbharu.hideout.application.infrastructure.exposed.ResultRowMapper
 import dev.usbharu.hideout.application.service.id.IdGenerateService
 import dev.usbharu.hideout.core.domain.model.actor.Actor
@@ -7,17 +8,21 @@ import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.javatime.timestamp
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 
 @Repository
 class ActorRepositoryImpl(
     private val idGenerateService: IdGenerateService,
-    private val actorResultRowMapper: ResultRowMapper<Actor>
-) :
-    ActorRepository {
+    private val actorResultRowMapper: ResultRowMapper<Actor>,
+    private val actorQueryMapper: QueryMapper<Actor>
+) : ActorRepository, AbstractRepository() {
+    override val logger: Logger
+        get() = Companion.logger
 
-    override suspend fun save(actor: Actor): Actor {
-        val singleOrNull = Actors.select { Actors.id eq actor.id }.empty()
+    override suspend fun save(actor: Actor): Actor = query {
+        val singleOrNull = Actors.select { Actors.id eq actor.id }.forUpdate().empty()
         if (singleOrNull) {
             Actors.insert {
                 it[id] = actor.id
@@ -64,17 +69,60 @@ class ActorRepositoryImpl(
                 it[lastPostAt] = actor.lastPostDate
             }
         }
-        return actor
+        return@query actor
     }
 
-    override suspend fun findById(id: Long): Actor? =
-        Actors.select { Actors.id eq id }.singleOrNull()?.let(actorResultRowMapper::map)
+    override suspend fun findById(id: Long): Actor? = query {
+        return@query Actors.select { Actors.id eq id }.singleOrNull()?.let(actorResultRowMapper::map)
+    }
 
-    override suspend fun delete(id: Long) {
+    override suspend fun findByIdWithLock(id: Long): Actor? = query {
+        return@query Actors.select { Actors.id eq id }.forUpdate().singleOrNull()?.let(actorResultRowMapper::map)
+    }
+
+    override suspend fun findAll(limit: Int, offset: Long): List<Actor> = query {
+        return@query Actors.selectAll().limit(limit, offset).let(actorQueryMapper::map)
+    }
+
+    override suspend fun findByName(name: String): List<Actor> = query {
+        return@query Actors.select { Actors.name eq name }.let(actorQueryMapper::map)
+    }
+
+    override suspend fun findByNameAndDomain(name: String, domain: String): Actor? = query {
+        return@query Actors.select { Actors.name eq name and (Actors.domain eq domain) }.singleOrNull()
+            ?.let(actorResultRowMapper::map)
+    }
+
+    override suspend fun findByNameAndDomainWithLock(name: String, domain: String): Actor? = query {
+        return@query Actors.select { Actors.name eq name and (Actors.domain eq domain) }.forUpdate().singleOrNull()
+            ?.let(actorResultRowMapper::map)
+    }
+
+    override suspend fun findByUrl(url: String): Actor? = query {
+        return@query Actors.select { Actors.url eq url }.singleOrNull()?.let(actorResultRowMapper::map)
+    }
+
+    override suspend fun findByUrlWithLock(url: String): Actor? = query {
+        return@query Actors.select { Actors.url eq url }.forUpdate().singleOrNull()?.let(actorResultRowMapper::map)
+    }
+
+    override suspend fun findByIds(ids: List<Long>): List<Actor> = query {
+        return@query Actors.select { Actors.id inList ids }.let(actorQueryMapper::map)
+    }
+
+    override suspend fun findByKeyId(keyId: String): Actor? = query {
+        return@query Actors.select { Actors.keyId eq keyId }.singleOrNull()?.let(actorResultRowMapper::map)
+    }
+
+    override suspend fun delete(id: Long): Unit = query {
         Actors.deleteWhere { Actors.id.eq(id) }
     }
 
     override suspend fun nextId(): Long = idGenerateService.generateId()
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(ActorRepositoryImpl::class.java)
+    }
 }
 
 object Actors : Table("actors") {

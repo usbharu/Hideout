@@ -4,7 +4,6 @@ import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
 import dev.usbharu.hideout.core.query.FollowerQueryService
-import dev.usbharu.hideout.core.query.RelationshipQueryService
 import dev.usbharu.hideout.core.service.media.MediaService
 import dev.usbharu.hideout.core.service.relationship.RelationshipService
 import dev.usbharu.hideout.core.service.user.UserService
@@ -49,10 +48,7 @@ class AccountApiServiceImplTest {
 
     @Mock
     private lateinit var relationshipRepository: RelationshipRepository
-
-    @Mock
-    private lateinit var relationshipQueryService: RelationshipQueryService
-
+    
     @Mock
     private lateinit var mediaService: MediaService
 

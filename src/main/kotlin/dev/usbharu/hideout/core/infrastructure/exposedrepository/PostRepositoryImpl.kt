@@ -2,24 +2,26 @@ package dev.usbharu.hideout.core.infrastructure.exposedrepository
 
 import dev.usbharu.hideout.application.infrastructure.exposed.QueryMapper
 import dev.usbharu.hideout.application.service.id.IdGenerateService
-import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
-import dev.usbharu.hideout.util.singleOr
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 
 @Repository
 class PostRepositoryImpl(
     private val idGenerateService: IdGenerateService,
     private val postQueryMapper: QueryMapper<Post>
-) : PostRepository {
+) : PostRepository, AbstractRepository() {
+    override val logger: Logger
+        get() = Companion.logger
 
     override suspend fun generateId(): Long = idGenerateService.generateId()
 
-    override suspend fun save(post: Post): Boolean {
-        val singleOrNull = Posts.select { Posts.id eq post.id }.singleOrNull()
+    override suspend fun save(post: Post): Post = query {
+        val singleOrNull = Posts.select { Posts.id eq post.id }.forUpdate().singleOrNull()
         if (singleOrNull == null) {
             Posts.insert {
                 it[id] = post.id
@@ -61,17 +63,44 @@ class PostRepositoryImpl(
                 it[deleted] = post.delted
             }
         }
-        return singleOrNull == null
+        return@query post
     }
 
-    override suspend fun findById(id: Long): Post =
-        Posts.leftJoin(PostsMedia)
+    override suspend fun findById(id: Long): Post? = query {
+        return@query Posts.leftJoin(PostsMedia)
             .select { Posts.id eq id }
             .let(postQueryMapper::map)
-            .singleOr { FailedToGetResourcesException("id: $id was not found.", it) }
+            .singleOrNull()
+    }
 
-    override suspend fun delete(id: Long) {
+    override suspend fun findByUrl(url: String): Post? = query {
+        return@query Posts.leftJoin(PostsMedia)
+            .select { Posts.url eq url }
+            .let(postQueryMapper::map)
+            .singleOrNull()
+    }
+
+    override suspend fun findByApId(apId: String): Post? = query {
+        return@query Posts.leftJoin(PostsMedia)
+            .select { Posts.apId eq apId }
+            .let(postQueryMapper::map)
+            .singleOrNull()
+    }
+
+    override suspend fun existByApIdWithLock(apId: String): Boolean = query {
+        return@query Posts.select { Posts.apId eq apId }.forUpdate().empty().not()
+    }
+
+    override suspend fun findByActorId(actorId: Long): List<Post> = query {
+        return@query Posts.select { Posts.actorId eq actorId }.let(postQueryMapper::map)
+    }
+
+    override suspend fun delete(id: Long): Unit = query {
         Posts.deleteWhere { Posts.id eq id }
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(PostRepositoryImpl::class.java)
     }
 }
 

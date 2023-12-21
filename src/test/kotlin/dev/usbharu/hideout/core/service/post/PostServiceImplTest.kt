@@ -2,15 +2,14 @@ package dev.usbharu.hideout.core.service.post
 
 import dev.usbharu.hideout.activitypub.service.activity.create.ApSendCreateService
 import dev.usbharu.hideout.application.config.CharacterLimit
+import dev.usbharu.hideout.core.domain.exception.resource.DuplicateException
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.domain.model.reaction.ReactionRepository
-import dev.usbharu.hideout.core.query.PostQueryService
 import dev.usbharu.hideout.core.service.timeline.TimelineService
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
@@ -20,7 +19,6 @@ import org.mockito.Mockito.mockStatic
 import org.mockito.Spy
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.*
-import org.springframework.dao.DuplicateKeyException
 import utils.PostBuilder
 import utils.UserBuilder
 import java.time.Instant
@@ -36,10 +34,6 @@ class PostServiceImplTest {
 
     @Mock
     private lateinit var timelineService: TimelineService
-
-    @Mock
-    private lateinit var postQueryService: PostQueryService
-
     @Spy
     private var postBuilder: Post.PostBuilder = Post.PostBuilder(CharacterLimit())
 
@@ -58,7 +52,7 @@ class PostServiceImplTest {
         val now = Instant.now()
         val post = PostBuilder.of(createdAt = now.toEpochMilli())
 
-        whenever(postRepository.save(eq(post))).doReturn(true)
+        whenever(postRepository.save(eq(post))).doReturn(post)
         whenever(postRepository.generateId()).doReturn(post.id)
         whenever(actorRepository.findById(eq(post.actorId))).doReturn(UserBuilder.localUserOf(id = post.actorId))
         whenever(timelineService.publishTimeline(eq(post), eq(true))).doReturn(Unit)
@@ -91,7 +85,7 @@ class PostServiceImplTest {
         val post = PostBuilder.of()
 
         whenever(actorRepository.findById(eq(post.actorId))).doReturn(UserBuilder.remoteUserOf(id = post.actorId))
-        whenever(postRepository.save(eq(post))).doReturn(true)
+        whenever(postRepository.save(eq(post))).doReturn(post)
         whenever(timelineService.publishTimeline(eq(post), eq(false))).doReturn(Unit)
 
 
@@ -109,23 +103,8 @@ class PostServiceImplTest {
         val post = PostBuilder.of()
 
         whenever(actorRepository.findById(eq(post.actorId))).doReturn(UserBuilder.remoteUserOf(id = post.actorId))
-        whenever(postRepository.save(eq(post))).doReturn(false)
-
-        val createLocal = postServiceImpl.createRemote(post)
-
-        assertThat(createLocal).isEqualTo(post)
-
-        verify(postRepository, times(1)).save(eq(post))
-        verify(timelineService, times(0)).publishTimeline(any(), any())
-    }
-
-    @Test
-    fun `createRemote 既に作成されていることを検知できず例外が発生した場合はDBから取得して返す`() = runTest {
-        val post = PostBuilder.of()
-
-        whenever(actorRepository.findById(eq(post.actorId))).doReturn(UserBuilder.remoteUserOf(id = post.actorId))
-        whenever(postRepository.save(eq(post))).doAnswer { throw ExposedSQLException(null, emptyList(), mock()) }
-        whenever(postQueryService.findByApId(eq(post.apId))).doReturn(post)
+        whenever(postRepository.save(eq(post))).doAnswer { throw DuplicateException() }
+        whenever(postRepository.findByApId(eq(post.apId))).doReturn(post)
 
         val createLocal = postServiceImpl.createRemote(post)
 
@@ -140,8 +119,9 @@ class PostServiceImplTest {
         val post = PostBuilder.of()
 
         whenever(actorRepository.findById(eq(post.actorId))).doReturn(UserBuilder.remoteUserOf(id = post.actorId))
-        whenever(postRepository.save(eq(post))).doReturn(true)
-        whenever(timelineService.publishTimeline(eq(post), eq(false))).doThrow(DuplicateKeyException::class)
+        whenever(postRepository.save(eq(post))).doReturn(post)
+        whenever(timelineService.publishTimeline(eq(post), eq(false))).doThrow(DuplicateException::class)
+        whenever(postRepository.findByApId(eq(post.apId))).doReturn(post)
 
         val createLocal = postServiceImpl.createRemote(post)
 

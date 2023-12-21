@@ -5,12 +5,10 @@ import dev.usbharu.hideout.activitypub.domain.model.Note
 import dev.usbharu.hideout.activitypub.query.NoteQueryService
 import dev.usbharu.hideout.activitypub.service.objects.note.APNoteServiceImpl.Companion.public
 import dev.usbharu.hideout.application.infrastructure.exposed.QueryMapper
-import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.domain.model.post.Visibility
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.*
-import dev.usbharu.hideout.util.singleOr
 import org.jetbrains.exposed.sql.Query
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.select
@@ -21,39 +19,42 @@ import java.time.Instant
 @Repository
 class NoteQueryServiceImpl(private val postRepository: PostRepository, private val postQueryMapper: QueryMapper<Post>) :
     NoteQueryService {
-    override suspend fun findById(id: Long): Pair<Note, Post> {
+    override suspend fun findById(id: Long): Pair<Note, Post>? {
         return Posts
             .leftJoin(Actors)
             .leftJoin(PostsMedia)
             .leftJoin(Media)
             .select { Posts.id eq id }
             .let {
-                it.toNote() to postQueryMapper.map(it)
-                    .singleOr { FailedToGetResourcesException("id: $id does not exist.") }
+                (it.toNote() ?: return null) to (
+                    postQueryMapper.map(it)
+                        .singleOrNull() ?: return null
+                    )
             }
     }
 
-    override suspend fun findByApid(apId: String): Pair<Note, Post> {
+    override suspend fun findByApid(apId: String): Pair<Note, Post>? {
         return Posts
             .leftJoin(Actors)
             .leftJoin(PostsMedia)
             .leftJoin(Media)
             .select { Posts.apId eq apId }
             .let {
-                it.toNote() to postQueryMapper.map(it)
-                    .singleOr { FailedToGetResourcesException("apid: $apId does not exist.") }
+                (it.toNote() ?: return null) to (
+                    postQueryMapper.map(it)
+                        .singleOrNull() ?: return null
+                    )
             }
     }
 
     private suspend fun ResultRow.toNote(mediaList: List<dev.usbharu.hideout.core.domain.model.media.Media>): Note {
         val replyId = this[Posts.replyId]
         val replyTo = if (replyId != null) {
-            try {
-                postRepository.findById(replyId).url
-            } catch (e: FailedToGetResourcesException) {
-                logger.warn("Failed to get replyId: $replyId", e)
-                null
+            val url = postRepository.findById(replyId)?.url
+            if (url == null) {
+                logger.warn("Failed to get replyId: $replyId")
             }
+            url
         } else {
             null
         }
@@ -76,11 +77,11 @@ class NoteQueryServiceImpl(private val postRepository: PostRepository, private v
         )
     }
 
-    private suspend fun Query.toNote(): Note {
+    private suspend fun Query.toNote(): Note? {
         return this.groupBy { it[Posts.id] }
             .map { it.value }
             .map { it.first().toNote(it.mapNotNull { resultRow -> resultRow.toMediaOrNull() }) }
-            .singleOr { FailedToGetResourcesException("resource does not exist.") }
+            .singleOrNull()
     }
 
     private fun visibility(visibility: Visibility, followers: String?): Pair<List<String>, List<String>> {

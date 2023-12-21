@@ -4,11 +4,9 @@ package dev.usbharu.hideout.core.service.user
 
 import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.application.config.CharacterLimit
-import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.post.Post
-import dev.usbharu.hideout.core.query.DeletedActorQueryService
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
@@ -38,13 +36,11 @@ class ActorServiceTest {
             UserServiceImpl(
                 actorRepository = actorRepository,
                 userAuthService = userAuthService,
-                actorQueryService = mock(),
                 actorBuilder = actorBuilder,
                 applicationConfig = testApplicationConfig,
                 instanceService = mock(),
                 userDetailRepository = mock(),
                 deletedActorRepository = mock(),
-                deletedActorQueryService = mock(),
                 reactionRepository = mock(),
                 relationshipRepository = mock(),
                 postService = mock(),
@@ -73,25 +69,16 @@ class ActorServiceTest {
         val actorRepository = mock<ActorRepository> {
             onBlocking { nextId() } doReturn 113345L
         }
-        val deletedActorQueryService = mock<DeletedActorQueryService> {
-            onBlocking {
-                findByNameAndDomain(
-                    eq("test"),
-                    eq("remote.example.com")
-                )
-            } doAnswer { throw FailedToGetResourcesException() }
-        }
+
         val userService =
             UserServiceImpl(
                 actorRepository = actorRepository,
                 userAuthService = mock(),
-                actorQueryService = mock(),
                 actorBuilder = actorBuilder,
                 applicationConfig = testApplicationConfig,
                 instanceService = mock(),
                 userDetailRepository = mock(),
                 deletedActorRepository = mock(),
-                deletedActorQueryService = deletedActorQueryService,
                 reactionRepository = mock(),
                 relationshipRepository = mock(),
                 postService = mock(),

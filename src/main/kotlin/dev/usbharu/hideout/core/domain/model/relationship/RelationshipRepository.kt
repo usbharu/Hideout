@@ -30,4 +30,16 @@ interface RelationshipRepository {
     suspend fun findByUserIdAndTargetUserId(actorId: Long, targetActorId: Long): Relationship?
 
     suspend fun deleteByActorIdOrTargetActorId(actorId: Long, targetActorId: Long)
+
+    suspend fun findByTargetIdAndFollowing(targetId: Long, following: Boolean): List<Relationship>
+
+    @Suppress("LongParameterList", "FunctionMaxLength")
+    suspend fun findByTargetIdAndFollowRequestAndIgnoreFollowRequest(
+        maxId: Long?,
+        sinceId: Long?,
+        limit: Int,
+        targetId: Long,
+        followRequest: Boolean,
+        ignoreFollowRequest: Boolean
+    ): List<Relationship>
 }

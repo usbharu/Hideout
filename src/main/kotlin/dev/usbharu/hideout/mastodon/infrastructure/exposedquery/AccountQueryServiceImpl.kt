@@ -1,11 +1,9 @@
 package dev.usbharu.hideout.mastodon.infrastructure.exposedquery
 
 import dev.usbharu.hideout.application.config.ApplicationConfig
-import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Actors
 import dev.usbharu.hideout.domain.mastodon.model.generated.Account
 import dev.usbharu.hideout.mastodon.query.AccountQueryService
-import dev.usbharu.hideout.util.singleOr
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.select
 import org.springframework.stereotype.Repository
@@ -13,12 +11,12 @@ import java.time.Instant
 
 @Repository
 class AccountQueryServiceImpl(private val applicationConfig: ApplicationConfig) : AccountQueryService {
-    override suspend fun findById(accountId: Long): Account {
+    override suspend fun findById(accountId: Long): Account? {
         val query = Actors.select { Actors.id eq accountId }
 
         return query
-            .singleOr { FailedToGetResourcesException("accountId: $accountId wad not exist or duplicate", it) }
-            .let { toAccount(it) }
+            .singleOrNull()
+            ?.let { toAccount(it) }
     }
 
     override suspend fun findByIds(accountIds: List<Long>): List<Account> {
