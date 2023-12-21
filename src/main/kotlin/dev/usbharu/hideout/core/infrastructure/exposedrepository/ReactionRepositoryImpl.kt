@@ -54,6 +54,28 @@ class ReactionRepositoryImpl(
             Reactions.actorId eq actorId
         }
     }
+
+    override suspend fun findByPostId(postId: Long): List<Reaction> {
+        return Reactions.select { Reactions.postId eq postId }.map { it.toReaction() }
+    }
+
+    override suspend fun findByPostIdAndActorIdAndEmojiId(postId: Long, actorId: Long, emojiId: Long): Reaction? {
+        return Reactions.select {
+            Reactions.postId eq postId and (Reactions.actorId eq actorId).and(
+                Reactions.emojiId.eq(
+                    emojiId
+                )
+            )
+        }.singleOrNull()?.toReaction()
+    }
+
+    override suspend fun existByPostIdAndActorIdAndEmojiId(postId: Long, actorId: Long, emojiId: Long): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun findByPostIdAndActorId(postId: Long, actorId: Long): List<Reaction> {
+        TODO("Not yet implemented")
+    }
 }
 
 fun ResultRow.toReaction(): Reaction {
