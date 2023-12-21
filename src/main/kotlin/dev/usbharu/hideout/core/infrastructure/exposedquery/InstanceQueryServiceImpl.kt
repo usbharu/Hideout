@@ -2,7 +2,6 @@ package dev.usbharu.hideout.core.infrastructure.exposedquery
 
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Instance
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.toInstance
-import dev.usbharu.hideout.core.query.InstanceQueryService
 import org.jetbrains.exposed.sql.select
 import org.springframework.stereotype.Repository
 import dev.usbharu.hideout.core.domain.model.instance.Instance as InstanceEntity

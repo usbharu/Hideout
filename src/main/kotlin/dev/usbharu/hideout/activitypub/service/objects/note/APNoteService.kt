@@ -9,7 +9,6 @@ import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.domain.model.post.Visibility
-import dev.usbharu.hideout.core.query.PostQueryService
 import dev.usbharu.hideout.core.service.media.MediaService
 import dev.usbharu.hideout.core.service.media.RemoteMedia
 import dev.usbharu.hideout.core.service.post.PostService
@@ -29,7 +28,6 @@ interface APNoteService {
 class APNoteServiceImpl(
     private val postRepository: PostRepository,
     private val apUserService: APUserService,
-    private val postQueryService: PostQueryService,
     private val postService: PostService,
     private val apResourceResolveService: APResourceResolveService,
     private val postBuilder: Post.PostBuilder,
@@ -97,7 +95,7 @@ class APNoteServiceImpl(
 
         val reply = note.inReplyTo?.let {
             fetchNote(it, targetActor)
-            postQueryService.findByUrl(it)
+            postRepository.findByUrl(it)
         }
 
         val mediaList = note.attachment.map {

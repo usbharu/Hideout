@@ -9,4 +9,8 @@ interface ReactionRepository {
     suspend fun delete(reaction: Reaction): Reaction
     suspend fun deleteByPostId(postId: Long): Int
     suspend fun deleteByActorId(actorId: Long): Int
+    suspend fun findByPostId(postId: Long): List<Reaction>
+    suspend fun findByPostIdAndActorIdAndEmojiId(postId: Long, actorId: Long, emojiId: Long): Reaction?
+    suspend fun existByPostIdAndActorIdAndEmojiId(postId: Long, actorId: Long, emojiId: Long): Boolean
+    suspend fun findByPostIdAndActorId(postId: Long, actorId: Long): List<Reaction>
 }

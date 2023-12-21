@@ -9,7 +9,6 @@ import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.domain.model.reaction.ReactionRepository
-import dev.usbharu.hideout.core.query.PostQueryService
 import dev.usbharu.hideout.core.service.timeline.TimelineService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -20,7 +19,6 @@ class PostServiceImpl(
     private val postRepository: PostRepository,
     private val actorRepository: ActorRepository,
     private val timelineService: TimelineService,
-    private val postQueryService: PostQueryService,
     private val postBuilder: Post.PostBuilder,
     private val apSendCreateService: ApSendCreateService,
     private val reactionRepository: ReactionRepository
@@ -69,7 +67,7 @@ class PostServiceImpl(
     }
 
     override suspend fun deleteByActor(actorId: Long) {
-        postQueryService.findByActorId(actorId).filterNot { it.delted }.forEach { postRepository.save(it.delete()) }
+        postRepository.findByActorId(actorId).filterNot { it.delted }.forEach { postRepository.save(it.delete()) }
 
         val actor = actorRepository.findById(actorId)
             ?: throw IllegalStateException("actor: $actorId was not found.")

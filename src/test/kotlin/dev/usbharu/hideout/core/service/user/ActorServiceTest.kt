@@ -8,7 +8,6 @@ import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.post.Post
-import dev.usbharu.hideout.core.query.DeletedActorQueryService
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
@@ -43,7 +42,6 @@ class ActorServiceTest {
                 instanceService = mock(),
                 userDetailRepository = mock(),
                 deletedActorRepository = mock(),
-                deletedActorQueryService = mock(),
                 reactionRepository = mock(),
                 relationshipRepository = mock(),
                 postService = mock(),
@@ -89,7 +87,6 @@ class ActorServiceTest {
                 instanceService = mock(),
                 userDetailRepository = mock(),
                 deletedActorRepository = mock(),
-                deletedActorQueryService = deletedActorQueryService,
                 reactionRepository = mock(),
                 relationshipRepository = mock(),
                 postService = mock(),

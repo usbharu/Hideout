@@ -5,7 +5,6 @@ import dev.usbharu.hideout.core.domain.model.instance.Instance
 import dev.usbharu.hideout.core.domain.model.instance.InstanceRepository
 import dev.usbharu.hideout.core.domain.model.instance.Nodeinfo
 import dev.usbharu.hideout.core.domain.model.instance.Nodeinfo2_0
-import dev.usbharu.hideout.core.query.InstanceQueryService
 import dev.usbharu.hideout.core.service.resource.ResourceResolveService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
@@ -22,14 +21,13 @@ interface InstanceService {
 class InstanceServiceImpl(
     private val instanceRepository: InstanceRepository,
     private val resourceResolveService: ResourceResolveService,
-    @Qualifier("activitypub") private val objectMapper: ObjectMapper,
-    private val instanceQueryService: InstanceQueryService
+    @Qualifier("activitypub") private val objectMapper: ObjectMapper
 ) : InstanceService {
     override suspend fun fetchInstance(url: String, sharedInbox: String?): Instance {
         val u = URL(url)
         val resolveInstanceUrl = u.protocol + "://" + u.host
 
-        val instance = instanceQueryService.findByUrl(resolveInstanceUrl)
+        val instance = instanceRepository.findByUrl(resolveInstanceUrl)
 
         if (instance != null) {
             return instance
