@@ -26,7 +26,8 @@ data class Actor private constructor(
     val followersCount: Int = 0,
     val followingCount: Int = 0,
     val postsCount: Int = 0,
-    val lastPostDate: Instant? = null
+    val lastPostDate: Instant? = null,
+    val emojis: List<Long> = emptyList()
 ) {
 
     @Component
@@ -55,7 +56,8 @@ data class Actor private constructor(
             followersCount: Int = 0,
             followingCount: Int = 0,
             postsCount: Int = 0,
-            lastPostDate: Instant? = null
+            lastPostDate: Instant? = null,
+            emojis: List<Long> = emptyList()
         ): Actor {
             if (id == 0L) {
                 return Actor(
@@ -78,7 +80,8 @@ data class Actor private constructor(
                     followersCount = followersCount,
                     followingCount = followingCount,
                     postsCount = postsCount,
-                    lastPostDate = lastPostDate
+                    lastPostDate = lastPostDate,
+                    emojis = emojis
                 )
             }
 
@@ -188,7 +191,8 @@ data class Actor private constructor(
                 followersCount = followersCount,
                 followingCount = followingCount,
                 postsCount = postsCount,
-                lastPostDate = lastPostDate
+                lastPostDate = lastPostDate,
+                emojis = emojis
             )
         }
     }

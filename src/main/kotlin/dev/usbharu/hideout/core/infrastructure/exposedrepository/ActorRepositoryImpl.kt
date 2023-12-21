@@ -45,6 +45,7 @@ class ActorRepositoryImpl(
                 it[followingCount] = actor.followingCount
                 it[postsCount] = actor.postsCount
                 it[lastPostAt] = actor.lastPostDate
+                it[emojis] = actor.emojis.joinToString(",")
             }
         } else {
             Actors.update({ Actors.id eq actor.id }) {
@@ -67,6 +68,7 @@ class ActorRepositoryImpl(
                 it[followingCount] = actor.followingCount
                 it[postsCount] = actor.postsCount
                 it[lastPostAt] = actor.lastPostDate
+                it[emojis] = actor.emojis.joinToString(",")
             }
         }
         return@query actor
@@ -152,7 +154,7 @@ object Actors : Table("actors") {
     val followersCount = integer("followers_count")
     val postsCount = integer("posts_count")
     val lastPostAt = timestamp("last_post_at").nullable()
-
+    val emojis = varchar("emojis", 3000)
     override val primaryKey: PrimaryKey = PrimaryKey(id)
 
     init {
