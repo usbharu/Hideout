@@ -94,7 +94,15 @@ class InboxJobProcessor(
 
         //todo 不正なactorを取得してしまわないようにする
         val verify =
-            signature?.let { verifyHttpSignature(httpRequest, it, transaction, jsonNode["actor"].textValue()) } ?: false
+            signature?.let {
+                verifyHttpSignature(
+                    httpRequest,
+                    it,
+                    transaction,
+                    jsonNode.get("actor")?.asText() ?: signature.keyId
+                )
+            }
+                ?: false
 
         logger.debug("Is verifying success? {}", verify)
 
