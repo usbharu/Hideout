@@ -5,6 +5,7 @@ import java.time.Instant
 sealed class Emoji {
     abstract val domain: String
     abstract val name: String
+    abstract fun id(): String
 }
 
 data class CustomEmoji(
@@ -15,10 +16,17 @@ data class CustomEmoji(
     val url: String,
     val category: String,
     val createdAt: Instant
-) : Emoji()
+) : Emoji() {
+    override fun id(): String {
+        return id.toString()
+    }
+}
 
 data class UnicodeEmoji(
     override val name: String
 ) : Emoji() {
     override val domain: String = "unicode.org"
+    override fun id(): String {
+        return name
+    }
 }
