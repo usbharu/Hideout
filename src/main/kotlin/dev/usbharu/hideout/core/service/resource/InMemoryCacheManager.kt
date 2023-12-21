@@ -33,7 +33,6 @@ class InMemoryCacheManager : CacheManager {
             val processed = try {
                 block()
             } catch (e: Exception) {
-                e.printStackTrace()
                 cacheKey.remove(key)
                 throw e
             }

@@ -99,7 +99,6 @@ class MediaServiceImpl(
     override suspend fun uploadRemoteMedia(remoteMedia: RemoteMedia): Media {
         logger.info("MEDIA Remote media. filename:${remoteMedia.name} url:${remoteMedia.url}")
 
-
         val findByRemoteUrl = mediaRepository.findByRemoteUrl(remoteMedia.url)
         if (findByRemoteUrl != null) {
             logger.warn("DUPLICATED Remote media is duplicated. url: {}", remoteMedia.url)
@@ -156,7 +155,7 @@ class MediaServiceImpl(
         }
     }
 
-    protected fun findMediaProcessor(mimeType: MimeType): MediaProcessService {
+    private fun findMediaProcessor(mimeType: MimeType): MediaProcessService {
         try {
             return mediaProcessServices.first {
                 try {
@@ -170,7 +169,7 @@ class MediaServiceImpl(
         }
     }
 
-    protected fun generateBlurhash(process: ProcessedMediaPath): String {
+    private fun generateBlurhash(process: ProcessedMediaPath): String {
         val path = if (process.thumbnailPath != null && process.thumbnailMimeType != null) {
             process.thumbnailPath
         } else {

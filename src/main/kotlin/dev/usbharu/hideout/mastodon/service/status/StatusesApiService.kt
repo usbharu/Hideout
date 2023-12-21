@@ -59,7 +59,6 @@ class StatsesApiServiceImpl(
             } else {
                 actorRepository.findById(findById.actorId)?.id
             }
-
         } else {
             null
         }

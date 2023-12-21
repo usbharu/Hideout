@@ -14,6 +14,9 @@ import org.springframework.stereotype.Repository
 
 @Repository
 class UserDetailRepositoryImpl : UserDetailRepository, AbstractRepository() {
+    override val logger: Logger
+        get() = Companion.logger
+
     override suspend fun save(userDetail: UserDetail): UserDetail = query {
         val singleOrNull = UserDetails.select { UserDetails.actorId eq userDetail.actorId }.forUpdate().singleOrNull()
         if (singleOrNull == null) {
@@ -47,9 +50,6 @@ class UserDetailRepositoryImpl : UserDetailRepository, AbstractRepository() {
                 )
             }
     }
-
-    override val logger: Logger
-        get() = Companion.logger
 
     companion object {
         private val logger = LoggerFactory.getLogger(UserDetailRepositoryImpl::class.java)

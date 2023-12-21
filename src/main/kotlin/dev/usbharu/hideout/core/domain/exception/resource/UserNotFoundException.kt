@@ -18,7 +18,6 @@ open class UserNotFoundException : NotFoundException {
         @Serial
         private const val serialVersionUID: Long = 3219433672235626200L
 
-
         fun withName(string: String, throwable: Throwable? = null): UserNotFoundException =
             UserNotFoundException("name: $string was not found.", throwable)
 

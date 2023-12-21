@@ -26,8 +26,10 @@ class NoteQueryServiceImpl(private val postRepository: PostRepository, private v
             .leftJoin(Media)
             .select { Posts.id eq id }
             .let {
-                (it.toNote() ?: return null) to (postQueryMapper.map(it)
-                    .singleOrNull() ?: return null)
+                (it.toNote() ?: return null) to (
+                        postQueryMapper.map(it)
+                            .singleOrNull() ?: return null
+                        )
             }
     }
 
@@ -38,8 +40,10 @@ class NoteQueryServiceImpl(private val postRepository: PostRepository, private v
             .leftJoin(Media)
             .select { Posts.apId eq apId }
             .let {
-                (it.toNote() ?: return null) to (postQueryMapper.map(it)
-                    .singleOrNull() ?: return null)
+                (it.toNote() ?: return null) to (
+                        postQueryMapper.map(it)
+                            .singleOrNull() ?: return null
+                        )
             }
     }
 

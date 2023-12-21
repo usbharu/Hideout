@@ -42,7 +42,6 @@ class APLikeProcessor(
             logger.trace("", e)
             return
         }
-
     }
 
     override fun isSupported(activityType: ActivityType): Boolean = activityType == ActivityType.Like

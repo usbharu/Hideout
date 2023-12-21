@@ -3,6 +3,7 @@ package dev.usbharu.hideout.core.domain.model.actor
 import org.springframework.stereotype.Repository
 
 @Repository
+@Suppress("TooManyFunctions")
 interface ActorRepository {
     suspend fun save(actor: Actor): Actor
 

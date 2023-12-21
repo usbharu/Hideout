@@ -57,7 +57,6 @@ data class Actor private constructor(
             postsCount: Int = 0,
             lastPostDate: Instant? = null
         ): Actor {
-
             if (id == 0L) {
                 return Actor(
                     id = id,

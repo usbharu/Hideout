@@ -3,6 +3,7 @@ package dev.usbharu.hideout.core.domain.model.reaction
 import org.springframework.stereotype.Repository
 
 @Repository
+@Suppress("FunctionMaxLength")
 interface ReactionRepository {
     suspend fun generateId(): Long
     suspend fun save(reaction: Reaction): Reaction

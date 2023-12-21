@@ -49,9 +49,9 @@ constructor(
     @Suppress("CyclomaticComplexMethod")
     override fun hashCode(): Int {
         var result = super.hashCode()
-        result = 31 * result + name.hashCode()
+        result = 31 * result + (name?.hashCode() ?: 0)
         result = 31 * result + id.hashCode()
-        result = 31 * result + (preferredUsername?.hashCode() ?: 0)
+        result = 31 * result + preferredUsername.hashCode()
         result = 31 * result + (summary?.hashCode() ?: 0)
         result = 31 * result + inbox.hashCode()
         result = 31 * result + outbox.hashCode()
@@ -61,15 +61,15 @@ constructor(
         result = 31 * result + endpoints.hashCode()
         result = 31 * result + (followers?.hashCode() ?: 0)
         result = 31 * result + (following?.hashCode() ?: 0)
-        result = 31 * result + manuallyApprovesFollowers.hashCode()
+        result = 31 * result + (manuallyApprovesFollowers?.hashCode() ?: 0)
         return result
     }
 
     override fun toString(): String {
         return "Person(" +
-            "name='$name', " +
+                "name=$name, " +
             "id='$id', " +
-            "preferredUsername=$preferredUsername, " +
+                "preferredUsername='$preferredUsername', " +
             "summary=$summary, " +
             "inbox='$inbox', " +
             "outbox='$outbox', " +

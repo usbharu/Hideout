@@ -15,7 +15,6 @@ class LocalUserNotFoundException : UserNotFoundException {
         writableStackTrace
     )
 
-
     companion object {
         @Serial
         private const val serialVersionUID: Long = -4742548128672528145L
@@ -29,5 +28,4 @@ class LocalUserNotFoundException : UserNotFoundException {
         fun withUrl(url: String, throwable: Throwable? = null): LocalUserNotFoundException =
             LocalUserNotFoundException("url: $url was not found.", throwable)
     }
-
 }

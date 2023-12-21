@@ -18,14 +18,12 @@ class ActorRepositoryImpl(
     private val actorResultRowMapper: ResultRowMapper<Actor>,
     private val actorQueryMapper: QueryMapper<Actor>
 ) : ActorRepository, AbstractRepository() {
-
+    override val logger: Logger
+        get() = Companion.logger
 
     override suspend fun save(actor: Actor): Actor = query {
-
-
         val singleOrNull = Actors.select { Actors.id eq actor.id }.forUpdate().empty()
         if (singleOrNull) {
-
             Actors.insert {
                 it[id] = actor.id
                 it[name] = actor.name
@@ -125,9 +123,6 @@ class ActorRepositoryImpl(
     companion object {
         private val logger = LoggerFactory.getLogger(ActorRepositoryImpl::class.java)
     }
-
-    override val logger: Logger
-        get() = Companion.logger
 }
 
 object Actors : Table("actors") {
@@ -136,14 +131,16 @@ object Actors : Table("actors") {
     val domain: Column<String> = varchar("domain", length = 1000)
     val screenName: Column<String> = varchar("screen_name", length = 300)
     val description: Column<String> = varchar(
-        "description", length = 10000
+        "description",
+        length = 10000
     )
     val inbox: Column<String> = varchar("inbox", length = 1000).uniqueIndex()
     val outbox: Column<String> = varchar("outbox", length = 1000).uniqueIndex()
     val url: Column<String> = varchar("url", length = 1000).uniqueIndex()
     val publicKey: Column<String> = varchar("public_key", length = 10000)
     val privateKey: Column<String?> = varchar(
-        "private_key", length = 10000
+        "private_key",
+        length = 10000
     ).nullable()
     val createdAt: Column<Long> = long("created_at")
     val keyId = varchar("key_id", length = 1000)
