@@ -7,14 +7,16 @@ import dev.usbharu.hideout.core.service.media.FileType
 import dev.usbharu.hideout.core.service.media.MimeType
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 import dev.usbharu.hideout.core.domain.model.media.Media as EntityMedia
 
 @Repository
-class MediaRepositoryImpl(private val idGenerateService: IdGenerateService) : MediaRepository {
+class MediaRepositoryImpl(private val idGenerateService: IdGenerateService) : MediaRepository, AbstractRepository() {
     override suspend fun generateId(): Long = idGenerateService.generateId()
 
-    override suspend fun save(media: EntityMedia): EntityMedia {
+    override suspend fun save(media: EntityMedia): EntityMedia = query {
         if (Media.select {
                 Media.id eq media.id
             }.forUpdate().singleOrNull() != null
@@ -42,11 +44,11 @@ class MediaRepositoryImpl(private val idGenerateService: IdGenerateService) : Me
                 it[description] = media.description
             }
         }
-        return media
+        return@query media
     }
 
-    override suspend fun findById(id: Long): EntityMedia? {
-        return Media
+    override suspend fun findById(id: Long): EntityMedia? = query {
+        return@query Media
             .select {
                 Media.id eq id
             }
@@ -54,14 +56,22 @@ class MediaRepositoryImpl(private val idGenerateService: IdGenerateService) : Me
             ?.toMedia()
     }
 
-    override suspend fun delete(id: Long) {
+    override suspend fun delete(id: Long): Unit = query {
         Media.deleteWhere {
             Media.id eq id
         }
     }
 
-    override suspend fun findByRemoteUrl(remoteUrl: String): dev.usbharu.hideout.core.domain.model.media.Media? {
-        return Media.select { Media.remoteUrl eq remoteUrl }.singleOrNull()?.toMedia()
+    override suspend fun findByRemoteUrl(remoteUrl: String): dev.usbharu.hideout.core.domain.model.media.Media? =
+        query {
+            return@query Media.select { Media.remoteUrl eq remoteUrl }.singleOrNull()?.toMedia()
+    }
+
+    override val logger: Logger
+        get() = Companion.logger
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(MediaRepositoryImpl::class.java)
     }
 }
 
