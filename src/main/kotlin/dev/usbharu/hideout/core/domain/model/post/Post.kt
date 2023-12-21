@@ -17,7 +17,8 @@ data class Post private constructor(
     val sensitive: Boolean = false,
     val apId: String = url,
     val mediaIds: List<Long> = emptyList(),
-    val delted: Boolean = false
+    val delted: Boolean = false,
+    val emojiIds: List<Long> = emptyList()
 ) {
 
     @Component
@@ -35,7 +36,8 @@ data class Post private constructor(
             replyId: Long? = null,
             sensitive: Boolean = false,
             apId: String = url,
-            mediaIds: List<Long> = emptyList()
+            mediaIds: List<Long> = emptyList(),
+            emojiIds: List<Long> = emptyList()
         ): Post {
             require(id >= 0) { "id must be greater than or equal to 0." }
 
@@ -74,7 +76,8 @@ data class Post private constructor(
                 sensitive = sensitive,
                 apId = apId,
                 mediaIds = mediaIds,
-                delted = false
+                delted = false,
+                emojiIds = emojiIds
             )
         }
 

@@ -117,6 +117,19 @@ alter table posts_media
     add constraint fk_posts_media_post_id__id foreign key (post_id) references posts (id) on delete cascade on update cascade;
 alter table posts_media
     add constraint fk_posts_media_media_id__id foreign key (media_id) references media (id) on delete cascade on update cascade;
+
+create table if not exists posts_emojis
+(
+    post_id  bigint not null,
+    emoji_id bigint not null,
+    constraint pk_postsemoji primary key (post_id, emoji_id)
+);
+
+alter table posts_emojis
+    add constraint fk_posts_emojis_post_id__id foreign key (post_id) references posts (id) on delete cascade on update cascade;
+alter table posts_emojis
+    add constraint fk_posts_emojis_emoji_id__id foreign key (emoji_id) references emojis (id) on delete cascade on update cascade;
+
 create table if not exists reactions
 (
     id       bigserial primary key,
