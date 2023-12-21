@@ -59,6 +59,10 @@ class MediaRepositoryImpl(private val idGenerateService: IdGenerateService) : Me
             Media.id eq id
         }
     }
+
+    override suspend fun findByRemoteUrl(remoteUrl: String): dev.usbharu.hideout.core.domain.model.media.Media? {
+        return Media.select { Media.remoteUrl eq remoteUrl }.singleOrNull()?.toMedia()
+    }
 }
 
 fun ResultRow.toMedia(): EntityMedia {

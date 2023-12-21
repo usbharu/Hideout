@@ -38,9 +38,17 @@ class DeletedActorRepositoryImpl : DeletedActorRepository, AbstractRepository() 
     }
 
     override suspend fun findById(id: Long): DeletedActor? = query {
-        return@query DeletedActors.select { DeletedActors.id eq id }
+        return@query DeletedActors
+            .select { DeletedActors.id eq id }
             .singleOrNull()
-            ?.let { it.toDeletedActor() }
+            ?.toDeletedActor()
+    }
+
+    override suspend fun findByNameAndDomain(name: String, domain: String): DeletedActor? = query {
+        return@query DeletedActors
+            .select { DeletedActors.name eq name and (DeletedActors.domain eq domain) }
+            .singleOrNull()
+            ?.toDeletedActor()
     }
 
     override val logger: Logger

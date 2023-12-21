@@ -70,8 +70,7 @@ class AccountApiServiceImpl(
     private val statusQueryService: StatusQueryService,
     private val relationshipService: RelationshipService,
     private val relationshipRepository: RelationshipRepository,
-    private val mediaService: MediaService,
-    private val relationshipQueryService: RelationshipQueryService
+    private val mediaService: MediaService
 ) :
     AccountApiService {
     override suspend fun accountsStatuses(
