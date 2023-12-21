@@ -16,6 +16,9 @@ import org.springframework.stereotype.Repository
 @ConditionalOnProperty("hideout.use-mongodb", havingValue = "false", matchIfMissing = true)
 class ExposedTimelineRepository(private val idGenerateService: IdGenerateService) : TimelineRepository,
     AbstractRepository() {
+    override val logger: Logger
+        get() = Companion.logger
+
     override suspend fun generateId(): Long = idGenerateService.generateId()
 
     override suspend fun save(timeline: Timeline): Timeline = query {
@@ -82,16 +85,14 @@ class ExposedTimelineRepository(private val idGenerateService: IdGenerateService
             .map { it.toTimeline() }
     }
 
-    override val logger: Logger
-        get() = Companion.logger
-
     companion object {
         private val logger = LoggerFactory.getLogger(ExposedTimelineRepository::class.java)
     }
 }
 
 fun ResultRow.toTimeline(): Timeline {
-    return Timeline(id = this[Timelines.id],
+    return Timeline(
+        id = this[Timelines.id],
         userId = this[Timelines.userId],
         timelineId = this[Timelines.timelineId],
         postId = this[Timelines.postId],
@@ -103,7 +104,8 @@ fun ResultRow.toTimeline(): Timeline {
         sensitive = this[Timelines.sensitive],
         isLocal = this[Timelines.isLocal],
         isPureRepost = this[Timelines.isPureRepost],
-        mediaIds = this[Timelines.mediaIds].split(",").mapNotNull { it.toLongOrNull() })
+        mediaIds = this[Timelines.mediaIds].split(",").mapNotNull { it.toLongOrNull() }
+    )
 }
 
 object Timelines : Table("timelines") {

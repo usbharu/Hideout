@@ -14,6 +14,9 @@ import dev.usbharu.hideout.core.domain.model.media.Media as EntityMedia
 
 @Repository
 class MediaRepositoryImpl(private val idGenerateService: IdGenerateService) : MediaRepository, AbstractRepository() {
+    override val logger: Logger
+        get() = Companion.logger
+
     override suspend fun generateId(): Long = idGenerateService.generateId()
 
     override suspend fun save(media: EntityMedia): EntityMedia = query {
@@ -65,10 +68,7 @@ class MediaRepositoryImpl(private val idGenerateService: IdGenerateService) : Me
     override suspend fun findByRemoteUrl(remoteUrl: String): dev.usbharu.hideout.core.domain.model.media.Media? =
         query {
             return@query Media.select { Media.remoteUrl eq remoteUrl }.singleOrNull()?.toMedia()
-    }
-
-    override val logger: Logger
-        get() = Companion.logger
+        }
 
     companion object {
         private val logger = LoggerFactory.getLogger(MediaRepositoryImpl::class.java)

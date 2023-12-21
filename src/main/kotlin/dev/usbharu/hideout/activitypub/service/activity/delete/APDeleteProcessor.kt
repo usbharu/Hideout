@@ -36,14 +36,12 @@ class APDeleteProcessor(
         val actor = actorRepository.findByUrl(deleteId)
         actor?.let { userService.deleteRemoteActor(it.id) }
 
-
         val post = postRepository.findByApId(deleteId)
         if (post == null) {
             logger.warn("FAILED Delete id: {} is not found.", deleteId)
             return
         }
         postService.deleteRemote(post)
-
     }
 
     override fun isSupported(activityType: ActivityType): Boolean = activityType == ActivityType.Delete

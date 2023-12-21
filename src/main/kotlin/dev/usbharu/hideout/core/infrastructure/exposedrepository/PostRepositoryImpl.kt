@@ -15,6 +15,8 @@ class PostRepositoryImpl(
     private val idGenerateService: IdGenerateService,
     private val postQueryMapper: QueryMapper<Post>
 ) : PostRepository, AbstractRepository() {
+    override val logger: Logger
+        get() = Companion.logger
 
     override suspend fun generateId(): Long = idGenerateService.generateId()
 
@@ -96,9 +98,6 @@ class PostRepositoryImpl(
     override suspend fun delete(id: Long): Unit = query {
         Posts.deleteWhere { Posts.id eq id }
     }
-
-    override val logger: Logger
-        get() = Companion.logger
 
     companion object {
         private val logger = LoggerFactory.getLogger(PostRepositoryImpl::class.java)

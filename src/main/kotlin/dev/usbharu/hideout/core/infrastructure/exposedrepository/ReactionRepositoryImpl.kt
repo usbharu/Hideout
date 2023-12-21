@@ -14,6 +14,8 @@ import org.springframework.stereotype.Repository
 class ReactionRepositoryImpl(
     private val idGenerateService: IdGenerateService
 ) : ReactionRepository, AbstractRepository() {
+    override val logger: Logger
+        get() = Companion.logger
 
     override suspend fun generateId(): Long = idGenerateService.generateId()
 
@@ -85,9 +87,6 @@ class ReactionRepositoryImpl(
             .map { it.toReaction() }
     }
 
-    override val logger: Logger
-        get() = Companion.logger
-
     companion object {
         private val logger = LoggerFactory.getLogger(ReactionRepositoryImpl::class.java)
     }
@@ -95,7 +94,10 @@ class ReactionRepositoryImpl(
 
 fun ResultRow.toReaction(): Reaction {
     return Reaction(
-        this[Reactions.id].value, this[Reactions.emojiId], this[Reactions.postId], this[Reactions.actorId]
+        this[Reactions.id].value,
+        this[Reactions.emojiId],
+        this[Reactions.postId],
+        this[Reactions.actorId]
     )
 }
 

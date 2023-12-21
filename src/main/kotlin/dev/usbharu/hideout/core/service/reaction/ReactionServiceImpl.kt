@@ -42,7 +42,6 @@ class ReactionServiceImpl(
             reactionRepository.delete(findByPostIdAndUserIdAndEmojiId)
         }
 
-
         val reaction = Reaction(reactionRepository.generateId(), 0, postId, actorId)
         reactionRepository.save(reaction)
         apReactionService.reaction(reaction)

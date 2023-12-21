@@ -91,8 +91,7 @@ class InboxJobProcessor(
 
         logger.debug("Has signature? {}", signature != null)
 
-
-        //todo 不正なactorを取得してしまわないようにする
+        // todo 不正なactorを取得してしまわないようにする
         val verify =
             signature?.let {
                 verifyHttpSignature(

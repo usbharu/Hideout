@@ -81,7 +81,7 @@ class PostServiceImpl(
             timelineService.publishTimeline(post, isLocal)
             actorRepository.save(actor.incrementPostsCount())
             save
-        } catch (e: DuplicateException) {
+        } catch (_: DuplicateException) {
             postRepository.findByApId(post.apId) ?: throw PostNotFoundException.withApId(post.apId)
         }
     }

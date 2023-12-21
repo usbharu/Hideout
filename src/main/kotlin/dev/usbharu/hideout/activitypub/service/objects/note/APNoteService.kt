@@ -53,7 +53,9 @@ class APNoteServiceImpl(
             apResourceResolveService.resolve<Note>(url, null as Long?)
         } catch (e: ClientRequestException) {
             logger.warn(
-                "FAILED Failed to retrieve ActivityPub resource. HTTP Status Code: {} url: {}", e.response.status, url
+                "FAILED Failed to retrieve ActivityPub resource. HTTP Status Code: {} url: {}",
+                e.response.status,
+                url
             )
             throw FailedToGetActivityPubResourceException("Could not retrieve $url.", e)
         }
@@ -63,14 +65,15 @@ class APNoteServiceImpl(
     }
 
     private suspend fun saveIfMissing(
-        note: Note, targetActor: String?, url: String
-    ): Pair<Note, Post> {
-        return noteQueryService.findByApid(note.id) ?: saveNote(note, targetActor, url)
-    }
+        note: Note,
+        targetActor: String?,
+        url: String
+    ): Pair<Note, Post> = noteQueryService.findByApid(note.id) ?: saveNote(note, targetActor, url)
 
     private suspend fun saveNote(note: Note, targetActor: String?, url: String): Pair<Note, Post> {
         val person = apUserService.fetchPersonWithEntity(
-            note.attributedTo, targetActor
+            note.attributedTo,
+            targetActor
         )
 
         val post = postRepository.findByApId(note.id)
@@ -101,7 +104,10 @@ class APNoteServiceImpl(
         val mediaList = note.attachment.map {
             mediaService.uploadRemoteMedia(
                 RemoteMedia(
-                    it.name, it.url, it.mediaType, description = it.name
+                    it.name,
+                    it.url,
+                    it.mediaType,
+                    description = it.name
                 )
             )
         }.map { it.id }

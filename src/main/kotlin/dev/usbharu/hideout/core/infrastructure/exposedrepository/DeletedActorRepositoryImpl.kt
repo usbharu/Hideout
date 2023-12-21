@@ -11,6 +11,9 @@ import org.springframework.stereotype.Repository
 
 @Repository
 class DeletedActorRepositoryImpl : DeletedActorRepository, AbstractRepository() {
+    override val logger: Logger
+        get() = Companion.logger
+
     override suspend fun save(deletedActor: DeletedActor): DeletedActor = query {
         val singleOrNull = DeletedActors.select { DeletedActors.id eq deletedActor.id }.forUpdate().singleOrNull()
 
@@ -50,9 +53,6 @@ class DeletedActorRepositoryImpl : DeletedActorRepository, AbstractRepository() 
             .singleOrNull()
             ?.toDeletedActor()
     }
-
-    override val logger: Logger
-        get() = Companion.logger
 
     companion object {
         private val logger = LoggerFactory.getLogger(DeletedActorRepositoryImpl::class.java)

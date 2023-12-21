@@ -5,5 +5,5 @@ interface InstanceRepository {
     suspend fun save(instance: Instance): Instance
     suspend fun findById(id: Long): Instance?
     suspend fun delete(instance: Instance)
-    suspend fun findByUrl(url:String):Instance?
+    suspend fun findByUrl(url: String): Instance?
 }

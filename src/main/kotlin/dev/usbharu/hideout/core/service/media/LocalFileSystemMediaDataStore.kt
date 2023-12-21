@@ -74,6 +74,7 @@ class LocalFileSystemMediaDataStore(
         val fileSavePathString = fileSavePath.toAbsolutePath().toString()
         logger.info("MEDIA save. path: {}", fileSavePathString)
 
+        @Suppress("TooGenericExceptionCaught")
         try {
             dataSaveRequest.filePath.copyTo(fileSavePath)
             dataSaveRequest.thumbnailPath?.copyTo(thumbnailSavePath)
@@ -97,6 +98,7 @@ class LocalFileSystemMediaDataStore(
      */
     override suspend fun delete(id: String) {
         logger.info("START Media delete. id: {}", id)
+        @Suppress("TooGenericExceptionCaught")
         try {
             buildSavePath(savePath, id).deleteIfExists()
             buildSavePath(savePath, "thumbnail-$id").deleteIfExists()

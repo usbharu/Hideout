@@ -12,13 +12,11 @@ import org.springframework.stereotype.Service
 @Service
 class RelationshipRepositoryImpl : RelationshipRepository, AbstractRepository() {
     override suspend fun save(relationship: Relationship): Relationship = query {
-        val singleOrNull =
-            Relationships
-                .select {
-                    (Relationships.actorId eq relationship.actorId)
-                        .and(Relationships.targetActorId eq relationship.targetActorId)
-                }.forUpdate()
-                .singleOrNull()
+        val singleOrNull = Relationships.select {
+            (Relationships.actorId eq relationship.actorId).and(
+                Relationships.targetActorId eq relationship.targetActorId
+            )
+        }.forUpdate().singleOrNull()
 
         if (singleOrNull == null) {
             Relationships.insert {
@@ -31,34 +29,33 @@ class RelationshipRepositoryImpl : RelationshipRepository, AbstractRepository() 
                 it[ignoreFollowRequestFromTarget] = relationship.ignoreFollowRequestToTarget
             }
         } else {
-            Relationships
-                .update({
-                    (Relationships.actorId eq relationship.actorId)
-                        .and(Relationships.targetActorId eq relationship.targetActorId)
-                }) {
-                    it[following] = relationship.following
-                    it[blocking] = relationship.blocking
-                    it[muting] = relationship.muting
-                    it[followRequest] = relationship.followRequest
-                    it[ignoreFollowRequestFromTarget] = relationship.ignoreFollowRequestToTarget
-                }
+            Relationships.update({
+                (Relationships.actorId eq relationship.actorId).and(
+                    Relationships.targetActorId eq relationship.targetActorId
+                )
+            }) {
+                it[following] = relationship.following
+                it[blocking] = relationship.blocking
+                it[muting] = relationship.muting
+                it[followRequest] = relationship.followRequest
+                it[ignoreFollowRequestFromTarget] = relationship.ignoreFollowRequestToTarget
+            }
         }
         return@query relationship
     }
 
     override suspend fun delete(relationship: Relationship): Unit = query {
         Relationships.deleteWhere {
-            (Relationships.actorId eq relationship.actorId)
-                .and(Relationships.targetActorId eq relationship.targetActorId)
+            (Relationships.actorId eq relationship.actorId).and(
+                Relationships.targetActorId eq relationship.targetActorId
+            )
         }
     }
 
     override suspend fun findByUserIdAndTargetUserId(actorId: Long, targetActorId: Long): Relationship? = query {
         return@query Relationships.select {
-            (Relationships.actorId eq actorId)
-                .and(Relationships.targetActorId eq targetActorId)
-        }.singleOrNull()
-            ?.toRelationships()
+            (Relationships.actorId eq actorId).and(Relationships.targetActorId eq targetActorId)
+        }.singleOrNull()?.toRelationships()
     }
 
     override suspend fun deleteByActorIdOrTargetActorId(actorId: Long, targetActorId: Long): Unit = query {
@@ -68,7 +65,8 @@ class RelationshipRepositoryImpl : RelationshipRepository, AbstractRepository() 
     }
 
     override suspend fun findByTargetIdAndFollowing(targetId: Long, following: Boolean): List<Relationship> = query {
-        return@query Relationships.select { Relationships.targetActorId eq targetId and (Relationships.following eq following) }
+        return@query Relationships
+            .select { Relationships.targetActorId eq targetId and (Relationships.following eq following) }
             .map { it.toRelationships() }
     }
 
@@ -81,8 +79,7 @@ class RelationshipRepositoryImpl : RelationshipRepository, AbstractRepository() 
         ignoreFollowRequest: Boolean
     ): List<Relationship> = query {
         val query = Relationships.select {
-            Relationships.targetActorId.eq(targetId)
-                .and(Relationships.followRequest.eq(followRequest))
+            Relationships.targetActorId.eq(targetId).and(Relationships.followRequest.eq(followRequest))
                 .and(Relationships.ignoreFollowRequestFromTarget.eq(ignoreFollowRequest))
         }.limit(limit)
 

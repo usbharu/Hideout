@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator
 import java.sql.SQLException
 
+@Suppress("VarCouldBeVal")
 abstract class AbstractRepository {
     protected abstract val logger: Logger
     private val sqlErrorCodeSQLExceptionTranslator = SQLErrorCodeSQLExceptionTranslator()
@@ -18,8 +19,8 @@ abstract class AbstractRepository {
     private var traceQueryCall: Boolean = false
 
     protected suspend fun <T> query(block: () -> T): T = try {
-
         if (traceQueryCall) {
+            @Suppress("ThrowingExceptionsWithoutMessageOrCause")
             logger.trace(
                 """
 ***** QUERY CALL STACK TRACE *****
@@ -29,11 +30,9 @@ ${Throwable().stackTrace.joinToString("\n")}
 ***** QUERY CALL STACK TRACE *****
 """
             )
-
         }
 
         block.invoke()
-
     } catch (e: SQLException) {
         if (traceQueryException) {
             logger.trace("FAILED EXECUTE SQL", e)

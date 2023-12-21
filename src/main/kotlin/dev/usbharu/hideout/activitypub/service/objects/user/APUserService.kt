@@ -12,7 +12,6 @@ import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.service.user.RemoteUserCreateDto
 import dev.usbharu.hideout.core.service.user.UserService
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 interface APUserService {
@@ -83,7 +82,6 @@ class APUserServiceImpl(
             return entityToPerson(userEntity, userEntity.url) to userEntity
         }
 
-
         val person = apResourceResolveService.resolve<Person>(url, null as Long?)
 
         val id = person.id
@@ -111,7 +109,6 @@ class APUserServiceImpl(
                 locked = person.manuallyApprovesFollowers
             )
         )
-
     }
 
     private fun entityToPerson(
@@ -141,8 +138,4 @@ class APUserServiceImpl(
         following = actorEntity.following,
         manuallyApprovesFollowers = actorEntity.locked
     )
-
-    companion object {
-        private val logger = LoggerFactory.getLogger(APUserServiceImpl::class.java)
-    }
 }

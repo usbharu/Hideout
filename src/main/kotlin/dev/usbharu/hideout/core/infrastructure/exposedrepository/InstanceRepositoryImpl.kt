@@ -13,6 +13,9 @@ import dev.usbharu.hideout.core.domain.model.instance.Instance as InstanceEntity
 @Repository
 class InstanceRepositoryImpl(private val idGenerateService: IdGenerateService) : InstanceRepository,
     AbstractRepository() {
+    override val logger: Logger
+        get() = Companion.logger
+
     override suspend fun generateId(): Long = idGenerateService.generateId()
 
     override suspend fun save(instance: InstanceEntity): InstanceEntity = query {
@@ -61,9 +64,6 @@ class InstanceRepositoryImpl(private val idGenerateService: IdGenerateService) :
     override suspend fun findByUrl(url: String): dev.usbharu.hideout.core.domain.model.instance.Instance? = query {
         return@query Instance.select { Instance.url eq url }.singleOrNull()?.toInstance()
     }
-
-    override val logger: Logger
-        get() = Companion.logger
 
     companion object {
         private val logger = LoggerFactory.getLogger(InstanceRepositoryImpl::class.java)
