@@ -2,6 +2,8 @@ package dev.usbharu.hideout.activitypub.service.activity.like
 
 
 import dev.usbharu.hideout.application.service.id.TwitterSnowflakeIdGenerateService
+import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
+import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.domain.model.reaction.Reaction
 import dev.usbharu.hideout.core.external.job.DeliverReactionJob
 import dev.usbharu.hideout.core.external.job.DeliverRemoveReactionJob
@@ -21,7 +23,7 @@ class APReactionServiceImplTest {
         val user = UserBuilder.localUserOf()
         val post = PostBuilder.of()
 
-        val postQueryService = mock<PostQueryService> {
+        val postQueryService = mock<PostRepository> {
             onBlocking { findById(eq(post.id)) } doReturn post
         }
         val followerQueryService = mock<FollowerQueryService> {
@@ -32,11 +34,14 @@ class APReactionServiceImplTest {
             )
         }
         val jobQueueParentService = mock<JobQueueParentService>()
+        val actorRepository = mock<ActorRepository> {
+            onBlocking { findById(eq(user.id)) }.doReturn(user)
+        }
         val apReactionServiceImpl = APReactionServiceImpl(
             jobQueueParentService = jobQueueParentService,
-            actorQueryService = mock(),
+            actorRepository = actorRepository,
             followerQueryService = followerQueryService,
-            postQueryService = postQueryService,
+            postRepository = postQueryService,
             objectMapper = objectMapper
         )
 
@@ -58,7 +63,7 @@ class APReactionServiceImplTest {
         val user = UserBuilder.localUserOf()
         val post = PostBuilder.of()
 
-        val postQueryService = mock<PostQueryService> {
+        val postQueryService = mock<PostRepository> {
             onBlocking { findById(eq(post.id)) } doReturn post
         }
         val followerQueryService = mock<FollowerQueryService> {
@@ -69,11 +74,14 @@ class APReactionServiceImplTest {
             )
         }
         val jobQueueParentService = mock<JobQueueParentService>()
+        val actorRepository = mock<ActorRepository> {
+            onBlocking { findById(eq(user.id)) }.doReturn(user)
+        }
         val apReactionServiceImpl = APReactionServiceImpl(
             jobQueueParentService = jobQueueParentService,
-            actorQueryService = mock(),
+            actorRepository = actorRepository,
             followerQueryService = followerQueryService,
-            postQueryService = postQueryService,
+            postRepository = postQueryService,
             objectMapper = objectMapper
         )
 

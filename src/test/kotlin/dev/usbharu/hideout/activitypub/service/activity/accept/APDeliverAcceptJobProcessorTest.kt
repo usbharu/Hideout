@@ -3,6 +3,7 @@ package dev.usbharu.hideout.activitypub.service.activity.accept
 import dev.usbharu.hideout.activitypub.domain.model.Accept
 import dev.usbharu.hideout.activitypub.domain.model.Follow
 import dev.usbharu.hideout.activitypub.service.common.APRequestService
+import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.external.job.DeliverAcceptJob
 import dev.usbharu.hideout.core.external.job.DeliverAcceptJobParam
 import kotlinx.coroutines.test.runTest
@@ -24,7 +25,7 @@ class APDeliverAcceptJobProcessorTest {
     private lateinit var apRequestService: APRequestService
 
     @Mock
-    private lateinit var actorQueryService: ActorQueryService
+    private lateinit var actorRepository: ActorRepository
 
     @Mock
     private lateinit var deliverAcceptJob: DeliverAcceptJob
@@ -39,7 +40,7 @@ class APDeliverAcceptJobProcessorTest {
     fun `process apPostが発行される`() = runTest {
         val user = UserBuilder.localUserOf()
 
-        whenever(actorQueryService.findById(eq(1))).doReturn(user)
+        whenever(actorRepository.findById(eq(1))).doReturn(user)
 
         val accept = Accept(
             apObject = Follow(

@@ -48,10 +48,7 @@ class AccountApiServiceImplTest {
 
     @Mock
     private lateinit var relationshipRepository: RelationshipRepository
-
-    @Mock
-    private lateinit var relationshipQueryService: RelationshipQueryService
-
+    
     @Mock
     private lateinit var mediaService: MediaService
 

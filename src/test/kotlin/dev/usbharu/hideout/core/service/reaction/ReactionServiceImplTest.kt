@@ -3,7 +3,6 @@ package dev.usbharu.hideout.core.service.reaction
 
 import dev.usbharu.hideout.activitypub.service.activity.like.APReactionService
 import dev.usbharu.hideout.application.service.id.TwitterSnowflakeIdGenerateService
-import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.domain.model.reaction.Reaction
 import dev.usbharu.hideout.core.domain.model.reaction.ReactionRepository
 import kotlinx.coroutines.test.runTest
@@ -25,9 +24,6 @@ class ReactionServiceImplTest {
     @Mock
     private lateinit var apReactionService: APReactionService
 
-    @Mock
-    private lateinit var reactionQueryService: ReactionQueryService
-
     @InjectMocks
     private lateinit var reactionServiceImpl: ReactionServiceImpl
 
@@ -36,7 +32,9 @@ class ReactionServiceImplTest {
 
         val post = PostBuilder.of()
 
-        whenever(reactionQueryService.reactionAlreadyExist(eq(post.id), eq(post.actorId), eq(0))).doReturn(false)
+        whenever(reactionRepository.existByPostIdAndActorIdAndEmojiId(eq(post.id), eq(post.actorId), eq(0))).doReturn(
+            false
+        )
         val generateId = TwitterSnowflakeIdGenerateService.generateId()
         whenever(reactionRepository.generateId()).doReturn(generateId)
 
@@ -49,7 +47,9 @@ class ReactionServiceImplTest {
     fun `receiveReaction リアクションが既に作成されていることを検知出来ずに例外が発生した場合は何もしない`() = runTest {
         val post = PostBuilder.of()
 
-        whenever(reactionQueryService.reactionAlreadyExist(eq(post.id), eq(post.actorId), eq(0))).doReturn(false)
+        whenever(reactionRepository.existByPostIdAndActorIdAndEmojiId(eq(post.id), eq(post.actorId), eq(0))).doReturn(
+            false
+        )
         val generateId = TwitterSnowflakeIdGenerateService.generateId()
         whenever(
             reactionRepository.save(
@@ -78,7 +78,9 @@ class ReactionServiceImplTest {
     @Test
     fun `receiveReaction リアクションが既に作成されている場合は何もしない`() = runTest() {
         val post = PostBuilder.of()
-        whenever(reactionQueryService.reactionAlreadyExist(eq(post.id), eq(post.actorId), eq(0))).doReturn(true)
+        whenever(reactionRepository.existByPostIdAndActorIdAndEmojiId(eq(post.id), eq(post.actorId), eq(0))).doReturn(
+            true
+        )
 
         reactionServiceImpl.receiveReaction("❤", "example.com", post.actorId, post.id)
 
@@ -88,8 +90,8 @@ class ReactionServiceImplTest {
     @Test
     fun `sendReaction リアクションが存在しないとき保存して配送する`() = runTest {
         val post = PostBuilder.of()
-        whenever(reactionQueryService.findByPostIdAndActorIdAndEmojiId(eq(post.id), eq(post.actorId), eq(0))).doThrow(
-            FailedToGetResourcesException::class
+        whenever(reactionRepository.findByPostIdAndActorIdAndEmojiId(eq(post.id), eq(post.actorId), eq(0))).doReturn(
+            null
         )
         val generateId = TwitterSnowflakeIdGenerateService.generateId()
         whenever(reactionRepository.generateId()).doReturn(generateId)
@@ -104,7 +106,7 @@ class ReactionServiceImplTest {
     fun `sendReaction リアクションが存在するときは削除して保存して配送する`() = runTest {
         val post = PostBuilder.of()
         val id = TwitterSnowflakeIdGenerateService.generateId()
-        whenever(reactionQueryService.findByPostIdAndActorIdAndEmojiId(eq(post.id), eq(post.actorId), eq(0))).doReturn(
+        whenever(reactionRepository.findByPostIdAndActorIdAndEmojiId(eq(post.id), eq(post.actorId), eq(0))).doReturn(
             Reaction(id, 0, post.id, post.actorId)
         )
         val generateId = TwitterSnowflakeIdGenerateService.generateId()
@@ -122,7 +124,7 @@ class ReactionServiceImplTest {
     @Test
     fun `removeReaction リアクションが存在する場合削除して配送`() = runTest {
         val post = PostBuilder.of()
-        whenever(reactionQueryService.findByPostIdAndActorIdAndEmojiId(eq(post.id), eq(post.actorId), eq(0))).doReturn(
+        whenever(reactionRepository.findByPostIdAndActorIdAndEmojiId(eq(post.id), eq(post.actorId), eq(0))).doReturn(
             Reaction(0, 0, post.id, post.actorId)
         )
 
