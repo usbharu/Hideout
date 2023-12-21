@@ -6,7 +6,6 @@ import dev.usbharu.hideout.application.service.id.TwitterSnowflakeIdGenerateServ
 import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.domain.model.reaction.Reaction
 import dev.usbharu.hideout.core.domain.model.reaction.ReactionRepository
-import dev.usbharu.hideout.core.query.ReactionQueryService
 import kotlinx.coroutines.test.runTest
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.junit.jupiter.api.Test

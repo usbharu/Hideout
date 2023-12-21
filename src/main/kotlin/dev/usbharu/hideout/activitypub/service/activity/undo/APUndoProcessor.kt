@@ -11,7 +11,7 @@ import dev.usbharu.hideout.core.domain.exception.resource.PostNotFoundException
 import dev.usbharu.hideout.core.domain.exception.resource.UserNotFoundException
 import dev.usbharu.hideout.core.domain.exception.resource.local.LocalUserNotFoundException
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
-import dev.usbharu.hideout.core.query.PostQueryService
+import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.service.reaction.ReactionService
 import dev.usbharu.hideout.core.service.relationship.RelationshipService
 import org.springframework.stereotype.Service
@@ -21,9 +21,9 @@ class APUndoProcessor(
     transaction: Transaction,
     private val apUserService: APUserService,
     private val relationshipService: RelationshipService,
-    private val postQueryService: PostQueryService,
     private val reactionService: ReactionService,
-    private val actorRepository: ActorRepository
+    private val actorRepository: ActorRepository,
+    private val postRepository: PostRepository
 ) :
     AbstractActivityPubProcessor<Undo>(transaction) {
     override suspend fun internalProcess(activity: ActivityPubProcessContext<Undo>) {
@@ -81,7 +81,7 @@ class APUndoProcessor(
                 val like = undo.apObject as Like
 
                 val post =
-                    postQueryService.findByUrl(like.apObject) ?: throw PostNotFoundException.withUrl(like.apObject)
+                    postRepository.findByUrl(like.apObject) ?: throw PostNotFoundException.withUrl(like.apObject)
 
                 val signer =
                     actorRepository.findById(post.actorId) ?: throw LocalUserNotFoundException.withId(post.actorId)

@@ -12,7 +12,6 @@ import dev.usbharu.hideout.core.domain.model.reaction.ReactionRepository
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetail
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
-import dev.usbharu.hideout.core.query.DeletedActorQueryService
 import dev.usbharu.hideout.core.service.instance.InstanceService
 import dev.usbharu.hideout.core.service.post.PostService
 import org.slf4j.LoggerFactory
@@ -29,7 +28,6 @@ class UserServiceImpl(
     private val instanceService: InstanceService,
     private val userDetailRepository: UserDetailRepository,
     private val deletedActorRepository: DeletedActorRepository,
-    private val deletedActorQueryService: DeletedActorQueryService,
     private val reactionRepository: ReactionRepository,
     private val relationshipRepository: RelationshipRepository,
     private val postService: PostService,
@@ -73,7 +71,7 @@ class UserServiceImpl(
     override suspend fun createRemoteUser(user: RemoteUserCreateDto): Actor {
         logger.info("START Create New remote user. name: {} url: {}", user.name, user.url)
 
-        val deletedActor = deletedActorQueryService.findByNameAndDomain(user.name, user.domain)
+        val deletedActor = deletedActorRepository.findByNameAndDomain(user.name, user.domain)
 
         if (deletedActor != null) {
             logger.warn("FAILED Deleted actor. user: ${user.name} domain: ${user.domain}")

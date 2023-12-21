@@ -16,7 +16,6 @@ import dev.usbharu.hideout.application.service.id.TwitterSnowflakeIdGenerateServ
 import dev.usbharu.hideout.core.domain.exception.FailedToGetResourcesException
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
-import dev.usbharu.hideout.core.query.PostQueryService
 import dev.usbharu.hideout.core.service.post.PostService
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -70,7 +69,6 @@ class APNoteServiceImplTest {
         val apNoteServiceImpl = APNoteServiceImpl(
             postRepository = mock(),
             apUserService = mock(),
-            postQueryService = mock(),
             postService = mock(),
             apResourceResolveService = mock(),
             postBuilder = Post.PostBuilder(CharacterLimit()),
@@ -144,7 +142,6 @@ class APNoteServiceImplTest {
         val apNoteServiceImpl = APNoteServiceImpl(
             postRepository = postRepository,
             apUserService = apUserService,
-            postQueryService = postQueryService,
             postService = mock(),
             apResourceResolveService = apResourceResolveService,
             postBuilder = Post.PostBuilder(CharacterLimit()),
@@ -211,7 +208,6 @@ class APNoteServiceImplTest {
             val apNoteServiceImpl = APNoteServiceImpl(
                 postRepository = mock(),
                 apUserService = mock(),
-                postQueryService = postQueryService,
                 postService = mock(),
                 apResourceResolveService = apResourceResolveService,
                 postBuilder = Post.PostBuilder(CharacterLimit()),
@@ -262,7 +258,6 @@ class APNoteServiceImplTest {
         val apNoteServiceImpl = APNoteServiceImpl(
             postRepository = postRepository,
             apUserService = apUserService,
-            postQueryService = mock(),
             postService = postService,
             apResourceResolveService = mock(),
             postBuilder = postBuilder,
@@ -318,7 +313,6 @@ class APNoteServiceImplTest {
         val apNoteServiceImpl = APNoteServiceImpl(
             postRepository = mock(),
             apUserService = mock(),
-            postQueryService = mock(),
             postService = mock(),
             apResourceResolveService = mock(),
             postBuilder = postBuilder,

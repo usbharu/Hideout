@@ -4,7 +4,6 @@ import dev.usbharu.hideout.core.domain.exception.media.MediaSaveException
 import dev.usbharu.hideout.core.domain.exception.media.UnsupportedMediaException
 import dev.usbharu.hideout.core.domain.model.media.Media
 import dev.usbharu.hideout.core.domain.model.media.MediaRepository
-import dev.usbharu.hideout.core.query.MediaQueryService
 import dev.usbharu.hideout.core.service.media.converter.MediaProcessService
 import dev.usbharu.hideout.mastodon.interfaces.api.media.MediaRequest
 import dev.usbharu.hideout.util.withDelete
@@ -23,8 +22,7 @@ class MediaServiceImpl(
     private val mediaRepository: MediaRepository,
     private val mediaProcessServices: List<MediaProcessService>,
     private val remoteMediaDownloadService: RemoteMediaDownloadService,
-    private val renameService: MediaFileRenameService,
-    private val mediaQueryService: MediaQueryService
+    private val renameService: MediaFileRenameService
 ) : MediaService {
     @Suppress("LongMethod", "NestedBlockDepth")
     override suspend fun uploadLocalMedia(mediaRequest: MediaRequest): EntityMedia {
@@ -102,7 +100,7 @@ class MediaServiceImpl(
         logger.info("MEDIA Remote media. filename:${remoteMedia.name} url:${remoteMedia.url}")
 
 
-        val findByRemoteUrl = mediaQueryService.findByRemoteUrl(remoteMedia.url)
+        val findByRemoteUrl = mediaRepository.findByRemoteUrl(remoteMedia.url)
         if (findByRemoteUrl != null) {
             logger.warn("DUPLICATED Remote media is duplicated. url: {}", remoteMedia.url)
             return findByRemoteUrl

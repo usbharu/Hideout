@@ -6,7 +6,6 @@ import dev.usbharu.hideout.core.domain.model.reaction.Reaction
 import dev.usbharu.hideout.core.external.job.DeliverReactionJob
 import dev.usbharu.hideout.core.external.job.DeliverRemoveReactionJob
 import dev.usbharu.hideout.core.query.FollowerQueryService
-import dev.usbharu.hideout.core.query.PostQueryService
 import dev.usbharu.hideout.core.service.job.JobQueueParentService
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test

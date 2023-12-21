@@ -4,7 +4,7 @@ import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.media.MediaRepository
 import dev.usbharu.hideout.core.domain.model.media.toMediaAttachments
-import dev.usbharu.hideout.core.query.PostQueryService
+import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.service.post.PostCreateDto
 import dev.usbharu.hideout.core.service.post.PostService
 import dev.usbharu.hideout.domain.mastodon.model.generated.Status
@@ -28,10 +28,10 @@ interface StatusesApiService {
 class StatsesApiServiceImpl(
     private val postService: PostService,
     private val accountService: AccountService,
-    private val postQueryService: PostQueryService,
     private val mediaRepository: MediaRepository,
     private val transaction: Transaction,
-    private val actorRepository: ActorRepository
+    private val actorRepository: ActorRepository,
+    private val postRepository: PostRepository
 ) :
     StatusesApiService {
     override suspend fun postStatus(
@@ -53,7 +53,7 @@ class StatsesApiServiceImpl(
         val account = accountService.findById(userId)
 
         val replyUser = if (post.replyId != null) {
-            val findById = postQueryService.findById(post.replyId)
+            val findById = postRepository.findById(post.replyId)
             if (findById == null) {
                 null
             } else {
