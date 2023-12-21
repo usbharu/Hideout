@@ -87,7 +87,6 @@ class InboxJobProcessor(
             logger.trace("type: {}\njson: \n{}", param.type, jsonNode.toPrettyString())
         }
 
-
         val map = objectMapper.readValue<Map<String, List<String>>>(param.headers)
 
         val httpRequest = objectMapper.readValue<HttpRequest>(param.httpRequest).copy(headers = HttpHeaders(map))
