@@ -54,6 +54,10 @@ class InstanceRepositoryImpl(private val idGenerateService: IdGenerateService) :
     override suspend fun delete(instance: InstanceEntity) {
         Instance.deleteWhere { id eq instance.id }
     }
+
+    override suspend fun findByUrl(url: String): dev.usbharu.hideout.core.domain.model.instance.Instance? {
+        return Instance.select { Instance.url eq url }.singleOrNull()?.toInstance()
+    }
 }
 
 fun ResultRow.toInstance(): InstanceEntity {
