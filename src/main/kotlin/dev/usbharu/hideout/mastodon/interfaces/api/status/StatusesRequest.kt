@@ -65,9 +65,17 @@ class StatusesRequest {
     }
 
     override fun toString(): String {
-        return "StatusesRequest(status=$status, mediaIds=$media_ids, poll=$poll, inReplyToId=$in_reply_to_id, " +
-            "sensitive=$sensitive, spoilerText=$spoiler_text, visibility=$visibility, language=$language," +
-            " scheduledAt=$scheduled_at)"
+        return "StatusesRequest(" +
+                "status=$status, " +
+                "media_ids=$media_ids, " +
+                "poll=$poll, " +
+                "in_reply_to_id=$in_reply_to_id, " +
+                "sensitive=$sensitive, " +
+                "spoiler_text=$spoiler_text, " +
+                "visibility=$visibility, " +
+                "language=$language, " +
+                "scheduled_at=$scheduled_at" +
+                ")"
     }
 
     @Suppress("EnumNaming", "EnumEntryNameCase")
