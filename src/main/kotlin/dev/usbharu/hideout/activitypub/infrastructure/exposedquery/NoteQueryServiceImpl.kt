@@ -27,9 +27,9 @@ class NoteQueryServiceImpl(private val postRepository: PostRepository, private v
             .select { Posts.id eq id }
             .let {
                 (it.toNote() ?: return null) to (
-                        postQueryMapper.map(it)
-                            .singleOrNull() ?: return null
-                        )
+                    postQueryMapper.map(it)
+                        .singleOrNull() ?: return null
+                    )
             }
     }
 
@@ -41,9 +41,9 @@ class NoteQueryServiceImpl(private val postRepository: PostRepository, private v
             .select { Posts.apId eq apId }
             .let {
                 (it.toNote() ?: return null) to (
-                        postQueryMapper.map(it)
-                            .singleOrNull() ?: return null
-                        )
+                    postQueryMapper.map(it)
+                        .singleOrNull() ?: return null
+                    )
             }
     }
 
