@@ -63,6 +63,36 @@ class RelationshipRepositoryImpl : RelationshipRepository {
             Relationships.actorId.eq(actorId).or(Relationships.targetActorId.eq(targetActorId))
         }
     }
+
+    override suspend fun findByTargetIdAndFollowing(targetId: Long, following: Boolean): List<Relationship> {
+        return Relationships.select { Relationships.targetActorId eq targetId and (Relationships.following eq following) }
+            .map { it.toRelationships() }
+    }
+
+    override suspend fun findByTargetIdAndFollowRequestAndIgnoreFollowRequest(
+        maxId: Long?,
+        sinceId: Long?,
+        limit: Int,
+        targetId: Long,
+        followRequest: Boolean,
+        ignoreFollowRequest: Boolean
+    ): List<Relationship> {
+        val query = Relationships.select {
+            Relationships.targetActorId.eq(targetId)
+                .and(Relationships.followRequest.eq(followRequest))
+                .and(Relationships.ignoreFollowRequestFromTarget.eq(ignoreFollowRequest))
+        }.limit(limit)
+
+        if (maxId != null) {
+            query.andWhere { Relationships.id lessEq maxId }
+        }
+
+        if (sinceId != null) {
+            query.andWhere { Relationships.id greaterEq sinceId }
+        }
+
+        return query.map { it.toRelationships() }
+    }
 }
 
 fun ResultRow.toRelationships(): Relationship = Relationship(

@@ -89,6 +89,10 @@ class PostRepositoryImpl(
         return@query Posts.select { Posts.apId eq apId }.forUpdate().empty().not()
     }
 
+    override suspend fun findByActorId(actorId: Long): List<Post> = query {
+        return@query Posts.select { Posts.actorId eq actorId }.let(postQueryMapper::map)
+    }
+
     override suspend fun delete(id: Long): Unit = query {
         Posts.deleteWhere { Posts.id eq id }
     }
