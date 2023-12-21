@@ -224,7 +224,11 @@ data class Actor private constructor(
                 "followers=$followers, " +
                 "following=$following, " +
                 "instance=$instance, " +
-                "locked=$locked" +
+                "locked=$locked, " +
+                "followersCount=$followersCount, " +
+                "followingCount=$followingCount, " +
+                "postsCount=$postsCount, " +
+                "lastPostDate=$lastPostDate" +
                 ")"
     }
 }

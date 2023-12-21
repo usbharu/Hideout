@@ -83,7 +83,9 @@ tasks.withType<Test> {
     useJUnitPlatform()
     doFirst {
         jvmArgs = arrayOf(
-            "--add-opens", "java.base/java.lang=ALL-UNNAMED"
+            "--add-opens", "java.base/java.lang=ALL-UNNAMED",
+            "--add-opens", "java.base/java.util=ALL-UNNAMED",
+            "--add-opens", "java.naming/javax.naming=ALL-UNNAMED",
         ).toMutableList()
     }
 }

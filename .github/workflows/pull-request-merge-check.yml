@@ -236,14 +236,14 @@ jobs:
       - name: Run Kover
         uses: gradle/gradle-build-action@v2.8.1
         with:
-          arguments: koverXmlReport -x integrationTest -x e2eTest
+          arguments: koverXmlReport -x integrationTest -x e2eTest --rerun-tasks
 
       - name: Add coverage report to PR
         if: always()
         id: kover
-        uses: mi-kas/kover-report@v1
+        uses: madrapps/jacoco-report@v1.6.1
         with:
-          path: |
+          paths: |
             ${{ github.workspace }}/build/reports/kover/report.xml
           token: ${{ secrets.GITHUB_TOKEN }}
           title: Code Coverage

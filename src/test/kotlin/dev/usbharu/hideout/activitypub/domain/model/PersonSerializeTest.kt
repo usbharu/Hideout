@@ -72,4 +72,68 @@ class PersonSerializeTest {
 
         val readValue = objectMapper.readValue<Person>(personString)
     }
+
+    @Test
+    fun MisskeyのnameがnullのPersonのデシリアライズができる() {
+        //language=JSON
+        val json = """{
+  "@context": [
+    "https://www.w3.org/ns/activitystreams",
+    "https://w3id.org/security/v1",
+    {
+      "manuallyApprovesFollowers": "as:manuallyApprovesFollowers",
+      "sensitive": "as:sensitive",
+      "Hashtag": "as:Hashtag",
+      "quoteUrl": "as:quoteUrl",
+      "toot": "http://joinmastodon.org/ns#",
+      "Emoji": "toot:Emoji",
+      "featured": "toot:featured",
+      "discoverable": "toot:discoverable",
+      "schema": "http://schema.org#",
+      "PropertyValue": "schema:PropertyValue",
+      "value": "schema:value",
+      "misskey": "https://misskey-hub.net/ns#",
+      "_misskey_content": "misskey:_misskey_content",
+      "_misskey_quote": "misskey:_misskey_quote",
+      "_misskey_reaction": "misskey:_misskey_reaction",
+      "_misskey_votes": "misskey:_misskey_votes",
+      "_misskey_summary": "misskey:_misskey_summary",
+      "isCat": "misskey:isCat",
+      "vcard": "http://www.w3.org/2006/vcard/ns#"
+    }
+  ],
+  "type": "Person",
+  "id": "https://misskey.usbharu.dev/users/9ghwhv9zgg",
+  "inbox": "https://misskey.usbharu.dev/users/9ghwhv9zgg/inbox",
+  "outbox": "https://misskey.usbharu.dev/users/9ghwhv9zgg/outbox",
+  "followers": "https://misskey.usbharu.dev/users/9ghwhv9zgg/followers",
+  "following": "https://misskey.usbharu.dev/users/9ghwhv9zgg/following",
+  "featured": "https://misskey.usbharu.dev/users/9ghwhv9zgg/collections/featured",
+  "sharedInbox": "https://misskey.usbharu.dev/inbox",
+  "endpoints": {
+    "sharedInbox": "https://misskey.usbharu.dev/inbox"
+  },
+  "url": "https://misskey.usbharu.dev/@relay_test",
+  "preferredUsername": "relay_test",
+  "name": null,
+  "summary": null,
+  "_misskey_summary": null,
+  "icon": null,
+  "image": null,
+  "tag": [],
+  "manuallyApprovesFollowers": true,
+  "discoverable": true,
+  "publicKey": {
+    "id": "https://misskey.usbharu.dev/users/9ghwhv9zgg#main-key",
+    "type": "Key",
+    "owner": "https://misskey.usbharu.dev/users/9ghwhv9zgg",
+    "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA2n5yekTaI4ex5VDWzQfE\nJpWMURAMWl8RcXHLPyLQVQ/PrHp7qatGXmKJUnAOBcq1cwk+VCqTEqx8vJCOZsr1\nMq+D3FMcFdwgtJ0nivPJPx2457b5kfQ4LTkWajcFhj2qixa/XFq6hHei3LDaE6hJ\nGQbdj9NTVlMd7VpiFQkoU09vAPUwGxRoP9Qbc/sh7jrKYFB3iRmY/+zOc+PFpnfn\nG8V1d2v+lnkb9f7t0Z8y2ckk6TVcLPRZktF15eGClVptlgts3hwhrcyrpBs2Dn0U\n35KgIhkhZGAjzk0uyplpfKcserXuGvsjJvelZ3BtMGsuR4kGLHrmiRQp23mIoA1I\n8tfVuV0zPOyO3ruLk2fOjoeZ4XvFHGRNKo66Qx055/8G8Ug5vU8lvIGXm9sflaA9\ntR3AKDNsyxEfjAfrfgJ7cwlKSlLZmkU51jtYEqJ48ZkiIa6fMC0m4QGXdaXmhFWC\no1sGoIErRFpRHewdGlLC9S8R/cMxjex+n8maF0yh79y7aVvU+TS6pRWg5wYjY8r3\nZqAVg/PGRVGAbjVdIdcsjH5ClwAFBW16S633D3m7HJypwwVCzVOvMZqPqcQ/2o8c\nUk+xa88xQG+OPqoAaQqyV9iqsmCMgYM/AcX/BC2h7L2mE/PWoXnoCxGPxr5uvyBf\nHQakDGg4pFZcpVNrDlYo260CAwEAAQ==\n-----END PUBLIC KEY-----\n"
+  },
+  "isCat": false
+}"""
+
+        val objectMapper = ActivityPubConfig().objectMapper()
+
+        objectMapper.readValue<Person>(json)
+    }
 }

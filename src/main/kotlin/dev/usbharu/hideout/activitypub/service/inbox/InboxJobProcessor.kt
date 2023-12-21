@@ -19,6 +19,7 @@ import dev.usbharu.httpsignature.verify.HttpSignatureVerifier
 import dev.usbharu.httpsignature.verify.Signature
 import dev.usbharu.httpsignature.verify.SignatureHeaderParser
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Service
@@ -30,6 +31,9 @@ class InboxJobProcessor(
     private val apUserService: APUserService,
     private val transaction: Transaction
 ) : JobProcessor<InboxJobParam, InboxJob> {
+
+    @Value("\${hideout.debug.trace-inbox:false}")
+    private var traceJson: Boolean = false
 
     private suspend fun verifyHttpSignature(
         httpRequest: HttpRequest,
@@ -79,7 +83,10 @@ class InboxJobProcessor(
         val jsonNode = objectMapper.readTree(param.json)
 
         logger.info("START Process inbox. type: {}", param.type)
-        logger.trace("type: {}\njson: \n{}", param.type, jsonNode.toPrettyString())
+        if (traceJson) {
+            logger.trace("type: {}\njson: \n{}", param.type, jsonNode.toPrettyString())
+        }
+
 
         val map = objectMapper.readValue<Map<String, List<String>>>(param.headers)
 
