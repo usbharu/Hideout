@@ -1,3 +1,15 @@
+create table if not exists emojis
+(
+    id          bigint primary key,
+    "name"      varchar(1000) not null,
+    domain      varchar(1000) not null,
+    instance_id bigint        null,
+    url         varchar(255)  not null unique,
+    category    varchar(255),
+    created_at  timestamp     not null default current_timestamp,
+    unique ("name", instance_id)
+);
+
 create table if not exists instance
 (
     id              bigint primary key,
@@ -13,6 +25,10 @@ create table if not exists instance
     moderation_note varchar(10000) not null,
     created_at      timestamp      not null
 );
+
+alter table emojis
+    add constraint fk_emojis_instance_id__id foreign key (instance_id) references instance (id) on delete cascade on update cascade;
+
 create table if not exists actors
 (
     id              bigint primary key,
@@ -34,7 +50,8 @@ create table if not exists actors
     following_count int            not null,
     followers_count int            not null,
     posts_count     int            not null,
-    last_post_at    timestamp      null default null,
+    last_post_at timestamp    null     default null,
+    emojis       varchar(300) not null default '',
     unique ("name", "domain"),
     constraint fk_actors_instance__id foreign key ("instance") references instance (id) on delete restrict on update restrict
 );
@@ -81,7 +98,8 @@ create table if not exists posts
     reply_id    bigint                null,
     "sensitive" boolean default false not null,
     ap_id    varchar(100)          not null unique,
-    deleted  boolean default false not null
+    deleted  boolean default false not null,
+    emojis   varchar(3000)         not null default ''
 );
 alter table posts
     add constraint fk_posts_actor_id__id foreign key (actor_id) references actors (id) on delete restrict on update restrict;
