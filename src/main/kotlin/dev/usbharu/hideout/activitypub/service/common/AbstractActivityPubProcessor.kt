@@ -5,8 +5,10 @@ import dev.usbharu.hideout.activitypub.domain.exception.FailedProcessException
 import dev.usbharu.hideout.activitypub.domain.exception.HttpSignatureUnauthorizedException
 import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 import dev.usbharu.hideout.application.external.Transaction
+import dev.usbharu.hideout.core.domain.exception.resource.ResourceAccessException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.sql.SQLException
 
 abstract class AbstractActivityPubProcessor<T : Object>(
     private val transaction: Transaction,
@@ -21,7 +23,11 @@ abstract class AbstractActivityPubProcessor<T : Object>(
         logger.info("START ActivityPub process. {}", this.type())
         try {
             transaction.transaction {
-                internalProcess(activity)
+                try {
+                    internalProcess(activity)
+                } catch (e: ResourceAccessException) {
+                    throw SQLException(e)
+                }
             }
         } catch (e: ActivityPubProcessException) {
             logger.warn("FAILED ActivityPub process", e)
