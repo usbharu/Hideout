@@ -9,7 +9,7 @@ import dev.usbharu.hideout.activitypub.service.common.ExtendedActivityVocabulary
 
 class ObjectDeserializer : JsonDeserializer<Object>() {
     @Suppress("LongMethod", "CyclomaticComplexMethod")
-    override fun deserialize(p: JsonParser?, ctxt: DeserializationContext?): Object {
+    override fun deserialize(p: JsonParser?, ctxt: DeserializationContext?): Object? {
         requireNotNull(p)
         val treeNode: JsonNode = requireNotNull(p.codec?.readTree(p))
         if (treeNode.isValueNode) {
@@ -24,7 +24,7 @@ class ObjectDeserializer : JsonDeserializer<Object>() {
                     ExtendedActivityVocabulary.values().firstOrNull { it.name.equals(jsonNode.asText(), true) }
                 }
             } else if (type.isValueNode) {
-                ExtendedActivityVocabulary.values().first { it.name.equals(type.asText(), true) }
+                ExtendedActivityVocabulary.values().firstOrNull() { it.name.equals(type.asText(), true) }
             } else {
                 TODO()
             }
@@ -85,6 +85,7 @@ class ObjectDeserializer : JsonDeserializer<Object>() {
                 ExtendedActivityVocabulary.Video -> TODO()
                 ExtendedActivityVocabulary.Mention -> TODO()
                 ExtendedActivityVocabulary.Emoji -> p.codec.treeToValue(treeNode, Emoji::class.java)
+                null -> null
             }
         } else {
             TODO()
