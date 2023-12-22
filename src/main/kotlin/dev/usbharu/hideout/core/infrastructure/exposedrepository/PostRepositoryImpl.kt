@@ -148,6 +148,6 @@ object PostsMedia : Table("posts_media") {
 
 object PostsEmojis : Table("posts_emojis") {
     val postId = long("post_id").references(Posts.id)
-    val emojiId = long("emoji_id").references(Posts.id)
+    val emojiId = long("emoji_id").references(CustomEmojis.id)
     override val primaryKey: PrimaryKey = PrimaryKey(postId, emojiId)
 }
