@@ -6,6 +6,12 @@ sealed class Emoji {
     abstract val domain: String
     abstract val name: String
     abstract fun id(): String
+    override fun toString(): String {
+        return "Emoji(" +
+                "domain='$domain', " +
+                "name='$name'" +
+                ")"
+    }
 }
 
 data class CustomEmoji(

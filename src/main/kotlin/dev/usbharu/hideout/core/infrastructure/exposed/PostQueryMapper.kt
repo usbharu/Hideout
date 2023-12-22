@@ -18,7 +18,8 @@ class PostQueryMapper(private val postResultRowMapper: ResultRowMapper<Post>) : 
                 it.first().let(postResultRowMapper::map)
                     .copy(
                         mediaIds = it.mapNotNull { resultRow -> resultRow.getOrNull(PostsMedia.mediaId) },
-                        emojiIds = it.mapNotNull { resultRow -> resultRow.getOrNull(PostsEmojis.emojiId) })
+                        emojiIds = it.mapNotNull { resultRow -> resultRow.getOrNull(PostsEmojis.emojiId) }
+                    )
             }
     }
 }
