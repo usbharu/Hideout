@@ -39,7 +39,7 @@ class ReactionServiceImplTest {
         val generateId = TwitterSnowflakeIdGenerateService.generateId()
         whenever(reactionRepository.generateId()).doReturn(generateId)
 
-        reactionServiceImpl.receiveReaction("❤", "example.com", post.actorId, post.id)
+        reactionServiceImpl.receiveReaction(UnicodeEmoji("❤"), post.actorId, post.id)
 
         verify(reactionRepository, times(1)).save(eq(Reaction(generateId, UnicodeEmoji("❤"), post.id, post.actorId)))
     }
@@ -71,7 +71,7 @@ class ReactionServiceImplTest {
         }
         whenever(reactionRepository.generateId()).doReturn(generateId)
 
-        reactionServiceImpl.receiveReaction("❤", "example.com", post.actorId, post.id)
+        reactionServiceImpl.receiveReaction(UnicodeEmoji("❤"), post.actorId, post.id)
 
         verify(reactionRepository, times(1)).save(eq(Reaction(generateId, UnicodeEmoji("❤"), post.id, post.actorId)))
     }
@@ -83,7 +83,7 @@ class ReactionServiceImplTest {
             true
         )
 
-        reactionServiceImpl.receiveReaction("❤", "example.com", post.actorId, post.id)
+        reactionServiceImpl.receiveReaction(UnicodeEmoji("❤"), post.actorId, post.id)
 
         verify(reactionRepository, never()).save(any())
     }
@@ -97,7 +97,7 @@ class ReactionServiceImplTest {
         val generateId = TwitterSnowflakeIdGenerateService.generateId()
         whenever(reactionRepository.generateId()).doReturn(generateId)
 
-        reactionServiceImpl.sendReaction("❤", post.actorId, post.id)
+        reactionServiceImpl.sendReaction(UnicodeEmoji("❤"), post.actorId, post.id)
 
         verify(reactionRepository, times(1)).save(eq(Reaction(generateId, UnicodeEmoji("❤"), post.id, post.actorId)))
         verify(apReactionService, times(1)).reaction(eq(Reaction(generateId, UnicodeEmoji("❤"), post.id, post.actorId)))
@@ -113,7 +113,7 @@ class ReactionServiceImplTest {
         val generateId = TwitterSnowflakeIdGenerateService.generateId()
         whenever(reactionRepository.generateId()).doReturn(generateId)
 
-        reactionServiceImpl.sendReaction("❤", post.actorId, post.id)
+        reactionServiceImpl.sendReaction(UnicodeEmoji("❤"), post.actorId, post.id)
 
 
         verify(reactionRepository, times(1)).delete(eq(Reaction(id, UnicodeEmoji("❤"), post.id, post.actorId)))
