@@ -45,7 +45,8 @@ class ExposedGenerateTimelineService(private val statusQueryService: StatusQuery
                 it[Timelines.postId],
                 it[Timelines.replyId],
                 it[Timelines.repostId],
-                it[Timelines.mediaIds].split(",").mapNotNull { s -> s.toLongOrNull() }
+                it[Timelines.mediaIds].split(",").mapNotNull { s -> s.toLongOrNull() },
+                it[Timelines.emojiIds].split(",").mapNotNull { s -> s.toLongOrNull() }
             )
         }
 

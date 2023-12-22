@@ -98,7 +98,7 @@ create table if not exists posts
     reply_id    bigint                null,
     "sensitive" boolean default false not null,
     ap_id    varchar(100)          not null unique,
-    deleted boolean default false not null
+    deleted  boolean default false not null
 );
 alter table posts
     add constraint fk_posts_actor_id__id foreign key (actor_id) references actors (id) on delete restrict on update restrict;
@@ -150,7 +150,7 @@ create table if not exists timelines
     user_id        bigint       not null,
     timeline_id    bigint       not null,
     post_id        bigint       not null,
-    post_actor_id bigint not null,
+    post_actor_id bigint       not null,
     created_at     bigint       not null,
     reply_id       bigint       null,
     repost_id      bigint       null,
@@ -158,7 +158,8 @@ create table if not exists timelines
     "sensitive"    boolean      not null,
     is_local       boolean      not null,
     is_pure_repost boolean      not null,
-    media_ids      varchar(255) not null
+    media_ids     varchar(255) not null,
+    emoji_ids     varchar(255) not null
 );
 
 create table if not exists application_authorization
