@@ -112,18 +112,17 @@ class InboxCommonTest {
 
         @BeforeAll
         @JvmStatic
-        fun beforeAll(@Autowired flyway: Flyway) {
+        fun beforeAll() {
             server = MockServer.feature("classpath:federation/InboxxCommonMockServerTest.feature").http(0).build()
             _remotePort = server.port.toString()
-
-            flyway.clean()
-            flyway.migrate()
         }
 
         @AfterAll
         @JvmStatic
-        fun afterAll() {
+        fun afterAll(@Autowired flyway: Flyway) {
             server.stop()
+            flyway.clean()
+            flyway.migrate()
         }
     }
 }
