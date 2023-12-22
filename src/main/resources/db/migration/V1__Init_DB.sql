@@ -98,8 +98,7 @@ create table if not exists posts
     reply_id    bigint                null,
     "sensitive" boolean default false not null,
     ap_id    varchar(100)          not null unique,
-    deleted  boolean default false not null,
-    emojis   varchar(3000)         not null default ''
+    deleted boolean default false not null
 );
 alter table posts
     add constraint fk_posts_actor_id__id foreign key (actor_id) references actors (id) on delete restrict on update restrict;
