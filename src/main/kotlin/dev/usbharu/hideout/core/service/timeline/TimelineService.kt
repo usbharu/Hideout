@@ -37,7 +37,8 @@ class TimelineService(
                 sensitive = post.sensitive,
                 isLocal = isLocal,
                 isPureRepost = post.repostId == null || (post.text.isBlank() && post.overview.isNullOrBlank()),
-                mediaIds = post.mediaIds
+                mediaIds = post.mediaIds,
+                emojiIds = post.emojiIds
             )
         }.toMutableList()
         if (post.visibility == Visibility.PUBLIC) {
@@ -55,7 +56,8 @@ class TimelineService(
                     sensitive = post.sensitive,
                     isLocal = isLocal,
                     isPureRepost = post.repostId == null || (post.text.isBlank() && post.overview.isNullOrBlank()),
-                    mediaIds = post.mediaIds
+                    mediaIds = post.mediaIds,
+                    emojiIds = post.emojiIds
                 )
             )
         }
