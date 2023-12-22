@@ -1,6 +1,8 @@
 package dev.usbharu.hideout.activitypub.domain.model
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import dev.usbharu.hideout.activitypub.domain.model.objects.Object
+import dev.usbharu.hideout.activitypub.domain.model.objects.ObjectDeserializer
 
 open class Note
 @Suppress("LongParameterList")
@@ -14,7 +16,9 @@ constructor(
     val cc: List<String> = emptyList(),
     val sensitive: Boolean = false,
     val inReplyTo: String? = null,
-    val attachment: List<Document> = emptyList()
+    val attachment: List<Document> = emptyList(),
+    @JsonDeserialize(contentUsing = ObjectDeserializer::class)
+    val tag: List<Object> = emptyList()
 ) : Object(
     type = add(type, "Note")
 ),
@@ -36,6 +40,7 @@ constructor(
         if (sensitive != other.sensitive) return false
         if (inReplyTo != other.inReplyTo) return false
         if (attachment != other.attachment) return false
+        if (tag != other.tag) return false
 
         return true
     }
@@ -51,21 +56,23 @@ constructor(
         result = 31 * result + sensitive.hashCode()
         result = 31 * result + (inReplyTo?.hashCode() ?: 0)
         result = 31 * result + attachment.hashCode()
+        result = 31 * result + tag.hashCode()
         return result
     }
 
     override fun toString(): String {
         return "Note(" +
-            "id='$id', " +
-            "attributedTo='$attributedTo', " +
-            "content='$content', " +
-            "published='$published', " +
-            "to=$to, " +
-            "cc=$cc, " +
-            "sensitive=$sensitive, " +
-            "inReplyTo=$inReplyTo, " +
-            "attachment=$attachment" +
-            ")" +
-            " ${super.toString()}"
+                "id='$id', " +
+                "attributedTo='$attributedTo', " +
+                "content='$content', " +
+                "published='$published', " +
+                "to=$to, " +
+                "cc=$cc, " +
+                "sensitive=$sensitive, " +
+                "inReplyTo=$inReplyTo, " +
+                "attachment=$attachment, " +
+                "tag=$tag" +
+                ")" +
+                " ${super.toString()}"
     }
 }

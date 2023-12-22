@@ -73,6 +73,7 @@ class APNoteServiceImplTest {
             apResourceResolveService = mock(),
             postBuilder = Post.PostBuilder(CharacterLimit()),
             noteQueryService = noteQueryService,
+            mock(),
             mock()
         )
 
@@ -142,7 +143,8 @@ class APNoteServiceImplTest {
             apResourceResolveService = apResourceResolveService,
             postBuilder = Post.PostBuilder(CharacterLimit()),
             noteQueryService = noteQueryService,
-            mock()
+            mock(),
+            mock { }
         )
 
         val actual = apNoteServiceImpl.fetchNote(url)
@@ -190,6 +192,7 @@ class APNoteServiceImplTest {
                 apResourceResolveService = apResourceResolveService,
                 postBuilder = Post.PostBuilder(CharacterLimit()),
                 noteQueryService = noteQueryService,
+                mock(),
                 mock()
             )
 
@@ -240,6 +243,7 @@ class APNoteServiceImplTest {
             apResourceResolveService = mock(),
             postBuilder = postBuilder,
             noteQueryService = noteQueryService,
+            mock(),
             mock()
         )
 
@@ -292,6 +296,7 @@ class APNoteServiceImplTest {
             apResourceResolveService = mock(),
             postBuilder = postBuilder,
             noteQueryService = noteQueryService,
+            mock(),
             mock()
         )
 
