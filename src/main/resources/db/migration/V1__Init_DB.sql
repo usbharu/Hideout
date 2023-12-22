@@ -143,7 +143,7 @@ alter table reactions
 alter table reactions
     add constraint fk_reactions_actor_id__id foreign key (actor_id) references actors (id) on delete restrict on update restrict;
 alter table reactions
-    add constraint fk_reactions_emoji_id__id foreign key (emoji_id) references emojis (id) on delete cascade on update cascade;
+    add constraint fk_reactions_custom_emoji_id__id foreign key (custom_emoji_id) references emojis (id) on delete cascade on update cascade;
 
 create table if not exists timelines
 (
