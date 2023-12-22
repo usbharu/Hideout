@@ -1,6 +1,7 @@
 package dev.usbharu.hideout.core.service.reaction
 
 import dev.usbharu.hideout.activitypub.service.activity.like.APReactionService
+import dev.usbharu.hideout.core.domain.model.emoji.UnicodeEmoji
 import dev.usbharu.hideout.core.domain.model.reaction.Reaction
 import dev.usbharu.hideout.core.domain.model.reaction.ReactionRepository
 import org.jetbrains.exposed.exceptions.ExposedSQLException
@@ -17,7 +18,7 @@ class ReactionServiceImpl(
         if (reactionRepository.existByPostIdAndActorIdAndEmojiId(postId, actorId, 0).not()) {
             try {
                 reactionRepository.save(
-                    Reaction(reactionRepository.generateId(), 0, postId, actorId)
+                    Reaction(reactionRepository.generateId(), UnicodeEmoji("❤"), postId, actorId)
                 )
             } catch (_: ExposedSQLException) {
             }
@@ -42,7 +43,7 @@ class ReactionServiceImpl(
             reactionRepository.delete(findByPostIdAndUserIdAndEmojiId)
         }
 
-        val reaction = Reaction(reactionRepository.generateId(), 0, postId, actorId)
+        val reaction = Reaction(reactionRepository.generateId(), UnicodeEmoji("❤"), postId, actorId)
         reactionRepository.save(reaction)
         apReactionService.reaction(reaction)
     }

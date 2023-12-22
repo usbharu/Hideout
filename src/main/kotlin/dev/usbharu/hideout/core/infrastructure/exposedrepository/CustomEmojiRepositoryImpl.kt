@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.core.infrastructure.exposedrepository
 
+import dev.usbharu.hideout.application.service.id.IdGenerateService
 import dev.usbharu.hideout.core.domain.model.emoji.CustomEmoji
 import dev.usbharu.hideout.core.domain.model.emoji.CustomEmojiRepository
 import org.jetbrains.exposed.sql.*
@@ -8,8 +9,13 @@ import org.jetbrains.exposed.sql.javatime.CurrentTimestamp
 import org.jetbrains.exposed.sql.javatime.timestamp
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Repository
 
-class CustomEmojiRepositoryImpl : CustomEmojiRepository, AbstractRepository() {
+@Repository
+class CustomEmojiRepositoryImpl(private val idGenerateService: IdGenerateService) : CustomEmojiRepository,
+    AbstractRepository() {
+    override suspend fun generateId(): Long = idGenerateService.generateId()
+
     override suspend fun save(customEmoji: CustomEmoji): CustomEmoji = query {
         val singleOrNull = CustomEmojis.select { CustomEmojis.id eq customEmoji.id }.forUpdate().singleOrNull()
         if (singleOrNull == null) {
@@ -41,6 +47,13 @@ class CustomEmojiRepositoryImpl : CustomEmojiRepository, AbstractRepository() {
 
     override suspend fun delete(customEmoji: CustomEmoji): Unit = query {
         CustomEmojis.deleteWhere { CustomEmojis.id eq customEmoji.id }
+    }
+
+    override suspend fun findByNameAndDomain(name: String, domain: String): CustomEmoji? = query {
+        return@query CustomEmojis
+            .select { CustomEmojis.name eq name and (CustomEmojis.domain eq domain) }
+            .singleOrNull()
+            ?.toCustomEmoji()
     }
 
     override val logger: Logger
