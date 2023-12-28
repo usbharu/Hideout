@@ -1,10 +1,10 @@
 package dev.usbharu.hideout.core.service.reaction
 
 import dev.usbharu.hideout.activitypub.service.activity.like.APReactionService
+import dev.usbharu.hideout.core.domain.exception.resource.DuplicateException
 import dev.usbharu.hideout.core.domain.model.emoji.Emoji
 import dev.usbharu.hideout.core.domain.model.reaction.Reaction
 import dev.usbharu.hideout.core.domain.model.reaction.ReactionRepository
-import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -19,13 +19,12 @@ class ReactionServiceImpl(
         actorId: Long,
         postId: Long
     ) {
-        if (reactionRepository.existByPostIdAndActorIdAndEmoji(postId, actorId, emoji).not()) {
-            try {
-                reactionRepository.save(
-                    Reaction(reactionRepository.generateId(), emoji, postId, actorId)
-                )
-            } catch (_: ExposedSQLException) {
-            }
+        if (reactionRepository.existByPostIdAndActor(postId, actorId)) {
+            reactionRepository.deleteByPostIdAndActorId(postId, actorId)
+        }
+        try {
+            reactionRepository.save(Reaction(reactionRepository.generateId(), emoji, postId, actorId))
+        } catch (_: DuplicateException) {
         }
     }
 
