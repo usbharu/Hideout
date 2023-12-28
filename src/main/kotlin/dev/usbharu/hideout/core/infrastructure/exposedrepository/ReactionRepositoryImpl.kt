@@ -79,6 +79,29 @@ class ReactionRepositoryImpl(
         }
     }
 
+    override suspend fun deleteByPostIdAndActorId(postId: Long, actorId: Long): Unit = query {
+        Reactions.deleteWhere {
+            Reactions.postId eq postId and (Reactions.actorId eq actorId)
+        }
+    }
+
+    override suspend fun deleteByPostIdAndActorIdAndEmoji(postId: Long, actorId: Long, emoji: Emoji): Unit = query {
+        if (emoji is CustomEmoji) {
+            Reactions.deleteWhere {
+                Reactions.postId.eq(postId)
+                    .and(Reactions.actorId.eq(actorId))
+                    .and(Reactions.customEmojiId.eq(emoji.id))
+            }
+        } else {
+            Reactions.deleteWhere {
+                Reactions.postId.eq(postId)
+                    .and(Reactions.actorId.eq(actorId))
+                    .and(Reactions.unicodeEmoji.eq(emoji.name))
+            }
+        }
+
+    }
+
     override suspend fun findByPostId(postId: Long): List<Reaction> = query {
         return@query Reactions.leftJoin(CustomEmojis).select { Reactions.postId eq postId }.map { it.toReaction() }
     }
@@ -133,6 +156,12 @@ class ReactionRepositoryImpl(
         }
 
         return@query query.empty().not()
+    }
+
+    override suspend fun existByPostIdAndActor(postId: Long, actorId: Long): Boolean = query {
+        Reactions.select {
+            Reactions.postId.eq(postId).and(Reactions.actorId.eq(actorId))
+        }.empty().not()
     }
 
     override suspend fun findByPostIdAndActorId(postId: Long, actorId: Long): List<Reaction> = query {
