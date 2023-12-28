@@ -2,6 +2,7 @@ package dev.usbharu.hideout.core.infrastructure.exposedrepository
 
 import dev.usbharu.hideout.application.service.id.IdGenerateService
 import dev.usbharu.hideout.core.domain.model.emoji.CustomEmoji
+import dev.usbharu.hideout.core.domain.model.emoji.Emoji
 import dev.usbharu.hideout.core.domain.model.emoji.UnicodeEmoji
 import dev.usbharu.hideout.core.domain.model.reaction.Reaction
 import dev.usbharu.hideout.core.domain.model.reaction.ReactionRepository
@@ -102,6 +103,37 @@ class ReactionRepositoryImpl(
                     .and(Reactions.customEmojiId.eq(emojiId))
             }.empty().not()
         }
+
+    override suspend fun existByPostIdAndActorIdAndUnicodeEmoji(
+        postId: Long,
+        actorId: Long,
+        unicodeEmoji: String
+    ): Boolean = query {
+        return@query Reactions.select {
+            Reactions.postId
+                .eq(postId)
+                .and(Reactions.actorId.eq(actorId))
+                .and(Reactions.unicodeEmoji.eq(unicodeEmoji))
+        }.empty().not()
+    }
+
+    override suspend fun existByPostIdAndActorIdAndEmoji(postId: Long, actorId: Long, emoji: Emoji): Boolean = query {
+        val query = Reactions.select {
+            Reactions.postId
+                .eq(postId)
+                .and(Reactions.actorId.eq(actorId))
+        }
+
+
+        if (emoji is UnicodeEmoji) {
+            query.andWhere { Reactions.unicodeEmoji eq emoji.name }
+        } else {
+            emoji as CustomEmoji
+            query.andWhere { Reactions.customEmojiId eq emoji.id }
+        }
+
+        return@query query.empty().not()
+    }
 
     override suspend fun findByPostIdAndActorId(postId: Long, actorId: Long): List<Reaction> = query {
         return@query Reactions.leftJoin(CustomEmojis)

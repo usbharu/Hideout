@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.core.domain.model.reaction
 
+import dev.usbharu.hideout.core.domain.model.emoji.Emoji
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -13,5 +14,7 @@ interface ReactionRepository {
     suspend fun findByPostId(postId: Long): List<Reaction>
     suspend fun findByPostIdAndActorIdAndEmojiId(postId: Long, actorId: Long, emojiId: Long): Reaction?
     suspend fun existByPostIdAndActorIdAndEmojiId(postId: Long, actorId: Long, emojiId: Long): Boolean
+    suspend fun existByPostIdAndActorIdAndUnicodeEmoji(postId: Long, actorId: Long, unicodeEmoji: String): Boolean
+    suspend fun existByPostIdAndActorIdAndEmoji(postId: Long, actorId: Long, emoji: Emoji): Boolean
     suspend fun findByPostIdAndActorId(postId: Long, actorId: Long): List<Reaction>
 }
