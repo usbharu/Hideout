@@ -19,7 +19,7 @@ class ReactionServiceImpl(
         actorId: Long,
         postId: Long
     ) {
-        if (reactionRepository.existByPostIdAndActorIdAndEmojiId(postId, actorId, 0).not()) {
+        if (reactionRepository.existByPostIdAndActorIdAndEmoji(postId, actorId, emoji).not()) {
             try {
                 reactionRepository.save(
                     Reaction(reactionRepository.generateId(), emoji, postId, actorId)
