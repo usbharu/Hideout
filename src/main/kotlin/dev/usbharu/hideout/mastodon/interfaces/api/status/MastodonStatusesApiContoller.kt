@@ -24,4 +24,16 @@ class MastodonStatusesApiContoller(private val statusesApiService: StatusesApiSe
             HttpStatus.OK
         )
     }
+
+    override suspend fun apiV1StatusesIdEmojiReactionsEmojiDelete(id: String, emoji: String): ResponseEntity<Status> {
+        return super.apiV1StatusesIdEmojiReactionsEmojiDelete(id, emoji)
+    }
+
+    override suspend fun apiV1StatusesIdEmojiReactionsEmojiPut(id: String, emoji: String): ResponseEntity<Status> {
+        return super.apiV1StatusesIdEmojiReactionsEmojiPut(id, emoji)
+    }
+
+    override suspend fun apiV1StatusesIdGet(id: String): ResponseEntity<Status> {
+        return super.apiV1StatusesIdGet(id)
+    }
 }
