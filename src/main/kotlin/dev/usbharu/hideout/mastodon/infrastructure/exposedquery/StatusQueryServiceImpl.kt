@@ -108,6 +108,10 @@ class StatusQueryServiceImpl : StatusQueryService {
         return resolveReplyAndRepost(pairs)
     }
 
+    override suspend fun findByPostId(id: Long): Status {
+        TODO("Not yet implemented")
+    }
+
     private fun resolveReplyAndRepost(pairs: List<Pair<Status, Long?>>): List<Status> {
         val statuses = pairs.map { it.first }
         return pairs

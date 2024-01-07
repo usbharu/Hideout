@@ -3,6 +3,7 @@ package dev.usbharu.hideout.activitypub.service.objects.emoji
 import dev.usbharu.hideout.activitypub.domain.model.Emoji
 import dev.usbharu.hideout.activitypub.service.common.APResourceResolveServiceImpl
 import dev.usbharu.hideout.activitypub.service.common.resolve
+import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.core.domain.model.emoji.CustomEmoji
 import dev.usbharu.hideout.core.domain.model.emoji.CustomEmojiRepository
 import dev.usbharu.hideout.core.service.instance.InstanceService
@@ -17,7 +18,8 @@ class EmojiServiceImpl(
     private val customEmojiRepository: CustomEmojiRepository,
     private val instanceService: InstanceService,
     private val mediaService: MediaService,
-    private val apResourceResolveServiceImpl: APResourceResolveServiceImpl
+    private val apResourceResolveServiceImpl: APResourceResolveServiceImpl,
+    private val applicationConfig: ApplicationConfig
 ) : EmojiService {
     override suspend fun fetchEmoji(url: String): Pair<Emoji, CustomEmoji> {
         val emoji = apResourceResolveServiceImpl.resolve<Emoji>(url, null as Long?)
@@ -59,5 +61,21 @@ class EmojiServiceImpl(
         )
 
         return customEmojiRepository.save(customEmoji1)
+    }
+
+    override suspend fun findByEmojiName(emojiName: String): CustomEmoji? {
+        val split = emojiName.trim(':').split("@")
+
+        return when (split.size) {
+            1 -> {
+                customEmojiRepository.findByNameAndDomain(split.first(), applicationConfig.url.host)
+            }
+
+            2 -> {
+                customEmojiRepository.findByNameAndDomain(split.first(), split[1])
+            }
+
+            else -> throw IllegalArgumentException("Unknown Emoji Format. $emojiName")
+        }
     }
 }
