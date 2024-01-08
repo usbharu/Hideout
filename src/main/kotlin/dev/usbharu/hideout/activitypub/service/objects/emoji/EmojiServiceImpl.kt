@@ -26,9 +26,7 @@ class EmojiServiceImpl(
         return fetchEmoji(emoji)
     }
 
-    override suspend fun fetchEmoji(emoji: Emoji): Pair<Emoji, CustomEmoji> {
-        return emoji to save(emoji)
-    }
+    override suspend fun fetchEmoji(emoji: Emoji): Pair<Emoji, CustomEmoji> = emoji to save(emoji)
 
     private suspend fun save(emoji: Emoji): CustomEmoji {
         val domain = URL(emoji.id).host
@@ -51,13 +49,13 @@ class EmojiServiceImpl(
         )
 
         val customEmoji1 = CustomEmoji(
-            customEmojiRepository.generateId(),
-            name,
-            domain,
-            instance.id,
-            media.url,
-            null,
-            Instant.now()
+            id = customEmojiRepository.generateId(),
+            name = name,
+            domain = domain,
+            instanceId = instance.id,
+            url = media.url,
+            category = null,
+            createdAt = Instant.now()
         )
 
         return customEmojiRepository.save(customEmoji1)

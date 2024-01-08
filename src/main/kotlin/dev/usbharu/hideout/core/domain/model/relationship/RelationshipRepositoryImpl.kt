@@ -11,6 +11,9 @@ import org.springframework.stereotype.Service
 
 @Service
 class RelationshipRepositoryImpl : RelationshipRepository, AbstractRepository() {
+    override val logger: Logger
+        get() = Companion.logger
+
     override suspend fun save(relationship: Relationship): Relationship = query {
         val singleOrNull = Relationships.select {
             (Relationships.actorId eq relationship.actorId).and(
@@ -93,9 +96,6 @@ class RelationshipRepositoryImpl : RelationshipRepository, AbstractRepository() 
 
         return@query query.map { it.toRelationships() }
     }
-
-    override val logger: Logger
-        get() = Companion.logger
 
     companion object {
         private val logger = LoggerFactory.getLogger(RelationshipRepositoryImpl::class.java)

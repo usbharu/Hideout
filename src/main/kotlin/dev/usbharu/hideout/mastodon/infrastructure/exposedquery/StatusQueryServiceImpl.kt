@@ -161,7 +161,7 @@ class StatusQueryServiceImpl : StatusQueryService {
                     mediaAttachments = it.mapNotNull { resultRow ->
                         resultRow.toMediaOrNull()?.toMediaAttachments()
                     },
-                    emojis = it.mapNotNull { resultRow -> resultRow.toCustomEmoji()?.toMastodonEmoji() }
+                    emojis = it.mapNotNull { resultRow -> resultRow.toCustomEmojiOrNull()?.toMastodonEmoji() }
                 ) to it.first()[Posts.repostId]
             }
         return resolveReplyAndRepost(pairs)

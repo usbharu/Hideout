@@ -24,7 +24,7 @@ class ObjectDeserializer : JsonDeserializer<Object>() {
                     ExtendedActivityVocabulary.values().firstOrNull { it.name.equals(jsonNode.asText(), true) }
                 }
             } else if (type.isValueNode) {
-                ExtendedActivityVocabulary.values().firstOrNull() { it.name.equals(type.asText(), true) }
+                ExtendedActivityVocabulary.values().firstOrNull { it.name.equals(type.asText(), true) }
             } else {
                 null
             }

@@ -12,9 +12,7 @@ class Nodeinfo private constructor() {
         return links == other.links
     }
 
-    override fun hashCode(): Int {
-        return links.hashCode()
-    }
+    override fun hashCode(): Int = links.hashCode()
 }
 
 class Links private constructor() {

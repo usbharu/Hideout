@@ -26,11 +26,6 @@ class UserDetailsImpl(
     accountNonLocked: Boolean,
     authorities: MutableCollection<out GrantedAuthority>?
 ) : User(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities) {
-    companion object {
-        @Serial
-        private const val serialVersionUID: Long = -899168205656607781L
-    }
-
     override fun toString(): String {
         return "UserDetailsImpl(" +
                 "id=$id" +
@@ -52,6 +47,11 @@ class UserDetailsImpl(
         var result = super.hashCode()
         result = 31 * result + id.hashCode()
         return result
+    }
+
+    companion object {
+        @Serial
+        private const val serialVersionUID: Long = -899168205656607781L
     }
 }
 

@@ -99,7 +99,6 @@ class ReactionRepositoryImpl(
                     .and(Reactions.unicodeEmoji.eq(emoji.name))
             }
         }
-
     }
 
     override suspend fun findByPostId(postId: Long): List<Reaction> = query {
@@ -147,7 +146,6 @@ class ReactionRepositoryImpl(
                 .and(Reactions.actorId.eq(actorId))
         }
 
-
         if (emoji is UnicodeEmoji) {
             query.andWhere { Reactions.unicodeEmoji eq emoji.name }
         } else {
@@ -178,13 +176,13 @@ class ReactionRepositoryImpl(
 fun ResultRow.toReaction(): Reaction {
     val emoji = if (this[Reactions.customEmojiId] != null) {
         CustomEmoji(
-            this[Reactions.customEmojiId]!!,
-            this[CustomEmojis.name],
-            this[CustomEmojis.domain],
-            this[CustomEmojis.instanceId],
-            this[CustomEmojis.url],
-            this[CustomEmojis.category],
-            this[CustomEmojis.createdAt]
+            id = this[Reactions.customEmojiId]!!,
+            name = this[CustomEmojis.name],
+            domain = this[CustomEmojis.domain],
+            instanceId = this[CustomEmojis.instanceId],
+            url = this[CustomEmojis.url],
+            category = this[CustomEmojis.category],
+            createdAt = this[CustomEmojis.createdAt]
         )
     } else if (this[Reactions.unicodeEmoji] != null) {
         UnicodeEmoji(this[Reactions.unicodeEmoji]!!)

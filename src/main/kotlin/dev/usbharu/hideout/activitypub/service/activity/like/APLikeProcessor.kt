@@ -36,7 +36,7 @@ class APLikeProcessor(
 
             val emoji = if (content.startsWith(":")) {
                 val tag = activity.activity.tag
-                (tag.firstOrNull { it is Emoji } as Emoji?)?.let { emojiService.fetchEmoji(it).second }
+                (tag.firstOrNull { it is Emoji } as? Emoji)?.let { emojiService.fetchEmoji(it).second }
             } else {
                 UnicodeEmoji(content)
             }

@@ -113,7 +113,6 @@ class APNoteServiceImpl(
                 it.id
             }
 
-
         val mediaList = note.attachment.map {
             mediaService.uploadRemoteMedia(
                 RemoteMedia(
