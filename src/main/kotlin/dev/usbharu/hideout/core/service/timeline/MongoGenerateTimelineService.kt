@@ -57,7 +57,8 @@ class MongoGenerateTimelineService(
                     it.postId,
                     it.replyId,
                     it.repostId,
-                    it.mediaIds
+                    it.mediaIds,
+                    it.emojiIds
                 )
             }
         )

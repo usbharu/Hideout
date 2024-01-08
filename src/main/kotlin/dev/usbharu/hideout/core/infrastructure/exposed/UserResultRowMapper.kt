@@ -31,6 +31,7 @@ class UserResultRowMapper(private val actorBuilder: Actor.UserBuilder) : ResultR
             followersCount = resultRow[Actors.followersCount],
             postsCount = resultRow[Actors.postsCount],
             lastPostDate = resultRow[Actors.lastPostAt],
+            emojis = resultRow[Actors.emojis].split(",").filter { it.isNotEmpty() }.map { it.toLong() }
         )
     }
 }

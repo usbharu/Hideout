@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.mastodon.infrastructure.exposedquery
 
+import dev.usbharu.hideout.core.domain.model.emoji.CustomEmoji
 import dev.usbharu.hideout.core.domain.model.media.toMediaAttachments
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.*
 import dev.usbharu.hideout.domain.mastodon.model.generated.Account
@@ -12,6 +13,7 @@ import org.jetbrains.exposed.sql.andWhere
 import org.jetbrains.exposed.sql.select
 import org.springframework.stereotype.Repository
 import java.time.Instant
+import dev.usbharu.hideout.domain.mastodon.model.generated.CustomEmoji as MastodonEmoji
 
 @Suppress("IncompleteDestructuring")
 @Repository
@@ -23,6 +25,10 @@ class StatusQueryServiceImpl : StatusQueryService {
         postIdSet.addAll(statusQueries.flatMap { listOfNotNull(it.postId, it.replyId, it.repostId) })
         val mediaIdSet = mutableSetOf<Long>()
         mediaIdSet.addAll(statusQueries.flatMap { it.mediaIds })
+
+        val emojiIdSet = mutableSetOf<Long>()
+        emojiIdSet.addAll(statusQueries.flatMap { it.emojiIds })
+
         val postMap = Posts
             .leftJoin(Actors)
             .select { Posts.id inList postIdSet }
@@ -32,12 +38,16 @@ class StatusQueryServiceImpl : StatusQueryService {
                 it[Media.id] to it.toMedia().toMediaAttachments()
             }
 
+        val emojiMap = CustomEmojis.select { CustomEmojis.id inList emojiIdSet }.associate {
+            it[CustomEmojis.id] to it.toCustomEmoji().toMastodonEmoji()
+        }
         return statusQueries.mapNotNull { statusQuery ->
             postMap[statusQuery.postId]?.copy(
                 inReplyToId = statusQuery.replyId?.toString(),
                 inReplyToAccountId = postMap[statusQuery.replyId]?.account?.id,
                 reblog = postMap[statusQuery.repostId],
-                mediaAttachments = statusQuery.mediaIds.mapNotNull { mediaMap[it] }
+                mediaAttachments = statusQuery.mediaIds.mapNotNull { mediaMap[it] },
+                emojis = statusQuery.emojiIds.mapNotNull { emojiMap[it] }
             )
         }
     }
@@ -98,6 +108,25 @@ class StatusQueryServiceImpl : StatusQueryService {
         return resolveReplyAndRepost(pairs)
     }
 
+    override suspend fun findByPostId(id: Long): Status {
+        val map = Posts
+            .leftJoin(PostsMedia)
+            .leftJoin(Actors)
+            .leftJoin(Media)
+            .select { Posts.id eq id }
+            .groupBy { it[Posts.id] }
+            .map { it.value }
+            .map {
+                toStatus(it.first()).copy(
+                    mediaAttachments = it.mapNotNull { resultRow ->
+                        resultRow.toMediaOrNull()?.toMediaAttachments()
+                    },
+                    emojis = it.mapNotNull { resultRow -> resultRow.toCustomEmojiOrNull()?.toMastodonEmoji() }
+                ) to it.first()[Posts.repostId]
+            }
+        return resolveReplyAndRepost(map).single()
+    }
+
     private fun resolveReplyAndRepost(pairs: List<Pair<Status, Long?>>): List<Status> {
         val statuses = pairs.map { it.first }
         return pairs
@@ -120,6 +149,8 @@ class StatusQueryServiceImpl : StatusQueryService {
     private suspend fun findByPostIdsWithMedia(ids: List<Long>): List<Status> {
         val pairs = Posts
             .leftJoin(PostsMedia)
+            .leftJoin(PostsEmojis)
+            .leftJoin(CustomEmojis)
             .leftJoin(Actors)
             .leftJoin(Media)
             .select { Posts.id inList ids }
@@ -129,12 +160,21 @@ class StatusQueryServiceImpl : StatusQueryService {
                 toStatus(it.first()).copy(
                     mediaAttachments = it.mapNotNull { resultRow ->
                         resultRow.toMediaOrNull()?.toMediaAttachments()
-                    }
+                    },
+                    emojis = it.mapNotNull { resultRow -> resultRow.toCustomEmojiOrNull()?.toMastodonEmoji() }
                 ) to it.first()[Posts.repostId]
             }
         return resolveReplyAndRepost(pairs)
     }
 }
+
+private fun CustomEmoji.toMastodonEmoji(): MastodonEmoji = MastodonEmoji(
+    shortcode = this.name,
+    url = this.url,
+    staticUrl = this.url,
+    visibleInPicker = true,
+    category = this.category.orEmpty()
+)
 
 private fun toStatus(it: ResultRow) = Status(
     id = it[Posts.id].toString(),

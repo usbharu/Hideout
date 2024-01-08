@@ -1,10 +1,12 @@
 package dev.usbharu.hideout.activitypub.service.objects.note
 
 import dev.usbharu.hideout.activitypub.domain.exception.FailedToGetActivityPubResourceException
+import dev.usbharu.hideout.activitypub.domain.model.Emoji
 import dev.usbharu.hideout.activitypub.domain.model.Note
 import dev.usbharu.hideout.activitypub.query.NoteQueryService
 import dev.usbharu.hideout.activitypub.service.common.APResourceResolveService
 import dev.usbharu.hideout.activitypub.service.common.resolve
+import dev.usbharu.hideout.activitypub.service.objects.emoji.EmojiService
 import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
@@ -32,7 +34,8 @@ class APNoteServiceImpl(
     private val apResourceResolveService: APResourceResolveService,
     private val postBuilder: Post.PostBuilder,
     private val noteQueryService: NoteQueryService,
-    private val mediaService: MediaService
+    private val mediaService: MediaService,
+    private val emojiService: EmojiService
 
 ) : APNoteService {
 
@@ -101,6 +104,15 @@ class APNoteServiceImpl(
             postRepository.findByUrl(it)
         }
 
+        val emojis = note.tag
+            .filterIsInstance<Emoji>()
+            .map {
+                emojiService.fetchEmoji(it).second
+            }
+            .map {
+                it.id
+            }
+
         val mediaList = note.attachment.map {
             mediaService.uploadRemoteMedia(
                 RemoteMedia(
@@ -123,7 +135,8 @@ class APNoteServiceImpl(
                 replyId = reply?.id,
                 sensitive = note.sensitive,
                 apId = note.id,
-                mediaIds = mediaList
+                mediaIds = mediaList,
+                emojiIds = emojis
             )
         )
         return note to createRemote

@@ -4,6 +4,7 @@ import dev.usbharu.hideout.application.infrastructure.exposed.QueryMapper
 import dev.usbharu.hideout.application.infrastructure.exposed.ResultRowMapper
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Posts
+import dev.usbharu.hideout.core.infrastructure.exposedrepository.PostsEmojis
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.PostsMedia
 import org.jetbrains.exposed.sql.Query
 import org.springframework.stereotype.Component
@@ -15,7 +16,10 @@ class PostQueryMapper(private val postResultRowMapper: ResultRowMapper<Post>) : 
             .map { it.value }
             .map {
                 it.first().let(postResultRowMapper::map)
-                    .copy(mediaIds = it.mapNotNull { resultRow -> resultRow.getOrNull(PostsMedia.mediaId) })
+                    .copy(
+                        mediaIds = it.mapNotNull { resultRow -> resultRow.getOrNull(PostsMedia.mediaId) },
+                        emojiIds = it.mapNotNull { resultRow -> resultRow.getOrNull(PostsEmojis.emojiId) }
+                    )
             }
     }
 }

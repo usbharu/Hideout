@@ -3,6 +3,7 @@ package dev.usbharu.hideout.activitypub.service.activity.like
 
 import dev.usbharu.hideout.application.service.id.TwitterSnowflakeIdGenerateService
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
+import dev.usbharu.hideout.core.domain.model.emoji.UnicodeEmoji
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.domain.model.reaction.Reaction
 import dev.usbharu.hideout.core.external.job.DeliverReactionJob
@@ -48,7 +49,7 @@ class APReactionServiceImplTest {
         apReactionServiceImpl.reaction(
             Reaction(
                 id = TwitterSnowflakeIdGenerateService.generateId(),
-                emojiId = 0,
+                emoji = UnicodeEmoji("❤"),
                 postId = post.id,
                 actorId = user.id
             )
@@ -88,7 +89,7 @@ class APReactionServiceImplTest {
         apReactionServiceImpl.removeReaction(
             Reaction(
                 id = TwitterSnowflakeIdGenerateService.generateId(),
-                emojiId = 0,
+                emoji = UnicodeEmoji("❤"),
                 postId = post.id,
                 actorId = user.id
             )

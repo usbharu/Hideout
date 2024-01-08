@@ -21,5 +21,6 @@ data class Timeline(
     val sensitive: Boolean,
     val isLocal: Boolean,
     val isPureRepost: Boolean = false,
-    val mediaIds: List<Long> = emptyList()
+    val mediaIds: List<Long> = emptyList(),
+    val emojiIds: List<Long> = emptyList()
 )

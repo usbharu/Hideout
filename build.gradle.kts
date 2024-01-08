@@ -142,6 +142,15 @@ repositories {
             password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
         }
     }
+    maven {
+        name = "GitHubPackages2"
+        url = uri("https://maven.pkg.github.com/multim-dev/emoji-kt")
+        credentials {
+
+            username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
+            password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
+        }
+    }
 }
 
 kotlin {
@@ -204,6 +213,8 @@ dependencies {
     implementation("net.coobird:thumbnailator:0.4.20")
     implementation("org.bytedeco:javacv-platform:1.5.9")
     implementation("org.flywaydb:flyway-core")
+
+    implementation("dev.usbharu:emoji-kt:2.0.0")
 
     implementation("io.ktor:ktor-client-logging-jvm:$ktor_version")
 
