@@ -10,9 +10,7 @@ sealed class SavedMedia(val success: Boolean) {
         return success == other.success
     }
 
-    override fun hashCode(): Int {
-        return success.hashCode()
-    }
+    override fun hashCode(): Int = success.hashCode()
 }
 
 class SuccessSavedMedia(

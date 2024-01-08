@@ -5,6 +5,8 @@ import java.time.Instant
 sealed class Emoji {
     abstract val domain: String
     abstract val name: String
+
+    @Suppress("FunctionMinLength")
     abstract fun id(): String
     override fun toString(): String {
         return "Emoji(" +
@@ -23,16 +25,12 @@ data class CustomEmoji(
     val category: String?,
     val createdAt: Instant
 ) : Emoji() {
-    override fun id(): String {
-        return id.toString()
-    }
+    override fun id(): String = id.toString()
 }
 
 data class UnicodeEmoji(
     override val name: String
 ) : Emoji() {
     override val domain: String = "unicode.org"
-    override fun id(): String {
-        return name
-    }
+    override fun id(): String = name
 }

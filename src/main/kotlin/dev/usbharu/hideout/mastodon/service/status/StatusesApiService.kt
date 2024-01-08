@@ -49,6 +49,7 @@ interface StatusesApiService {
 }
 
 @Service
+@Suppress("LongParameterList")
 class StatsesApiServiceImpl(
     private val postService: PostService,
     private val accountService: AccountService,
@@ -155,7 +156,6 @@ class StatsesApiServiceImpl(
     }
 
     override suspend fun emojiReactions(postId: Long, userId: Long, emojiName: String): Status? {
-
         status(statusQueryService.findByPostId(postId), userId) ?: return null
 
         val emoji = try {
@@ -164,9 +164,9 @@ class StatsesApiServiceImpl(
             } else {
                 emojiService.findByEmojiName(emojiName)!!
             }
-        } catch (e: IllegalStateException) {
+        } catch (_: IllegalStateException) {
             UnicodeEmoji("❤")
-        } catch (e: NullPointerException) {
+        } catch (_: NullPointerException) {
             UnicodeEmoji("❤")
         }
         reactionService.sendReaction(emoji, userId, postId)
@@ -174,7 +174,6 @@ class StatsesApiServiceImpl(
     }
 
     override suspend fun removeEmojiReactions(postId: Long, userId: Long, emojiName: String): Status? {
-
         reactionService.removeReaction(userId, postId)
 
         return status(statusQueryService.findByPostId(postId), userId)

@@ -14,6 +14,9 @@ import org.springframework.stereotype.Repository
 @Repository
 class CustomEmojiRepositoryImpl(private val idGenerateService: IdGenerateService) : CustomEmojiRepository,
     AbstractRepository() {
+    override val logger: Logger
+        get() = Companion.logger
+
     override suspend fun generateId(): Long = idGenerateService.generateId()
 
     override suspend fun save(customEmoji: CustomEmoji): CustomEmoji = query {
@@ -56,22 +59,19 @@ class CustomEmojiRepositoryImpl(private val idGenerateService: IdGenerateService
             ?.toCustomEmoji()
     }
 
-    override val logger: Logger
-        get() = Companion.logger
-
     companion object {
         private val logger = LoggerFactory.getLogger(CustomEmojiRepositoryImpl::class.java)
     }
 }
 
 fun ResultRow.toCustomEmoji(): CustomEmoji = CustomEmoji(
-    this[CustomEmojis.id],
-    this[CustomEmojis.name],
-    this[CustomEmojis.domain],
-    this[CustomEmojis.instanceId],
-    this[CustomEmojis.url],
-    this[CustomEmojis.category],
-    this[CustomEmojis.createdAt]
+    id = this[CustomEmojis.id],
+    name = this[CustomEmojis.name],
+    domain = this[CustomEmojis.domain],
+    instanceId = this[CustomEmojis.instanceId],
+    url = this[CustomEmojis.url],
+    category = this[CustomEmojis.category],
+    createdAt = this[CustomEmojis.createdAt]
 )
 
 fun ResultRow.toCustomEmojiOrNull(): CustomEmoji? {
