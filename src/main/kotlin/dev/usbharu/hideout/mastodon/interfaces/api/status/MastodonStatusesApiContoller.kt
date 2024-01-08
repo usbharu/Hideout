@@ -26,11 +26,17 @@ class MastodonStatusesApiContoller(private val statusesApiService: StatusesApiSe
     }
 
     override suspend fun apiV1StatusesIdEmojiReactionsEmojiDelete(id: String, emoji: String): ResponseEntity<Status> {
-        return super.apiV1StatusesIdEmojiReactionsEmojiDelete(id, emoji)
+        val uid =
+            (SecurityContextHolder.getContext().authentication.principal as Jwt).getClaim<String>("uid").toLong()
+
+        return ResponseEntity.ok(statusesApiService.removeEmojiReactions(id.toLong(), uid, emoji))
     }
 
     override suspend fun apiV1StatusesIdEmojiReactionsEmojiPut(id: String, emoji: String): ResponseEntity<Status> {
-        return super.apiV1StatusesIdEmojiReactionsEmojiPut(id, emoji)
+        val uid =
+            (SecurityContextHolder.getContext().authentication.principal as Jwt).getClaim<String>("uid").toLong()
+
+        return ResponseEntity.ok(statusesApiService.emojiReactions(id.toLong(), uid, emoji))
     }
 
     override suspend fun apiV1StatusesIdGet(id: String): ResponseEntity<Status> {

@@ -109,7 +109,22 @@ class StatusQueryServiceImpl : StatusQueryService {
     }
 
     override suspend fun findByPostId(id: Long): Status {
-        TODO("Not yet implemented")
+        val map = Posts
+            .leftJoin(PostsMedia)
+            .leftJoin(Actors)
+            .leftJoin(Media)
+            .select { Posts.id eq id }
+            .groupBy { it[Posts.id] }
+            .map { it.value }
+            .map {
+                toStatus(it.first()).copy(
+                    mediaAttachments = it.mapNotNull { resultRow ->
+                        resultRow.toMediaOrNull()?.toMediaAttachments()
+                    },
+                    emojis = it.mapNotNull { resultRow -> resultRow.toCustomEmojiOrNull()?.toMastodonEmoji() }
+                ) to it.first()[Posts.repostId]
+            }
+        return resolveReplyAndRepost(map).single()
     }
 
     private fun resolveReplyAndRepost(pairs: List<Pair<Status, Long?>>): List<Status> {

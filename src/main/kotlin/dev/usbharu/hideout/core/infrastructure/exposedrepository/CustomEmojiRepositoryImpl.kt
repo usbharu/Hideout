@@ -74,6 +74,18 @@ fun ResultRow.toCustomEmoji(): CustomEmoji = CustomEmoji(
     this[CustomEmojis.createdAt]
 )
 
+fun ResultRow.toCustomEmojiOrNull(): CustomEmoji? {
+    return CustomEmoji(
+        id = this.getOrNull(CustomEmojis.id) ?: return null,
+        name = this.getOrNull(CustomEmojis.name) ?: return null,
+        domain = this.getOrNull(CustomEmojis.domain) ?: return null,
+        instanceId = this[CustomEmojis.instanceId],
+        url = this.getOrNull(CustomEmojis.url) ?: return null,
+        category = this[CustomEmojis.category],
+        createdAt = this.getOrNull(CustomEmojis.createdAt) ?: return null
+    )
+}
+
 object CustomEmojis : Table("emojis") {
     val id = long("id")
     val name = varchar("name", 1000)
