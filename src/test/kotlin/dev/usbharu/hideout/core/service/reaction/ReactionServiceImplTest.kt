@@ -7,7 +7,6 @@ import dev.usbharu.hideout.core.domain.model.emoji.UnicodeEmoji
 import dev.usbharu.hideout.core.domain.model.reaction.Reaction
 import dev.usbharu.hideout.core.domain.model.reaction.ReactionRepository
 import kotlinx.coroutines.test.runTest
-import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
@@ -33,7 +32,7 @@ class ReactionServiceImplTest {
 
         val post = PostBuilder.of()
 
-        whenever(reactionRepository.existByPostIdAndActorIdAndEmojiId(eq(post.id), eq(post.actorId), eq(0))).doReturn(
+        whenever(reactionRepository.existByPostIdAndActor(eq(post.id), eq(post.actorId))).doReturn(
             false
         )
         val generateId = TwitterSnowflakeIdGenerateService.generateId()
@@ -44,48 +43,22 @@ class ReactionServiceImplTest {
         verify(reactionRepository, times(1)).save(eq(Reaction(generateId, UnicodeEmoji("❤"), post.id, post.actorId)))
     }
 
-    @Test
-    fun `receiveReaction リアクションが既に作成されていることを検知出来ずに例外が発生した場合は何もしない`() = runTest {
-        val post = PostBuilder.of()
-
-        whenever(reactionRepository.existByPostIdAndActorIdAndEmojiId(eq(post.id), eq(post.actorId), eq(0))).doReturn(
-            false
-        )
-        val generateId = TwitterSnowflakeIdGenerateService.generateId()
-        whenever(
-            reactionRepository.save(
-                eq(
-                    Reaction(
-                        id = generateId,
-                        emoji = UnicodeEmoji("❤"),
-                        postId = post.id,
-                        actorId = post.actorId
-                    )
-                )
-            )
-        ).doAnswer {
-            throw ExposedSQLException(
-                null,
-                emptyList(), mock()
-            )
-        }
-        whenever(reactionRepository.generateId()).doReturn(generateId)
-
-        reactionServiceImpl.receiveReaction(UnicodeEmoji("❤"), post.actorId, post.id)
-
-        verify(reactionRepository, times(1)).save(eq(Reaction(generateId, UnicodeEmoji("❤"), post.id, post.actorId)))
-    }
 
     @Test
-    fun `receiveReaction リアクションが既に作成されている場合は何もしない`() = runTest() {
+    fun `receiveReaction リアクションが既に作成されている場合削除して新しく作成`() = runTest() {
         val post = PostBuilder.of()
-        whenever(reactionRepository.existByPostIdAndActorIdAndEmojiId(eq(post.id), eq(post.actorId), eq(0))).doReturn(
+        whenever(reactionRepository.existByPostIdAndActor(eq(post.id), eq(post.actorId))).doReturn(
             true
         )
 
+        val generateId = TwitterSnowflakeIdGenerateService.generateId()
+
+        whenever(reactionRepository.generateId()).doReturn(generateId)
+
         reactionServiceImpl.receiveReaction(UnicodeEmoji("❤"), post.actorId, post.id)
 
-        verify(reactionRepository, never()).save(any())
+        verify(reactionRepository, times(1)).deleteByPostIdAndActorId(post.id, post.actorId)
+        verify(reactionRepository, times(1)).save(Reaction(generateId, UnicodeEmoji("❤"), post.id, post.actorId))
     }
 
     @Test
