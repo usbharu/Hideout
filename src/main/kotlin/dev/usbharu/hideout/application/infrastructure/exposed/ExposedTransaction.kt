@@ -13,12 +13,6 @@ import java.sql.Connection
 @Service
 class ExposedTransaction : Transaction {
     override suspend fun <T> transaction(block: suspend () -> T): T {
-//        return newSuspendedTransaction(MDCContext(), transactionIsolation = java.sql.Connection.TRANSACTION_READ_COMMITTED) {
-//            warnLongQueriesDuration = 1000
-//            addLogger(Slf4jSqlDebugLogger)
-//            block()
-//        }
-
         return transaction(transactionIsolation = Connection.TRANSACTION_READ_COMMITTED) {
             debug = true
             warnLongQueriesDuration = 1000

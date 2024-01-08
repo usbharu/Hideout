@@ -37,6 +37,7 @@ class ExposedTimelineRepository(private val idGenerateService: IdGenerateService
                 it[isLocal] = timeline.isLocal
                 it[isPureRepost] = timeline.isPureRepost
                 it[mediaIds] = timeline.mediaIds.joinToString(",")
+                it[emojiIds] = timeline.emojiIds.joinToString(",")
             }
         } else {
             Timelines.update({ Timelines.id eq timeline.id }) {
@@ -52,6 +53,7 @@ class ExposedTimelineRepository(private val idGenerateService: IdGenerateService
                 it[isLocal] = timeline.isLocal
                 it[isPureRepost] = timeline.isPureRepost
                 it[mediaIds] = timeline.mediaIds.joinToString(",")
+                it[emojiIds] = timeline.emojiIds.joinToString(",")
             }
         }
         return@query timeline
@@ -72,6 +74,7 @@ class ExposedTimelineRepository(private val idGenerateService: IdGenerateService
             this[Timelines.isLocal] = it.isLocal
             this[Timelines.isPureRepost] = it.isPureRepost
             this[Timelines.mediaIds] = it.mediaIds.joinToString(",")
+            this[Timelines.emojiIds] = it.emojiIds.joinToString(",")
         }
         return@query timelines
     }
@@ -104,7 +107,8 @@ fun ResultRow.toTimeline(): Timeline {
         sensitive = this[Timelines.sensitive],
         isLocal = this[Timelines.isLocal],
         isPureRepost = this[Timelines.isPureRepost],
-        mediaIds = this[Timelines.mediaIds].split(",").mapNotNull { it.toLongOrNull() }
+        mediaIds = this[Timelines.mediaIds].split(",").mapNotNull { it.toLongOrNull() },
+        emojiIds = this[Timelines.emojiIds].split(",").mapNotNull { it.toLongOrNull() }
     )
 }
 
@@ -122,6 +126,7 @@ object Timelines : Table("timelines") {
     val isLocal = bool("is_local")
     val isPureRepost = bool("is_pure_repost")
     val mediaIds = varchar("media_ids", 255)
+    val emojiIds = varchar("emoji_ids", 255)
 
     override val primaryKey: PrimaryKey = PrimaryKey(id)
 

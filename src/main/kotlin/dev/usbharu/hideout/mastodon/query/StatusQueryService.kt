@@ -36,4 +36,6 @@ interface StatusQueryService {
         tagged: String? = null,
         includeFollowers: Boolean = false
     ): List<Status>
+
+    suspend fun findByPostId(id: Long): Status
 }

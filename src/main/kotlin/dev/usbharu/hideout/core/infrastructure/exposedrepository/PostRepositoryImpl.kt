@@ -41,13 +41,24 @@ class PostRepositoryImpl(
                 this[PostsMedia.postId] = post.id
                 this[PostsMedia.mediaId] = it
             }
+            PostsEmojis.batchInsert(post.emojiIds) {
+                this[PostsEmojis.postId] = post.id
+                this[PostsEmojis.emojiId] = it
+            }
         } else {
             PostsMedia.deleteWhere {
+                postId eq post.id
+            }
+            PostsEmojis.deleteWhere {
                 postId eq post.id
             }
             PostsMedia.batchInsert(post.mediaIds) {
                 this[PostsMedia.postId] = post.id
                 this[PostsMedia.mediaId] = it
+            }
+            PostsEmojis.batchInsert(post.emojiIds) {
+                this[PostsEmojis.postId] = post.id
+                this[PostsEmojis.emojiId] = it
             }
             Posts.update({ Posts.id eq post.id }) {
                 it[actorId] = post.actorId
@@ -67,21 +78,27 @@ class PostRepositoryImpl(
     }
 
     override suspend fun findById(id: Long): Post? = query {
-        return@query Posts.leftJoin(PostsMedia)
+        return@query Posts
+            .leftJoin(PostsMedia)
+            .leftJoin(PostsEmojis)
             .select { Posts.id eq id }
             .let(postQueryMapper::map)
             .singleOrNull()
     }
 
     override suspend fun findByUrl(url: String): Post? = query {
-        return@query Posts.leftJoin(PostsMedia)
+        return@query Posts
+            .leftJoin(PostsMedia)
+            .leftJoin(PostsEmojis)
             .select { Posts.url eq url }
             .let(postQueryMapper::map)
             .singleOrNull()
     }
 
     override suspend fun findByApId(apId: String): Post? = query {
-        return@query Posts.leftJoin(PostsMedia)
+        return@query Posts
+            .leftJoin(PostsMedia)
+            .leftJoin(PostsEmojis)
             .select { Posts.apId eq apId }
             .let(postQueryMapper::map)
             .singleOrNull()
@@ -92,7 +109,10 @@ class PostRepositoryImpl(
     }
 
     override suspend fun findByActorId(actorId: Long): List<Post> = query {
-        return@query Posts.select { Posts.actorId eq actorId }.let(postQueryMapper::map)
+        return@query Posts
+            .leftJoin(PostsMedia)
+            .leftJoin(PostsEmojis)
+            .select { Posts.actorId eq actorId }.let(postQueryMapper::map)
     }
 
     override suspend fun delete(id: Long): Unit = query {
@@ -124,4 +144,10 @@ object PostsMedia : Table("posts_media") {
     val postId = long("post_id").references(Posts.id, ReferenceOption.CASCADE, ReferenceOption.CASCADE)
     val mediaId = long("media_id").references(Media.id, ReferenceOption.CASCADE, ReferenceOption.CASCADE)
     override val primaryKey = PrimaryKey(postId, mediaId)
+}
+
+object PostsEmojis : Table("posts_emojis") {
+    val postId = long("post_id").references(Posts.id)
+    val emojiId = long("emoji_id").references(CustomEmojis.id)
+    override val primaryKey: PrimaryKey = PrimaryKey(postId, emojiId)
 }

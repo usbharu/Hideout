@@ -1,9 +1,10 @@
 package dev.usbharu.hideout.core.service.reaction
 
 import dev.usbharu.hideout.activitypub.service.activity.like.APReactionService
+import dev.usbharu.hideout.core.domain.exception.resource.DuplicateException
+import dev.usbharu.hideout.core.domain.model.emoji.Emoji
 import dev.usbharu.hideout.core.domain.model.reaction.Reaction
 import dev.usbharu.hideout.core.domain.model.reaction.ReactionRepository
-import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -13,14 +14,17 @@ class ReactionServiceImpl(
     private val reactionRepository: ReactionRepository,
     private val apReactionService: APReactionService
 ) : ReactionService {
-    override suspend fun receiveReaction(name: String, domain: String, actorId: Long, postId: Long) {
-        if (reactionRepository.existByPostIdAndActorIdAndEmojiId(postId, actorId, 0).not()) {
-            try {
-                reactionRepository.save(
-                    Reaction(reactionRepository.generateId(), 0, postId, actorId)
-                )
-            } catch (_: ExposedSQLException) {
-            }
+    override suspend fun receiveReaction(
+        emoji: Emoji,
+        actorId: Long,
+        postId: Long
+    ) {
+        if (reactionRepository.existByPostIdAndActor(postId, actorId)) {
+            reactionRepository.deleteByPostIdAndActorId(postId, actorId)
+        }
+        try {
+            reactionRepository.save(Reaction(reactionRepository.generateId(), emoji, postId, actorId))
+        } catch (_: DuplicateException) {
         }
     }
 
@@ -33,7 +37,7 @@ class ReactionServiceImpl(
         reactionRepository.delete(reaction)
     }
 
-    override suspend fun sendReaction(name: String, actorId: Long, postId: Long) {
+    override suspend fun sendReaction(emoji: Emoji, actorId: Long, postId: Long) {
         val findByPostIdAndUserIdAndEmojiId =
             reactionRepository.findByPostIdAndActorIdAndEmojiId(postId, actorId, 0)
 
@@ -42,7 +46,7 @@ class ReactionServiceImpl(
             reactionRepository.delete(findByPostIdAndUserIdAndEmojiId)
         }
 
-        val reaction = Reaction(reactionRepository.generateId(), 0, postId, actorId)
+        val reaction = Reaction(reactionRepository.generateId(), emoji, postId, actorId)
         reactionRepository.save(reaction)
         apReactionService.reaction(reaction)
     }

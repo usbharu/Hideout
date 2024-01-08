@@ -1,3 +1,15 @@
+create table if not exists emojis
+(
+    id          bigint primary key,
+    "name"      varchar(1000) not null,
+    domain      varchar(1000) not null,
+    instance_id bigint        null,
+    url         varchar(255)  not null unique,
+    category    varchar(255),
+    created_at  timestamp     not null default current_timestamp,
+    unique ("name", instance_id)
+);
+
 create table if not exists instance
 (
     id              bigint primary key,
@@ -13,6 +25,10 @@ create table if not exists instance
     moderation_note varchar(10000) not null,
     created_at      timestamp      not null
 );
+
+alter table emojis
+    add constraint fk_emojis_instance_id__id foreign key (instance_id) references instance (id) on delete cascade on update cascade;
+
 create table if not exists actors
 (
     id              bigint primary key,
@@ -34,7 +50,8 @@ create table if not exists actors
     following_count int            not null,
     followers_count int            not null,
     posts_count     int            not null,
-    last_post_at    timestamp      null default null,
+    last_post_at timestamp    null     default null,
+    emojis       varchar(300) not null default '',
     unique ("name", "domain"),
     constraint fk_actors_instance__id foreign key ("instance") references instance (id) on delete restrict on update restrict
 );
@@ -99,24 +116,42 @@ alter table posts_media
     add constraint fk_posts_media_post_id__id foreign key (post_id) references posts (id) on delete cascade on update cascade;
 alter table posts_media
     add constraint fk_posts_media_media_id__id foreign key (media_id) references media (id) on delete cascade on update cascade;
+
+create table if not exists posts_emojis
+(
+    post_id  bigint not null,
+    emoji_id bigint not null,
+    constraint pk_postsemoji primary key (post_id, emoji_id)
+);
+
+alter table posts_emojis
+    add constraint fk_posts_emojis_post_id__id foreign key (post_id) references posts (id) on delete cascade on update cascade;
+alter table posts_emojis
+    add constraint fk_posts_emojis_emoji_id__id foreign key (emoji_id) references emojis (id) on delete cascade on update cascade;
+
 create table if not exists reactions
 (
-    id       bigserial primary key,
-    emoji_id bigint not null,
-    post_id  bigint not null,
-    actor_id bigint not null
+    id       bigint primary key,
+    unicode_emoji   varchar(255) null default null,
+    custom_emoji_id bigint       null default null,
+    post_id         bigint       not null,
+    actor_id bigint not null,
+    unique (post_id, actor_id)
 );
 alter table reactions
     add constraint fk_reactions_post_id__id foreign key (post_id) references posts (id) on delete restrict on update restrict;
 alter table reactions
     add constraint fk_reactions_actor_id__id foreign key (actor_id) references actors (id) on delete restrict on update restrict;
+alter table reactions
+    add constraint fk_reactions_custom_emoji_id__id foreign key (custom_emoji_id) references emojis (id) on delete cascade on update cascade;
+
 create table if not exists timelines
 (
     id             bigint primary key,
     user_id        bigint       not null,
     timeline_id    bigint       not null,
     post_id        bigint       not null,
-    post_actor_id bigint not null,
+    post_actor_id bigint       not null,
     created_at     bigint       not null,
     reply_id       bigint       null,
     repost_id      bigint       null,
@@ -124,7 +159,8 @@ create table if not exists timelines
     "sensitive"    boolean      not null,
     is_local       boolean      not null,
     is_pure_repost boolean      not null,
-    media_ids      varchar(255) not null
+    media_ids     varchar(255) not null,
+    emoji_ids     varchar(255) not null
 );
 
 create table if not exists application_authorization

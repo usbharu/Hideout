@@ -112,7 +112,7 @@ class InboxJobProcessor(
         logger.debug("Is verifying success? {}", verify)
 
         val activityPubProcessor =
-            activityPubProcessorList.firstOrNull { it.isSupported(param.type) } as ActivityPubProcessor<Object>?
+            activityPubProcessorList.firstOrNull { it.isSupported(param.type) } as? ActivityPubProcessor<Object>
 
         if (activityPubProcessor == null) {
             logger.warn("ActivityType {} is not support.", param.type)

@@ -83,8 +83,6 @@ class APResourceResolveServiceImpl(
             return objects == other.objects
         }
 
-        override fun hashCode(): Int {
-            return objects.hashCode()
-        }
+        override fun hashCode(): Int = objects.hashCode()
     }
 }

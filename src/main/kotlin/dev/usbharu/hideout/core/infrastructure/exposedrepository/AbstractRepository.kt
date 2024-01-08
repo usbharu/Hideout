@@ -1,6 +1,7 @@
 package dev.usbharu.hideout.core.infrastructure.exposedrepository
 
 import dev.usbharu.hideout.core.domain.exception.SpringDataAccessExceptionSQLExceptionTranslator
+import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.slf4j.Logger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator
@@ -37,6 +38,7 @@ ${Throwable().stackTrace.joinToString("\n")}
         if (traceQueryException) {
             logger.trace("FAILED EXECUTE SQL", e)
         }
+        TransactionManager.currentOrNull()?.rollback()
         if (e.cause !is SQLException) {
             throw e
         }

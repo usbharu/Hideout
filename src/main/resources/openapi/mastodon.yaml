@@ -152,6 +152,79 @@ paths:
               schema:
                 $ref: "#/components/schemas/Status"
 
+  /api/v1/statuses/{id}:
+    get:
+      tags:
+        - status
+      security:
+        - OAuth2:
+            - "write:statuses"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+
+  /api/v1/statuses/{id}/emoji_reactions/{emoji}:
+    put:
+      tags:
+        - status
+      security:
+        - OAuth2:
+            - "write:statuses"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: emoji
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+
+    delete:
+      tags:
+        - status
+      security:
+        - OAuth2:
+            - "write:statuses"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: emoji
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+
+
   /api/v1/apps:
     post:
       tags:
