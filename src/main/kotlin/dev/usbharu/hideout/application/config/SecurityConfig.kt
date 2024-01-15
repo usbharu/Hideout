@@ -43,6 +43,7 @@ import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.Authentication
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.oauth2.core.AuthorizationGrantType
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenType
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration
@@ -267,7 +268,8 @@ class SecurityConfig {
     @Bean
     fun jwtTokenCustomizer(): OAuth2TokenCustomizer<JwtEncodingContext> {
         return OAuth2TokenCustomizer { context: JwtEncodingContext ->
-            if (OAuth2TokenType.ACCESS_TOKEN == context.tokenType) {
+
+            if (OAuth2TokenType.ACCESS_TOKEN == context.tokenType && context.authorization?.authorizationGrantType == AuthorizationGrantType.AUTHORIZATION_CODE) {
                 val userDetailsImpl = context.getPrincipal<Authentication>().principal as UserDetailsImpl
                 context.claims.claim("uid", userDetailsImpl.id.toString())
             }
