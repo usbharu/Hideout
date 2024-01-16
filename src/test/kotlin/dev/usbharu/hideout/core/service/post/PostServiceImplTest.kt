@@ -1,6 +1,7 @@
 package dev.usbharu.hideout.core.service.post
 
 import dev.usbharu.hideout.activitypub.service.activity.create.ApSendCreateService
+import dev.usbharu.hideout.activitypub.service.activity.delete.APSendDeleteService
 import dev.usbharu.hideout.application.config.CharacterLimit
 import dev.usbharu.hideout.core.domain.exception.resource.DuplicateException
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
@@ -42,6 +43,9 @@ class PostServiceImplTest {
 
     @Mock
     private lateinit var reactionRepository: ReactionRepository
+
+    @Mock
+    private lateinit var apSendDeleteService: APSendDeleteService
 
     @InjectMocks
     private lateinit var postServiceImpl: PostServiceImpl
@@ -129,5 +133,33 @@ class PostServiceImplTest {
 
         verify(postRepository, times(1)).save(eq(post))
         verify(timelineService, times(1)).publishTimeline(eq(post), eq(false))
+    }
+
+    @Test
+    fun `deleteLocal Deleteが配送される`() = runTest {
+        val post = PostBuilder.of()
+
+        val localUserOf = UserBuilder.localUserOf()
+
+        whenever(actorRepository.findById(eq(post.actorId))).doReturn(localUserOf)
+
+        postServiceImpl.deleteLocal(post)
+
+        verify(reactionRepository, times(1)).deleteByPostId(eq(post.id))
+        verify(postRepository, times(1)).save(eq(post.delete()))
+        verify(apSendDeleteService, times(1)).sendDeleteNote(eq(post))
+        verify(actorRepository, times(1)).save(eq(localUserOf.decrementPostsCount()))
+    }
+
+    @Test
+    fun `deleteLocal 削除済み投稿は何もしない`() = runTest {
+        val delete = PostBuilder.of().delete()
+
+        postServiceImpl.deleteLocal(delete)
+
+        verify(reactionRepository, never()).deleteByPostId(any())
+        verify(postRepository, never()).save(any())
+        verify(apSendDeleteService, never()).sendDeleteNote(any())
+        verify(actorRepository, never()).save(any())
     }
 }
