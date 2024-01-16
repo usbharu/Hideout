@@ -1,6 +1,7 @@
 package dev.usbharu.hideout.core.service.post
 
 import dev.usbharu.hideout.activitypub.service.activity.create.ApSendCreateService
+import dev.usbharu.hideout.activitypub.service.activity.delete.APSendDeleteService
 import dev.usbharu.hideout.core.domain.exception.UserNotFoundException
 import dev.usbharu.hideout.core.domain.exception.resource.DuplicateException
 import dev.usbharu.hideout.core.domain.exception.resource.PostNotFoundException
@@ -21,7 +22,8 @@ class PostServiceImpl(
     private val timelineService: TimelineService,
     private val postBuilder: Post.PostBuilder,
     private val apSendCreateService: ApSendCreateService,
-    private val reactionRepository: ReactionRepository
+    private val reactionRepository: ReactionRepository,
+    private val apSendDeleteService: APSendDeleteService
 ) : PostService {
 
     override suspend fun createLocal(post: PostCreateDto): Post {
@@ -49,6 +51,8 @@ class PostServiceImpl(
         postRepository.save(post.delete())
         val actor = actorRepository.findById(post.actorId)
             ?: throw IllegalStateException("actor: ${post.actorId} was not found.")
+
+        apSendDeleteService.sendDeleteNote(post)
 
         actorRepository.save(actor.decrementPostsCount())
     }
