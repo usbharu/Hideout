@@ -316,3 +316,7 @@ koverReport {
         }
     }
 }
+
+springBoot {
+    buildInfo()
+}
