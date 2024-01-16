@@ -53,7 +53,8 @@ class RejectTest {
             "https://misskey.usbharu.dev/06407419-5aeb-4e2d-8885-aa54b03decf0",
             Follow(
                 apObject = "https://misskey.usbharu.dev/users/97ws8y3rj6",
-                actor = "https://test-hideout.usbharu.dev/users/test-user2"
+                actor = "https://test-hideout.usbharu.dev/users/test-user2",
+                id = "https://misskey.usbharu.dev/follows/9mxh6mawru/97ws8y3rj6"
             )
         ).apply { context = listOf("https://www.w3.org/ns/activitystreams", "https://w3id.org/security/v1") }
 
