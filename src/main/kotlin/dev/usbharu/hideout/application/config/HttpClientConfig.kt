@@ -24,5 +24,5 @@ class HttpClientConfig {
             install(UserAgent) {
                 agent = "Hideout/${buildProperties.version} (${applicationConfig.url})"
             }
-    }
+        }
 }
