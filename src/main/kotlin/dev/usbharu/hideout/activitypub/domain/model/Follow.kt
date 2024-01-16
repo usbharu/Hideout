@@ -6,12 +6,12 @@ import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 open class Follow(
     type: List<String> = emptyList(),
     @JsonProperty("object") val apObject: String,
-    override val actor: String
+    override val actor: String,
+    val id: String? = null
 ) : Object(
     type = add(type, "Follow")
 ),
     HasActor {
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -21,6 +21,7 @@ open class Follow(
 
         if (apObject != other.apObject) return false
         if (actor != other.actor) return false
+        if (id != other.id) return false
 
         return true
     }
@@ -29,13 +30,15 @@ open class Follow(
         var result = super.hashCode()
         result = 31 * result + apObject.hashCode()
         result = 31 * result + actor.hashCode()
+        result = 31 * result + (id?.hashCode() ?: 0)
         return result
     }
 
     override fun toString(): String {
         return "Follow(" +
                 "apObject='$apObject', " +
-                "actor='$actor'" +
+                "actor='$actor', " +
+                "id=$id" +
                 ")" +
                 " ${super.toString()}"
     }
