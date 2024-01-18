@@ -97,7 +97,7 @@ class PostServiceImpl(
             id = id,
             actorId = post.userId,
             overview = post.overview,
-            text = post.text,
+            content = post.text,
             createdAt = Instant.now().toEpochMilli(),
             visibility = post.visibility,
             url = "${user.url}/posts/$id",

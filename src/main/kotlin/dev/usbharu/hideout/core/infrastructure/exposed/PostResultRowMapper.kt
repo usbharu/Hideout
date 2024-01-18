@@ -25,7 +25,7 @@ class PostResultRowMapper(private val postBuilder: Post.PostBuilder) : ResultRow
             id = resultRow[Posts.id],
             actorId = resultRow[Posts.actorId],
             overview = resultRow[Posts.overview],
-            text = resultRow[Posts.text],
+            content = resultRow[Posts.text],
             createdAt = resultRow[Posts.createdAt],
             visibility = Visibility.values().first { visibility -> visibility.ordinal == resultRow[Posts.visibility] },
             url = resultRow[Posts.url],
