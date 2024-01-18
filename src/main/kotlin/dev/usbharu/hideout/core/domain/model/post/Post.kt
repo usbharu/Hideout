@@ -8,6 +8,7 @@ data class Post private constructor(
     val id: Long,
     val actorId: Long,
     val overview: String? = null,
+    val content: String,
     val text: String,
     val createdAt: Long,
     val visibility: Visibility,
@@ -28,7 +29,7 @@ data class Post private constructor(
             id: Long,
             actorId: Long,
             overview: String? = null,
-            text: String,
+            content: String,
             createdAt: Long,
             visibility: Visibility,
             url: String,
@@ -49,10 +50,10 @@ data class Post private constructor(
                 overview
             }
 
-            val limitedText = if (text.length >= characterLimit.post.text) {
-                text.substring(0, characterLimit.post.text)
+            val limitedText = if (content.length >= characterLimit.post.text) {
+                content.substring(0, characterLimit.post.text)
             } else {
-                text
+                content
             }
 
             require(url.isNotBlank()) { "url must contain non-blank characters" }
@@ -67,6 +68,7 @@ data class Post private constructor(
                 id = id,
                 actorId = actorId,
                 overview = limitedOverview,
+                content = content,
                 text = limitedText,
                 createdAt = createdAt,
                 visibility = visibility,
@@ -94,6 +96,7 @@ data class Post private constructor(
                 id = id,
                 actorId = 0,
                 overview = null,
+                content = "",
                 text = "",
                 createdAt = Instant.EPOCH.toEpochMilli(),
                 visibility = visibility,
@@ -113,6 +116,7 @@ data class Post private constructor(
             id = this.id,
             actorId = 0,
             overview = null,
+            content = "",
             text = "",
             createdAt = Instant.EPOCH.toEpochMilli(),
             visibility = visibility,

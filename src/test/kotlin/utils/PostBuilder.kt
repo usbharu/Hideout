@@ -26,7 +26,7 @@ object PostBuilder {
             id = id,
             actorId = userId,
             overview = overview,
-            text = text,
+            content = text,
             createdAt = createdAt,
             visibility = visibility,
             url = url,
