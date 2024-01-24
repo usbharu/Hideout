@@ -1,6 +1,7 @@
 package dev.usbharu.hideout.core.domain.model.post
 
 import dev.usbharu.hideout.application.config.CharacterLimit
+import dev.usbharu.hideout.core.service.post.PostContentFormatter
 import org.springframework.stereotype.Component
 import java.time.Instant
 
@@ -23,7 +24,10 @@ data class Post private constructor(
 ) {
 
     @Component
-    class PostBuilder(private val characterLimit: CharacterLimit) {
+    class PostBuilder(
+        private val characterLimit: CharacterLimit,
+        private val postContentFormatter: PostContentFormatter
+    ) {
         @Suppress("FunctionMinLength", "LongParameterList")
         fun of(
             id: Long,
@@ -56,6 +60,8 @@ data class Post private constructor(
                 content
             }
 
+            val (html, content1) = postContentFormatter.format(limitedText)
+
             require(url.isNotBlank()) { "url must contain non-blank characters" }
             require(url.length <= characterLimit.general.url) {
                 "url must not exceed ${characterLimit.general.url} characters."
@@ -68,8 +74,8 @@ data class Post private constructor(
                 id = id,
                 actorId = actorId,
                 overview = limitedOverview,
-                content = content,
-                text = limitedText,
+                content = html,
+                text = content1,
                 createdAt = createdAt,
                 visibility = visibility,
                 url = url,
