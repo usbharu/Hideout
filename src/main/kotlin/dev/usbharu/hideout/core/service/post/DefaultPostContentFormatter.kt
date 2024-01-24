@@ -6,9 +6,11 @@ import org.jsoup.nodes.Element
 import org.jsoup.nodes.TextNode
 import org.jsoup.parser.Tag
 import org.jsoup.select.Elements
+import org.springframework.stereotype.Service
 
+@Service
 class DefaultPostContentFormatter() : PostContentFormatter {
-    override suspend fun format(content: String): FormattedPostContent {
+    override fun format(content: String): FormattedPostContent {
         val document =
             Jsoup.parseBodyFragment(content).getElementsByTag("body").first() ?: return FormattedPostContent("", "")
 
