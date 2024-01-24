@@ -1,26 +1,34 @@
 package dev.usbharu.hideout.core.service.post
 
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Attributes
+import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.TextNode
-import org.jsoup.parser.Tag
 import org.jsoup.select.Elements
+import org.owasp.html.PolicyFactory
 import org.springframework.stereotype.Service
 
 @Service
-class DefaultPostContentFormatter : PostContentFormatter {
+class DefaultPostContentFormatter(private val policyFactory: PolicyFactory) : PostContentFormatter {
     override fun format(content: String): FormattedPostContent {
-        val document =
-            Jsoup.parseBodyFragment(content).getElementsByTag("body").first() ?: return FormattedPostContent("", "")
 
-        val flattenHtml = document.childNodes().mapNotNull {
+        //まず不正なHTMLを整形する
+        val document = Jsoup.parseBodyFragment(content)
+        val outputSettings = Document.OutputSettings()
+        outputSettings.prettyPrint(false)
+
+        document.outputSettings(outputSettings)
+
+        val unsafeElement = document.getElementsByTag("body").first() ?: return FormattedPostContent(
+            "",
+            ""
+        )
+
+
+        //文字だけのHTMLなどはここでpタグで囲む
+        val flattenHtml = unsafeElement.childNodes().mapNotNull {
             if (it is Element) {
-                if (it.tagName() == "p") {
-                    p(it)
-                } else {
-                    p(Element("p").appendChildren(document.childNodes()))
-                }
+                it
             } else if (it is TextNode) {
                 Element("p").appendText(it.text())
             } else {
@@ -28,9 +36,20 @@ class DefaultPostContentFormatter : PostContentFormatter {
             }
         }.filter { it.text().isNotBlank() }
 
+
+        // HTMLのサニタイズをする
+        val unsafeHtml = Elements(flattenHtml).outerHtml()
+
+        val safeHtml = policyFactory.sanitize(unsafeHtml)
+
+        val safeDocument =
+            Jsoup.parseBodyFragment(safeHtml).getElementsByTag("body").first() ?: return FormattedPostContent("", "")
+
         val formattedHtml = mutableListOf<Element>()
 
-        for (element in flattenHtml) {
+
+        //連続するbrタグを段落に変換する
+        for (element in safeDocument.children()) {
             var brCount = 0
             var prevIndex = 0
             val childNodes = element.childNodes()
@@ -49,46 +68,6 @@ class DefaultPostContentFormatter : PostContentFormatter {
         val elements = Elements(formattedHtml)
 
         return FormattedPostContent(elements.outerHtml().replace("\n", ""), printHtml(elements))
-    }
-
-    private fun p(element: Element): Element {
-        val childNodes = element.childNodes()
-
-        if (childNodes.size == 1 && childNodes.first() is TextNode) {
-            val pTag = Element("p")
-
-            pTag.appendText(element.text())
-            return pTag
-        }
-
-        val map = childNodes.mapNotNull {
-            if (it is Element) {
-                if (it.tagName() == "a") {
-                    a(it)
-                } else if (it.tagName() == "br") {
-                    Element("br")
-                } else {
-                    TextNode(it.text())
-                }
-            } else if (it is TextNode) {
-                it
-            } else {
-                null
-            }
-        }
-
-        val pTag = Element("p")
-
-        pTag.appendChildren(map)
-
-        return pTag
-    }
-
-    private fun a(element: Element): Element {
-        val attributes = Attributes()
-
-        attributes.put("href", element.attribute("href").value)
-        return Element(Tag.valueOf("a"), "", attributes).appendText(element.text())
     }
 
     private fun printHtml(element: Elements): String {

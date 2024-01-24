@@ -1,15 +1,18 @@
 package dev.usbharu.hideout.core.service.post
 
+import dev.usbharu.hideout.application.config.HtmlSanitizeConfig
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class DefaultPostContentFormatterTest {
+    val defaultPostContentFormatter = DefaultPostContentFormatter(HtmlSanitizeConfig().policy())
+
     @Test
     fun pタグがpタグになる() {
         //language=HTML
         val html = """<p>hoge</p>"""
 
-        val actual = DefaultPostContentFormatter().format(html)
+        val actual = defaultPostContentFormatter.format(html)
 
         assertThat(actual).isEqualTo(FormattedPostContent("<p>hoge</p>", "hoge"))
     }
@@ -19,7 +22,7 @@ class DefaultPostContentFormatterTest {
         //language=HTML
         val html = """<h1>hoge</h1>"""
 
-        val actual = DefaultPostContentFormatter().format(html)
+        val actual = defaultPostContentFormatter.format(html)
 
         assertThat(actual).isEqualTo(FormattedPostContent("<p>hoge</p>", "hoge"))
     }
@@ -29,7 +32,7 @@ class DefaultPostContentFormatterTest {
         //language=HTML
         val html = """<p>hoge<p>fuga</p>piyo</p>"""
 
-        val actual = DefaultPostContentFormatter().format(html)
+        val actual = defaultPostContentFormatter.format(html)
 
         assertThat(actual).isEqualTo(FormattedPostContent("<p>hoge</p><p>fuga</p><p>piyo</p>", "hoge\n\nfuga\n\npiyo"))
     }
@@ -39,7 +42,7 @@ class DefaultPostContentFormatterTest {
         //language=HTML
         val html = """<p><span>hoge</span></p>"""
 
-        val actual = DefaultPostContentFormatter().format(html)
+        val actual = defaultPostContentFormatter.format(html)
 
         assertThat(actual).isEqualTo(FormattedPostContent("<p>hoge</p>", "hoge"))
     }
@@ -49,7 +52,7 @@ class DefaultPostContentFormatterTest {
         //language=HTML
         val html = """<p>hoge<br><br>fuga</p>"""
 
-        val actual = DefaultPostContentFormatter().format(html)
+        val actual = defaultPostContentFormatter.format(html)
 
         assertThat(actual).isEqualTo(FormattedPostContent("<p>hoge</p><p>fuga</p>", "hoge\n\nfuga"))
     }
@@ -59,7 +62,7 @@ class DefaultPostContentFormatterTest {
         //language=HTML
         val html = """<p><i>hoge</i></p>"""
 
-        val actual = DefaultPostContentFormatter().format(html)
+        val actual = defaultPostContentFormatter.format(html)
 
         assertThat(actual).isEqualTo(FormattedPostContent("<p>hoge</p>", "hoge"))
     }
@@ -69,7 +72,7 @@ class DefaultPostContentFormatterTest {
         //language=HTML
         val html = """<p><a href='https://example.com' class='u-url' target='_blank'>hoge</a></p>"""
 
-        val actual = DefaultPostContentFormatter().format(html)
+        val actual = defaultPostContentFormatter.format(html)
 
         assertThat(actual).isEqualTo(FormattedPostContent("<p><a href=\"https://example.com\">hoge</a></p>", "hoge"))
     }
@@ -79,7 +82,7 @@ class DefaultPostContentFormatterTest {
         //language=HTML
         val html = """<p><a href='https://example.com'><span>hoge</span></a></p>"""
 
-        val actual = DefaultPostContentFormatter().format(html)
+        val actual = defaultPostContentFormatter.format(html)
 
         assertThat(actual).isEqualTo(FormattedPostContent("<p><a href=\"https://example.com\">hoge</a></p>", "hoge"))
     }
@@ -89,7 +92,7 @@ class DefaultPostContentFormatterTest {
         //language=HTML
         val html = """<p>hoge<br>fuga</p>"""
 
-        val actual = DefaultPostContentFormatter().format(html)
+        val actual = defaultPostContentFormatter.format(html)
 
         assertThat(actual).isEqualTo(FormattedPostContent("<p>hoge<br> fuga</p>", "hoge\nfuga"))
     }
@@ -99,7 +102,7 @@ class DefaultPostContentFormatterTest {
         //language=HTML
         val html = """hoge"""
 
-        val actual = DefaultPostContentFormatter().format(html)
+        val actual = defaultPostContentFormatter.format(html)
 
         assertThat(actual).isEqualTo(FormattedPostContent("<p>hoge</p>", "hoge"))
     }
@@ -109,8 +112,24 @@ class DefaultPostContentFormatterTest {
         //language=HTML
         val html = """</body><p>hoge</p>"""
 
-        val actual = DefaultPostContentFormatter().format(html)
+        val actual = defaultPostContentFormatter.format(html)
 
         assertThat(actual).isEqualTo(FormattedPostContent("<p>hoge</p>", "hoge"))
+    }
+
+    @Test
+    fun pタグの中のspanは無視される() {
+        //language=HTML
+        val html =
+            """<p><span class="h-card" translate="no"><a href="https://test-hideout.usbharu.dev/users/testuser14" class="u-url mention">@<span>testuser14</span></a></span> tes</p>"""
+
+        val actual = defaultPostContentFormatter.format(html)
+
+        assertThat(actual).isEqualTo(
+            FormattedPostContent(
+                "<p><a href=\"https://test-hideout.usbharu.dev/users/testuser14\">@testuser14</a> tes</p>",
+                "@testuser14 tes"
+            )
+        )
     }
 }

@@ -4,9 +4,11 @@ package dev.usbharu.hideout.core.service.user
 
 import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.application.config.CharacterLimit
+import dev.usbharu.hideout.application.config.HtmlSanitizeConfig
 import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.post.Post
+import dev.usbharu.hideout.core.service.post.DefaultPostContentFormatter
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
@@ -20,7 +22,7 @@ import kotlin.test.assertNull
 
 class ActorServiceTest {
     val actorBuilder = Actor.UserBuilder(CharacterLimit(), ApplicationConfig(URL("https://example.com")))
-    val postBuilder = Post.PostBuilder(CharacterLimit())
+    val postBuilder = Post.PostBuilder(CharacterLimit(), DefaultPostContentFormatter(HtmlSanitizeConfig().policy()))
     @Test
     fun `createLocalUser ローカルユーザーを作成できる`() = runTest {
 
