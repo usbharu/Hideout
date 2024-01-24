@@ -1,12 +1,11 @@
 package dev.usbharu.hideout.core.service.post
 
-import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class DefaultPostContentFormatterTest {
     @Test
-    fun pタグがpタグになる() = runTest {
+    fun pタグがpタグになる() {
         //language=HTML
         val html = """<p>hoge</p>"""
 
@@ -16,7 +15,7 @@ class DefaultPostContentFormatterTest {
     }
 
     @Test
-    fun hタグがpタグになる() = runTest {
+    fun hタグがpタグになる() {
         //language=HTML
         val html = """<h1>hoge</h1>"""
 
@@ -26,7 +25,7 @@ class DefaultPostContentFormatterTest {
     }
 
     @Test
-    fun pタグのネストは破棄される() = runTest {
+    fun pタグのネストは破棄される() {
         //language=HTML
         val html = """<p>hoge<p>fuga</p>piyo</p>"""
 
@@ -36,7 +35,7 @@ class DefaultPostContentFormatterTest {
     }
 
     @Test
-    fun spanタグは無視される() = runTest {
+    fun spanタグは無視される() {
         //language=HTML
         val html = """<p><span>hoge</span></p>"""
 
@@ -46,7 +45,7 @@ class DefaultPostContentFormatterTest {
     }
 
     @Test
-    fun `2連続改行は段落に変換される`() = runTest {
+    fun `2連続改行は段落に変換される`() {
         //language=HTML
         val html = """<p>hoge<br><br>fuga</p>"""
 
@@ -56,7 +55,7 @@ class DefaultPostContentFormatterTest {
     }
 
     @Test
-    fun iタグは無視される() = runTest {
+    fun iタグは無視される() {
         //language=HTML
         val html = """<p><i>hoge</i></p>"""
 
@@ -66,7 +65,7 @@ class DefaultPostContentFormatterTest {
     }
 
     @Test
-    fun aタグはhrefの中身のみ引き継がれる() = runTest {
+    fun aタグはhrefの中身のみ引き継がれる() {
         //language=HTML
         val html = """<p><a href='https://example.com' class='u-url' target='_blank'>hoge</a></p>"""
 
@@ -76,7 +75,7 @@ class DefaultPostContentFormatterTest {
     }
 
     @Test
-    fun aタグの中のspanは無視される() = runTest {
+    fun aタグの中のspanは無視される() {
         //language=HTML
         val html = """<p><a href='https://example.com'><span>hoge</span></a></p>"""
 
@@ -86,7 +85,7 @@ class DefaultPostContentFormatterTest {
     }
 
     @Test
-    fun brタグのコンテンツは改行になる() = runTest {
+    fun brタグのコンテンツは改行になる() {
         //language=HTML
         val html = """<p>hoge<br>fuga</p>"""
 
@@ -96,7 +95,7 @@ class DefaultPostContentFormatterTest {
     }
 
     @Test
-    fun いきなりテキストが来たらpタグで囲む() = runTest {
+    fun いきなりテキストが来たらpタグで囲む() {
         //language=HTML
         val html = """hoge"""
 
@@ -106,7 +105,7 @@ class DefaultPostContentFormatterTest {
     }
 
     @Test
-    fun bodyタグが含まれていた場合消す() = runTest {
+    fun bodyタグが含まれていた場合消す() {
         //language=HTML
         val html = """</body><p>hoge</p>"""
 
