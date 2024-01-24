@@ -9,7 +9,7 @@ import org.jsoup.select.Elements
 import org.springframework.stereotype.Service
 
 @Service
-class DefaultPostContentFormatter() : PostContentFormatter {
+class DefaultPostContentFormatter : PostContentFormatter {
     override fun format(content: String): FormattedPostContent {
         val document =
             Jsoup.parseBodyFragment(content).getElementsByTag("body").first() ?: return FormattedPostContent("", "")
