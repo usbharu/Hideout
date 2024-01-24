@@ -1,15 +1,18 @@
 package utils
 
 import dev.usbharu.hideout.application.config.CharacterLimit
+import dev.usbharu.hideout.application.config.HtmlSanitizeConfig
 import dev.usbharu.hideout.application.service.id.TwitterSnowflakeIdGenerateService
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.Visibility
+import dev.usbharu.hideout.core.service.post.DefaultPostContentFormatter
 import kotlinx.coroutines.runBlocking
 import java.time.Instant
 
 object PostBuilder {
 
-    private val postBuilder = Post.PostBuilder(CharacterLimit())
+    private val postBuilder =
+        Post.PostBuilder(CharacterLimit(), DefaultPostContentFormatter(HtmlSanitizeConfig().policy()))
 
     private val idGenerator = TwitterSnowflakeIdGenerateService
 
