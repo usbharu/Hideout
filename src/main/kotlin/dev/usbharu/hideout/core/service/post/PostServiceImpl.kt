@@ -83,7 +83,7 @@ class PostServiceImpl(
         return try {
             val save = postRepository.save(post)
             timelineService.publishTimeline(post, isLocal)
-            actorRepository.save(actor.incrementPostsCount())
+//            actorRepository.save(actor.incrementPostsCount())
             save
         } catch (_: DuplicateException) {
             postRepository.findByApId(post.apId) ?: throw PostNotFoundException.withApId(post.apId)
