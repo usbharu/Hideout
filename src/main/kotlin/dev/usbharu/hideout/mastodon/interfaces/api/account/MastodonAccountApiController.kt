@@ -186,4 +186,36 @@ class MastodonAccountApiController(
                     .asFlow()
             ResponseEntity.ok(accountFlow)
         }
+
+    override suspend fun apiV1AccountsIdMutePost(id: String): ResponseEntity<Relationship> {
+        val principal = SecurityContextHolder.getContext().getAuthentication().principal as Jwt
+
+        val userid = principal.getClaim<String>("uid").toLong()
+
+        val mute = accountApiService.mute(userid, id.toLong())
+
+        return ResponseEntity.ok(mute)
+    }
+
+    override suspend fun apiV1AccountsIdUnmutePost(id: String): ResponseEntity<Relationship> {
+        val principal = SecurityContextHolder.getContext().getAuthentication().principal as Jwt
+
+        val userid = principal.getClaim<String>("uid").toLong()
+
+        val unmute = accountApiService.unmute(userid, id.toLong())
+
+        return ResponseEntity.ok(unmute)
+    }
+
+    override fun apiV1MutesGet(maxId: String?, sinceId: String?, limit: Int?): ResponseEntity<Flow<Account>> =
+        runBlocking {
+            val principal = SecurityContextHolder.getContext().getAuthentication().principal as Jwt
+
+            val userid = principal.getClaim<String>("uid").toLong()
+
+            val unmute =
+                accountApiService.mutesAccount(userid, maxId?.toLong(), sinceId?.toLong(), limit ?: 20).asFlow()
+
+            return@runBlocking ResponseEntity.ok(unmute)
+        }
 }

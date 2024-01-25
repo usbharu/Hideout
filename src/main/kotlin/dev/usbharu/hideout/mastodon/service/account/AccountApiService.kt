@@ -60,6 +60,9 @@ interface AccountApiService {
 
     suspend fun acceptFollowRequest(loginUser: Long, target: Long): Relationship
     suspend fun rejectFollowRequest(loginUser: Long, target: Long): Relationship
+    suspend fun mute(userid: Long, target: Long): Relationship
+    suspend fun unmute(userid: Long, target: Long): Relationship
+    suspend fun mutesAccount(userid: Long, maxId: Long?, sinceId: Long?, limit: Int): List<Account>
 }
 
 @Service
@@ -243,6 +246,25 @@ class AccountApiServiceImpl(
         relationshipService.rejectFollowRequest(loginUser, target)
 
         return@transaction fetchRelationship(loginUser, target)
+    }
+
+    override suspend fun mute(userid: Long, target: Long): Relationship = transaction.transaction {
+        relationshipService.mute(userid, target)
+
+        return@transaction fetchRelationship(userid, target)
+    }
+
+    override suspend fun unmute(userid: Long, target: Long): Relationship = transaction.transaction {
+        relationshipService.mute(userid, target)
+
+        return@transaction fetchRelationship(userid, target)
+    }
+
+    override suspend fun mutesAccount(userid: Long, maxId: Long?, sinceId: Long?, limit: Int): List<Account> {
+        val mutedAccounts =
+            relationshipRepository.findByActorIdAntMutingAndMaxIdAndSinceId(userid, true, maxId, sinceId, limit)
+
+        return accountService.findByIds(mutedAccounts.map { it.targetActorId })
     }
 
     private fun from(account: Account): CredentialAccount {

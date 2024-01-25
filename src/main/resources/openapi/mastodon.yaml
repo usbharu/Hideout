@@ -464,6 +464,80 @@ paths:
               schema:
                 $ref: "#/components/schemas/Relationship"
 
+  /api/v1/accounts/{id}/mute:
+    post:
+      tags:
+        - account
+      security:
+        - OAuth2:
+            - "write:mutes"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Relationship"
+
+  /api/v1/accounts/{id}/unmute:
+    post:
+      tags:
+        - account
+      security:
+        - OAuth2:
+            - "write:mutes"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Relationship"
+
+  /api/v1/mutes:
+    get:
+      tags:
+        - account
+      security:
+        - OAuth2:
+            - "read:mutes"
+      parameters:
+        - in: query
+          name: max_id
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: since_id
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          required: false
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/Account"
+
   /api/v1/accounts/{id}/statuses:
     get:
       tags:

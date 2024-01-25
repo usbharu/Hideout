@@ -97,6 +97,28 @@ class RelationshipRepositoryImpl : RelationshipRepository, AbstractRepository() 
         return@query query.map { it.toRelationships() }
     }
 
+    override suspend fun findByActorIdAntMutingAndMaxIdAndSinceId(
+        actorId: Long,
+        muting: Boolean,
+        maxId: Long?,
+        sinceId: Long?,
+        limit: Int
+    ): List<Relationship> = query {
+        val query = Relationships.select {
+            Relationships.actorId.eq(actorId).and(Relationships.muting.eq(muting))
+        }.limit(limit)
+
+        if (maxId != null) {
+            query.andWhere { Relationships.id lessEq maxId }
+        }
+
+        if (sinceId != null) {
+            query.andWhere { Relationships.id greaterEq sinceId }
+        }
+
+        return@query query.map { it.toRelationships() }
+    }
+
     companion object {
         private val logger = LoggerFactory.getLogger(RelationshipRepositoryImpl::class.java)
     }
