@@ -42,4 +42,12 @@ interface RelationshipRepository {
         followRequest: Boolean,
         ignoreFollowRequest: Boolean
     ): List<Relationship>
+
+    suspend fun findByActorIdAntMutingAndMaxIdAndSinceId(
+        actorId: Long,
+        muting: Boolean,
+        maxId: Long?,
+        sinceId: Long?,
+        limit: Int
+    ): List<Relationship>
 }
