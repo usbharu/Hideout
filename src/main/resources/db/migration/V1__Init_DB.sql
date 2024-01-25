@@ -90,6 +90,7 @@ create table if not exists posts
     id          bigint primary key,
     actor_id bigint                not null,
     overview    varchar(100)          null,
+    content varchar(5000) not null,
     text        varchar(3000)         not null,
     created_at  bigint                not null,
     visibility  int     default 0     not null,
