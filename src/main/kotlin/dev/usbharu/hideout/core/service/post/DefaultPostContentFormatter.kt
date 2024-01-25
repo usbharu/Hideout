@@ -11,8 +11,7 @@ import org.springframework.stereotype.Service
 @Service
 class DefaultPostContentFormatter(private val policyFactory: PolicyFactory) : PostContentFormatter {
     override fun format(content: String): FormattedPostContent {
-
-        //まず不正なHTMLを整形する
+        // まず不正なHTMLを整形する
         val document = Jsoup.parseBodyFragment(content)
         val outputSettings = Document.OutputSettings()
         outputSettings.prettyPrint(false)
@@ -24,8 +23,7 @@ class DefaultPostContentFormatter(private val policyFactory: PolicyFactory) : Po
             ""
         )
 
-
-        //文字だけのHTMLなどはここでpタグで囲む
+        // 文字だけのHTMLなどはここでpタグで囲む
         val flattenHtml = unsafeElement.childNodes().mapNotNull {
             if (it is Element) {
                 it
@@ -35,7 +33,6 @@ class DefaultPostContentFormatter(private val policyFactory: PolicyFactory) : Po
                 null
             }
         }.filter { it.text().isNotBlank() }
-
 
         // HTMLのサニタイズをする
         val unsafeHtml = Elements(flattenHtml).outerHtml()
@@ -47,8 +44,7 @@ class DefaultPostContentFormatter(private val policyFactory: PolicyFactory) : Po
 
         val formattedHtml = mutableListOf<Element>()
 
-
-        //連続するbrタグを段落に変換する
+        // 連続するbrタグを段落に変換する
         for (element in safeDocument.children()) {
             var brCount = 0
             var prevIndex = 0
@@ -63,7 +59,6 @@ class DefaultPostContentFormatter(private val policyFactory: PolicyFactory) : Po
             }
             formattedHtml.add(Element("p").appendChildren(childNodes.subList(prevIndex, childNodes.size)))
         }
-
 
         val elements = Elements(formattedHtml)
 
