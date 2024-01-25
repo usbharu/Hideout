@@ -30,7 +30,9 @@ class RemoteMediaDownloadServiceImpl(
 
         val contentLength = createTempFile.toFile().length()
         if (contentLength >= mediaConfig.remoteMediaFileSizeLimit) {
-            throw RemoteMediaFileSizeException("File size is too large. $contentLength >= ${mediaConfig.remoteMediaFileSizeLimit}")
+            throw RemoteMediaFileSizeException(
+                "File size is too large. $contentLength >= ${mediaConfig.remoteMediaFileSizeLimit}"
+            )
         }
 
         logger.info("SUCCESS Download remote file. url: {}", url)
