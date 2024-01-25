@@ -27,6 +27,7 @@ class PostRepositoryImpl(
                 it[id] = post.id
                 it[actorId] = post.actorId
                 it[overview] = post.overview
+                it[content] = post.content
                 it[text] = post.text
                 it[createdAt] = post.createdAt
                 it[visibility] = post.visibility.ordinal
@@ -63,6 +64,7 @@ class PostRepositoryImpl(
             Posts.update({ Posts.id eq post.id }) {
                 it[actorId] = post.actorId
                 it[overview] = post.overview
+                it[content] = post.content
                 it[text] = post.text
                 it[createdAt] = post.createdAt
                 it[visibility] = post.visibility.ordinal
@@ -128,6 +130,7 @@ object Posts : Table() {
     val id: Column<Long> = long("id")
     val actorId: Column<Long> = long("actor_id").references(Actors.id)
     val overview: Column<String?> = varchar("overview", 100).nullable()
+    val content = varchar("content", 5000)
     val text: Column<String> = varchar("text", 3000)
     val createdAt: Column<Long> = long("created_at")
     val visibility: Column<Int> = integer("visibility").default(0)

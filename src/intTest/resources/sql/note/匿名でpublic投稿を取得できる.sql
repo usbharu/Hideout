@@ -9,7 +9,9 @@ VALUES (1, 'test-user', 'example.com', 'Im test user.', 'THis account is test us
         'https://example.com/users/test-user#pubkey', 'https://example.com/users/test-user/following',
         'https://example.com/users/test-users/followers', null, false, 0, 0, 0, null);
 
-insert into POSTS (id, actor_id, overview, text, created_at, visibility, url, repost_id, reply_id, sensitive, ap_id,
+insert into POSTS (id, actor_id, overview, content, text, created_at, visibility, url, repost_id, reply_id, sensitive,
+                   ap_id,
                    deleted)
-VALUES (1234, 1, null, 'test post', 12345680, 0, 'https://example.com/users/test-user/posts/1234', null, null, false,
+VALUES (1234, 1, null, '<p>test post</p>', 'test post', 12345680, 0, 'https://example.com/users/test-user/posts/1234',
+        null, null, false,
         'https://example.com/users/test-user/posts/1234', false)

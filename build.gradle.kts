@@ -215,6 +215,8 @@ dependencies {
     implementation("org.flywaydb:flyway-core")
 
     implementation("dev.usbharu:emoji-kt:2.0.0")
+    implementation("org.jsoup:jsoup:1.17.2")
+    implementation("com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20220608.1")
 
     implementation("io.ktor:ktor-client-logging-jvm:$ktor_version")
 

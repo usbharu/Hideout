@@ -12,10 +12,12 @@ import dev.usbharu.hideout.activitypub.service.common.APResourceResolveService
 import dev.usbharu.hideout.activitypub.service.objects.note.APNoteServiceImpl.Companion.public
 import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
 import dev.usbharu.hideout.application.config.CharacterLimit
+import dev.usbharu.hideout.application.config.HtmlSanitizeConfig
 import dev.usbharu.hideout.application.service.id.TwitterSnowflakeIdGenerateService
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
+import dev.usbharu.hideout.core.service.post.DefaultPostContentFormatter
 import dev.usbharu.hideout.core.service.post.PostService
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -42,7 +44,7 @@ import java.time.Instant
 
 class APNoteServiceImplTest {
 
-    val postBuilder = Post.PostBuilder(CharacterLimit())
+    val postBuilder = Post.PostBuilder(CharacterLimit(), DefaultPostContentFormatter(HtmlSanitizeConfig().policy()))
 
     @Test
     fun `fetchNote(String,String) ノートが既に存在する場合はDBから取得したものを返す`() = runTest {
@@ -71,7 +73,10 @@ class APNoteServiceImplTest {
             apUserService = mock(),
             postService = mock(),
             apResourceResolveService = mock(),
-            postBuilder = Post.PostBuilder(CharacterLimit()),
+            postBuilder = Post.PostBuilder(
+                CharacterLimit(),
+                DefaultPostContentFormatter(HtmlSanitizeConfig().policy())
+            ),
             noteQueryService = noteQueryService,
             mock(),
             mock()
@@ -141,7 +146,10 @@ class APNoteServiceImplTest {
             apUserService = apUserService,
             postService = mock(),
             apResourceResolveService = apResourceResolveService,
-            postBuilder = Post.PostBuilder(CharacterLimit()),
+            postBuilder = Post.PostBuilder(
+                CharacterLimit(),
+                DefaultPostContentFormatter(HtmlSanitizeConfig().policy())
+            ),
             noteQueryService = noteQueryService,
             mock(),
             mock { }
@@ -190,7 +198,10 @@ class APNoteServiceImplTest {
                 apUserService = mock(),
                 postService = mock(),
                 apResourceResolveService = apResourceResolveService,
-                postBuilder = Post.PostBuilder(CharacterLimit()),
+                postBuilder = Post.PostBuilder(
+                    CharacterLimit(),
+                    DefaultPostContentFormatter(HtmlSanitizeConfig().policy())
+                ),
                 noteQueryService = noteQueryService,
                 mock(),
                 mock()

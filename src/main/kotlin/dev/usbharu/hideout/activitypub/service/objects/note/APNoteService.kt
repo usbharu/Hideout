@@ -128,7 +128,7 @@ class APNoteServiceImpl(
             postBuilder.of(
                 id = postRepository.generateId(),
                 actorId = person.second.id,
-                text = note.content,
+                content = note.content,
                 createdAt = Instant.parse(note.published).toEpochMilli(),
                 visibility = visibility,
                 url = note.id,

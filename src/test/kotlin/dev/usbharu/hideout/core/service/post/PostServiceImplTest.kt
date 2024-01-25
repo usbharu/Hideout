@@ -3,6 +3,7 @@ package dev.usbharu.hideout.core.service.post
 import dev.usbharu.hideout.activitypub.service.activity.create.ApSendCreateService
 import dev.usbharu.hideout.activitypub.service.activity.delete.APSendDeleteService
 import dev.usbharu.hideout.application.config.CharacterLimit
+import dev.usbharu.hideout.application.config.HtmlSanitizeConfig
 import dev.usbharu.hideout.core.domain.exception.resource.DuplicateException
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.post.Post
@@ -36,7 +37,11 @@ class PostServiceImplTest {
     @Mock
     private lateinit var timelineService: TimelineService
     @Spy
-    private var postBuilder: Post.PostBuilder = Post.PostBuilder(CharacterLimit())
+    private var postBuilder: Post.PostBuilder = Post.PostBuilder(
+        CharacterLimit(), DefaultPostContentFormatter(
+            HtmlSanitizeConfig().policy()
+        )
+    )
 
     @Mock
     private lateinit var apSendCreateService: ApSendCreateService
