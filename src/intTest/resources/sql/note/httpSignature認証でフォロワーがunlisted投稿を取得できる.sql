@@ -21,7 +21,9 @@ insert into relationships (actor_id, target_actor_id, following, blocking, mutin
                            ignore_follow_request)
 VALUES (7, 6, true, false, false, false, false);
 
-insert into POSTS (ID, "actor_ID", OVERVIEW, TEXT, "CREATED_AT", VISIBILITY, URL, "REPOST_ID", "REPLY_ID", SENSITIVE,
+insert into POSTS (ID, "actor_ID", OVERVIEW, CONTENT, TEXT, "CREATED_AT", VISIBILITY, URL, "REPOST_ID", "REPLY_ID",
+                   SENSITIVE,
                    AP_ID)
-VALUES (1238, 6, null, 'test post', 12345680, 1, 'https://example.com/users/test-user6/posts/1238', null, null, false,
+VALUES (1238, 6, null, '<p>test post</p>', 'test post', 12345680, 1, 'https://example.com/users/test-user6/posts/1238',
+        null, null, false,
         'https://example.com/users/test-user6/posts/1238');
