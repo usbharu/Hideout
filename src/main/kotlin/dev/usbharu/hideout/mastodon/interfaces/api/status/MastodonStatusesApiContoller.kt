@@ -18,7 +18,6 @@ class MastodonStatusesApiContoller(
     ): ResponseEntity<Status> {
         val userid = loginUserContextHolder.getLoginUserId()
 
-
         return ResponseEntity(
             statusesApiService.postStatus(
                 devUsbharuHideoutDomainModelMastodonStatusesRequest,
