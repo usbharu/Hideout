@@ -200,6 +200,9 @@ class SecurityConfig {
                 authorize(POST, "/api/v1/accounts/*/unfollow", hasAnyScope("write", "write:follows"))
                 authorize(POST, "/api/v1/accounts/*/block", hasAnyScope("write", "write:blocks"))
                 authorize(POST, "/api/v1/accounts/*/unblock", hasAnyScope("write", "write:blocks"))
+                authorize(POST, "/api/v1/accounts/*/mute", hasAnyScope("write", "write:mutes"))
+                authorize(POST, "/api/v1/accounts/*/unmute", hasAnyScope("write", "write:mutes"))
+                authorize(GET, "/api/v1/mutes", hasAnyScope("read", "read:mutes"))
 
                 authorize(POST, "/api/v1/media", hasAnyScope("write", "write:media"))
                 authorize(POST, "/api/v1/statuses", hasAnyScope("write", "write:statuses"))
