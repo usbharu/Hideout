@@ -1,25 +1,27 @@
 package dev.usbharu.hideout.mastodon.interfaces.api.status
 
 import dev.usbharu.hideout.controller.mastodon.generated.StatusApi
+import dev.usbharu.hideout.core.infrastructure.springframework.security.LoginUserContextHolder
 import dev.usbharu.hideout.domain.mastodon.model.generated.Status
 import dev.usbharu.hideout.mastodon.service.status.StatusesApiService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.stereotype.Controller
 
 @Controller
-class MastodonStatusesApiContoller(private val statusesApiService: StatusesApiService) : StatusApi {
+class MastodonStatusesApiContoller(
+    private val statusesApiService: StatusesApiService,
+    private val loginUserContextHolder: LoginUserContextHolder
+) : StatusApi {
     override suspend fun apiV1StatusesPost(
         devUsbharuHideoutDomainModelMastodonStatusesRequest: StatusesRequest
     ): ResponseEntity<Status> {
-        val jwt = SecurityContextHolder.getContext().authentication.principal as Jwt
+        val userid = loginUserContextHolder.getLoginUserId()
 
         return ResponseEntity(
             statusesApiService.postStatus(
                 devUsbharuHideoutDomainModelMastodonStatusesRequest,
-                jwt.getClaim<String>("uid").toLong()
+                userid
             ),
             HttpStatus.OK
         )
@@ -27,14 +29,14 @@ class MastodonStatusesApiContoller(private val statusesApiService: StatusesApiSe
 
     override suspend fun apiV1StatusesIdEmojiReactionsEmojiDelete(id: String, emoji: String): ResponseEntity<Status> {
         val uid =
-            (SecurityContextHolder.getContext().authentication.principal as Jwt).getClaim<String>("uid").toLong()
+            loginUserContextHolder.getLoginUserId()
 
         return ResponseEntity.ok(statusesApiService.removeEmojiReactions(id.toLong(), uid, emoji))
     }
 
     override suspend fun apiV1StatusesIdEmojiReactionsEmojiPut(id: String, emoji: String): ResponseEntity<Status> {
         val uid =
-            (SecurityContextHolder.getContext().authentication.principal as Jwt).getClaim<String>("uid").toLong()
+            loginUserContextHolder.getLoginUserId()
 
         return ResponseEntity.ok(statusesApiService.emojiReactions(id.toLong(), uid, emoji))
     }
