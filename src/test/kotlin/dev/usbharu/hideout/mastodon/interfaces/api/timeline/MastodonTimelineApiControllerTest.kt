@@ -1,6 +1,7 @@
 package dev.usbharu.hideout.mastodon.interfaces.api.timeline
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import dev.usbharu.hideout.core.infrastructure.springframework.security.OAuth2JwtLoginUserContextHolder
 import dev.usbharu.hideout.domain.mastodon.model.generated.Account
 import dev.usbharu.hideout.domain.mastodon.model.generated.Status
 import dev.usbharu.hideout.mastodon.service.timeline.TimelineApiService
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
+import org.mockito.Spy
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.*
 import org.springframework.security.core.context.SecurityContextHolder
@@ -22,6 +24,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
 @ExtendWith(MockitoExtension::class)
 class MastodonTimelineApiControllerTest {
+
+    @Spy
+    private val loginUserContextHolder = OAuth2JwtLoginUserContextHolder()
 
     @Mock
     private lateinit var timelineApiService: TimelineApiService
