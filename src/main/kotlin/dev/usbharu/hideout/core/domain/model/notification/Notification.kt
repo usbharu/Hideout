@@ -4,6 +4,7 @@ import java.time.Instant
 
 data class Notification(
     val id: Long,
+    val type: String,
     val userId: Long,
     val sourceActorId: Long?,
     val postId: Long?,
