@@ -27,6 +27,7 @@ class ExposedNotificationRepository(private val idGenerateService: IdGenerateSer
         if (singleOrNull == null) {
             Notifications.insert {
                 it[id] = notification.id
+                it[type] = notification.type
                 it[userId] = notification.userId
                 it[sourceActorId] = notification.sourceActorId
                 it[postId] = notification.postId
@@ -36,6 +37,7 @@ class ExposedNotificationRepository(private val idGenerateService: IdGenerateSer
             }
         } else {
             Notifications.update({ Notifications.id eq notification.id }) {
+                it[type] = notification.type
                 it[userId] = notification.userId
                 it[sourceActorId] = notification.sourceActorId
                 it[postId] = notification.postId
@@ -62,6 +64,7 @@ class ExposedNotificationRepository(private val idGenerateService: IdGenerateSer
 
 fun ResultRow.toNotifications() = Notification(
     this[Notifications.id],
+    this[Notifications.type],
     this[Notifications.userId],
     this[Notifications.sourceActorId],
     this[Notifications.postId],
@@ -72,6 +75,7 @@ fun ResultRow.toNotifications() = Notification(
 
 object Notifications : Table("notifications") {
     val id = long("id")
+    val type = varchar("type", 100)
     val userId = long("user_id").references(Actors.id)
     val sourceActorId = long("source_actor_id").references(Actors.id).nullable()
     val postId = long("post_id").references(Posts.id).nullable()
