@@ -1,6 +1,7 @@
 package dev.usbharu.hideout.mastodon.interfaces.api.account
 
 import dev.usbharu.hideout.application.config.ActivityPubConfig
+import dev.usbharu.hideout.core.infrastructure.springframework.security.OAuth2JwtLoginUserContextHolder
 import dev.usbharu.hideout.domain.mastodon.model.generated.AccountSource
 import dev.usbharu.hideout.domain.mastodon.model.generated.CredentialAccount
 import dev.usbharu.hideout.domain.mastodon.model.generated.Role
@@ -30,6 +31,9 @@ import utils.TestTransaction
 class MastodonAccountApiControllerTest {
 
     private lateinit var mockMvc: MockMvc
+
+    @Spy
+    private val loginUserContextHolder = OAuth2JwtLoginUserContextHolder()
 
     @Spy
     private lateinit var testTransaction: TestTransaction
