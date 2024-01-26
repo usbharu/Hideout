@@ -1,6 +1,7 @@
 package dev.usbharu.hideout.mastodon.interfaces.api.status
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import dev.usbharu.hideout.core.infrastructure.springframework.security.OAuth2JwtLoginUserContextHolder
 import dev.usbharu.hideout.domain.mastodon.model.generated.Account
 import dev.usbharu.hideout.domain.mastodon.model.generated.Status
 import dev.usbharu.hideout.generate.JsonOrFormModelMethodProcessor
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
+import org.mockito.Spy
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
@@ -29,6 +31,9 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestResponseBody
 
 @ExtendWith(MockitoExtension::class)
 class MastodonStatusesApiControllerTest {
+
+    @Spy
+    private val loginUserContextHolder = OAuth2JwtLoginUserContextHolder()
 
     @Mock
     private lateinit var statusesApiService: StatusesApiService
