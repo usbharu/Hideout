@@ -281,6 +281,149 @@ class AccountApiTest {
         assertThat(alreadyFollow).isTrue()
     }
 
+    @Test
+    fun `apiV1AccountsIdMutePost write権限でミュートできる`() {
+        mockMvc
+            .post("/api/v1/accounts/2/mute") {
+                contentType = MediaType.APPLICATION_JSON
+                with(jwt().jwt { it.claim("uid", "1") }.authorities(SimpleGrantedAuthority("SCOPE_write")))
+            }
+            .asyncDispatch()
+            .andExpect { status { isOk() } }
+    }
+
+    @Test
+    fun `apiV1AccountsIdMutePost write_mutes権限でミュートできる`() {
+        mockMvc
+            .post("/api/v1/accounts/2/mute") {
+                contentType = MediaType.APPLICATION_JSON
+                with(jwt().jwt { it.claim("uid", "1") }.authorities(SimpleGrantedAuthority("SCOPE_write:mutes")))
+            }
+            .asyncDispatch()
+            .andExpect { status { isOk() } }
+    }
+
+    @Test
+    fun `apiV1AccountsIdMutePost read権限だと403`() = runTest {
+        mockMvc
+            .post("/api/v1/accounts/2/mute") {
+                contentType = MediaType.APPLICATION_JSON
+                with(jwt().jwt { it.claim("uid", "1") }.authorities(SimpleGrantedAuthority("SCOPE_read")))
+            }
+            .andExpect { status { isForbidden() } }
+    }
+
+    @Test
+    @WithAnonymousUser
+    fun `apiV1AccountsIdMutePost 匿名だと401`() = runTest {
+        mockMvc
+            .post("/api/v1/accounts/2/mute") {
+                contentType = MediaType.APPLICATION_JSON
+                with(csrf())
+            }
+            .andExpect { status { isUnauthorized() } }
+    }
+
+    @Test
+    @WithAnonymousUser
+    fun `apiV1AccountsIdMutePost csrfトークンがないと403`() = runTest {
+        mockMvc
+            .post("/api/v1/accounts/2/mute") {
+                contentType = MediaType.APPLICATION_JSON
+            }
+            .andExpect { status { isForbidden() } }
+    }
+
+    @Test
+    fun `apiV1AccountsIdUnmutePost write権限でアンミュートできる`() {
+        mockMvc
+            .post("/api/v1/accounts/2/unmute") {
+                contentType = MediaType.APPLICATION_JSON
+                with(jwt().jwt { it.claim("uid", "1") }.authorities(SimpleGrantedAuthority("SCOPE_write")))
+            }
+            .asyncDispatch()
+            .andExpect { status { isOk() } }
+    }
+
+    @Test
+    fun `apiV1AccountsIdUnmutePost write_mutes権限でアンミュートできる`() {
+        mockMvc
+            .post("/api/v1/accounts/2/unmute") {
+                contentType = MediaType.APPLICATION_JSON
+                with(jwt().jwt { it.claim("uid", "1") }.authorities(SimpleGrantedAuthority("SCOPE_write:mutes")))
+            }
+            .asyncDispatch()
+            .andExpect { status { isOk() } }
+    }
+
+    @Test
+    fun `apiV1AccountsIdUnmutePost read権限だと403`() = runTest {
+        mockMvc
+            .post("/api/v1/accounts/2/unmute") {
+                contentType = MediaType.APPLICATION_JSON
+                with(jwt().jwt { it.claim("uid", "1") }.authorities(SimpleGrantedAuthority("SCOPE_read")))
+            }
+            .andExpect { status { isForbidden() } }
+    }
+
+    @Test
+    @WithAnonymousUser
+    fun `apiV1AccountsIdUnmutePost 匿名だと401`() = runTest {
+        mockMvc
+            .post("/api/v1/accounts/2/unmute") {
+                contentType = MediaType.APPLICATION_JSON
+                with(csrf())
+            }
+            .andExpect { status { isUnauthorized() } }
+    }
+
+    @Test
+    @WithAnonymousUser
+    fun `apiV1AccountsIdUnmutePost csrfトークンがないと403`() = runTest {
+        mockMvc
+            .post("/api/v1/accounts/2/unmute") {
+                contentType = MediaType.APPLICATION_JSON
+            }
+            .andExpect { status { isForbidden() } }
+    }
+
+    @Test
+    fun `apiV1MutesGet read権限でミュートしているアカウント一覧を取得できる`() {
+        mockMvc
+            .get("/api/v1/mutes") {
+                with(jwt().jwt { it.claim("uid", "1") }.authorities(SimpleGrantedAuthority("SCOPE_read")))
+            }
+            .asyncDispatch()
+            .andExpect { status { isOk() } }
+    }
+
+    @Test
+    fun `apiV1MutesGet read_mutes権限でミュートしているアカウント一覧を取得できる`() {
+        mockMvc
+            .get("/api/v1/mutes") {
+                with(jwt().jwt { it.claim("uid", "1") }.authorities(SimpleGrantedAuthority("SCOPE_read:mutes")))
+            }
+            .asyncDispatch()
+            .andExpect { status { isOk() } }
+    }
+
+    @Test
+    fun `apiV1MutesGet write権限だと403`() {
+        mockMvc
+            .get("/api/v1/mutes") {
+                with(jwt().jwt { it.claim("uid", "1") }.authorities(SimpleGrantedAuthority("SCOPE_write")))
+            }
+            .andExpect { status { isForbidden() } }
+    }
+
+    @Test
+    @WithAnonymousUser
+    fun `apiV1MutesGet 匿名だと401`() {
+        mockMvc
+            .get("/api/v1/mutes")
+            .andExpect { status { isUnauthorized() } }
+    }
+
     companion object {
         @JvmStatic
         @AfterAll
