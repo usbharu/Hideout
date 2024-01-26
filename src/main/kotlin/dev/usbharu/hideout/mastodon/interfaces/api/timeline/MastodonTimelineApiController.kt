@@ -22,7 +22,6 @@ class MastodonTimelineApiController(
         minId: String?,
         limit: Int?
     ): ResponseEntity<Flow<Status>> = runBlocking {
-
         val homeTimeline = timelineApiService.homeTimeline(
             userId = loginUserContextHolder.getLoginUserId(),
             maxId = maxId?.toLongOrNull(),
