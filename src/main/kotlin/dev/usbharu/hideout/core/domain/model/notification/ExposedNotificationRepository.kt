@@ -82,4 +82,6 @@ object Notifications : Table("notifications") {
     val text = varchar("text", 3000).nullable()
     val reactionId = long("reaction_id").references(Reactions.id).nullable()
     val createdAt = timestamp("created_at")
+
+    override val primaryKey: PrimaryKey = PrimaryKey(id)
 }
