@@ -90,7 +90,7 @@ create table if not exists posts
     id          bigint primary key,
     actor_id bigint                not null,
     overview    varchar(100)          null,
-    content varchar(5000) not null,
+    content  varchar(5000)         not null,
     text        varchar(3000)         not null,
     created_at  bigint                not null,
     visibility  int     default 0     not null,
@@ -253,4 +253,20 @@ create table if not exists deleted_actors
     public_key varchar(10000) not null,
     deleted_at timestamp      not null,
     unique ("name", domain)
+);
+
+create table if not exists notifications
+(
+    id              bigint primary key,
+    type            varchar(100)  not null,
+    user_id         bigint        not null,
+    source_actor_id bigint        null,
+    post_id         bigint        null,
+    text            varchar(3000) null,
+    reaction_id     bigint        null,
+    created_at      timestamp     not null,
+    constraint fk_notifications_user_id__id foreign key (user_id) references actors (id) on delete cascade on update cascade,
+    constraint fk_notifications_source_actor__id foreign key (source_actor_id) references actors (id) on delete cascade on update cascade,
+    constraint fk_notifications_post_id__id foreign key (post_id) references posts (id) on delete cascade on update cascade,
+    constraint fk_notifications_reaction_id__id foreign key (reaction_id) references reactions (id) on delete cascade on update cascade
 )
