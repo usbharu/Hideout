@@ -1,6 +1,7 @@
 package dev.usbharu.hideout.mastodon.infrastructure.exposedrepository
 
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.AbstractRepository
+import dev.usbharu.hideout.core.infrastructure.exposedrepository.Timelines
 import dev.usbharu.hideout.mastodon.domain.model.MastodonNotification
 import dev.usbharu.hideout.mastodon.domain.model.MastodonNotificationRepository
 import dev.usbharu.hideout.mastodon.domain.model.NotificationType
@@ -58,6 +59,48 @@ class ExposedMastodonNotificationRepository : MastodonNotificationRepository, Ab
         MastodonNotifications.select { MastodonNotifications.id eq id }.singleOrNull()?.toMastodonNotification()
     }
 
+    override suspend fun findByUserIdAndMaxIdAndMinIdAndSinceIdAndInTypesAndInSourceActorId(
+        loginUser: Long,
+        maxId: Long?,
+        minId: Long?,
+        sinceId: Long?,
+        limit: Int,
+        typesTmp: MutableList<NotificationType>,
+        accountId: List<Long>
+    ): List<MastodonNotification> = query {
+        val query = MastodonNotifications.select {
+            MastodonNotifications.userId eq loginUser
+        }
+
+
+        if (maxId != null) {
+            query.andWhere { MastodonNotifications.id lessEq maxId }
+        }
+        if (minId != null) {
+            query.andWhere { MastodonNotifications.id greaterEq minId }
+        }
+        if (sinceId != null) {
+            query.andWhere { MastodonNotifications.id greaterEq sinceId }
+        }
+        val result = query
+            .limit(limit)
+            .orderBy(Timelines.createdAt, SortOrder.DESC)
+
+        return@query result.map { it.toMastodonNotification() }
+    }
+
+    override suspend fun deleteByUserId(userId: Long) {
+        MastodonNotifications.deleteWhere {
+            MastodonNotifications.userId eq userId
+        }
+    }
+
+    override suspend fun deleteByUserIdAndId(userId: Long, id: Long) {
+        MastodonNotifications.deleteWhere {
+            MastodonNotifications.userId eq userId and (MastodonNotifications.id eq id)
+        }
+    }
+
     companion object {
         private val logger = LoggerFactory.getLogger(ExposedMastodonNotificationRepository::class.java)
     }
@@ -66,6 +109,7 @@ class ExposedMastodonNotificationRepository : MastodonNotificationRepository, Ab
 fun ResultRow.toMastodonNotification(): MastodonNotification {
     return MastodonNotification(
         this[MastodonNotifications.id],
+        this[MastodonNotifications.userId],
         NotificationType.valueOf(this[MastodonNotifications.type]),
         this[MastodonNotifications.createdAt],
         this[MastodonNotifications.accountId],
@@ -77,6 +121,7 @@ fun ResultRow.toMastodonNotification(): MastodonNotification {
 
 object MastodonNotifications : Table("mastodon_notifications") {
     val id = long("id")
+    val userId = long("user_id")
     val type = varchar("type", 100)
     val createdAt = timestamp("created_at")
     val accountId = long("account_id")
