@@ -1,11 +1,13 @@
 package dev.usbharu.hideout.core.service.notification
 
+import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.notification.Notification
 import dev.usbharu.hideout.core.domain.model.notification.NotificationRepository
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.domain.model.reaction.ReactionRepository
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.Instant
 
@@ -17,13 +19,22 @@ class NotificationServiceImpl(
     private val notificationRepository: NotificationRepository,
     private val actorRepository: ActorRepository,
     private val postRepository: PostRepository,
-    private val reactionRepository: ReactionRepository
+    private val reactionRepository: ReactionRepository,
+    private val applicationConfig: ApplicationConfig
 ) : NotificationService {
-    @Suppress("ReplaceNotNullAssertionWithElvisReturn")
     override suspend fun publishNotify(notificationRequest: NotificationRequest): Notification? {
+        logger.debug("NOTIFICATION REQUEST user: {} type: {}", notificationRequest.userId, notificationRequest.type)
+        logger.trace("NotificationRequest: {}", notificationRequest)
+
+        val user = actorRepository.findById(notificationRequest.userId)
+        if (user == null || user.domain != applicationConfig.url.host) {
+            logger.debug("NOTIFICATION REQUEST is rejected. (Remote Actor or user not found.)")
+            return null
+        }
 
         // とりあえず個人間のRelationshipに基づいてきめる。今後増やす
         if (!relationship(notificationRequest)) {
+            logger.debug("NOTIFICATION REQUEST is rejected. (relationship)")
             return null
         }
 
@@ -34,16 +45,27 @@ class NotificationServiceImpl(
 
         val savedNotification = notificationRepository.save(notification)
 
-        // saveで参照整合性違反が発生するはずなので
-        val user = actorRepository.findById(savedNotification.userId)!!
         val sourceActor = savedNotification.sourceActorId?.let { actorRepository.findById(it) }
 
         val post = savedNotification.postId?.let { postRepository.findById(it) }
         val reaction = savedNotification.reactionId?.let { reactionRepository.findById(it) }
 
+        logger.info(
+            "NOTIFICATION id: {} user: {} type: {}",
+            savedNotification.id,
+            savedNotification.userId,
+            savedNotification.type
+        )
+
+        logger.debug("push to {} notification store.", notificationStoreList.size)
         for (it in notificationStoreList) {
-            it.publishNotification(savedNotification, user, sourceActor, post, reaction)
+            try {
+                it.publishNotification(savedNotification, user, sourceActor, post, reaction)
+            } catch (e: Exception) {
+                logger.warn("FAILED Publish to notification.", e)
+            }
         }
+        logger.debug("SUCCESS Notification id: {}", savedNotification.id)
 
         return savedNotification
     }
@@ -66,5 +88,9 @@ class NotificationServiceImpl(
         val relationship =
             relationshipRepository.findByUserIdAndTargetUserId(notificationRequest.userId, targetActorId) ?: return true
         return relationshipNotificationManagementService.sendNotification(relationship, notificationRequest)
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(NotificationServiceImpl::class.java)
     }
 }
