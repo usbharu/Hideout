@@ -8,6 +8,7 @@ import java.time.Instant
 data class MastodonNotification(
     @Id
     val id: Long,
+    val userId: Long,
     val type: NotificationType,
     val createdAt: Instant,
     val accountId: Long,

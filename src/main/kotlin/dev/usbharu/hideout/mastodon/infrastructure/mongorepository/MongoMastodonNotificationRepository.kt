@@ -5,4 +5,9 @@ import org.springframework.data.mongodb.repository.MongoRepository
 
 interface MongoMastodonNotificationRepository : MongoRepository<MastodonNotification, Long> {
 
+
+    fun deleteByUserId(userId: Long): Long
+
+
+    fun deleteByIdAndUserId(id: Long, userId: Long): Long
 }

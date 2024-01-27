@@ -41,6 +41,7 @@ class MastodonNotificationStore(private val mastodonNotificationRepository: Mast
 
         val mastodonNotification = MastodonNotification(
             id = notification.id,
+            notification.userId,
             type = notificationType,
             createdAt = notification.createdAt,
             accountId = notification.sourceActorId,
