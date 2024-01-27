@@ -3,8 +3,11 @@ package dev.usbharu.hideout.core.service.reaction
 import dev.usbharu.hideout.activitypub.service.activity.like.APReactionService
 import dev.usbharu.hideout.core.domain.exception.resource.DuplicateException
 import dev.usbharu.hideout.core.domain.model.emoji.Emoji
+import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.domain.model.reaction.Reaction
 import dev.usbharu.hideout.core.domain.model.reaction.ReactionRepository
+import dev.usbharu.hideout.core.service.notification.NotificationService
+import dev.usbharu.hideout.core.service.notification.ReactionNotificationRequest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -12,7 +15,9 @@ import org.springframework.stereotype.Service
 @Service
 class ReactionServiceImpl(
     private val reactionRepository: ReactionRepository,
-    private val apReactionService: APReactionService
+    private val apReactionService: APReactionService,
+    private val notificationService: NotificationService,
+    private val postRepository: PostRepository
 ) : ReactionService {
     override suspend fun receiveReaction(
         emoji: Emoji,
@@ -23,7 +28,16 @@ class ReactionServiceImpl(
             reactionRepository.deleteByPostIdAndActorId(postId, actorId)
         }
         try {
-            reactionRepository.save(Reaction(reactionRepository.generateId(), emoji, postId, actorId))
+            val reaction = reactionRepository.save(Reaction(reactionRepository.generateId(), emoji, postId, actorId))
+
+            notificationService.publishNotify(
+                ReactionNotificationRequest(
+                    postRepository.findById(postId)!!.actorId,
+                    actorId,
+                    postId,
+                    reaction.id
+                )
+            )
         } catch (_: DuplicateException) {
         }
     }
@@ -49,6 +63,10 @@ class ReactionServiceImpl(
         val reaction = Reaction(reactionRepository.generateId(), emoji, postId, actorId)
         reactionRepository.save(reaction)
         apReactionService.reaction(reaction)
+
+        val id = postRepository.findById(postId)!!.actorId
+
+        notificationService.publishNotify(ReactionNotificationRequest(id, actorId, postId, reaction.id))
     }
 
     override suspend fun removeReaction(actorId: Long, postId: Long) {
