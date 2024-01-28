@@ -67,13 +67,13 @@ class DefaultPostContentFormatter(private val policyFactory: PolicyFactory) : Po
 
     private fun printHtml(element: Elements): String {
         return element.joinToString("\n\n") {
-            it.childNodes().joinToString("") {
-                if (it is Element && it.tagName() == "br") {
+            it.childNodes().joinToString("") { node ->
+                if (node is Element && node.tagName() == "br") {
                     "\n"
-                } else if (it is Element) {
-                    it.text()
-                } else if (it is TextNode) {
-                    it.text()
+                } else if (node is Element) {
+                    node.text()
+                } else if (node is TextNode) {
+                    node.text()
                 } else {
                     ""
                 }

@@ -4,8 +4,10 @@ package dev.usbharu.hideout.core.service.reaction
 import dev.usbharu.hideout.activitypub.service.activity.like.APReactionService
 import dev.usbharu.hideout.application.service.id.TwitterSnowflakeIdGenerateService
 import dev.usbharu.hideout.core.domain.model.emoji.UnicodeEmoji
+import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.domain.model.reaction.Reaction
 import dev.usbharu.hideout.core.domain.model.reaction.ReactionRepository
+import dev.usbharu.hideout.core.service.notification.NotificationService
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -17,6 +19,12 @@ import utils.PostBuilder
 
 @ExtendWith(MockitoExtension::class)
 class ReactionServiceImplTest {
+
+    @Mock
+    private lateinit var notificationService: NotificationService
+
+    @Mock
+    private lateinit var postRepository: PostRepository
 
     @Mock
     private lateinit var reactionRepository: ReactionRepository
@@ -35,6 +43,9 @@ class ReactionServiceImplTest {
         whenever(reactionRepository.existByPostIdAndActor(eq(post.id), eq(post.actorId))).doReturn(
             false
         )
+        whenever(postRepository.findById(eq(post.id))).doReturn(post)
+        whenever(reactionRepository.save(any())).doAnswer { it.arguments[0] as Reaction }
+
         val generateId = TwitterSnowflakeIdGenerateService.generateId()
         whenever(reactionRepository.generateId()).doReturn(generateId)
 
@@ -50,7 +61,8 @@ class ReactionServiceImplTest {
         whenever(reactionRepository.existByPostIdAndActor(eq(post.id), eq(post.actorId))).doReturn(
             true
         )
-
+        whenever(postRepository.findById(eq(post.id))).doReturn(post)
+        whenever(reactionRepository.save(any())).doAnswer { it.arguments[0] as Reaction }
         val generateId = TwitterSnowflakeIdGenerateService.generateId()
 
         whenever(reactionRepository.generateId()).doReturn(generateId)
@@ -67,6 +79,8 @@ class ReactionServiceImplTest {
         whenever(reactionRepository.findByPostIdAndActorIdAndEmojiId(eq(post.id), eq(post.actorId), eq(0))).doReturn(
             null
         )
+        whenever(postRepository.findById(eq(post.id))).doReturn(post)
+        whenever(reactionRepository.save(any())).doAnswer { it.arguments[0] as Reaction }
         val generateId = TwitterSnowflakeIdGenerateService.generateId()
         whenever(reactionRepository.generateId()).doReturn(generateId)
 
@@ -83,6 +97,8 @@ class ReactionServiceImplTest {
         whenever(reactionRepository.findByPostIdAndActorIdAndEmojiId(eq(post.id), eq(post.actorId), eq(0))).doReturn(
             Reaction(id, UnicodeEmoji("❤"), post.id, post.actorId)
         )
+        whenever(postRepository.findById(eq(post.id))).doReturn(post)
+        whenever(reactionRepository.save(any())).doAnswer { it.arguments[0] as Reaction }
         val generateId = TwitterSnowflakeIdGenerateService.generateId()
         whenever(reactionRepository.generateId()).doReturn(generateId)
 

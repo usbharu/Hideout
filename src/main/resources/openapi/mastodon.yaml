@@ -19,6 +19,8 @@ tags:
     description: timeline
   - name: media
     description: media
+  - name: notification
+    description: notification
 
 paths:
   /api/v2/instance:
@@ -802,6 +804,122 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Relationship"
+
+  /api/v1/notifications:
+    get:
+      tags:
+        - notifications
+      security:
+        - OAuth2:
+            - "read:notifications"
+      parameters:
+        - in: query
+          name: max_id
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: since_id
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: min_id
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+        - in: query
+          name: types[]
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+        - in: query
+          name: exclude_types[]
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+        - in: query
+          name: account_id
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Notification"
+
+  /api/v1/notifications/{id}:
+    get:
+      tags:
+        - notifications
+      security:
+        - OAuth2:
+            - "read:notifications"
+      parameters:
+        - in: path
+          required: true
+          name: id
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Notification"
+
+  /api/v1/notifications/clear:
+    post:
+      tags:
+        - notifications
+      security:
+        - OAuth2:
+            - "write:notifications"
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /api/v1/notifications/{id}/dismiss:
+    post:
+      tags:
+        - notifications
+      security:
+        - OAuth2:
+            - "write:notifications"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
 
 components:
   schemas:
@@ -1934,6 +2052,47 @@ components:
           type: string
         value:
           type: string
+
+    Report:
+      type: object
+
+    RelationshipServeranceEvent:
+      type: object
+
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum:
+            - mention
+            - status
+            - reblog
+            - follow
+            - follow_request
+            - favourite
+            - poll
+            - update
+            - admin.sign_up
+            - admin.report
+            - severed_relationships
+        created_at:
+          type: string
+        account:
+          $ref: "#/components/schemas/Account"
+        status:
+          $ref: "#/components/schemas/Status"
+        report:
+          $ref: "#/components/schemas/Report"
+        relationship_severance_event:
+          $ref: "#/components/schemas/RelationshipServeranceEvent"
+      required:
+        - id
+        - type
+        - created_at
+        - account
 
   securitySchemes:
     OAuth2:

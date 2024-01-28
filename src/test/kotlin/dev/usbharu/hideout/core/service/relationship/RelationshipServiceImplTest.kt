@@ -10,6 +10,7 @@ import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.relationship.Relationship
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
 import dev.usbharu.hideout.core.service.follow.SendFollowDto
+import dev.usbharu.hideout.core.service.notification.NotificationService
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -24,6 +25,10 @@ import java.net.URL
 
 @ExtendWith(MockitoExtension::class)
 class RelationshipServiceImplTest {
+
+
+    @Mock
+    private lateinit var notificationService: NotificationService
 
     @Spy
     private val applicationConfig = ApplicationConfig(URL("https://example.com"))

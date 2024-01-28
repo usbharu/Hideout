@@ -2,6 +2,7 @@ package dev.usbharu.hideout.core.domain.exception.media
 
 import java.io.Serial
 
+@Suppress("UnnecessaryAbstractClass")
 abstract class MediaException : RuntimeException {
     constructor() : super()
     constructor(message: String?) : super(message)

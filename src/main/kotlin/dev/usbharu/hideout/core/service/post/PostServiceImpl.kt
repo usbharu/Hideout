@@ -5,7 +5,6 @@ import dev.usbharu.hideout.activitypub.service.activity.delete.APSendDeleteServi
 import dev.usbharu.hideout.core.domain.exception.UserNotFoundException
 import dev.usbharu.hideout.core.domain.exception.resource.DuplicateException
 import dev.usbharu.hideout.core.domain.exception.resource.PostNotFoundException
-import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
@@ -38,7 +37,7 @@ class PostServiceImpl(
         logger.info("START Create Remote Post user: {}, remote url: {}", post.actorId, post.apId)
         val actor =
             actorRepository.findById(post.actorId) ?: throw UserNotFoundException("${post.actorId} was not found.")
-        val createdPost = internalCreate(post, false, actor)
+        val createdPost = internalCreate(post, false)
         logger.info("SUCCESS Create Remote Post url: {}", createdPost.url)
         return createdPost
     }
@@ -79,11 +78,10 @@ class PostServiceImpl(
         actorRepository.save(actor.copy(postsCount = 0, lastPostDate = null))
     }
 
-    private suspend fun internalCreate(post: Post, isLocal: Boolean, actor: Actor): Post {
+    private suspend fun internalCreate(post: Post, isLocal: Boolean): Post {
         return try {
             val save = postRepository.save(post)
             timelineService.publishTimeline(post, isLocal)
-//            actorRepository.save(actor.incrementPostsCount())
             save
         } catch (_: DuplicateException) {
             postRepository.findByApId(post.apId) ?: throw PostNotFoundException.withApId(post.apId)
@@ -105,7 +103,7 @@ class PostServiceImpl(
             replyId = post.repolyId,
             repostId = post.repostId,
         )
-        return internalCreate(createPost, isLocal, user)
+        return internalCreate(createPost, isLocal)
     }
 
     companion object {
