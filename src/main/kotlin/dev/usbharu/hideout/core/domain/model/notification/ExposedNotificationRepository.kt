@@ -63,14 +63,14 @@ class ExposedNotificationRepository(private val idGenerateService: IdGenerateSer
 }
 
 fun ResultRow.toNotifications() = Notification(
-    this[Notifications.id],
-    this[Notifications.type],
-    this[Notifications.userId],
-    this[Notifications.sourceActorId],
-    this[Notifications.postId],
-    this[Notifications.text],
-    this[Notifications.reactionId],
-    this[Notifications.createdAt],
+    id = this[Notifications.id],
+    type = this[Notifications.type],
+    userId = this[Notifications.userId],
+    sourceActorId = this[Notifications.sourceActorId],
+    postId = this[Notifications.postId],
+    text = this[Notifications.text],
+    reactionId = this[Notifications.reactionId],
+    createdAt = this[Notifications.createdAt],
 )
 
 object Notifications : Table("notifications") {

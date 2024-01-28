@@ -4,6 +4,8 @@ interface MastodonNotificationRepository {
     suspend fun save(mastodonNotification: MastodonNotification): MastodonNotification
     suspend fun deleteById(id: Long)
     suspend fun findById(id: Long): MastodonNotification?
+
+    @Suppress("LongParameterList", "FunctionMaxLength")
     suspend fun findByUserIdAndMaxIdAndMinIdAndSinceIdAndInTypesAndInSourceActorId(
         loginUser: Long,
         maxId: Long?,

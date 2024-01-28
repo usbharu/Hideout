@@ -4,7 +4,7 @@ import dev.usbharu.hideout.core.domain.model.emoji.Emoji
 import org.springframework.stereotype.Repository
 
 @Repository
-@Suppress("FunctionMaxLength", "TooManyFunction")
+@Suppress("FunctionMaxLength", "TooManyFunctions")
 interface ReactionRepository {
     suspend fun generateId(): Long
     suspend fun save(reaction: Reaction): Reaction

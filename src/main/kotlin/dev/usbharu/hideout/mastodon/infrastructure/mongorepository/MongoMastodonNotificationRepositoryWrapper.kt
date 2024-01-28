@@ -18,17 +18,13 @@ class MongoMastodonNotificationRepositoryWrapper(
     private val mongoTemplate: MongoTemplate
 ) :
     MastodonNotificationRepository {
-    override suspend fun save(mastodonNotification: MastodonNotification): MastodonNotification {
-        return mongoMastodonNotificationRepository.save(mastodonNotification)
-    }
+    override suspend fun save(mastodonNotification: MastodonNotification): MastodonNotification =
+        mongoMastodonNotificationRepository.save(mastodonNotification)
 
-    override suspend fun deleteById(id: Long) {
-        mongoMastodonNotificationRepository.deleteById(id)
-    }
+    override suspend fun deleteById(id: Long) = mongoMastodonNotificationRepository.deleteById(id)
 
-    override suspend fun findById(id: Long): MastodonNotification? {
-        return mongoMastodonNotificationRepository.findById(id).getOrNull()
-    }
+    override suspend fun findById(id: Long): MastodonNotification? =
+        mongoMastodonNotificationRepository.findById(id).getOrNull()
 
     override suspend fun findByUserIdAndMaxIdAndMinIdAndSinceIdAndInTypesAndInSourceActorId(
         loginUser: Long,

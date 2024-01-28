@@ -272,7 +272,9 @@ class SecurityConfig {
     fun jwtTokenCustomizer(): OAuth2TokenCustomizer<JwtEncodingContext> {
         return OAuth2TokenCustomizer { context: JwtEncodingContext ->
 
-            if (OAuth2TokenType.ACCESS_TOKEN == context.tokenType && context.authorization?.authorizationGrantType == AuthorizationGrantType.AUTHORIZATION_CODE) {
+            if (OAuth2TokenType.ACCESS_TOKEN == context.tokenType &&
+                context.authorization?.authorizationGrantType == AuthorizationGrantType.AUTHORIZATION_CODE
+            ) {
                 val userDetailsImpl = context.getPrincipal<Authentication>().principal as UserDetailsImpl
                 context.claims.claim("uid", userDetailsImpl.id.toString())
             }

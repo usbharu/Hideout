@@ -14,13 +14,13 @@ class HttpClientConfig {
     @Bean
     fun httpClient(buildProperties: BuildProperties, applicationConfig: ApplicationConfig): HttpClient =
         HttpClient(CIO).config {
-        install(Logging) {
-            logger = Logger.DEFAULT
-            level = LogLevel.ALL
-        }
-        install(HttpCache) {
-        }
-        expectSuccess = true
+            install(Logging) {
+                logger = Logger.DEFAULT
+                level = LogLevel.ALL
+            }
+            install(HttpCache) {
+            }
+            expectSuccess = true
             install(UserAgent) {
                 agent = "Hideout/${buildProperties.version} (${applicationConfig.url})"
             }
