@@ -15,7 +15,6 @@ enum class NotificationType {
 
     companion object {
         fun parse(string: String): NotificationType? = when (string) {
-
             "mention" -> mention
             "status" -> status
             "reblog" -> reblog
