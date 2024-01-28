@@ -12,6 +12,9 @@ import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.relationship.Relationship
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
 import dev.usbharu.hideout.core.service.follow.SendFollowDto
+import dev.usbharu.hideout.core.service.notification.FollowNotificationRequest
+import dev.usbharu.hideout.core.service.notification.FollowRequestNotificationRequest
+import dev.usbharu.hideout.core.service.notification.NotificationService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -24,7 +27,8 @@ class RelationshipServiceImpl(
     private val apSendAcceptService: ApSendAcceptService,
     private val apSendRejectService: ApSendRejectService,
     private val apSendUndoService: APSendUndoService,
-    private val actorRepository: ActorRepository
+    private val actorRepository: ActorRepository,
+    private val notificationService: NotificationService
 ) : RelationshipService {
     override suspend fun followRequest(actorId: Long, targetId: Long) {
         logger.info("START Follow Request userId: {} targetId: {}", actorId, targetId)
@@ -82,6 +86,8 @@ class RelationshipServiceImpl(
             val target = actorRepository.findById(targetId) ?: throw UserNotFoundException.withId(targetId)
             if (target.locked.not()) {
                 acceptFollowRequest(targetId, actorId)
+            } else {
+                notificationService.publishNotify(FollowRequestNotificationRequest(targetId, actorId))
             }
         }
 
@@ -185,6 +191,7 @@ class RelationshipServiceImpl(
         if (isRemoteActor(remoteActor)) {
             apSendAcceptService.sendAcceptFollow(user, remoteActor)
         }
+        notificationService.publishNotify(FollowNotificationRequest(actorId, targetId))
     }
 
     override suspend fun rejectFollowRequest(actorId: Long, targetId: Long) {

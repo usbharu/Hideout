@@ -101,6 +101,10 @@ class ReactionRepositoryImpl(
         }
     }
 
+    override suspend fun findById(id: Long): Reaction? = query {
+        return@query Reactions.leftJoin(CustomEmojis).select { Reactions.id eq id }.singleOrNull()?.toReaction()
+    }
+
     override suspend fun findByPostId(postId: Long): List<Reaction> = query {
         return@query Reactions.leftJoin(CustomEmojis).select { Reactions.postId eq postId }.map { it.toReaction() }
     }

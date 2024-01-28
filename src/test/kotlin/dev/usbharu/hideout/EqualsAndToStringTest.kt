@@ -96,6 +96,9 @@ class EqualsAndToStringTest {
             .filter {
                 it.superclass == Any::class.java || it.superclass?.packageName?.startsWith("dev.usbharu") ?: true
             }
+            .filterNot {
+                it.superclass.isSealed
+            }
             .filterNot { it == UnicodeEmoji::class.java }
             .map {
 

@@ -1,0 +1,97 @@
+package dev.usbharu.hideout.core.service.notification
+
+import dev.usbharu.hideout.application.config.ApplicationConfig
+import dev.usbharu.hideout.application.service.id.TwitterSnowflakeIdGenerateService
+import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
+import dev.usbharu.hideout.core.domain.model.notification.Notification
+import dev.usbharu.hideout.core.domain.model.notification.NotificationRepository
+import dev.usbharu.hideout.core.domain.model.post.PostRepository
+import dev.usbharu.hideout.core.domain.model.reaction.ReactionRepository
+import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
+import kotlinx.coroutines.test.runTest
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.InjectMocks
+import org.mockito.Mock
+import org.mockito.Spy
+import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.*
+import utils.UserBuilder
+import java.net.URL
+
+@ExtendWith(MockitoExtension::class)
+class NotificationServiceImplTest {
+
+
+    @Mock
+    private lateinit var relationshipNotificationManagementService: RelationshipNotificationManagementService
+
+    @Mock
+    private lateinit var relationshipRepository: RelationshipRepository
+
+    @Spy
+    private val notificationStoreList: MutableList<NotificationStore> = mutableListOf()
+
+    @Mock
+    private lateinit var notificationRepository: NotificationRepository
+
+    @Mock
+    private lateinit var actorRepository: ActorRepository
+
+    @Mock
+    private lateinit var postRepository: PostRepository
+
+    @Mock
+    private lateinit var reactionRepository: ReactionRepository
+
+    @Spy
+    private val applicationConfig = ApplicationConfig(URL("https://example.com"))
+
+    @InjectMocks
+    private lateinit var notificationServiceImpl: NotificationServiceImpl
+
+    @Test
+    fun `publishNotifi ローカルユーザーへの通知を発行する`() = runTest {
+
+        val actor = UserBuilder.localUserOf(domain = "example.com")
+
+        whenever(actorRepository.findById(eq(1))).doReturn(actor)
+
+        val id = TwitterSnowflakeIdGenerateService.generateId()
+
+        whenever(notificationRepository.generateId()).doReturn(id)
+
+        whenever(notificationRepository.save(any())).doAnswer { it.arguments[0] as Notification }
+
+
+        val actual = notificationServiceImpl.publishNotify(PostNotificationRequest(1, 2, 3))
+
+        assertThat(actual).isNotNull()
+
+        verify(notificationRepository, times(1)).save(any())
+    }
+
+    @Test
+    fun `publishNotify ユーザーが存在しないときは発行しない`() = runTest {
+        val actual = notificationServiceImpl.publishNotify(PostNotificationRequest(1, 2, 3))
+
+        assertThat(actual).isNull()
+    }
+
+    @Test
+    fun `publishNotify ユーザーがリモートユーザーの場合は発行しない`() = runTest {
+        val actor = UserBuilder.remoteUserOf(domain = "remote.example.com")
+
+        whenever(actorRepository.findById(eq(1))).doReturn(actor)
+
+        val actual = notificationServiceImpl.publishNotify(PostNotificationRequest(1, 2, 3))
+
+        assertThat(actual).isNull()
+    }
+
+    @Test
+    fun unpublishNotify() = runTest {
+        notificationServiceImpl.unpublishNotify(1)
+    }
+}
