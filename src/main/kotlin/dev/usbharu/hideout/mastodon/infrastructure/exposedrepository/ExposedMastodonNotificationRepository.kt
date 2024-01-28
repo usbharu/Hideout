@@ -72,7 +72,6 @@ class ExposedMastodonNotificationRepository : MastodonNotificationRepository, Ab
             MastodonNotifications.userId eq loginUser
         }
 
-
         if (maxId != null) {
             query.andWhere { MastodonNotifications.id lessEq maxId }
         }

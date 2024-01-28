@@ -27,7 +27,6 @@ class NotificationApiServiceImpl(
         excludeTypes: List<NotificationType>,
         accountId: List<Long>
     ): List<Notification> = transaction.transaction {
-
         val typesTmp = mutableListOf<NotificationType>()
 
         typesTmp.addAll(types)
@@ -44,9 +43,11 @@ class NotificationApiServiceImpl(
                 accountId
             )
 
-        val accounts = accountService.findByIds(mastodonNotifications.map {
-            it.accountId
-        }).associateBy { it.id.toLong() }
+        val accounts = accountService.findByIds(
+            mastodonNotifications.map {
+                it.accountId
+            }
+        ).associateBy { it.id.toLong() }
 
         val statuses = statusQueryService.findByPostIds(mastodonNotifications.mapNotNull { it.statusId })
             .associateBy { it.id.toLong() }
@@ -92,7 +93,6 @@ class NotificationApiServiceImpl(
     override suspend fun dismiss(loginUser: Long, notificationId: Long) {
         mastodonNotificationRepository.deleteByUserIdAndId(loginUser, notificationId)
     }
-
 
     private fun convertNotificationType(notificationType: NotificationType): Notification.Type =
         when (notificationType) {

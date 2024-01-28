@@ -12,11 +12,15 @@ interface PostId {
 }
 
 data class MentionNotificationRequest(
-    override val userId: Long, override val sourceActorId: Long, override val postId: Long
+    override val userId: Long,
+    override val sourceActorId: Long,
+    override val postId: Long
 ) : NotificationRequest(
-    userId, sourceActorId,
+    userId,
+    sourceActorId,
     "mention"
-), PostId {
+),
+    PostId {
     override fun buildNotification(id: Long, createdAt: Instant): Notification = Notification(
         id,
         type,
@@ -30,7 +34,9 @@ data class MentionNotificationRequest(
 }
 
 data class PostNotificationRequest(
-    override val userId: Long, override val sourceActorId: Long, override val postId: Long
+    override val userId: Long,
+    override val sourceActorId: Long,
+    override val postId: Long
 
 ) : NotificationRequest(userId, sourceActorId, "post"), PostId {
     override fun buildNotification(id: Long, createdAt: Instant): Notification = Notification(
@@ -46,7 +52,9 @@ data class PostNotificationRequest(
 }
 
 data class RepostNotificationRequest(
-    override val userId: Long, override val sourceActorId: Long, override val postId: Long
+    override val userId: Long,
+    override val sourceActorId: Long,
+    override val postId: Long
 ) : NotificationRequest(userId, sourceActorId, "repost"), PostId {
     override fun buildNotification(id: Long, createdAt: Instant): Notification = Notification(
         id,
@@ -61,7 +69,8 @@ data class RepostNotificationRequest(
 }
 
 data class FollowNotificationRequest(
-    override val userId: Long, override val sourceActorId: Long
+    override val userId: Long,
+    override val sourceActorId: Long
 ) : NotificationRequest(userId, sourceActorId, "follow") {
     override fun buildNotification(id: Long, createdAt: Instant): Notification = Notification(
         id,
@@ -76,7 +85,8 @@ data class FollowNotificationRequest(
 }
 
 data class FollowRequestNotificationRequest(
-    override val userId: Long, override val sourceActorId: Long
+    override val userId: Long,
+    override val sourceActorId: Long
 ) : NotificationRequest(userId, sourceActorId, "follow-request") {
     override fun buildNotification(id: Long, createdAt: Instant): Notification = Notification(
         id,
@@ -91,7 +101,10 @@ data class FollowRequestNotificationRequest(
 }
 
 data class ReactionNotificationRequest(
-    override val userId: Long, override val sourceActorId: Long, override val postId: Long, val reactionId: Long
+    override val userId: Long,
+    override val sourceActorId: Long,
+    override val postId: Long,
+    val reactionId: Long
 
 ) : NotificationRequest(userId, sourceActorId, "reaction"), PostId {
     override fun buildNotification(id: Long, createdAt: Instant): Notification = Notification(
