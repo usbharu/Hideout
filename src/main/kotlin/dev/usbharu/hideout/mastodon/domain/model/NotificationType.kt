@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.mastodon.domain.model
 
+@Suppress("EnumEntryName", "EnumNaming", "EnumEntryNameCase")
 enum class NotificationType {
     mention,
     status,

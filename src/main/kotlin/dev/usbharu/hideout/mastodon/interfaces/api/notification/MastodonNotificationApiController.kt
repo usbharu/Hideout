@@ -31,12 +31,12 @@ class MastodonNotificationApiController(
         accountId: List<String>?
     ): ResponseEntity<Flow<Notification>> = runBlocking {
         val notificationFlow = notificationApiService.notifications(
-            loginUserContextHolder.getLoginUserId(),
-            maxId?.toLong(),
-            minId?.toLong(),
-            sinceId?.toLong(),
-            limit ?: 20,
-            types.orEmpty().mapNotNull { NotificationType.parse(it) },
+            loginUser = loginUserContextHolder.getLoginUserId(),
+            maxId = maxId?.toLong(),
+            minId = minId?.toLong(),
+            sinceId = sinceId?.toLong(),
+            limit = limit ?: 20,
+            types = types.orEmpty().mapNotNull { NotificationType.parse(it) },
             excludeTypes = excludeTypes.orEmpty().mapNotNull { NotificationType.parse(it) },
             accountId = accountId.orEmpty().mapNotNull { it.toLongOrNull() }
         ).asFlow()

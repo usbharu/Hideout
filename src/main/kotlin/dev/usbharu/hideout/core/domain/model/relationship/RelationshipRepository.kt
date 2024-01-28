@@ -43,6 +43,7 @@ interface RelationshipRepository {
         ignoreFollowRequest: Boolean
     ): List<Relationship>
 
+    @Suppress("FunctionMaxLength")
     suspend fun findByActorIdAntMutingAndMaxIdAndSinceId(
         actorId: Long,
         muting: Boolean,

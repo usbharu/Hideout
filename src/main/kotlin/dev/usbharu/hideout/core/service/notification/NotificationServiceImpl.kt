@@ -59,6 +59,7 @@ class NotificationServiceImpl(
 
         logger.debug("push to {} notification store.", notificationStoreList.size)
         for (it in notificationStoreList) {
+            @Suppress("TooGenericExceptionCaught")
             try {
                 it.publishNotification(savedNotification, user, sourceActor, post, reaction)
             } catch (e: Exception) {

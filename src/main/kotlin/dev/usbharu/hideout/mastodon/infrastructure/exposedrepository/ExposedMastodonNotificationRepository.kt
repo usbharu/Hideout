@@ -105,18 +105,16 @@ class ExposedMastodonNotificationRepository : MastodonNotificationRepository, Ab
     }
 }
 
-fun ResultRow.toMastodonNotification(): MastodonNotification {
-    return MastodonNotification(
-        this[MastodonNotifications.id],
-        this[MastodonNotifications.userId],
-        NotificationType.valueOf(this[MastodonNotifications.type]),
-        this[MastodonNotifications.createdAt],
-        this[MastodonNotifications.accountId],
-        this[MastodonNotifications.statusId],
-        this[MastodonNotifications.reportId],
-        this[MastodonNotifications.relationshipServeranceEventId],
-    )
-}
+fun ResultRow.toMastodonNotification(): MastodonNotification = MastodonNotification(
+    id = this[MastodonNotifications.id],
+    userId = this[MastodonNotifications.userId],
+    type = NotificationType.valueOf(this[MastodonNotifications.type]),
+    createdAt = this[MastodonNotifications.createdAt],
+    accountId = this[MastodonNotifications.accountId],
+    statusId = this[MastodonNotifications.statusId],
+    reportId = this[MastodonNotifications.reportId],
+    relationshipServeranceEvent = this[MastodonNotifications.relationshipServeranceEventId],
+)
 
 object MastodonNotifications : Table("mastodon_notifications") {
     val id = long("id")

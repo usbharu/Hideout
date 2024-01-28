@@ -4,6 +4,7 @@ import dev.usbharu.hideout.domain.mastodon.model.generated.Notification
 import dev.usbharu.hideout.mastodon.domain.model.NotificationType
 
 interface NotificationApiService {
+    @Suppress("LongParameterList")
     suspend fun notifications(
         loginUser: Long,
         maxId: Long?,
