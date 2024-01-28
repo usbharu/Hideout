@@ -23,7 +23,7 @@ enum class NotificationType {
             "favourite" -> favourite
             "poll" -> poll
             "update" -> update
-            "admin.aign_up" -> admin_sign_up
+            "admin.sign_up" -> admin_sign_up
             "admin.report" -> admin_report
             "servered_relationships" -> severed_relationships
             else -> null
