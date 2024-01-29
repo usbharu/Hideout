@@ -65,20 +65,31 @@ class MastodonAccountApiController(
         tagged: String?
     ): ResponseEntity<Flow<Status>> = runBlocking {
         val userid = loginUserContextHolder.getLoginUserId()
-        val statusFlow = accountApiService.accountsStatuses(
+        val statuses = accountApiService.accountsStatuses(
             userid = id.toLong(),
-            maxId = maxId?.toLongOrNull(),
-            sinceId = sinceId?.toLongOrNull(),
-            minId = minId?.toLongOrNull(),
-            limit = limit,
             onlyMedia = onlyMedia,
             excludeReplies = excludeReplies,
             excludeReblogs = excludeReblogs,
             pinned = pinned,
             tagged = tagged,
-            loginUser = userid
-        ).asFlow()
-        ResponseEntity.ok(statusFlow)
+            loginUser = userid,
+            page = Page.of(
+                maxId?.toLongOrNull(),
+                sinceId?.toLongOrNull(),
+                minId?.toLongOrNull(),
+                limit.coerceIn(0, 80) ?: 40
+            )
+        )
+        val httpHeader = statuses.toHttpHeader(
+            { "${applicationConfig.url}/api/v1/follow_requests?max_id=$it" },
+            { "${applicationConfig.url}/api/v1/follow_requests?min_id=$it" },
+        )
+
+        if (httpHeader != null) {
+            return@runBlocking ResponseEntity.ok().header("Link", httpHeader).body(statuses.asFlow())
+        }
+
+        ResponseEntity.ok(statuses.asFlow())
     }
 
     override fun apiV1AccountsRelationshipsGet(

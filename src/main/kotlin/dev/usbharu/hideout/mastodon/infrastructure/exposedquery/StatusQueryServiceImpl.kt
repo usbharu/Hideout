@@ -1,5 +1,8 @@
 package dev.usbharu.hideout.mastodon.infrastructure.exposedquery
 
+import dev.usbharu.hideout.application.infrastructure.exposed.Page
+import dev.usbharu.hideout.application.infrastructure.exposed.PaginationList
+import dev.usbharu.hideout.application.infrastructure.exposed.pagination
 import dev.usbharu.hideout.core.domain.model.emoji.CustomEmoji
 import dev.usbharu.hideout.core.domain.model.media.toMediaAttachments
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.*
@@ -106,6 +109,57 @@ class StatusQueryServiceImpl : StatusQueryService {
             }
 
         return resolveReplyAndRepost(pairs)
+    }
+
+    override suspend fun accountsStatus(
+        accountId: Long,
+        onlyMedia: Boolean,
+        excludeReplies: Boolean,
+        excludeReblogs: Boolean,
+        pinned: Boolean,
+        tagged: String?,
+        includeFollowers: Boolean,
+        page: Page
+    ): PaginationList<Status, Long> {
+        val query = Posts
+            .leftJoin(PostsMedia)
+            .leftJoin(Actors)
+            .leftJoin(Media)
+            .select { Posts.actorId eq accountId }
+
+        query.pagination(page, Posts.id)
+
+        if (onlyMedia) {
+            query.andWhere { PostsMedia.mediaId.isNotNull() }
+        }
+        if (excludeReplies) {
+            query.andWhere { Posts.replyId.isNotNull() }
+        }
+        if (excludeReblogs) {
+            query.andWhere { Posts.repostId.isNotNull() }
+        }
+        if (includeFollowers) {
+            query.andWhere { Posts.visibility inList listOf(public.ordinal, unlisted.ordinal, private.ordinal) }
+        } else {
+            query.andWhere { Posts.visibility inList listOf(public.ordinal, unlisted.ordinal) }
+        }
+
+        val pairs = query.groupBy { it[Posts.id] }
+            .map { it.value }
+            .map {
+                toStatus(it.first()).copy(
+                    mediaAttachments = it.mapNotNull { resultRow ->
+                        resultRow.toMediaOrNull()?.toMediaAttachments()
+                    }
+                ) to it.first()[Posts.repostId]
+            }
+
+        val statuses = resolveReplyAndRepost(pairs)
+        return PaginationList(
+            statuses,
+            statuses.lastOrNull()?.id?.toLongOrNull(),
+            statuses.firstOrNull()?.id?.toLongOrNull()
+        )
     }
 
     override suspend fun findByPostId(id: Long): Status {
