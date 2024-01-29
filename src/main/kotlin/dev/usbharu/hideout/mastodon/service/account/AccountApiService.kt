@@ -34,6 +34,17 @@ interface AccountApiService {
         loginUser: Long?
     ): List<Status>
 
+    suspend fun accountsStatuses(
+        userid: Long,
+        onlyMedia: Boolean,
+        excludeReplies: Boolean,
+        excludeReblogs: Boolean,
+        pinned: Boolean,
+        tagged: String?,
+        loginUser: Long?,
+        page: Page
+    ): PaginationList<Status, Long>
+
     suspend fun verifyCredentials(userid: Long): CredentialAccount
     suspend fun registerAccount(userCreateDto: UserCreateDto): Unit
     suspend fun follow(loginUser: Long, followTargetUserId: Long): Relationship
@@ -111,6 +122,38 @@ class AccountApiServiceImpl(
                 pinned = pinned,
                 tagged = tagged,
                 includeFollowers = canViewFollowers
+            )
+        }
+    }
+
+    override suspend fun accountsStatuses(
+        userid: Long,
+        onlyMedia: Boolean,
+        excludeReplies: Boolean,
+        excludeReblogs: Boolean,
+        pinned: Boolean,
+        tagged: String?,
+        loginUser: Long?,
+        page: Page
+    ): PaginationList<Status, Long> {
+        val canViewFollowers = if (loginUser == null) {
+            false
+        } else {
+            transaction.transaction {
+                isFollowing(loginUser, userid)
+            }
+        }
+
+        return transaction.transaction {
+            statusQueryService.accountsStatus(
+                accountId = userid,
+                onlyMedia = onlyMedia,
+                excludeReplies = excludeReplies,
+                excludeReblogs = excludeReblogs,
+                pinned = pinned,
+                tagged = tagged,
+                includeFollowers = canViewFollowers,
+                page = page
             )
         }
     }
