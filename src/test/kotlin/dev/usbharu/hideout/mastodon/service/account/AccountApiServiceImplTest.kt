@@ -1,6 +1,8 @@
 package dev.usbharu.hideout.mastodon.service.account
 
 import dev.usbharu.hideout.application.external.Transaction
+import dev.usbharu.hideout.application.infrastructure.exposed.Page
+import dev.usbharu.hideout.application.infrastructure.exposed.PaginationList
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
 import dev.usbharu.hideout.core.query.FollowerQueryService
@@ -48,63 +50,65 @@ class AccountApiServiceImplTest {
 
     @Mock
     private lateinit var relationshipRepository: RelationshipRepository
-    
+
     @Mock
     private lateinit var mediaService: MediaService
 
     @InjectMocks
     private lateinit var accountApiServiceImpl: AccountApiServiceImpl
 
-    private val statusList = listOf(
-        Status(
-            id = "",
-            uri = "",
-            createdAt = "",
-            account = Account(
+    private val statusList = PaginationList<Status, Long>(
+        listOf(
+            Status(
                 id = "",
-                username = "",
-                acct = "",
-                url = "",
-                displayName = "",
-                note = "",
-                avatar = "",
-                avatarStatic = "",
-                header = "",
-                headerStatic = "",
-                locked = false,
-                fields = emptyList(),
-                emojis = emptyList(),
-                bot = false,
-                group = false,
-                discoverable = true,
+                uri = "",
                 createdAt = "",
-                lastStatusAt = "",
-                statusesCount = 0,
-                followersCount = 0,
-                noindex = false,
-                moved = false,
-                suspendex = false,
-                limited = false,
-                followingCount = 0
-            ),
-            content = "",
-            visibility = Status.Visibility.public,
-            sensitive = false,
-            spoilerText = "",
-            mediaAttachments = emptyList(),
-            mentions = emptyList(),
-            tags = emptyList(),
-            emojis = emptyList(),
-            reblogsCount = 0,
-            favouritesCount = 0,
-            repliesCount = 0,
-            url = "https://example.com",
-            inReplyToId = null,
-            inReplyToAccountId = null,
-            language = "ja_JP",
-            text = "Test",
-            editedAt = null
-        )
+                account = Account(
+                    id = "",
+                    username = "",
+                    acct = "",
+                    url = "",
+                    displayName = "",
+                    note = "",
+                    avatar = "",
+                    avatarStatic = "",
+                    header = "",
+                    headerStatic = "",
+                    locked = false,
+                    fields = emptyList(),
+                    emojis = emptyList(),
+                    bot = false,
+                    group = false,
+                    discoverable = true,
+                    createdAt = "",
+                    lastStatusAt = "",
+                    statusesCount = 0,
+                    followersCount = 0,
+                    noindex = false,
+                    moved = false,
+                    suspendex = false,
+                    limited = false,
+                    followingCount = 0
+                ),
+                content = "",
+                visibility = Status.Visibility.public,
+                sensitive = false,
+                spoilerText = "",
+                mediaAttachments = emptyList(),
+                mentions = emptyList(),
+                tags = emptyList(),
+                emojis = emptyList(),
+                reblogsCount = 0,
+                favouritesCount = 0,
+                repliesCount = 0,
+                url = "https://example.com",
+                inReplyToId = null,
+                inReplyToAccountId = null,
+                language = "ja_JP",
+                text = "Test",
+                editedAt = null
+            )
+        ), null, null
     )
 
     @Test
@@ -114,16 +118,13 @@ class AccountApiServiceImplTest {
         whenever(
             statusQueryService.accountsStatus(
                 accountId = eq(userId),
-                maxId = isNull(),
-                sinceId = isNull(),
-                minId = isNull(),
-                limit = eq(20),
                 onlyMedia = eq(false),
                 excludeReplies = eq(false),
                 excludeReblogs = eq(false),
                 pinned = eq(false),
                 tagged = isNull(),
-                includeFollowers = eq(false)
+                includeFollowers = eq(false),
+                page = any()
             )
         ).doReturn(
             statusList
@@ -132,16 +133,13 @@ class AccountApiServiceImplTest {
 
         val accountsStatuses = accountApiServiceImpl.accountsStatuses(
             userid = userId,
-            maxId = null,
-            sinceId = null,
-            minId = null,
-            limit = 20,
             onlyMedia = false,
             excludeReplies = false,
             excludeReblogs = false,
             pinned = false,
             tagged = null,
-            loginUser = null
+            loginUser = null,
+            Page.of()
         )
 
         assertThat(accountsStatuses).hasSize(1)
@@ -156,31 +154,25 @@ class AccountApiServiceImplTest {
         whenever(
             statusQueryService.accountsStatus(
                 accountId = eq(userId),
-                maxId = isNull(),
-                sinceId = isNull(),
-                minId = isNull(),
-                limit = eq(20),
                 onlyMedia = eq(false),
                 excludeReplies = eq(false),
                 excludeReblogs = eq(false),
                 pinned = eq(false),
                 tagged = isNull(),
-                includeFollowers = eq(false)
+                includeFollowers = eq(false),
+                page = any()
             )
         ).doReturn(statusList)
 
         val accountsStatuses = accountApiServiceImpl.accountsStatuses(
             userid = userId,
-            maxId = null,
-            sinceId = null,
-            minId = null,
-            limit = 20,
             onlyMedia = false,
             excludeReplies = false,
             excludeReblogs = false,
             pinned = false,
             tagged = null,
-            loginUser = loginUser
+            loginUser = loginUser,
+            Page.of()
         )
 
         assertThat(accountsStatuses).hasSize(1)
@@ -193,16 +185,13 @@ class AccountApiServiceImplTest {
         whenever(
             statusQueryService.accountsStatus(
                 accountId = eq(userId),
-                maxId = isNull(),
-                sinceId = isNull(),
-                minId = isNull(),
-                limit = eq(20),
                 onlyMedia = eq(false),
                 excludeReplies = eq(false),
                 excludeReblogs = eq(false),
                 pinned = eq(false),
                 tagged = isNull(),
-                includeFollowers = eq(true)
+                includeFollowers = eq(true),
+                page = any()
             )
         ).doReturn(statusList)
 
@@ -221,16 +210,13 @@ class AccountApiServiceImplTest {
 
         val accountsStatuses = accountApiServiceImpl.accountsStatuses(
             userid = userId,
-            maxId = null,
-            sinceId = null,
-            minId = null,
-            limit = 20,
             onlyMedia = false,
             excludeReplies = false,
             excludeReblogs = false,
             pinned = false,
             tagged = null,
-            loginUser = loginUser
+            loginUser = loginUser,
+            Page.of()
         )
 
         assertThat(accountsStatuses).hasSize(1)

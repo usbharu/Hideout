@@ -1,6 +1,7 @@
 package dev.usbharu.hideout.mastodon.interfaces.api.account
 
 import dev.usbharu.hideout.application.config.ActivityPubConfig
+import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.core.infrastructure.springframework.security.OAuth2JwtLoginUserContextHolder
 import dev.usbharu.hideout.domain.mastodon.model.generated.AccountSource
 import dev.usbharu.hideout.domain.mastodon.model.generated.CredentialAccount
@@ -26,6 +27,7 @@ import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import utils.TestTransaction
+import java.net.URL
 
 @ExtendWith(MockitoExtension::class)
 class MastodonAccountApiControllerTest {
@@ -40,6 +42,9 @@ class MastodonAccountApiControllerTest {
 
     @Mock
     private lateinit var accountApiService: AccountApiService
+
+    @Spy
+    private val applicationConfig: ApplicationConfig = ApplicationConfig(URL("https://example.com"))
 
     @InjectMocks
     private lateinit var mastodonAccountApiController: MastodonAccountApiController
