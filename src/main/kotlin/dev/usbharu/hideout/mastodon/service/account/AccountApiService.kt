@@ -52,13 +52,6 @@ interface AccountApiService {
     suspend fun unfollow(userid: Long, target: Long): Relationship
     suspend fun removeFromFollowers(userid: Long, target: Long): Relationship
     suspend fun updateProfile(userid: Long, updateCredentials: UpdateCredentials?): Account
-    suspend fun followRequests(
-        loginUser: Long,
-        maxId: Long?,
-        sinceId: Long?,
-        limit: Int = 20,
-        withIgnore: Boolean
-    ): List<Account>
 
     suspend fun followRequests(
         loginUser: Long,
@@ -70,7 +63,6 @@ interface AccountApiService {
     suspend fun rejectFollowRequest(loginUser: Long, target: Long): Relationship
     suspend fun mute(userid: Long, target: Long): Relationship
     suspend fun unmute(userid: Long, target: Long): Relationship
-    suspend fun mutesAccount(userid: Long, maxId: Long?, sinceId: Long?, limit: Int): List<Account>
     suspend fun mutesAccount(userid: Long, pageByMaxId: Page.PageByMaxId): PaginationList<Account, Long>
 }
 
@@ -226,27 +218,6 @@ class AccountApiServiceImpl(
 
     override suspend fun followRequests(
         loginUser: Long,
-        maxId: Long?,
-        sinceId: Long?,
-        limit: Int,
-        withIgnore: Boolean
-    ): List<Account> = transaction.transaction {
-        val actorIdList = relationshipRepository
-            .findByTargetIdAndFollowRequestAndIgnoreFollowRequest(
-                maxId = maxId,
-                sinceId = sinceId,
-                limit = limit,
-                targetId = loginUser,
-                followRequest = true,
-                ignoreFollowRequest = withIgnore
-            )
-            .map { it.actorId }
-
-        return@transaction accountService.findByIds(actorIdList)
-    }
-
-    override suspend fun followRequests(
-        loginUser: Long,
         withIgnore: Boolean,
         pageByMaxId: Page.PageByMaxId
     ): PaginationList<Account, Long> = transaction.transaction {
@@ -284,13 +255,6 @@ class AccountApiServiceImpl(
         relationshipService.mute(userid, target)
 
         return@transaction fetchRelationship(userid, target)
-    }
-
-    override suspend fun mutesAccount(userid: Long, maxId: Long?, sinceId: Long?, limit: Int): List<Account> {
-        val mutedAccounts =
-            relationshipRepository.findByActorIdAntMutingAndMaxIdAndSinceId(userid, true, maxId, sinceId, limit)
-
-        return accountService.findByIds(mutedAccounts.map { it.targetActorId })
     }
 
     override suspend fun mutesAccount(userid: Long, pageByMaxId: Page.PageByMaxId): PaginationList<Account, Long> {
