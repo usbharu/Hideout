@@ -71,4 +71,25 @@ class UndoTest {
         val undo = ActivityPubConfig().objectMapper().readValue(json, Undo::class.java)
         println(undo)
     }
+
+    @Test
+    fun MastodonのUndoのデシリアライズができる() {
+        //language=JSON
+        val json = """{
+  "@context" : "https://www.w3.org/ns/activitystreams",
+  "id" : "https://kb.usbharu.dev/users/usbharu#follows/12/undo",
+  "type" : "Undo",
+  "actor" : "https://kb.usbharu.dev/users/usbharu",
+  "object" : {
+    "id" : "https://kb.usbharu.dev/0347b269-4dcb-4eb1-b8c4-b5f157bb6957",
+    "type" : "Follow",
+    "actor" : "https://kb.usbharu.dev/users/usbharu",
+    "object" : "https://test-hideout.usbharu.dev/users/testuser15"
+  }
+}""".trimIndent()
+
+        val undo = ActivityPubConfig().objectMapper().readValue<Undo>(json, Undo::class.java)
+
+        println(undo)
+    }
 }

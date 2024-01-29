@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.activitypub.service.inbox
 
+import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.activitypub.domain.model.objects.Object
@@ -119,7 +120,12 @@ class InboxJobProcessor(
             throw IllegalStateException("ActivityPubProcessor not found. type: ${param.type}")
         }
 
-        val value = objectMapper.treeToValue(jsonNode, activityPubProcessor.type())
+        val value = try {
+            objectMapper.treeToValue(jsonNode, activityPubProcessor.type())
+        } catch (e: JsonParseException) {
+            logger.warn("Invalid JSON\n\n{}\n\n", jsonNode.toPrettyString())
+            throw e
+        }
         activityPubProcessor.process(ActivityPubProcessContext(value, jsonNode, httpRequest, signature, verify))
 
         logger.info("SUCCESS Process inbox. type: {}", param.type)
