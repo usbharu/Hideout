@@ -11,7 +11,7 @@ open class Undo(
     override val id: String,
     @JsonDeserialize(using = ObjectDeserializer::class)
     @JsonProperty("object") val apObject: Object,
-    val published: String
+    val published: String?
 ) : Object(add(type, "Undo")), HasId, HasActor {
 
     override fun equals(other: Any?): Boolean {
@@ -21,20 +21,20 @@ open class Undo(
 
         other as Undo
 
-        if (apObject != other.apObject) return false
-        if (published != other.published) return false
         if (actor != other.actor) return false
         if (id != other.id) return false
+        if (apObject != other.apObject) return false
+        if (published != other.published) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = super.hashCode()
-        result = 31 * result + apObject.hashCode()
-        result = 31 * result + published.hashCode()
         result = 31 * result + actor.hashCode()
         result = 31 * result + id.hashCode()
+        result = 31 * result + apObject.hashCode()
+        result = 31 * result + (published?.hashCode() ?: 0)
         return result
     }
 
@@ -43,7 +43,7 @@ open class Undo(
                 "actor='$actor', " +
                 "id='$id', " +
                 "apObject=$apObject, " +
-                "published='$published'" +
+                "published=$published" +
                 ")" +
                 " ${super.toString()}"
     }
