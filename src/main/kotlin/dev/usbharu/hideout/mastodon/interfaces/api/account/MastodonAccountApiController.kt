@@ -27,7 +27,8 @@ class MastodonAccountApiController(
 ) : AccountApi {
 
     override suspend fun apiV1AccountsIdFollowPost(
-        id: String, followRequestBody: FollowRequestBody?
+        id: String,
+        followRequestBody: FollowRequestBody?
     ): ResponseEntity<Relationship> {
         val userid = loginUserContextHolder.getLoginUserId()
 
@@ -38,11 +39,17 @@ class MastodonAccountApiController(
         ResponseEntity.ok(accountApiService.account(id.toLong()))
 
     override suspend fun apiV1AccountsVerifyCredentialsGet(): ResponseEntity<CredentialAccount> = ResponseEntity(
-        accountApiService.verifyCredentials(loginUserContextHolder.getLoginUserId()), HttpStatus.OK
+        accountApiService.verifyCredentials(loginUserContextHolder.getLoginUserId()),
+        HttpStatus.OK
     )
 
     override suspend fun apiV1AccountsPost(
-        username: String, password: String, email: String?, agreement: Boolean?, locale: Boolean?, reason: String?
+        username: String,
+        password: String,
+        email: String?,
+        agreement: Boolean?,
+        locale: Boolean?,
+        reason: String?
     ): ResponseEntity<Unit> {
         transaction.transaction {
             accountApiService.registerAccount(UserCreateDto(username, username, "", password))
@@ -93,7 +100,8 @@ class MastodonAccountApiController(
     }
 
     override fun apiV1AccountsRelationshipsGet(
-        id: List<String>?, withSuspended: Boolean
+        id: List<String>?,
+        withSuspended: Boolean
     ): ResponseEntity<Flow<Relationship>> = runBlocking {
         val userid = loginUserContextHolder.getLoginUserId()
 
@@ -164,8 +172,12 @@ class MastodonAccountApiController(
             val userid = loginUserContextHolder.getLoginUserId()
 
             val followRequests = accountApiService.followRequests(
-                userid, false, Page.PageByMaxId(
-                    maxId?.toLongOrNull(), sinceId?.toLongOrNull(), limit?.coerceIn(0, 80) ?: 40
+                userid,
+                false,
+                Page.PageByMaxId(
+                    maxId?.toLongOrNull(),
+                    sinceId?.toLongOrNull(),
+                    limit?.coerceIn(0, 80) ?: 40
                 )
 
             )
