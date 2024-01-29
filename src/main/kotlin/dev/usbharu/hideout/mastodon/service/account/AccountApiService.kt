@@ -19,20 +19,6 @@ import kotlin.math.min
 @Service
 @Suppress("TooManyFunctions")
 interface AccountApiService {
-    @Suppress("LongParameterList")
-    suspend fun accountsStatuses(
-        userid: Long,
-        maxId: Long?,
-        sinceId: Long?,
-        minId: Long?,
-        limit: Int,
-        onlyMedia: Boolean,
-        excludeReplies: Boolean,
-        excludeReblogs: Boolean,
-        pinned: Boolean,
-        tagged: String?,
-        loginUser: Long?
-    ): List<Status>
 
     suspend fun accountsStatuses(
         userid: Long,
@@ -88,43 +74,6 @@ class AccountApiServiceImpl(
     private val mediaService: MediaService
 ) :
     AccountApiService {
-    override suspend fun accountsStatuses(
-        userid: Long,
-        maxId: Long?,
-        sinceId: Long?,
-        minId: Long?,
-        limit: Int,
-        onlyMedia: Boolean,
-        excludeReplies: Boolean,
-        excludeReblogs: Boolean,
-        pinned: Boolean,
-        tagged: String?,
-        loginUser: Long?
-    ): List<Status> {
-        val canViewFollowers = if (loginUser == null) {
-            false
-        } else {
-            transaction.transaction {
-                isFollowing(loginUser, userid)
-            }
-        }
-
-        return transaction.transaction {
-            statusQueryService.accountsStatus(
-                accountId = userid,
-                maxId = maxId,
-                sinceId = sinceId,
-                minId = minId,
-                limit = limit,
-                onlyMedia = onlyMedia,
-                excludeReplies = excludeReplies,
-                excludeReblogs = excludeReblogs,
-                pinned = pinned,
-                tagged = tagged,
-                includeFollowers = canViewFollowers
-            )
-        }
-    }
 
     override suspend fun accountsStatuses(
         userid: Long,

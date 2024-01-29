@@ -57,62 +57,6 @@ class StatusQueryServiceImpl : StatusQueryService {
 
     override suspend fun accountsStatus(
         accountId: Long,
-        maxId: Long?,
-        sinceId: Long?,
-        minId: Long?,
-        limit: Int,
-        onlyMedia: Boolean,
-        excludeReplies: Boolean,
-        excludeReblogs: Boolean,
-        pinned: Boolean,
-        tagged: String?,
-        includeFollowers: Boolean
-    ): List<Status> {
-        val query = Posts
-            .leftJoin(PostsMedia)
-            .leftJoin(Actors)
-            .leftJoin(Media)
-            .select { Posts.actorId eq accountId }.limit(20)
-
-        if (maxId != null) {
-            query.andWhere { Posts.id eq maxId }
-        }
-        if (sinceId != null) {
-            query.andWhere { Posts.id eq sinceId }
-        }
-        if (minId != null) {
-            query.andWhere { Posts.id eq minId }
-        }
-        if (onlyMedia) {
-            query.andWhere { PostsMedia.mediaId.isNotNull() }
-        }
-        if (excludeReplies) {
-            query.andWhere { Posts.replyId.isNotNull() }
-        }
-        if (excludeReblogs) {
-            query.andWhere { Posts.repostId.isNotNull() }
-        }
-        if (includeFollowers) {
-            query.andWhere { Posts.visibility inList listOf(public.ordinal, unlisted.ordinal, private.ordinal) }
-        } else {
-            query.andWhere { Posts.visibility inList listOf(public.ordinal, unlisted.ordinal) }
-        }
-
-        val pairs = query.groupBy { it[Posts.id] }
-            .map { it.value }
-            .map {
-                toStatus(it.first()).copy(
-                    mediaAttachments = it.mapNotNull { resultRow ->
-                        resultRow.toMediaOrNull()?.toMediaAttachments()
-                    }
-                ) to it.first()[Posts.repostId]
-            }
-
-        return resolveReplyAndRepost(pairs)
-    }
-
-    override suspend fun accountsStatus(
-        accountId: Long,
         onlyMedia: Boolean,
         excludeReplies: Boolean,
         excludeReblogs: Boolean,
