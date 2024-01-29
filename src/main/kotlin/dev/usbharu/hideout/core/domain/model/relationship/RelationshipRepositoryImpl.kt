@@ -77,30 +77,6 @@ class RelationshipRepositoryImpl : RelationshipRepository, AbstractRepository() 
     }
 
     override suspend fun findByTargetIdAndFollowRequestAndIgnoreFollowRequest(
-        maxId: Long?,
-        sinceId: Long?,
-        limit: Int,
-        targetId: Long,
-        followRequest: Boolean,
-        ignoreFollowRequest: Boolean
-    ): List<Relationship> = query {
-        val query = Relationships.select {
-            Relationships.targetActorId.eq(targetId).and(Relationships.followRequest.eq(followRequest))
-                .and(Relationships.ignoreFollowRequestFromTarget.eq(ignoreFollowRequest))
-        }.limit(limit)
-
-        if (maxId != null) {
-            query.andWhere { Relationships.id lessEq maxId }
-        }
-
-        if (sinceId != null) {
-            query.andWhere { Relationships.id greaterEq sinceId }
-        }
-
-        return@query query.map { it.toRelationships() }
-    }
-
-    override suspend fun findByTargetIdAndFollowRequestAndIgnoreFollowRequest(
         targetId: Long,
         followRequest: Boolean,
         ignoreFollowRequest: Boolean,
@@ -118,28 +94,6 @@ class RelationshipRepositoryImpl : RelationshipRepository, AbstractRepository() 
             resultRowList.lastOrNull()?.getOrNull(Relationships.id)?.value,
             resultRowList.firstOrNull()?.getOrNull(Relationships.id)?.value
         )
-    }
-
-    override suspend fun findByActorIdAntMutingAndMaxIdAndSinceId(
-        actorId: Long,
-        muting: Boolean,
-        maxId: Long?,
-        sinceId: Long?,
-        limit: Int
-    ): List<Relationship> = query {
-        val query = Relationships.select {
-            Relationships.actorId.eq(actorId).and(Relationships.muting.eq(muting))
-        }.limit(limit)
-
-        if (maxId != null) {
-            query.andWhere { Relationships.id lessEq maxId }
-        }
-
-        if (sinceId != null) {
-            query.andWhere { Relationships.id greaterEq sinceId }
-        }
-
-        return@query query.map { it.toRelationships() }
     }
 
     override suspend fun findByActorIdAndMuting(

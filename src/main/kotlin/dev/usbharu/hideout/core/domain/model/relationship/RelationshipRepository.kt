@@ -36,31 +36,12 @@ interface RelationshipRepository {
 
     suspend fun findByTargetIdAndFollowing(targetId: Long, following: Boolean): List<Relationship>
 
-    @Suppress("LongParameterList", "FunctionMaxLength")
-    suspend fun findByTargetIdAndFollowRequestAndIgnoreFollowRequest(
-        maxId: Long?,
-        sinceId: Long?,
-        limit: Int,
-        targetId: Long,
-        followRequest: Boolean,
-        ignoreFollowRequest: Boolean
-    ): List<Relationship>
-
     suspend fun findByTargetIdAndFollowRequestAndIgnoreFollowRequest(
         targetIdLong: Long,
         followRequest: Boolean,
         ignoreFollowRequest: Boolean,
         page: Page.PageByMaxId
     ): PaginationList<Relationship, Long>
-
-    @Suppress("FunctionMaxLength")
-    suspend fun findByActorIdAntMutingAndMaxIdAndSinceId(
-        actorId: Long,
-        muting: Boolean,
-        maxId: Long?,
-        sinceId: Long?,
-        limit: Int
-    ): List<Relationship>
 
     suspend fun findByActorIdAndMuting(
         actorId: Long,
