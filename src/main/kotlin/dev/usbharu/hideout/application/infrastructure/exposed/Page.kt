@@ -23,14 +23,20 @@ sealed class Page {
     }
 
     companion object {
-        fun of(maxId: Long?, sinceId: Long?, minId: Long?, limit: Int?): Page = if (minId != null) {
-            PageByMinId(
-                maxId, minId, limit
-            )
-        } else {
-            PageByMaxId(
-                maxId, sinceId, limit
-            )
-        }
+        fun of(
+            maxId: Long? = null,
+            sinceId: Long? = null,
+            minId: Long? = null,
+            limit: Int? = null
+        ): Page =
+            if (minId != null) {
+                PageByMinId(
+                    maxId, minId, limit
+                )
+            } else {
+                PageByMaxId(
+                    maxId, sinceId, limit
+                )
+            }
     }
 }
