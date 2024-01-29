@@ -1,6 +1,9 @@
 package dev.usbharu.hideout.mastodon.interfaces.api.account
 
+import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.application.external.Transaction
+import dev.usbharu.hideout.application.infrastructure.exposed.Page
+import dev.usbharu.hideout.application.infrastructure.exposed.toHttpHeader
 import dev.usbharu.hideout.controller.mastodon.generated.AccountApi
 import dev.usbharu.hideout.core.infrastructure.springframework.security.LoginUserContextHolder
 import dev.usbharu.hideout.core.service.user.UserCreateDto
@@ -19,12 +22,12 @@ import java.net.URI
 class MastodonAccountApiController(
     private val accountApiService: AccountApiService,
     private val transaction: Transaction,
-    private val loginUserContextHolder: LoginUserContextHolder
+    private val loginUserContextHolder: LoginUserContextHolder,
+    private val applicationConfig: ApplicationConfig
 ) : AccountApi {
 
     override suspend fun apiV1AccountsIdFollowPost(
-        id: String,
-        followRequestBody: FollowRequestBody?
+        id: String, followRequestBody: FollowRequestBody?
     ): ResponseEntity<Relationship> {
         val userid = loginUserContextHolder.getLoginUserId()
 
@@ -35,17 +38,11 @@ class MastodonAccountApiController(
         ResponseEntity.ok(accountApiService.account(id.toLong()))
 
     override suspend fun apiV1AccountsVerifyCredentialsGet(): ResponseEntity<CredentialAccount> = ResponseEntity(
-        accountApiService.verifyCredentials(loginUserContextHolder.getLoginUserId()),
-        HttpStatus.OK
+        accountApiService.verifyCredentials(loginUserContextHolder.getLoginUserId()), HttpStatus.OK
     )
 
     override suspend fun apiV1AccountsPost(
-        username: String,
-        password: String,
-        email: String?,
-        agreement: Boolean?,
-        locale: Boolean?,
-        reason: String?
+        username: String, password: String, email: String?, agreement: Boolean?, locale: Boolean?, reason: String?
     ): ResponseEntity<Unit> {
         transaction.transaction {
             accountApiService.registerAccount(UserCreateDto(username, username, "", password))
@@ -85,8 +82,7 @@ class MastodonAccountApiController(
     }
 
     override fun apiV1AccountsRelationshipsGet(
-        id: List<String>?,
-        withSuspended: Boolean
+        id: List<String>?, withSuspended: Boolean
     ): ResponseEntity<Flow<Relationship>> = runBlocking {
         val userid = loginUserContextHolder.getLoginUserId()
 
@@ -128,8 +124,7 @@ class MastodonAccountApiController(
         return ResponseEntity.ok(removeFromFollowers)
     }
 
-    override suspend fun apiV1AccountsUpdateCredentialsPatch(updateCredentials: UpdateCredentials?):
-        ResponseEntity<Account> {
+    override suspend fun apiV1AccountsUpdateCredentialsPatch(updateCredentials: UpdateCredentials?): ResponseEntity<Account> {
         val userid = loginUserContextHolder.getLoginUserId()
 
         val removeFromFollowers = accountApiService.updateProfile(userid, updateCredentials)
@@ -157,10 +152,23 @@ class MastodonAccountApiController(
         runBlocking {
             val userid = loginUserContextHolder.getLoginUserId()
 
-            val accountFlow =
-                accountApiService.followRequests(userid, maxId?.toLong(), sinceId?.toLong(), limit ?: 20, false)
-                    .asFlow()
-            ResponseEntity.ok(accountFlow)
+            val followRequests = accountApiService.followRequests(
+                userid, false, Page.PageByMaxId(
+                    maxId?.toLongOrNull(), sinceId?.toLongOrNull(), limit?.coerceIn(0, 80) ?: 40
+                )
+
+            )
+
+            val httpHeader = followRequests.toHttpHeader(
+                { "${applicationConfig.url}/api/v1/follow_requests?max_id=$it" },
+                { "${applicationConfig.url}/api/v1/follow_requests?min_id=$it" },
+            )
+
+            if (httpHeader != null) {
+                return@runBlocking ResponseEntity.ok().header("Link", httpHeader).body(followRequests.asFlow())
+            }
+
+            ResponseEntity.ok(followRequests.asFlow())
         }
 
     override suspend fun apiV1AccountsIdMutePost(id: String): ResponseEntity<Relationship> {
