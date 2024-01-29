@@ -1,5 +1,8 @@
 package dev.usbharu.hideout.core.domain.model.relationship
 
+import dev.usbharu.hideout.application.infrastructure.exposed.Page
+import dev.usbharu.hideout.application.infrastructure.exposed.PaginationList
+import dev.usbharu.hideout.application.infrastructure.exposed.pagination
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.AbstractRepository
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Actors
 import org.jetbrains.exposed.dao.id.LongIdTable
@@ -97,6 +100,26 @@ class RelationshipRepositoryImpl : RelationshipRepository, AbstractRepository() 
         return@query query.map { it.toRelationships() }
     }
 
+    override suspend fun findByTargetIdAndFollowRequestAndIgnoreFollowRequest(
+        targetId: Long,
+        followRequest: Boolean,
+        ignoreFollowRequest: Boolean,
+        page: Page.PageByMaxId
+    ): PaginationList<Relationship, Long> = query {
+        val query = Relationships.select {
+            Relationships.targetActorId.eq(targetId).and(Relationships.followRequest.eq(followRequest))
+                .and(Relationships.ignoreFollowRequestFromTarget.eq(ignoreFollowRequest))
+        }
+
+        val resultRowList = query.pagination(page, Relationships.id).toList()
+
+        return@query PaginationList(
+            query.map { it.toRelationships() },
+            resultRowList.lastOrNull()?.getOrNull(Relationships.id)?.value,
+            resultRowList.firstOrNull()?.getOrNull(Relationships.id)?.value
+        )
+    }
+
     override suspend fun findByActorIdAntMutingAndMaxIdAndSinceId(
         actorId: Long,
         muting: Boolean,
@@ -117,6 +140,24 @@ class RelationshipRepositoryImpl : RelationshipRepository, AbstractRepository() 
         }
 
         return@query query.map { it.toRelationships() }
+    }
+
+    override suspend fun findByActorIdAndMuting(
+        actorId: Long,
+        muting: Boolean,
+        page: Page.PageByMaxId
+    ): PaginationList<Relationship, Long> = query {
+        val query = Relationships.select {
+            Relationships.actorId.eq(actorId).and(Relationships.muting.eq(muting))
+        }
+
+        val resultRowList = query.pagination(page, Relationships.id).toList()
+
+        return@query PaginationList(
+            query.map { it.toRelationships() },
+            resultRowList.lastOrNull()?.getOrNull(Relationships.id)?.value,
+            resultRowList.firstOrNull()?.getOrNull(Relationships.id)?.value
+        )
     }
 
     companion object {

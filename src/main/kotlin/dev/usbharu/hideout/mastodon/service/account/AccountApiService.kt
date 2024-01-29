@@ -1,6 +1,8 @@
 package dev.usbharu.hideout.mastodon.service.account
 
 import dev.usbharu.hideout.application.external.Transaction
+import dev.usbharu.hideout.application.infrastructure.exposed.Page
+import dev.usbharu.hideout.application.infrastructure.exposed.PaginationList
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
 import dev.usbharu.hideout.core.service.media.MediaService
 import dev.usbharu.hideout.core.service.relationship.RelationshipService
@@ -58,11 +60,18 @@ interface AccountApiService {
         withIgnore: Boolean
     ): List<Account>
 
+    suspend fun followRequests(
+        loginUser: Long,
+        withIgnore: Boolean,
+        pageByMaxId: Page.PageByMaxId
+    ): PaginationList<Account, Long>
+
     suspend fun acceptFollowRequest(loginUser: Long, target: Long): Relationship
     suspend fun rejectFollowRequest(loginUser: Long, target: Long): Relationship
     suspend fun mute(userid: Long, target: Long): Relationship
     suspend fun unmute(userid: Long, target: Long): Relationship
     suspend fun mutesAccount(userid: Long, maxId: Long?, sinceId: Long?, limit: Int): List<Account>
+    suspend fun mutesAccount(userid: Long, pageByMaxId: Page.PageByMaxId): PaginationList<Account, Long>
 }
 
 @Service
@@ -236,6 +245,23 @@ class AccountApiServiceImpl(
         return@transaction accountService.findByIds(actorIdList)
     }
 
+    override suspend fun followRequests(
+        loginUser: Long,
+        withIgnore: Boolean,
+        pageByMaxId: Page.PageByMaxId
+    ): PaginationList<Account, Long> = transaction.transaction {
+        val request =
+            relationshipRepository.findByTargetIdAndFollowRequestAndIgnoreFollowRequest(
+                loginUser,
+                true,
+                withIgnore,
+                pageByMaxId
+            )
+        val actorIds = request.map { it.actorId }
+
+        return@transaction PaginationList(accountService.findByIds(actorIds), request.next, request.prev)
+    }
+
     override suspend fun acceptFollowRequest(loginUser: Long, target: Long): Relationship = transaction.transaction {
         relationshipService.acceptFollowRequest(loginUser, target)
 
@@ -265,6 +291,16 @@ class AccountApiServiceImpl(
             relationshipRepository.findByActorIdAntMutingAndMaxIdAndSinceId(userid, true, maxId, sinceId, limit)
 
         return accountService.findByIds(mutedAccounts.map { it.targetActorId })
+    }
+
+    override suspend fun mutesAccount(userid: Long, pageByMaxId: Page.PageByMaxId): PaginationList<Account, Long> {
+        val mutedAccounts = relationshipRepository.findByActorIdAndMuting(userid, true, pageByMaxId)
+
+        return PaginationList(
+            accountService.findByIds(mutedAccounts.map { it.targetActorId }),
+            mutedAccounts.next,
+            mutedAccounts.prev
+        )
     }
 
     private fun from(account: Account): CredentialAccount {
