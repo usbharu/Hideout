@@ -1,6 +1,8 @@
 package dev.usbharu.hideout.mastodon.service.timeline
 
 import dev.usbharu.hideout.application.external.Transaction
+import dev.usbharu.hideout.application.infrastructure.exposed.Page
+import dev.usbharu.hideout.application.infrastructure.exposed.PaginationList
 import dev.usbharu.hideout.core.service.timeline.GenerateTimelineService
 import dev.usbharu.hideout.domain.mastodon.model.generated.Status
 import org.springframework.stereotype.Service
@@ -17,6 +19,13 @@ interface TimelineApiService {
         limit: Int = 20
     ): List<Status>
 
+    suspend fun publicTimeline(
+        localOnly: Boolean = false,
+        remoteOnly: Boolean = false,
+        mediaOnly: Boolean = false,
+        page: Page
+    ): PaginationList<Status, Long>
+
     suspend fun homeTimeline(
         userId: Long,
         maxId: Long?,
@@ -24,6 +33,11 @@ interface TimelineApiService {
         sinceId: Long?,
         limit: Int = 20
     ): List<Status>
+
+    suspend fun homeTimeline(
+        userId: Long,
+        page: Page
+    ): PaginationList<Status, Long>
 }
 
 @Service
@@ -51,6 +65,13 @@ class TimelineApiServiceImpl(
         )
     }
 
+    override suspend fun publicTimeline(
+        localOnly: Boolean,
+        remoteOnly: Boolean,
+        mediaOnly: Boolean,
+        page: Page
+    ): PaginationList<Status, Long> = generateTimelineService.getTimeline(forUserId = 0, localOnly, mediaOnly, page)
+
     override suspend fun homeTimeline(
         userId: Long,
         maxId: Long?,
@@ -66,4 +87,7 @@ class TimelineApiServiceImpl(
             limit = limit
         )
     }
+
+    override suspend fun homeTimeline(userId: Long, page: Page): PaginationList<Status, Long> =
+        generateTimelineService.getTimeline(forUserId = userId, page = page)
 }
