@@ -16,45 +16,6 @@ import org.springframework.stereotype.Service
 @Service
 @ConditionalOnProperty("hideout.use-mongodb", havingValue = "false", matchIfMissing = true)
 class ExposedGenerateTimelineService(private val statusQueryService: StatusQueryService) : GenerateTimelineService {
-    override suspend fun getTimeline(
-        forUserId: Long?,
-        localOnly: Boolean,
-        mediaOnly: Boolean,
-        maxId: Long?,
-        minId: Long?,
-        sinceId: Long?,
-        limit: Int
-    ): List<Status> {
-        val query = Timelines.selectAll()
-
-        if (forUserId != null) {
-            query.andWhere { Timelines.userId eq forUserId }
-        }
-        if (localOnly) {
-            query.andWhere { Timelines.isLocal eq true }
-        }
-        if (maxId != null) {
-            query.andWhere { Timelines.id lessEq maxId }
-        }
-        if (minId != null) {
-            query.andWhere { Timelines.id greaterEq minId }
-        }
-        val result = query
-            .limit(limit)
-            .orderBy(Timelines.createdAt, SortOrder.DESC)
-
-        val statusQueries = result.map {
-            StatusQuery(
-                it[Timelines.postId],
-                it[Timelines.replyId],
-                it[Timelines.repostId],
-                it[Timelines.mediaIds].split(",").mapNotNull { s -> s.toLongOrNull() },
-                it[Timelines.emojiIds].split(",").mapNotNull { s -> s.toLongOrNull() }
-            )
-        }
-
-        return statusQueryService.findByPostIdsWithMediaIds(statusQueries)
-    }
 
     override suspend fun getTimeline(
         forUserId: Long?,

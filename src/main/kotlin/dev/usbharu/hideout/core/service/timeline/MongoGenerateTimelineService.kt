@@ -20,51 +20,6 @@ class MongoGenerateTimelineService(
     private val mongoTemplate: MongoTemplate
 ) :
     GenerateTimelineService {
-    override suspend fun getTimeline(
-        forUserId: Long?,
-        localOnly: Boolean,
-        mediaOnly: Boolean,
-        maxId: Long?,
-        minId: Long?,
-        sinceId: Long?,
-        limit: Int
-    ): List<Status> {
-        val query = Query()
-
-        if (forUserId != null) {
-            val criteria = Criteria.where("userId").`is`(forUserId)
-            query.addCriteria(criteria)
-        }
-        if (localOnly) {
-            val criteria = Criteria.where("isLocal").`is`(true)
-            query.addCriteria(criteria)
-        }
-        if (maxId != null) {
-            val criteria = Criteria.where("postId").lt(maxId)
-            query.addCriteria(criteria)
-        }
-        if (minId != null) {
-            val criteria = Criteria.where("postId").gt(minId)
-            query.addCriteria(criteria)
-        }
-
-        query.limit(limit)
-        query.with(Sort.by(Sort.Direction.DESC, "createdAt"))
-
-        val timelines = mongoTemplate.find(query, Timeline::class.java)
-
-        return statusQueryService.findByPostIdsWithMediaIds(
-            timelines.map {
-                StatusQuery(
-                    it.postId,
-                    it.replyId,
-                    it.repostId,
-                    it.mediaIds,
-                    it.emojiIds
-                )
-            }
-        )
-    }
 
     override suspend fun getTimeline(
         forUserId: Long?,
