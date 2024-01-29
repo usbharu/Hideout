@@ -191,9 +191,21 @@ class MastodonAccountApiController(
         runBlocking {
             val userid = loginUserContextHolder.getLoginUserId()
 
-            val unmute =
-                accountApiService.mutesAccount(userid, maxId?.toLong(), sinceId?.toLong(), limit ?: 20).asFlow()
+            val mutes =
+                accountApiService.mutesAccount(
+                    userid,
+                    Page.PageByMaxId(maxId?.toLongOrNull(), sinceId?.toLongOrNull(), limit?.coerceIn(0, 80) ?: 40)
+                )
 
-            return@runBlocking ResponseEntity.ok(unmute)
+            val httpHeader = mutes.toHttpHeader(
+                { "${applicationConfig.url}/api/v1/mutes?max_id=$it" },
+                { "${applicationConfig.url}/api/v1/mutes?since_id=$it" },
+            )
+
+            if (httpHeader != null) {
+                return@runBlocking ResponseEntity.ok().header("Link", httpHeader).body(mutes.asFlow())
+            }
+
+            return@runBlocking ResponseEntity.ok(mutes.asFlow())
         }
 }
