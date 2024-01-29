@@ -55,7 +55,6 @@ class MastodonNotificationApiController(
         )
 
         ResponseEntity.ok().header("Link", httpHeader).body(notifications.asFlow())
-
     }
 
     override suspend fun apiV1NotificationsIdDismissPost(id: String): ResponseEntity<Any> {

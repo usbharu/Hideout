@@ -31,11 +31,15 @@ sealed class Page {
         ): Page =
             if (minId != null) {
                 PageByMinId(
-                    maxId, minId, limit
+                    maxId,
+                    minId,
+                    limit
                 )
             } else {
                 PageByMaxId(
-                    maxId, sinceId, limit
+                    maxId,
+                    sinceId,
+                    limit
                 )
             }
     }
