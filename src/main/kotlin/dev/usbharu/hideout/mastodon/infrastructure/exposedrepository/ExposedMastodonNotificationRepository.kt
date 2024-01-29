@@ -62,35 +62,6 @@ class ExposedMastodonNotificationRepository : MastodonNotificationRepository, Ab
         MastodonNotifications.select { MastodonNotifications.id eq id }.singleOrNull()?.toMastodonNotification()
     }
 
-    override suspend fun findByUserIdAndMaxIdAndMinIdAndSinceIdAndInTypesAndInSourceActorId(
-        loginUser: Long,
-        maxId: Long?,
-        minId: Long?,
-        sinceId: Long?,
-        limit: Int,
-        typesTmp: MutableList<NotificationType>,
-        accountId: List<Long>
-    ): List<MastodonNotification> = query {
-        val query = MastodonNotifications.select {
-            MastodonNotifications.userId eq loginUser
-        }
-
-        if (maxId != null) {
-            query.andWhere { MastodonNotifications.id lessEq maxId }
-        }
-        if (minId != null) {
-            query.andWhere { MastodonNotifications.id greaterEq minId }
-        }
-        if (sinceId != null) {
-            query.andWhere { MastodonNotifications.id greaterEq sinceId }
-        }
-        val result = query
-            .limit(limit)
-            .orderBy(Timelines.createdAt, SortOrder.DESC)
-
-        return@query result.map { it.toMastodonNotification() }
-    }
-
     override suspend fun findByUserIdAndInTypesAndInSourceActorId(
         loginUser: Long,
         types: List<NotificationType>,

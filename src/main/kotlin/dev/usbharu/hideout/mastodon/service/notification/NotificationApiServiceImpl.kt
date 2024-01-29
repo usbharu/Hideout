@@ -19,53 +19,6 @@ class NotificationApiServiceImpl(
     private val statusQueryService: StatusQueryService
 ) :
     NotificationApiService {
-    override suspend fun notifications(
-        loginUser: Long,
-        maxId: Long?,
-        minId: Long?,
-        sinceId: Long?,
-        limit: Int,
-        types: List<NotificationType>,
-        excludeTypes: List<NotificationType>,
-        accountId: List<Long>
-    ): List<Notification> = transaction.transaction {
-        val typesTmp = mutableListOf<NotificationType>()
-
-        typesTmp.addAll(types)
-        typesTmp.removeAll(excludeTypes)
-
-        val mastodonNotifications =
-            mastodonNotificationRepository.findByUserIdAndMaxIdAndMinIdAndSinceIdAndInTypesAndInSourceActorId(
-                loginUser,
-                maxId,
-                minId,
-                sinceId,
-                limit,
-                typesTmp,
-                accountId
-            )
-
-        val accounts = accountService.findByIds(
-            mastodonNotifications.map {
-                it.accountId
-            }
-        ).associateBy { it.id.toLong() }
-
-        val statuses = statusQueryService.findByPostIds(mastodonNotifications.mapNotNull { it.statusId })
-            .associateBy { it.id.toLong() }
-
-        mastodonNotifications.map {
-            Notification(
-                id = it.id.toString(),
-                type = convertNotificationType(it.type),
-                createdAt = it.createdAt.toString(),
-                account = accounts.getValue(it.accountId),
-                status = statuses[it.statusId],
-                report = null,
-                relationshipSeveranceEvent = null
-            )
-        }
-    }
 
     override suspend fun notifications(
         loginUser: Long,
