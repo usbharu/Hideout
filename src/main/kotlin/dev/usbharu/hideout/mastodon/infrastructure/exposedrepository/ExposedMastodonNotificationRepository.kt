@@ -1,5 +1,8 @@
 package dev.usbharu.hideout.mastodon.infrastructure.exposedrepository
 
+import dev.usbharu.hideout.application.infrastructure.exposed.Page
+import dev.usbharu.hideout.application.infrastructure.exposed.PaginationList
+import dev.usbharu.hideout.application.infrastructure.exposed.pagination
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.AbstractRepository
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Timelines
 import dev.usbharu.hideout.mastodon.domain.model.MastodonNotification
@@ -86,6 +89,23 @@ class ExposedMastodonNotificationRepository : MastodonNotificationRepository, Ab
             .orderBy(Timelines.createdAt, SortOrder.DESC)
 
         return@query result.map { it.toMastodonNotification() }
+    }
+
+    override suspend fun findByUserIdAndInTypesAndInSourceActorId(
+        loginUser: Long,
+        types: List<NotificationType>,
+        accountId: List<Long>,
+        page: Page
+    ): PaginationList<MastodonNotification, Long> = query {
+        val query = MastodonNotifications.select {
+            MastodonNotifications.userId eq loginUser
+        }
+        val result = query
+            .pagination(page, MastodonNotifications.id)
+            .orderBy(Timelines.createdAt, SortOrder.DESC)
+
+        val notifications = result.map { it.toMastodonNotification() }
+        return@query PaginationList(notifications, notifications.lastOrNull()?.id, notifications.firstOrNull()?.id)
     }
 
     override suspend fun deleteByUserId(userId: Long) {

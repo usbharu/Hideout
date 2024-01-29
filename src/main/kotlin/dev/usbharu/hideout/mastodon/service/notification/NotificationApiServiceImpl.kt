@@ -1,6 +1,8 @@
 package dev.usbharu.hideout.mastodon.service.notification
 
 import dev.usbharu.hideout.application.external.Transaction
+import dev.usbharu.hideout.application.infrastructure.exposed.Page
+import dev.usbharu.hideout.application.infrastructure.exposed.PaginationList
 import dev.usbharu.hideout.domain.mastodon.model.generated.Notification
 import dev.usbharu.hideout.mastodon.domain.model.MastodonNotificationRepository
 import dev.usbharu.hideout.mastodon.domain.model.NotificationType
@@ -63,6 +65,50 @@ class NotificationApiServiceImpl(
                 relationshipSeveranceEvent = null
             )
         }
+    }
+
+    override suspend fun notifications(
+        loginUser: Long,
+        types: List<NotificationType>,
+        excludeTypes: List<NotificationType>,
+        accountId: List<Long>,
+        page: Page
+    ): PaginationList<Notification, Long> = transaction.transaction {
+        val typesTmp = mutableListOf<NotificationType>()
+
+        typesTmp.addAll(types)
+        typesTmp.removeAll(excludeTypes)
+
+        val mastodonNotifications =
+            mastodonNotificationRepository.findByUserIdAndInTypesAndInSourceActorId(
+                loginUser,
+                typesTmp,
+                accountId,
+                page
+            )
+
+        val accounts = accountService.findByIds(
+            mastodonNotifications.map {
+                it.accountId
+            }
+        ).associateBy { it.id.toLong() }
+
+        val statuses = statusQueryService.findByPostIds(mastodonNotifications.mapNotNull { it.statusId })
+            .associateBy { it.id.toLong() }
+
+        val notifications = mastodonNotifications.map {
+            Notification(
+                id = it.id.toString(),
+                type = convertNotificationType(it.type),
+                createdAt = it.createdAt.toString(),
+                account = accounts.getValue(it.accountId),
+                status = statuses[it.statusId],
+                report = null,
+                relationshipSeveranceEvent = null
+            )
+        }
+
+        return@transaction PaginationList(notifications, mastodonNotifications.next, mastodonNotifications.prev)
     }
 
     override suspend fun fingById(loginUser: Long, notificationId: Long): Notification? {
