@@ -28,37 +28,6 @@ class MongoMastodonNotificationRepositoryWrapper(
     override suspend fun findById(id: Long): MastodonNotification? =
         mongoMastodonNotificationRepository.findById(id).getOrNull()
 
-    override suspend fun findByUserIdAndMaxIdAndMinIdAndSinceIdAndInTypesAndInSourceActorId(
-        loginUser: Long,
-        maxId: Long?,
-        minId: Long?,
-        sinceId: Long?,
-        limit: Int,
-        typesTmp: MutableList<NotificationType>,
-        accountId: List<Long>
-    ): List<MastodonNotification> {
-        val query = Query()
-
-        if (maxId != null) {
-            val criteria = Criteria.where("id").lte(maxId)
-            query.addCriteria(criteria)
-        }
-
-        if (minId != null) {
-            val criteria = Criteria.where("id").gte(minId)
-            query.addCriteria(criteria)
-        }
-        if (sinceId != null) {
-            val criteria = Criteria.where("id").gte(sinceId)
-            query.addCriteria(criteria)
-        }
-
-        query.limit(limit)
-        query.with(Sort.by(Sort.Direction.DESC, "createdAt"))
-
-        return mongoTemplate.find(query, MastodonNotification::class.java)
-    }
-
     override suspend fun findByUserIdAndInTypesAndInSourceActorId(
         loginUser: Long,
         types: List<NotificationType>,
