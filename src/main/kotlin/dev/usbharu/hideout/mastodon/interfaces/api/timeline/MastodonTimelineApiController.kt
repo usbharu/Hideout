@@ -1,5 +1,8 @@
 package dev.usbharu.hideout.mastodon.interfaces.api.timeline
 
+import dev.usbharu.hideout.application.config.ApplicationConfig
+import dev.usbharu.hideout.application.infrastructure.exposed.Page
+import dev.usbharu.hideout.application.infrastructure.exposed.toHttpHeader
 import dev.usbharu.hideout.controller.mastodon.generated.TimelineApi
 import dev.usbharu.hideout.core.infrastructure.springframework.security.LoginUserContextHolder
 import dev.usbharu.hideout.domain.mastodon.model.generated.Status
@@ -14,7 +17,8 @@ import org.springframework.stereotype.Controller
 @Controller
 class MastodonTimelineApiController(
     private val timelineApiService: TimelineApiService,
-    private val loginUserContextHolder: LoginUserContextHolder
+    private val loginUserContextHolder: LoginUserContextHolder,
+    private val applicationConfig: ApplicationConfig,
 ) : TimelineApi {
     override fun apiV1TimelinesHomeGet(
         maxId: String?,
@@ -24,10 +28,12 @@ class MastodonTimelineApiController(
     ): ResponseEntity<Flow<Status>> = runBlocking {
         val homeTimeline = timelineApiService.homeTimeline(
             userId = loginUserContextHolder.getLoginUserId(),
-            maxId = maxId?.toLongOrNull(),
-            minId = minId?.toLongOrNull(),
-            sinceId = sinceId?.toLongOrNull(),
-            limit = limit ?: 20
+            page = Page.of(
+                maxId = maxId?.toLongOrNull(),
+                minId = minId?.toLongOrNull(),
+                sinceId = sinceId?.toLongOrNull(),
+                limit = limit?.coerceIn(0, 80) ?: 40
+            )
         )
         ResponseEntity(homeTimeline.asFlow(), HttpStatus.OK)
     }
@@ -45,11 +51,21 @@ class MastodonTimelineApiController(
             localOnly = local ?: false,
             remoteOnly = remote ?: false,
             mediaOnly = onlyMedia ?: false,
-            maxId = maxId?.toLongOrNull(),
-            minId = minId?.toLongOrNull(),
-            sinceId = sinceId?.toLongOrNull(),
-            limit = limit ?: 20
+            page = Page.of(
+                maxId = maxId?.toLongOrNull(),
+                minId = minId?.toLongOrNull(),
+                sinceId = sinceId?.toLongOrNull(),
+                limit = limit?.coerceIn(0, 80) ?: 40
+            )
         )
-        ResponseEntity(publicTimeline.asFlow(), HttpStatus.OK)
+
+        val httpHeader = publicTimeline.toHttpHeader(
+            { "${applicationConfig.url}/api/v1/public?max_id=$it" },
+            { "${applicationConfig.url}/api/v1/public?min_id=$it" }
+        ) ?: return@runBlocking ResponseEntity(
+            publicTimeline.asFlow(),
+            HttpStatus.OK
+        )
+        ResponseEntity.ok().header("Link", httpHeader).body(publicTimeline.asFlow())
     }
 }
