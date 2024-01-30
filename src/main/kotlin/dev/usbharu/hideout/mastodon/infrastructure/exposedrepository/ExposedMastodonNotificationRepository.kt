@@ -2,10 +2,8 @@ package dev.usbharu.hideout.mastodon.infrastructure.exposedrepository
 
 import dev.usbharu.hideout.application.infrastructure.exposed.Page
 import dev.usbharu.hideout.application.infrastructure.exposed.PaginationList
-import dev.usbharu.hideout.application.infrastructure.exposed.pagination
 import dev.usbharu.hideout.application.infrastructure.exposed.withPagination
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.AbstractRepository
-import dev.usbharu.hideout.core.infrastructure.exposedrepository.Timelines
 import dev.usbharu.hideout.mastodon.domain.model.MastodonNotification
 import dev.usbharu.hideout.mastodon.domain.model.MastodonNotificationRepository
 import dev.usbharu.hideout.mastodon.domain.model.NotificationType
