@@ -2,7 +2,6 @@ package dev.usbharu.hideout.mastodon.infrastructure.exposedquery
 
 import dev.usbharu.hideout.application.infrastructure.exposed.Page
 import dev.usbharu.hideout.application.infrastructure.exposed.PaginationList
-import dev.usbharu.hideout.application.infrastructure.exposed.pagination
 import dev.usbharu.hideout.application.infrastructure.exposed.withPagination
 import dev.usbharu.hideout.core.domain.model.emoji.CustomEmoji
 import dev.usbharu.hideout.core.domain.model.media.toMediaAttachments
