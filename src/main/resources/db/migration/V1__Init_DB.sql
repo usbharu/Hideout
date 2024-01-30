@@ -15,9 +15,9 @@ create table if not exists instance
     id              bigint primary key,
     "name"          varchar(1000)  not null,
     description     varchar(5000)  not null,
-    url          varchar(255) not null unique,
+    url             varchar(255)   not null unique,
     icon_url        varchar(255)   not null,
-    shared_inbox varchar(255) null unique,
+    shared_inbox    varchar(255)   null unique,
     software        varchar(255)   not null,
     version         varchar(255)   not null,
     is_blocked      boolean        not null,
@@ -50,8 +50,8 @@ create table if not exists actors
     following_count int            not null,
     followers_count int            not null,
     posts_count     int            not null,
-    last_post_at timestamp    null     default null,
-    emojis       varchar(300) not null default '',
+    last_post_at    timestamp      null     default null,
+    emojis          varchar(300)   not null default '',
     unique ("name", "domain"),
     constraint fk_actors_instance__id foreign key ("instance") references instance (id) on delete restrict on update restrict
 );
@@ -60,7 +60,7 @@ create table if not exists user_details
 (
     id                                  bigserial primary key,
     actor_id                            bigint       not null unique,
-    password varchar(255) not null,
+    password                            varchar(255) not null,
     auto_accept_followee_follow_request boolean      not null,
     constraint fk_user_details_actor_id__id foreign key (actor_id) references actors (id) on delete restrict on update restrict
 );
@@ -69,9 +69,9 @@ create table if not exists media
 (
     id            bigint primary key,
     "name"        varchar(255)  not null,
-    url           varchar(255) not null unique,
-    remote_url    varchar(255) null unique,
-    thumbnail_url varchar(255) null unique,
+    url           varchar(255)  not null unique,
+    remote_url    varchar(255)  null unique,
+    thumbnail_url varchar(255)  null unique,
     "type"        int           not null,
     blurhash      varchar(255)  null,
     mime_type     varchar(255)  not null,
@@ -88,9 +88,9 @@ create table if not exists meta_info
 create table if not exists posts
 (
     id          bigint primary key,
-    actor_id bigint                not null,
+    actor_id    bigint                not null,
     overview    varchar(100)          null,
-    content  varchar(5000)         not null,
+    content     varchar(5000)         not null,
     text        varchar(3000)         not null,
     created_at  bigint                not null,
     visibility  int     default 0     not null,
@@ -98,8 +98,8 @@ create table if not exists posts
     repost_id   bigint                null,
     reply_id    bigint                null,
     "sensitive" boolean default false not null,
-    ap_id    varchar(100)          not null unique,
-    deleted  boolean default false not null
+    ap_id       varchar(100)          not null unique,
+    deleted     boolean default false not null
 );
 alter table posts
     add constraint fk_posts_actor_id__id foreign key (actor_id) references actors (id) on delete restrict on update restrict;
@@ -132,11 +132,11 @@ alter table posts_emojis
 
 create table if not exists reactions
 (
-    id       bigint primary key,
+    id              bigint primary key,
     unicode_emoji   varchar(255) null default null,
     custom_emoji_id bigint       null default null,
     post_id         bigint       not null,
-    actor_id bigint not null,
+    actor_id        bigint       not null,
     unique (post_id, actor_id)
 );
 alter table reactions
@@ -152,7 +152,7 @@ create table if not exists timelines
     user_id        bigint       not null,
     timeline_id    bigint       not null,
     post_id        bigint       not null,
-    post_actor_id bigint       not null,
+    post_actor_id  bigint       not null,
     created_at     bigint       not null,
     reply_id       bigint       null,
     repost_id      bigint       null,
@@ -160,8 +160,8 @@ create table if not exists timelines
     "sensitive"    boolean      not null,
     is_local       boolean      not null,
     is_pure_repost boolean      not null,
-    media_ids     varchar(255) not null,
-    emoji_ids     varchar(255) not null
+    media_ids      varchar(255) not null,
+    emoji_ids      varchar(255) not null
 );
 
 create table if not exists application_authorization
@@ -228,8 +228,8 @@ create table if not exists registered_client
 create table if not exists relationships
 (
     id                    bigserial primary key,
-    actor_id        bigint not null,
-    target_actor_id bigint not null,
+    actor_id              bigint  not null,
+    target_actor_id       bigint  not null,
     following             boolean not null,
     blocking              boolean not null,
     muting                boolean not null,
@@ -269,4 +269,16 @@ create table if not exists notifications
     constraint fk_notifications_source_actor__id foreign key (source_actor_id) references actors (id) on delete cascade on update cascade,
     constraint fk_notifications_post_id__id foreign key (post_id) references posts (id) on delete cascade on update cascade,
     constraint fk_notifications_reaction_id__id foreign key (reaction_id) references reactions (id) on delete cascade on update cascade
+);
+
+create table if not exists mastodon_notifications
+(
+    id                               bigint primary key,
+    user_id                          bigint       not null,
+    type                             varchar(100) not null,
+    created_at                       timestamp    not null,
+    account_id                       bigint       not null,
+    status_id                        bigint       null,
+    report_id                        bigint       null,
+    relationship_serverance_event_id bigint       null
 )
