@@ -97,6 +97,16 @@ class ExposedPaginationExtensionKtTest {
         assertThat(pagination).size().isEqualTo(30)
     }
 
+    @Test
+    fun 結果が0件の場合はprevとnextがnullになる():Unit = transaction {
+        val pagination = ExposePaginationTestTable.select { ExposePaginationTestTable.id.isNull() }
+            .withPagination(Page.of(), ExposePaginationTestTable.id)
+
+        assertThat(pagination).isEmpty()
+        assertThat(pagination.next).isNull()
+        assertThat(pagination.prev).isNull()
+    }
+
     object ExposePaginationTestTable : Table(){
         val id = long("id")
         val name = varchar("name",100)
