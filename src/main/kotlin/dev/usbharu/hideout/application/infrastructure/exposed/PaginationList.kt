@@ -8,15 +8,15 @@ fun <T, ID> PaginationList<T, ID>.toHttpHeader(
 ): String? {
     val mutableListOf = mutableListOf<String>()
     if (next != null) {
-        mutableListOf.add("<${nextBlock(nextBlock.toString())}>; rel=\"next\";")
+        mutableListOf.add("<${nextBlock(this.next.toString())}>; rel=\"next\"")
     }
     if (prev != null) {
-        mutableListOf.add("<${prevBlock(prevBlock.toString())}>; rel=\"prev\";")
+        mutableListOf.add("<${prevBlock(this.prev.toString())}>; rel=\"prev\"")
     }
 
     if (mutableListOf.isEmpty()) {
         return null
     }
 
-    return mutableListOf.joinToString(",")
+    return mutableListOf.joinToString(", ")
 }
