@@ -3,6 +3,7 @@ package dev.usbharu.hideout.core.domain.model.relationship
 import dev.usbharu.hideout.application.infrastructure.exposed.Page
 import dev.usbharu.hideout.application.infrastructure.exposed.PaginationList
 import dev.usbharu.hideout.application.infrastructure.exposed.pagination
+import dev.usbharu.hideout.application.infrastructure.exposed.withPagination
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.AbstractRepository
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Actors
 import org.jetbrains.exposed.dao.id.LongIdTable
@@ -87,12 +88,12 @@ class RelationshipRepositoryImpl : RelationshipRepository, AbstractRepository() 
                 .and(Relationships.ignoreFollowRequestFromTarget.eq(ignoreFollowRequest))
         }
 
-        val resultRowList = query.pagination(page, Relationships.id).toList()
+        val resultRowList = query.withPagination(page, Relationships.id)
 
         return@query PaginationList(
-            query.map { it.toRelationships() },
-            resultRowList.lastOrNull()?.getOrNull(Relationships.id)?.value,
-            resultRowList.firstOrNull()?.getOrNull(Relationships.id)?.value
+            resultRowList.map { it.toRelationships() },
+            resultRowList.next?.value,
+            resultRowList.prev?.value
         )
     }
 
@@ -105,12 +106,12 @@ class RelationshipRepositoryImpl : RelationshipRepository, AbstractRepository() 
             Relationships.actorId.eq(actorId).and(Relationships.muting.eq(muting))
         }
 
-        val resultRowList = query.pagination(page, Relationships.id).toList()
+        val resultRowList = query.withPagination(page, Relationships.id)
 
         return@query PaginationList(
-            query.map { it.toRelationships() },
-            resultRowList.lastOrNull()?.getOrNull(Relationships.id)?.value,
-            resultRowList.firstOrNull()?.getOrNull(Relationships.id)?.value
+            resultRowList.map { it.toRelationships() },
+            resultRowList.next?.value,
+            resultRowList.prev?.value
         )
     }
 

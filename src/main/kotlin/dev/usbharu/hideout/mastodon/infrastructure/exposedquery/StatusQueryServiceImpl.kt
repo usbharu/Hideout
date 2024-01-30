@@ -3,6 +3,7 @@ package dev.usbharu.hideout.mastodon.infrastructure.exposedquery
 import dev.usbharu.hideout.application.infrastructure.exposed.Page
 import dev.usbharu.hideout.application.infrastructure.exposed.PaginationList
 import dev.usbharu.hideout.application.infrastructure.exposed.pagination
+import dev.usbharu.hideout.application.infrastructure.exposed.withPagination
 import dev.usbharu.hideout.core.domain.model.emoji.CustomEmoji
 import dev.usbharu.hideout.core.domain.model.media.toMediaAttachments
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.*
@@ -71,8 +72,6 @@ class StatusQueryServiceImpl : StatusQueryService {
             .leftJoin(Media)
             .select { Posts.actorId eq accountId }
 
-        query.pagination(page, Posts.id)
-
         if (onlyMedia) {
             query.andWhere { PostsMedia.mediaId.isNotNull() }
         }
@@ -88,7 +87,9 @@ class StatusQueryServiceImpl : StatusQueryService {
             query.andWhere { Posts.visibility inList listOf(public.ordinal, unlisted.ordinal) }
         }
 
-        val pairs = query.groupBy { it[Posts.id] }
+        val pairs = query
+            .withPagination(page,Posts.id)
+            .groupBy { it[Posts.id] }
             .map { it.value }
             .map {
                 toStatus(it.first()).copy(

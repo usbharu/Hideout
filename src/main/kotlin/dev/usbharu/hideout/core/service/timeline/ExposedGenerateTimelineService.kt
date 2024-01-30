@@ -3,6 +3,7 @@ package dev.usbharu.hideout.core.service.timeline
 import dev.usbharu.hideout.application.infrastructure.exposed.Page
 import dev.usbharu.hideout.application.infrastructure.exposed.PaginationList
 import dev.usbharu.hideout.application.infrastructure.exposed.pagination
+import dev.usbharu.hideout.application.infrastructure.exposed.withPagination
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Timelines
 import dev.usbharu.hideout.domain.mastodon.model.generated.Status
 import dev.usbharu.hideout.mastodon.interfaces.api.status.StatusQuery
@@ -31,9 +32,8 @@ class ExposedGenerateTimelineService(private val statusQueryService: StatusQuery
         if (localOnly) {
             query.andWhere { Timelines.isLocal eq true }
         }
-        query.pagination(page, Timelines.id)
-        val result = query
-            .orderBy(Timelines.createdAt, SortOrder.DESC)
+        val result = query.withPagination(page, Timelines.id)
+
 
         val statusQueries = result.map {
             StatusQuery(
