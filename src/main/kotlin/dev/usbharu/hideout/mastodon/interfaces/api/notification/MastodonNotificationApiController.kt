@@ -48,8 +48,8 @@ class MastodonNotificationApiController(
         )
 
         val httpHeader = notifications.toHttpHeader(
-            { "${applicationConfig.url}/api/v1/notifications?max_id=$it" },
-            { "${applicationConfig.url}/api/v1/notifications?min_id=$it" }
+            { "${applicationConfig.url}/api/v1/notifications?min_id=$it" },
+            { "${applicationConfig.url}/api/v1/notifications?max_id=$it" }
         ) ?: return@runBlocking ResponseEntity.ok(
             notifications.asFlow()
         )
