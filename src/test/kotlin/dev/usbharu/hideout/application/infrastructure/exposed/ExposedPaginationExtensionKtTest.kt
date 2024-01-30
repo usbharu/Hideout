@@ -27,61 +27,73 @@ class ExposedPaginationExtensionKtTest {
 
     @Test
     fun パラメーター無しでの取得(): Unit = transaction {
-        val pagination: List<ResultRow> = ExposePaginationTestTable.selectAll().pagination(Page.of(), ExposePaginationTestTable.id).limit(20).toList()
+        val pagination: PaginationList<ResultRow,Long> = ExposePaginationTestTable.selectAll().limit(20).withPagination(Page.of(), ExposePaginationTestTable.id)
 
-        assertThat(pagination.firstOrNull()?.getOrNull(ExposePaginationTestTable.id)).isEqualTo(100)
-        assertThat(pagination.lastOrNull()?.getOrNull(ExposePaginationTestTable.id)).isEqualTo(81)
+        assertThat(pagination.next).isEqualTo(100)
+        assertThat(pagination.prev).isEqualTo(81)
+        assertThat(pagination.first()[ExposePaginationTestTable.id]).isEqualTo(100)
+        assertThat(pagination.last()[ExposePaginationTestTable.id]).isEqualTo(81)
         assertThat(pagination).size().isEqualTo(20)
     }
 
     @Test
     fun maxIdを指定して取得(): Unit = transaction {
-        val pagination: List<ResultRow> = ExposePaginationTestTable.selectAll().pagination(Page.of(maxId = 100), ExposePaginationTestTable.id).limit(20).toList()
+        val pagination: PaginationList<ResultRow,Long> = ExposePaginationTestTable.selectAll().limit(20).withPagination(Page.of(maxId = 100), ExposePaginationTestTable.id)
 
-        assertThat(pagination.firstOrNull()?.getOrNull(ExposePaginationTestTable.id)).isEqualTo(99)
-        assertThat(pagination.lastOrNull()?.getOrNull(ExposePaginationTestTable.id)).isEqualTo(80)
+        assertThat(pagination.next).isEqualTo(99)
+        assertThat(pagination.prev).isEqualTo(80)
+        assertThat(pagination.first()[ExposePaginationTestTable.id]).isEqualTo(99)
+        assertThat(pagination.last()[ExposePaginationTestTable.id]).isEqualTo(80)
         assertThat(pagination).size().isEqualTo(20)
     }
 
     @Test
     fun sinceIdを指定して取得(): Unit = transaction {
-        val pagination: List<ResultRow> = ExposePaginationTestTable.selectAll().pagination(Page.of(sinceId = 15), ExposePaginationTestTable.id).limit(20).toList()
+        val pagination: PaginationList<ResultRow,Long> = ExposePaginationTestTable.selectAll().limit(20).withPagination(Page.of(sinceId = 15), ExposePaginationTestTable.id)
 
-        assertThat(pagination.firstOrNull()?.getOrNull(ExposePaginationTestTable.id)).isEqualTo(100)
-        assertThat(pagination.lastOrNull()?.getOrNull(ExposePaginationTestTable.id)).isEqualTo(81)
+        assertThat(pagination.next).isEqualTo(100)
+        assertThat(pagination.prev).isEqualTo(81)
+        assertThat(pagination.first()[ExposePaginationTestTable.id]).isEqualTo(100)
+        assertThat(pagination.last()[ExposePaginationTestTable.id]).isEqualTo(81)
         assertThat(pagination).size().isEqualTo(20)
     }
 
     @Test
     fun minIdを指定して取得():Unit = transaction {
-        val pagination: List<ResultRow> = ExposePaginationTestTable.selectAll().pagination(Page.of(minId = 45), ExposePaginationTestTable.id).limit(20).toList()
+        val pagination: PaginationList<ResultRow,Long> = ExposePaginationTestTable.selectAll().limit(20).withPagination(Page.of(minId = 45), ExposePaginationTestTable.id)
 
-        assertThat(pagination.firstOrNull()?.getOrNull(ExposePaginationTestTable.id)).isEqualTo(46)
-        assertThat(pagination.lastOrNull()?.getOrNull(ExposePaginationTestTable.id)).isEqualTo(65)
+        assertThat(pagination.next).isEqualTo(65)
+        assertThat(pagination.prev).isEqualTo(46)
+        assertThat(pagination.first()[ExposePaginationTestTable.id]).isEqualTo(65)
+        assertThat(pagination.last()[ExposePaginationTestTable.id]).isEqualTo(46)
         assertThat(pagination).size().isEqualTo(20)
     }
 
     @Test
     fun maxIdとsinceIdを指定して取得(): Unit = transaction {
-        val pagination: List<ResultRow> = ExposePaginationTestTable.selectAll().pagination(Page.of(maxId = 45, sinceId = 34), ExposePaginationTestTable.id).limit(20).toList()
+        val pagination: PaginationList<ResultRow,Long> = ExposePaginationTestTable.selectAll().limit(20).withPagination(Page.of(maxId = 45, sinceId = 34), ExposePaginationTestTable.id)
 
-        assertThat(pagination.firstOrNull()?.getOrNull(ExposePaginationTestTable.id)).isEqualTo(44)
-        assertThat(pagination.lastOrNull()?.getOrNull(ExposePaginationTestTable.id)).isEqualTo(35)
+        assertThat(pagination.next).isEqualTo(44)
+        assertThat(pagination.prev).isEqualTo(35)
+        assertThat(pagination.first()[ExposePaginationTestTable.id]).isEqualTo(44)
+        assertThat(pagination.last()[ExposePaginationTestTable.id]).isEqualTo(35)
         assertThat(pagination).size().isEqualTo(10)
     }
 
     @Test
     fun maxIdとminIdを指定して取得():Unit = transaction {
-        val pagination: List<ResultRow> = ExposePaginationTestTable.selectAll().pagination(Page.of(maxId = 54, minId = 45), ExposePaginationTestTable.id).limit(20).toList()
+        val pagination: PaginationList<ResultRow,Long> = ExposePaginationTestTable.selectAll().limit(20).withPagination(Page.of(maxId = 54, minId = 45), ExposePaginationTestTable.id)
 
-        assertThat(pagination.firstOrNull()?.getOrNull(ExposePaginationTestTable.id)).isEqualTo(46)
-        assertThat(pagination.lastOrNull()?.getOrNull(ExposePaginationTestTable.id)).isEqualTo(53)
+        assertThat(pagination.next).isEqualTo(53)
+        assertThat(pagination.prev).isEqualTo(46)
+        assertThat(pagination.first()[ExposePaginationTestTable.id]).isEqualTo(53)
+        assertThat(pagination.last()[ExposePaginationTestTable.id]).isEqualTo(46)
         assertThat(pagination).size().isEqualTo(8)
     }
 
     @Test
     fun limitを指定して取得():Unit  = transaction {
-        val pagination: List<ResultRow> = ExposePaginationTestTable.selectAll().pagination(Page.of(limit = 30), ExposePaginationTestTable.id).toList()
+        val pagination: PaginationList<ResultRow,Long> = ExposePaginationTestTable.selectAll().withPagination(Page.of(limit = 30), ExposePaginationTestTable.id)
         assertThat(pagination).size().isEqualTo(30)
     }
 
