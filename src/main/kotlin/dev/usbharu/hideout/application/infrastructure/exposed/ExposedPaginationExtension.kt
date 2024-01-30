@@ -6,7 +6,7 @@ fun <S> Query.withPagination(page: Page, exp: ExpressionWithColumnType<S>): Pagi
     page.limit?.let { limit(it) }
     val resultRows = if (page.minId != null) {
         page.maxId?.let { andWhere { exp.less(it) } }
-        page.minId?.let { andWhere { exp.greater(it) } }
+        andWhere { exp.greater(page.minId!!) }
         reversed()
     } else {
         page.maxId?.let { andWhere { exp.less(it) } }
