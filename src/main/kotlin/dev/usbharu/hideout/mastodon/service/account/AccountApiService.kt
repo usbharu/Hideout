@@ -20,6 +20,7 @@ import kotlin.math.min
 @Suppress("TooManyFunctions")
 interface AccountApiService {
 
+    @Suppress("ongParameterList")
     suspend fun accountsStatuses(
         userid: Long,
         onlyMedia: Boolean,
@@ -87,7 +88,7 @@ class AccountApiServiceImpl(
     ): PaginationList<Status, Long> {
         val canViewFollowers = if (loginUser == null) {
             false
-        }else if(loginUser == userid) {
+        } else if (loginUser == userid) {
             true
         } else {
             transaction.transaction {

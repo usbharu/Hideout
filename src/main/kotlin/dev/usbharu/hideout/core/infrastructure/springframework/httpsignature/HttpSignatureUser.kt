@@ -41,10 +41,10 @@ class HttpSignatureUser(
 
     override fun toString(): String {
         return "HttpSignatureUser(" +
-                "domain='$domain', " +
-                "id=$id" +
-                ")" +
-                " ${super.toString()}"
+            "domain='$domain', " +
+            "id=$id" +
+            ")" +
+            " ${super.toString()}"
     }
 
     companion object {
