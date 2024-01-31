@@ -101,8 +101,8 @@ class StatusQueryServiceImpl : StatusQueryService {
         val statuses = resolveReplyAndRepost(pairs)
         return PaginationList(
             statuses,
-            statuses.lastOrNull()?.id?.toLongOrNull(),
-            statuses.firstOrNull()?.id?.toLongOrNull()
+            statuses.firstOrNull()?.id?.toLongOrNull(),
+            statuses.lastOrNull()?.id?.toLongOrNull()
         )
     }
 
@@ -137,7 +137,9 @@ class StatusQueryServiceImpl : StatusQueryService {
             }
             .map {
                 if (it.inReplyToId != null) {
-                    it.copy(inReplyToAccountId = statuses.find { (id) -> id == it.inReplyToId }?.id)
+                    println("statuses trace: $statuses")
+                    println("inReplyToId trace: ${it.inReplyToId}")
+                    it.copy(inReplyToAccountId = statuses.find { (id) -> id == it.inReplyToId }?.account?.id)
                 } else {
                     it
                 }

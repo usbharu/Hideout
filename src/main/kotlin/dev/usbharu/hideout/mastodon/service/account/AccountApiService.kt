@@ -87,6 +87,8 @@ class AccountApiServiceImpl(
     ): PaginationList<Status, Long> {
         val canViewFollowers = if (loginUser == null) {
             false
+        }else if(loginUser == userid) {
+            true
         } else {
             transaction.transaction {
                 isFollowing(loginUser, userid)
