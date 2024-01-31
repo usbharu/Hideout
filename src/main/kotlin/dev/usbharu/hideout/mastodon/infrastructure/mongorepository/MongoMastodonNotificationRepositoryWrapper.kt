@@ -36,22 +36,25 @@ class MongoMastodonNotificationRepositoryWrapper(
     ): PaginationList<MastodonNotification, Long> {
         val query = Query()
 
-        if (page.minId != null) {
-            page.minId?.let { query.addCriteria(Criteria.where("id").gt(it)) }
-            page.maxId?.let { query.addCriteria(Criteria.where("id").lt(it)) }
-        } else {
-            query.with(Sort.by(Sort.Direction.DESC, "createdAt"))
-            page.sinceId?.let { query.addCriteria(Criteria.where("id").gt(it)) }
-            page.maxId?.let { query.addCriteria(Criteria.where("id").lt(it)) }
-        }
-
         page.limit?.let { query.limit(it) }
 
-        val mastodonNotifications = mongoTemplate.find(query, MastodonNotification::class.java)
+        val mastodonNotifications = if (page.minId != null) {
+            query.with(Sort.by(Sort.Direction.ASC, "id"))
+            page.minId?.let { query.addCriteria(Criteria.where("id").gt(it)) }
+            page.maxId?.let { query.addCriteria(Criteria.where("id").lt(it)) }
+            mongoTemplate.find(query, MastodonNotification::class.java).reversed()
+        } else {
+            query.with(Sort.by(Sort.Direction.DESC, "id"))
+            page.sinceId?.let { query.addCriteria(Criteria.where("id").gt(it)) }
+            page.maxId?.let { query.addCriteria(Criteria.where("id").lt(it)) }
+            mongoTemplate.find(query, MastodonNotification::class.java)
+        }
+
+
         return PaginationList(
             mastodonNotifications,
-            mastodonNotifications.lastOrNull()?.id,
-            mastodonNotifications.firstOrNull()?.id
+            mastodonNotifications.firstOrNull()?.id,
+            mastodonNotifications.lastOrNull()?.id
         )
     }
 
