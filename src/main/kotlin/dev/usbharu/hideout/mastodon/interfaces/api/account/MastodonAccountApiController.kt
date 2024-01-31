@@ -88,8 +88,8 @@ class MastodonAccountApiController(
             )
         )
         val httpHeader = statuses.toHttpHeader(
-            { "${applicationConfig.url}/api/v1/accounts/$id/statuses?max_id=$it" },
             { "${applicationConfig.url}/api/v1/accounts/$id/statuses?min_id=$it" },
+            { "${applicationConfig.url}/api/v1/accounts/$id/statuses?max_id=$it" },
         )
 
         if (httpHeader != null) {
