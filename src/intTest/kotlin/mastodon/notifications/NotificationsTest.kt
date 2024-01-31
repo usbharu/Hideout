@@ -1,7 +1,11 @@
 package mastodon.notifications
 
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import dev.usbharu.hideout.SpringApplication
+import dev.usbharu.hideout.domain.mastodon.model.generated.Notification
 import kotlinx.coroutines.test.runTest
+import org.assertj.core.api.Assertions.assertThat
 import org.flywaydb.core.Flyway
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
@@ -34,7 +38,7 @@ class NotificationsTest {
 
     @Test
     fun `通知を取得できる`() = runTest {
-        mockMvc
+        val content = mockMvc
             .get("/api/v1/notifications") {
                 with(
                     SecurityMockMvcRequestPostProcessors.jwt()
@@ -50,12 +54,19 @@ class NotificationsTest {
                     )
                 }
             }
+            .andReturn()
+            .response
+            .contentAsString
 
+        val value = jacksonObjectMapper().readValue(content, object : TypeReference<List<Notification>>() {})
+
+        assertThat(value.first().id).isEqualTo("65")
+        assertThat(value.last().id).isEqualTo("26")
     }
 
     @Test
     fun maxIdを指定して通知を取得できる() = runTest {
-        mockMvc
+        val content = mockMvc
             .get("/api/v1/notifications?max_id=26") {
                 with(
                     SecurityMockMvcRequestPostProcessors.jwt()
@@ -71,12 +82,20 @@ class NotificationsTest {
                     )
                 }
             }
+            .andReturn()
+            .response
+            .contentAsString
+
+        val value = jacksonObjectMapper().readValue(content, object : TypeReference<List<Notification>>() {})
+
+        assertThat(value.first().id).isEqualTo("25")
+        assertThat(value.last().id).isEqualTo("1")
 
     }
 
     @Test
     fun minIdを指定して通知を取得できる() = runTest {
-        mockMvc
+        val content = mockMvc
             .get("/api/v1/notifications?min_id=25") {
                 with(
                     SecurityMockMvcRequestPostProcessors.jwt()
@@ -92,7 +111,38 @@ class NotificationsTest {
                     )
                 }
             }
+            .andReturn()
+            .response
+            .contentAsString
 
+        val value = jacksonObjectMapper().readValue(content, object : TypeReference<List<Notification>>() {})
+
+        assertThat(value.first().id).isEqualTo("65")
+        assertThat(value.last().id).isEqualTo("26")
+    }
+
+    @Test
+    fun 結果が0件のときはページネーションのヘッダーがない() = runTest {
+        val content = mockMvc
+            .get("/api/v1/notifications?max_id=1") {
+                with(
+                    SecurityMockMvcRequestPostProcessors.jwt()
+                        .jwt { it.claim("uid", "1") }.authorities(SimpleGrantedAuthority("SCOPE_read"))
+                )
+            }
+            .asyncDispatch()
+            .andExpect {
+                header {
+                    doesNotExist("Link")
+                }
+            }
+            .andReturn()
+            .response
+            .contentAsString
+
+        val value = jacksonObjectMapper().readValue(content, object : TypeReference<List<Notification>>() {})
+
+        assertThat(value).size().isZero()
     }
 
     @BeforeEach
