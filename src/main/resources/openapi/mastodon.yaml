@@ -573,6 +573,7 @@ paths:
           required: false
           schema:
             type: integer
+            nullable: true
             default: 20
         - in: query
           name: only_media
@@ -1051,7 +1052,6 @@ components:
         - group
         - discoverable
         - created_at
-        - last_status_at
         - statuses_count
         - followers_count
         - followers_count
@@ -1279,6 +1279,7 @@ components:
         language:
           type: string
           nullable: true
+          default: null
         text:
           type: string
           nullable: true
@@ -1316,11 +1317,7 @@ components:
         - favourites_count
         - replies_count
         - url
-        - in_reply_to_id
-        - in_reply_to_account_id
-        - language
         - text
-        - edited_at
 
     MediaAttachment:
       type: object

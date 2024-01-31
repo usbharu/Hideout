@@ -24,7 +24,7 @@ spring:
       auto-index-creation: true
       host: localhost
       port: 27017
-      database: hideout
+      database: hideout-integration-test
   h2:
     console:
       enabled: true

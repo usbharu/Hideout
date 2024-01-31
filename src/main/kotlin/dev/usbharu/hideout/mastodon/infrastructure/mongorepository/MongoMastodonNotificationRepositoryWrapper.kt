@@ -1,5 +1,7 @@
 package dev.usbharu.hideout.mastodon.infrastructure.mongorepository
 
+import dev.usbharu.hideout.application.infrastructure.exposed.Page
+import dev.usbharu.hideout.application.infrastructure.exposed.PaginationList
 import dev.usbharu.hideout.mastodon.domain.model.MastodonNotification
 import dev.usbharu.hideout.mastodon.domain.model.MastodonNotificationRepository
 import dev.usbharu.hideout.mastodon.domain.model.NotificationType
@@ -26,35 +28,33 @@ class MongoMastodonNotificationRepositoryWrapper(
     override suspend fun findById(id: Long): MastodonNotification? =
         mongoMastodonNotificationRepository.findById(id).getOrNull()
 
-    override suspend fun findByUserIdAndMaxIdAndMinIdAndSinceIdAndInTypesAndInSourceActorId(
+    override suspend fun findByUserIdAndInTypesAndInSourceActorId(
         loginUser: Long,
-        maxId: Long?,
-        minId: Long?,
-        sinceId: Long?,
-        limit: Int,
-        typesTmp: MutableList<NotificationType>,
-        accountId: List<Long>
-    ): List<MastodonNotification> {
+        types: List<NotificationType>,
+        accountId: List<Long>,
+        page: Page
+    ): PaginationList<MastodonNotification, Long> {
         val query = Query()
 
-        if (maxId != null) {
-            val criteria = Criteria.where("id").lte(maxId)
-            query.addCriteria(criteria)
+        page.limit?.let { query.limit(it) }
+
+        val mastodonNotifications = if (page.minId != null) {
+            query.with(Sort.by(Sort.Direction.ASC, "id"))
+            page.minId?.let { query.addCriteria(Criteria.where("id").gt(it)) }
+            page.maxId?.let { query.addCriteria(Criteria.where("id").lt(it)) }
+            mongoTemplate.find(query, MastodonNotification::class.java).reversed()
+        } else {
+            query.with(Sort.by(Sort.Direction.DESC, "id"))
+            page.sinceId?.let { query.addCriteria(Criteria.where("id").gt(it)) }
+            page.maxId?.let { query.addCriteria(Criteria.where("id").lt(it)) }
+            mongoTemplate.find(query, MastodonNotification::class.java)
         }
 
-        if (minId != null) {
-            val criteria = Criteria.where("id").gte(minId)
-            query.addCriteria(criteria)
-        }
-        if (sinceId != null) {
-            val criteria = Criteria.where("id").gte(sinceId)
-            query.addCriteria(criteria)
-        }
-
-        query.limit(limit)
-        query.with(Sort.by(Sort.Direction.DESC, "createdAt"))
-
-        return mongoTemplate.find(query, MastodonNotification::class.java)
+        return PaginationList(
+            mastodonNotifications,
+            mastodonNotifications.firstOrNull()?.id,
+            mastodonNotifications.lastOrNull()?.id
+        )
     }
 
     override suspend fun deleteByUserId(userId: Long) {

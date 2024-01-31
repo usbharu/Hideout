@@ -19,7 +19,7 @@ class InstanceApiServiceImpl(private val applicationConfig: ApplicationConfig) :
             title = "Hideout Server",
             shortDescription = "Hideout test server",
             description = "This server is operated for testing of Hideout." +
-                    " We are not responsible for any events that occur when associating with this server",
+                " We are not responsible for any events that occur when associating with this server",
             email = "i@usbharu.dev",
             version = "0.0.1",
             urls = V1InstanceUrls("wss://${url.host}"),

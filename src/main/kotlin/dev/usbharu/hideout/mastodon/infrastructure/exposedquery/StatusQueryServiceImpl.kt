@@ -1,5 +1,8 @@
 package dev.usbharu.hideout.mastodon.infrastructure.exposedquery
 
+import dev.usbharu.hideout.application.infrastructure.exposed.Page
+import dev.usbharu.hideout.application.infrastructure.exposed.PaginationList
+import dev.usbharu.hideout.application.infrastructure.exposed.withPagination
 import dev.usbharu.hideout.core.domain.model.emoji.CustomEmoji
 import dev.usbharu.hideout.core.domain.model.media.toMediaAttachments
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.*
@@ -54,32 +57,20 @@ class StatusQueryServiceImpl : StatusQueryService {
 
     override suspend fun accountsStatus(
         accountId: Long,
-        maxId: Long?,
-        sinceId: Long?,
-        minId: Long?,
-        limit: Int,
         onlyMedia: Boolean,
         excludeReplies: Boolean,
         excludeReblogs: Boolean,
         pinned: Boolean,
         tagged: String?,
-        includeFollowers: Boolean
-    ): List<Status> {
+        includeFollowers: Boolean,
+        page: Page
+    ): PaginationList<Status, Long> {
         val query = Posts
             .leftJoin(PostsMedia)
             .leftJoin(Actors)
             .leftJoin(Media)
-            .select { Posts.actorId eq accountId }.limit(20)
+            .select { Posts.actorId eq accountId }
 
-        if (maxId != null) {
-            query.andWhere { Posts.id eq maxId }
-        }
-        if (sinceId != null) {
-            query.andWhere { Posts.id eq sinceId }
-        }
-        if (minId != null) {
-            query.andWhere { Posts.id eq minId }
-        }
         if (onlyMedia) {
             query.andWhere { PostsMedia.mediaId.isNotNull() }
         }
@@ -95,7 +86,9 @@ class StatusQueryServiceImpl : StatusQueryService {
             query.andWhere { Posts.visibility inList listOf(public.ordinal, unlisted.ordinal) }
         }
 
-        val pairs = query.groupBy { it[Posts.id] }
+        val pairs = query
+            .withPagination(page, Posts.id)
+            .groupBy { it[Posts.id] }
             .map { it.value }
             .map {
                 toStatus(it.first()).copy(
@@ -105,7 +98,12 @@ class StatusQueryServiceImpl : StatusQueryService {
                 ) to it.first()[Posts.repostId]
             }
 
-        return resolveReplyAndRepost(pairs)
+        val statuses = resolveReplyAndRepost(pairs)
+        return PaginationList(
+            statuses,
+            statuses.firstOrNull()?.id?.toLongOrNull(),
+            statuses.lastOrNull()?.id?.toLongOrNull()
+        )
     }
 
     override suspend fun findByPostId(id: Long): Status {
@@ -139,7 +137,9 @@ class StatusQueryServiceImpl : StatusQueryService {
             }
             .map {
                 if (it.inReplyToId != null) {
-                    it.copy(inReplyToAccountId = statuses.find { (id) -> id == it.inReplyToId }?.id)
+                    println("statuses trace: $statuses")
+                    println("inReplyToId trace: ${it.inReplyToId}")
+                    it.copy(inReplyToAccountId = statuses.find { (id) -> id == it.inReplyToId }?.account?.id)
                 } else {
                     it
                 }

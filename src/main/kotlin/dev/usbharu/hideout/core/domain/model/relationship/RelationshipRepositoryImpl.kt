@@ -1,5 +1,8 @@
 package dev.usbharu.hideout.core.domain.model.relationship
 
+import dev.usbharu.hideout.application.infrastructure.exposed.Page
+import dev.usbharu.hideout.application.infrastructure.exposed.PaginationList
+import dev.usbharu.hideout.application.infrastructure.exposed.withPagination
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.AbstractRepository
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Actors
 import org.jetbrains.exposed.dao.id.LongIdTable
@@ -74,49 +77,41 @@ class RelationshipRepositoryImpl : RelationshipRepository, AbstractRepository() 
     }
 
     override suspend fun findByTargetIdAndFollowRequestAndIgnoreFollowRequest(
-        maxId: Long?,
-        sinceId: Long?,
-        limit: Int,
         targetId: Long,
         followRequest: Boolean,
-        ignoreFollowRequest: Boolean
-    ): List<Relationship> = query {
+        ignoreFollowRequest: Boolean,
+        page: Page.PageByMaxId
+    ): PaginationList<Relationship, Long> = query {
         val query = Relationships.select {
             Relationships.targetActorId.eq(targetId).and(Relationships.followRequest.eq(followRequest))
                 .and(Relationships.ignoreFollowRequestFromTarget.eq(ignoreFollowRequest))
-        }.limit(limit)
-
-        if (maxId != null) {
-            query.andWhere { Relationships.id lessEq maxId }
         }
 
-        if (sinceId != null) {
-            query.andWhere { Relationships.id greaterEq sinceId }
-        }
+        val resultRowList = query.withPagination(page, Relationships.id)
 
-        return@query query.map { it.toRelationships() }
+        return@query PaginationList(
+            resultRowList.map { it.toRelationships() },
+            resultRowList.next?.value,
+            resultRowList.prev?.value
+        )
     }
 
-    override suspend fun findByActorIdAntMutingAndMaxIdAndSinceId(
+    override suspend fun findByActorIdAndMuting(
         actorId: Long,
         muting: Boolean,
-        maxId: Long?,
-        sinceId: Long?,
-        limit: Int
-    ): List<Relationship> = query {
+        page: Page.PageByMaxId
+    ): PaginationList<Relationship, Long> = query {
         val query = Relationships.select {
             Relationships.actorId.eq(actorId).and(Relationships.muting.eq(muting))
-        }.limit(limit)
-
-        if (maxId != null) {
-            query.andWhere { Relationships.id lessEq maxId }
         }
 
-        if (sinceId != null) {
-            query.andWhere { Relationships.id greaterEq sinceId }
-        }
+        val resultRowList = query.withPagination(page, Relationships.id)
 
-        return@query query.map { it.toRelationships() }
+        return@query PaginationList(
+            resultRowList.map { it.toRelationships() },
+            resultRowList.next?.value,
+            resultRowList.prev?.value
+        )
     }
 
     companion object {

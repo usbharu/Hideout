@@ -1,6 +1,9 @@
 package dev.usbharu.hideout.mastodon.interfaces.api.account
 
+import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.application.external.Transaction
+import dev.usbharu.hideout.application.infrastructure.exposed.Page
+import dev.usbharu.hideout.application.infrastructure.exposed.toHttpHeader
 import dev.usbharu.hideout.controller.mastodon.generated.AccountApi
 import dev.usbharu.hideout.core.infrastructure.springframework.security.LoginUserContextHolder
 import dev.usbharu.hideout.core.service.user.UserCreateDto
@@ -19,7 +22,8 @@ import java.net.URI
 class MastodonAccountApiController(
     private val accountApiService: AccountApiService,
     private val transaction: Transaction,
-    private val loginUserContextHolder: LoginUserContextHolder
+    private val loginUserContextHolder: LoginUserContextHolder,
+    private val applicationConfig: ApplicationConfig
 ) : AccountApi {
 
     override suspend fun apiV1AccountsIdFollowPost(
@@ -68,20 +72,31 @@ class MastodonAccountApiController(
         tagged: String?
     ): ResponseEntity<Flow<Status>> = runBlocking {
         val userid = loginUserContextHolder.getLoginUserId()
-        val statusFlow = accountApiService.accountsStatuses(
+        val statuses = accountApiService.accountsStatuses(
             userid = id.toLong(),
-            maxId = maxId?.toLongOrNull(),
-            sinceId = sinceId?.toLongOrNull(),
-            minId = minId?.toLongOrNull(),
-            limit = limit,
             onlyMedia = onlyMedia,
             excludeReplies = excludeReplies,
             excludeReblogs = excludeReblogs,
             pinned = pinned,
             tagged = tagged,
-            loginUser = userid
-        ).asFlow()
-        ResponseEntity.ok(statusFlow)
+            loginUser = userid,
+            page = Page.of(
+                maxId?.toLongOrNull(),
+                sinceId?.toLongOrNull(),
+                minId?.toLongOrNull(),
+                limit.coerceIn(0, 80) ?: 40
+            )
+        )
+        val httpHeader = statuses.toHttpHeader(
+            { "${applicationConfig.url}/api/v1/accounts/$id/statuses?min_id=$it" },
+            { "${applicationConfig.url}/api/v1/accounts/$id/statuses?max_id=$it" },
+        )
+
+        if (httpHeader != null) {
+            return@runBlocking ResponseEntity.ok().header("Link", httpHeader).body(statuses.asFlow())
+        }
+
+        ResponseEntity.ok(statuses.asFlow())
     }
 
     override fun apiV1AccountsRelationshipsGet(
@@ -128,8 +143,7 @@ class MastodonAccountApiController(
         return ResponseEntity.ok(removeFromFollowers)
     }
 
-    override suspend fun apiV1AccountsUpdateCredentialsPatch(updateCredentials: UpdateCredentials?):
-        ResponseEntity<Account> {
+    override suspend fun apiV1AccountsUpdateCredentialsPatch(updateCredentials: UpdateCredentials?): ResponseEntity<Account> {
         val userid = loginUserContextHolder.getLoginUserId()
 
         val removeFromFollowers = accountApiService.updateProfile(userid, updateCredentials)
@@ -157,10 +171,27 @@ class MastodonAccountApiController(
         runBlocking {
             val userid = loginUserContextHolder.getLoginUserId()
 
-            val accountFlow =
-                accountApiService.followRequests(userid, maxId?.toLong(), sinceId?.toLong(), limit ?: 20, false)
-                    .asFlow()
-            ResponseEntity.ok(accountFlow)
+            val followRequests = accountApiService.followRequests(
+                userid,
+                false,
+                Page.PageByMaxId(
+                    maxId?.toLongOrNull(),
+                    sinceId?.toLongOrNull(),
+                    limit?.coerceIn(0, 80) ?: 40
+                )
+
+            )
+
+            val httpHeader = followRequests.toHttpHeader(
+                { "${applicationConfig.url}/api/v1/follow_requests?max_id=$it" },
+                { "${applicationConfig.url}/api/v1/follow_requests?min_id=$it" },
+            )
+
+            if (httpHeader != null) {
+                return@runBlocking ResponseEntity.ok().header("Link", httpHeader).body(followRequests.asFlow())
+            }
+
+            ResponseEntity.ok(followRequests.asFlow())
         }
 
     override suspend fun apiV1AccountsIdMutePost(id: String): ResponseEntity<Relationship> {
@@ -183,9 +214,21 @@ class MastodonAccountApiController(
         runBlocking {
             val userid = loginUserContextHolder.getLoginUserId()
 
-            val unmute =
-                accountApiService.mutesAccount(userid, maxId?.toLong(), sinceId?.toLong(), limit ?: 20).asFlow()
+            val mutes =
+                accountApiService.mutesAccount(
+                    userid,
+                    Page.PageByMaxId(maxId?.toLongOrNull(), sinceId?.toLongOrNull(), limit?.coerceIn(0, 80) ?: 40)
+                )
 
-            return@runBlocking ResponseEntity.ok(unmute)
+            val httpHeader = mutes.toHttpHeader(
+                { "${applicationConfig.url}/api/v1/mutes?max_id=$it" },
+                { "${applicationConfig.url}/api/v1/mutes?since_id=$it" },
+            )
+
+            if (httpHeader != null) {
+                return@runBlocking ResponseEntity.ok().header("Link", httpHeader).body(mutes.asFlow())
+            }
+
+            return@runBlocking ResponseEntity.ok(mutes.asFlow())
         }
 }

@@ -29,7 +29,7 @@ class MediaServiceImpl(
         val fileName = mediaRequest.file.name
         logger.info(
             "Media upload. filename:$fileName " +
-                    "contentType:${mediaRequest.file.contentType}"
+                "contentType:${mediaRequest.file.contentType}"
         )
 
         val tempFile = Files.createTempFile("hideout-tmp-file", ".tmp")

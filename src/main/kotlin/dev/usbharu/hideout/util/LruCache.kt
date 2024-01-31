@@ -7,9 +7,9 @@ class LruCache<K, V>(private val maxSize: Int) : LinkedHashMap<K, V>(15, 0.75f, 
     override fun removeEldestEntry(eldest: MutableMap.MutableEntry<K, V>?): Boolean = size > maxSize
     override fun toString(): String {
         return "LruCache(" +
-                "maxSize=$maxSize" +
-                ")" +
-                " ${super.toString()}"
+            "maxSize=$maxSize" +
+            ")" +
+            " ${super.toString()}"
     }
 
     companion object {
