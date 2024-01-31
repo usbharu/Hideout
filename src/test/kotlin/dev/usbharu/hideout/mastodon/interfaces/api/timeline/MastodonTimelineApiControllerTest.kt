@@ -1,6 +1,8 @@
 package dev.usbharu.hideout.mastodon.interfaces.api.timeline
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import dev.usbharu.hideout.application.config.ApplicationConfig
+import dev.usbharu.hideout.application.infrastructure.exposed.PaginationList
 import dev.usbharu.hideout.core.infrastructure.springframework.security.OAuth2JwtLoginUserContextHolder
 import dev.usbharu.hideout.domain.mastodon.model.generated.Account
 import dev.usbharu.hideout.domain.mastodon.model.generated.Status
@@ -21,6 +23,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
+import java.net.URL
 
 @ExtendWith(MockitoExtension::class)
 class MastodonTimelineApiControllerTest {
@@ -30,6 +33,9 @@ class MastodonTimelineApiControllerTest {
 
     @Mock
     private lateinit var timelineApiService: TimelineApiService
+
+    @Spy
+    private val applicationConfig: ApplicationConfig = ApplicationConfig(URL("https://example.com"))
 
     @InjectMocks
     private lateinit var mastodonTimelineApiController: MastodonTimelineApiController
@@ -41,107 +47,109 @@ class MastodonTimelineApiControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(mastodonTimelineApiController).build()
     }
 
-    val statusList = listOf<Status>(
-        Status(
-            id = "",
-            uri = "",
-            createdAt = "",
-            account = Account(
+    val statusList = PaginationList<Status, Long>(
+        listOf<Status>(
+            Status(
                 id = "",
-                username = "",
-                acct = "",
-                url = "",
-                displayName = "",
-                note = "",
-                avatar = "",
-                avatarStatic = "",
-                header = "",
-                headerStatic = "",
-                locked = false,
-                fields = emptyList(),
-                emojis = emptyList(),
-                bot = false,
-                group = false,
-                discoverable = true,
+                uri = "",
                 createdAt = "",
-                lastStatusAt = "",
-                statusesCount = 0,
-                followersCount = 0,
-                noindex = false,
-                moved = false,
-                suspendex = false,
-                limited = false,
-                followingCount = 0
-            ),
-            content = "",
-            visibility = Status.Visibility.public,
-            sensitive = false,
-            spoilerText = "",
-            mediaAttachments = emptyList(),
-            mentions = emptyList(),
-            tags = emptyList(),
-            emojis = emptyList(),
-            reblogsCount = 0,
-            favouritesCount = 0,
-            repliesCount = 0,
-            url = "https://example.com",
-            inReplyToId = null,
-            inReplyToAccountId = null,
-            language = "ja_JP",
-            text = "Test",
-            editedAt = null
+                account = Account(
+                    id = "",
+                    username = "",
+                    acct = "",
+                    url = "",
+                    displayName = "",
+                    note = "",
+                    avatar = "",
+                    avatarStatic = "",
+                    header = "",
+                    headerStatic = "",
+                    locked = false,
+                    fields = emptyList(),
+                    emojis = emptyList(),
+                    bot = false,
+                    group = false,
+                    discoverable = true,
+                    createdAt = "",
+                    lastStatusAt = "",
+                    statusesCount = 0,
+                    followersCount = 0,
+                    noindex = false,
+                    moved = false,
+                    suspendex = false,
+                    limited = false,
+                    followingCount = 0
+                ),
+                content = "",
+                visibility = Status.Visibility.public,
+                sensitive = false,
+                spoilerText = "",
+                mediaAttachments = emptyList(),
+                mentions = emptyList(),
+                tags = emptyList(),
+                emojis = emptyList(),
+                reblogsCount = 0,
+                favouritesCount = 0,
+                repliesCount = 0,
+                url = "https://example.com",
+                inReplyToId = null,
+                inReplyToAccountId = null,
+                language = "ja_JP",
+                text = "Test",
+                editedAt = null
 
-        ),
-        Status(
-            id = "",
-            uri = "",
-            createdAt = "",
-            account = Account(
+            ),
+            Status(
                 id = "",
-                username = "",
-                acct = "",
-                url = "",
-                displayName = "",
-                note = "",
-                avatar = "",
-                avatarStatic = "",
-                header = "",
-                headerStatic = "",
-                locked = false,
-                fields = emptyList(),
-                emojis = emptyList(),
-                bot = false,
-                group = false,
-                discoverable = true,
+                uri = "",
                 createdAt = "",
-                lastStatusAt = "",
-                statusesCount = 0,
-                followersCount = 0,
-                noindex = false,
-                moved = false,
-                suspendex = false,
-                limited = false,
-                followingCount = 0
-            ),
-            content = "",
-            visibility = Status.Visibility.public,
-            sensitive = false,
-            spoilerText = "",
-            mediaAttachments = emptyList(),
-            mentions = emptyList(),
-            tags = emptyList(),
-            emojis = emptyList(),
-            reblogsCount = 0,
-            favouritesCount = 0,
-            repliesCount = 0,
-            url = "https://example.com",
-            inReplyToId = null,
-            inReplyToAccountId = null,
-            language = "ja_JP",
-            text = "Test",
-            editedAt = null
+                account = Account(
+                    id = "",
+                    username = "",
+                    acct = "",
+                    url = "",
+                    displayName = "",
+                    note = "",
+                    avatar = "",
+                    avatarStatic = "",
+                    header = "",
+                    headerStatic = "",
+                    locked = false,
+                    fields = emptyList(),
+                    emojis = emptyList(),
+                    bot = false,
+                    group = false,
+                    discoverable = true,
+                    createdAt = "",
+                    lastStatusAt = "",
+                    statusesCount = 0,
+                    followersCount = 0,
+                    noindex = false,
+                    moved = false,
+                    suspendex = false,
+                    limited = false,
+                    followingCount = 0
+                ),
+                content = "",
+                visibility = Status.Visibility.public,
+                sensitive = false,
+                spoilerText = "",
+                mediaAttachments = emptyList(),
+                mentions = emptyList(),
+                tags = emptyList(),
+                emojis = emptyList(),
+                reblogsCount = 0,
+                favouritesCount = 0,
+                repliesCount = 0,
+                url = "https://example.com",
+                inReplyToId = null,
+                inReplyToAccountId = null,
+                language = "ja_JP",
+                text = "Test",
+                editedAt = null
 
-        )
+            )
+        ), null, null
     )
 
     @Test
@@ -156,10 +164,7 @@ class MastodonTimelineApiControllerTest {
         whenever(
             timelineApiService.homeTimeline(
                 eq(1234),
-                eq(123456),
-                eq(54321),
-                eq(1234567),
-                eq(20)
+                any()
             )
         ).doReturn(statusList)
 
@@ -183,10 +188,7 @@ class MastodonTimelineApiControllerTest {
         whenever(
             timelineApiService.homeTimeline(
                 eq(1234),
-                isNull(),
-                isNull(),
-                isNull(),
-                eq(20)
+                any()
             )
         ).doReturn(statusList)
 
@@ -213,10 +215,7 @@ class MastodonTimelineApiControllerTest {
                 localOnly = eq(false),
                 remoteOnly = eq(true),
                 mediaOnly = eq(false),
-                maxId = eq(1234),
-                minId = eq(4321),
-                sinceId = eq(12345),
-                limit = eq(20)
+                any()
             )
         ).doAnswer {
             println(it.arguments.joinToString())
@@ -245,10 +244,7 @@ class MastodonTimelineApiControllerTest {
                 localOnly = eq(false),
                 remoteOnly = eq(false),
                 mediaOnly = eq(false),
-                maxId = isNull(),
-                minId = isNull(),
-                sinceId = isNull(),
-                limit = eq(20)
+                any()
             )
         ).doAnswer {
             println(it.arguments.joinToString())

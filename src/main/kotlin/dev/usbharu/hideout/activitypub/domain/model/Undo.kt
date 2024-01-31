@@ -40,11 +40,11 @@ open class Undo(
 
     override fun toString(): String {
         return "Undo(" +
-                "actor='$actor', " +
-                "id='$id', " +
-                "apObject=$apObject, " +
-                "published=$published" +
-                ")" +
-                " ${super.toString()}"
+            "actor='$actor', " +
+            "id='$id', " +
+            "apObject=$apObject, " +
+            "published=$published" +
+            ")" +
+            " ${super.toString()}"
     }
 }

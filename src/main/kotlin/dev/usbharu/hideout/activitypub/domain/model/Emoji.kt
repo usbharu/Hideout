@@ -16,12 +16,12 @@ open class Emoji(
 
     override fun toString(): String {
         return "Emoji(" +
-                "name='$name', " +
-                "id='$id', " +
-                "updated='$updated', " +
-                "icon=$icon" +
-                ")" +
-                " ${super.toString()}"
+            "name='$name', " +
+            "id='$id', " +
+            "updated='$updated', " +
+            "icon=$icon" +
+            ")" +
+            " ${super.toString()}"
     }
 
     override fun equals(other: Any?): Boolean {

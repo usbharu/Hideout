@@ -1,5 +1,8 @@
 package dev.usbharu.hideout.core.domain.model.relationship
 
+import dev.usbharu.hideout.application.infrastructure.exposed.Page
+import dev.usbharu.hideout.application.infrastructure.exposed.PaginationList
+
 /**
  * [Relationship]の永続化
  *
@@ -33,22 +36,16 @@ interface RelationshipRepository {
 
     suspend fun findByTargetIdAndFollowing(targetId: Long, following: Boolean): List<Relationship>
 
-    @Suppress("LongParameterList", "FunctionMaxLength")
     suspend fun findByTargetIdAndFollowRequestAndIgnoreFollowRequest(
-        maxId: Long?,
-        sinceId: Long?,
-        limit: Int,
         targetId: Long,
         followRequest: Boolean,
-        ignoreFollowRequest: Boolean
-    ): List<Relationship>
+        ignoreFollowRequest: Boolean,
+        page: Page.PageByMaxId
+    ): PaginationList<Relationship, Long>
 
-    @Suppress("FunctionMaxLength")
-    suspend fun findByActorIdAntMutingAndMaxIdAndSinceId(
+    suspend fun findByActorIdAndMuting(
         actorId: Long,
         muting: Boolean,
-        maxId: Long?,
-        sinceId: Long?,
-        limit: Int
-    ): List<Relationship>
+        page: Page.PageByMaxId
+    ): PaginationList<Relationship, Long>
 }

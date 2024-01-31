@@ -1,5 +1,8 @@
 package dev.usbharu.hideout.mastodon.interfaces.api.notification
 
+import dev.usbharu.hideout.application.config.ApplicationConfig
+import dev.usbharu.hideout.application.infrastructure.exposed.Page
+import dev.usbharu.hideout.application.infrastructure.exposed.toHttpHeader
 import dev.usbharu.hideout.controller.mastodon.generated.NotificationsApi
 import dev.usbharu.hideout.core.infrastructure.springframework.security.LoginUserContextHolder
 import dev.usbharu.hideout.domain.mastodon.model.generated.Notification
@@ -14,7 +17,8 @@ import org.springframework.stereotype.Controller
 @Controller
 class MastodonNotificationApiController(
     private val loginUserContextHolder: LoginUserContextHolder,
-    private val notificationApiService: NotificationApiService
+    private val notificationApiService: NotificationApiService,
+    private val applicationConfig: ApplicationConfig
 ) : NotificationsApi {
     override suspend fun apiV1NotificationsClearPost(): ResponseEntity<Any> {
         notificationApiService.clearAll(loginUserContextHolder.getLoginUserId())
@@ -30,17 +34,27 @@ class MastodonNotificationApiController(
         excludeTypes: List<String>?,
         accountId: List<String>?
     ): ResponseEntity<Flow<Notification>> = runBlocking {
-        val notificationFlow = notificationApiService.notifications(
+        val notifications = notificationApiService.notifications(
             loginUser = loginUserContextHolder.getLoginUserId(),
-            maxId = maxId?.toLong(),
-            minId = minId?.toLong(),
-            sinceId = sinceId?.toLong(),
-            limit = limit ?: 20,
             types = types.orEmpty().mapNotNull { NotificationType.parse(it) },
             excludeTypes = excludeTypes.orEmpty().mapNotNull { NotificationType.parse(it) },
-            accountId = accountId.orEmpty().mapNotNull { it.toLongOrNull() }
-        ).asFlow()
-        ResponseEntity.ok(notificationFlow)
+            accountId = accountId.orEmpty().mapNotNull { it.toLongOrNull() },
+            page = Page.of(
+                maxId?.toLongOrNull(),
+                sinceId?.toLongOrNull(),
+                minId?.toLongOrNull(),
+                limit?.coerceIn(0, 80) ?: 40
+            )
+        )
+
+        val httpHeader = notifications.toHttpHeader(
+            { "${applicationConfig.url}/api/v1/notifications?min_id=$it" },
+            { "${applicationConfig.url}/api/v1/notifications?max_id=$it" }
+        ) ?: return@runBlocking ResponseEntity.ok(
+            notifications.asFlow()
+        )
+
+        ResponseEntity.ok().header("Link", httpHeader).body(notifications.asFlow())
     }
 
     override suspend fun apiV1NotificationsIdDismissPost(id: String): ResponseEntity<Any> {

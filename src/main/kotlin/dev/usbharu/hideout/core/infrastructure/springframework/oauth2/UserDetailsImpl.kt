@@ -28,9 +28,9 @@ class UserDetailsImpl(
 ) : User(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities) {
     override fun toString(): String {
         return "UserDetailsImpl(" +
-                "id=$id" +
-                ")" +
-                " ${super.toString()}"
+            "id=$id" +
+            ")" +
+            " ${super.toString()}"
     }
 
     override fun equals(other: Any?): Boolean {

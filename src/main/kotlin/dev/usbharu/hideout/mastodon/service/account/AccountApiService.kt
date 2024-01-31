@@ -1,6 +1,8 @@
 package dev.usbharu.hideout.mastodon.service.account
 
 import dev.usbharu.hideout.application.external.Transaction
+import dev.usbharu.hideout.application.infrastructure.exposed.Page
+import dev.usbharu.hideout.application.infrastructure.exposed.PaginationList
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
 import dev.usbharu.hideout.core.service.media.MediaService
 import dev.usbharu.hideout.core.service.relationship.RelationshipService
@@ -17,20 +19,18 @@ import kotlin.math.min
 @Service
 @Suppress("TooManyFunctions")
 interface AccountApiService {
-    @Suppress("LongParameterList")
+
+    @Suppress("ongParameterList")
     suspend fun accountsStatuses(
         userid: Long,
-        maxId: Long?,
-        sinceId: Long?,
-        minId: Long?,
-        limit: Int,
         onlyMedia: Boolean,
         excludeReplies: Boolean,
         excludeReblogs: Boolean,
         pinned: Boolean,
         tagged: String?,
-        loginUser: Long?
-    ): List<Status>
+        loginUser: Long?,
+        page: Page
+    ): PaginationList<Status, Long>
 
     suspend fun verifyCredentials(userid: Long): CredentialAccount
     suspend fun registerAccount(userCreateDto: UserCreateDto): Unit
@@ -50,19 +50,18 @@ interface AccountApiService {
     suspend fun unfollow(userid: Long, target: Long): Relationship
     suspend fun removeFromFollowers(userid: Long, target: Long): Relationship
     suspend fun updateProfile(userid: Long, updateCredentials: UpdateCredentials?): Account
+
     suspend fun followRequests(
         loginUser: Long,
-        maxId: Long?,
-        sinceId: Long?,
-        limit: Int = 20,
-        withIgnore: Boolean
-    ): List<Account>
+        withIgnore: Boolean,
+        pageByMaxId: Page.PageByMaxId
+    ): PaginationList<Account, Long>
 
     suspend fun acceptFollowRequest(loginUser: Long, target: Long): Relationship
     suspend fun rejectFollowRequest(loginUser: Long, target: Long): Relationship
     suspend fun mute(userid: Long, target: Long): Relationship
     suspend fun unmute(userid: Long, target: Long): Relationship
-    suspend fun mutesAccount(userid: Long, maxId: Long?, sinceId: Long?, limit: Int): List<Account>
+    suspend fun mutesAccount(userid: Long, pageByMaxId: Page.PageByMaxId): PaginationList<Account, Long>
 }
 
 @Service
@@ -76,21 +75,21 @@ class AccountApiServiceImpl(
     private val mediaService: MediaService
 ) :
     AccountApiService {
+
     override suspend fun accountsStatuses(
         userid: Long,
-        maxId: Long?,
-        sinceId: Long?,
-        minId: Long?,
-        limit: Int,
         onlyMedia: Boolean,
         excludeReplies: Boolean,
         excludeReblogs: Boolean,
         pinned: Boolean,
         tagged: String?,
-        loginUser: Long?
-    ): List<Status> {
+        loginUser: Long?,
+        page: Page
+    ): PaginationList<Status, Long> {
         val canViewFollowers = if (loginUser == null) {
             false
+        } else if (loginUser == userid) {
+            true
         } else {
             transaction.transaction {
                 isFollowing(loginUser, userid)
@@ -100,16 +99,13 @@ class AccountApiServiceImpl(
         return transaction.transaction {
             statusQueryService.accountsStatus(
                 accountId = userid,
-                maxId = maxId,
-                sinceId = sinceId,
-                minId = minId,
-                limit = limit,
                 onlyMedia = onlyMedia,
                 excludeReplies = excludeReplies,
                 excludeReblogs = excludeReblogs,
                 pinned = pinned,
                 tagged = tagged,
-                includeFollowers = canViewFollowers
+                includeFollowers = canViewFollowers,
+                page = page
             )
         }
     }
@@ -217,23 +213,19 @@ class AccountApiServiceImpl(
 
     override suspend fun followRequests(
         loginUser: Long,
-        maxId: Long?,
-        sinceId: Long?,
-        limit: Int,
-        withIgnore: Boolean
-    ): List<Account> = transaction.transaction {
-        val actorIdList = relationshipRepository
-            .findByTargetIdAndFollowRequestAndIgnoreFollowRequest(
-                maxId = maxId,
-                sinceId = sinceId,
-                limit = limit,
-                targetId = loginUser,
-                followRequest = true,
-                ignoreFollowRequest = withIgnore
+        withIgnore: Boolean,
+        pageByMaxId: Page.PageByMaxId
+    ): PaginationList<Account, Long> = transaction.transaction {
+        val request =
+            relationshipRepository.findByTargetIdAndFollowRequestAndIgnoreFollowRequest(
+                loginUser,
+                true,
+                withIgnore,
+                pageByMaxId
             )
-            .map { it.actorId }
+        val actorIds = request.map { it.actorId }
 
-        return@transaction accountService.findByIds(actorIdList)
+        return@transaction PaginationList(accountService.findByIds(actorIds), request.next, request.prev)
     }
 
     override suspend fun acceptFollowRequest(loginUser: Long, target: Long): Relationship = transaction.transaction {
@@ -260,11 +252,14 @@ class AccountApiServiceImpl(
         return@transaction fetchRelationship(userid, target)
     }
 
-    override suspend fun mutesAccount(userid: Long, maxId: Long?, sinceId: Long?, limit: Int): List<Account> {
-        val mutedAccounts =
-            relationshipRepository.findByActorIdAntMutingAndMaxIdAndSinceId(userid, true, maxId, sinceId, limit)
+    override suspend fun mutesAccount(userid: Long, pageByMaxId: Page.PageByMaxId): PaginationList<Account, Long> {
+        val mutedAccounts = relationshipRepository.findByActorIdAndMuting(userid, true, pageByMaxId)
 
-        return accountService.findByIds(mutedAccounts.map { it.targetActorId })
+        return PaginationList(
+            accountService.findByIds(mutedAccounts.map { it.targetActorId }),
+            mutedAccounts.next,
+            mutedAccounts.prev
+        )
     }
 
     private fun from(account: Account): CredentialAccount {
