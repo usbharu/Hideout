@@ -30,7 +30,8 @@ import org.springframework.web.context.WebApplicationContext
 @Sql("/sql/test-user.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 @Sql("/sql/test-user2.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 @Sql("/sql/notification/test-notifications.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
-class NotificationsTest {
+@Sql("/sql/notification/test-mastodon_notifications.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
+class ExposedNotificationsApiPaginationTest {
     @Autowired
     private lateinit var context: WebApplicationContext
 
