@@ -35,7 +35,15 @@ class MastodonTimelineApiController(
                 limit = limit?.coerceIn(0, 80) ?: 40
             )
         )
-        ResponseEntity(homeTimeline.asFlow(), HttpStatus.OK)
+
+        val httpHeader = homeTimeline.toHttpHeader(
+            { "${applicationConfig.url}/api/v1/home?max_id=$it" },
+            { "${applicationConfig.url}/api/v1/home?min_id=$it" }
+        ) ?: return@runBlocking ResponseEntity(
+            homeTimeline.asFlow(),
+            HttpStatus.OK
+        )
+        ResponseEntity.ok().header("Link", httpHeader).body(homeTimeline.asFlow())
     }
 
     override fun apiV1TimelinesPublicGet(
