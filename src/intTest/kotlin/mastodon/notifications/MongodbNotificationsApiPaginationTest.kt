@@ -165,6 +165,9 @@ class MongodbNotificationsApiPaginationTest {
         fun setupMongodb(
             @Autowired mongoMastodonNotificationRepository: MongoMastodonNotificationRepository
         ) {
+
+            mongoMastodonNotificationRepository.deleteAll()
+
             val notifications = (1..65).map {
                 MastodonNotification(
                     it.toLong(),
