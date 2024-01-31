@@ -8,7 +8,7 @@ data class ImageMediaProcessorConfiguration(
     val thubnail: ImageMediaProcessorThumbnailConfiguration?,
     val supportedType: List<String>?,
 
-    )
+)
 
 data class ImageMediaProcessorThumbnailConfiguration(
     val generate: Boolean,

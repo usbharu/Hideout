@@ -50,7 +50,6 @@ class MongoMastodonNotificationRepositoryWrapper(
             mongoTemplate.find(query, MastodonNotification::class.java)
         }
 
-
         return PaginationList(
             mastodonNotifications,
             mastodonNotifications.firstOrNull()?.id,

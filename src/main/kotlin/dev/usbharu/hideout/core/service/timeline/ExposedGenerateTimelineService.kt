@@ -32,7 +32,6 @@ class ExposedGenerateTimelineService(private val statusQueryService: StatusQuery
         }
         val result = query.withPagination(page, Timelines.id)
 
-
         val statusQueries = result.map {
             StatusQuery(
                 it[Timelines.postId],

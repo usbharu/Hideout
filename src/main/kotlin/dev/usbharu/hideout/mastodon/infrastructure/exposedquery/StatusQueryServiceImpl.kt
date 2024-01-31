@@ -87,7 +87,7 @@ class StatusQueryServiceImpl : StatusQueryService {
         }
 
         val pairs = query
-            .withPagination(page,Posts.id)
+            .withPagination(page, Posts.id)
             .groupBy { it[Posts.id] }
             .map { it.value }
             .map {

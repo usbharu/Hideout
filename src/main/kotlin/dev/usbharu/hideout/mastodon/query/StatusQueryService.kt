@@ -9,6 +9,7 @@ interface StatusQueryService {
     suspend fun findByPostIds(ids: List<Long>): List<Status>
     suspend fun findByPostIdsWithMediaIds(statusQueries: List<StatusQuery>): List<Status>
 
+    @Suppress("LongParameterList")
     suspend fun accountsStatus(
         accountId: Long,
         onlyMedia: Boolean = false,
