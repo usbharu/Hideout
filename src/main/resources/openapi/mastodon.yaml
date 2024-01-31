@@ -1051,7 +1051,6 @@ components:
         - group
         - discoverable
         - created_at
-        - last_status_at
         - statuses_count
         - followers_count
         - followers_count
