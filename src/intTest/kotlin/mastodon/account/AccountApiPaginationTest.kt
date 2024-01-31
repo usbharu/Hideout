@@ -55,8 +55,76 @@ class AccountApiPaginationTest {
 
         val value = jacksonObjectMapper().readValue(content, object : TypeReference<List<Status>>() {})
 
-        Assertions.assertThat(value.first().id).isEqualTo("100")
-        Assertions.assertThat(value.last().id).isEqualTo("81")
+        assertThat(value.first().id).isEqualTo("100")
+        assertThat(value.last().id).isEqualTo("81")
+        assertThat(value).size().isEqualTo(20)
+    }
+
+    @Test
+    fun `apiV1AccountsIdStatusesGet 結果が0件のときはLinkヘッダーがない`() {
+        val content = mockMvc
+            .get("/api/v1/accounts/1/statuses?min_id=100"){
+                with(
+                    SecurityMockMvcRequestPostProcessors.jwt()
+                        .jwt { it.claim("uid", "1") }.authorities(SimpleGrantedAuthority("SCOPE_read"))
+                )
+            }
+            .asyncDispatch()
+            .andExpect { status { isOk() } }
+            .andExpect { header { doesNotExist("Link") } }
+            .andReturn()
+            .response
+            .contentAsString
+
+        val value = jacksonObjectMapper().readValue(content, object : TypeReference<List<Status>>() {})
+
+
+        assertThat(value).isEmpty()
+    }
+
+    @Test
+    fun `apiV1AccountsIdStatusesGet maxIdを指定して取得`() {
+        val content = mockMvc
+            .get("/api/v1/accounts/1/statuses?max_id=100"){
+                with(
+                    SecurityMockMvcRequestPostProcessors.jwt()
+                        .jwt { it.claim("uid", "1") }.authorities(SimpleGrantedAuthority("SCOPE_read"))
+                )
+            }
+            .asyncDispatch()
+            .andExpect { status { isOk() } }
+            .andExpect { header { string("Link","<https://example.com/api/v1/accounts/1/statuses?min_id=99>; rel=\"next\", <https://example.com/api/v1/accounts/1/statuses?max_id=80>; rel=\"prev\"") } }
+            .andReturn()
+            .response
+            .contentAsString
+
+        val value = jacksonObjectMapper().readValue(content, object : TypeReference<List<Status>>() {})
+
+        assertThat(value.first().id).isEqualTo("99")
+        assertThat(value.last().id).isEqualTo("80")
+        assertThat(value).size().isEqualTo(20)
+    }
+
+    @Test
+    fun `apiV1AccountsIdStatusesGet minIdを指定して取得`() {
+        val content = mockMvc
+            .get("/api/v1/accounts/1/statuses?min_id=1"){
+                with(
+                    SecurityMockMvcRequestPostProcessors.jwt()
+                        .jwt { it.claim("uid", "1") }.authorities(SimpleGrantedAuthority("SCOPE_read"))
+                )
+            }
+            .asyncDispatch()
+            .andExpect { status { isOk() } }
+            .andExpect { header { string("Link","<https://example.com/api/v1/accounts/1/statuses?min_id=21>; rel=\"next\", <https://example.com/api/v1/accounts/1/statuses?max_id=2>; rel=\"prev\"") } }
+            .andReturn()
+            .response
+            .contentAsString
+
+        val value = jacksonObjectMapper().readValue(content, object : TypeReference<List<Status>>() {})
+
+        assertThat(value.first().id).isEqualTo("21")
+        assertThat(value.last().id).isEqualTo("2")
         assertThat(value).size().isEqualTo(20)
     }
 
