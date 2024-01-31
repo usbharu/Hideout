@@ -1,0 +1,78 @@
+package mastodon.account
+
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import dev.usbharu.hideout.SpringApplication
+import dev.usbharu.hideout.domain.mastodon.model.generated.Notification
+import dev.usbharu.hideout.domain.mastodon.model.generated.Status
+import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
+import org.flywaydb.core.Flyway
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors
+import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers
+import org.springframework.test.context.jdbc.Sql
+import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.get
+import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
+import org.springframework.test.web.servlet.setup.MockMvcBuilders
+import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.context.WebApplicationContext
+
+@SpringBootTest(classes = [SpringApplication::class])
+@AutoConfigureMockMvc
+@Transactional
+@Sql("/sql/test-user.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
+@Sql("/sql/test-user2.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
+@Sql("/sql/accounts/test-accounts-statuses.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
+class AccountApiPaginationTest {
+    @Autowired
+    private lateinit var context: WebApplicationContext
+
+    private lateinit var mockMvc: MockMvc
+
+    @Test
+    fun `apiV1AccountsIdStatusesGet 投稿を取得できる`() {
+        val content = mockMvc
+            .get("/api/v1/accounts/1/statuses"){
+                with(
+                    SecurityMockMvcRequestPostProcessors.jwt()
+                        .jwt { it.claim("uid", "1") }.authorities(SimpleGrantedAuthority("SCOPE_read"))
+                )
+            }
+            .asyncDispatch()
+            .andExpect { status { isOk() } }
+            .andExpect { header { string("Link","<https://example.com/api/v1/accounts/1/statuses?min_id=100>; rel=\"next\", <https://example.com/api/v1/accounts/1/statuses?max_id=81>; rel=\"prev\"") } }
+            .andReturn()
+            .response
+            .contentAsString
+
+        val value = jacksonObjectMapper().readValue(content, object : TypeReference<List<Status>>() {})
+
+        Assertions.assertThat(value.first().id).isEqualTo("100")
+        Assertions.assertThat(value.last().id).isEqualTo("81")
+        assertThat(value).size().isEqualTo(20)
+    }
+
+    @BeforeEach
+    fun setUp() {
+        mockMvc = MockMvcBuilders.webAppContextSetup(context)
+            .apply<DefaultMockMvcBuilder>(SecurityMockMvcConfigurers.springSecurity())
+            .build()
+    }
+
+    companion object {
+        @JvmStatic
+        @AfterAll
+        fun dropDatabase(@Autowired flyway: Flyway) {
+            flyway.clean()
+            flyway.migrate()
+        }
+    }
+}
