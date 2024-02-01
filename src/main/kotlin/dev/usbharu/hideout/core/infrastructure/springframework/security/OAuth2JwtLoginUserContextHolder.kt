@@ -11,4 +11,13 @@ class OAuth2JwtLoginUserContextHolder : LoginUserContextHolder {
 
         return principal.getClaim<String>("uid").toLong()
     }
+
+    override fun getLoginUserIdOrNull(): Long? {
+        val principal = SecurityContextHolder.getContext()?.authentication?.principal
+        if (principal !is Jwt) {
+            return null
+        }
+
+        return principal.getClaim<String>("uid").toLongOrNull()
+    }
 }
