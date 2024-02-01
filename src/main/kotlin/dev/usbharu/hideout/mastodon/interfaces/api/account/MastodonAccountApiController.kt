@@ -71,7 +71,7 @@ class MastodonAccountApiController(
         pinned: Boolean,
         tagged: String?
     ): ResponseEntity<Flow<Status>> = runBlocking {
-        val userid = loginUserContextHolder.getLoginUserId()
+        val userid = loginUserContextHolder.getLoginUserIdOrNull()
         val statuses = accountApiService.accountsStatuses(
             userid = id.toLong(),
             onlyMedia = onlyMedia,
