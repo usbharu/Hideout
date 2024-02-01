@@ -424,6 +424,23 @@ class AccountApiTest {
             .andExpect { status { isUnauthorized() } }
     }
 
+    @Test
+    fun `apiV1AccountsIdStatusesGet read権限で取得できる`() {
+        mockMvc
+            .get("/api/v1/accounts/1/statuses")
+            .asyncDispatch()
+            .andExpect { status { isOk() } }
+    }
+
+    @Test
+    @WithAnonymousUser
+    fun `apiV1AccountsIdStatusesGet 匿名でもpublic投稿を取得できる`() {
+        mockMvc
+            .get("/api/v1/accounts/1/statuses")
+            .asyncDispatch()
+            .andExpect { status { isOk() } }
+    }
+
     companion object {
         @JvmStatic
         @AfterAll
