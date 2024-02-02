@@ -89,6 +89,114 @@ data class Post private constructor(
             )
         }
 
+        fun pureRepostOf(
+            id: Long,
+            actorId: Long,
+            visibility: Visibility,
+            createdAt: Instant,
+            url: String,
+            repost: Post,
+            apId: String
+        ): Post {
+
+            // リポストの公開範囲は元のポストより広くてはいけない
+            val fixedVisibility = if (visibility.ordinal <= repost.visibility.ordinal) {
+                repost.visibility
+            } else {
+                visibility
+            }
+
+            require(id >= 0) { "id must be greater than or equal to 0." }
+
+            require(actorId >= 0) { "actorId must be greater than or equal to 0." }
+
+
+            return Post(
+                id,
+                actorId,
+                null,
+                "",
+                "",
+                createdAt.toEpochMilli(),
+                fixedVisibility,
+                url,
+                repost.id,
+                null,
+                false,
+                apId,
+                emptyList(),
+                false,
+                emptyList()
+            )
+        }
+
+        fun quoteRepostOf(
+            id: Long,
+            actorId: Long,
+            overview: String? = null,
+            content: String,
+            createdAt: Instant,
+            visibility: Visibility,
+            url: String,
+            repost:Post,
+            replyId: Long? = null,
+            sensitive: Boolean = false,
+            apId: String = url,
+            mediaIds: List<Long> = emptyList(),
+            emojiIds: List<Long> = emptyList()
+        ): Post {
+
+            // リポストの公開範囲は元のポストより広くてはいけない
+            val fixedVisibility = if (visibility.ordinal <= repost.visibility.ordinal) {
+                repost.visibility
+            } else {
+                visibility
+            }
+
+            require(id >= 0) { "id must be greater than or equal to 0." }
+
+            require(actorId >= 0) { "actorId must be greater than or equal to 0." }
+
+            val limitedOverview = if ((overview?.length ?: 0) >= characterLimit.post.overview) {
+                overview?.substring(0, characterLimit.post.overview)
+            } else {
+                overview
+            }
+
+            val limitedText = if (content.length >= characterLimit.post.text) {
+                content.substring(0, characterLimit.post.text)
+            } else {
+                content
+            }
+
+            val (html, content1) = postContentFormatter.format(limitedText)
+
+            require(url.isNotBlank()) { "url must contain non-blank characters" }
+            require(url.length <= characterLimit.general.url) {
+                "url must not exceed ${characterLimit.general.url} characters."
+            }
+
+            require((replyId ?: 0) >= 0) { "replyId must be greater then or equal to 0." }
+
+            return Post(
+                id = id,
+                actorId = actorId,
+                overview = limitedOverview,
+                content = html,
+                text = content1,
+                createdAt = createdAt.toEpochMilli(),
+                visibility = fixedVisibility,
+                url = url,
+                repostId = repost.id,
+                replyId = replyId,
+                sensitive = sensitive,
+                apId = apId,
+                mediaIds = mediaIds,
+                delted = false,
+                emojiIds = emojiIds
+            )
+        }
+
         @Suppress("LongParameterList")
         fun deleteOf(
             id: Long,
@@ -116,6 +224,9 @@ data class Post private constructor(
             )
         }
     }
+
+    fun isPureRepost():Boolean =
+        this.text.isEmpty() && this.content.isEmpty() && this.overview == null && this.replyId == null && this.repostId != null
 
     fun delete(): Post {
         return Post(
