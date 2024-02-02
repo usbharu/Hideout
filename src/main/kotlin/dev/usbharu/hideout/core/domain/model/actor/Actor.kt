@@ -5,6 +5,7 @@ import dev.usbharu.hideout.application.config.CharacterLimit
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.time.Instant
+import kotlin.math.max
 
 data class Actor private constructor(
     val id: Long,
@@ -159,18 +160,6 @@ data class Actor private constructor(
                 "keyId must contain non-blank characters."
             }
 
-            require(postsCount >= 0) {
-                "postsCount must be greater than or equal to 0"
-            }
-
-            require(followersCount >= 0) {
-                "followersCount must be greater than or equal to 0"
-            }
-
-            require(followingCount >= 0) {
-                "followingCount must be greater than or equal to 0"
-            }
-
             return Actor(
                 id = id,
                 name = limitedName,
@@ -188,9 +177,9 @@ data class Actor private constructor(
                 following = following,
                 instance = instance,
                 locked = locked,
-                followersCount = followersCount,
-                followingCount = followingCount,
-                postsCount = postsCount,
+                followersCount = max(0,followersCount),
+                followingCount = max(0,followingCount),
+                postsCount = max(0, postsCount),
                 lastPostDate = lastPostDate,
                 emojis = emojis
             )
@@ -212,27 +201,27 @@ data class Actor private constructor(
     fun withLastPostAt(lastPostDate: Instant): Actor = this.copy(lastPostDate = lastPostDate)
     override fun toString(): String {
         return "Actor(" +
-            "id=$id, " +
-            "name='$name', " +
-            "domain='$domain', " +
-            "screenName='$screenName', " +
-            "description='$description', " +
-            "inbox='$inbox', " +
-            "outbox='$outbox', " +
-            "url='$url', " +
-            "publicKey='$publicKey', " +
-            "privateKey=$privateKey, " +
-            "createdAt=$createdAt, " +
-            "keyId='$keyId', " +
-            "followers=$followers, " +
-            "following=$following, " +
-            "instance=$instance, " +
-            "locked=$locked, " +
-            "followersCount=$followersCount, " +
-            "followingCount=$followingCount, " +
-            "postsCount=$postsCount, " +
-            "lastPostDate=$lastPostDate, " +
-            "emojis=$emojis" +
-            ")"
+                "id=$id, " +
+                "name='$name', " +
+                "domain='$domain', " +
+                "screenName='$screenName', " +
+                "description='$description', " +
+                "inbox='$inbox', " +
+                "outbox='$outbox', " +
+                "url='$url', " +
+                "publicKey='$publicKey', " +
+                "privateKey=$privateKey, " +
+                "createdAt=$createdAt, " +
+                "keyId='$keyId', " +
+                "followers=$followers, " +
+                "following=$following, " +
+                "instance=$instance, " +
+                "locked=$locked, " +
+                "followersCount=$followersCount, " +
+                "followingCount=$followingCount, " +
+                "postsCount=$postsCount, " +
+                "lastPostDate=$lastPostDate, " +
+                "emojis=$emojis" +
+                ")"
     }
 }
