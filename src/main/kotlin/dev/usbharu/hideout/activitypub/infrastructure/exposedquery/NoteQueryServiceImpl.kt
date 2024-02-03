@@ -66,8 +66,7 @@ class NoteQueryServiceImpl(private val postRepository: PostRepository, private v
                 logger.warn("Failed to get repostId: $repostId")
             }
             url
-        } 
-        else {
+        } else {
             null
         }
 

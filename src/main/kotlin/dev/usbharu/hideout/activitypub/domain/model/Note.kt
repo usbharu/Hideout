@@ -6,7 +6,7 @@ import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 import dev.usbharu.hideout.activitypub.domain.model.objects.ObjectDeserializer
 
 open class Note
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "CyclomaticComplexMethod")
 constructor(
     type: List<String> = emptyList(),
     override val id: String,
@@ -28,6 +28,8 @@ constructor(
     type = add(type, "Note")
 ),
     HasId {
+
+    @Suppress("CyclomaticComplexMethod", "CognitiveComplexMethod")
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -52,6 +54,7 @@ constructor(
         return true
     }
 
+    @Suppress("CyclomaticComplexMethod")
     override fun hashCode(): Int {
         var result = super.hashCode()
         result = 31 * result + id.hashCode()
