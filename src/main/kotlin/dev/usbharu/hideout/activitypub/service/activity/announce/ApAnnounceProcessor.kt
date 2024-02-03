@@ -9,7 +9,7 @@ import dev.usbharu.hideout.application.external.Transaction
 import org.springframework.stereotype.Service
 
 @Service
-class ApAnnounceProcessor(transaction: Transaction,private val apNoteService:APNoteService) :
+class ApAnnounceProcessor(transaction: Transaction, private val apNoteService: APNoteService) :
     AbstractActivityPubProcessor<Announce>(transaction) {
     override suspend fun internalProcess(activity: ActivityPubProcessContext<Announce>) {
         apNoteService.fetchAnnounce(activity.activity)

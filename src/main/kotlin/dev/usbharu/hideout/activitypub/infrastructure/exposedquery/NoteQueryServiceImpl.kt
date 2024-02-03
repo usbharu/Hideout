@@ -62,11 +62,12 @@ class NoteQueryServiceImpl(private val postRepository: PostRepository, private v
         val repostId = this[Posts.repostId]
         val repost = if (repostId != null) {
             val url = postRepository.findById(repostId)?.url
-            if (url == null){
+            if (url == null) {
                 logger.warn("Failed to get repostId: $repostId")
             }
             url
-        }else{
+        } 
+        else {
             null
         }
 

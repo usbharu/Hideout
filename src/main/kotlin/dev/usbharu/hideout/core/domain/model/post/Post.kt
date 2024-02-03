@@ -98,7 +98,6 @@ data class Post private constructor(
             repost: Post,
             apId: String
         ): Post {
-
             // リポストの公開範囲は元のポストより広くてはいけない
             val fixedVisibility = if (visibility.ordinal <= repost.visibility.ordinal) {
                 repost.visibility
@@ -109,7 +108,6 @@ data class Post private constructor(
             require(id >= 0) { "id must be greater than or equal to 0." }
 
             require(actorId >= 0) { "actorId must be greater than or equal to 0." }
-
 
             return Post(
                 id,
@@ -138,14 +136,13 @@ data class Post private constructor(
             createdAt: Instant,
             visibility: Visibility,
             url: String,
-            repost:Post,
+            repost: Post,
             replyId: Long? = null,
             sensitive: Boolean = false,
             apId: String = url,
             mediaIds: List<Long> = emptyList(),
             emojiIds: List<Long> = emptyList()
         ): Post {
-
             // リポストの公開範囲は元のポストより広くてはいけない
             val fixedVisibility = if (visibility.ordinal <= repost.visibility.ordinal) {
                 repost.visibility
@@ -225,7 +222,7 @@ data class Post private constructor(
         }
     }
 
-    fun isPureRepost():Boolean =
+    fun isPureRepost(): Boolean =
         this.text.isEmpty() && this.content.isEmpty() && this.overview == null && this.replyId == null && this.repostId != null
 
     fun delete(): Post {
