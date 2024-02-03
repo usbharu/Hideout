@@ -4,12 +4,14 @@ import dev.usbharu.hideout.activitypub.domain.exception.FailedToGetActivityPubRe
 import dev.usbharu.hideout.activitypub.domain.model.Announce
 import dev.usbharu.hideout.activitypub.domain.model.Emoji
 import dev.usbharu.hideout.activitypub.domain.model.Note
+import dev.usbharu.hideout.activitypub.domain.model.Person
 import dev.usbharu.hideout.activitypub.query.AnnounceQueryService
 import dev.usbharu.hideout.activitypub.query.NoteQueryService
 import dev.usbharu.hideout.activitypub.service.common.APResourceResolveService
 import dev.usbharu.hideout.activitypub.service.common.resolve
 import dev.usbharu.hideout.activitypub.service.objects.emoji.EmojiService
 import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
+import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.domain.model.post.Visibility
@@ -68,7 +70,7 @@ class APNoteServiceImpl(
             )
             throw FailedToGetActivityPubResourceException("Could not retrieve $url.", e)
         }
-        val savedNote = saveIfMissing(note, targetActor, url)
+        val savedNote = saveIfMissing(note, targetActor)
         logger.debug("SUCCESS Fetch Note url: {}", url)
         return savedNote
     }
@@ -136,34 +138,22 @@ class APNoteServiceImpl(
 
     private suspend fun saveIfMissing(
         note: Note,
-        targetActor: String?,
-        url: String
-    ): Pair<Note, Post> = noteQueryService.findByApid(note.id) ?: saveNote(note, targetActor, url)
+        targetActor: String?
+    ): Pair<Note, Post> = noteQueryService.findByApid(note.id) ?: saveNote(note, targetActor)
 
-    private suspend fun saveNote(note: Note, targetActor: String?, url: String): Pair<Note, Post> {
+    private suspend fun saveNote(note: Note, targetActor: String?): Pair<Note, Post> {
         val person = apUserService.fetchPersonWithEntity(
             note.attributedTo,
             targetActor
         )
 
         val post = postRepository.findByApId(note.id)
-
         if (post != null) {
             return note to post
         }
 
         logger.debug("VISIBILITY url: {} to: {} cc: {}", note.id, note.to, note.cc)
-
-        val visibility = if (note.to.contains(public)) {
-            Visibility.PUBLIC
-        } else if (note.to.contains(person.second.followers) && note.cc.contains(public)) {
-            Visibility.UNLISTED
-        } else if (note.to.contains(person.second.followers)) {
-            Visibility.FOLLOWERS
-        } else {
-            Visibility.DIRECT
-        }
-
+        val visibility = visibility(note, person)
         logger.debug("VISIBILITY is {} url: {}", visibility.name, note.id)
 
         val reply = note.inReplyTo?.let {
@@ -176,14 +166,7 @@ class APNoteServiceImpl(
             postRepository.findByUrl(it)
         }
 
-        val emojis = note.tag
-            .filterIsInstance<Emoji>()
-            .map {
-                emojiService.fetchEmoji(it).second
-            }
-            .map {
-                it.id
-            }
+        val emojis = buildEmojis(note)
 
         val mediaList = note.attachment.map {
             mediaService.uploadRemoteMedia(
@@ -228,14 +211,37 @@ class APNoteServiceImpl(
                 )
             }
 
-        val createRemote = postService.createRemote(
-            createPost
-        )
+        val createRemote = postService.createRemote(createPost)
         return note to createRemote
     }
 
+    private suspend fun buildEmojis(note: Note) = note.tag
+        .filterIsInstance<Emoji>()
+        .map {
+            emojiService.fetchEmoji(it).second
+        }
+        .map {
+            it.id
+        }
+
+    private fun visibility(
+        note: Note,
+        person: Pair<Person, Actor>
+    ): Visibility {
+        val visibility = if (note.to.contains(public)) {
+            Visibility.PUBLIC
+        } else if (note.to.contains(person.second.followers) && note.cc.contains(public)) {
+            Visibility.UNLISTED
+        } else if (note.to.contains(person.second.followers)) {
+            Visibility.FOLLOWERS
+        } else {
+            Visibility.DIRECT
+        }
+        return visibility
+    }
+
     override suspend fun fetchNote(note: Note, targetActor: String?): Note =
-        saveIfMissing(note, targetActor, note.id).first
+        saveIfMissing(note, targetActor).first
 
     companion object {
         const val public: String = "https://www.w3.org/ns/activitystreams#Public"

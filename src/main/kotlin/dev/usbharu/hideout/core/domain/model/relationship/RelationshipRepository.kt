@@ -36,6 +36,7 @@ interface RelationshipRepository {
 
     suspend fun findByTargetIdAndFollowing(targetId: Long, following: Boolean): List<Relationship>
 
+    @Suppress("FunctionMaxLength")
     suspend fun findByTargetIdAndFollowRequestAndIgnoreFollowRequest(
         targetId: Long,
         followRequest: Boolean,

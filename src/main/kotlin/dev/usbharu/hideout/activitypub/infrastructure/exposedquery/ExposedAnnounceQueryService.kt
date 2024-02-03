@@ -45,7 +45,7 @@ class ExposedAnnounceQueryService(
         )
 
         return Announce(
-            emptyList(),
+            type = emptyList(),
             id = this[Posts.apId],
             apObject = repost,
             actor = this[Actors.url],

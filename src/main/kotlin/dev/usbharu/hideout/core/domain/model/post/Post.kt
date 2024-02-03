@@ -223,7 +223,11 @@ data class Post private constructor(
     }
 
     fun isPureRepost(): Boolean =
-        this.text.isEmpty() && this.content.isEmpty() && this.overview == null && this.replyId == null && this.repostId != null
+        this.text.isEmpty() &&
+            this.content.isEmpty() &&
+            this.overview == null &&
+            this.replyId == null &&
+            this.repostId != null
 
     fun delete(): Post {
         return Post(

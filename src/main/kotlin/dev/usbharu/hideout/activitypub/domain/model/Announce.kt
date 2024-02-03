@@ -17,7 +17,7 @@ open class Announce @JsonCreator constructor(
     type = add(type, "Announce")
 ),
     HasActor,
-    HasId{
+    HasId {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -48,13 +48,13 @@ open class Announce @JsonCreator constructor(
 
     override fun toString(): String {
         return "Announce(" +
-                "apObject='$apObject', " +
-                "actor='$actor', " +
-                "id='$id', " +
-                "published='$published', " +
-                "to=$to, " +
-                "cc=$cc" +
-                ")" +
-                " ${super.toString()}"
+            "apObject='$apObject', " +
+            "actor='$actor', " +
+            "id='$id', " +
+            "published='$published', " +
+            "to=$to, " +
+            "cc=$cc" +
+            ")" +
+            " ${super.toString()}"
     }
 }

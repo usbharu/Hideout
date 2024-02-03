@@ -84,7 +84,7 @@ class MastodonAccountApiController(
                 maxId?.toLongOrNull(),
                 sinceId?.toLongOrNull(),
                 minId?.toLongOrNull(),
-                limit.coerceIn(0, 80) ?: 40
+                limit.coerceIn(0, 80)
             )
         )
         val httpHeader = statuses.toHttpHeader(
