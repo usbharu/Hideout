@@ -59,6 +59,17 @@ class NoteQueryServiceImpl(private val postRepository: PostRepository, private v
             null
         }
 
+        val repostId = this[Posts.repostId]
+        val repost = if (repostId != null) {
+            val url = postRepository.findById(repostId)?.url
+            if (url == null) {
+                logger.warn("Failed to get repostId: $repostId")
+            }
+            url
+        } else {
+            null
+        }
+
         val visibility1 =
             visibility(
                 Visibility.values().first { visibility -> visibility.ordinal == this[Posts.visibility] },
@@ -72,6 +83,9 @@ class NoteQueryServiceImpl(private val postRepository: PostRepository, private v
             to = visibility1.first,
             cc = visibility1.second,
             inReplyTo = replyTo,
+            misskeyQuote = repost,
+            quoteUri = repost,
+            quoteUrl = repost,
             sensitive = this[Posts.sensitive],
             attachment = mediaList.map { Document(url = it.url, mediaType = "image/jpeg") }
         )

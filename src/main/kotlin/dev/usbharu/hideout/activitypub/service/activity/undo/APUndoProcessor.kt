@@ -12,6 +12,7 @@ import dev.usbharu.hideout.core.domain.exception.resource.UserNotFoundException
 import dev.usbharu.hideout.core.domain.exception.resource.local.LocalUserNotFoundException
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
+import dev.usbharu.hideout.core.service.post.PostService
 import dev.usbharu.hideout.core.service.reaction.ReactionService
 import dev.usbharu.hideout.core.service.relationship.RelationshipService
 import org.springframework.stereotype.Service
@@ -23,7 +24,8 @@ class APUndoProcessor(
     private val relationshipService: RelationshipService,
     private val reactionService: ReactionService,
     private val actorRepository: ActorRepository,
-    private val postRepository: PostRepository
+    private val postRepository: PostRepository,
+    private val postService: PostService
 ) : AbstractActivityPubProcessor<Undo>(transaction) {
     override suspend fun internalProcess(activity: ActivityPubProcessContext<Undo>) {
         val undo = activity.activity
@@ -50,6 +52,11 @@ class APUndoProcessor(
 
             "Like" -> {
                 like(undo)
+                return
+            }
+
+            "Announce" -> {
+                announce(undo)
                 return
             }
 
@@ -107,6 +114,13 @@ class APUndoProcessor(
 
         relationshipService.unfollow(follower.id, target.id)
         return
+    }
+
+    private suspend fun announce(undo: Undo) {
+        val announce = undo.apObject as Announce
+
+        val findByApId = postRepository.findByApId(announce.id) ?: return
+        postService.deleteRemote(findByApId)
     }
 
     override fun isSupported(activityType: ActivityType): Boolean = activityType == ActivityType.Undo
