@@ -26,8 +26,8 @@ interface APNoteService {
     suspend fun fetchNote(note: Note, targetActor: String? = null): Note
     suspend fun fetchNoteWithEntity(url: String, targetActor: String? = null): Pair<Note, Post>
 
-    suspend fun fetchAnnounce(url: String, signerId: Long? = null): Pair<Announce,Post>
-    suspend fun fetchAnnounce(announce: Announce, signerId: Long? = null): Pair<Announce,Post>
+    suspend fun fetchAnnounce(url: String, signerId: Long? = null): Pair<Announce, Post>
+    suspend fun fetchAnnounce(announce: Announce, signerId: Long? = null): Pair<Announce, Post>
 }
 
 @Service
@@ -96,7 +96,7 @@ class APNoteServiceImpl(
             throw FailedToGetActivityPubResourceException("Could not retrieve $url.", e)
         }
 
-        return fetchAnnounce(announce,signerId)
+        return fetchAnnounce(announce, signerId)
     }
 
     override suspend fun fetchAnnounce(announce: Announce, signerId: Long?): Pair<Announce, Post> {
@@ -172,6 +172,11 @@ class APNoteServiceImpl(
             postRepository.findByUrl(it)
         }
 
+        val quote = (note.misskeyQuote ?: note.quoteUri ?: note.quoteUrl)?.let {
+            fetchNote(it, targetActor)
+            postRepository.findByUrl(it)
+        }
+
         val emojis = note.tag
             .filterIsInstance<Emoji>()
             .map {
@@ -192,20 +197,41 @@ class APNoteServiceImpl(
             )
         }.map { it.id }
 
+        val createPost =
+            if (quote != null) {
+                postBuilder.quoteRepostOf(
+                    id = postRepository.generateId(),
+                    actorId = person.second.id,
+                    content = note.content,
+                    createdAt = Instant.parse(note.published),
+                    visibility = visibility,
+                    url = note.id,
+                    replyId = reply?.id,
+                    sensitive = note.sensitive,
+                    apId = note.id,
+                    mediaIds = mediaList,
+                    emojiIds = emojis,
+                    repost = quote
+                )
+            } else {
+                postBuilder.of(
+                    id = postRepository.generateId(),
+                    actorId = person.second.id,
+                    content = note.content,
+                    createdAt = Instant.parse(note.published).toEpochMilli(),
+                    visibility = visibility,
+                    url = note.id,
+                    replyId = reply?.id,
+                    sensitive = note.sensitive,
+                    apId = note.id,
+                    mediaIds = mediaList,
+                    emojiIds = emojis
+                )
+
+            }
+
         val createRemote = postService.createRemote(
-            postBuilder.of(
-                id = postRepository.generateId(),
-                actorId = person.second.id,
-                content = note.content,
-                createdAt = Instant.parse(note.published).toEpochMilli(),
-                visibility = visibility,
-                url = note.id,
-                replyId = reply?.id,
-                sensitive = note.sensitive,
-                apId = note.id,
-                mediaIds = mediaList,
-                emojiIds = emojis
-            )
+            createPost
         )
         return note to createRemote
     }
