@@ -35,7 +35,6 @@ class ExposedAnnounceQueryService(
             ?.let { (it.toAnnounce() ?: return null) to (postResultRowMapper.map(it)) }
     }
 
-
     private suspend fun ResultRow.toAnnounce(): Announce? {
         val repostId = this[Posts.repostId] ?: return null
         val repost = postRepository.findById(repostId)?.url ?: return null

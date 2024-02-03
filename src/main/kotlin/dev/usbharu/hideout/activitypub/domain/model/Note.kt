@@ -20,10 +20,10 @@ constructor(
     val attachment: List<Document> = emptyList(),
     @JsonDeserialize(contentUsing = ObjectDeserializer::class)
     val tag: List<Object> = emptyList(),
-    val quoteUri:String? = null,
-    val quoteUrl:String? = null,
+    val quoteUri: String? = null,
+    val quoteUrl: String? = null,
     @JsonProperty("_misskey_quote")
-    val misskeyQuote:String? = null
+    val misskeyQuote: String? = null
 ) : Object(
     type = add(type, "Note")
 ),
@@ -72,20 +72,20 @@ constructor(
 
     override fun toString(): String {
         return "Note(" +
-                "id='$id', " +
-                "attributedTo='$attributedTo', " +
-                "content='$content', " +
-                "published='$published', " +
-                "to=$to, " +
-                "cc=$cc, " +
-                "sensitive=$sensitive, " +
-                "inReplyTo=$inReplyTo, " +
-                "attachment=$attachment, " +
-                "tag=$tag, " +
-                "quoteUri=$quoteUri, " +
-                "quoteUrl=$quoteUrl, " +
-                "misskeyQuote=$misskeyQuote" +
-                ")" +
-                " ${super.toString()}"
+            "id='$id', " +
+            "attributedTo='$attributedTo', " +
+            "content='$content', " +
+            "published='$published', " +
+            "to=$to, " +
+            "cc=$cc, " +
+            "sensitive=$sensitive, " +
+            "inReplyTo=$inReplyTo, " +
+            "attachment=$attachment, " +
+            "tag=$tag, " +
+            "quoteUri=$quoteUri, " +
+            "quoteUrl=$quoteUrl, " +
+            "misskeyQuote=$misskeyQuote" +
+            ")" +
+            " ${super.toString()}"
     }
 }

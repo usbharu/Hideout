@@ -100,7 +100,6 @@ class APNoteServiceImpl(
     }
 
     override suspend fun fetchAnnounce(announce: Announce, signerId: Long?): Pair<Announce, Post> {
-
         val findByApId = announceQueryService.findByApId(announce.id)
 
         if (findByApId != null) {
@@ -227,7 +226,6 @@ class APNoteServiceImpl(
                     mediaIds = mediaList,
                     emojiIds = emojis
                 )
-
             }
 
         val createRemote = postService.createRemote(

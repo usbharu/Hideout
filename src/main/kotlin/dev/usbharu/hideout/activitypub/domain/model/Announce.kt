@@ -15,4 +15,6 @@ open class Announce @JsonCreator constructor(
     val cc: List<String> = emptyList()
 ) : Object(
     type = add(type, "Announce")
-), HasActor, HasId
+),
+    HasActor,
+    HasId
