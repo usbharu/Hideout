@@ -21,7 +21,7 @@ class ExposedOAuth2AuthorizationConsentService(
         requireNotNull(authorizationConsent)
         transaction.transaction {
             val singleOrNull =
-                OAuth2AuthorizationConsent.select {
+                OAuth2AuthorizationConsent.selectAll().where {
                     OAuth2AuthorizationConsent.registeredClientId
                         .eq(authorizationConsent.registeredClientId)
                         .and(OAuth2AuthorizationConsent.principalName.eq(authorizationConsent.principalName))
@@ -50,7 +50,7 @@ class ExposedOAuth2AuthorizationConsentService(
         requireNotNull(registeredClientId)
         requireNotNull(principalName)
         transaction.transaction {
-            OAuth2AuthorizationConsent.select {
+            OAuth2AuthorizationConsent.selectAll().where {
                 (OAuth2AuthorizationConsent.registeredClientId eq registeredClientId)
                     .and(OAuth2AuthorizationConsent.principalName eq principalName)
             }

@@ -34,7 +34,7 @@ class ExposedOAuth2AuthorizationService(
     override fun save(authorization: OAuth2Authorization?): Unit = runBlocking {
         requireNotNull(authorization)
         transaction.transaction {
-            val singleOrNull = Authorization.select { Authorization.id eq authorization.id }.singleOrNull()
+            val singleOrNull = Authorization.selectAll().where { Authorization.id eq authorization.id }.singleOrNull()
             if (singleOrNull == null) {
                 val authorizationCodeToken = authorization.getToken(OAuth2AuthorizationCode::class.java)
                 val accessToken = authorization.getToken(OAuth2AccessToken::class.java)
@@ -139,7 +139,7 @@ class ExposedOAuth2AuthorizationService(
         if (id == null) {
             return null
         }
-        return Authorization.select { Authorization.id eq id }.singleOrNull()?.toAuthorization()
+        return Authorization.selectAll().where { Authorization.id eq id }.singleOrNull()?.toAuthorization()
     }
 
     override fun findByToken(token: String?, tokenType: OAuth2TokenType?): OAuth2Authorization? = runBlocking {
@@ -147,9 +147,7 @@ class ExposedOAuth2AuthorizationService(
         transaction.transaction {
             when (tokenType?.value) {
                 null -> {
-                    Authorization.select {
-                        Authorization.authorizationCodeValue eq token
-                    }.orWhere {
+                    Authorization.selectAll().where { Authorization.authorizationCodeValue eq token }.orWhere {
                         Authorization.accessTokenValue eq token
                     }.orWhere {
                         Authorization.oidcIdTokenValue eq token
@@ -163,31 +161,31 @@ class ExposedOAuth2AuthorizationService(
                 }
 
                 OAuth2ParameterNames.STATE -> {
-                    Authorization.select { Authorization.state eq token }
+                    Authorization.selectAll().where { Authorization.state eq token }
                 }
 
                 OAuth2ParameterNames.CODE -> {
-                    Authorization.select { Authorization.authorizationCodeValue eq token }
+                    Authorization.selectAll().where { Authorization.authorizationCodeValue eq token }
                 }
 
                 OAuth2ParameterNames.ACCESS_TOKEN -> {
-                    Authorization.select { Authorization.accessTokenValue eq token }
+                    Authorization.selectAll().where { Authorization.accessTokenValue eq token }
                 }
 
                 OidcParameterNames.ID_TOKEN -> {
-                    Authorization.select { Authorization.oidcIdTokenValue eq token }
+                    Authorization.selectAll().where { Authorization.oidcIdTokenValue eq token }
                 }
 
                 OAuth2ParameterNames.REFRESH_TOKEN -> {
-                    Authorization.select { Authorization.refreshTokenValue eq token }
+                    Authorization.selectAll().where { Authorization.refreshTokenValue eq token }
                 }
 
                 OAuth2ParameterNames.USER_CODE -> {
-                    Authorization.select { Authorization.userCodeValue eq token }
+                    Authorization.selectAll().where { Authorization.userCodeValue eq token }
                 }
 
                 OAuth2ParameterNames.DEVICE_CODE -> {
-                    Authorization.select { Authorization.deviceCodeValue eq token }
+                    Authorization.selectAll().where { Authorization.deviceCodeValue eq token }
                 }
 
                 else -> {

@@ -15,41 +15,42 @@ class DeletedActorRepositoryImpl : DeletedActorRepository, AbstractRepository() 
         get() = Companion.logger
 
     override suspend fun save(deletedActor: DeletedActor): DeletedActor = query {
-        val singleOrNull = DeletedActors.select { DeletedActors.id eq deletedActor.id }.forUpdate().singleOrNull()
+        val singleOrNull =
+            DeletedActors.selectAll().where { DeletedActors.id eq deletedActor.id }.forUpdate().singleOrNull()
 
         if (singleOrNull == null) {
             DeletedActors.insert {
-                it[DeletedActors.id] = deletedActor.id
-                it[DeletedActors.name] = deletedActor.name
-                it[DeletedActors.domain] = deletedActor.domain
-                it[DeletedActors.publicKey] = deletedActor.publicKey
-                it[DeletedActors.deletedAt] = deletedActor.deletedAt
+                it[id] = deletedActor.id
+                it[name] = deletedActor.name
+                it[domain] = deletedActor.domain
+                it[publicKey] = deletedActor.publicKey
+                it[deletedAt] = deletedActor.deletedAt
             }
         } else {
             DeletedActors.update({ DeletedActors.id eq deletedActor.id }) {
-                it[DeletedActors.name] = deletedActor.name
-                it[DeletedActors.domain] = deletedActor.domain
-                it[DeletedActors.publicKey] = deletedActor.publicKey
-                it[DeletedActors.deletedAt] = deletedActor.deletedAt
+                it[name] = deletedActor.name
+                it[domain] = deletedActor.domain
+                it[publicKey] = deletedActor.publicKey
+                it[deletedAt] = deletedActor.deletedAt
             }
         }
         return@query deletedActor
     }
 
     override suspend fun delete(deletedActor: DeletedActor): Unit = query {
-        DeletedActors.deleteWhere { DeletedActors.id eq deletedActor.id }
+        DeletedActors.deleteWhere { id eq deletedActor.id }
     }
 
     override suspend fun findById(id: Long): DeletedActor? = query {
         return@query DeletedActors
-            .select { DeletedActors.id eq id }
+            .selectAll().where { DeletedActors.id eq id }
             .singleOrNull()
             ?.toDeletedActor()
     }
 
     override suspend fun findByNameAndDomain(name: String, domain: String): DeletedActor? = query {
         return@query DeletedActors
-            .select { DeletedActors.name eq name and (DeletedActors.domain eq domain) }
+            .selectAll().where { DeletedActors.name eq name and (DeletedActors.domain eq domain) }
             .singleOrNull()
             ?.toDeletedActor()
     }

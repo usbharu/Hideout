@@ -6,7 +6,7 @@ import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.update
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -18,7 +18,8 @@ class UserDetailRepositoryImpl : UserDetailRepository, AbstractRepository() {
         get() = Companion.logger
 
     override suspend fun save(userDetail: UserDetail): UserDetail = query {
-        val singleOrNull = UserDetails.select { UserDetails.actorId eq userDetail.actorId }.forUpdate().singleOrNull()
+        val singleOrNull =
+            UserDetails.selectAll().where { UserDetails.actorId eq userDetail.actorId }.forUpdate().singleOrNull()
         if (singleOrNull == null) {
             UserDetails.insert {
                 it[actorId] = userDetail.actorId
@@ -35,12 +36,12 @@ class UserDetailRepositoryImpl : UserDetailRepository, AbstractRepository() {
     }
 
     override suspend fun delete(userDetail: UserDetail): Unit = query {
-        UserDetails.deleteWhere { UserDetails.actorId eq userDetail.actorId }
+        UserDetails.deleteWhere { actorId eq userDetail.actorId }
     }
 
     override suspend fun findByActorId(actorId: Long): UserDetail? = query {
         return@query UserDetails
-            .select { UserDetails.actorId eq actorId }
+            .selectAll().where { UserDetails.actorId eq actorId }
             .singleOrNull()
             ?.let {
                 UserDetail(

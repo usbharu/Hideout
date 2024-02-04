@@ -37,6 +37,9 @@ spring:
   h2:
     console:
       enabled: true
+  threads:
+    virtual:
+      enabled: true
 server:
   tomcat:
     basedir: tomcat

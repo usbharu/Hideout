@@ -23,7 +23,7 @@ class ReactionRepositoryImpl(
     override suspend fun generateId(): Long = idGenerateService.generateId()
 
     override suspend fun save(reaction: Reaction): Reaction = query {
-        if (Reactions.select { Reactions.id eq reaction.id }.forUpdate().empty()) {
+        if (Reactions.selectAll().where { Reactions.id eq reaction.id }.forUpdate().empty()) {
             Reactions.insert {
                 it[id] = reaction.id
                 if (reaction.emoji is CustomEmoji) {
@@ -90,30 +90,32 @@ class ReactionRepositoryImpl(
             Reactions.deleteWhere {
                 Reactions.postId.eq(postId)
                     .and(Reactions.actorId.eq(actorId))
-                    .and(Reactions.customEmojiId.eq(emoji.id))
+                    .and(customEmojiId.eq(emoji.id))
             }
         } else {
             Reactions.deleteWhere {
                 Reactions.postId.eq(postId)
                     .and(Reactions.actorId.eq(actorId))
-                    .and(Reactions.unicodeEmoji.eq(emoji.name))
+                    .and(unicodeEmoji.eq(emoji.name))
             }
         }
     }
 
     override suspend fun findById(id: Long): Reaction? = query {
-        return@query Reactions.leftJoin(CustomEmojis).select { Reactions.id eq id }.singleOrNull()?.toReaction()
+        return@query Reactions.leftJoin(CustomEmojis).selectAll().where { Reactions.id eq id }.singleOrNull()
+            ?.toReaction()
     }
 
     override suspend fun findByPostId(postId: Long): List<Reaction> = query {
-        return@query Reactions.leftJoin(CustomEmojis).select { Reactions.postId eq postId }.map { it.toReaction() }
+        return@query Reactions.leftJoin(CustomEmojis).selectAll().where { Reactions.postId eq postId }
+            .map { it.toReaction() }
     }
 
     override suspend fun findByPostIdAndActorIdAndEmojiId(postId: Long, actorId: Long, emojiId: Long): Reaction? =
         query {
-            return@query Reactions.leftJoin(CustomEmojis).select {
+            return@query Reactions.leftJoin(CustomEmojis).selectAll().where {
                 Reactions.postId eq postId and (Reactions.actorId eq actorId).and(
-                    Reactions.customEmojiId.eq(
+                    Reactions.customEmojiId.eq<Long?>(
                         emojiId
                     )
                 )
@@ -122,11 +124,11 @@ class ReactionRepositoryImpl(
 
     override suspend fun existByPostIdAndActorIdAndEmojiId(postId: Long, actorId: Long, emojiId: Long): Boolean =
         query {
-            return@query Reactions.select {
+            return@query Reactions.selectAll().where {
                 Reactions.postId
-                    .eq(postId)
-                    .and(Reactions.actorId.eq(actorId))
-                    .and(Reactions.customEmojiId.eq(emojiId))
+                    .eq<Long>(postId)
+                    .and(Reactions.actorId.eq<Long>(actorId))
+                    .and(Reactions.customEmojiId.eq<Long?>(emojiId))
             }.empty().not()
         }
 
@@ -135,16 +137,16 @@ class ReactionRepositoryImpl(
         actorId: Long,
         unicodeEmoji: String
     ): Boolean = query {
-        return@query Reactions.select {
+        return@query Reactions.selectAll().where {
             Reactions.postId
-                .eq(postId)
-                .and(Reactions.actorId.eq(actorId))
-                .and(Reactions.unicodeEmoji.eq(unicodeEmoji))
+                .eq<Long>(postId)
+                .and(Reactions.actorId.eq<Long>(actorId))
+                .and(Reactions.unicodeEmoji.eq<String?>(unicodeEmoji))
         }.empty().not()
     }
 
     override suspend fun existByPostIdAndActorIdAndEmoji(postId: Long, actorId: Long, emoji: Emoji): Boolean = query {
-        val query = Reactions.select {
+        val query = Reactions.selectAll().where {
             Reactions.postId
                 .eq(postId)
                 .and(Reactions.actorId.eq(actorId))
@@ -161,14 +163,12 @@ class ReactionRepositoryImpl(
     }
 
     override suspend fun existByPostIdAndActor(postId: Long, actorId: Long): Boolean = query {
-        Reactions.select {
-            Reactions.postId.eq(postId).and(Reactions.actorId.eq(actorId))
-        }.empty().not()
+        Reactions.selectAll().where { Reactions.postId.eq(postId).and(Reactions.actorId.eq(actorId)) }.empty().not()
     }
 
     override suspend fun findByPostIdAndActorId(postId: Long, actorId: Long): List<Reaction> = query {
         return@query Reactions.leftJoin(CustomEmojis)
-            .select { Reactions.postId eq postId and (Reactions.actorId eq actorId) }
+            .selectAll().where { Reactions.postId eq postId and (Reactions.actorId eq actorId) }
             .map { it.toReaction() }
     }
 

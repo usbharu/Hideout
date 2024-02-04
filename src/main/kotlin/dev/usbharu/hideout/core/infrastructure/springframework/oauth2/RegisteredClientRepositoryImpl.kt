@@ -7,6 +7,7 @@ import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.Registered
 import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.RegisteredClient.clientSettings
 import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.RegisteredClient.tokenSettings
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.javatime.CurrentTimestamp
 import org.jetbrains.exposed.sql.javatime.timestamp
 import org.slf4j.Logger
@@ -30,7 +31,8 @@ class RegisteredClientRepositoryImpl : RegisteredClientRepository {
 
     override fun save(registeredClient: SpringRegisteredClient?) {
         requireNotNull(registeredClient)
-        val singleOrNull = RegisteredClient.select { RegisteredClient.id eq registeredClient.id }.singleOrNull()
+        val singleOrNull =
+            RegisteredClient.selectAll().where { RegisteredClient.id eq registeredClient.id }.singleOrNull()
         if (singleOrNull == null) {
             RegisteredClient.insert {
                 it[id] = registeredClient.id
@@ -71,9 +73,7 @@ class RegisteredClientRepositoryImpl : RegisteredClientRepository {
         if (id == null) {
             return null
         }
-        return RegisteredClient.select {
-            RegisteredClient.id eq id
-        }.singleOrNull()?.toRegisteredClient()
+        return RegisteredClient.selectAll().where { RegisteredClient.id eq id }.singleOrNull()?.toRegisteredClient()
     }
 
     @Transactional
@@ -81,9 +81,9 @@ class RegisteredClientRepositoryImpl : RegisteredClientRepository {
         if (clientId == null) {
             return null
         }
-        val toRegisteredClient = RegisteredClient.select {
-            RegisteredClient.clientId eq clientId
-        }.singleOrNull()?.toRegisteredClient()
+        val toRegisteredClient =
+            RegisteredClient.selectAll().where { RegisteredClient.clientId eq clientId }.singleOrNull()
+                ?.toRegisteredClient()
         LOGGER.trace("findByClientId: {}", toRegisteredClient)
         return toRegisteredClient
     }

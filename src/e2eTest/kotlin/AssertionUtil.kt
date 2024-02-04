@@ -1,6 +1,5 @@
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Actors
 import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import java.net.MalformedURLException
 import java.net.URL
@@ -23,6 +22,6 @@ object AssertionUtil {
 
         selectAll.map { "@${it[Actors.name]}@${it[Actors.domain]}" }.forEach { println(it) }
 
-        return Actors.select { Actors.name eq username and (Actors.domain eq s) }.empty().not()
+        return Actors.selectAll().where { Actors.name eq username and (Actors.domain eq s) }.empty().not()
     }
 }

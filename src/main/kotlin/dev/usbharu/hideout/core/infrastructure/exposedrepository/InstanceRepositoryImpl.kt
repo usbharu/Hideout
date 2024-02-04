@@ -19,7 +19,7 @@ class InstanceRepositoryImpl(private val idGenerateService: IdGenerateService) :
     override suspend fun generateId(): Long = idGenerateService.generateId()
 
     override suspend fun save(instance: InstanceEntity): InstanceEntity = query {
-        if (Instance.select { Instance.id.eq(instance.id) }.forUpdate().empty()) {
+        if (Instance.selectAll().where { Instance.id.eq(instance.id) }.forUpdate().empty()) {
             Instance.insert {
                 it[id] = instance.id
                 it[name] = instance.name
@@ -53,7 +53,7 @@ class InstanceRepositoryImpl(private val idGenerateService: IdGenerateService) :
     }
 
     override suspend fun findById(id: Long): InstanceEntity? = query {
-        return@query Instance.select { Instance.id eq id }
+        return@query Instance.selectAll().where { Instance.id eq id }
             .singleOrNull()?.toInstance()
     }
 
@@ -62,7 +62,7 @@ class InstanceRepositoryImpl(private val idGenerateService: IdGenerateService) :
     }
 
     override suspend fun findByUrl(url: String): dev.usbharu.hideout.core.domain.model.instance.Instance? = query {
-        return@query Instance.select { Instance.url eq url }.singleOrNull()?.toInstance()
+        return@query Instance.selectAll().where { Instance.url eq url }.singleOrNull()?.toInstance()
     }
 
     companion object {
