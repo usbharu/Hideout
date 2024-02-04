@@ -99,7 +99,7 @@ class ExposedPaginationExtensionKtTest {
 
     @Test
     fun 結果が0件の場合はprevとnextがnullになる():Unit = transaction {
-        val pagination = ExposePaginationTestTable.select { ExposePaginationTestTable.id.isNull() }
+        val pagination = ExposePaginationTestTable.selectAll().where { ExposePaginationTestTable.id.isNull() }
             .withPagination(Page.of(), ExposePaginationTestTable.id)
 
         assertThat(pagination).isEmpty()
@@ -111,7 +111,7 @@ class ExposedPaginationExtensionKtTest {
         val id = long("id")
         val name = varchar("name",100)
 
-        override val primaryKey: PrimaryKey?
+        override val primaryKey: PrimaryKey
             get() = PrimaryKey(id)
     }
 

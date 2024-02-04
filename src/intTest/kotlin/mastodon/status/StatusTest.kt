@@ -9,7 +9,7 @@ import dev.usbharu.hideout.core.infrastructure.exposedrepository.toReaction
 import org.assertj.core.api.Assertions.assertThat
 import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -61,7 +61,7 @@ class StatusTest {
                 contentType = MediaType.APPLICATION_JSON
                 content = """{"status":"hello"}"""
                 with(
-                    SecurityMockMvcRequestPostProcessors.jwt()
+                    jwt()
                         .jwt { it.claim("uid", "1") }.authorities(SimpleGrantedAuthority("SCOPE_write"))
                 )
             }
@@ -76,7 +76,7 @@ class StatusTest {
                 contentType = MediaType.APPLICATION_JSON
                 content = """{"status":"hello"}"""
                 with(
-                    SecurityMockMvcRequestPostProcessors.jwt()
+                    jwt()
                         .jwt { it.claim("uid", "1") }.authorities(SimpleGrantedAuthority("SCOPE_write:statuses"))
                 )
             }
@@ -91,7 +91,7 @@ class StatusTest {
                 contentType = MediaType.APPLICATION_JSON
                 content = """{"status":"hello"}"""
                 with(
-                    SecurityMockMvcRequestPostProcessors.jwt()
+                    jwt()
                         .jwt { it.claim("uid", "1") }.authorities(SimpleGrantedAuthority("SCOPE_read"))
                 )
             }
@@ -128,7 +128,7 @@ class StatusTest {
                 contentType = MediaType.APPLICATION_FORM_URLENCODED
                 param("status", "hello")
                 with(
-                    SecurityMockMvcRequestPostProcessors.jwt()
+                    jwt()
                         .jwt { it.claim("uid", "1") }.authorities(SimpleGrantedAuthority("SCOPE_write:statuses"))
                 )
             }
@@ -147,7 +147,7 @@ class StatusTest {
   "in_reply_to_id": "1"
 }"""
                 with(
-                    SecurityMockMvcRequestPostProcessors.jwt()
+                    jwt()
                         .jwt { it.claim("uid", "1") }.authorities(SimpleGrantedAuthority("SCOPE_write"))
                 )
             }
@@ -167,7 +167,8 @@ class StatusTest {
             .asyncDispatch()
             .andExpect { status { isOk() } }
 
-        val reaction = Reactions.select { Reactions.postId eq 1 and (Reactions.actorId eq 1) }.single().toReaction()
+        val reaction =
+            Reactions.selectAll().where { Reactions.postId eq 1 and (Reactions.actorId eq 1) }.single().toReaction()
         assertThat(reaction.emoji).isEqualTo(UnicodeEmoji("😭"))
         assertThat(reaction.postId).isEqualTo(1)
         assertThat(reaction.actorId).isEqualTo(1)
@@ -183,7 +184,8 @@ class StatusTest {
             .asyncDispatch()
             .andExpect { status { isOk() } }
 
-        val reaction = Reactions.select { Reactions.postId eq 1 and (Reactions.actorId eq 1) }.single().toReaction()
+        val reaction =
+            Reactions.selectAll().where { Reactions.postId eq 1 and (Reactions.actorId eq 1) }.single().toReaction()
         assertThat(reaction.emoji).isEqualTo(UnicodeEmoji("❤"))
         assertThat(reaction.postId).isEqualTo(1)
         assertThat(reaction.actorId).isEqualTo(1)
@@ -200,7 +202,8 @@ class StatusTest {
             .andExpect { status { isOk() } }
 
         val reaction =
-            Reactions.leftJoin(CustomEmojis).select { Reactions.postId eq 1 and (Reactions.actorId eq 1) }.single()
+            Reactions.leftJoin(CustomEmojis).selectAll().where { Reactions.postId eq 1 and (Reactions.actorId eq 1) }
+                .single()
                 .toReaction()
         assertThat(reaction.emoji).isEqualTo(
             CustomEmoji(

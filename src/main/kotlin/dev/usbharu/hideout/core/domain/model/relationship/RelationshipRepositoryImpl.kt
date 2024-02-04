@@ -18,7 +18,7 @@ class RelationshipRepositoryImpl : RelationshipRepository, AbstractRepository() 
         get() = Companion.logger
 
     override suspend fun save(relationship: Relationship): Relationship = query {
-        val singleOrNull = Relationships.select {
+        val singleOrNull = Relationships.selectAll().where {
             (Relationships.actorId eq relationship.actorId).and(
                 Relationships.targetActorId eq relationship.targetActorId
             )
@@ -52,16 +52,16 @@ class RelationshipRepositoryImpl : RelationshipRepository, AbstractRepository() 
 
     override suspend fun delete(relationship: Relationship): Unit = query {
         Relationships.deleteWhere {
-            (Relationships.actorId eq relationship.actorId).and(
-                Relationships.targetActorId eq relationship.targetActorId
+            (actorId eq relationship.actorId).and(
+                targetActorId eq relationship.targetActorId
             )
         }
     }
 
     override suspend fun findByUserIdAndTargetUserId(actorId: Long, targetActorId: Long): Relationship? = query {
-        return@query Relationships.select {
-            (Relationships.actorId eq actorId).and(Relationships.targetActorId eq targetActorId)
-        }.singleOrNull()?.toRelationships()
+        return@query Relationships.selectAll()
+            .where { (Relationships.actorId eq actorId).and(Relationships.targetActorId eq targetActorId) }
+            .singleOrNull()?.toRelationships()
     }
 
     override suspend fun deleteByActorIdOrTargetActorId(actorId: Long, targetActorId: Long): Unit = query {
@@ -72,7 +72,7 @@ class RelationshipRepositoryImpl : RelationshipRepository, AbstractRepository() 
 
     override suspend fun findByTargetIdAndFollowing(targetId: Long, following: Boolean): List<Relationship> = query {
         return@query Relationships
-            .select { Relationships.targetActorId eq targetId and (Relationships.following eq following) }
+            .selectAll().where { Relationships.targetActorId eq targetId and (Relationships.following eq following) }
             .map { it.toRelationships() }
     }
 
@@ -82,7 +82,7 @@ class RelationshipRepositoryImpl : RelationshipRepository, AbstractRepository() 
         ignoreFollowRequest: Boolean,
         page: Page.PageByMaxId
     ): PaginationList<Relationship, Long> = query {
-        val query = Relationships.select {
+        val query = Relationships.selectAll().where {
             Relationships.targetActorId.eq(targetId).and(Relationships.followRequest.eq(followRequest))
                 .and(Relationships.ignoreFollowRequestFromTarget.eq(ignoreFollowRequest))
         }
@@ -101,9 +101,8 @@ class RelationshipRepositoryImpl : RelationshipRepository, AbstractRepository() 
         muting: Boolean,
         page: Page.PageByMaxId
     ): PaginationList<Relationship, Long> = query {
-        val query = Relationships.select {
-            Relationships.actorId.eq(actorId).and(Relationships.muting.eq(muting))
-        }
+        val query =
+            Relationships.selectAll().where { Relationships.actorId.eq(actorId).and(Relationships.muting.eq(muting)) }
 
         val resultRowList = query.withPagination(page, Relationships.id)
 

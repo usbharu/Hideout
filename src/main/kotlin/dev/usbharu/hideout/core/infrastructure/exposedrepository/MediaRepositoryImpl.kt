@@ -20,9 +20,7 @@ class MediaRepositoryImpl(private val idGenerateService: IdGenerateService) : Me
     override suspend fun generateId(): Long = idGenerateService.generateId()
 
     override suspend fun save(media: EntityMedia): EntityMedia = query {
-        if (Media.select {
-                Media.id eq media.id
-            }.forUpdate().singleOrNull() != null
+        if (Media.selectAll().where { Media.id eq media.id }.forUpdate().singleOrNull() != null
         ) {
             Media.update({ Media.id eq media.id }) {
                 it[name] = media.name
@@ -52,9 +50,7 @@ class MediaRepositoryImpl(private val idGenerateService: IdGenerateService) : Me
 
     override suspend fun findById(id: Long): EntityMedia? = query {
         return@query Media
-            .select {
-                Media.id eq id
-            }
+            .selectAll().where { Media.id eq id }
             .singleOrNull()
             ?.toMedia()
     }
@@ -67,7 +63,7 @@ class MediaRepositoryImpl(private val idGenerateService: IdGenerateService) : Me
 
     override suspend fun findByRemoteUrl(remoteUrl: String): dev.usbharu.hideout.core.domain.model.media.Media? =
         query {
-            return@query Media.select { Media.remoteUrl eq remoteUrl }.singleOrNull()?.toMedia()
+            return@query Media.selectAll().where { Media.remoteUrl eq remoteUrl }.singleOrNull()?.toMedia()
         }
 
     companion object {
