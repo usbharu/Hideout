@@ -22,7 +22,7 @@ class ActorRepositoryImpl(
         get() = Companion.logger
 
     override suspend fun save(actor: Actor): Actor = query {
-        val singleOrNull = Actors.select { Actors.id eq actor.id }.forUpdate().empty()
+        val singleOrNull = Actors.selectAll().where { Actors.id eq actor.id }.forUpdate().empty()
         if (singleOrNull) {
             Actors.insert {
                 it[id] = actor.id
@@ -75,11 +75,12 @@ class ActorRepositoryImpl(
     }
 
     override suspend fun findById(id: Long): Actor? = query {
-        return@query Actors.select { Actors.id eq id }.singleOrNull()?.let(actorResultRowMapper::map)
+        return@query Actors.selectAll().where { Actors.id eq id }.singleOrNull()?.let(actorResultRowMapper::map)
     }
 
     override suspend fun findByIdWithLock(id: Long): Actor? = query {
-        return@query Actors.select { Actors.id eq id }.forUpdate().singleOrNull()?.let(actorResultRowMapper::map)
+        return@query Actors.selectAll().where { Actors.id eq id }.forUpdate().singleOrNull()
+            ?.let(actorResultRowMapper::map)
     }
 
     override suspend fun findAll(limit: Int, offset: Long): List<Actor> = query {
@@ -87,33 +88,35 @@ class ActorRepositoryImpl(
     }
 
     override suspend fun findByName(name: String): List<Actor> = query {
-        return@query Actors.select { Actors.name eq name }.let(actorQueryMapper::map)
+        return@query Actors.selectAll().where { Actors.name eq name }.let(actorQueryMapper::map)
     }
 
     override suspend fun findByNameAndDomain(name: String, domain: String): Actor? = query {
-        return@query Actors.select { Actors.name eq name and (Actors.domain eq domain) }.singleOrNull()
+        return@query Actors.selectAll().where { Actors.name eq name and (Actors.domain eq domain) }.singleOrNull()
             ?.let(actorResultRowMapper::map)
     }
 
     override suspend fun findByNameAndDomainWithLock(name: String, domain: String): Actor? = query {
-        return@query Actors.select { Actors.name eq name and (Actors.domain eq domain) }.forUpdate().singleOrNull()
+        return@query Actors.selectAll().where { Actors.name eq name and (Actors.domain eq domain) }.forUpdate()
+            .singleOrNull()
             ?.let(actorResultRowMapper::map)
     }
 
     override suspend fun findByUrl(url: String): Actor? = query {
-        return@query Actors.select { Actors.url eq url }.singleOrNull()?.let(actorResultRowMapper::map)
+        return@query Actors.selectAll().where { Actors.url eq url }.singleOrNull()?.let(actorResultRowMapper::map)
     }
 
     override suspend fun findByUrlWithLock(url: String): Actor? = query {
-        return@query Actors.select { Actors.url eq url }.forUpdate().singleOrNull()?.let(actorResultRowMapper::map)
+        return@query Actors.selectAll().where { Actors.url eq url }.forUpdate().singleOrNull()
+            ?.let(actorResultRowMapper::map)
     }
 
     override suspend fun findByIds(ids: List<Long>): List<Actor> = query {
-        return@query Actors.select { Actors.id inList ids }.let(actorQueryMapper::map)
+        return@query Actors.selectAll().where { Actors.id inList ids }.let(actorQueryMapper::map)
     }
 
     override suspend fun findByKeyId(keyId: String): Actor? = query {
-        return@query Actors.select { Actors.keyId eq keyId }.singleOrNull()?.let(actorResultRowMapper::map)
+        return@query Actors.selectAll().where { Actors.keyId eq keyId }.singleOrNull()?.let(actorResultRowMapper::map)
     }
 
     override suspend fun delete(id: Long): Unit = query {

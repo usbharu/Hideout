@@ -13,7 +13,7 @@ import dev.usbharu.hideout.mastodon.interfaces.api.status.StatusQuery
 import dev.usbharu.hideout.mastodon.query.StatusQueryService
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.andWhere
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 import org.springframework.stereotype.Repository
 import java.time.Instant
 import dev.usbharu.hideout.domain.mastodon.model.generated.CustomEmoji as MastodonEmoji
@@ -34,14 +34,14 @@ class StatusQueryServiceImpl : StatusQueryService {
 
         val postMap = Posts
             .leftJoin(Actors)
-            .select { Posts.id inList postIdSet }
+            .selectAll().where { Posts.id inList postIdSet }
             .associate { it[Posts.id] to toStatus(it) }
-        val mediaMap = Media.select { Media.id inList mediaIdSet }
+        val mediaMap = Media.selectAll().where { Media.id inList mediaIdSet }
             .associate {
                 it[Media.id] to it.toMedia().toMediaAttachments()
             }
 
-        val emojiMap = CustomEmojis.select { CustomEmojis.id inList emojiIdSet }.associate {
+        val emojiMap = CustomEmojis.selectAll().where { CustomEmojis.id inList emojiIdSet }.associate {
             it[CustomEmojis.id] to it.toCustomEmoji().toMastodonEmoji()
         }
         return statusQueries.mapNotNull { statusQuery ->
@@ -69,7 +69,7 @@ class StatusQueryServiceImpl : StatusQueryService {
             .leftJoin(PostsMedia)
             .leftJoin(Actors)
             .leftJoin(Media)
-            .select { Posts.actorId eq accountId }
+            .selectAll().where { Posts.actorId eq accountId }
 
         if (onlyMedia) {
             query.andWhere { PostsMedia.mediaId.isNotNull() }
@@ -111,7 +111,7 @@ class StatusQueryServiceImpl : StatusQueryService {
             .leftJoin(PostsMedia)
             .leftJoin(Actors)
             .leftJoin(Media)
-            .select { Posts.id eq id }
+            .selectAll().where { Posts.id eq id }
             .groupBy { it[Posts.id] }
             .map { it.value }
             .map {
@@ -153,7 +153,7 @@ class StatusQueryServiceImpl : StatusQueryService {
             .leftJoin(CustomEmojis)
             .leftJoin(Actors)
             .leftJoin(Media)
-            .select { Posts.id inList ids }
+            .selectAll().where { Posts.id inList ids }
             .groupBy { it[Posts.id] }
             .map { it.value }
             .map {

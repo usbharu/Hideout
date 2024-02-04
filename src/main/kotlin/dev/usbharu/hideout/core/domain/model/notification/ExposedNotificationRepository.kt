@@ -21,9 +21,8 @@ class ExposedNotificationRepository(private val idGenerateService: IdGenerateSer
     override suspend fun generateId(): Long = idGenerateService.generateId()
 
     override suspend fun save(notification: Notification): Notification = query {
-        val singleOrNull = Notifications.select {
-            Notifications.id eq notification.id
-        }.forUpdate().singleOrNull()
+        val singleOrNull =
+            Notifications.selectAll().where { Notifications.id eq notification.id }.forUpdate().singleOrNull()
         if (singleOrNull == null) {
             Notifications.insert {
                 it[id] = notification.id
@@ -50,7 +49,7 @@ class ExposedNotificationRepository(private val idGenerateService: IdGenerateSer
     }
 
     override suspend fun findById(id: Long): Notification? = query {
-        Notifications.select { Notifications.id eq id }.singleOrNull()?.toNotifications()
+        Notifications.selectAll().where { Notifications.id eq id }.singleOrNull()?.toNotifications()
     }
 
     override suspend fun deleteById(id: Long) {

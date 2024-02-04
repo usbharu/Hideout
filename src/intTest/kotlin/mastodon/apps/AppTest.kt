@@ -4,7 +4,7 @@ import dev.usbharu.hideout.SpringApplication
 import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.RegisteredClient
 import org.assertj.core.api.Assertions.assertThat
 import org.flywaydb.core.Flyway
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -55,7 +55,7 @@ class AppTest {
 
 
         val app = RegisteredClient
-            .select { RegisteredClient.clientName eq "test-client" }
+            .selectAll().where { RegisteredClient.clientName eq "test-client" }
             .single()
 
         assertThat(app[RegisteredClient.clientName]).isEqualTo("test-client")
@@ -80,7 +80,7 @@ class AppTest {
             .andExpect { status { isOk() } }
 
         val app = RegisteredClient
-            .select { RegisteredClient.clientName eq "test-client-2" }
+            .selectAll().where { RegisteredClient.clientName eq "test-client-2" }
             .single()
 
         assertThat(app[RegisteredClient.clientName]).isEqualTo("test-client-2")

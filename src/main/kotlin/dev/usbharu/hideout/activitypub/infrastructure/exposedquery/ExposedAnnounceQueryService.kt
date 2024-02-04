@@ -10,7 +10,7 @@ import dev.usbharu.hideout.core.domain.model.post.Visibility
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Actors
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Posts
 import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 import org.springframework.stereotype.Repository
 import java.time.Instant
 
@@ -22,7 +22,7 @@ class ExposedAnnounceQueryService(
     override suspend fun findById(id: Long): Pair<Announce, Post>? {
         return Posts
             .leftJoin(Actors)
-            .select { Posts.id eq id }
+            .selectAll().where { Posts.id eq id }
             .singleOrNull()
             ?.let { (it.toAnnounce() ?: return null) to (postResultRowMapper.map(it)) }
     }
@@ -30,7 +30,7 @@ class ExposedAnnounceQueryService(
     override suspend fun findByApId(apId: String): Pair<Announce, Post>? {
         return Posts
             .leftJoin(Actors)
-            .select { Posts.apId eq apId }
+            .selectAll().where { Posts.apId eq apId }
             .singleOrNull()
             ?.let { (it.toAnnounce() ?: return null) to (postResultRowMapper.map(it)) }
     }
@@ -40,7 +40,7 @@ class ExposedAnnounceQueryService(
         val repost = postRepository.findById(repostId)?.url ?: return null
 
         val (to, cc) = visibility(
-            Visibility.values().first { visibility -> visibility.ordinal == this[Posts.visibility] },
+            Visibility.entries.first { visibility -> visibility.ordinal == this[Posts.visibility] },
             this[Actors.followers]
         )
 

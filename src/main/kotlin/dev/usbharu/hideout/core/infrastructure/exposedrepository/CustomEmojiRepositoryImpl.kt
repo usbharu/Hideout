@@ -20,41 +20,42 @@ class CustomEmojiRepositoryImpl(private val idGenerateService: IdGenerateService
     override suspend fun generateId(): Long = idGenerateService.generateId()
 
     override suspend fun save(customEmoji: CustomEmoji): CustomEmoji = query {
-        val singleOrNull = CustomEmojis.select { CustomEmojis.id eq customEmoji.id }.forUpdate().singleOrNull()
+        val singleOrNull =
+            CustomEmojis.selectAll().where { CustomEmojis.id eq customEmoji.id }.forUpdate().singleOrNull()
         if (singleOrNull == null) {
             CustomEmojis.insert {
-                it[CustomEmojis.id] = customEmoji.id
-                it[CustomEmojis.name] = customEmoji.name
-                it[CustomEmojis.domain] = customEmoji.domain
-                it[CustomEmojis.instanceId] = customEmoji.instanceId
-                it[CustomEmojis.url] = customEmoji.url
-                it[CustomEmojis.category] = customEmoji.category
-                it[CustomEmojis.createdAt] = customEmoji.createdAt
+                it[id] = customEmoji.id
+                it[name] = customEmoji.name
+                it[domain] = customEmoji.domain
+                it[instanceId] = customEmoji.instanceId
+                it[url] = customEmoji.url
+                it[category] = customEmoji.category
+                it[createdAt] = customEmoji.createdAt
             }
         } else {
             CustomEmojis.update({ CustomEmojis.id eq customEmoji.id }) {
-                it[CustomEmojis.name] = customEmoji.name
-                it[CustomEmojis.domain] = customEmoji.domain
-                it[CustomEmojis.instanceId] = customEmoji.instanceId
-                it[CustomEmojis.url] = customEmoji.url
-                it[CustomEmojis.category] = customEmoji.category
-                it[CustomEmojis.createdAt] = customEmoji.createdAt
+                it[name] = customEmoji.name
+                it[domain] = customEmoji.domain
+                it[instanceId] = customEmoji.instanceId
+                it[url] = customEmoji.url
+                it[category] = customEmoji.category
+                it[createdAt] = customEmoji.createdAt
             }
         }
         return@query customEmoji
     }
 
     override suspend fun findById(id: Long): CustomEmoji? = query {
-        return@query CustomEmojis.select { CustomEmojis.id eq id }.singleOrNull()?.toCustomEmoji()
+        return@query CustomEmojis.selectAll().where { CustomEmojis.id eq id }.singleOrNull()?.toCustomEmoji()
     }
 
     override suspend fun delete(customEmoji: CustomEmoji): Unit = query {
-        CustomEmojis.deleteWhere { CustomEmojis.id eq customEmoji.id }
+        CustomEmojis.deleteWhere { id eq customEmoji.id }
     }
 
     override suspend fun findByNameAndDomain(name: String, domain: String): CustomEmoji? = query {
         return@query CustomEmojis
-            .select { CustomEmojis.name eq name and (CustomEmojis.domain eq domain) }
+            .selectAll().where { CustomEmojis.name eq name and (CustomEmojis.domain eq domain) }
             .singleOrNull()
             ?.toCustomEmoji()
     }

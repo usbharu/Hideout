@@ -22,7 +22,7 @@ class ExposedTimelineRepository(private val idGenerateService: IdGenerateService
     override suspend fun generateId(): Long = idGenerateService.generateId()
 
     override suspend fun save(timeline: Timeline): Timeline = query {
-        if (Timelines.select { Timelines.id eq timeline.id }.forUpdate().singleOrNull() == null) {
+        if (Timelines.selectAll().where { Timelines.id eq timeline.id }.forUpdate().singleOrNull() == null) {
             Timelines.insert {
                 it[id] = timeline.id
                 it[userId] = timeline.userId
@@ -80,11 +80,11 @@ class ExposedTimelineRepository(private val idGenerateService: IdGenerateService
     }
 
     override suspend fun findByUserId(id: Long): List<Timeline> = query {
-        return@query Timelines.select { Timelines.userId eq id }.map { it.toTimeline() }
+        return@query Timelines.selectAll().where { Timelines.userId eq id }.map { it.toTimeline() }
     }
 
     override suspend fun findByUserIdAndTimelineId(userId: Long, timelineId: Long): List<Timeline> = query {
-        return@query Timelines.select { Timelines.userId eq userId and (Timelines.timelineId eq timelineId) }
+        return@query Timelines.selectAll().where { Timelines.userId eq userId and (Timelines.timelineId eq timelineId) }
             .map { it.toTimeline() }
     }
 

@@ -62,6 +62,7 @@ class ContextDeserializer : JsonDeserializer<String>() {
 
 class ContextSerializer : JsonSerializer<List<String>>() {
 
+    @Deprecated("Deprecated in Java")
     override fun isEmpty(value: List<String>?): Boolean = value.isNullOrEmpty()
 
     override fun isEmpty(provider: SerializerProvider?, value: List<String>?): Boolean = value.isNullOrEmpty()
