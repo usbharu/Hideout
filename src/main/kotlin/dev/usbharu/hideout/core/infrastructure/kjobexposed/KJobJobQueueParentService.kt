@@ -26,6 +26,7 @@ class KJobJobQueueParentService : JobQueueParentService {
 
     override fun init(jobDefines: List<Job>) = Unit
 
+    @Deprecated("use type safe → scheduleTypeSafe")
     override suspend fun <J : Job> schedule(job: J, block: ScheduleContext<J>.(J) -> Unit) {
         logger.debug("schedule job={}", job.name)
         kjob.schedule(job, block)
