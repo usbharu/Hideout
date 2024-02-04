@@ -169,6 +169,9 @@ sourceSets.main {
     )
 }
 
+val os = org.gradle.nativeplatform.platform.internal
+    .DefaultNativePlatform.getCurrentOperatingSystem()
+
 dependencies {
     implementation("io.ktor:ktor-serialization-jackson:$ktor_version")
     implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
@@ -211,7 +214,22 @@ dependencies {
     implementation("org.apache.tika:tika-core:2.9.1")
     implementation("org.apache.tika:tika-parsers:2.9.1")
     implementation("net.coobird:thumbnailator:0.4.20")
-    implementation("org.bytedeco:javacv-platform:1.5.9")
+    implementation("org.bytedeco:javacv:1.5.10"){
+        exclude(module = "opencv")
+        exclude(module = "flycapture")
+        exclude(module = "artoolkitplus")
+        exclude(module = "libdc1394")
+        exclude(module = "librealsense")
+        exclude(module = "librealsense2")
+        exclude(module = "tesseract")
+        exclude(module = "libfreenect")
+        exclude(module = "libfreenect2")
+    }
+    if (os.isWindows) {
+        implementation("org.bytedeco","ffmpeg","6.1.1-1.5.10", classifier = "windows-x86_64")
+    }else{
+        implementation("org.bytedeco","ffmpeg","6.1.1-1.5.10", classifier = "linux-x86_64")
+    }
     implementation("org.flywaydb:flyway-core")
 
     implementation("dev.usbharu:emoji-kt:2.0.0")
