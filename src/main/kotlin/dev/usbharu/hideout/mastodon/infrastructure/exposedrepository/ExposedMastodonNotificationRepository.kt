@@ -25,26 +25,27 @@ class ExposedMastodonNotificationRepository : MastodonNotificationRepository, Ab
 
     override suspend fun save(mastodonNotification: MastodonNotification): MastodonNotification = query {
         val singleOrNull =
-            MastodonNotifications.select { MastodonNotifications.id eq mastodonNotification.id }.singleOrNull()
+            MastodonNotifications.selectAll().where { MastodonNotifications.id eq mastodonNotification.id }
+                .singleOrNull()
         if (singleOrNull == null) {
             MastodonNotifications.insert {
-                it[MastodonNotifications.id] = mastodonNotification.id
-                it[MastodonNotifications.type] = mastodonNotification.type.name
-                it[MastodonNotifications.createdAt] = mastodonNotification.createdAt
-                it[MastodonNotifications.accountId] = mastodonNotification.accountId
-                it[MastodonNotifications.statusId] = mastodonNotification.statusId
-                it[MastodonNotifications.reportId] = mastodonNotification.reportId
-                it[MastodonNotifications.relationshipServeranceEventId] =
+                it[id] = mastodonNotification.id
+                it[type] = mastodonNotification.type.name
+                it[createdAt] = mastodonNotification.createdAt
+                it[accountId] = mastodonNotification.accountId
+                it[statusId] = mastodonNotification.statusId
+                it[reportId] = mastodonNotification.reportId
+                it[relationshipServeranceEventId] =
                     mastodonNotification.relationshipServeranceEvent
             }
         } else {
             MastodonNotifications.update({ MastodonNotifications.id eq mastodonNotification.id }) {
-                it[MastodonNotifications.type] = mastodonNotification.type.name
-                it[MastodonNotifications.createdAt] = mastodonNotification.createdAt
-                it[MastodonNotifications.accountId] = mastodonNotification.accountId
-                it[MastodonNotifications.statusId] = mastodonNotification.statusId
-                it[MastodonNotifications.reportId] = mastodonNotification.reportId
-                it[MastodonNotifications.relationshipServeranceEventId] =
+                it[type] = mastodonNotification.type.name
+                it[createdAt] = mastodonNotification.createdAt
+                it[accountId] = mastodonNotification.accountId
+                it[statusId] = mastodonNotification.statusId
+                it[reportId] = mastodonNotification.reportId
+                it[relationshipServeranceEventId] =
                     mastodonNotification.relationshipServeranceEvent
             }
         }
@@ -58,7 +59,8 @@ class ExposedMastodonNotificationRepository : MastodonNotificationRepository, Ab
     }
 
     override suspend fun findById(id: Long): MastodonNotification? = query {
-        MastodonNotifications.select { MastodonNotifications.id eq id }.singleOrNull()?.toMastodonNotification()
+        MastodonNotifications.selectAll().where { MastodonNotifications.id eq id }.singleOrNull()
+            ?.toMastodonNotification()
     }
 
     override suspend fun findByUserIdAndInTypesAndInSourceActorId(
@@ -67,9 +69,7 @@ class ExposedMastodonNotificationRepository : MastodonNotificationRepository, Ab
         accountId: List<Long>,
         page: Page
     ): PaginationList<MastodonNotification, Long> = query {
-        val query = MastodonNotifications.select {
-            MastodonNotifications.userId eq loginUser
-        }
+        val query = MastodonNotifications.selectAll().where { MastodonNotifications.userId eq loginUser }
         val result = query.withPagination(page, MastodonNotifications.id)
 
         return@query PaginationList(result.map { it.toMastodonNotification() }, result.next, result.prev)

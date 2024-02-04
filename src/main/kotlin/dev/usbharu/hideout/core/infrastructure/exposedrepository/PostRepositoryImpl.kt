@@ -21,7 +21,7 @@ class PostRepositoryImpl(
     override suspend fun generateId(): Long = idGenerateService.generateId()
 
     override suspend fun save(post: Post): Post = query {
-        val singleOrNull = Posts.select { Posts.id eq post.id }.forUpdate().singleOrNull()
+        val singleOrNull = Posts.selectAll().where { Posts.id eq post.id }.forUpdate().singleOrNull()
         if (singleOrNull == null) {
             Posts.insert {
                 it[id] = post.id
@@ -83,7 +83,7 @@ class PostRepositoryImpl(
         return@query Posts
             .leftJoin(PostsMedia)
             .leftJoin(PostsEmojis)
-            .select { Posts.id eq id }
+            .selectAll().where { Posts.id eq id }
             .let(postQueryMapper::map)
             .singleOrNull()
     }
@@ -92,7 +92,7 @@ class PostRepositoryImpl(
         return@query Posts
             .leftJoin(PostsMedia)
             .leftJoin(PostsEmojis)
-            .select { Posts.url eq url }
+            .selectAll().where { Posts.url eq url }
             .let(postQueryMapper::map)
             .singleOrNull()
     }
@@ -101,20 +101,20 @@ class PostRepositoryImpl(
         return@query Posts
             .leftJoin(PostsMedia)
             .leftJoin(PostsEmojis)
-            .select { Posts.apId eq apId }
+            .selectAll().where { Posts.apId eq apId }
             .let(postQueryMapper::map)
             .singleOrNull()
     }
 
     override suspend fun existByApIdWithLock(apId: String): Boolean = query {
-        return@query Posts.select { Posts.apId eq apId }.forUpdate().empty().not()
+        return@query Posts.selectAll().where { Posts.apId eq apId }.forUpdate().empty().not()
     }
 
     override suspend fun findByActorId(actorId: Long): List<Post> = query {
         return@query Posts
             .leftJoin(PostsMedia)
             .leftJoin(PostsEmojis)
-            .select { Posts.actorId eq actorId }.let(postQueryMapper::map)
+            .selectAll().where { Posts.actorId eq actorId }.let(postQueryMapper::map)
     }
 
     override suspend fun delete(id: Long): Unit = query {

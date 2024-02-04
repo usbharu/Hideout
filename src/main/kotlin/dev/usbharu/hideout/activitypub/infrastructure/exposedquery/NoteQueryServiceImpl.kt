@@ -11,7 +11,7 @@ import dev.usbharu.hideout.core.domain.model.post.Visibility
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.*
 import org.jetbrains.exposed.sql.Query
 import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 import java.time.Instant
@@ -24,12 +24,12 @@ class NoteQueryServiceImpl(private val postRepository: PostRepository, private v
             .leftJoin(Actors)
             .leftJoin(PostsMedia)
             .leftJoin(Media)
-            .select { Posts.id eq id }
+            .selectAll().where { Posts.id eq id }
             .let {
                 (it.toNote() ?: return null) to (
-                    postQueryMapper.map(it)
-                        .singleOrNull() ?: return null
-                    )
+                        postQueryMapper.map(it)
+                            .singleOrNull() ?: return null
+                        )
             }
     }
 
@@ -38,12 +38,12 @@ class NoteQueryServiceImpl(private val postRepository: PostRepository, private v
             .leftJoin(Actors)
             .leftJoin(PostsMedia)
             .leftJoin(Media)
-            .select { Posts.apId eq apId }
+            .selectAll().where { Posts.apId eq apId }
             .let {
                 (it.toNote() ?: return null) to (
-                    postQueryMapper.map(it)
-                        .singleOrNull() ?: return null
-                    )
+                        postQueryMapper.map(it)
+                            .singleOrNull() ?: return null
+                        )
             }
     }
 

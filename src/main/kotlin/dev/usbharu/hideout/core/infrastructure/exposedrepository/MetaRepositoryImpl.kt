@@ -10,7 +10,7 @@ import java.util.*
 class MetaRepositoryImpl : MetaRepository {
 
     override suspend fun save(meta: dev.usbharu.hideout.core.domain.model.meta.Meta) {
-        if (Meta.select { Meta.id eq 1 }.empty()) {
+        if (Meta.selectAll().where { Meta.id eq 1 }.empty()) {
             Meta.insert {
                 it[id] = 1
                 it[version] = meta.version
@@ -29,7 +29,7 @@ class MetaRepositoryImpl : MetaRepository {
     }
 
     override suspend fun get(): dev.usbharu.hideout.core.domain.model.meta.Meta? {
-        return Meta.select { Meta.id eq 1 }.singleOrNull()?.let {
+        return Meta.selectAll().where { Meta.id eq 1 }.singleOrNull()?.let {
             dev.usbharu.hideout.core.domain.model.meta.Meta(
                 it[Meta.version],
                 Jwt(UUID.fromString(it[Meta.kid]), it[Meta.jwtPrivateKey], it[Meta.jwtPublicKey])
