@@ -53,10 +53,10 @@ jobs:
             build
           key: gradle-build-${{ hashFiles('**/*.gradle.kts') }}-${{ hashFiles('**/*.kt') }}-${{ github.sha }}
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
       - name: Build
         uses: gradle/gradle-build-action@v2.8.1
@@ -104,10 +104,10 @@ jobs:
             build
           key: gradle-build-${{ hashFiles('**/*.gradle.kts') }}-${{ hashFiles('src') }}-${{ github.sha }}
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Unit Test
@@ -163,10 +163,10 @@ jobs:
             build
           key: gradle-build-${{ hashFiles('**/*.gradle.kts') }}-${{ hashFiles('src') }}-${{ github.sha }}
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: MongoDB in GitHub Actions
@@ -227,10 +227,10 @@ jobs:
             build
           key: gradle-build-${{ hashFiles('**/*.gradle.kts') }}-${{ hashFiles('src') }}-${{ github.sha }}
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Run Kover
@@ -322,10 +322,10 @@ jobs:
             build
           key: gradle-build-${{ hashFiles('**/*.gradle.kts') }}-${{ hashFiles('src') }}-${{ github.sha }}
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Build with Gradle
@@ -380,10 +380,10 @@ jobs:
             build
           key: gradle-build-${{ hashFiles('**/*.gradle.kts') }}-${{ hashFiles('src') }}-${{ github.sha }}
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: MongoDB in GitHub Actions
