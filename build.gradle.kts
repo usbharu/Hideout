@@ -7,16 +7,17 @@ val logback_version: String by project
 val exposed_version: String by project
 val h2_version: String by project
 val koin_version: String by project
+val coroutines_version: String by project
+val serialization_version: String by project
 
 plugins {
-    kotlin("jvm") version "1.8.21"
-    id("org.graalvm.buildtools.native") version "0.9.21"
-    id("io.gitlab.arturbosch.detekt") version "1.23.1"
-    id("org.springframework.boot") version "3.2.0"
-    kotlin("plugin.spring") version "1.8.21"
-    id("org.openapi.generator") version "7.0.1"
+    kotlin("jvm") version "1.9.22"
+    id("org.graalvm.buildtools.native") version "0.10.0"
+    id("io.gitlab.arturbosch.detekt") version "1.23.5"
+    id("org.springframework.boot") version "3.2.2"
+    kotlin("plugin.spring") version "1.9.22"
+    id("org.openapi.generator") version "7.2.0"
     id("org.jetbrains.kotlinx.kover") version "0.7.4"
-//    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
 }
 
 apply {
@@ -91,8 +92,8 @@ tasks.withType<Test> {
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>().configureEach {
-    compilerOptions.languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_8)
-    compilerOptions.apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_8)
+    compilerOptions.languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9)
+    compilerOptions.apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9)
 }
 
 tasks.withType<KotlinCompile> {
@@ -156,7 +157,7 @@ repositories {
 kotlin {
     target {
         compilations.all {
-            kotlinOptions.jvmTarget = JavaVersion.VERSION_17.toString()
+            kotlinOptions.jvmTarget = JavaVersion.VERSION_21.toString()
         }
     }
 }
@@ -177,11 +178,10 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
     implementation("com.h2database:h2:$h2_version")
-    implementation("org.xerial:sqlite-jdbc:3.40.1.0")
+    implementation("org.xerial:sqlite-jdbc:3.45.1.0")
     implementation("ch.qos.logback:logback-classic:$logback_version")
-    implementation("com.auth0:java-jwt:4.4.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.6.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$serialization_version")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version")
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
 
@@ -201,16 +201,16 @@ dependencies {
     implementation("org.springframework.security:spring-security-oauth2-jose")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
-    implementation("org.jetbrains.exposed:exposed-spring-boot-starter:0.44.0")
+    implementation("org.jetbrains.exposed:exposed-spring-boot-starter:$exposed_version")
     implementation("io.trbl:blurhash:1.0.0")
-    implementation("software.amazon.awssdk:s3:2.20.157")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.7.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:1.7.3")
+    implementation("software.amazon.awssdk:s3:2.23.17")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:$coroutines_version")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:$coroutines_version")
     implementation("dev.usbharu:http-signature:1.0.0")
 
-    implementation("org.postgresql:postgresql:42.6.0")
-    implementation("com.twelvemonkeys.imageio:imageio-webp:3.10.0")
+    implementation("org.postgresql:postgresql:42.7.1")
+    implementation("com.twelvemonkeys.imageio:imageio-webp:3.10.1")
     implementation("org.apache.tika:tika-core:2.9.1")
     implementation("org.apache.tika:tika-parsers:2.9.1")
     implementation("net.coobird:thumbnailator:0.4.20")
@@ -239,28 +239,28 @@ dependencies {
     implementation("io.ktor:ktor-client-logging-jvm:$ktor_version")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version")
 
     implementation("io.ktor:ktor-client-core:$ktor_version")
     implementation("io.ktor:ktor-client-cio:$ktor_version")
     implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
     testImplementation("io.ktor:ktor-client-mock:$ktor_version")
 
-    testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
     testImplementation("org.mockito:mockito-inline:5.2.0")
-    testImplementation("nl.jqno.equalsverifier:equalsverifier:3.15.3")
+    testImplementation("nl.jqno.equalsverifier:equalsverifier:3.15.6")
     testImplementation("com.jparams:to-string-verifier:1.4.8")
 
     implementation("org.drewcarlson:kjob-core:0.6.0")
     implementation("org.drewcarlson:kjob-mongo:0.6.0")
 
-    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.1")
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.5")
 
     intTestImplementation("org.springframework.boot:spring-boot-starter-test")
     intTestImplementation("org.springframework.security:spring-security-test")
     intTestImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
-    intTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
-    intTestImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
+    intTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version")
+    intTestImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
 
     e2eTestImplementation("org.springframework.boot:spring-boot-starter-test")
     e2eTestImplementation("org.springframework.security:spring-security-test")
@@ -301,7 +301,7 @@ tasks.withType<io.gitlab.arturbosch.detekt.DetektCreateBaselineTask>().configure
 configurations.matching { it.name == "detekt" }.all {
     resolutionStrategy.eachDependency {
         if (requested.group == "org.jetbrains.kotlin") {
-            useVersion("1.9.0")
+            useVersion("1.9.22")
         }
     }
 }
