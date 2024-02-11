@@ -1194,7 +1194,7 @@ paths:
             - "read:filters"
       parameters:
         - in: path
-          name: filter_id
+          name: id
           required: true
           schema:
             type: string
@@ -1213,7 +1213,7 @@ paths:
             - "write:filters"
       parameters:
         - in: path
-          name: filter_id
+          name: id
           required: true
           schema:
             type: string
