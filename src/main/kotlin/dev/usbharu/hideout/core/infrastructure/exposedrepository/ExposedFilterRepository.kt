@@ -46,6 +46,11 @@ class ExposedFilterRepository(private val idGenerateService: IdGenerateService) 
         return@query Filters.selectAll().where { Filters.id eq id }.singleOrNull()?.toFilter()
     }
 
+    override suspend fun findByUserIdAndId(userId: Long, id: Long): Filter? = query {
+        return@query Filters.selectAll().where { Filters.userId eq userId and (Filters.id eq id) }.singleOrNull()
+            ?.toFilter()
+    }
+
     override suspend fun findByUserIdAndType(userId: Long, types: List<FilterType>): List<Filter> = query {
         return@query Filters.selectAll().where { Filters.userId eq userId }.map { it.toFilter() }
             .filter { it.context.containsAll(types) }
@@ -53,6 +58,10 @@ class ExposedFilterRepository(private val idGenerateService: IdGenerateService) 
 
     override suspend fun deleteById(id: Long): Unit = query {
         Filters.deleteWhere { Filters.id eq id }
+    }
+
+    override suspend fun deleteByUserIdAndId(userId: Long, id: Long) {
+        Filters.deleteWhere { Filters.userId eq userId and (Filters.id eq id) }
     }
 
     companion object {
