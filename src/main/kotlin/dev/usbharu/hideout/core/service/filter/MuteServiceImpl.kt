@@ -17,16 +17,15 @@ class MuteServiceImpl(
 ) : MuteService {
     override suspend fun createFilter(
         title: String,
-        name: String,
         context: List<FilterType>,
         action: FilterAction,
         keywords: List<FilterKeyword>,
         loginUser: Long
-    ): Filter {
+    ): FilterQueryModel {
         val filter = Filter(
             filterRepository.generateId(),
             loginUser,
-            name,
+            title,
             context,
             action
         )
@@ -42,7 +41,8 @@ class MuteServiceImpl(
 
         filterKeywordRepository.saveAll(filterKeywordList)
 
-        return filterRepository.save(filter)
+        val savedFilter = filterRepository.save(filter)
+        return FilterQueryModel.of(savedFilter, filterKeywordList)
     }
 
     override suspend fun getFilters(userId: Long, types: List<FilterType>): List<FilterQueryModel> =
