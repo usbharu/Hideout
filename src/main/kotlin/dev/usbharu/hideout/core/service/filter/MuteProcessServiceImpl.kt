@@ -71,7 +71,6 @@ class MuteProcessServiceImpl : MuteProcessService {
                     it,
                     precompileRegex(it)
                 )
-
             }
 
         return filterQueryModelList
@@ -93,10 +92,8 @@ class MuteProcessServiceImpl : MuteProcessService {
             }
         }
 
-
         val noneRegex = noneRegexStrings.joinToString("|", "(", ")")
         val wholeRegex = wholeRegexStrings.joinToString("|", "\\b(", ")\\b")
-
 
         val regex = if (noneRegexStrings.isNotEmpty() && wholeRegexStrings.isNotEmpty()) {
             Regex("$noneRegex|$wholeRegex")
