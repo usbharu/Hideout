@@ -2,7 +2,6 @@ package dev.usbharu.hideout.mastodon.interfaces.api.filter
 
 import dev.usbharu.hideout.controller.mastodon.generated.FilterApi
 import dev.usbharu.hideout.domain.mastodon.model.generated.*
-import kotlinx.coroutines.flow.Flow
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 
