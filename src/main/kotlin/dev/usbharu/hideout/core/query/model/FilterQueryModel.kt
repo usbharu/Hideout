@@ -14,13 +14,14 @@ data class FilterQueryModel(
     val keywords: List<FilterKeyword>
 ) {
     companion object {
+        @Suppress("FunctionMinLength")
         fun of(filter: Filter, keywords: List<FilterKeyword>): FilterQueryModel = FilterQueryModel(
-            filter.id,
-            filter.userId,
-            filter.name,
-            filter.context,
-            filter.filterAction,
-            keywords
+            id = filter.id,
+            userId = filter.userId,
+            name = filter.name,
+            context = filter.context,
+            filterAction = filter.filterAction,
+            keywords = keywords
         )
     }
 }

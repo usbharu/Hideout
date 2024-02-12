@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 
+@Suppress("TooManyFunctions")
 interface MastodonFilterApiService {
     fun v1Filters(userId: Long): Flow<V1Filter>
 
@@ -33,7 +34,7 @@ interface MastodonFilterApiService {
 
     fun filterStatuses(userId: Long, filterId: Long): Flow<FilterStatus>
 
-    suspend fun addFilterStatus(userId: Long, filterId: Long, filterStatusRequest: FilterStatusRequest)
+    suspend fun addFilterStatus(userId: Long, filterId: Long, filterStatusRequest: FilterStatusRequest): FilterStatus
 
     fun filters(userId: Long): Flow<Filter>
 
@@ -65,8 +66,8 @@ class MastodonFilterApiServiceImpl(
                 V1Filter(
                     id = it.id.toString(),
                     phrase = it.keyword,
-                    context = filterQueryModel.context.map {
-                        when (it) {
+                    context = filterQueryModel.context.map { filterType ->
+                        when (filterType) {
                             home -> Context.home
                             notifications -> Context.notifications
                             public -> Context.public
@@ -178,19 +179,20 @@ class MastodonFilterApiServiceImpl(
         return toFilterKeyword(filterKeyword)
     }
 
-    override fun filterStatuses(userId: Long, filterId: Long): Flow<FilterStatus> {
-        return emptyFlow()
+    override fun filterStatuses(userId: Long, filterId: Long): Flow<FilterStatus> = emptyFlow()
+
+    override suspend fun addFilterStatus(
+        userId: Long,
+        filterId: Long,
+        filterStatusRequest: FilterStatusRequest
+    ): FilterStatus {
+        TODO()
     }
 
-    override suspend fun addFilterStatus(userId: Long, filterId: Long, filterStatusRequest: FilterStatusRequest) {
-        return
-    }
-
-    override fun filters(userId: Long): Flow<Filter> {
-        return runBlocking { filterQueryService.findByUserId(userId) }.map { filterQueryModel ->
+    override fun filters(userId: Long): Flow<Filter> =
+        runBlocking { filterQueryService.findByUserId(userId) }.map { filterQueryModel ->
             toFilter(filterQueryModel)
         }.asFlow()
-    }
 
     private fun toFilter(filterQueryModel: FilterQueryModel) = Filter(
         id = filterQueryModel.id.toString(),
@@ -221,9 +223,8 @@ class MastodonFilterApiServiceImpl(
         it.mode == FilterMode.WHOLE_WORD
     )
 
-    override suspend fun deleteById(userId: Long, filterId: Long) {
+    override suspend fun deleteById(userId: Long, filterId: Long) =
         filterRepository.deleteByUserIdAndId(userId, filterId)
-    }
 
     override suspend fun getById(userId: Long, filterId: Long): Filter? =
         filterQueryService.findByUserIdAndId(userId, filterId)?.let { toFilter(it) }
@@ -278,11 +279,7 @@ class MastodonFilterApiServiceImpl(
         )
     }
 
-    override suspend fun deleteFilterStatusById(userId: Long, filterPostsId: Long) {
-        return
-    }
+    override suspend fun deleteFilterStatusById(userId: Long, filterPostsId: Long) = Unit
 
-    override suspend fun getFilterStatusById(userId: Long, filterPostsId: Long): FilterStatus? {
-        return null
-    }
+    override suspend fun getFilterStatusById(userId: Long, filterPostsId: Long): FilterStatus? = null
 }

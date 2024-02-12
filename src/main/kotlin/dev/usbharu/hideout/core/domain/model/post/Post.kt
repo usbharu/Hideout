@@ -89,6 +89,7 @@ data class Post private constructor(
             )
         }
 
+        @Suppress("LongParameterList")
         fun pureRepostOf(
             id: Long,
             actorId: Long,
@@ -110,24 +111,25 @@ data class Post private constructor(
             require(actorId >= 0) { "actorId must be greater than or equal to 0." }
 
             return Post(
-                id,
-                actorId,
-                null,
-                "",
-                "",
-                createdAt.toEpochMilli(),
-                fixedVisibility,
-                url,
-                repost.id,
-                null,
-                false,
-                apId,
-                emptyList(),
-                false,
-                emptyList()
+                id = id,
+                actorId = actorId,
+                overview = null,
+                content = "",
+                text = "",
+                createdAt = createdAt.toEpochMilli(),
+                visibility = fixedVisibility,
+                url = url,
+                repostId = repost.id,
+                replyId = null,
+                sensitive = false,
+                apId = apId,
+                mediaIds = emptyList(),
+                delted = false,
+                emojiIds = emptyList()
             )
         }
 
+        @Suppress("LongParameterList")
         fun quoteRepostOf(
             id: Long,
             actorId: Long,
