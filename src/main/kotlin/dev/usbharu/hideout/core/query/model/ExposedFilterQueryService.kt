@@ -53,7 +53,7 @@ class ExposedFilterQueryService : FilterQueryService {
             .map {
                 FilterQueryModel.of(
                     it.first().toFilter(),
-                    it.map { it.toFilterKeyword() }
+                    it.map { resultRow -> resultRow.toFilterKeyword() }
                 )
             }
     }

@@ -28,14 +28,14 @@ class ExposedFilterRepository(private val idGenerateService: IdGenerateService) 
                 it[id] = filter.id
                 it[userId] = filter.userId
                 it[name] = filter.name
-                it[context] = filter.context.joinToString(",") { it.name }
+                it[context] = filter.context.joinToString(",") { filterType -> filterType.name }
                 it[filterAction] = filter.filterAction.name
             }
         } else {
             Filters.update({ Filters.id eq filter.id }) {
                 it[userId] = filter.userId
                 it[name] = filter.name
-                it[context] = filter.context.joinToString(",") { it.name }
+                it[context] = filter.context.joinToString(",") { filterType -> filterType.name }
                 it[filterAction] = filter.filterAction.name
             }
         }
