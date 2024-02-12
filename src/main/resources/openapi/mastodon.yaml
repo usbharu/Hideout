@@ -949,6 +949,9 @@ paths:
       requestBody:
         required: true
         content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FilterPostRequest"
           application/x-www-form-urlencoded:
             schema:
               $ref: "#/components/schemas/FilterPostRequest"
@@ -1062,6 +1065,9 @@ paths:
       requestBody:
         required: true
         content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FilterKeywordsPostRequest"
           application/x-www-form-urlencoded:
             schema:
               $ref: "#/components/schemas/FilterKeywordsPostRequest"
@@ -1158,7 +1164,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/FilterStatus"
+                type: array
+                items:
+                  $ref: "#/components/schemas/FilterStatus"
     post:
       tags:
         - filter
@@ -1174,6 +1182,9 @@ paths:
       requestBody:
         required: true
         content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FilterStatusRequest"
           application/x-www-form-urlencoded:
             schema:
               $ref: "#/components/schemas/FilterStatusRequest"
@@ -1248,6 +1259,15 @@ paths:
       security:
         - OAuth2:
             - "write:filters"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/V1FilterPostRequest"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/V1FilterPostRequest"
       responses:
         200:
           description: 成功
@@ -1269,12 +1289,6 @@ paths:
           required: true
           schema:
             type: string
-      requestBody:
-        required: true
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: "#/components/schemas/V1FilterPostRequest"
       responses:
         200:
           description: 成功
@@ -1882,13 +1896,15 @@ components:
         title:
           type: string
         context:
-          type: string
-          enum:
-            - home
-            - notifications
-            - public
-            - thread
-            - account
+          type: array
+          items:
+            type: string
+            enum:
+              - home
+              - notifications
+              - public
+              - thread
+              - account
         expires_at:
           type: string
           nullable: true
@@ -1968,6 +1984,9 @@ components:
           type: boolean
         expires_in:
           type: integer
+      required:
+        - phrase
+        - context
 
     V1FilterPutRequest:
       type: object
@@ -2017,6 +2036,9 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/FilterPostRequestKeyword"
+      required:
+        - title
+        - context
 
     FilterPostRequestKeyword:
       type: object
@@ -2025,8 +2047,12 @@ components:
           type: string
         whole_word:
           type: boolean
+          default: false
         regex:
           type: boolean
+          default: false
+      required:
+        - keyword
 
     FilterKeywordsPostRequest:
       type: object
@@ -2035,8 +2061,12 @@ components:
           type: string
         whole_word:
           type: boolean
+          default: false
         regex:
           type: boolean
+          default: false
+      required:
+        - keyword
 
     FilterKeywordsPutRequest:
       type: object
