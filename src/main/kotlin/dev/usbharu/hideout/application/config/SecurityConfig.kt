@@ -26,8 +26,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import org.springframework.core.annotation.Order
-import org.springframework.http.HttpMethod.GET
-import org.springframework.http.HttpMethod.POST
+import org.springframework.http.HttpMethod.*
 import org.springframework.http.HttpStatus
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
@@ -209,6 +208,33 @@ class SecurityConfig {
 
                 authorize(GET, "/api/v1/timelines/public", permitAll)
                 authorize(GET, "/api/v1/timelines/home", hasAnyScope("read", "read:statuses"))
+
+                authorize(GET, "/api/v2/filters", hasAnyScope("read", "read:filters"))
+                authorize(POST, "/api/v2/filters", hasAnyScope("write", "write:filters"))
+
+                authorize(GET, "/api/v2/filters/*", hasAnyScope("read", "read:filters"))
+                authorize(PUT, "/api/v2/filters/*", hasAnyScope("write", "write:filters"))
+                authorize(DELETE, "/api/v2/filters/*", hasAnyScope("write", "write:filters"))
+
+                authorize(GET, "/api/v2/filters/*/keywords", hasAnyScope("read", "read:filters"))
+                authorize(POST, "/api/v2/filters/*/keywords", hasAnyScope("write", "write:filters"))
+
+                authorize(GET, "/api/v2/filters/keywords/*", hasAnyScope("read", "read:filters"))
+                authorize(PUT, "/api/v2/filters/keywords/*", hasAnyScope("write", "write:filters"))
+                authorize(DELETE, "/api/v2/filters/keywords/*", hasAnyScope("write", "write:filters"))
+
+                authorize(GET, "/api/v2/filters/*/statuses", hasAnyScope("read", "read:filters"))
+                authorize(POST, "/api/v2/filters/*/statuses", hasAnyScope("write", "write:filters"))
+
+                authorize(GET, "/api/v2/filters/statuses/*", hasAnyScope("read", "read:filters"))
+                authorize(DELETE, "/api/v2/filters/statuses/*", hasAnyScope("write", "write:filters"))
+
+                authorize(GET, "/api/v1/filters", hasAnyScope("read", "read:filters"))
+                authorize(POST, "/api/v1/filters", hasAnyScope("write", "write:filters"))
+
+                authorize(GET, "/api/v/filters/*", hasAnyScope("read", "read:filters"))
+                authorize(POST, "/api/v1/filters/*", hasAnyScope("write", "write:filters"))
+                authorize(DELETE, "/api/v1/filters/*", hasAnyScope("write", "write:filters"))
 
                 authorize(anyRequest, authenticated)
             }
