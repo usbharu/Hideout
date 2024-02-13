@@ -72,7 +72,7 @@ fun ResultRow.toFilterKeyword(): FilterKeyword {
     )
 }
 
-object FilterKeywords : Table() {
+object FilterKeywords : Table("filter_keywords") {
     val id = long("id")
     val filterId = long("filter_id").references(Filters.id)
     val keyword = varchar("keyword", 1000)
