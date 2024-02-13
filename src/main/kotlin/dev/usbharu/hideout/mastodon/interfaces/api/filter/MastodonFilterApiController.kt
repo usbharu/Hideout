@@ -4,6 +4,7 @@ import dev.usbharu.hideout.controller.mastodon.generated.FilterApi
 import dev.usbharu.hideout.core.infrastructure.springframework.security.LoginUserContextHolder
 import dev.usbharu.hideout.domain.mastodon.model.generated.*
 import dev.usbharu.hideout.mastodon.service.filter.MastodonFilterApiService
+import kotlinx.coroutines.flow.Flow
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 
@@ -68,6 +69,31 @@ class MastodonFilterApiController(
                 filterStatusRequest
             )
         )
+    }
+
+    override fun apiV1FiltersGet(): ResponseEntity<Flow<V1Filter>> =
+        ResponseEntity.ok(mastodonFilterApiService.v1Filters(loginUserContextHolder.getLoginUserId()))
+
+    override fun apiV2FiltersFilterIdKeywordsGet(filterId: String): ResponseEntity<Flow<FilterKeyword>> {
+        return ResponseEntity.ok(
+            mastodonFilterApiService.filterKeywords(
+                loginUserContextHolder.getLoginUserId(),
+                filterId.toLong()
+            )
+        )
+    }
+
+    override fun apiV2FiltersFilterIdStatusesGet(filterId: String): ResponseEntity<Flow<FilterStatus>> {
+        return ResponseEntity.ok(
+            mastodonFilterApiService.filterStatuses(
+                loginUserContextHolder.getLoginUserId(),
+                filterId.toLong()
+            )
+        )
+    }
+
+    override fun apiV2FiltersGet(): ResponseEntity<Flow<Filter>> {
+        return ResponseEntity.ok(mastodonFilterApiService.filters(loginUserContextHolder.getLoginUserId()))
     }
 
     override suspend fun apiV2FiltersIdDelete(id: String): ResponseEntity<Any> {
