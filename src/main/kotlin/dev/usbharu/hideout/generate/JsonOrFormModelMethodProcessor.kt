@@ -40,11 +40,12 @@ class JsonOrFormModelMethodProcessor(
 
         return try {
             modelAttributeMethodProcessor.resolveArgument(parameter, mavContainer, webRequest, binderFactory)
-        } catch (ignore: Exception) {
+        } catch (exception: Exception) {
             try {
                 requestResponseBodyMethodProcessor.resolveArgument(parameter, mavContainer, webRequest, binderFactory)
             } catch (e: Exception) {
-                logger.warn("Failed to bind request", e)
+                logger.warn("Failed to bind request (1)", exception)
+                logger.warn("Failed to bind request (2)", e)
             }
         }
     }
