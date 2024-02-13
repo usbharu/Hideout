@@ -39,9 +39,9 @@ class MuteServiceImpl(
             )
         }
 
-        filterKeywordRepository.saveAll(filterKeywordList)
-
         val savedFilter = filterRepository.save(filter)
+
+        filterKeywordRepository.saveAll(filterKeywordList)
         return FilterQueryModel.of(savedFilter, filterKeywordList)
     }
 
