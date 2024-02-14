@@ -15,5 +15,4 @@ interface MuteService {
 
     suspend fun getFilters(userId: Long, types: List<FilterType> = emptyList()): List<FilterQueryModel>
 
-    suspend fun deleteFilter(filterId: Long)
 }

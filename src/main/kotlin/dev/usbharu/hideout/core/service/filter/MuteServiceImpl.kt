@@ -32,7 +32,7 @@ class MuteServiceImpl(
 
         val filterKeywordList = keywords.map {
             dev.usbharu.hideout.core.domain.model.filterkeyword.FilterKeyword(
-                filterRepository.generateId(),
+                filterKeywordRepository.generateId(),
                 filter.id,
                 it.keyword,
                 it.mode
@@ -48,8 +48,4 @@ class MuteServiceImpl(
     override suspend fun getFilters(userId: Long, types: List<FilterType>): List<FilterQueryModel> =
         filterQueryService.findByUserIdAndType(userId, types)
 
-    override suspend fun deleteFilter(filterId: Long) {
-        filterKeywordRepository.deleteByFilterId(filterId)
-        filterRepository.deleteById(filterId)
-    }
 }
