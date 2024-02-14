@@ -232,7 +232,7 @@ class SecurityConfig {
                 authorize(GET, "/api/v1/filters", hasAnyScope("read", "read:filters"))
                 authorize(POST, "/api/v1/filters", hasAnyScope("write", "write:filters"))
 
-                authorize(GET, "/api/v/filters/*", hasAnyScope("read", "read:filters"))
+                authorize(GET, "/api/v1/filters/*", hasAnyScope("read", "read:filters"))
                 authorize(POST, "/api/v1/filters/*", hasAnyScope("write", "write:filters"))
                 authorize(DELETE, "/api/v1/filters/*", hasAnyScope("write", "write:filters"))
 
