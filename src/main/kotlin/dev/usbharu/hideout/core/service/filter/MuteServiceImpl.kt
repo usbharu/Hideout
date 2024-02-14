@@ -47,5 +47,4 @@ class MuteServiceImpl(
 
     override suspend fun getFilters(userId: Long, types: List<FilterType>): List<FilterQueryModel> =
         filterQueryService.findByUserIdAndType(userId, types)
-
 }
