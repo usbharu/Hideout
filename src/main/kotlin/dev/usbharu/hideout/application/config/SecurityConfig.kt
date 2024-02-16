@@ -64,10 +64,9 @@ import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.util.*
 
-
 @EnableWebSecurity(debug = false)
 @Configuration
-@Suppress("FunctionMaxLength", "TooManyFunctions")
+@Suppress("FunctionMaxLength", "TooManyFunctions", "LongMethod")
 class SecurityConfig {
 
     @Bean
@@ -246,9 +245,6 @@ class SecurityConfig {
                 authorize(anyRequest, authenticated)
             }
 
-
-
-
             oauth2ResourceServer {
                 jwt { }
             }
@@ -384,13 +380,12 @@ class SecurityConfig {
             SCOPE_admin:write > SCOPE_admin:write:ip_blocks
             SCOPE_admin:write > SCOPE_admin:write:email_domain_blocks
             SCOPE_admin:write > SCOPE_admin:write:canonical_email_blocks
-        """.trimIndent()
+            """.trimIndent()
         )
 
         return roleHierarchyImpl
     }
 }
-
 
 @ConfigurationProperties("hideout.security.jwt")
 @ConditionalOnProperty(name = ["hideout.security.jwt.generate"], havingValue = "")
