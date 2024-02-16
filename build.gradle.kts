@@ -214,7 +214,7 @@ dependencies {
     implementation("org.apache.tika:tika-core:2.9.1")
     implementation("org.apache.tika:tika-parsers:2.9.1")
     implementation("net.coobird:thumbnailator:0.4.20")
-    implementation("org.bytedeco:javacv:1.5.10"){
+    implementation("org.bytedeco:javacv:1.5.10") {
         exclude(module = "opencv")
         exclude(module = "flycapture")
         exclude(module = "artoolkitplus")
@@ -226,9 +226,9 @@ dependencies {
         exclude(module = "libfreenect2")
     }
     if (os.isWindows) {
-        implementation("org.bytedeco","ffmpeg","6.1.1-1.5.10", classifier = "windows-x86_64")
-    }else{
-        implementation("org.bytedeco","ffmpeg","6.1.1-1.5.10", classifier = "linux-x86_64")
+        implementation("org.bytedeco", "ffmpeg", "6.1.1-1.5.10", classifier = "windows-x86_64")
+    } else {
+        implementation("org.bytedeco", "ffmpeg", "6.1.1-1.5.10", classifier = "linux-x86_64")
     }
     implementation("org.flywaydb:flyway-core")
 
@@ -269,8 +269,6 @@ dependencies {
     e2eTestImplementation("com.intuit.karate:karate-junit5:1.4.1")
 
 
-
-
 }
 
 detekt {
@@ -281,7 +279,7 @@ detekt {
     autoCorrect = true
 }
 
-tasks.withType<io.gitlab.arturbosch.detekt.Detekt>() {
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt> {
     exclude("**/generated/**")
     doFirst {
 
@@ -327,6 +325,15 @@ kover {
 koverReport {
     filters {
         excludes {
+            packages(
+                "dev.usbharu.hideout.activitypub.domain.exception",
+                "dev.usbharu.hideout.core.domain.exception",
+                "dev.usbharu.hideout.core.domain.exception.media",
+                "dev.usbharu.hideout.core.domain.exception.resource",
+                "dev.usbharu.hideout.core.domain.exception.resource.local"
+            )
+            annotatedBy("org.springframework.context.annotation.Configuration")
+            annotatedBy("org.springframework.boot.context.properties.ConfigurationProperties")
             packages(
                 "dev.usbharu.hideout.controller.mastodon.generated",
                 "dev.usbharu.hideout.domain.mastodon.model.generated"
