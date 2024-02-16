@@ -20,7 +20,7 @@ import kotlin.math.min
 @Suppress("TooManyFunctions")
 interface AccountApiService {
 
-    @Suppress("ongParameterList")
+    @Suppress("LongParameterList")
     suspend fun accountsStatuses(
         userid: Long,
         onlyMedia: Boolean,
