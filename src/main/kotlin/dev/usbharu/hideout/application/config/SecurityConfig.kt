@@ -7,6 +7,7 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet
 import com.nimbusds.jose.jwk.source.JWKSource
 import com.nimbusds.jose.proc.SecurityContext
 import dev.usbharu.hideout.application.external.Transaction
+import dev.usbharu.hideout.application.infrastructure.springframework.RoleHierarchyAuthorizationManagerFactory
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.infrastructure.springframework.httpsignature.HttpSignatureFilter
 import dev.usbharu.hideout.core.infrastructure.springframework.httpsignature.HttpSignatureUserDetailsService
@@ -14,7 +15,6 @@ import dev.usbharu.hideout.core.infrastructure.springframework.httpsignature.Htt
 import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.UserDetailsImpl
 import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.UserDetailsServiceImpl
 import dev.usbharu.hideout.util.RsaUtil
-import dev.usbharu.hideout.util.hasAnyScope
 import dev.usbharu.httpsignature.sign.RsaSha256HttpSignatureSigner
 import dev.usbharu.httpsignature.verify.DefaultSignatureHeaderParser
 import dev.usbharu.httpsignature.verify.RsaSha256HttpSignatureVerifier
@@ -30,6 +30,8 @@ import org.springframework.http.HttpMethod.*
 import org.springframework.http.HttpStatus
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl
 import org.springframework.security.authentication.AccountStatusUserDetailsChecker
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
@@ -64,12 +66,13 @@ import java.util.*
 
 @EnableWebSecurity(debug = false)
 @Configuration
-@Suppress("FunctionMaxLength", "TooManyFunctions")
+@Suppress("FunctionMaxLength", "TooManyFunctions", "LongMethod")
 class SecurityConfig {
 
     @Bean
-    fun authenticationManager(authenticationConfiguration: AuthenticationConfiguration): AuthenticationManager? =
-        authenticationConfiguration.authenticationManager
+    fun authenticationManager(authenticationConfiguration: AuthenticationConfiguration): AuthenticationManager? {
+        return authenticationConfiguration.authenticationManager
+    }
 
     @Bean
     @Order(1)
@@ -169,7 +172,10 @@ class SecurityConfig {
 
     @Bean
     @Order(4)
-    fun defaultSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
+    fun defaultSecurityFilterChain(
+        http: HttpSecurity,
+        rf: RoleHierarchyAuthorizationManagerFactory
+    ): SecurityFilterChain {
         http {
             authorizeHttpRequests {
                 authorize("/error", permitAll)
@@ -191,50 +197,50 @@ class SecurityConfig {
                 authorize(GET, "/users/*/icon.jpg", permitAll)
                 authorize(GET, "/users/*/header.jpg", permitAll)
 
-                authorize(GET, "/api/v1/accounts/verify_credentials", hasAnyScope("read", "read:accounts"))
-                authorize(GET, "/api/v1/accounts/relationships", hasAnyScope("read", "read:follows"))
+                authorize(GET, "/api/v1/accounts/verify_credentials", rf.hasScope("read:accounts"))
+                authorize(GET, "/api/v1/accounts/relationships", rf.hasScope("read:follows"))
                 authorize(GET, "/api/v1/accounts/*", permitAll)
                 authorize(GET, "/api/v1/accounts/*/statuses", permitAll)
-                authorize(POST, "/api/v1/accounts/*/follow", hasAnyScope("write", "write:follows"))
-                authorize(POST, "/api/v1/accounts/*/unfollow", hasAnyScope("write", "write:follows"))
-                authorize(POST, "/api/v1/accounts/*/block", hasAnyScope("write", "write:blocks"))
-                authorize(POST, "/api/v1/accounts/*/unblock", hasAnyScope("write", "write:blocks"))
-                authorize(POST, "/api/v1/accounts/*/mute", hasAnyScope("write", "write:mutes"))
-                authorize(POST, "/api/v1/accounts/*/unmute", hasAnyScope("write", "write:mutes"))
-                authorize(GET, "/api/v1/mutes", hasAnyScope("read", "read:mutes"))
+                authorize(POST, "/api/v1/accounts/*/follow", rf.hasScope("write:follows"))
+                authorize(POST, "/api/v1/accounts/*/unfollow", rf.hasScope("write:follows"))
+                authorize(POST, "/api/v1/accounts/*/block", rf.hasScope("write:blocks"))
+                authorize(POST, "/api/v1/accounts/*/unblock", rf.hasScope("write:blocks"))
+                authorize(POST, "/api/v1/accounts/*/mute", rf.hasScope("write:mutes"))
+                authorize(POST, "/api/v1/accounts/*/unmute", rf.hasScope("write:mutes"))
+                authorize(GET, "/api/v1/mutes", rf.hasScope("read:mutes"))
 
-                authorize(POST, "/api/v1/media", hasAnyScope("write", "write:media"))
-                authorize(POST, "/api/v1/statuses", hasAnyScope("write", "write:statuses"))
+                authorize(POST, "/api/v1/media", rf.hasScope("write:media"))
+                authorize(POST, "/api/v1/statuses", rf.hasScope("write:statuses"))
 
                 authorize(GET, "/api/v1/timelines/public", permitAll)
-                authorize(GET, "/api/v1/timelines/home", hasAnyScope("read", "read:statuses"))
+                authorize(GET, "/api/v1/timelines/home", rf.hasScope("read:statuses"))
 
-                authorize(GET, "/api/v2/filters", hasAnyScope("read", "read:filters"))
-                authorize(POST, "/api/v2/filters", hasAnyScope("write", "write:filters"))
+                authorize(GET, "/api/v2/filters", rf.hasScope("read:filters"))
+                authorize(POST, "/api/v2/filters", rf.hasScope("write:filters"))
 
-                authorize(GET, "/api/v2/filters/*", hasAnyScope("read", "read:filters"))
-                authorize(PUT, "/api/v2/filters/*", hasAnyScope("write", "write:filters"))
-                authorize(DELETE, "/api/v2/filters/*", hasAnyScope("write", "write:filters"))
+                authorize(GET, "/api/v2/filters/*", rf.hasScope("read:filters"))
+                authorize(PUT, "/api/v2/filters/*", rf.hasScope("write:filters"))
+                authorize(DELETE, "/api/v2/filters/*", rf.hasScope("write:filters"))
 
-                authorize(GET, "/api/v2/filters/*/keywords", hasAnyScope("read", "read:filters"))
-                authorize(POST, "/api/v2/filters/*/keywords", hasAnyScope("write", "write:filters"))
+                authorize(GET, "/api/v2/filters/*/keywords", rf.hasScope("read:filters"))
+                authorize(POST, "/api/v2/filters/*/keywords", rf.hasScope("write:filters"))
 
-                authorize(GET, "/api/v2/filters/keywords/*", hasAnyScope("read", "read:filters"))
-                authorize(PUT, "/api/v2/filters/keywords/*", hasAnyScope("write", "write:filters"))
-                authorize(DELETE, "/api/v2/filters/keywords/*", hasAnyScope("write", "write:filters"))
+                authorize(GET, "/api/v2/filters/keywords/*", rf.hasScope("read:filters"))
+                authorize(PUT, "/api/v2/filters/keywords/*", rf.hasScope("write:filters"))
+                authorize(DELETE, "/api/v2/filters/keywords/*", rf.hasScope("write:filters"))
 
-                authorize(GET, "/api/v2/filters/*/statuses", hasAnyScope("read", "read:filters"))
-                authorize(POST, "/api/v2/filters/*/statuses", hasAnyScope("write", "write:filters"))
+                authorize(GET, "/api/v2/filters/*/statuses", rf.hasScope("read:filters"))
+                authorize(POST, "/api/v2/filters/*/statuses", rf.hasScope("write:filters"))
 
-                authorize(GET, "/api/v2/filters/statuses/*", hasAnyScope("read", "read:filters"))
-                authorize(DELETE, "/api/v2/filters/statuses/*", hasAnyScope("write", "write:filters"))
+                authorize(GET, "/api/v2/filters/statuses/*", rf.hasScope("read:filters"))
+                authorize(DELETE, "/api/v2/filters/statuses/*", rf.hasScope("write:filters"))
 
-                authorize(GET, "/api/v1/filters", hasAnyScope("read", "read:filters"))
-                authorize(POST, "/api/v1/filters", hasAnyScope("write", "write:filters"))
+                authorize(GET, "/api/v1/filters", rf.hasScope("read:filters"))
+                authorize(POST, "/api/v1/filters", rf.hasScope("write:filters"))
 
-                authorize(GET, "/api/v1/filters/*", hasAnyScope("read", "read:filters"))
-                authorize(POST, "/api/v1/filters/*", hasAnyScope("write", "write:filters"))
-                authorize(DELETE, "/api/v1/filters/*", hasAnyScope("write", "write:filters"))
+                authorize(GET, "/api/v1/filters/*", rf.hasScope("read:filters"))
+                authorize(POST, "/api/v1/filters/*", rf.hasScope("write:filters"))
+                authorize(DELETE, "/api/v1/filters/*", rf.hasScope("write:filters"))
 
                 authorize(anyRequest, authenticated)
             }
@@ -319,6 +325,65 @@ class SecurityConfig {
     fun mappingJackson2HttpMessageConverter(): MappingJackson2HttpMessageConverter {
         val builder = Jackson2ObjectMapperBuilder().serializationInclusion(JsonInclude.Include.NON_NULL)
         return MappingJackson2HttpMessageConverter(builder.build())
+    }
+
+    @Bean
+    fun roleHierarchy(): RoleHierarchy {
+        val roleHierarchyImpl = RoleHierarchyImpl()
+
+        roleHierarchyImpl.setHierarchy(
+            """
+            SCOPE_read > SCOPE_read:accounts
+            SCOPE_read > SCOPE_read:accounts
+            SCOPE_read > SCOPE_read:blocks
+            SCOPE_read > SCOPE_read:bookmarks
+            SCOPE_read > SCOPE_read:favourites
+            SCOPE_read > SCOPE_read:filters
+            SCOPE_read > SCOPE_read:follows
+            SCOPE_read > SCOPE_read:lists
+            SCOPE_read > SCOPE_read:mutes
+            SCOPE_read > SCOPE_read:notifications
+            SCOPE_read > SCOPE_read:search
+            SCOPE_read > SCOPE_read:statuses
+            SCOPE_write > SCOPE_write:accounts
+            SCOPE_write > SCOPE_write:blocks
+            SCOPE_write > SCOPE_write:bookmarks
+            SCOPE_write > SCOPE_write:conversations
+            SCOPE_write > SCOPE_write:favourites
+            SCOPE_write > SCOPE_write:filters
+            SCOPE_write > SCOPE_write:follows
+            SCOPE_write > SCOPE_write:lists
+            SCOPE_write > SCOPE_write:media
+            SCOPE_write > SCOPE_write:mutes
+            SCOPE_write > SCOPE_write:notifications
+            SCOPE_write > SCOPE_write:reports
+            SCOPE_write > SCOPE_write:statuses
+            SCOPE_follow > SCOPE_write:blocks
+            SCOPE_follow > SCOPE_write:follows
+            SCOPE_follow > SCOPE_write:mutes
+            SCOPE_follow > SCOPE_read:blocks
+            SCOPE_follow > SCOPE_read:follows
+            SCOPE_follow > SCOPE_read:mutes
+            SCOPE_admin > SCOPE_admin:read
+            SCOPE_admin > SCOPE_admin:write
+            SCOPE_admin:read > SCOPE_admin:read:accounts
+            SCOPE_admin:read > SCOPE_admin:read:reports
+            SCOPE_admin:read > SCOPE_admin:read:domain_allows
+            SCOPE_admin:read > SCOPE_admin:read:domain_blocks
+            SCOPE_admin:read > SCOPE_admin:read:ip_blocks
+            SCOPE_admin:read > SCOPE_admin:read:email_domain_blocks
+            SCOPE_admin:read > SCOPE_admin:read:canonical_email_blocks
+            SCOPE_admin:write > SCOPE_admin:write:accounts
+            SCOPE_admin:write > SCOPE_admin:write:reports
+            SCOPE_admin:write > SCOPE_admin:write:domain_allows
+            SCOPE_admin:write > SCOPE_admin:write:domain_blocks
+            SCOPE_admin:write > SCOPE_admin:write:ip_blocks
+            SCOPE_admin:write > SCOPE_admin:write:email_domain_blocks
+            SCOPE_admin:write > SCOPE_admin:write:canonical_email_blocks
+            """.trimIndent()
+        )
+
+        return roleHierarchyImpl
     }
 }
 
