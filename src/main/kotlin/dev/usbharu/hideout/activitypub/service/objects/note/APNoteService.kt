@@ -180,39 +180,49 @@ class APNoteServiceImpl(
         }.map { it.id }
 
         val createPost =
-            if (quote != null) {
-                postBuilder.quoteRepostOf(
-                    id = postRepository.generateId(),
-                    actorId = person.second.id,
-                    content = note.content,
-                    createdAt = Instant.parse(note.published),
-                    visibility = visibility,
-                    url = note.id,
-                    replyId = reply?.id,
-                    sensitive = note.sensitive,
-                    apId = note.id,
-                    mediaIds = mediaList,
-                    emojiIds = emojis,
-                    repost = quote
-                )
-            } else {
-                postBuilder.of(
-                    id = postRepository.generateId(),
-                    actorId = person.second.id,
-                    content = note.content,
-                    createdAt = Instant.parse(note.published).toEpochMilli(),
-                    visibility = visibility,
-                    url = note.id,
-                    replyId = reply?.id,
-                    sensitive = note.sensitive,
-                    apId = note.id,
-                    mediaIds = mediaList,
-                    emojiIds = emojis
-                )
-            }
+            post(quote, person, note, visibility, reply, mediaList, emojis)
 
         val createRemote = postService.createRemote(createPost)
         return note to createRemote
+    }
+
+    private suspend fun post(
+        quote: Post?,
+        person: Pair<Person, Actor>,
+        note: Note,
+        visibility: Visibility,
+        reply: Post?,
+        mediaList: List<Long>,
+        emojis: List<Long>
+    ) = if (quote != null) {
+        postBuilder.quoteRepostOf(
+            id = postRepository.generateId(),
+            actorId = person.second.id,
+            content = note.content,
+            createdAt = Instant.parse(note.published),
+            visibility = visibility,
+            url = note.id,
+            replyId = reply?.id,
+            sensitive = note.sensitive,
+            apId = note.id,
+            mediaIds = mediaList,
+            emojiIds = emojis,
+            repost = quote
+        )
+    } else {
+        postBuilder.of(
+            id = postRepository.generateId(),
+            actorId = person.second.id,
+            content = note.content,
+            createdAt = Instant.parse(note.published).toEpochMilli(),
+            visibility = visibility,
+            url = note.id,
+            replyId = reply?.id,
+            sensitive = note.sensitive,
+            apId = note.id,
+            mediaIds = mediaList,
+            emojiIds = emojis
+        )
     }
 
     private suspend fun buildEmojis(note: Note) = note.tag

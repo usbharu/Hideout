@@ -21,6 +21,8 @@ tags:
     description: media
   - name: notification
     description: notification
+  - name: filter
+    description: filter
 
 paths:
   /api/v2/instance:
@@ -922,6 +924,424 @@ paths:
               schema:
                 type: object
 
+  /api/v2/filters:
+    get:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "read:filters"
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Filter"
+    post:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "write:filters"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FilterPostRequest"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/FilterPostRequest"
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Filter"
+
+  /api/v2/filters/{id}:
+    get:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "read:filters"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Filter"
+    put:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "write:filters"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/FilterPutRequest"
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Filter"
+    delete:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "write:filters"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /api/v2/filters/{filter_id}/keywords:
+    get:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "read:filters"
+      parameters:
+        - in: path
+          name: filter_id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FilterKeyword"
+    post:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "write:filters"
+      parameters:
+        - in: path
+          name: filter_id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FilterKeywordsPostRequest"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/FilterKeywordsPostRequest"
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FilterKeyword"
+
+  /api/v2/filters/keywords/{id}:
+    get:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "read:filters"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FilterKeyword"
+
+    put:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "write:filters"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/FilterKeywordsPutRequest"
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FilterKeyword"
+
+    delete:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "write:filters"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+  /api/v2/filters/{filter_id}/statuses:
+    get:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "read:filters"
+      parameters:
+        - in: path
+          name: filter_id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FilterStatus"
+    post:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "write:filters"
+      parameters:
+        - in: path
+          name: filter_id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FilterStatusRequest"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/FilterStatusRequest"
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FilterStatus"
+
+  /api/v2/filters/statuses/{id}:
+    get:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "read:filters"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FilterStatus"
+    delete:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "write:filters"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+
+
+  /api/v1/filters:
+    get:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "read:filters"
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/V1Filter"
+    post:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "write:filters"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/V1FilterPostRequest"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/V1FilterPostRequest"
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/V1Filter"
+
+  /api/v1/filters/{id}:
+    get:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "read:filters"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/V1Filter"
+    put:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "write:filters"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/V1FilterPutRequest"
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/V1Filter"
+    delete:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "write:filters"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+
+
 components:
   schemas:
     V1MediaRequest:
@@ -1476,13 +1896,15 @@ components:
         title:
           type: string
         context:
-          type: string
-          enum:
-            - home
-            - notifications
-            - public
-            - thread
-            - account
+          type: array
+          items:
+            type: string
+            enum:
+              - home
+              - notifications
+              - public
+              - thread
+              - account
         expires_at:
           type: string
           nullable: true
@@ -1515,6 +1937,191 @@ components:
       properties:
         id:
           type: string
+        status_id:
+          type: string
+
+    V1Filter:
+      type: object
+      properties:
+        id:
+          type: string
+        phrase:
+          type: string
+        context:
+          type: array
+          items:
+            enum:
+              - home
+              - notifications
+              - thread
+              - public
+              - account
+        expires_at:
+          type: string
+        irreversible:
+          type: boolean
+        whole_word:
+          type: boolean
+
+    V1FilterPostRequest:
+      type: object
+      properties:
+        phrase:
+          type: string
+        context:
+          type: array
+          items:
+            type: string
+            enum:
+              - home
+              - notifications
+              - public
+              - thread
+              - account
+        irreversible:
+          type: boolean
+        whole_word:
+          type: boolean
+        expires_in:
+          type: integer
+      required:
+        - phrase
+        - context
+
+    V1FilterPutRequest:
+      type: object
+      properties:
+        phrase:
+          type: string
+        context:
+          type: array
+          items:
+            type: string
+            enum:
+              - home
+              - notifications
+              - public
+              - thread
+              - account
+        irreversible:
+          type: boolean
+        whole_word:
+          type: boolean
+        expires_in:
+          type: integer
+
+    FilterPostRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        context:
+          type: array
+          items:
+            type: string
+            enum:
+              - home
+              - notifications
+              - public
+              - thread
+              - account
+        filter_action:
+          type: string
+          enum:
+            - warn
+            - hide
+        expires_in:
+          type: integer
+        keywords_attributes:
+          type: array
+          items:
+            $ref: "#/components/schemas/FilterPostRequestKeyword"
+      required:
+        - title
+        - context
+
+    FilterPostRequestKeyword:
+      type: object
+      properties:
+        keyword:
+          type: string
+        whole_word:
+          type: boolean
+          default: false
+        regex:
+          type: boolean
+          default: false
+      required:
+        - keyword
+
+    FilterKeywordsPostRequest:
+      type: object
+      properties:
+        keyword:
+          type: string
+        whole_word:
+          type: boolean
+          default: false
+        regex:
+          type: boolean
+          default: false
+      required:
+        - keyword
+
+    FilterKeywordsPutRequest:
+      type: object
+      properties:
+        keyword:
+          type: string
+        whole_word:
+          type: boolean
+        regex:
+          type: boolean
+
+    FilterPutRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        context:
+          type: array
+          items:
+            type: string
+            enum:
+              - homa
+              - notifications
+              - public
+              - thread
+              - account
+        filter_action:
+          type: string
+          enum:
+            - warn
+            - hide
+        expires_in:
+          type: integer
+        keywords_attributes:
+          type: array
+          items:
+            $ref: "#/components/schemas/FilterPubRequestKeyword"
+
+    FilterPubRequestKeyword:
+      type: object
+      properties:
+        keyword:
+          type: string
+        whole_word:
+          type: boolean
+        regex:
+          type: boolean
+        id:
+          type: string
+        _destroy:
+          type: boolean
+
+    FilterStatusRequest:
+      type: object
+      properties:
         status_id:
           type: string
 

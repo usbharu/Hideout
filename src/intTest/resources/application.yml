@@ -1,4 +1,7 @@
 hideout:
+  debug:
+    trace-query-exception: true
+    trace-query-call: true
   url: "https://example.com"
   use-mongodb: true
   security:
