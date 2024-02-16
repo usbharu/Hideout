@@ -23,6 +23,7 @@ sealed class Page {
     }
 
     companion object {
+        @Suppress("FunctionMinLength")
         fun of(
             maxId: Long? = null,
             sinceId: Long? = null,

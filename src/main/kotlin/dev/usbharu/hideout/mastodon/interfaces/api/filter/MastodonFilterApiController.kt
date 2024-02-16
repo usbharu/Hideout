@@ -92,9 +92,8 @@ class MastodonFilterApiController(
         )
     }
 
-    override fun apiV2FiltersGet(): ResponseEntity<Flow<Filter>> {
-        return ResponseEntity.ok(mastodonFilterApiService.filters(loginUserContextHolder.getLoginUserId()))
-    }
+    override fun apiV2FiltersGet(): ResponseEntity<Flow<Filter>> =
+        ResponseEntity.ok(mastodonFilterApiService.filters(loginUserContextHolder.getLoginUserId()))
 
     override suspend fun apiV2FiltersIdDelete(id: String): ResponseEntity<Any> {
         mastodonFilterApiService.deleteById(loginUserContextHolder.getLoginUserId(), id.toLong())
