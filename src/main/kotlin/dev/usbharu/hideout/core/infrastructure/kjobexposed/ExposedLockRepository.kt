@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2024 usbharu
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package dev.usbharu.hideout.core.infrastructure.kjobexposed
 
 import kjob.core.job.Lock
@@ -39,7 +55,7 @@ class ExposedLockRepository(
     override suspend fun exists(id: UUID): Boolean {
         val now = Instant.now(clock)
         return query {
-            locks.select(locks.id eq id and locks.expiresAt.greater(now.toEpochMilli())).empty().not()
+            locks.selectAll().where(locks.id eq id and locks.expiresAt.greater(now.toEpochMilli())).empty().not()
         }
     }
 
@@ -48,7 +64,7 @@ class ExposedLockRepository(
         val expiresAt = now.plusSeconds(config.expireLockInMinutes.minutes.inWholeSeconds)
         val lock = Lock(id, now)
         query {
-            if (locks.select(locks.id eq id).limit(1)
+            if (locks.selectAll().where(locks.id eq id).limit(1)
                     .map { Lock(it[locks.id].value, Instant.ofEpochMilli(it[locks.expiresAt])) }.isEmpty()
             ) {
                 locks.insert {

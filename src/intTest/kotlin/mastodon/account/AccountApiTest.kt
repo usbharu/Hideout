@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2024 usbharu
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package mastodon.account
 
 import dev.usbharu.hideout.SpringApplication
@@ -95,7 +111,7 @@ class AccountApiTest {
                 param("email", "test@example.com")
                 param("agreement", "true")
                 param("locale", "")
-                with(SecurityMockMvcRequestPostProcessors.csrf())
+                with(csrf())
             }
             .asyncDispatch()
             .andExpect { status { isFound() } }
@@ -111,7 +127,7 @@ class AccountApiTest {
                 contentType = MediaType.APPLICATION_FORM_URLENCODED
                 param("username", "api-test-user-2")
                 param("password", "very-secure-password")
-                with(SecurityMockMvcRequestPostProcessors.csrf())
+                with(csrf())
             }
             .asyncDispatch()
             .andExpect { status { isFound() } }
@@ -126,7 +142,7 @@ class AccountApiTest {
             .post("/api/v1/accounts") {
                 contentType = MediaType.APPLICATION_FORM_URLENCODED
                 param("username", "api-test-user-3")
-                with(SecurityMockMvcRequestPostProcessors.csrf())
+                with(csrf())
             }
             .andExpect { status { isBadRequest() } }
     }
@@ -138,7 +154,7 @@ class AccountApiTest {
             .post("/api/v1/accounts") {
                 contentType = MediaType.APPLICATION_FORM_URLENCODED
                 param("username", "api-test-user-4")
-                with(SecurityMockMvcRequestPostProcessors.csrf())
+                with(csrf())
             }
             .andExpect { status { isBadRequest() } }
     }
@@ -150,7 +166,7 @@ class AccountApiTest {
             .post("/api/v1/accounts") {
                 contentType = MediaType.APPLICATION_JSON
                 content = """{"username":"api-test-user-5","password":"very-very-secure-password"}"""
-                with(SecurityMockMvcRequestPostProcessors.csrf())
+                with(csrf())
             }
             .andExpect { status { isUnsupportedMediaType() } }
     }
