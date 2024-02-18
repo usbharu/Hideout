@@ -252,6 +252,7 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:$ktor_version")
     implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
     testImplementation("io.ktor:ktor-client-mock:$ktor_version")
+    testImplementation("com.h2database:h2:$h2_version")
 
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
     testImplementation("org.mockito:mockito-inline:5.2.0")
@@ -268,13 +269,14 @@ dependencies {
     intTestImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     intTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version")
     intTestImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
+    intTestImplementation("com.h2database:h2:$h2_version")
 
     e2eTestImplementation("org.springframework.boot:spring-boot-starter-test")
     e2eTestImplementation("org.springframework.security:spring-security-test")
     e2eTestImplementation("org.springframework.boot:spring-boot-starter-webflux")
     e2eTestImplementation("org.jsoup:jsoup:1.17.1")
     e2eTestImplementation("com.intuit.karate:karate-junit5:1.4.1")
-
+    e2eTestImplementation("com.h2database:h2:$h2_version")
 
 }
 
@@ -314,6 +316,7 @@ configurations.matching { it.name == "detekt" }.all {
 configurations {
     all {
         exclude("org.springframework.boot", "spring-boot-starter-logging")
+        exclude("ch.qos.logback", "logback-classic")
     }
 }
 
