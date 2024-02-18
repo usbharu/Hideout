@@ -1,3 +1,8 @@
+import com.github.jk1.license.filter.DependencyFilter
+import com.github.jk1.license.filter.LicenseBundleNormalizer
+import com.github.jk1.license.importer.DependencyDataImporter
+import com.github.jk1.license.importer.XmlReportImporter
+import com.github.jk1.license.render.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
@@ -18,6 +23,8 @@ plugins {
     kotlin("plugin.spring") version "1.9.22"
     id("org.openapi.generator") version "7.2.0"
     id("org.jetbrains.kotlinx.kover") version "0.7.4"
+    id("com.github.jk1.dependency-license-report") version "2.5"
+
 }
 
 apply {
@@ -177,9 +184,8 @@ dependencies {
     implementation("io.ktor:ktor-serialization-jackson:$ktor_version")
     implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
-    implementation("com.h2database:h2:$h2_version")
+    developmentOnly("com.h2database:h2:$h2_version")
     implementation("org.xerial:sqlite-jdbc:3.45.1.0")
-    implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$serialization_version")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version")
 
@@ -190,8 +196,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-authorization-server")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
-    implementation("jakarta.validation:jakarta.validation-api")
-    implementation("jakarta.annotation:jakarta.annotation-api:2.1.0")
+    implementation("org.springframework.boot:spring-boot-starter-log4j2")
+    compileOnly("jakarta.validation:jakarta.validation-api")
+    compileOnly("jakarta.annotation:jakarta.annotation-api:2.1.0")
     compileOnly("io.swagger.core.v3:swagger-annotations:2.2.6")
     implementation("io.swagger.core.v3:swagger-models:2.2.6")
     implementation("org.jetbrains.exposed:exposed-java-time:$exposed_version")
@@ -245,6 +252,7 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:$ktor_version")
     implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
     testImplementation("io.ktor:ktor-client-mock:$ktor_version")
+    testImplementation("com.h2database:h2:$h2_version")
 
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
     testImplementation("org.mockito:mockito-inline:5.2.0")
@@ -261,13 +269,14 @@ dependencies {
     intTestImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     intTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version")
     intTestImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
+    intTestImplementation("com.h2database:h2:$h2_version")
 
     e2eTestImplementation("org.springframework.boot:spring-boot-starter-test")
     e2eTestImplementation("org.springframework.security:spring-security-test")
     e2eTestImplementation("org.springframework.boot:spring-boot-starter-webflux")
     e2eTestImplementation("org.jsoup:jsoup:1.17.1")
     e2eTestImplementation("com.intuit.karate:karate-junit5:1.4.1")
-
+    e2eTestImplementation("com.h2database:h2:$h2_version")
 
 }
 
@@ -301,6 +310,13 @@ configurations.matching { it.name == "detekt" }.all {
         if (requested.group == "org.jetbrains.kotlin") {
             useVersion("1.9.22")
         }
+    }
+}
+
+configurations {
+    all {
+        exclude("org.springframework.boot", "spring-boot-starter-logging")
+        exclude("ch.qos.logback", "logback-classic")
     }
 }
 
@@ -346,4 +362,20 @@ koverReport {
 
 springBoot {
     buildInfo()
+}
+
+licenseReport {
+
+    excludeOwnGroup = true
+
+    importers = arrayOf<DependencyDataImporter>(XmlReportImporter("hideout", File("$projectDir/license-list.xml")))
+    renderers = arrayOf<ReportRenderer>(
+        InventoryHtmlReportRenderer(),
+        CsvReportRenderer(),
+        JsonReportRenderer(),
+        XmlReportRenderer()
+    )
+    filters = arrayOf<DependencyFilter>(LicenseBundleNormalizer("$projectDir/license-normalizer-bundle.json", true))
+    allowedLicensesFile = File("$projectDir/allowed-licenses.json")
+    configurations = arrayOf("productionRuntimeClasspath")
 }

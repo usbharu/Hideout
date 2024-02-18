@@ -1,0 +1,25 @@
+{
+  "allowedLicenses": [
+    {
+      "moduleLicense": "Apache License, Version 2.0"
+    },
+    {
+      "moduleLicense": "MIT License"
+    },
+    {
+      "moduleLicense": "MIT-0"
+    },
+    {
+      "moduleLicense": "The BSD License"
+    },
+    {
+      "moduleLicense": "PUBLIC DOMAIN"
+    },
+    {
+      "moduleLicense": "The 2-Clause BSD License"
+    },
+    {
+      "moduleLicense": "GNU GENERAL PUBLIC LICENSE, Version 2 + Classpath Exception"
+    }
+  ]
+}
