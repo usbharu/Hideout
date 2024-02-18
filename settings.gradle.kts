@@ -7,3 +7,4 @@ include("core")
 include("federation:activitypub")
 findProject(":federation:activitypub")?.name = "activitypub"
 include("mastodon")
+include("util")

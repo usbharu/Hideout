@@ -4,7 +4,6 @@ import com.github.jk1.license.importer.DependencyDataImporter
 import com.github.jk1.license.importer.XmlReportImporter
 import com.github.jk1.license.render.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 val ktor_version: String by project
 val kotlin_version: String by project
@@ -107,8 +106,8 @@ tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs += "-Xjsr305=strict"
     }
-    dependsOn("openApiGenerateMastodonCompatibleApi")
-    mustRunAfter("openApiGenerateMastodonCompatibleApi")
+//    dependsOn("openApiGenerateMastodonCompatibleApi")
+//    mustRunAfter("openApiGenerateMastodonCompatibleApi")
 }
 
 
@@ -116,25 +115,7 @@ tasks.clean {
     delete += listOf("$rootDir/src/main/resources/static")
 }
 
-tasks.create<GenerateTask>("openApiGenerateMastodonCompatibleApi", GenerateTask::class) {
-    generatorName.set("kotlin-spring")
-    inputSpec.set("$rootDir/src/main/resources/openapi/mastodon.yaml")
-    outputDir.set("$buildDir/generated/sources/mastodon")
-    apiPackage.set("dev.usbharu.hideout.controller.mastodon.generated")
-    modelPackage.set("dev.usbharu.hideout.domain.mastodon.model.generated")
-    configOptions.put("interfaceOnly", "true")
-    configOptions.put("useSpringBoot3", "true")
-    configOptions.put("reactive", "true")
-    additionalProperties.put("useTags", "true")
 
-    importMappings.put("org.springframework.core.io.Resource", "org.springframework.web.multipart.MultipartFile")
-    typeMappings.put("org.springframework.core.io.Resource", "org.springframework.web.multipart.MultipartFile")
-    schemaMappings.put(
-        "StatusesRequest",
-        "dev.usbharu.hideout.mastodon.interfaces.api.status.StatusesRequest"
-    )
-    templateDir.set("$rootDir/templates")
-}
 
 repositories {
     mavenCentral()
@@ -378,4 +359,123 @@ licenseReport {
     filters = arrayOf<DependencyFilter>(LicenseBundleNormalizer("$projectDir/license-normalizer-bundle.json", true))
     allowedLicensesFile = File("$projectDir/allowed-licenses.json")
     configurations = arrayOf("productionRuntimeClasspath")
+}
+
+allprojects {
+
+    group = "dev.usbharu"
+    version = "0.0.1"
+}
+
+subprojects {
+
+
+    repositories {
+        mavenCentral()
+        maven {
+            url = uri("https://git.usbharu.dev/api/packages/usbharu/maven")
+        }
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/usbharu/http-signature")
+            credentials {
+
+                username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
+                password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
+            }
+        }
+        maven {
+            name = "GitHubPackages2"
+            url = uri("https://maven.pkg.github.com/multim-dev/emoji-kt")
+            credentials {
+
+                username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
+                password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
+            }
+        }
+    }
+
+    apply {
+        plugin("org.springframework.boot")
+        plugin("io.spring.dependency-management")
+        plugin("org.jetbrains.kotlin.jvm")
+        plugin("org.jetbrains.kotlin.plugin.spring")
+    }
+
+
+    sourceSets {
+        create("intTest") {
+            compileClasspath += sourceSets.main.get().output
+            runtimeClasspath += sourceSets.main.get().output
+        }
+        create("e2eTest") {
+            compileClasspath += sourceSets.main.get().output
+            runtimeClasspath += sourceSets.main.get().output
+        }
+    }
+
+    val intTestImplementation by configurations.getting {
+        extendsFrom(configurations.implementation.get())
+    }
+    val intTestRuntimeOnly by configurations.getting {
+        extendsFrom(configurations.runtimeOnly.get())
+    }
+
+    val e2eTestImplementation by configurations.getting {
+        extendsFrom(configurations.implementation.get())
+    }
+
+    val e2eTestRuntimeOnly by configurations.getting {
+        extendsFrom(configurations.runtimeOnly.get())
+    }
+
+    val integrationTest = task<Test>("integrationTest") {
+        description = "Runs integration tests."
+        group = "verification"
+
+        testClassesDirs = sourceSets["intTest"].output.classesDirs
+        classpath = sourceSets["intTest"].runtimeClasspath
+        shouldRunAfter("test")
+
+        useJUnitPlatform()
+    }
+
+    val e2eTest = task<Test>("e2eTest") {
+        description = "Runs e2e tests."
+        group = "verification"
+
+        testClassesDirs = sourceSets["e2eTest"].output.classesDirs
+        classpath = sourceSets["e2eTest"].runtimeClasspath
+        shouldRunAfter("test")
+
+        useJUnitPlatform()
+    }
+
+    tasks.check {
+        dependsOn(integrationTest)
+        dependsOn(e2eTest)
+    }
+
+    tasks.withType<Test> {
+        useJUnitPlatform()
+        doFirst {
+            jvmArgs = arrayOf(
+                "--add-opens", "java.base/java.lang=ALL-UNNAMED",
+                "--add-opens", "java.base/java.util=ALL-UNNAMED",
+                "--add-opens", "java.naming/javax.naming=ALL-UNNAMED",
+            ).toMutableList()
+        }
+    }
+
+    tasks.test {
+        useJUnitPlatform()
+    }
+    kotlin {
+        jvmToolchain(21)
+    }
+
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>().configureEach {
+        compilerOptions.languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9)
+        compilerOptions.apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9)
+    }
 }
