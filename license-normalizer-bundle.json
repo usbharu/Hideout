@@ -1,0 +1,56 @@
+{
+  "bundles": [
+    {
+      "bundleName": "Apache-2.0",
+      "licenseName": "Apache License, Version 2.0",
+      "licenseUrl": "https://www.apache.org/licenses/LICENSE-2.0.txt"
+    },
+    {
+      "bundleName": "EPL-1.0",
+      "licenseName": "Eclipse Public License - v 1.0",
+      "licenseUrl": "http://www.eclipse.org/legal/epl-v10.html"
+    }
+  ],
+  "transformationRules": [
+    {
+      "bundleName": "Apache-2.0",
+      "licenseNamePattern": ".*The Apache Software License, Version 2.0.*"
+    },
+    {
+      "bundleName": "Apache-2.0",
+      "licenseNamePattern": "Apache 2"
+    },
+    {
+      "bundleName": "Apache-2.0",
+      "licenseUrlPattern": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+    },
+    {
+      "bundleName": "Apache-2.0",
+      "licenseUrlPattern": "https://www.apache.org/licenses/LICENSE-2.0"
+    },
+    {
+      "bundleName": "Apache-2.0",
+      "licenseUrlPattern": "https://aws.amazon.com/apache2.0"
+    },
+    {
+      "bundleName": "Apache-2.0",
+      "licenseUrlPattern": "https://www.apache.org/licenses/LICENSE-2.0.txt"
+    },
+    {
+      "bundleName": "Apache-2.0",
+      "licenseNamePattern": "Special Apache"
+    },
+    {
+      "bundleName": "Apache-2.0",
+      "licenseNamePattern": "Keep this name"
+    },
+    {
+      "bundleName": "Apache-2.0",
+      "licenseNamePattern": "The Apache Software License, Version 2.0"
+    },
+    {
+      "bundleName": "EPL-1.0",
+      "licenseNamePattern": "EPL 1.0"
+    }
+  ]
+}
