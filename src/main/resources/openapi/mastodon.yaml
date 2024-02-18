@@ -400,6 +400,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Relationship"
+        401:
+          $ref: "#/components/responses/unauthorized"
+        403:
+          $ref: "#/components/responses/forbidden"
+        422:
+          $ref: "#/components/responses/unprocessableEntity"
 
   /api/v1/accounts/{id}/block:
     post:
@@ -421,6 +427,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Relationship"
+        401:
+          $ref: "#/components/responses/unauthorized"
+        403:
+          $ref: "#/components/responses/forbidden"
+        422:
+          $ref: "#/components/responses/unprocessableEntity"
 
   /api/v1/accounts/{id}/unfollow:
     post:
@@ -442,6 +454,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Relationship"
+        401:
+          $ref: "#/components/responses/unauthorized"
+        403:
+          $ref: "#/components/responses/forbidden"
+        422:
+          $ref: "#/components/responses/unprocessableEntity"
 
   /api/v1/accounts/{id}/unblock:
     post:
@@ -463,6 +481,13 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Relationship"
+        401:
+          $ref: "#/components/responses/unauthorized"
+        403:
+          $ref: "#/components/responses/forbidden"
+        422:
+          $ref: "#/components/responses/unprocessableEntity"
+
   /api/v1/accounts/{id}/remove_from_followers:
     post:
       tags:
@@ -483,6 +508,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Relationship"
+        401:
+          $ref: "#/components/responses/unauthorized"
+        403:
+          $ref: "#/components/responses/forbidden"
+        422:
+          $ref: "#/components/responses/unprocessableEntity"
 
   /api/v1/accounts/{id}/mute:
     post:
@@ -504,6 +535,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Relationship"
+        401:
+          $ref: "#/components/responses/unauthorized"
+        403:
+          $ref: "#/components/responses/forbidden"
+        422:
+          $ref: "#/components/responses/unprocessableEntity"
 
   /api/v1/accounts/{id}/unmute:
     post:
@@ -525,6 +562,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Relationship"
+        401:
+          $ref: "#/components/responses/unauthorized"
+        403:
+          $ref: "#/components/responses/forbidden"
+        422:
+          $ref: "#/components/responses/unprocessableEntity"
 
   /api/v1/mutes:
     get:
@@ -557,6 +600,12 @@ paths:
               schema:
                 items:
                   $ref: "#/components/schemas/Account"
+        401:
+          $ref: "#/components/responses/unauthorized"
+        403:
+          $ref: "#/components/responses/forbidden"
+        422:
+          $ref: "#/components/responses/unprocessableEntity"
 
   /api/v1/accounts/{id}/statuses:
     get:
@@ -748,6 +797,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/MediaAttachment"
+        401:
+          $ref: "#/components/responses/unauthorized"
+        422:
+          $ref: "#/components/responses/unprocessableEntity"
 
   /api/v1/follow_requests:
     get:
