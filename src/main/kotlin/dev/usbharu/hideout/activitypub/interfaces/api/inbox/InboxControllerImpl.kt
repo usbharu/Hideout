@@ -41,7 +41,6 @@ class InboxControllerImpl(
     override suspend fun inbox(
         httpServletRequest: HttpServletRequest,
     ): ResponseEntity<String> {
-
         val headersList = httpServletRequest.headerNames?.toList().orEmpty()
         LOGGER.trace("Inbox Headers {}", headersList)
 
@@ -49,38 +48,10 @@ class InboxControllerImpl(
             httpServletRequest.inputStream.readAllBytes()!!
         }
 
-        try {
-            httpSignatureHeaderChecker.checkDate(httpServletRequest.getHeader("date")!!)
-        } catch (e: NullPointerException) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Required date header")
-        } catch (e: IllegalArgumentException) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Request is too old.")
-        }
-        try {
-            httpSignatureHeaderChecker.checkHost(httpServletRequest.getHeader("host")!!)
-        } catch (e: NullPointerException) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Required host header")
-        } catch (e: IllegalArgumentException) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Wrong host for request")
-        }
-        try {
-            httpSignatureHeaderChecker.checkDigest(body, httpServletRequest.getHeader("digest")!!)
-        } catch (e: NullPointerException) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body("Required request body digest in digest header (sha256)")
-        } catch (e: IllegalArgumentException) {
-            return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body("Wrong digest for request")
-        }
+        val responseEntity = checkHeader(httpServletRequest, body)
 
-        if (httpServletRequest.getHeader("signature").orEmpty().isBlank()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .header(
-                    WWW_AUTHENTICATE,
-                    "Signature realm=\"Example\",headers=\"(request-target) date host digest\""
-                )
-                .build()
+        if (responseEntity != null) {
+            return responseEntity
         }
 
         val parseActivity = try {
@@ -114,6 +85,46 @@ class InboxControllerImpl(
         }
         LOGGER.info("SUCCESS Processing Activity Type: {}", parseActivity)
         return ResponseEntity(HttpStatus.ACCEPTED)
+    }
+
+    private fun checkHeader(
+        httpServletRequest: HttpServletRequest,
+        body: ByteArray,
+    ): ResponseEntity<String>? {
+        try {
+            httpSignatureHeaderChecker.checkDate(httpServletRequest.getHeader("date")!!)
+        } catch (_: NullPointerException) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Required date header")
+        } catch (_: IllegalArgumentException) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Request is too old.")
+        }
+        try {
+            httpSignatureHeaderChecker.checkHost(httpServletRequest.getHeader("host")!!)
+        } catch (_: NullPointerException) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Required host header")
+        } catch (_: IllegalArgumentException) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Wrong host for request")
+        }
+        try {
+            httpSignatureHeaderChecker.checkDigest(body, httpServletRequest.getHeader("digest")!!)
+        } catch (_: NullPointerException) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body("Required request body digest in digest header (sha256)")
+        } catch (_: IllegalArgumentException) {
+            return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body("Wrong digest for request")
+        }
+
+        if (httpServletRequest.getHeader("signature").orEmpty().isBlank()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .header(
+                    WWW_AUTHENTICATE,
+                    "Signature realm=\"Example\",headers=\"(request-target) date host digest\""
+                )
+                .build()
+        }
+        return null
     }
 
     companion object {
