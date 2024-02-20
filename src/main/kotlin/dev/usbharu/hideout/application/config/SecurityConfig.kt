@@ -92,16 +92,14 @@ import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.util.*
 
-
 @EnableWebSecurity(debug = false)
 @Configuration
 @Suppress("FunctionMaxLength", "TooManyFunctions", "LongMethod")
 class SecurityConfig {
 
     @Bean
-    fun authenticationManager(authenticationConfiguration: AuthenticationConfiguration): AuthenticationManager? {
-        return authenticationConfiguration.authenticationManager
-    }
+    fun authenticationManager(authenticationConfiguration: AuthenticationConfiguration): AuthenticationManager? =
+        authenticationConfiguration.authenticationManager
 
     @Bean
     @Order(1)
@@ -416,6 +414,9 @@ class SecurityConfig {
         return roleHierarchyImpl
     }
 
+    // Spring Security 3.2.1 に存在する EnableWebSecurity(debug = true)にすると発生するエラーに対処するためのコード
+    // trueにしないときはコメントアウト
+
     //    @Bean
     fun beanDefinitionRegistryPostProcessor(): BeanDefinitionRegistryPostProcessor {
         return BeanDefinitionRegistryPostProcessor { registry: BeanDefinitionRegistry ->
@@ -424,6 +425,7 @@ class SecurityConfig {
         }
     }
 
+    @Suppress("ExpressionBodySyntax")
     internal class CompositeFilterChainProxy(filters: List<Filter?>) : FilterChainProxy() {
         private val doFilterDelegate: Filter
 
