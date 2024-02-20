@@ -90,7 +90,7 @@ class InboxControllerImplTest {
             header("Signature", "a")
             header("Host", "example.com")
             header("Date", ZonedDateTime.now().format(dateTimeFormatter))
-            header("Digest", digest)
+            header("Digest", "SHA-256=" + digest)
         }.asyncDispatch().andExpect {
             status { isAccepted() }
         }
@@ -110,7 +110,7 @@ class InboxControllerImplTest {
             header("Signature", "a")
             header("Host", "example.com")
             header("Date", ZonedDateTime.now().format(dateTimeFormatter))
-            header("Digest", digest)
+            header("Digest", "SHA-256=$digest")
         }.asyncDispatch().andExpect {
             status { isAccepted() }
         }
@@ -135,7 +135,7 @@ class InboxControllerImplTest {
             header("Signature", "a")
             header("Host", "example.com")
             header("Date", ZonedDateTime.now().format(dateTimeFormatter))
-            header("Digest", digest)
+            header("Digest", "SHA-256=$digest")
         }.asyncDispatch().andExpect {
             status { isAccepted() }
         }
@@ -165,7 +165,7 @@ class InboxControllerImplTest {
             header("Signature", "a")
             header("Host", "example.com")
             header("Date", ZonedDateTime.now().format(dateTimeFormatter))
-            header("Digest", digest)
+            header("Digest", "SHA-256=$digest")
         }.asyncDispatch().andExpect {
             status { isAccepted() }
         }
@@ -185,7 +185,7 @@ class InboxControllerImplTest {
             header("Signature", "a")
             header("Host", "example.com")
             header("Date", ZonedDateTime.now().format(dateTimeFormatter))
-            header("Digest", digest)
+            header("Digest", "SHA-256=$digest")
         }.asyncDispatch().andExpect {
             status { isAccepted() }
         }
@@ -210,7 +210,7 @@ class InboxControllerImplTest {
             header("Signature", "a")
             header("Host", "example.com")
             header("Date", ZonedDateTime.now().format(dateTimeFormatter))
-            header("Digest", digest)
+            header("Digest", "SHA-256=$digest")
         }.asyncDispatch().andExpect {
             status { isAccepted() }
         }
@@ -427,7 +427,7 @@ class InboxControllerImplTest {
                 header("Signature", "")
                 header("Host", "example.com")
                 header("Date", ZonedDateTime.now().format(dateTimeFormatter))
-                header("Digest", digest)
+                header("Digest", "SHA-256=$digest")
             }
             .asyncDispatch()
             .andExpect {
@@ -470,7 +470,7 @@ class InboxControllerImplTest {
                 header("Signature", "")
                 header("Host", "example.com")
                 header("Date", ZonedDateTime.now().format(dateTimeFormatter))
-                header("Digest", digest)
+                header("Digest", "SHA-256=$digest")
             }
             .asyncDispatch()
             .andExpect {
@@ -493,7 +493,7 @@ class InboxControllerImplTest {
                 contentType = MediaType.APPLICATION_JSON
                 header("Host", "example.com")
                 header("Date", ZonedDateTime.now().format(dateTimeFormatter))
-                header("Digest", digest)
+                header("Digest", "SHA-256=$digest")
             }
             .asyncDispatch()
             .andExpect {
@@ -516,7 +516,7 @@ class InboxControllerImplTest {
                 header("Signature", "")
                 header("Host", "example.com")
                 header("Date", ZonedDateTime.now().format(dateTimeFormatter))
-                header("Digest", digest)
+                header("Digest", "SHA-256=$digest")
             }
             .asyncDispatch()
             .andExpect {
@@ -537,7 +537,7 @@ class InboxControllerImplTest {
                 contentType = MediaType.APPLICATION_JSON
                 header("Host", "example.com")
                 header("Date", ZonedDateTime.now().format(dateTimeFormatter))
-                header("Digest", digest)
+                header("Digest", "SHA-256=$digest")
             }
             .asyncDispatch()
             .andExpect {
@@ -560,7 +560,7 @@ class InboxControllerImplTest {
                 header("Signature", "")
                 header("Host", "example.com")
                 header("Date", ZonedDateTime.now().format(dateTimeFormatter))
-                header("Digest", digest)
+                header("Digest", "SHA-256=$digest")
             }
             .asyncDispatch()
             .andExpect {
