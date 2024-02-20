@@ -87,7 +87,7 @@ class HttpSignatureHeaderCheckerTest {
         val digest = Base64Util.encode(sha256.digest(requestBody.toByteArray()))
 
         assertDoesNotThrow {
-            httpSignatureHeaderChecker.checkDigest(requestBody.toByteArray(), digest)
+            httpSignatureHeaderChecker.checkDigest(requestBody.toByteArray(), "SHA-256=" + digest)
         }
     }
 
