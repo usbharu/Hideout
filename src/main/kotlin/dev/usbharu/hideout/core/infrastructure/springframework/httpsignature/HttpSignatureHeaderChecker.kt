@@ -41,14 +41,18 @@ class HttpSignatureHeaderChecker(private val applicationConfig: ApplicationConfi
     }
 
     fun checkDigest(byteArray: ByteArray, digest: String) {
+        val find = regex.find(digest)
         val sha256 = MessageDigest.getInstance("SHA-256")
 
-        if (Base64Util.encode(sha256.digest(byteArray)).equals(digest, true).not()) {
+        val other = find?.groups?.get(2)?.value.orEmpty()
+
+        if (Base64Util.encode(sha256.digest(byteArray)).equals(other, true).not()) {
             throw IllegalArgumentException("リクエストボディが違う")
         }
     }
 
     companion object {
         private val dateFormat = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US)
+        private val regex = Regex("^([a-zA-Z0-9\\-]+)=(.+)$")
     }
 }
