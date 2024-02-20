@@ -93,7 +93,7 @@ import java.security.interfaces.RSAPublicKey
 import java.util.*
 
 
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity(debug = false)
 @Configuration
 @Suppress("FunctionMaxLength", "TooManyFunctions", "LongMethod")
 class SecurityConfig {
@@ -416,7 +416,7 @@ class SecurityConfig {
         return roleHierarchyImpl
     }
 
-    @Bean
+    //    @Bean
     fun beanDefinitionRegistryPostProcessor(): BeanDefinitionRegistryPostProcessor {
         return BeanDefinitionRegistryPostProcessor { registry: BeanDefinitionRegistry ->
             registry.getBeanDefinition(AbstractSecurityWebApplicationInitializer.DEFAULT_FILTER_NAME).beanClassName =
