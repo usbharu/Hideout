@@ -26,6 +26,7 @@ import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.application.infrastructure.springframework.RoleHierarchyAuthorizationManagerFactory
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.infrastructure.springframework.httpsignature.HttpSignatureFilter
+import dev.usbharu.hideout.core.infrastructure.springframework.httpsignature.HttpSignatureHeaderChecker
 import dev.usbharu.hideout.core.infrastructure.springframework.httpsignature.HttpSignatureUserDetailsService
 import dev.usbharu.hideout.core.infrastructure.springframework.httpsignature.HttpSignatureVerifierComposite
 import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.UserDetailsImpl
@@ -35,6 +36,9 @@ import dev.usbharu.httpsignature.sign.RsaSha256HttpSignatureSigner
 import dev.usbharu.httpsignature.verify.DefaultSignatureHeaderParser
 import dev.usbharu.httpsignature.verify.RsaSha256HttpSignatureVerifier
 import jakarta.annotation.PostConstruct
+import jakarta.servlet.*
+import org.springframework.beans.factory.support.BeanDefinitionRegistry
+import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -58,6 +62,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.invoke
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.Authentication
+import org.springframework.security.core.context.SecurityContextHolderStrategy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.core.AuthorizationGrantType
@@ -67,14 +72,21 @@ import org.springframework.security.oauth2.server.authorization.config.annotatio
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer
+import org.springframework.security.web.FilterChainProxy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.access.ExceptionTranslationFilter
 import org.springframework.security.web.authentication.AuthenticationEntryPointFailureHandler
 import org.springframework.security.web.authentication.HttpStatusEntryPoint
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider
+import org.springframework.security.web.context.AbstractSecurityWebApplicationInitializer
+import org.springframework.security.web.debug.DebugFilter
+import org.springframework.security.web.firewall.HttpFirewall
+import org.springframework.security.web.firewall.RequestRejectedHandler
 import org.springframework.security.web.savedrequest.RequestCacheAwareFilter
 import org.springframework.security.web.util.matcher.AnyRequestMatcher
+import org.springframework.web.filter.CompositeFilter
+import java.io.IOException
 import java.security.KeyPairGenerator
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
@@ -86,15 +98,14 @@ import java.util.*
 class SecurityConfig {
 
     @Bean
-    fun authenticationManager(authenticationConfiguration: AuthenticationConfiguration): AuthenticationManager? {
-        return authenticationConfiguration.authenticationManager
-    }
+    fun authenticationManager(authenticationConfiguration: AuthenticationConfiguration): AuthenticationManager? =
+        authenticationConfiguration.authenticationManager
 
     @Bean
     @Order(1)
     fun httpSignatureFilterChain(
         http: HttpSecurity,
-        httpSignatureFilter: HttpSignatureFilter
+        httpSignatureFilter: HttpSignatureFilter,
     ): SecurityFilterChain {
         http {
             securityMatcher("/users/*/posts/*")
@@ -122,9 +133,10 @@ class SecurityConfig {
     @Bean
     fun getHttpSignatureFilter(
         authenticationManager: AuthenticationManager,
+        httpSignatureHeaderChecker: HttpSignatureHeaderChecker,
     ): HttpSignatureFilter {
         val httpSignatureFilter =
-            HttpSignatureFilter(DefaultSignatureHeaderParser())
+            HttpSignatureFilter(DefaultSignatureHeaderParser(), httpSignatureHeaderChecker)
         httpSignatureFilter.setAuthenticationManager(authenticationManager)
         httpSignatureFilter.setContinueFilterChainOnUnsuccessfulAuthentication(false)
         val authenticationEntryPointFailureHandler =
@@ -147,7 +159,7 @@ class SecurityConfig {
     @Order(1)
     fun httpSignatureAuthenticationProvider(
         transaction: Transaction,
-        actorRepository: ActorRepository
+        actorRepository: ActorRepository,
     ): PreAuthenticatedAuthenticationProvider {
         val provider = PreAuthenticatedAuthenticationProvider()
         val signatureHeaderParser = DefaultSignatureHeaderParser()
@@ -190,7 +202,7 @@ class SecurityConfig {
     @Order(4)
     fun defaultSecurityFilterChain(
         http: HttpSecurity,
-        rf: RoleHierarchyAuthorizationManagerFactory
+        rf: RoleHierarchyAuthorizationManagerFactory,
     ): SecurityFilterChain {
         http {
             authorizeHttpRequests {
@@ -401,6 +413,86 @@ class SecurityConfig {
 
         return roleHierarchyImpl
     }
+
+    // Spring Security 3.2.1 に存在する EnableWebSecurity(debug = true)にすると発生するエラーに対処するためのコード
+    // trueにしないときはコメントアウト
+
+    //    @Bean
+    fun beanDefinitionRegistryPostProcessor(): BeanDefinitionRegistryPostProcessor {
+        return BeanDefinitionRegistryPostProcessor { registry: BeanDefinitionRegistry ->
+            registry.getBeanDefinition(AbstractSecurityWebApplicationInitializer.DEFAULT_FILTER_NAME).beanClassName =
+                CompositeFilterChainProxy::class.java.name
+        }
+    }
+
+    @Suppress("ExpressionBodySyntax")
+    internal class CompositeFilterChainProxy(filters: List<Filter?>) : FilterChainProxy() {
+        private val doFilterDelegate: Filter
+
+        private val springSecurityFilterChain: FilterChainProxy
+
+        init {
+            this.doFilterDelegate = createDoFilterDelegate(filters)
+            this.springSecurityFilterChain = findFilterChainProxy(filters)
+        }
+
+        override fun afterPropertiesSet() {
+            springSecurityFilterChain.afterPropertiesSet()
+        }
+
+        @Throws(IOException::class, ServletException::class)
+        override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
+            doFilterDelegate.doFilter(request, response, chain)
+        }
+
+        override fun getFilters(url: String): List<Filter> {
+            return springSecurityFilterChain.getFilters(url)
+        }
+
+        override fun getFilterChains(): List<SecurityFilterChain> {
+            return springSecurityFilterChain.filterChains
+        }
+
+        override fun setSecurityContextHolderStrategy(securityContextHolderStrategy: SecurityContextHolderStrategy) {
+            springSecurityFilterChain.setSecurityContextHolderStrategy(securityContextHolderStrategy)
+        }
+
+        override fun setFilterChainValidator(filterChainValidator: FilterChainValidator) {
+            springSecurityFilterChain.setFilterChainValidator(filterChainValidator)
+        }
+
+        override fun setFilterChainDecorator(filterChainDecorator: FilterChainDecorator) {
+            springSecurityFilterChain.setFilterChainDecorator(filterChainDecorator)
+        }
+
+        override fun setFirewall(firewall: HttpFirewall) {
+            springSecurityFilterChain.setFirewall(firewall)
+        }
+
+        override fun setRequestRejectedHandler(requestRejectedHandler: RequestRejectedHandler) {
+            springSecurityFilterChain.setRequestRejectedHandler(requestRejectedHandler)
+        }
+
+        companion object {
+            private fun createDoFilterDelegate(filters: List<Filter?>): Filter {
+                val delegate: CompositeFilter = CompositeFilter()
+                delegate.setFilters(filters)
+                return delegate
+            }
+
+            private fun findFilterChainProxy(filters: List<Filter?>): FilterChainProxy {
+                for (filter in filters) {
+                    if (filter is FilterChainProxy) {
+                        return filter
+                    }
+                    if (filter is DebugFilter) {
+                        return filter.filterChainProxy
+                    }
+                }
+                throw IllegalStateException("Couldn't find FilterChainProxy in $filters")
+            }
+        }
+    }
 }
 
 @ConfigurationProperties("hideout.security.jwt")
@@ -408,14 +500,14 @@ class SecurityConfig {
 data class JwkConfig(
     val keyId: String,
     val publicKey: String,
-    val privateKey: String
+    val privateKey: String,
 )
 
 @Configuration
 class PostSecurityConfig(
     val auth: AuthenticationManagerBuilder,
     val daoAuthenticationProvider: DaoAuthenticationProvider,
-    val httpSignatureAuthenticationProvider: PreAuthenticatedAuthenticationProvider
+    val httpSignatureAuthenticationProvider: PreAuthenticatedAuthenticationProvider,
 ) {
 
     @PostConstruct

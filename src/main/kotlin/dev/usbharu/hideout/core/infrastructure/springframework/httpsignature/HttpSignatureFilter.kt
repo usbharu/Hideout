@@ -24,7 +24,10 @@ import jakarta.servlet.http.HttpServletRequest
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter
 import java.net.URL
 
-class HttpSignatureFilter(private val httpSignatureHeaderParser: SignatureHeaderParser) :
+class HttpSignatureFilter(
+    private val httpSignatureHeaderParser: SignatureHeaderParser,
+    private val httpSignatureHeaderChecker: HttpSignatureHeaderChecker,
+) :
     AbstractPreAuthenticatedProcessingFilter() {
     override fun getPreAuthenticatedPrincipal(request: HttpServletRequest?): Any? {
         val headersList = request?.headerNames?.toList().orEmpty()
@@ -42,7 +45,7 @@ class HttpSignatureFilter(private val httpSignatureHeaderParser: SignatureHeader
         return signature.keyId
     }
 
-    override fun getPreAuthenticatedCredentials(request: HttpServletRequest?): Any {
+    override fun getPreAuthenticatedCredentials(request: HttpServletRequest?): Any? {
         requireNotNull(request)
         val url = request.requestURL.toString()
 
@@ -55,8 +58,24 @@ class HttpSignatureFilter(private val httpSignatureHeaderParser: SignatureHeader
             "get" -> HttpMethod.GET
             "post" -> HttpMethod.POST
             else -> {
-                throw IllegalArgumentException("Unsupported method: $method")
+//                throw IllegalArgumentException("Unsupported method: $method")
+                return null
             }
+        }
+
+        try {
+            httpSignatureHeaderChecker.checkDate(request.getHeader("date")!!)
+            httpSignatureHeaderChecker.checkHost(request.getHeader("host")!!)
+            if (request.method.equals("post", true)) {
+                httpSignatureHeaderChecker.checkDigest(
+                    request.inputStream.readAllBytes()!!,
+                    request.getHeader("digest")!!
+                )
+            }
+        } catch (_: NullPointerException) {
+            return null
+        } catch (_: IllegalArgumentException) {
+            return null
         }
 
         return HttpRequest(

@@ -16,8 +16,8 @@
 
 package dev.usbharu.hideout.activitypub.interfaces.api.inbox
 
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
@@ -34,5 +34,5 @@ interface InboxController {
         consumes = ["application/json", "application/*+json"],
         method = [RequestMethod.POST]
     )
-    suspend fun inbox(@RequestBody string: String): ResponseEntity<Unit>
+    suspend fun inbox(httpServletRequest: HttpServletRequest): ResponseEntity<String>
 }
