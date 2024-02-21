@@ -75,7 +75,7 @@ class InboxControllerImpl(
                 HttpRequest(
                     URL(url + httpServletRequest.queryString.orEmpty()),
                     HttpHeaders(headers),
-                    HttpMethod.GET
+                    HttpMethod.POST
                 ),
                 headers
             )
