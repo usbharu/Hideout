@@ -59,19 +59,19 @@ class MastodonAccountApiController(
         HttpStatus.OK
     )
 
-    override suspend fun apiV1AccountsPost(
-        username: String,
-        password: String,
-        email: String?,
-        agreement: Boolean?,
-        locale: Boolean?,
-        reason: String?
-    ): ResponseEntity<Unit> {
+    override suspend fun apiV1AccountsPost(accountsCreateRequest: AccountsCreateRequest): ResponseEntity<Unit> {
         transaction.transaction {
-            accountApiService.registerAccount(UserCreateDto(username, username, "", password))
+            accountApiService.registerAccount(
+                UserCreateDto(
+                    accountsCreateRequest.username,
+                    accountsCreateRequest.username,
+                    "",
+                    accountsCreateRequest.password
+                )
+            )
         }
         val httpHeaders = HttpHeaders()
-        httpHeaders.location = URI("/users/$username")
+        httpHeaders.location = URI("/users/${accountsCreateRequest.username}")
         return ResponseEntity(Unit, httpHeaders, HttpStatus.FOUND)
     }
 

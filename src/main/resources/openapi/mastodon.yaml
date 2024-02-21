@@ -276,6 +276,9 @@ paths:
       requestBody:
         required: true
         content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AccountsCreateRequest"
           application/x-www-form-urlencoded:
             schema:
               $ref: "#/components/schemas/AccountsCreateRequest"
@@ -1365,6 +1368,8 @@ components:
       properties:
         username:
           type: string
+          minLength: 1
+          pattern: '^[a-zA-Z0-9_-]{1,300}$'
         email:
           type: string
         password:
@@ -1399,6 +1404,8 @@ components:
           type: string
         username:
           type: string
+          minLength: 1
+          pattern: '^[a-zA-Z0-9_-]{1,300}$'
         acct:
           type: string
         url:
