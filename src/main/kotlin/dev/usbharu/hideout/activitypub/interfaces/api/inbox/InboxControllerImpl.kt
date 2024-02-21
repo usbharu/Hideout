@@ -17,67 +17,65 @@
 package dev.usbharu.hideout.activitypub.interfaces.api.inbox
 
 import dev.usbharu.hideout.activitypub.service.common.APService
+import dev.usbharu.hideout.core.infrastructure.springframework.httpsignature.HttpSignatureHeaderChecker
 import dev.usbharu.httpsignature.common.HttpHeaders
 import dev.usbharu.httpsignature.common.HttpMethod
 import dev.usbharu.httpsignature.common.HttpRequest
+import jakarta.servlet.http.HttpServletRequest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.slf4j.MDCContext
+import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders.WWW_AUTHENTICATE
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.context.request.RequestContextHolder
-import org.springframework.web.context.request.ServletRequestAttributes
 import java.net.URL
 
 @RestController
-class InboxControllerImpl(private val apService: APService) : InboxController {
+class InboxControllerImpl(
+    private val apService: APService,
+    private val httpSignatureHeaderChecker: HttpSignatureHeaderChecker,
+) : InboxController {
     @Suppress("TooGenericExceptionCaught")
     override suspend fun inbox(
-        @RequestBody string: String
-    ): ResponseEntity<Unit> {
-        val request = (requireNotNull(RequestContextHolder.getRequestAttributes()) as ServletRequestAttributes).request
-
-        val headersList = request.headerNames?.toList().orEmpty()
+        httpServletRequest: HttpServletRequest,
+    ): ResponseEntity<String> {
+        val headersList = httpServletRequest.headerNames?.toList().orEmpty()
         LOGGER.trace("Inbox Headers {}", headersList)
 
-        if (headersList.map { it.lowercase() }.contains("signature").not()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .header(
-                    WWW_AUTHENTICATE,
-                    "Signature realm=\"Example\",headers=\"(request-target) date host digest\""
-                )
-                .build()
+        val body = withContext(Dispatchers.IO + MDCContext()) {
+            httpServletRequest.inputStream.readAllBytes()!!
+        }
+
+        val responseEntity = checkHeader(httpServletRequest, body)
+
+        if (responseEntity != null) {
+            return responseEntity
         }
 
         val parseActivity = try {
-            apService.parseActivity(string)
+            apService.parseActivity(body.decodeToString())
         } catch (e: Exception) {
             LOGGER.warn("FAILED Parse Activity", e)
             return ResponseEntity.accepted().build()
         }
         LOGGER.info("INBOX Processing Activity Type: {}", parseActivity)
         try {
-            val url = request.requestURL.toString()
+            val url = httpServletRequest.requestURL.toString()
 
             val headers =
-                headersList.associateWith { header -> request.getHeaders(header)?.toList().orEmpty() }
-
-            val method = when (val method = request.method.lowercase()) {
-                "get" -> HttpMethod.GET
-                "post" -> HttpMethod.POST
-                else -> {
-                    throw IllegalArgumentException("Unsupported method: $method")
+                headersList.associateWith { header ->
+                    httpServletRequest.getHeaders(header)?.toList().orEmpty()
                 }
-            }
 
             apService.processActivity(
-                string,
+                body.decodeToString(),
                 parseActivity,
                 HttpRequest(
-                    URL(url + request.queryString.orEmpty()),
+                    URL(url + httpServletRequest.queryString.orEmpty()),
                     HttpHeaders(headers),
-                    method
+                    HttpMethod.POST
                 ),
                 headers
             )
@@ -87,6 +85,46 @@ class InboxControllerImpl(private val apService: APService) : InboxController {
         }
         LOGGER.info("SUCCESS Processing Activity Type: {}", parseActivity)
         return ResponseEntity(HttpStatus.ACCEPTED)
+    }
+
+    private fun checkHeader(
+        httpServletRequest: HttpServletRequest,
+        body: ByteArray,
+    ): ResponseEntity<String>? {
+        try {
+            httpSignatureHeaderChecker.checkDate(httpServletRequest.getHeader("date")!!)
+        } catch (_: NullPointerException) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Required date header")
+        } catch (_: IllegalArgumentException) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Request is too old.")
+        }
+        try {
+            httpSignatureHeaderChecker.checkHost(httpServletRequest.getHeader("host")!!)
+        } catch (_: NullPointerException) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Required host header")
+        } catch (_: IllegalArgumentException) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Wrong host for request")
+        }
+        try {
+            httpSignatureHeaderChecker.checkDigest(body, httpServletRequest.getHeader("digest")!!)
+        } catch (_: NullPointerException) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body("Required request body digest in digest header (sha256)")
+        } catch (_: IllegalArgumentException) {
+            return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body("Wrong digest for request")
+        }
+
+        if (httpServletRequest.getHeader("signature").orEmpty().isBlank()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .header(
+                    WWW_AUTHENTICATE,
+                    "Signature realm=\"Example\",headers=\"(request-target) date host digest\""
+                )
+                .build()
+        }
+        return null
     }
 
     companion object {

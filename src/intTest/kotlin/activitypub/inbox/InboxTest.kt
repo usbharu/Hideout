@@ -17,11 +17,13 @@
 package activitypub.inbox
 
 import dev.usbharu.hideout.SpringApplication
+import dev.usbharu.hideout.util.Base64Util
 import org.flywaydb.core.Flyway
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
@@ -37,6 +39,9 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.context.WebApplicationContext
 import util.TestTransaction
 import util.WithMockHttpSignature
+import java.security.MessageDigest
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 @SpringBootTest(classes = [SpringApplication::class])
 @AutoConfigureMockMvc
@@ -44,9 +49,14 @@ import util.WithMockHttpSignature
 class InboxTest {
 
     @Autowired
+    @Qualifier("http")
+    private lateinit var dateTimeFormatter: DateTimeFormatter
+
+    @Autowired
     private lateinit var context: WebApplicationContext
 
     private lateinit var mockMvc: MockMvc
+
 
     @BeforeEach
     fun setUp() {
@@ -62,6 +72,12 @@ class InboxTest {
             .post("/inbox") {
                 content = "{}"
                 contentType = MediaType.APPLICATION_JSON
+                header("Host", "example.com")
+                header("Date", ZonedDateTime.now().format(dateTimeFormatter))
+                header(
+                    "Digest",
+                    "SHA-256=" + Base64Util.encode(MessageDigest.getInstance("SHA-256").digest("{}".toByteArray()))
+                )
             }
             .asyncDispatch()
             .andExpect { status { isUnauthorized() } }
@@ -74,7 +90,13 @@ class InboxTest {
             .post("/inbox") {
                 content = "{}"
                 contentType = MediaType.APPLICATION_JSON
-                header("Signature", "")
+                header("Signature", "a")
+                header("Host", "example.com")
+                header("Date", ZonedDateTime.now().format(dateTimeFormatter))
+                header(
+                    "Digest",
+                    "SHA-256=" + Base64Util.encode(MessageDigest.getInstance("SHA-256").digest("{}".toByteArray()))
+                )
             }
             .asyncDispatch()
             .andExpect { status { isAccepted() } }
@@ -87,8 +109,15 @@ class InboxTest {
             .post("/users/hoge/inbox") {
                 content = "{}"
                 contentType = MediaType.APPLICATION_JSON
+                header("Host", "example.com")
+                header("Date", ZonedDateTime.now().format(dateTimeFormatter))
+                header(
+                    "Digest",
+                    "SHA-256=" + Base64Util.encode(MessageDigest.getInstance("SHA-256").digest("{}".toByteArray()))
+                )
             }
             .asyncDispatch()
+            .andDo { print() }
             .andExpect { status { isUnauthorized() } }
     }
 
@@ -99,9 +128,16 @@ class InboxTest {
             .post("/users/hoge/inbox") {
                 content = "{}"
                 contentType = MediaType.APPLICATION_JSON
-                header("Signature", "")
+                header("Signature", "a")
+                header("Host", "example.com")
+                header("Date", ZonedDateTime.now().format(dateTimeFormatter))
+                header(
+                    "Digest",
+                    "SHA-256=" + Base64Util.encode(MessageDigest.getInstance("SHA-256").digest("{}".toByteArray()))
+                )
             }
             .asyncDispatch()
+            .andDo { print() }
             .andExpect { status { isAccepted() } }
     }
 

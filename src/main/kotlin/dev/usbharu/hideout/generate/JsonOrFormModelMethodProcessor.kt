@@ -19,6 +19,7 @@ package dev.usbharu.hideout.generate
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.core.MethodParameter
+import org.springframework.validation.BindException
 import org.springframework.web.bind.support.WebDataBinderFactory
 import org.springframework.web.context.request.NativeWebRequest
 import org.springframework.web.method.annotation.ModelAttributeMethodProcessor
@@ -56,12 +57,17 @@ class JsonOrFormModelMethodProcessor(
 
         return try {
             modelAttributeMethodProcessor.resolveArgument(parameter, mavContainer, webRequest, binderFactory)
+        } catch (e: BindException) {
+            throw e
         } catch (exception: Exception) {
             try {
                 requestResponseBodyMethodProcessor.resolveArgument(parameter, mavContainer, webRequest, binderFactory)
+            } catch (e: BindException) {
+                throw e
             } catch (e: Exception) {
                 logger.warn("Failed to bind request (1)", exception)
                 logger.warn("Failed to bind request (2)", e)
+                throw IllegalArgumentException("Failed to bind request.")
             }
         }
     }
