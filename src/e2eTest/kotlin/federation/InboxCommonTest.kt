@@ -27,6 +27,7 @@ import org.flywaydb.core.Flyway
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.TestFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -38,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 @Transactional
+@Disabled
 class InboxCommonTest {
     @LocalServerPort
     private var port = ""

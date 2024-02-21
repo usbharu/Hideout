@@ -22,6 +22,7 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
@@ -36,6 +37,8 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.context.WebApplicationContext
 import util.WithHttpSignature
 import util.WithMockHttpSignature
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 @SpringBootTest(classes = [SpringApplication::class])
 @AutoConfigureMockMvc
@@ -45,6 +48,10 @@ class NoteTest {
 
     @Autowired
     private lateinit var context: WebApplicationContext
+
+    @Autowired
+    @Qualifier("http")
+    private lateinit var dateTimeFormatter: DateTimeFormatter
 
     @BeforeEach
     fun setUp() {
@@ -195,6 +202,29 @@ class NoteTest {
             .andExpect { jsonPath("\$.attachment[0].url") { value("https://example.com/media/test-media.png") } }
             .andExpect { jsonPath("\$.attachment[1].type") { value("Document") } }
             .andExpect { jsonPath("\$.attachment[1].url") { value("https://example.com/media/test-media2.png") } }
+    }
+
+    @Test
+    fun signatureヘッダーがあるのにhostヘッダーがないと401() {
+        mockMvc
+            .get("/users/test-user10/posts/9999") {
+                accept(MediaType("application", "activity+json"))
+                header("Signature", "a")
+                header("Date", ZonedDateTime.now().format(dateTimeFormatter))
+
+            }
+            .andExpect { status { isUnauthorized() } }
+    }
+
+    @Test
+    fun signatureヘッダーがあるのにdateヘッダーがないと401() {
+        mockMvc
+            .get("/users/test-user10/posts/9999") {
+                accept(MediaType("application", "activity+json"))
+                header("Signature", "a")
+                header("Host", "example.com")
+            }
+            .andExpect { status { isUnauthorized() } }
     }
 
     companion object {
