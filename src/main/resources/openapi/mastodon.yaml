@@ -1358,6 +1358,7 @@ components:
           format: binary
         description:
           type: string
+          maxLength: 4000
         focus:
           type: string
       required:
@@ -1369,13 +1370,17 @@ components:
         username:
           type: string
           minLength: 1
+          maxLength: 300
           pattern: '^[a-zA-Z0-9_-]{1,300}$'
         email:
           type: string
+          format: email
         password:
           type: string
+          format: password
         agreement:
           type: boolean
+          default: false
         locale:
           type: boolean
         reason:
@@ -1975,8 +1980,10 @@ components:
       properties:
         phrase:
           type: string
+          maxLength: 1000
         context:
           type: array
+          maxItems: 10
           items:
             type: string
             enum:
@@ -1987,8 +1994,10 @@ components:
               - account
         irreversible:
           type: boolean
+          default: false
         whole_word:
           type: boolean
+          default: false
         expires_in:
           type: integer
       required:
@@ -2000,8 +2009,10 @@ components:
       properties:
         phrase:
           type: string
+          maxLength: 1000
         context:
           type: array
+          maxItems: 10
           items:
             type: string
             enum:
@@ -2022,8 +2033,10 @@ components:
       properties:
         title:
           type: string
+          maxLength: 255
         context:
           type: array
+          maxItems: 10
           items:
             type: string
             enum:
@@ -2040,6 +2053,7 @@ components:
         expires_in:
           type: integer
         keywords_attributes:
+          maxItems: 1000
           type: array
           items:
             $ref: "#/components/schemas/FilterPostRequestKeyword"
@@ -2052,6 +2066,7 @@ components:
       properties:
         keyword:
           type: string
+          maxLength: 1000
         whole_word:
           type: boolean
           default: false
@@ -2066,6 +2081,7 @@ components:
       properties:
         keyword:
           type: string
+          maxLength: 1000
         whole_word:
           type: boolean
           default: false
@@ -2080,6 +2096,7 @@ components:
       properties:
         keyword:
           type: string
+          maxLength: 1000
         whole_word:
           type: boolean
         regex:
@@ -2090,8 +2107,10 @@ components:
       properties:
         title:
           type: string
+          maxLength: 255
         context:
           type: array
+          maxItems: 10
           items:
             type: string
             enum:
@@ -2108,6 +2127,7 @@ components:
         expires_in:
           type: integer
         keywords_attributes:
+          maxItems: 1000
           type: array
           items:
             $ref: "#/components/schemas/FilterPubRequestKeyword"
@@ -2117,6 +2137,7 @@ components:
       properties:
         keyword:
           type: string
+          maxLength: 1000
         whole_word:
           type: boolean
         regex:
@@ -2125,6 +2146,9 @@ components:
           type: string
         _destroy:
           type: boolean
+          default: false
+      required:
+        - id
 
     FilterStatusRequest:
       type: object
@@ -2480,18 +2504,22 @@ components:
         status:
           type: string
           nullable: true
+          maxLength: 3000
         media_ids:
           type: array
           items:
             type: string
+          maxItems: 4
         poll:
           $ref: "#/components/schemas/StatusesRequestPoll"
         in_reply_to_id:
           type: string
         sensitive:
           type: boolean
+          default: false
         spoiler_text:
           type: string
+          maxLength: 100
         visibility:
           type: string
           enum:
@@ -2501,22 +2529,29 @@ components:
             - direct
         language:
           type: string
+          maxLength: 100
         scheduled_at:
           type: string
+          format: date-time
+          example: "2019-12-05T12:33:01.000Z"
 
     StatusesRequestPoll:
       type: object
       properties:
         options:
           type: array
+          maxItems: 10
           items:
             type: string
+            maxLength: 100
         expires_in:
           type: integer
         multiple:
           type: boolean
+          default: false
         hide_totals:
           type: boolean
+          default: false
 
     Application:
       type: object
@@ -2543,12 +2578,16 @@ components:
       properties:
         client_name:
           type: string
+          maxLength: 200
         redirect_uris:
           type: string
+          maxLength: 1000
         scopes:
           type: string
+          maxLength: 1000
         website:
           type: string
+          maxLength: 1000
       required:
         - client_name
         - redirect_uris
@@ -2609,16 +2648,20 @@ components:
           default: false
         languages:
           type: array
+          maxItems: 10
           items:
             type: string
+            maxLength: 10
 
     UpdateCredentials:
       type: object
       properties:
         display_name:
           type: string
+          maxLength: 300
         note:
           type: string
+          maxLength: 2000
         avatar:
           type: string
           format: binary
