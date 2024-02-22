@@ -80,6 +80,7 @@ class MastodonNotificationApiController(
 
     override suspend fun apiV1NotificationsIdGet(id: String): ResponseEntity<Notification> {
         val notification = notificationApiService.fingById(loginUserContextHolder.getLoginUserId(), id.toLong())
+            ?: return ResponseEntity.notFound().build()
 
         return ResponseEntity.ok(notification)
     }

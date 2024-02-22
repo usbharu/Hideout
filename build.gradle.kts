@@ -271,6 +271,7 @@ dependencies {
     intTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version")
     intTestImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
     intTestImplementation("com.h2database:h2:$h2_version")
+    intTestImplementation(project(":test-mvc"))
 
     e2eTestImplementation("org.springframework.boot:spring-boot-starter-test")
     e2eTestImplementation("org.springframework.security:spring-security-test")
