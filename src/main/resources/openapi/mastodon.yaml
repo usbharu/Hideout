@@ -328,6 +328,10 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Relationship"
+        401:
+          $ref: "#/components/responses/unauthorized"
+        422:
+          $ref: "#/components/responses/unprocessableEntity"
 
   /api/v1/accounts/update_credentials:
     patch:
@@ -349,6 +353,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Account"
+        401:
+          $ref: "#/components/responses/unauthorized"
+        422:
+          $ref: "#/components/responses/unprocessableEntity"
 
   /api/v1/accounts/{id}:
     get:
@@ -777,6 +785,11 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Status"
+        206:
+          $ref: "#/components/responses/partialContent"
+        401:
+          $ref: "#/components/responses/unauthorized"
+
   /api/v1/media:
     post:
       tags:
@@ -2862,6 +2875,14 @@ components:
       required:
         - error
 
+    PartialContentResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
   responses:
     forbidden:
       description: forbidden
@@ -2896,6 +2917,13 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/NotFoundResponse"
+
+    partialContent:
+      description: Partial content
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/PartialContentResponse"
 
   securitySchemes:
     OAuth2:
