@@ -52,17 +52,21 @@ interface RelationshipRepository {
 
     suspend fun findByTargetIdAndFollowing(targetId: Long, following: Boolean): List<Relationship>
 
+    suspend fun countByTargetIdAndFollowing(targetId: Long, following: Boolean): Int
+
+    suspend fun countByUserIdAndFollowing(userId: Long, following: Boolean): Int
+
     @Suppress("FunctionMaxLength")
     suspend fun findByTargetIdAndFollowRequestAndIgnoreFollowRequest(
         targetId: Long,
         followRequest: Boolean,
         ignoreFollowRequest: Boolean,
-        page: Page.PageByMaxId
+        page: Page.PageByMaxId,
     ): PaginationList<Relationship, Long>
 
     suspend fun findByActorIdAndMuting(
         actorId: Long,
         muting: Boolean,
-        page: Page.PageByMaxId
+        page: Page.PageByMaxId,
     ): PaginationList<Relationship, Long>
 }

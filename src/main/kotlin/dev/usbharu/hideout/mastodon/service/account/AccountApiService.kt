@@ -19,6 +19,7 @@ package dev.usbharu.hideout.mastodon.service.account
 import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.application.infrastructure.exposed.Page
 import dev.usbharu.hideout.application.infrastructure.exposed.PaginationList
+import dev.usbharu.hideout.core.domain.exception.resource.UserNotFoundException
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
 import dev.usbharu.hideout.core.service.media.MediaService
 import dev.usbharu.hideout.core.service.relationship.RelationshipService
@@ -26,6 +27,7 @@ import dev.usbharu.hideout.core.service.user.UpdateUserDto
 import dev.usbharu.hideout.core.service.user.UserCreateDto
 import dev.usbharu.hideout.core.service.user.UserService
 import dev.usbharu.hideout.domain.mastodon.model.generated.*
+import dev.usbharu.hideout.mastodon.domain.exception.AccountNotFoundException
 import dev.usbharu.hideout.mastodon.interfaces.api.media.MediaRequest
 import dev.usbharu.hideout.mastodon.query.StatusQueryService
 import org.slf4j.LoggerFactory
@@ -127,6 +129,8 @@ class AccountApiServiceImpl(
     }
 
     override suspend fun verifyCredentials(userid: Long): CredentialAccount = transaction.transaction {
+        userService.updateUserStatistics(userid)
+
         val account = accountService.findById(userid)
         from(account)
     }
@@ -141,8 +145,15 @@ class AccountApiServiceImpl(
         return@transaction fetchRelationship(loginUser, followTargetUserId)
     }
 
-    override suspend fun account(id: Long): Account = transaction.transaction {
-        return@transaction accountService.findById(id)
+    override suspend fun account(id: Long): Account {
+        return try {
+            transaction.transaction {
+                userService.updateUserStatistics(id)
+                return@transaction accountService.findById(id)
+            }
+        } catch (e: UserNotFoundException) {
+            throw AccountNotFoundException.ofId(id)
+        }
     }
 
     override suspend fun relationships(userid: Long, id: List<Long>, withSuspended: Boolean): List<Relationship> =
@@ -160,7 +171,7 @@ class AccountApiServiceImpl(
             }
         }
 
-    override suspend fun block(userid: Long, target: Long): Relationship = transaction.transaction {
+    override suspend fun block(userid: Long, target: Long) = transaction.transaction {
         relationshipService.block(userid, target)
 
         fetchRelationship(userid, target)
@@ -338,6 +349,9 @@ class AccountApiServiceImpl(
                 followRequest = false,
                 ignoreFollowRequestToTarget = false
             )
+
+        userService.updateUserStatistics(userid)
+        userService.updateUserStatistics(targetId)
 
         return Relationship(
             id = targetId.toString(),
