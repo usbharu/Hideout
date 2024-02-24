@@ -29,6 +29,7 @@ import dev.usbharu.hideout.core.service.post.PostService
 import dev.usbharu.hideout.core.service.reaction.ReactionService
 import dev.usbharu.hideout.domain.mastodon.model.generated.Status
 import dev.usbharu.hideout.domain.mastodon.model.generated.Status.Visibility.*
+import dev.usbharu.hideout.mastodon.domain.exception.StatusNotFoundException
 import dev.usbharu.hideout.mastodon.interfaces.api.status.StatusesRequest
 import dev.usbharu.hideout.mastodon.interfaces.api.status.toPostVisibility
 import dev.usbharu.hideout.mastodon.interfaces.api.status.toStatusVisibility
@@ -43,25 +44,25 @@ import java.time.Instant
 interface StatusesApiService {
     suspend fun postStatus(
         statusesRequest: StatusesRequest,
-        userId: Long
+        userId: Long,
     ): Status
 
     suspend fun findById(
         id: Long,
-        userId: Long?
-    ): Status?
+        userId: Long?,
+    ): Status
 
     suspend fun emojiReactions(
         postId: Long,
         userId: Long,
-        emojiName: String
-    ): Status?
+        emojiName: String,
+    ): Status
 
     suspend fun removeEmojiReactions(
         postId: Long,
         userId: Long,
-        emojiName: String
-    ): Status?
+        emojiName: String,
+    ): Status
 }
 
 @Service
@@ -76,12 +77,12 @@ class StatsesApiServiceImpl(
     private val statusQueryService: StatusQueryService,
     private val relationshipRepository: RelationshipRepository,
     private val reactionService: ReactionService,
-    private val emojiService: EmojiService
+    private val emojiService: EmojiService,
 ) :
     StatusesApiService {
     override suspend fun postStatus(
         statusesRequest: StatusesRequest,
-        userId: Long
+        userId: Long,
     ): Status = transaction.transaction {
         logger.debug("START create post by mastodon api. {}", statusesRequest)
 
@@ -140,39 +141,51 @@ class StatsesApiServiceImpl(
         )
     }
 
-    override suspend fun findById(id: Long, userId: Long?): Status? {
-        val status = statusQueryService.findByPostId(id)
+    override suspend fun findById(id: Long, userId: Long?): Status = transaction.transaction {
+        val status = statusQueryService.findByPostId(id) ?: statusNotFound(id)
 
-        return status(status, userId)
+        return@transaction status(status, userId)
+    }
+
+    private fun accessDenied(id: String): Nothing {
+        logger.debug("Access Denied $id")
+        throw StatusNotFoundException.ofId(id.toLong())
+    }
+
+    private fun statusNotFound(id: Long): Nothing {
+        logger.debug("Status Not Found $id")
+        throw StatusNotFoundException.ofId(id)
     }
 
     private suspend fun status(
         status: Status,
-        userId: Long?
-    ): Status? {
+        userId: Long?,
+    ): Status {
+
+
         return when (status.visibility) {
             public -> status
             unlisted -> status
             private -> {
                 if (userId == null) {
-                    return null
+                    accessDenied(status.id)
                 }
 
                 val relationship =
                     relationshipRepository.findByUserIdAndTargetUserId(userId, status.account.id.toLong())
-                        ?: return null
+                        ?: accessDenied(status.id)
                 if (relationship.following) {
                     return status
                 }
-                return null
+                accessDenied(status.id)
             }
 
-            direct -> null
+            direct -> accessDenied(status.id)
         }
     }
 
-    override suspend fun emojiReactions(postId: Long, userId: Long, emojiName: String): Status? {
-        status(statusQueryService.findByPostId(postId), userId) ?: return null
+    override suspend fun emojiReactions(postId: Long, userId: Long, emojiName: String): Status {
+        status(statusQueryService.findByPostId(postId) ?: statusNotFound(postId), userId)
 
         val emoji = try {
             if (EmojiUtil.isEmoji(emojiName)) {
@@ -186,13 +199,13 @@ class StatsesApiServiceImpl(
             UnicodeEmoji("❤")
         }
         reactionService.sendReaction(emoji, userId, postId)
-        return statusQueryService.findByPostId(postId)
+        return statusQueryService.findByPostId(postId) ?: statusNotFound(postId)
     }
 
-    override suspend fun removeEmojiReactions(postId: Long, userId: Long, emojiName: String): Status? {
+    override suspend fun removeEmojiReactions(postId: Long, userId: Long, emojiName: String): Status {
         reactionService.removeReaction(userId, postId)
 
-        return status(statusQueryService.findByPostId(postId), userId)
+        return status(statusQueryService.findByPostId(postId) ?: statusNotFound(postId), userId)
     }
 
     companion object {

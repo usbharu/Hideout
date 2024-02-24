@@ -18,4 +18,38 @@ package dev.usbharu.hideout.mastodon.domain.exception
 
 import dev.usbharu.hideout.mastodon.domain.model.MastodonApiErrorResponse
 
-abstract class MastodonApiException(val response: MastodonApiErrorResponse<*>) : RuntimeException()
+abstract class MastodonApiException : RuntimeException {
+
+    val response: MastodonApiErrorResponse<*>
+
+    constructor(response: MastodonApiErrorResponse<*>) : super() {
+        this.response = response
+    }
+
+    constructor(message: String?, response: MastodonApiErrorResponse<*>) : super(message) {
+        this.response = response
+    }
+
+    constructor(message: String?, cause: Throwable?, response: MastodonApiErrorResponse<*>) : super(message, cause) {
+        this.response = response
+    }
+
+    constructor(cause: Throwable?, response: MastodonApiErrorResponse<*>) : super(cause) {
+        this.response = response
+    }
+
+    constructor(
+        message: String?,
+        cause: Throwable?,
+        enableSuppression: Boolean,
+        writableStackTrace: Boolean,
+        response: MastodonApiErrorResponse<*>,
+    ) : super(
+        message,
+        cause,
+        enableSuppression,
+        writableStackTrace
+    ) {
+        this.response = response
+    }
+}

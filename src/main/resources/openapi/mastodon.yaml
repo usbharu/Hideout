@@ -2840,6 +2840,18 @@ components:
       properties:
         error:
           type: string
+        details:
+          type: object
+          additionalProperties:
+            $ref: "#/components/schemas/UnprocessableEntityResponseDetails"
+
+    UnprocessableEntityResponseDetails:
+      type: object
+      properties:
+        error:
+          type: string
+        description:
+          type: string
 
     UnauthorizedResponse:
       type: object
@@ -2877,11 +2889,7 @@ components:
 
     PartialContentResponse:
       type: object
-      properties:
-        error:
-          type: string
-      required:
-        - error
+
 
   responses:
     forbidden:

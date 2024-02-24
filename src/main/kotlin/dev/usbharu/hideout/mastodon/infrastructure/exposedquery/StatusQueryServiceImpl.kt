@@ -122,12 +122,13 @@ class StatusQueryServiceImpl : StatusQueryService {
         )
     }
 
-    override suspend fun findByPostId(id: Long): Status {
+    override suspend fun findByPostId(id: Long): Status? {
         val map = Posts
             .leftJoin(PostsMedia)
             .leftJoin(Actors)
             .leftJoin(Media)
-            .selectAll().where { Posts.id eq id }
+            .selectAll()
+            .where { Posts.id eq id }
             .groupBy { it[Posts.id] }
             .map { it.value }
             .map {
@@ -138,7 +139,7 @@ class StatusQueryServiceImpl : StatusQueryService {
                     emojis = it.mapNotNull { resultRow -> resultRow.toCustomEmojiOrNull()?.toMastodonEmoji() }
                 ) to it.first()[Posts.repostId]
             }
-        return resolveReplyAndRepost(map).single()
+        return resolveReplyAndRepost(map).singleOrNull()
     }
 
     private fun resolveReplyAndRepost(pairs: List<Pair<Status, Long?>>): List<Status> {
