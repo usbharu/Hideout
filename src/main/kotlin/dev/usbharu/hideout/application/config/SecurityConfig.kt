@@ -239,6 +239,7 @@ class SecurityConfig {
 
                 authorize(POST, "/api/v1/media", rf.hasScope("write:media"))
                 authorize(POST, "/api/v1/statuses", rf.hasScope("write:statuses"))
+                authorize(GET, "/api/v1/statuses/*", permitAll)
 
                 authorize(GET, "/api/v1/timelines/public", permitAll)
                 authorize(GET, "/api/v1/timelines/home", rf.hasScope("read:statuses"))
