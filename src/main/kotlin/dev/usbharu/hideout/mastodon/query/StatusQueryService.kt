@@ -37,5 +37,5 @@ interface StatusQueryService {
         page: Page
     ): PaginationList<Status, Long>
 
-    suspend fun findByPostId(id: Long): Status
+    suspend fun findByPostId(id: Long): Status?
 }

@@ -18,4 +18,21 @@ package dev.usbharu.hideout.mastodon.domain.exception
 
 import dev.usbharu.hideout.mastodon.domain.model.MastodonApiErrorResponse
 
-open class ClientException(response: MastodonApiErrorResponse<*>) : MastodonApiException(response)
+open class ClientException : MastodonApiException {
+    constructor(response: MastodonApiErrorResponse<*>) : super(response)
+    constructor(message: String?, response: MastodonApiErrorResponse<*>) : super(message, response)
+    constructor(message: String?, cause: Throwable?, response: MastodonApiErrorResponse<*>) : super(
+        message,
+        cause,
+        response
+    )
+
+    constructor(cause: Throwable?, response: MastodonApiErrorResponse<*>) : super(cause, response)
+    constructor(
+        message: String?,
+        cause: Throwable?,
+        enableSuppression: Boolean,
+        writableStackTrace: Boolean,
+        response: MastodonApiErrorResponse<*>,
+    ) : super(message, cause, enableSuppression, writableStackTrace, response)
+}
