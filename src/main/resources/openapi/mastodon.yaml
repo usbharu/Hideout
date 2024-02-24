@@ -250,6 +250,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Application"
+        422:
+          $ref: "#/components/responses/unprocessableEntity"
 
   /api/v1/accounts/verify_credentials:
     get:
@@ -265,6 +267,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CredentialAccount"
+        401:
+          $ref: "#/components/responses/unauthorized"
+        403:
+          $ref: "#/components/responses/forbidden"
+        422:
+          $ref: "#/components/responses/unprocessableEntity"
 
   /api/v1/accounts:
     post:
@@ -285,6 +293,10 @@ paths:
       responses:
         200:
           description: 成功
+        401:
+          $ref: "#/components/responses/unauthorized"
+        429:
+          $ref: "#/components/responses/rateLimited"
 
   /api/v1/accounts/relationships:
     get:
@@ -316,6 +328,10 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Relationship"
+        401:
+          $ref: "#/components/responses/unauthorized"
+        422:
+          $ref: "#/components/responses/unprocessableEntity"
 
   /api/v1/accounts/update_credentials:
     patch:
@@ -337,6 +353,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Account"
+        401:
+          $ref: "#/components/responses/unauthorized"
+        422:
+          $ref: "#/components/responses/unprocessableEntity"
 
   /api/v1/accounts/{id}:
     get:
@@ -357,6 +377,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Account"
+        401:
+          $ref: "#/components/responses/unauthorized"
+        404:
+          $ref: "#/components/responses/notfound"
 
   /api/v1/accounts/{id}/follow:
     post:
@@ -387,6 +411,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Relationship"
+        401:
+          $ref: "#/components/responses/unauthorized"
+        403:
+          $ref: "#/components/responses/forbidden"
+        422:
+          $ref: "#/components/responses/unprocessableEntity"
 
   /api/v1/accounts/{id}/block:
     post:
@@ -408,6 +438,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Relationship"
+        401:
+          $ref: "#/components/responses/unauthorized"
+        403:
+          $ref: "#/components/responses/forbidden"
+        422:
+          $ref: "#/components/responses/unprocessableEntity"
 
   /api/v1/accounts/{id}/unfollow:
     post:
@@ -429,6 +465,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Relationship"
+        401:
+          $ref: "#/components/responses/unauthorized"
+        403:
+          $ref: "#/components/responses/forbidden"
+        422:
+          $ref: "#/components/responses/unprocessableEntity"
 
   /api/v1/accounts/{id}/unblock:
     post:
@@ -450,6 +492,13 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Relationship"
+        401:
+          $ref: "#/components/responses/unauthorized"
+        403:
+          $ref: "#/components/responses/forbidden"
+        422:
+          $ref: "#/components/responses/unprocessableEntity"
+
   /api/v1/accounts/{id}/remove_from_followers:
     post:
       tags:
@@ -470,6 +519,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Relationship"
+        401:
+          $ref: "#/components/responses/unauthorized"
+        403:
+          $ref: "#/components/responses/forbidden"
+        422:
+          $ref: "#/components/responses/unprocessableEntity"
 
   /api/v1/accounts/{id}/mute:
     post:
@@ -491,6 +546,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Relationship"
+        401:
+          $ref: "#/components/responses/unauthorized"
+        403:
+          $ref: "#/components/responses/forbidden"
+        422:
+          $ref: "#/components/responses/unprocessableEntity"
 
   /api/v1/accounts/{id}/unmute:
     post:
@@ -512,6 +573,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Relationship"
+        401:
+          $ref: "#/components/responses/unauthorized"
+        403:
+          $ref: "#/components/responses/forbidden"
+        422:
+          $ref: "#/components/responses/unprocessableEntity"
 
   /api/v1/mutes:
     get:
@@ -544,6 +611,12 @@ paths:
               schema:
                 items:
                   $ref: "#/components/schemas/Account"
+        401:
+          $ref: "#/components/responses/unauthorized"
+        403:
+          $ref: "#/components/responses/forbidden"
+        422:
+          $ref: "#/components/responses/unprocessableEntity"
 
   /api/v1/accounts/{id}/statuses:
     get:
@@ -619,6 +692,11 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Status"
+
+        401:
+          $ref: "#/components/responses/unauthorized"
+        404:
+          $ref: "#/components/responses/notfound"
 
   /api/v1/timelines/public:
     get:
@@ -707,6 +785,11 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Status"
+        206:
+          $ref: "#/components/responses/partialContent"
+        401:
+          $ref: "#/components/responses/unauthorized"
+
   /api/v1/media:
     post:
       tags:
@@ -730,6 +813,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/MediaAttachment"
+        401:
+          $ref: "#/components/responses/unauthorized"
+        422:
+          $ref: "#/components/responses/unprocessableEntity"
 
   /api/v1/follow_requests:
     get:
@@ -1368,6 +1455,8 @@ components:
       type: object
       properties:
         username:
+
+          nullable: false
           type: string
           minLength: 1
           maxLength: 300
@@ -2747,6 +2836,110 @@ components:
         - type
         - created_at
         - account
+
+    UnprocessableEntityResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        details:
+          type: array
+          additionalProperties:
+            type: array
+            items:
+              $ref: "#/components/schemas/UnprocessableEntityResponseDetails"
+
+    UnprocessableEntityResponseDetails:
+      type: object
+      properties:
+        error:
+          type: string
+        description:
+          type: string
+          nullable: false
+      required:
+        - error
+        - description
+
+    UnauthorizedResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          default: "The access token is invalid"
+      required:
+        - error
+
+    RateLimitedResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          default: "Too many requests"
+      required:
+        - error
+
+    ForbiddenResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    NotFoundResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    PartialContentResponse:
+      type: object
+
+
+  responses:
+    forbidden:
+      description: forbidden
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ForbiddenResponse"
+    unprocessableEntity:
+      description: Unprocessable entity
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/UnprocessableEntityResponse"
+
+    unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/UnauthorizedResponse"
+
+    rateLimited:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/RateLimitedResponse"
+
+    notfound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/NotFoundResponse"
+
+    partialContent:
+      description: Partial content
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/PartialContentResponse"
 
   securitySchemes:
     OAuth2:

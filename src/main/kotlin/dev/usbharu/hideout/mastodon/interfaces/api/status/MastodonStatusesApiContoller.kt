@@ -57,5 +57,9 @@ class MastodonStatusesApiContoller(
         return ResponseEntity.ok(statusesApiService.emojiReactions(id.toLong(), uid, emoji))
     }
 
-    override suspend fun apiV1StatusesIdGet(id: String): ResponseEntity<Status> = super.apiV1StatusesIdGet(id)
+    override suspend fun apiV1StatusesIdGet(id: String): ResponseEntity<Status> {
+        val uid = loginUserContextHolder.getLoginUserIdOrNull()
+
+        return ResponseEntity.ok(statusesApiService.findById(id.toLong(), uid))
+    }
 }
