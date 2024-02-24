@@ -62,7 +62,8 @@ class ActorServiceTest {
                 reactionRepository = mock(),
                 relationshipRepository = mock(),
                 postService = mock(),
-                apSendDeleteService = mock()
+                apSendDeleteService = mock(),
+                postRepository = mock()
             )
         userService.createLocalUser(UserCreateDto("test", "testUser", "XXXXXXXXXXXXX", "test"))
         verify(actorRepository, times(1)).save(any())
@@ -100,7 +101,8 @@ class ActorServiceTest {
                 reactionRepository = mock(),
                 relationshipRepository = mock(),
                 postService = mock(),
-                apSendDeleteService = mock()
+                apSendDeleteService = mock(),
+                postRepository = mock()
             )
         val user = RemoteUserCreateDto(
             name = "test",

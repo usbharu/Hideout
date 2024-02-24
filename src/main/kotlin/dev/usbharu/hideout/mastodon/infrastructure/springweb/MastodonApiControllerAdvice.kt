@@ -19,6 +19,7 @@ package dev.usbharu.hideout.mastodon.infrastructure.springweb
 import dev.usbharu.hideout.domain.mastodon.model.generated.NotFoundResponse
 import dev.usbharu.hideout.domain.mastodon.model.generated.UnprocessableEntityResponse
 import dev.usbharu.hideout.domain.mastodon.model.generated.UnprocessableEntityResponseDetails
+import dev.usbharu.hideout.mastodon.domain.exception.AccountNotFoundException
 import dev.usbharu.hideout.mastodon.domain.exception.StatusNotFoundException
 import dev.usbharu.hideout.mastodon.interfaces.api.account.MastodonAccountApiController
 import dev.usbharu.hideout.mastodon.interfaces.api.apps.MastodonAppsApiController
@@ -95,6 +96,12 @@ class MastodonApiControllerAdvice {
     @ExceptionHandler(StatusNotFoundException::class)
     fun handleException(ex: StatusNotFoundException): ResponseEntity<NotFoundResponse> {
         logger.warn("Status not found.", ex)
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getTypedResponse().response)
+    }
+
+    @ExceptionHandler(AccountNotFoundException::class)
+    fun handleException(ex: AccountNotFoundException): ResponseEntity<NotFoundResponse> {
+        logger.warn("Account not found.", ex)
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getTypedResponse().response)
     }
 

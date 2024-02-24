@@ -24,6 +24,7 @@ import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.deletedActor.DeletedActor
 import dev.usbharu.hideout.core.domain.model.deletedActor.DeletedActorRepository
+import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.domain.model.reaction.ReactionRepository
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetail
@@ -47,8 +48,8 @@ class UserServiceImpl(
     private val reactionRepository: ReactionRepository,
     private val relationshipRepository: RelationshipRepository,
     private val postService: PostService,
-    private val apSendDeleteService: APSendDeleteService
-
+    private val apSendDeleteService: APSendDeleteService,
+    private val postRepository: PostRepository,
 ) :
     UserService {
 
@@ -189,6 +190,22 @@ class UserServiceImpl(
             userDetailRepository.findByActorId(actor.id) ?: throw IllegalStateException("user detail not found.")
         userDetailRepository.delete(userDetail)
         deletedActorRepository.save(deletedActor)
+    }
+
+    override suspend fun updateUserStatistics(userId: Long) {
+        val actor = actorRepository.findByIdWithLock(userId) ?: throw UserNotFoundException.withId(userId)
+
+        val followerCount = relationshipRepository.countByTargetIdAndFollowing(userId, true)
+        val followingCount = relationshipRepository.countByUserIdAndFollowing(userId, true)
+        val postsCount = postRepository.countByActorId(userId)
+
+        actorRepository.save(
+            actor.copy(
+                followersCount = followerCount,
+                followingCount = followingCount,
+                postsCount = postsCount
+            )
+        )
     }
 
     companion object {
