@@ -33,4 +33,6 @@ interface UserService {
     suspend fun deleteRemoteActor(actorId: Long)
 
     suspend fun deleteLocalUser(userId: Long)
+
+    suspend fun updateUserStatistics(userId: Long)
 }
