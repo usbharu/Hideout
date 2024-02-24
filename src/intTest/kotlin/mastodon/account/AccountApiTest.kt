@@ -141,10 +141,11 @@ class AccountApiTest {
         mockMvc
             .post("/api/v1/accounts") {
                 contentType = MediaType.APPLICATION_FORM_URLENCODED
-                param("username", "api-test-user-3")
+                param("password", "api-test-user-3")
                 with(csrf())
             }
-            .andExpect { status { isBadRequest() } }
+            .andDo { print() }
+            .andExpect { status { isUnprocessableEntity() } }
     }
 
     @Test
@@ -156,7 +157,7 @@ class AccountApiTest {
                 param("username", "api-test-user-4")
                 with(csrf())
             }
-            .andExpect { status { isBadRequest() } }
+            .andExpect { status { isUnprocessableEntity() } }
     }
 
     @Test

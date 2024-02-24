@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.BindException
+import org.springframework.validation.FieldError
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 
@@ -52,23 +53,43 @@ class MastodonApiControllerAdvice {
     @ExceptionHandler(BindException::class)
     fun handleException(ex: BindException): ResponseEntity<UnprocessableEntityResponse> {
         logger.debug("Failed bind entity.", ex)
-        val error = ex.bindingResult.fieldErrors
-        val message = error.map {
-            "${it.field} ${it.defaultMessage}"
-        }.joinToString(prefix = "Validation failed: ")
 
-        val details = error.associate {
-            it.field to UnprocessableEntityResponseDetails(
-                when (it.code) {
-                    "Email" -> "ERR_INVALID"
-                    "Pattern" -> "ERR_INVALID"
-                    else -> "ERR_INVALID"
-                },
-                it.defaultMessage
-            )
+        val details = mutableMapOf<String, MutableList<UnprocessableEntityResponseDetails>>()
+
+        ex.allErrors.forEach {
+            val defaultMessage = it.defaultMessage
+            when {
+                it is FieldError -> {
+                    val code = when (it.code) {
+                        "Email" -> "ERR_INVALID"
+                        "Pattern" -> "ERR_INVALID"
+                        else -> "ERR_INVALID"
+                    }
+                    details.getOrPut(it.field) {
+                        mutableListOf()
+                    }.add(UnprocessableEntityResponseDetails(code, defaultMessage.orEmpty()))
+                }
+
+                defaultMessage?.startsWith("Parameter specified as non-null is null:") == true -> {
+                    val parameter = defaultMessage.substringAfterLast("parameter ")
+
+                    details.getOrPut(parameter) {
+                        mutableListOf()
+                    }.add(UnprocessableEntityResponseDetails("ERR_BLANK", "can't be blank"))
+                }
+
+                else -> {
+                    logger.warn("Unknown validation error", ex)
+                }
+            }
         }
 
-        return ResponseEntity.unprocessableEntity().body(UnprocessableEntityResponse(message, details))
+        val message = details.map {
+            it.key + " " + it.value.joinToString { it.description }
+        }.joinToString()
+
+        return ResponseEntity.unprocessableEntity()
+            .body(UnprocessableEntityResponse(message, details))
     }
 
     @ExceptionHandler(StatusNotFoundException::class)
