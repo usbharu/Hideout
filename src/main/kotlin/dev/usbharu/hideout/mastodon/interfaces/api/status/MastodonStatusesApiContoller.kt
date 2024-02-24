@@ -43,7 +43,6 @@ class MastodonStatusesApiContoller(
         )
     }
 
-
     override suspend fun apiV1StatusesIdEmojiReactionsEmojiDelete(id: String, emoji: String): ResponseEntity<Status> {
         val uid =
             loginUserContextHolder.getLoginUserId()

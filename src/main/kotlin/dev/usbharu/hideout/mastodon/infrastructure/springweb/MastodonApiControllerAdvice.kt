@@ -85,7 +85,7 @@ class MastodonApiControllerAdvice {
         }
 
         val message = details.map {
-            it.key + " " + it.value.joinToString { it.description }
+            it.key + " " + it.value.joinToString { responseDetails -> responseDetails.description }
         }.joinToString()
 
         return ResponseEntity.unprocessableEntity()

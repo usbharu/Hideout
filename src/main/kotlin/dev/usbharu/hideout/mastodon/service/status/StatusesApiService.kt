@@ -161,8 +161,6 @@ class StatsesApiServiceImpl(
         status: Status,
         userId: Long?,
     ): Status {
-
-
         return when (status.visibility) {
             public -> status
             unlisted -> status
