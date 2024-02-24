@@ -43,7 +43,7 @@ class KtorResourceResolveService(
     protected suspend fun runResolve(url: String): ResolveResponse {
         val httpResponse = httpClient.get(url)
         val contentLength = httpResponse.contentLength()
-        if ((contentLength ?: sizeLimit) >= sizeLimit) {
+        if ((contentLength ?: 0) >= sizeLimit) {
             throw RemoteMediaFileSizeException("File size is too large. $contentLength >= $sizeLimit")
         }
         return KtorResolveResponse(httpResponse)
