@@ -1455,6 +1455,8 @@ components:
       type: object
       properties:
         username:
+
+          nullable: false
           type: string
           minLength: 1
           maxLength: 300
@@ -2841,9 +2843,11 @@ components:
         error:
           type: string
         details:
-          type: object
+          type: array
           additionalProperties:
-            $ref: "#/components/schemas/UnprocessableEntityResponseDetails"
+            type: array
+            items:
+              $ref: "#/components/schemas/UnprocessableEntityResponseDetails"
 
     UnprocessableEntityResponseDetails:
       type: object
@@ -2852,6 +2856,10 @@ components:
           type: string
         description:
           type: string
+          nullable: false
+      required:
+        - error
+        - description
 
     UnauthorizedResponse:
       type: object
