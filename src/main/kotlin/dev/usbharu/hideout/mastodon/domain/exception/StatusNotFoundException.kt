@@ -21,19 +21,16 @@ import dev.usbharu.hideout.mastodon.domain.model.MastodonApiErrorResponse
 
 class StatusNotFoundException : ClientException {
 
-    fun getTypedResponse(): MastodonApiErrorResponse<NotFoundResponse> {
-        return response as MastodonApiErrorResponse<NotFoundResponse>
-    }
-
     constructor(response: MastodonApiErrorResponse<NotFoundResponse>) : super(response)
+
     constructor(message: String?, response: MastodonApiErrorResponse<NotFoundResponse>) : super(message, response)
     constructor(message: String?, cause: Throwable?, response: MastodonApiErrorResponse<NotFoundResponse>) : super(
         message,
         cause,
         response
     )
-
     constructor(cause: Throwable?, response: MastodonApiErrorResponse<NotFoundResponse>) : super(cause, response)
+
     constructor(
         message: String?,
         cause: Throwable?,
@@ -42,13 +39,17 @@ class StatusNotFoundException : ClientException {
         response: MastodonApiErrorResponse<NotFoundResponse>,
     ) : super(message, cause, enableSuppression, writableStackTrace, response)
 
+    fun getTypedResponse(): MastodonApiErrorResponse<NotFoundResponse> =
+        response as MastodonApiErrorResponse<NotFoundResponse>
+
     companion object {
         fun ofId(id: Long): StatusNotFoundException = StatusNotFoundException(
             "id: $id was not found.",
             MastodonApiErrorResponse(
                 NotFoundResponse(
                     "Record not found"
-                ), 404
+                ),
+                404
             ),
         )
     }
