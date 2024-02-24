@@ -133,6 +133,14 @@ class PostRepositoryImpl(
             .selectAll().where { Posts.actorId eq actorId }.let(postQueryMapper::map)
     }
 
+    override suspend fun countByActorId(actorId: Long): Int = query {
+        return@query Posts
+            .selectAll()
+            .where { Posts.actorId eq actorId }
+            .count()
+            .toInt()
+    }
+
     override suspend fun delete(id: Long): Unit = query {
         Posts.deleteWhere { Posts.id eq id }
     }

@@ -54,7 +54,7 @@ interface RelationshipRepository {
 
     suspend fun countByTargetIdAndFollowing(targetId: Long, following: Boolean): Int
 
-    suspend fun countByUserIdAndFollowing(targetId: Long, following: Boolean): Int
+    suspend fun countByUserIdAndFollowing(userId: Long, following: Boolean): Int
 
     @Suppress("FunctionMaxLength")
     suspend fun findByTargetIdAndFollowRequestAndIgnoreFollowRequest(
