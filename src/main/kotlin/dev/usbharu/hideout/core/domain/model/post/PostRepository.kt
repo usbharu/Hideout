@@ -30,4 +30,6 @@ interface PostRepository {
     suspend fun findByApId(apId: String): Post?
     suspend fun existByApIdWithLock(apId: String): Boolean
     suspend fun findByActorId(actorId: Long): List<Post>
+
+    suspend fun countByActorId(actorId: Long): Int
 }
