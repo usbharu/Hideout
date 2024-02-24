@@ -152,7 +152,6 @@ class AccountApiServiceImpl(
                 return@transaction accountService.findById(id)
             }
         } catch (e: UserNotFoundException) {
-            logger.debug("Account Not found $id")
             throw AccountNotFoundException.ofId(id)
         }
     }
