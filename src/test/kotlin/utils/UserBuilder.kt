@@ -20,12 +20,16 @@ import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.application.config.CharacterLimit
 import dev.usbharu.hideout.application.service.id.TwitterSnowflakeIdGenerateService
 import dev.usbharu.hideout.core.domain.model.actor.Actor
+import jakarta.validation.Validation
 import kotlinx.coroutines.runBlocking
 import java.net.URL
 import java.time.Instant
 
 object UserBuilder {
-    private val actorBuilder = Actor.UserBuilder(CharacterLimit(), ApplicationConfig(URL("https://example.com")))
+    private val actorBuilder = Actor.UserBuilder(
+        CharacterLimit(), ApplicationConfig(URL("https://example.com")),
+        Validation.buildDefaultValidatorFactory().validator
+    )
 
     private val idGenerator = TwitterSnowflakeIdGenerateService
 
@@ -43,7 +47,7 @@ object UserBuilder {
         createdAt: Instant = Instant.now(),
         keyId: String = "https://$domain/users/$id#pubkey",
         followers: String = "https://$domain/users/$id/followers",
-        following: String = "https://$domain/users/$id/following"
+        following: String = "https://$domain/users/$id/following",
     ): Actor {
         return actorBuilder.of(
             id = id,
@@ -77,7 +81,7 @@ object UserBuilder {
         createdAt: Instant = Instant.now(),
         keyId: String = "https://$domain/$id#pubkey",
         followers: String = "https://$domain/$id/followers",
-        following: String = "https://$domain/$id/following"
+        following: String = "https://$domain/$id/following",
     ): Actor {
         return actorBuilder.of(
             id = id,
