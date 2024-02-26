@@ -215,14 +215,10 @@ class SecurityConfig {
                 authorize(GET, "/users/*", permitAll)
                 authorize(GET, "/users/*/posts/*", permitAll)
 
-
-
                 authorize("/auth/sign_up", hasRole("ANONYMOUS"))
                 authorize(GET, "/files/*", permitAll)
                 authorize(GET, "/users/*/icon.jpg", permitAll)
                 authorize(GET, "/users/*/header.jpg", permitAll)
-
-
 
                 authorize(anyRequest, authenticated)
             }
@@ -308,8 +304,6 @@ class SecurityConfig {
         val builder = Jackson2ObjectMapperBuilder().serializationInclusion(JsonInclude.Include.NON_NULL)
         return MappingJackson2HttpMessageConverter(builder.build())
     }
-
-
 
     // Spring Security 3.2.1 に存在する EnableWebSecurity(debug = true)にすると発生するエラーに対処するためのコード
     // trueにしないときはコメントアウト
