@@ -33,7 +33,6 @@ data class Actor private constructor(
     @get:Pattern(regexp = "^[a-zA-Z0-9_-]{1,300}\$")
     @get:Size(min = 1)
     val name: String,
-    @get:Pattern(regexp = "^([a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]*\\.){1,255}[a-zA-Z]{2,}\$")
     val domain: String,
     val screenName: String,
     val description: String,
