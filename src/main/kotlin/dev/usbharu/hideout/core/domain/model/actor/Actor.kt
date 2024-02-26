@@ -51,8 +51,8 @@ data class Actor private constructor(
     val keyId: String,
     val followers: String? = null,
     val following: String? = null,
-    @get:Positive
-    val instance: Long? = null,
+    @get:PositiveOrZero
+    val instance: Long,
     val locked: Boolean,
     val followersCount: Int = 0,
     val followingCount: Int = 0,
@@ -86,7 +86,7 @@ data class Actor private constructor(
             keyId: String,
             following: String? = null,
             followers: String? = null,
-            instance: Long? = null,
+            instance: Long,
             locked: Boolean,
             followersCount: Int = 0,
             followingCount: Int = 0,

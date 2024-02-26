@@ -64,7 +64,8 @@ object UserBuilder {
             keyId = keyId,
             followers = followers,
             following = following,
-            locked = false
+            locked = false,
+            instance = 0
         )
     }
 
@@ -82,6 +83,7 @@ object UserBuilder {
         keyId: String = "https://$domain/$id#pubkey",
         followers: String = "https://$domain/$id/followers",
         following: String = "https://$domain/$id/following",
+        instanceId: Long = generateId(),
     ): Actor {
         return actorBuilder.of(
             id = id,
@@ -98,7 +100,8 @@ object UserBuilder {
             keyId = keyId,
             followers = followers,
             following = following,
-            locked = false
+            locked = false,
+            instance = instanceId
         )
     }
 

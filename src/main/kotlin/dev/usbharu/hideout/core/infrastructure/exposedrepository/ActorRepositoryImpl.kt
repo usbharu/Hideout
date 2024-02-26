@@ -167,7 +167,7 @@ object Actors : Table("actors") {
     val keyId = varchar("key_id", length = 1000)
     val following = varchar("following", length = 1000).nullable()
     val followers = varchar("followers", length = 1000).nullable()
-    val instance = long("instance").references(Instance.id).nullable()
+    val instance = long("instance").references(Instance.id)
     val locked = bool("locked")
     val followingCount = integer("following_count")
     val followersCount = integer("followers_count")
