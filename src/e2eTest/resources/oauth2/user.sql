@@ -44,7 +44,7 @@ Ja15+ZWbOA4vJA9pOh3x4XM=
 -----END PRIVATE KEY-----
 ', 1701398248417,
         'http://localhost/users/test-user#pubkey', 'http://localhost/users/test-user/following',
-        'http://localhost/users/test-users/followers', null, false, 0, 0, 0, null);
+        'http://localhost/users/test-users/followers', 0, false, 0, 0, 0, null);
 
 insert into user_details (actor_id, password, auto_accept_followee_follow_request)
 values ( 1730415786666758144
