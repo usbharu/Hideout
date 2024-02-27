@@ -7,4 +7,4 @@ VALUES (1, 'test-user', 'example.com', 'Im test user.', 'THis account is test us
         '-----BEGIN PUBLIC KEY-----...-----END PUBLIC KEY-----',
         '-----BEGIN PRIVATE KEY-----...-----END PRIVATE KEY-----', 12345678,
         'https://example.com/users/test-user#pubkey', 'https://example.com/users/test-user/following',
-        'https://example.com/users/test-users/followers', null, false, 0, 0, 0, null);
+        'https://example.com/users/test-users/followers', 0, false, 0, 0, 0, null);

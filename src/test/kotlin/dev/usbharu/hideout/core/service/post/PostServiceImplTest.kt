@@ -26,6 +26,7 @@ import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.domain.model.reaction.ReactionRepository
 import dev.usbharu.hideout.core.service.timeline.TimelineService
+import jakarta.validation.Validation
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -56,7 +57,7 @@ class PostServiceImplTest {
     private var postBuilder: Post.PostBuilder = Post.PostBuilder(
         CharacterLimit(), DefaultPostContentFormatter(
             HtmlSanitizeConfig().policy()
-        )
+        ), Validation.buildDefaultValidatorFactory().validator
     )
 
     @Mock

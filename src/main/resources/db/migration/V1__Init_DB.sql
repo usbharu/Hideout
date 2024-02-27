@@ -45,7 +45,7 @@ create table if not exists actors
     key_id          varchar(1000)  not null,
     "following"     varchar(1000)  null,
     followers       varchar(1000)  null,
-    "instance"      bigint         null,
+    "instance" bigint not null,
     locked          boolean        not null,
     following_count int            not null,
     followers_count int            not null,
@@ -240,10 +240,14 @@ create table if not exists relationships
     unique (actor_id, target_actor_id)
 );
 
+insert into instance (id, name, description, url, icon_url, shared_inbox, software, version, is_blocked, is_muted,
+                      moderation_note, created_at)
+values (0, 'system', '', '', '', null, '', '', false, false, '', current_timestamp);
+
 insert into actors (id, name, domain, screen_name, description, inbox, outbox, url, public_key, private_key, created_at,
                     key_id, following, followers, instance, locked, following_count, followers_count, posts_count,
                     last_post_at)
-values (0, 'ghost', '', '', '', '', '', '', '', null, 0, '', '', '', null, true, 0, 0, 0, null);
+values (0, 'ghost', '', '', '', '', '', '', '', null, 0, '', '', '', 0, true, 0, 0, 0, null);
 
 create table if not exists deleted_actors
 (

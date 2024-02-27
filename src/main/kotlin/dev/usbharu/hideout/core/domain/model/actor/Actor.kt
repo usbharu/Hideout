@@ -18,37 +18,55 @@ package dev.usbharu.hideout.core.domain.model.actor
 
 import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.application.config.CharacterLimit
+import jakarta.validation.Validator
+import jakarta.validation.constraints.*
+import org.hibernate.validator.constraints.URL
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.time.Instant
 import kotlin.math.max
 
 data class Actor private constructor(
+    @get:NotNull
+    @get:Positive
     val id: Long,
+    @get:Pattern(regexp = "^[a-zA-Z0-9_-]{1,300}\$")
+    @get:Size(min = 1)
     val name: String,
     val domain: String,
     val screenName: String,
     val description: String,
+    @get:URL
     val inbox: String,
+    @get:URL
     val outbox: String,
+    @get:URL
     val url: String,
+    @get:NotBlank
     val publicKey: String,
     val privateKey: String? = null,
+    @get:PastOrPresent
     val createdAt: Instant,
+    @get:NotBlank
     val keyId: String,
     val followers: String? = null,
     val following: String? = null,
-    val instance: Long? = null,
+    @get:PositiveOrZero
+    val instance: Long,
     val locked: Boolean,
     val followersCount: Int = 0,
     val followingCount: Int = 0,
     val postsCount: Int = 0,
     val lastPostDate: Instant? = null,
-    val emojis: List<Long> = emptyList()
+    val emojis: List<Long> = emptyList(),
 ) {
 
     @Component
-    class UserBuilder(private val characterLimit: CharacterLimit, private val applicationConfig: ApplicationConfig) {
+    class UserBuilder(
+        private val characterLimit: CharacterLimit,
+        private val applicationConfig: ApplicationConfig,
+        private val validator: Validator,
+    ) {
 
         private val logger = LoggerFactory.getLogger(UserBuilder::class.java)
 
@@ -68,13 +86,13 @@ data class Actor private constructor(
             keyId: String,
             following: String? = null,
             followers: String? = null,
-            instance: Long? = null,
+            instance: Long,
             locked: Boolean,
             followersCount: Int = 0,
             followingCount: Int = 0,
             postsCount: Int = 0,
             lastPostDate: Instant? = null,
-            emojis: List<Long> = emptyList()
+            emojis: List<Long> = emptyList(),
         ): Actor {
             if (id == 0L) {
                 return Actor(
@@ -176,7 +194,7 @@ data class Actor private constructor(
                 "keyId must contain non-blank characters."
             }
 
-            return Actor(
+            val actor = Actor(
                 id = id,
                 name = limitedName,
                 domain = domain,
@@ -199,6 +217,13 @@ data class Actor private constructor(
                 lastPostDate = lastPostDate,
                 emojis = emojis
             )
+
+            val validate = validator.validate(actor)
+
+            for (constraintViolation in validate) {
+                throw IllegalArgumentException("${constraintViolation.propertyPath} : ${constraintViolation.message}")
+            }
+            return actor
         }
     }
 
@@ -217,27 +242,27 @@ data class Actor private constructor(
     fun withLastPostAt(lastPostDate: Instant): Actor = this.copy(lastPostDate = lastPostDate)
     override fun toString(): String {
         return "Actor(" +
-            "id=$id, " +
-            "name='$name', " +
-            "domain='$domain', " +
-            "screenName='$screenName', " +
-            "description='$description', " +
-            "inbox='$inbox', " +
-            "outbox='$outbox', " +
-            "url='$url', " +
-            "publicKey='$publicKey', " +
-            "privateKey=$privateKey, " +
-            "createdAt=$createdAt, " +
-            "keyId='$keyId', " +
-            "followers=$followers, " +
-            "following=$following, " +
-            "instance=$instance, " +
-            "locked=$locked, " +
-            "followersCount=$followersCount, " +
-            "followingCount=$followingCount, " +
-            "postsCount=$postsCount, " +
-            "lastPostDate=$lastPostDate, " +
-            "emojis=$emojis" +
-            ")"
+                "id=$id, " +
+                "name='$name', " +
+                "domain='$domain', " +
+                "screenName='$screenName', " +
+                "description='$description', " +
+                "inbox='$inbox', " +
+                "outbox='$outbox', " +
+                "url='$url', " +
+                "publicKey='$publicKey', " +
+                "privateKey=$privateKey, " +
+                "createdAt=$createdAt, " +
+                "keyId='$keyId', " +
+                "followers=$followers, " +
+                "following=$following, " +
+                "instance=$instance, " +
+                "locked=$locked, " +
+                "followersCount=$followersCount, " +
+                "followingCount=$followingCount, " +
+                "postsCount=$postsCount, " +
+                "lastPostDate=$lastPostDate, " +
+                "emojis=$emojis" +
+                ")"
     }
 }

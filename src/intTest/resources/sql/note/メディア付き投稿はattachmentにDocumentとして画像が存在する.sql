@@ -7,7 +7,7 @@ VALUES (11, 'test-user11', 'example.com', 'Im test-user11.', 'THis account is te
         '-----BEGIN PUBLIC KEY-----...-----END PUBLIC KEY-----',
         '-----BEGIN PRIVATE KEY-----...-----END PRIVATE KEY-----', 12345678,
         'https://example.com/users/test-user11#pubkey', 'https://example.com/users/test-user11/following',
-        'https://example.com/users/test-user11/followers', null, false, 0, 0, 0, null);
+        'https://example.com/users/test-user11/followers', 0, false, 0, 0, 0, null);
 
 insert into POSTS (id, actor_id, overview, content, text, created_at, visibility, url, repost_id, reply_id, sensitive,
                    ap_id,

@@ -45,6 +45,7 @@ import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.util.*
 import io.ktor.util.date.*
+import jakarta.validation.Validation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -60,7 +61,10 @@ import java.time.Instant
 
 class APNoteServiceImplTest {
 
-    val postBuilder = Post.PostBuilder(CharacterLimit(), DefaultPostContentFormatter(HtmlSanitizeConfig().policy()))
+    val postBuilder = Post.PostBuilder(
+        CharacterLimit(), DefaultPostContentFormatter(HtmlSanitizeConfig().policy()),
+        Validation.buildDefaultValidatorFactory().validator
+    )
 
     @Test
     fun `fetchNote(String,String) ノートが既に存在する場合はDBから取得したものを返す`() = runTest {
@@ -89,10 +93,7 @@ class APNoteServiceImplTest {
             apUserService = mock(),
             postService = mock(),
             apResourceResolveService = mock(),
-            postBuilder = Post.PostBuilder(
-                CharacterLimit(),
-                DefaultPostContentFormatter(HtmlSanitizeConfig().policy())
-            ),
+            postBuilder = postBuilder,
             noteQueryService = noteQueryService,
             mock(),
             mock(),
@@ -163,10 +164,7 @@ class APNoteServiceImplTest {
             apUserService = apUserService,
             postService = mock(),
             apResourceResolveService = apResourceResolveService,
-            postBuilder = Post.PostBuilder(
-                CharacterLimit(),
-                DefaultPostContentFormatter(HtmlSanitizeConfig().policy())
-            ),
+            postBuilder = postBuilder,
             noteQueryService = noteQueryService,
             mock(),
             mock { },
@@ -216,14 +214,11 @@ class APNoteServiceImplTest {
                 apUserService = mock(),
                 postService = mock(),
                 apResourceResolveService = apResourceResolveService,
-                postBuilder = Post.PostBuilder(
-                    CharacterLimit(),
-                    DefaultPostContentFormatter(HtmlSanitizeConfig().policy())
-                ),
+                postBuilder = postBuilder,
                 noteQueryService = noteQueryService,
                 mock(),
                 mock(),
-                mock {  }
+                mock { }
             )
 
             assertThrows<FailedToGetActivityPubResourceException> { apNoteServiceImpl.fetchNote(url) }

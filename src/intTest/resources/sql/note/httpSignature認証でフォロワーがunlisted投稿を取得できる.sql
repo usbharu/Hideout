@@ -7,7 +7,7 @@ VALUES (6, 'test-user6', 'example.com', 'Im test-user6.', 'THis account is test-
         '-----BEGIN PUBLIC KEY-----...-----END PUBLIC KEY-----',
         '-----BEGIN PRIVATE KEY-----...-----END PRIVATE KEY-----', 12345678,
         'https://example.com/users/test-user6#pubkey', 'https://example.com/users/test-user6/following',
-        'https://example.com/users/test-user6/followers', null, false, 0, 0, 0, null),
+        'https://example.com/users/test-user6/followers', 0, false, 0, 0, 0, null),
        (7, 'test-user7', 'follower.example.com', 'Im test-user7.', 'THis account is test-user7.',
         'https://follower.example.com/users/test-user7/inbox',
         'https://follower.example.com/users/test-user7/outbox', 'https://follower.example.com/users/test-user7',
@@ -15,7 +15,7 @@ VALUES (6, 'test-user6', 'example.com', 'Im test-user6.', 'THis account is test-
         null, 12345678,
         'https://follower.example.com/users/test-user7#pubkey',
         'https://follower.example.com/users/test-user7/following',
-        'https://follower.example.com/users/test-user7/followers', null, false, 0, 0, 0, null);
+        'https://follower.example.com/users/test-user7/followers', 0, false, 0, 0, 0, null);
 
 insert into relationships (actor_id, target_actor_id, following, blocking, muting, follow_request,
                            ignore_follow_request)

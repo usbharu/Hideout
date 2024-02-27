@@ -20,11 +20,11 @@ package dev.usbharu.hideout.core.service.user
 
 import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.application.config.CharacterLimit
-import dev.usbharu.hideout.application.config.HtmlSanitizeConfig
 import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
-import dev.usbharu.hideout.core.domain.model.post.Post
-import dev.usbharu.hideout.core.service.post.DefaultPostContentFormatter
+import dev.usbharu.hideout.core.domain.model.instance.Instance
+import dev.usbharu.hideout.core.service.instance.InstanceService
+import jakarta.validation.Validation
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
@@ -33,12 +33,17 @@ import org.mockito.kotlin.*
 import utils.TestApplicationConfig.testApplicationConfig
 import java.net.URL
 import java.security.KeyPairGenerator
+import java.time.Instant
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 class ActorServiceTest {
-    val actorBuilder = Actor.UserBuilder(CharacterLimit(), ApplicationConfig(URL("https://example.com")))
-    val postBuilder = Post.PostBuilder(CharacterLimit(), DefaultPostContentFormatter(HtmlSanitizeConfig().policy()))
+    val actorBuilder = Actor.UserBuilder(
+        CharacterLimit(),
+        ApplicationConfig(URL("https://example.com")),
+        Validation.buildDefaultValidatorFactory().validator
+    )
+
     @Test
     fun `createLocalUser ローカルユーザーを作成できる`() = runTest {
 
@@ -89,13 +94,34 @@ class ActorServiceTest {
             onBlocking { nextId() } doReturn 113345L
         }
 
+        val instanceService = mock<InstanceService> {
+            onBlocking {
+                fetchInstance(
+                    eq("https://remote.example.com"),
+                    isNull()
+                )
+            } doReturn Instance(
+                12345L,
+                "",
+                "",
+                "https://remote.example.com",
+                "https://remote.example.com/favicon.ico",
+                null,
+                "unknown",
+                "",
+                false,
+                false,
+                "",
+                Instant.now()
+            )
+        }
         val userService =
             UserServiceImpl(
                 actorRepository = actorRepository,
                 userAuthService = mock(),
                 actorBuilder = actorBuilder,
                 applicationConfig = testApplicationConfig,
-                instanceService = mock(),
+                instanceService = instanceService,
                 userDetailRepository = mock(),
                 deletedActorRepository = mock(),
                 reactionRepository = mock(),
