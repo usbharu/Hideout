@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+option java_package = "dev.usbharu.owl";
+
+message Property{
+  oneof value {
+    google.protobuf.Empty empty = 1;
+    string string = 2;
+    int32 integer = 3;
+  }
+}

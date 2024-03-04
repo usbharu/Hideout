@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+import "uuid.proto";
+import "property.proto";
+
+option java_package = "dev.usbharu.owl";
+
+
+message PublishTask {
+  string name = 1;
+  google.protobuf.Timestamp publishedAt = 2;
+  map<string, string> properties = 3;
+  UUID producer_id = 4;
+}
+
+message PublishedTask {
+  string name = 1;
+  UUID id = 2;
+}
+
+service TaskPublishService {
+  rpc publishTask (PublishTask) returns (PublishedTask);
+}
