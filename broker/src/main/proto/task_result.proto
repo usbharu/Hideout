@@ -1,0 +1,13 @@
+syntax = "proto3";
+import "uuid.proto";
+import "google/protobuf/empty.proto";
+import "property.proto";
+
+option java_package = "dev.usbharu.owl";
+
+message TaskResult {
+  UUID id = 1;
+  bool success = 2;
+  int32 attempt = 3;
+  map<string, string> result = 4;
+}
