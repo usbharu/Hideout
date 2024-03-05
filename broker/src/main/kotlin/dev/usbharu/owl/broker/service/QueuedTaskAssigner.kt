@@ -16,6 +16,7 @@
 
 package dev.usbharu.owl.broker.service
 
+import dev.usbharu.owl.broker.domain.exception.service.QueueCannotDequeueException
 import dev.usbharu.owl.broker.domain.model.queuedtask.QueuedTask
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -65,8 +66,9 @@ class QueuedTaskAssignerImpl(
                 queuedTask.assignedConsumer
             )
             assignedTaskQueue
-        } catch (e: Exception) {
-            TODO("Not yet implemented")
+        } catch (e: QueueCannotDequeueException) {
+            logger.debug("Failed dequeue queue", e)
+            return null
         }
     }
 

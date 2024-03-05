@@ -16,6 +16,7 @@
 
 package dev.usbharu.owl.broker.service
 
+import dev.usbharu.owl.broker.domain.exception.service.IncompatibleTaskException
 import dev.usbharu.owl.broker.domain.model.taskdefinition.TaskDefinition
 import dev.usbharu.owl.broker.domain.model.taskdefinition.TaskDefinitionRepository
 import org.koin.core.annotation.Singleton
@@ -30,6 +31,14 @@ interface RegisterTaskService {
 @Singleton
 class RegisterTaskServiceImpl(private val taskDefinitionRepository: TaskDefinitionRepository) : RegisterTaskService {
     override suspend fun registerTask(taskDefinition: TaskDefinition) {
+        val definedTask = taskDefinitionRepository.findByName(taskDefinition.name)
+        if (definedTask != null) {
+            logger.debug("Task already defined. name: ${taskDefinition.name}")
+            if (taskDefinition.propertyDefinitionHash != definedTask.propertyDefinitionHash) {
+                throw IncompatibleTaskException("Task ${taskDefinition.name} has already been defined, and the parameters are incompatible.")
+            }
+            return
+        }
         taskDefinitionRepository.save(taskDefinition)
 
         logger.info("Register a new task. name: {}",taskDefinition.name)

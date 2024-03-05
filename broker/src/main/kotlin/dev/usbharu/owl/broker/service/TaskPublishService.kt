@@ -16,6 +16,7 @@
 
 package dev.usbharu.owl.broker.service
 
+import dev.usbharu.owl.broker.domain.exception.service.TaskNotRegisterException
 import dev.usbharu.owl.broker.domain.model.task.Task
 import dev.usbharu.owl.broker.domain.model.task.TaskRepository
 import dev.usbharu.owl.broker.domain.model.taskdefinition.TaskDefinitionRepository
@@ -49,7 +50,8 @@ class TaskPublishServiceImpl(
     override suspend fun publishTask(publishTask: PublishTask): PublishedTask {
                 val id = UUID.randomUUID()
 
-        val definition = taskDefinitionRepository.findByName(publishTask.name) ?:  TODO()
+        val definition = taskDefinitionRepository.findByName(publishTask.name)
+            ?: throw TaskNotRegisterException("Task ${publishTask.name} not definition.")
 
         val published = Instant.now()
         val nextRetry = retryPolicyFactory.factory(definition.name).nextRetry(published,0)

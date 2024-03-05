@@ -16,15 +16,25 @@
 
 package dev.usbharu.owl.broker.service
 
-import dev.usbharu.owl.common.retry.ExponentialRetryPolicy
+import dev.usbharu.owl.broker.domain.exception.service.RetryPolicyNotFoundException
 import dev.usbharu.owl.common.retry.RetryPolicy
+import org.slf4j.LoggerFactory
 
 interface RetryPolicyFactory {
     fun factory(name: String): RetryPolicy
 }
 
-class DefaultRetryPolicyFactory(private val map: Map<String,RetryPolicy>) : RetryPolicyFactory {
+class DefaultRetryPolicyFactory(private val map: Map<String, RetryPolicy>) : RetryPolicyFactory {
     override fun factory(name: String): RetryPolicy {
-        return map[name]?: ExponentialRetryPolicy()
+        return map[name] ?: throwException(name)
+    }
+
+    private fun throwException(name: String): Nothing {
+        logger.warn("RetryPolicy not found. name: {}", name)
+        throw RetryPolicyNotFoundException("RetryPolicy not found. name: $name")
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(RetryPolicyFactory::class.java)
     }
 }
