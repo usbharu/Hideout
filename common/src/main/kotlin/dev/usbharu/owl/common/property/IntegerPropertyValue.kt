@@ -16,7 +16,25 @@
 
 package dev.usbharu.owl.common.property
 
-class IntegerPropertyValue(override val value: Int) : PropertyValue() {
+class IntegerPropertyValue(override val value: Int) : PropertyValue<Int>() {
     override val type: PropertyType
         get() = PropertyType.integer
+}
+
+class IntegerPropertySerializer : PropertySerializer<Int> {
+    override fun isSupported(propertyValue: PropertyValue<*>): Boolean {
+        return propertyValue.value is Int
+    }
+
+    override fun isSupported(string: String): Boolean {
+        return string.startsWith("int32:")
+    }
+
+    override fun serialize(propertyValue: PropertyValue<*>): String {
+        return "int32:" + propertyValue.value.toString()
+    }
+
+    override fun deserialize(string: String): PropertyValue<Int> {
+        return IntegerPropertyValue(string.replace("int32:", "").toInt())
+    }
 }

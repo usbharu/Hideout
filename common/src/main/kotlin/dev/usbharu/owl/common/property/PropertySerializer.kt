@@ -16,10 +16,10 @@
 
 package dev.usbharu.owl.common.property
 
-interface PropertySerializer {
-    fun isSupported(propertyValue: PropertyValue): Boolean
+interface PropertySerializer<T> {
+    fun isSupported(propertyValue: PropertyValue<*>): Boolean
     fun isSupported(string: String): Boolean
-    fun serialize(propertyValue: PropertyValue): String
+    fun serialize(propertyValue: PropertyValue<*>): String
 
-    fun deserialize(string: String): PropertyValue
+    fun deserialize(string: String): PropertyValue<T>
 }

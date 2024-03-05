@@ -32,7 +32,7 @@ interface TaskPublishService {
 data class PublishTask(
     val name: String,
     val producerId: UUID,
-    val properties: Map<String, PropertyValue>
+    val properties: Map<String, PropertyValue<*>>
 )
 
 data class PublishedTask(

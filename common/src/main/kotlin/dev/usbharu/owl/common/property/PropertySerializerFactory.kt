@@ -17,6 +17,6 @@
 package dev.usbharu.owl.common.property
 
 interface PropertySerializerFactory {
-    fun factory(propertyValue: PropertyValue): PropertySerializer
-    fun factory(string: String): PropertySerializer
+    fun <T> factory(propertyValue: PropertyValue<T>): PropertySerializer<T>
+    fun factory(string: String): PropertySerializer<*>
 }
