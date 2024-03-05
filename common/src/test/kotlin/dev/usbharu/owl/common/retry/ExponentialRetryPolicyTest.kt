@@ -14,18 +14,23 @@
  * limitations under the License.
  */
 
-package dev.usbharu.owl.broker.service
+package dev.usbharu.owl.common.retry
 
-import dev.usbharu.owl.common.property.*
-import org.koin.core.annotation.Singleton
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import java.time.Instant
 
-@Singleton(binds = [PropertySerializerFactory::class])
-class DefaultPropertySerializerFactory :
-    CustomPropertySerializerFactory(
-        setOf(
-            IntegerPropertySerializer(),
-            StringPropertyValueSerializer(),
-            DoublePropertySerializer(),
-            BooleanPropertySerializer()
-        )
-    )
+class ExponentialRetryPolicyTest {
+    @Test
+    fun exponential0() {
+        val nextRetry = ExponentialRetryPolicy().nextRetry(Instant.ofEpochSecond(300), 0)
+
+        assertEquals(Instant.ofEpochSecond(330), nextRetry)
+    }
+
+    @Test
+    fun exponential1() {
+        val nextRetry = ExponentialRetryPolicy().nextRetry(Instant.ofEpochSecond(300), 1)
+        assertEquals(Instant.ofEpochSecond(360), nextRetry)
+    }
+}
