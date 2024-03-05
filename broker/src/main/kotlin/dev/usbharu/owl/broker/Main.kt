@@ -16,40 +16,23 @@
 
 package dev.usbharu.owl.broker
 
-import com.mongodb.ConnectionString
-import com.mongodb.MongoClientSettings
-import com.mongodb.kotlin.client.coroutine.MongoClient
 import dev.usbharu.owl.broker.service.DefaultRetryPolicyFactory
 import dev.usbharu.owl.broker.service.RetryPolicyFactory
 import dev.usbharu.owl.common.property.PropertySerializerFactory
 import dev.usbharu.owl.common.property.PropertySerializerFactoryImpl
 import kotlinx.coroutines.runBlocking
-import org.bson.UuidRepresentation
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
 import org.koin.ksp.generated.defaultModule
+import java.util.*
 
 fun main() {
-
-    val moduleContext =
-        Class.forName("dev.usbharu.owl.broker.mongodb.MongoModuleContext").newInstance() as ModuleContext
-
-
-//    println(File(Thread.currentThread().contextClassLoader.getResource("dev/usbharu/owl/broker/mongodb").file).listFiles().joinToString())
+    val moduleContext = ServiceLoader.load(ModuleContext::class.java).first()
 
     val koin = startKoin {
         printLogger()
 
         val module = module {
-            single {
-                val clientSettings =
-                    MongoClientSettings.builder()
-                        .applyConnectionString(ConnectionString("mongodb://agent1.build:27017"))
-                        .uuidRepresentation(UuidRepresentation.STANDARD).build()
-
-
-                MongoClient.create(clientSettings).getDatabase("mongo-test")
-            }
             single<PropertySerializerFactory> {
                 PropertySerializerFactoryImpl()
             }
