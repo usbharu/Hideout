@@ -25,7 +25,6 @@ dependencies {
     implementation("org.mongodb:mongodb-driver-kotlin-coroutine:4.11.0")
     implementation("org.mongodb:bson-kotlinx:4.11.0")
     implementation(project(":common"))
-    runtimeOnly(project(":broker:broker-mongodb"))
     implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.23.0")
     implementation(platform("io.insert-koin:koin-bom:3.5.3"))
     implementation(platform("io.insert-koin:koin-annotations-bom:1.3.1"))

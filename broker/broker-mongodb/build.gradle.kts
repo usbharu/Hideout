@@ -1,4 +1,5 @@
 plugins {
+    application
     kotlin("jvm")
     id("com.google.devtools.ksp") version "1.9.22-1.0.17"
 }
@@ -16,7 +17,7 @@ repositories {
 
 dependencies {
     implementation("org.mongodb:mongodb-driver-kotlin-coroutine:5.0.0")
-    compileOnly(project(":broker"))
+    implementation(project(":broker"))
     implementation(project(":common"))
     implementation(platform("io.insert-koin:koin-bom:3.5.3"))
     implementation(platform("io.insert-koin:koin-annotations-bom:1.3.1"))
@@ -30,4 +31,8 @@ tasks.test {
 }
 kotlin {
     jvmToolchain(17)
+}
+
+application {
+    mainClass = "dev.usbharu.owl.broker.MainKt"
 }
