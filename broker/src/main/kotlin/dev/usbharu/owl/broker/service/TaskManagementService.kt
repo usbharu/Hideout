@@ -16,6 +16,7 @@
 
 package dev.usbharu.owl.broker.service
 
+import dev.usbharu.owl.broker.domain.exception.service.TaskNotRegisterException
 import dev.usbharu.owl.broker.domain.model.queuedtask.QueuedTask
 import dev.usbharu.owl.broker.domain.model.task.Task
 import dev.usbharu.owl.broker.domain.model.task.TaskRepository
@@ -46,13 +47,13 @@ class TaskManagementServiceImpl(
     private val taskRepository: TaskRepository
 ) : TaskManagementService {
 
-    private var flow:Flow<Task> = flowOf()
+    private var flow: Flow<Task> = flowOf()
     override suspend fun startManagement() {
         flow = taskScanner.startScan()
 
-            flow.onEach {
-                enqueueTask(it)
-            }.collect()
+        flow.onEach {
+            enqueueTask(it)
+        }.collect()
 
     }
 
@@ -61,7 +62,7 @@ class TaskManagementServiceImpl(
         return assignQueuedTaskDecider.findAssignableQueue(consumerId, numberOfConcurrent)
     }
 
-    private suspend fun enqueueTask(task: Task):QueuedTask{
+    private suspend fun enqueueTask(task: Task): QueuedTask {
 
         val queuedTask = QueuedTask(
             task.attempt + 1,
@@ -71,19 +72,21 @@ class TaskManagementServiceImpl(
             null
         )
 
+        val definedTask = taskDefinitionRepository.findByName(task.name)
+            ?: throw TaskNotRegisterException("Task ${task.name} not definition.")
         val copy = task.copy(
-            nextRetry = retryPolicyFactory.factory(taskDefinitionRepository.findByName(task.name)?.retryPolicy.orEmpty())
+            nextRetry = retryPolicyFactory.factory(definedTask.retryPolicy)
                 .nextRetry(Instant.now(), task.attempt)
         )
 
         taskRepository.save(copy)
 
         queueStore.enqueue(queuedTask)
-        logger.debug("Enqueue Task. {} {}", task.name, task.id)
+        logger.debug("Enqueue Task. name: {} id: {} attempt: {}", task.name, task.id, queuedTask.attempt)
         return queuedTask
     }
 
-    companion object{
+    companion object {
         private val logger = LoggerFactory.getLogger(TaskManagementServiceImpl::class.java)
     }
 }

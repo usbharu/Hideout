@@ -16,6 +16,7 @@
 
 package dev.usbharu.owl.broker.service
 
+import dev.usbharu.owl.broker.domain.exception.repository.RecordNotFoundException
 import dev.usbharu.owl.broker.domain.model.consumer.ConsumerRepository
 import dev.usbharu.owl.broker.domain.model.queuedtask.QueuedTask
 import kotlinx.coroutines.flow.Flow
@@ -34,7 +35,8 @@ class AssignQueuedTaskDeciderImpl(
 ) : AssignQueuedTaskDecider {
     override fun findAssignableQueue(consumerId: UUID, numberOfConcurrent: Int): Flow<QueuedTask> {
         return flow {
-            val consumer = consumerRepository.findById(consumerId) ?: TODO()
+            val consumer = consumerRepository.findById(consumerId)
+                ?: throw RecordNotFoundException("Consumer not found. id: $consumerId")
             emitAll(
                 queueStore.findByTaskNameInAndAssignedConsumerIsNullAndOrderByPriority(
                     consumer.tasks,
