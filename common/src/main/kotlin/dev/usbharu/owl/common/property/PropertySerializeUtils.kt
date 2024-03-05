@@ -19,13 +19,13 @@ package dev.usbharu.owl.common.property
 object PropertySerializeUtils {
     fun serialize(
         serializerFactory: PropertySerializerFactory,
-        properties: Map<String, PropertyValue>
+        properties: Map<String, PropertyValue<*>>
     ): Map<String, String> =
         properties.map { it.key to serializerFactory.factory(it.value).serialize(it.value) }.toMap()
 
     fun deserialize(
         serializerFactory: PropertySerializerFactory,
         properties: Map<String, String>
-    ): Map<String, PropertyValue> =
+    ): Map<String, PropertyValue<*>> =
         properties.map { it.key to serializerFactory.factory(it.value).deserialize(it.value) }.toMap()
 }

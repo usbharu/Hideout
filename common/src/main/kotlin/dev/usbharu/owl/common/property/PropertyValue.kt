@@ -16,7 +16,7 @@
 
 package dev.usbharu.owl.common.property
 
-sealed class PropertyValue {
-    abstract val value:Any
+sealed class PropertyValue<T> {
+    abstract val value: T
     abstract val type: PropertyType
 }

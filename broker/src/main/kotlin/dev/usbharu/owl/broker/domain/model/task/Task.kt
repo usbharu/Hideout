@@ -31,5 +31,5 @@ data class Task(
     val nextRetry:Instant,
     val completedAt: Instant? = null,
     val attempt: Int,
-    val properties: Map<String, PropertyValue>
+    val properties: Map<String, PropertyValue<*>>
 )

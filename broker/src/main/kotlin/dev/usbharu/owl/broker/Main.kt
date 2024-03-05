@@ -18,8 +18,6 @@ package dev.usbharu.owl.broker
 
 import dev.usbharu.owl.broker.service.DefaultRetryPolicyFactory
 import dev.usbharu.owl.broker.service.RetryPolicyFactory
-import dev.usbharu.owl.common.property.PropertySerializerFactory
-import dev.usbharu.owl.common.property.PropertySerializerFactoryImpl
 import kotlinx.coroutines.runBlocking
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
@@ -33,9 +31,6 @@ fun main() {
         printLogger()
 
         val module = module {
-            single<PropertySerializerFactory> {
-                PropertySerializerFactoryImpl()
-            }
             single<RetryPolicyFactory> {
                 DefaultRetryPolicyFactory(emptyMap())
             }

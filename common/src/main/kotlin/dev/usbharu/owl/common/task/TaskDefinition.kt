@@ -27,6 +27,6 @@ interface TaskDefinition<T : Task> {
     val timeoutMilli: Long
     val propertyDefinition: PropertyDefinition
 
-    fun serialize(task: T): Map<String, PropertyValue>
-    fun deserialize(value: Map<String, PropertyValue>): T
+    fun serialize(task: T): Map<String, PropertyValue<*>>
+    fun deserialize(value: Map<String, PropertyValue<*>>): T
 }
