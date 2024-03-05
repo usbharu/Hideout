@@ -16,8 +16,11 @@
 
 package dev.usbharu.owl.broker.service
 
+import dev.usbharu.owl.common.retry.ExponentialRetryPolicy
+import dev.usbharu.owl.common.retry.RetryPolicy
+
 interface RetryPolicyFactory {
-    fun factory(name:String):RetryPolicy
+    fun factory(name: String): RetryPolicy
 }
 
 class DefaultRetryPolicyFactory(private val map: Map<String,RetryPolicy>) : RetryPolicyFactory {

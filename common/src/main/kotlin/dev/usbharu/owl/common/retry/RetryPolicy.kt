@@ -16,5 +16,8 @@
 
 package dev.usbharu.owl.common.retry
 
+import java.time.Instant
+
 interface RetryPolicy {
+    fun nextRetry(now: Instant, attempt: Int): Instant
 }
