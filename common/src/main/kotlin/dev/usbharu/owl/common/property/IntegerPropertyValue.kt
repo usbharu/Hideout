@@ -18,7 +18,7 @@ package dev.usbharu.owl.common.property
 
 class IntegerPropertyValue(override val value: Int) : PropertyValue<Int>() {
     override val type: PropertyType
-        get() = PropertyType.integer
+        get() = PropertyType.number
 }
 
 class IntegerPropertySerializer : PropertySerializer<Int> {
