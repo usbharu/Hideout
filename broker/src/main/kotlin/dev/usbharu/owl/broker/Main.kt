@@ -35,7 +35,6 @@ fun main() {
         Class.forName("dev.usbharu.owl.broker.mongodb.MongoModuleContext").newInstance() as ModuleContext
 
 
-
 //    println(File(Thread.currentThread().contextClassLoader.getResource("dev/usbharu/owl/broker/mongodb").file).listFiles().joinToString())
 
     val koin = startKoin {
@@ -44,7 +43,8 @@ fun main() {
         val module = module {
             single {
                 val clientSettings =
-                    MongoClientSettings.builder().applyConnectionString(ConnectionString("mongodb://localhost:27017"))
+                    MongoClientSettings.builder()
+                        .applyConnectionString(ConnectionString("mongodb://agent1.build:27017"))
                         .uuidRepresentation(UuidRepresentation.STANDARD).build()
 
 
@@ -57,7 +57,7 @@ fun main() {
                 DefaultRetryPolicyFactory(emptyMap())
             }
         }
-        modules(module,defaultModule, moduleContext.module())
+        modules(module, defaultModule, moduleContext.module())
     }
 
     val application = koin.koin.get<OwlBrokerApplication>()
