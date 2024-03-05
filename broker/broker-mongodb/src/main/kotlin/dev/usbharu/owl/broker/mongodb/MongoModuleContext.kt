@@ -21,20 +21,30 @@ import com.mongodb.MongoClientSettings
 import com.mongodb.kotlin.client.coroutine.MongoClient
 import dev.usbharu.owl.broker.ModuleContext
 import org.bson.UuidRepresentation
+import org.koin.core.module.Module
+import org.koin.dsl.module
 import org.koin.ksp.generated.module
 
 class MongoModuleContext : ModuleContext {
-    override fun module(): org.koin.core.module.Module {
+    override fun module(): Module {
         val module = MongoModule().module
-        module.includes(org.koin.dsl.module {
+        module.includes(module {
             single {
                 val clientSettings =
                     MongoClientSettings.builder()
-                        .applyConnectionString(ConnectionString("mongodb://agent1.build:27017"))
+                        .applyConnectionString(
+                            ConnectionString(
+                                System.getProperty(
+                                    "owl.broker.mongo.url",
+                                    "mongodb://agent1.build:27017"
+                                )
+                            )
+                        )
                         .uuidRepresentation(UuidRepresentation.STANDARD).build()
 
 
-                MongoClient.create(clientSettings).getDatabase("mongo-test")
+                MongoClient.create(clientSettings)
+                    .getDatabase(System.getProperty("owl.broker.mongo.database", "mongo-test"))
             }
         })
         return module

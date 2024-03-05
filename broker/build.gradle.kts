@@ -22,8 +22,6 @@ dependencies {
     implementation("com.google.protobuf:protobuf-kotlin:3.25.3")
     implementation("io.grpc:grpc-netty:1.61.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
-    implementation("org.mongodb:mongodb-driver-kotlin-coroutine:4.11.0")
-    implementation("org.mongodb:bson-kotlinx:4.11.0")
     implementation(project(":common"))
     implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.23.0")
     implementation(platform("io.insert-koin:koin-bom:3.5.3"))
