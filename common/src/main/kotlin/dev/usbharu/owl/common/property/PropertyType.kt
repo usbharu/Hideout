@@ -17,6 +17,7 @@
 package dev.usbharu.owl.common.property
 
 enum class PropertyType {
-    integer,
-    string
+    number,
+    string,
+    binary
 }
