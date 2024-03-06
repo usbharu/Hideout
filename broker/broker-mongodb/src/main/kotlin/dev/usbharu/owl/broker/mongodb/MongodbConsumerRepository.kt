@@ -21,7 +21,9 @@ import com.mongodb.client.model.ReplaceOptions
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import dev.usbharu.owl.broker.domain.model.consumer.Consumer
 import dev.usbharu.owl.broker.domain.model.consumer.ConsumerRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.singleOrNull
+import kotlinx.coroutines.withContext
 import org.bson.BsonType
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.codecs.pojo.annotations.BsonRepresentation
@@ -32,13 +34,13 @@ import java.util.*
 class MongodbConsumerRepository(database: MongoDatabase) : ConsumerRepository {
 
     private val collection = database.getCollection<ConsumerMongodb>("consumers")
-    override suspend fun save(consumer: Consumer): Consumer {
+    override suspend fun save(consumer: Consumer): Consumer = withContext(Dispatchers.IO) {
         collection.replaceOne(Filters.eq("_id", consumer.id.toString()), ConsumerMongodb.of(consumer), ReplaceOptions().upsert(true))
-        return consumer
+        return@withContext consumer
     }
 
-    override suspend fun findById(id: UUID): Consumer? {
-        return collection.find(Filters.eq("_id", id.toString())).singleOrNull()?.toConsumer()
+    override suspend fun findById(id: UUID): Consumer? = withContext(Dispatchers.IO) {
+        return@withContext collection.find(Filters.eq("_id", id.toString())).singleOrNull()?.toConsumer()
     }
 }
 

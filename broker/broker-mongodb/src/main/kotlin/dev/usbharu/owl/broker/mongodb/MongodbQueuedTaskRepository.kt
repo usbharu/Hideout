@@ -16,7 +16,6 @@
 
 package dev.usbharu.owl.broker.mongodb
 
-import com.mongodb.client.model.Filters
 import com.mongodb.client.model.Filters.*
 import com.mongodb.client.model.FindOneAndUpdateOptions
 import com.mongodb.client.model.ReplaceOptions
@@ -28,8 +27,11 @@ import dev.usbharu.owl.broker.domain.model.queuedtask.QueuedTaskRepository
 import dev.usbharu.owl.broker.domain.model.task.Task
 import dev.usbharu.owl.common.property.PropertySerializeUtils
 import dev.usbharu.owl.common.property.PropertySerializerFactory
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import org.bson.BsonType
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.codecs.pojo.annotations.BsonRepresentation
@@ -45,29 +47,34 @@ class MongodbQueuedTaskRepository(
 
     private val collection = database.getCollection<QueuedTaskMongodb>("queued_task")
     override suspend fun save(queuedTask: QueuedTask): QueuedTask {
-        collection.replaceOne(
-            eq("_id", queuedTask.task.id.toString()), QueuedTaskMongodb.of(propertySerializerFactory, queuedTask),
-            ReplaceOptions().upsert(true)
-        )
+        withContext(Dispatchers.IO) {
+            collection.replaceOne(
+                eq("_id", queuedTask.task.id.toString()), QueuedTaskMongodb.of(propertySerializerFactory, queuedTask),
+                ReplaceOptions().upsert(true)
+            )
+        }
         return queuedTask
     }
 
     override suspend fun findByTaskIdAndAssignedConsumerIsNullAndUpdate(id: UUID, update: QueuedTask): QueuedTask {
-        val findOneAndUpdate = collection.findOneAndUpdate(
-            and(
-                eq("_id", id.toString()),
-                eq(QueuedTaskMongodb::assignedConsumer.name, null)
-            ),
-            listOf(
-                set(QueuedTaskMongodb::assignedConsumer.name, update.assignedConsumer),
-                set(QueuedTaskMongodb::assignedAt.name, update.assignedAt)
-            ),
-            FindOneAndUpdateOptions().upsert(false).returnDocument(ReturnDocument.AFTER)
-        )
-        if (findOneAndUpdate == null) {
-            TODO()
+        return withContext(Dispatchers.IO) {
+
+            val findOneAndUpdate = collection.findOneAndUpdate(
+                and(
+                    eq("_id", id.toString()),
+                    eq(QueuedTaskMongodb::assignedConsumer.name, null)
+                ),
+                listOf(
+                    set(QueuedTaskMongodb::assignedConsumer.name, update.assignedConsumer),
+                    set(QueuedTaskMongodb::assignedAt.name, update.assignedAt)
+                ),
+                FindOneAndUpdateOptions().upsert(false).returnDocument(ReturnDocument.AFTER)
+            )
+            if (findOneAndUpdate == null) {
+                TODO()
+            }
+            findOneAndUpdate.toQueuedTask(propertySerializerFactory)
         }
-        return findOneAndUpdate.toQueuedTask(propertySerializerFactory)
     }
 
     override fun findByTaskNameInAndAssignedConsumerIsNullAndOrderByPriority(
@@ -79,12 +86,12 @@ class MongodbQueuedTaskRepository(
                 `in`("task.name", tasks),
                 eq(QueuedTaskMongodb::assignedConsumer.name, null)
             )
-        ).map { it.toQueuedTask(propertySerializerFactory) }
+        ).map { it.toQueuedTask(propertySerializerFactory) }.flowOn(Dispatchers.IO)
     }
 
     override fun findByQueuedAtBeforeAndAssignedConsumerIsNull(instant: Instant): Flow<QueuedTask> {
-        return collection.find(Filters.lte(QueuedTaskMongodb::queuedAt.name, instant))
-            .map { it.toQueuedTask(propertySerializerFactory) }
+        return collection.find(lte(QueuedTaskMongodb::queuedAt.name, instant))
+            .map { it.toQueuedTask(propertySerializerFactory) }.flowOn(Dispatchers.IO)
     }
 }
 
