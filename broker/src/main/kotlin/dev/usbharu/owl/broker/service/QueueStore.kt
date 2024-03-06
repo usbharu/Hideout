@@ -28,9 +28,9 @@ interface QueueStore {
 
     suspend fun dequeue(queuedTask: QueuedTask)
     suspend fun dequeueAll(queuedTaskList: List<QueuedTask>)
-    fun findByTaskNameInAndAssignedConsumerIsNullAndOrderByPriority(tasks: List<String>, limit: Int): Flow<QueuedTask>
+    fun findByTaskNameInAndIsActiveIsTrueAndOrderByPriority(tasks: List<String>, limit: Int): Flow<QueuedTask>
 
-    fun findByQueuedAtBeforeAndAssignedConsumerIsNull(instant: Instant): Flow<QueuedTask>
+    fun findByQueuedAtBeforeAndIsActiveIsTrue(instant: Instant): Flow<QueuedTask>
 }
 
 @Singleton
@@ -51,15 +51,15 @@ class QueueStoreImpl(private val queuedTaskRepository: QueuedTaskRepository) : Q
         return queuedTaskList.forEach { dequeue(it) }
     }
 
-    override fun findByTaskNameInAndAssignedConsumerIsNullAndOrderByPriority(
+    override fun findByTaskNameInAndIsActiveIsTrueAndOrderByPriority(
         tasks: List<String>,
         limit: Int
     ): Flow<QueuedTask> {
-        return queuedTaskRepository.findByTaskNameInAndAssignedConsumerIsNullAndOrderByPriority(tasks, limit)
+        return queuedTaskRepository.findByTaskNameInAndIsActiveIsTrueAndOrderByPriority(tasks, limit)
     }
 
-    override fun findByQueuedAtBeforeAndAssignedConsumerIsNull(instant: Instant): Flow<QueuedTask> {
-        return queuedTaskRepository.findByQueuedAtBeforeAndAssignedConsumerIsNull(instant)
+    override fun findByQueuedAtBeforeAndIsActiveIsTrue(instant: Instant): Flow<QueuedTask> {
+        return queuedTaskRepository.findByQueuedAtBeforeAndIsActiveIsTrue(instant)
     }
 
 }

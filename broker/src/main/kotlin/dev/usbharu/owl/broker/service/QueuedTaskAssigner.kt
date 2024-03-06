@@ -28,33 +28,39 @@ import java.time.Instant
 import java.util.*
 
 interface QueuedTaskAssigner {
-    fun ready(consumerId: UUID,numberOfConcurrent:Int): Flow<QueuedTask>
+    fun ready(consumerId: UUID, numberOfConcurrent: Int): Flow<QueuedTask>
 }
 
 @Singleton
 class QueuedTaskAssignerImpl(
     private val taskManagementService: TaskManagementService,
     private val queueStore: QueueStore
-) : QueuedTaskAssigner{
+) : QueuedTaskAssigner {
     override fun ready(consumerId: UUID, numberOfConcurrent: Int): Flow<QueuedTask> {
         return flow {
             taskManagementService.findAssignableTask(consumerId, numberOfConcurrent)
                 .onEach {
-                        val assignTask = assignTask(it, consumerId)
+                    val assignTask = assignTask(it, consumerId)
 
-                        if (assignTask != null) {
-                            emit(assignTask)
-                        }
+                    if (assignTask != null) {
+                        emit(assignTask)
+                    }
                 }
                 .collect()
         }
     }
 
-    private suspend fun assignTask(queuedTask: QueuedTask,consumerId: UUID):QueuedTask?{
+    private suspend fun assignTask(queuedTask: QueuedTask, consumerId: UUID): QueuedTask? {
         return try {
 
-            val assignedTaskQueue = queuedTask.copy(assignedConsumer = consumerId, assignedAt = Instant.now())
-            logger.trace("Try assign task: {} id: {} consumer: {}",queuedTask.task.name,queuedTask.task.id,consumerId)
+            val assignedTaskQueue =
+                queuedTask.copy(assignedConsumer = consumerId, assignedAt = Instant.now(), isActive = false)
+            logger.trace(
+                "Try assign task: {} id: {} consumer: {}",
+                queuedTask.task.name,
+                queuedTask.task.id,
+                consumerId
+            )
 
             queueStore.dequeue(assignedTaskQueue)
 
@@ -72,7 +78,7 @@ class QueuedTaskAssignerImpl(
         }
     }
 
-    companion object{
+    companion object {
         private val logger = LoggerFactory.getLogger(QueuedTaskAssignerImpl::class.java)
     }
 }

@@ -55,7 +55,7 @@ class TaskPublishService(
                 )
             )
             PublishedTask.newBuilder().setName(publishedTask.name).setId(publishedTask.id.toUUID()).build()
-        }catch (e:Error){
+        } catch (e: Throwable) {
             logger.warn("exception ",e)
             throw StatusException(Status.INTERNAL)
         }

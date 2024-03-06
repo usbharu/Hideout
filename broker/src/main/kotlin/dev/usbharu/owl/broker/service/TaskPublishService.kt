@@ -54,7 +54,7 @@ class TaskPublishServiceImpl(
             ?: throw TaskNotRegisterException("Task ${publishTask.name} not definition.")
 
         val published = Instant.now()
-        val nextRetry = retryPolicyFactory.factory(definition.name).nextRetry(published,0)
+        val nextRetry = retryPolicyFactory.factory(definition.retryPolicy).nextRetry(published, 0)
 
         val task = Task(
             name = publishTask.name,

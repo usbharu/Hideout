@@ -27,6 +27,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.singleOrNull
 import kotlinx.coroutines.withContext
 import org.bson.BsonType
 import org.bson.codecs.pojo.annotations.BsonId
@@ -51,6 +52,10 @@ class MongodbTaskRepository(database: MongoDatabase, private val propertySeriali
     override fun findByNextRetryBefore(timestamp: Instant): Flow<Task> {
         return collection.find(Filters.lte(TaskMongodb::nextRetry.name, timestamp))
             .map { it.toTask(propertySerializerFactory) }.flowOn(Dispatchers.IO)
+    }
+
+    override suspend fun findById(uuid: UUID): Task? = withContext(Dispatchers.IO) {
+        collection.find(Filters.eq(uuid.toString())).singleOrNull()?.toTask(propertySerializerFactory)
     }
 }
 
