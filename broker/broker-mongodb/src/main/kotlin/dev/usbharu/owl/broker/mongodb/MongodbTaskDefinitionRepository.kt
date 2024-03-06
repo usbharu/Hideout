@@ -21,7 +21,9 @@ import com.mongodb.client.model.ReplaceOptions
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import dev.usbharu.owl.broker.domain.model.taskdefinition.TaskDefinition
 import dev.usbharu.owl.broker.domain.model.taskdefinition.TaskDefinitionRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.singleOrNull
+import kotlinx.coroutines.withContext
 import org.bson.BsonType
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.codecs.pojo.annotations.BsonRepresentation
@@ -31,21 +33,21 @@ import org.koin.core.annotation.Singleton
 class MongodbTaskDefinitionRepository(database: MongoDatabase) : TaskDefinitionRepository {
 
     private val collection = database.getCollection<TaskDefinitionMongodb>("task_definition")
-    override suspend fun save(taskDefinition: TaskDefinition): TaskDefinition {
+    override suspend fun save(taskDefinition: TaskDefinition): TaskDefinition = withContext(Dispatchers.IO) {
         collection.replaceOne(
             Filters.eq("_id", taskDefinition.name),
             TaskDefinitionMongodb.of(taskDefinition),
             ReplaceOptions().upsert(true)
         )
-        return taskDefinition
+        return@withContext taskDefinition
     }
 
-    override suspend fun deleteByName(name: String) {
+    override suspend fun deleteByName(name: String): Unit = withContext(Dispatchers.IO) {
         collection.deleteOne(Filters.eq("_id",name))
     }
 
-    override suspend fun findByName(name: String): TaskDefinition? {
-        return collection.find(Filters.eq("_id", name)).singleOrNull()?.toTaskDefinition()
+    override suspend fun findByName(name: String): TaskDefinition? = withContext(Dispatchers.IO) {
+        return@withContext collection.find(Filters.eq("_id", name)).singleOrNull()?.toTaskDefinition()
     }
 }
 

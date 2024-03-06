@@ -23,8 +23,11 @@ import dev.usbharu.owl.broker.domain.model.task.Task
 import dev.usbharu.owl.broker.domain.model.task.TaskRepository
 import dev.usbharu.owl.common.property.PropertySerializeUtils
 import dev.usbharu.owl.common.property.PropertySerializerFactory
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import org.bson.BsonType
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.codecs.pojo.annotations.BsonRepresentation
@@ -37,17 +40,17 @@ class MongodbTaskRepository(database: MongoDatabase, private val propertySeriali
     TaskRepository {
 
     private val collection = database.getCollection<TaskMongodb>("tasks")
-    override suspend fun save(task: Task): Task {
+    override suspend fun save(task: Task): Task = withContext(Dispatchers.IO) {
         collection.replaceOne(
             Filters.eq("_id", task.id.toString()), TaskMongodb.of(propertySerializerFactory, task),
             ReplaceOptions().upsert(true)
         )
-        return task
+        return@withContext task
     }
 
     override fun findByNextRetryBefore(timestamp: Instant): Flow<Task> {
         return collection.find(Filters.lte(TaskMongodb::nextRetry.name, timestamp))
-            .map { it.toTask(propertySerializerFactory) }
+            .map { it.toTask(propertySerializerFactory) }.flowOn(Dispatchers.IO)
     }
 }
 

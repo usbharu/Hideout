@@ -21,6 +21,8 @@ import com.mongodb.client.model.ReplaceOptions
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import dev.usbharu.owl.broker.domain.model.producer.Producer
 import dev.usbharu.owl.broker.domain.model.producer.ProducerRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.koin.core.annotation.Singleton
 import java.time.Instant
 import java.util.*
@@ -30,13 +32,13 @@ class MongodbProducerRepository(database: MongoDatabase) : ProducerRepository {
 
     private val collection = database.getCollection<ProducerMongodb>("producers")
 
-    override suspend fun save(producer: Producer): Producer {
+    override suspend fun save(producer: Producer): Producer = withContext(Dispatchers.IO) {
         collection.replaceOne(
             Filters.eq("_id", producer.id.toString()),
             ProducerMongodb.of(producer),
             ReplaceOptions().upsert(true)
         )
-        return producer
+        return@withContext producer
     }
 }
 
