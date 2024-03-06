@@ -18,6 +18,7 @@ package dev.usbharu.owl.broker
 
 import dev.usbharu.owl.broker.service.DefaultRetryPolicyFactory
 import dev.usbharu.owl.broker.service.RetryPolicyFactory
+import dev.usbharu.owl.common.retry.ExponentialRetryPolicy
 import kotlinx.coroutines.runBlocking
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
@@ -40,7 +41,7 @@ fun main() {
 
         val module = module {
             single<RetryPolicyFactory> {
-                DefaultRetryPolicyFactory(emptyMap())
+                DefaultRetryPolicyFactory(mapOf("" to ExponentialRetryPolicy()))
             }
         }
         modules(module, defaultModule, moduleContext.module())

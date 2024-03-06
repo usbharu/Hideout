@@ -16,6 +16,7 @@
 
 package dev.usbharu.owl.broker.mongodb
 
+import com.mongodb.client.model.Filters
 import com.mongodb.client.model.Filters.*
 import com.mongodb.client.model.FindOneAndUpdateOptions
 import com.mongodb.client.model.ReplaceOptions
@@ -24,6 +25,8 @@ import com.mongodb.client.model.Updates.set
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import dev.usbharu.owl.broker.domain.model.queuedtask.QueuedTask
 import dev.usbharu.owl.broker.domain.model.queuedtask.QueuedTaskRepository
+import dev.usbharu.owl.broker.domain.model.task.Task
+import dev.usbharu.owl.common.property.PropertySerializeUtils
 import dev.usbharu.owl.common.property.PropertySerializerFactory
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -35,12 +38,15 @@ import java.time.Instant
 import java.util.*
 
 @Singleton
-class MongodbQueuedTaskRepository(private val propertySerializerFactory: PropertySerializerFactory,database: MongoDatabase) : QueuedTaskRepository {
+class MongodbQueuedTaskRepository(
+    private val propertySerializerFactory: PropertySerializerFactory,
+    database: MongoDatabase
+) : QueuedTaskRepository {
 
     private val collection = database.getCollection<QueuedTaskMongodb>("queued_task")
     override suspend fun save(queuedTask: QueuedTask): QueuedTask {
         collection.replaceOne(
-            eq("_id", queuedTask.task.id.toString()), QueuedTaskMongodb.of(propertySerializerFactory,queuedTask),
+            eq("_id", queuedTask.task.id.toString()), QueuedTaskMongodb.of(propertySerializerFactory, queuedTask),
             ReplaceOptions().upsert(true)
         )
         return queuedTask
@@ -75,6 +81,11 @@ class MongodbQueuedTaskRepository(private val propertySerializerFactory: Propert
             )
         ).map { it.toQueuedTask(propertySerializerFactory) }
     }
+
+    override fun findByQueuedAtBeforeAndAssignedConsumerIsNull(instant: Instant): Flow<QueuedTask> {
+        return collection.find(Filters.lte(QueuedTaskMongodb::queuedAt.name, instant))
+            .map { it.toQueuedTask(propertySerializerFactory) }
+    }
 }
 
 data class QueuedTaskMongodb(
@@ -93,16 +104,55 @@ data class QueuedTaskMongodb(
             attempt,
             queuedAt,
             task.toTask(propertySerializerFactory),
-            UUID.fromString(assignedConsumer),
+            assignedConsumer?.let { UUID.fromString(it) },
             assignedAt
         )
     }
 
+    data class TaskMongodb(
+        val name: String,
+        val id: String,
+        val publishProducerId: String,
+        val publishedAt: Instant,
+        val nextRetry: Instant,
+        val completedAt: Instant?,
+        val attempt: Int,
+        val properties: Map<String, String>
+    ) {
+
+        fun toTask(propertySerializerFactory: PropertySerializerFactory): Task {
+            return Task(
+                name = name,
+                id = UUID.fromString(id),
+                publishProducerId = UUID.fromString(publishProducerId),
+                publishedAt = publishedAt,
+                nextRetry = nextRetry,
+                completedAt = completedAt,
+                attempt = attempt,
+                properties = PropertySerializeUtils.deserialize(propertySerializerFactory, properties)
+            )
+        }
+
+        companion object {
+            fun of(propertySerializerFactory: PropertySerializerFactory, task: Task): TaskMongodb {
+                return TaskMongodb(
+                    task.name,
+                    task.id.toString(),
+                    task.publishProducerId.toString(),
+                    task.publishedAt,
+                    task.nextRetry,
+                    task.completedAt,
+                    task.attempt,
+                    PropertySerializeUtils.serialize(propertySerializerFactory, task.properties)
+                )
+            }
+        }
+    }
     companion object {
-        fun of(propertySerializerFactory: PropertySerializerFactory,queuedTask: QueuedTask): QueuedTaskMongodb {
+        fun of(propertySerializerFactory: PropertySerializerFactory, queuedTask: QueuedTask): QueuedTaskMongodb {
             return QueuedTaskMongodb(
                 queuedTask.task.id.toString(),
-                TaskMongodb.of(propertySerializerFactory,queuedTask.task),
+                TaskMongodb.of(propertySerializerFactory, queuedTask.task),
                 queuedTask.attempt,
                 queuedTask.queuedAt,
                 queuedTask.assignedConsumer?.toString(),

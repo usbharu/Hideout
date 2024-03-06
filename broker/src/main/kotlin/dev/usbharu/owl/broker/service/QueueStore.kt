@@ -20,6 +20,7 @@ import dev.usbharu.owl.broker.domain.model.queuedtask.QueuedTask
 import dev.usbharu.owl.broker.domain.model.queuedtask.QueuedTaskRepository
 import kotlinx.coroutines.flow.Flow
 import org.koin.core.annotation.Singleton
+import java.time.Instant
 
 interface QueueStore {
     suspend fun enqueue(queuedTask: QueuedTask)
@@ -28,6 +29,8 @@ interface QueueStore {
     suspend fun dequeue(queuedTask: QueuedTask)
     suspend fun dequeueAll(queuedTaskList: List<QueuedTask>)
     fun findByTaskNameInAndAssignedConsumerIsNullAndOrderByPriority(tasks: List<String>, limit: Int): Flow<QueuedTask>
+
+    fun findByQueuedAtBeforeAndAssignedConsumerIsNull(instant: Instant): Flow<QueuedTask>
 }
 
 @Singleton
@@ -53,6 +56,10 @@ class QueueStoreImpl(private val queuedTaskRepository: QueuedTaskRepository) : Q
         limit: Int
     ): Flow<QueuedTask> {
         return queuedTaskRepository.findByTaskNameInAndAssignedConsumerIsNullAndOrderByPriority(tasks, limit)
+    }
+
+    override fun findByQueuedAtBeforeAndAssignedConsumerIsNull(instant: Instant): Flow<QueuedTask> {
+        return queuedTaskRepository.findByQueuedAtBeforeAndAssignedConsumerIsNull(instant)
     }
 
 }

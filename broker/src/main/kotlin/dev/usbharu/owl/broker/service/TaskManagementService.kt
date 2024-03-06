@@ -21,10 +21,14 @@ import dev.usbharu.owl.broker.domain.model.queuedtask.QueuedTask
 import dev.usbharu.owl.broker.domain.model.task.Task
 import dev.usbharu.owl.broker.domain.model.task.TaskRepository
 import dev.usbharu.owl.broker.domain.model.taskdefinition.TaskDefinitionRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
 import org.koin.core.annotation.Singleton
 import org.slf4j.LoggerFactory
 import java.time.Instant
@@ -33,7 +37,7 @@ import java.util.*
 
 interface TaskManagementService {
 
-    suspend fun startManagement()
+    suspend fun startManagement(coroutineScope: CoroutineScope)
     fun findAssignableTask(consumerId: UUID, numberOfConcurrent: Int): Flow<QueuedTask>
 }
 
@@ -44,17 +48,35 @@ class TaskManagementServiceImpl(
     private val taskDefinitionRepository: TaskDefinitionRepository,
     private val assignQueuedTaskDecider: AssignQueuedTaskDecider,
     private val retryPolicyFactory: RetryPolicyFactory,
-    private val taskRepository: TaskRepository
+    private val taskRepository: TaskRepository,
+    private val queueScanner: QueueScanner
 ) : TaskManagementService {
 
-    private var flow: Flow<Task> = flowOf()
-    override suspend fun startManagement() {
-        flow = taskScanner.startScan()
+    private var taskFlow: Flow<Task> = flowOf()
+    private var queueFlow: Flow<QueuedTask> = flowOf()
+    override suspend fun startManagement(coroutineScope: CoroutineScope) {
+        taskFlow = taskScanner.startScan()
+        queueFlow = queueScanner.startScan()
 
-        flow.onEach {
-            enqueueTask(it)
-        }.collect()
-
+        coroutineScope {
+            listOf(
+                launch {
+                    taskFlow.onEach {
+                        enqueueTask(it)
+                    }.collect()
+                },
+                launch {
+                    queueFlow.onEach {
+                        logger.warn(
+                            "Queue timed out. name: {} id: {} attempt: {}",
+                            it.task.name,
+                            it.task.id,
+                            it.attempt
+                        )
+                    }.collect()
+                }
+            ).joinAll()
+        }
     }
 
 

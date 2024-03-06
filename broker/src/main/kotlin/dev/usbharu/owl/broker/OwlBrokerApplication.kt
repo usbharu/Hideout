@@ -55,7 +55,7 @@ class OwlBrokerApplication(
         )
 
         return coroutineScope.launch {
-            taskManagementService.startManagement()
+            taskManagementService.startManagement(this)
         }
     }
 
