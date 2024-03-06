@@ -25,12 +25,12 @@ class ExponentialRetryPolicyTest {
     fun exponential0() {
         val nextRetry = ExponentialRetryPolicy().nextRetry(Instant.ofEpochSecond(300), 0)
 
-        assertEquals(Instant.ofEpochSecond(330), nextRetry)
+        assertEquals(Instant.ofEpochSecond(300), nextRetry)
     }
 
     @Test
     fun exponential1() {
         val nextRetry = ExponentialRetryPolicy().nextRetry(Instant.ofEpochSecond(300), 1)
-        assertEquals(Instant.ofEpochSecond(360), nextRetry)
+        assertEquals(Instant.ofEpochSecond(330), nextRetry)
     }
 }

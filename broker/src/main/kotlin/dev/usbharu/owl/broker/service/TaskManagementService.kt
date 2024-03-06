@@ -16,6 +16,7 @@
 
 package dev.usbharu.owl.broker.service
 
+import dev.usbharu.owl.broker.domain.exception.repository.RecordNotFoundException
 import dev.usbharu.owl.broker.domain.exception.service.TaskNotRegisterException
 import dev.usbharu.owl.broker.domain.model.queuedtask.QueuedTask
 import dev.usbharu.owl.broker.domain.model.task.Task
@@ -67,12 +68,7 @@ class TaskManagementServiceImpl(
                 },
                 launch {
                     queueFlow.onEach {
-                        logger.warn(
-                            "Queue timed out. name: {} id: {} attempt: {}",
-                            it.task.name,
-                            it.task.id,
-                            it.attempt
-                        )
+                        timeoutQueue(it)
                     }.collect()
                 }
             ).joinAll()
@@ -90,6 +86,8 @@ class TaskManagementServiceImpl(
             task.attempt + 1,
             Instant.now(),
             task,
+            isActive = true,
+            timeoutAt = null,
             null,
             null
         )
@@ -98,7 +96,7 @@ class TaskManagementServiceImpl(
             ?: throw TaskNotRegisterException("Task ${task.name} not definition.")
         val copy = task.copy(
             nextRetry = retryPolicyFactory.factory(definedTask.retryPolicy)
-                .nextRetry(Instant.now(), task.attempt)
+                .nextRetry(Instant.now(), queuedTask.attempt)
         )
 
         taskRepository.save(copy)
@@ -107,6 +105,26 @@ class TaskManagementServiceImpl(
         logger.debug("Enqueue Task. name: {} id: {} attempt: {}", task.name, task.id, queuedTask.attempt)
         return queuedTask
     }
+
+    private suspend fun timeoutQueue(queuedTask: QueuedTask) {
+        val timeoutQueue = queuedTask.copy(isActive = false, timeoutAt = Instant.now())
+
+        queueStore.dequeue(timeoutQueue)
+
+
+        val task = taskRepository.findById(timeoutQueue.task.id)
+            ?: throw RecordNotFoundException("Task not found. id: ${timeoutQueue.task.id}")
+        val copy = task.copy(attempt = timeoutQueue.attempt)
+
+        logger.warn(
+            "Queue timed out. name: {} id: {} attempt: {}",
+            timeoutQueue.task.name,
+            timeoutQueue.task.id,
+            timeoutQueue.attempt
+        )
+        taskRepository.save(copy)
+    }
+
 
     companion object {
         private val logger = LoggerFactory.getLogger(TaskManagementServiceImpl::class.java)

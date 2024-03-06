@@ -38,7 +38,7 @@ class AssignQueuedTaskDeciderImpl(
             val consumer = consumerRepository.findById(consumerId)
                 ?: throw RecordNotFoundException("Consumer not found. id: $consumerId")
             emitAll(
-                queueStore.findByTaskNameInAndAssignedConsumerIsNullAndOrderByPriority(
+                queueStore.findByTaskNameInAndIsActiveIsTrueAndOrderByPriority(
                     consumer.tasks,
                     numberOfConcurrent
                 ).take(numberOfConcurrent)

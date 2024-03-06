@@ -22,11 +22,14 @@ import java.util.*
 
 /**
  * @param attempt キューされた時点での試行回数より1多い
+ * @param isActive trueならアサイン可能 falseならアサイン済みかタイムアウト等で無効
  */
 data class QueuedTask(
     val attempt: Int,
     val queuedAt: Instant,
     val task: Task,
+    val isActive: Boolean,
+    val timeoutAt: Instant?,
     val assignedConsumer: UUID?,
-    val assignedAt:Instant?
+    val assignedAt: Instant?
 )

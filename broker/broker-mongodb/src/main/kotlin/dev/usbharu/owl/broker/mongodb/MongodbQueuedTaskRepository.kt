@@ -62,11 +62,13 @@ class MongodbQueuedTaskRepository(
             val findOneAndUpdate = collection.findOneAndUpdate(
                 and(
                     eq("_id", id.toString()),
-                    eq(QueuedTaskMongodb::assignedConsumer.name, null)
+                    eq(QueuedTaskMongodb::isActive.name, true)
                 ),
                 listOf(
                     set(QueuedTaskMongodb::assignedConsumer.name, update.assignedConsumer),
-                    set(QueuedTaskMongodb::assignedAt.name, update.assignedAt)
+                    set(QueuedTaskMongodb::assignedAt.name, update.assignedAt),
+                    set(QueuedTaskMongodb::queuedAt.name, update.queuedAt),
+                    set(QueuedTaskMongodb::isActive.name, update.isActive)
                 ),
                 FindOneAndUpdateOptions().upsert(false).returnDocument(ReturnDocument.AFTER)
             )
@@ -77,20 +79,25 @@ class MongodbQueuedTaskRepository(
         }
     }
 
-    override fun findByTaskNameInAndAssignedConsumerIsNullAndOrderByPriority(
+    override fun findByTaskNameInAndIsActiveIsTrueAndOrderByPriority(
         tasks: List<String>,
         limit: Int
     ): Flow<QueuedTask> {
         return collection.find<QueuedTaskMongodb>(
             and(
                 `in`("task.name", tasks),
-                eq(QueuedTaskMongodb::assignedConsumer.name, null)
+                eq(QueuedTaskMongodb::isActive.name, true)
             )
         ).map { it.toQueuedTask(propertySerializerFactory) }.flowOn(Dispatchers.IO)
     }
 
-    override fun findByQueuedAtBeforeAndAssignedConsumerIsNull(instant: Instant): Flow<QueuedTask> {
-        return collection.find(lte(QueuedTaskMongodb::queuedAt.name, instant))
+    override fun findByQueuedAtBeforeAndIsActiveIsTrue(instant: Instant): Flow<QueuedTask> {
+        return collection.find(
+            and(
+                lte(QueuedTaskMongodb::queuedAt.name, instant),
+                eq(QueuedTaskMongodb::isActive.name, true)
+            )
+        )
             .map { it.toQueuedTask(propertySerializerFactory) }.flowOn(Dispatchers.IO)
     }
 }
@@ -102,6 +109,8 @@ data class QueuedTaskMongodb(
     val task: TaskMongodb,
     val attempt: Int,
     val queuedAt: Instant,
+    val isActive: Boolean,
+    val timeoutAt: Instant?,
     val assignedConsumer: String?,
     val assignedAt: Instant?
 ) {
@@ -111,6 +120,8 @@ data class QueuedTaskMongodb(
             attempt,
             queuedAt,
             task.toTask(propertySerializerFactory),
+            isActive,
+            timeoutAt,
             assignedConsumer?.let { UUID.fromString(it) },
             assignedAt
         )
@@ -155,6 +166,7 @@ data class QueuedTaskMongodb(
             }
         }
     }
+
     companion object {
         fun of(propertySerializerFactory: PropertySerializerFactory, queuedTask: QueuedTask): QueuedTaskMongodb {
             return QueuedTaskMongodb(
@@ -162,6 +174,8 @@ data class QueuedTaskMongodb(
                 TaskMongodb.of(propertySerializerFactory, queuedTask.task),
                 queuedTask.attempt,
                 queuedTask.queuedAt,
+                queuedTask.isActive,
+                queuedTask.timeoutAt,
                 queuedTask.assignedConsumer?.toString(),
                 queuedTask.assignedAt
             )

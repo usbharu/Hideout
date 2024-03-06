@@ -18,9 +18,12 @@ package dev.usbharu.owl.broker.domain.model.task
 
 import kotlinx.coroutines.flow.Flow
 import java.time.Instant
+import java.util.*
 
 interface TaskRepository {
     suspend fun save(task: Task):Task
 
     fun findByNextRetryBefore(timestamp:Instant): Flow<Task>
+
+    suspend fun findById(uuid: UUID): Task?
 }

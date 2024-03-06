@@ -42,7 +42,7 @@ class QueueScannerImpl(private val queueStore: QueueStore) : QueueScanner {
     }
 
     private fun scanQueue(): Flow<QueuedTask> {
-        return queueStore.findByQueuedAtBeforeAndAssignedConsumerIsNull(Instant.now().minusSeconds(10))
+        return queueStore.findByQueuedAtBeforeAndIsActiveIsTrue(Instant.now().minusSeconds(10))
     }
 
 }

@@ -28,7 +28,7 @@ interface QueuedTaskRepository {
      */
     suspend fun findByTaskIdAndAssignedConsumerIsNullAndUpdate(id:UUID,update:QueuedTask):QueuedTask
 
-    fun findByTaskNameInAndAssignedConsumerIsNullAndOrderByPriority(tasks:List<String>,limit:Int): Flow<QueuedTask>
+    fun findByTaskNameInAndIsActiveIsTrueAndOrderByPriority(tasks: List<String>, limit: Int): Flow<QueuedTask>
 
-    fun findByQueuedAtBeforeAndAssignedConsumerIsNull(instant: Instant): Flow<QueuedTask>
+    fun findByQueuedAtBeforeAndIsActiveIsTrue(instant: Instant): Flow<QueuedTask>
 }
