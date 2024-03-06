@@ -22,10 +22,18 @@ import kotlinx.coroutines.runBlocking
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
 import org.koin.ksp.generated.defaultModule
+import org.slf4j.LoggerFactory
 import java.util.*
 
+val logger = LoggerFactory.getLogger("MAIN")
+
 fun main() {
-    val moduleContext = ServiceLoader.load(ModuleContext::class.java).first()
+    val moduleContexts = ServiceLoader.load(ModuleContext::class.java)
+
+    val moduleContext = moduleContexts.first()
+
+    logger.info("Use module name: {}", moduleContext)
+
 
     val koin = startKoin {
         printLogger()
