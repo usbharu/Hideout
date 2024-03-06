@@ -17,6 +17,7 @@
 package dev.usbharu.owl.broker.domain.model.queuedtask
 
 import kotlinx.coroutines.flow.Flow
+import java.time.Instant
 import java.util.*
 
 interface QueuedTaskRepository {
@@ -28,4 +29,6 @@ interface QueuedTaskRepository {
     suspend fun findByTaskIdAndAssignedConsumerIsNullAndUpdate(id:UUID,update:QueuedTask):QueuedTask
 
     fun findByTaskNameInAndAssignedConsumerIsNullAndOrderByPriority(tasks:List<String>,limit:Int): Flow<QueuedTask>
+
+    fun findByQueuedAtBeforeAndAssignedConsumerIsNull(instant: Instant): Flow<QueuedTask>
 }

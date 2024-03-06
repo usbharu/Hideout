@@ -25,6 +25,9 @@ import dev.usbharu.owl.common.property.PropertySerializeUtils
 import dev.usbharu.owl.common.property.PropertySerializerFactory
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import org.bson.BsonType
+import org.bson.codecs.pojo.annotations.BsonId
+import org.bson.codecs.pojo.annotations.BsonRepresentation
 import org.koin.core.annotation.Singleton
 import java.time.Instant
 import java.util.*
@@ -50,6 +53,8 @@ class MongodbTaskRepository(database: MongoDatabase, private val propertySeriali
 
 data class TaskMongodb(
     val name: String,
+    @BsonId
+    @BsonRepresentation(BsonType.STRING)
     val id: String,
     val publishProducerId: String,
     val publishedAt: Instant,
