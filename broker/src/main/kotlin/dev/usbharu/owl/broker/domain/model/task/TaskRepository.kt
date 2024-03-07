@@ -23,6 +23,8 @@ import java.util.*
 interface TaskRepository {
     suspend fun save(task: Task):Task
 
+    suspend fun saveAll(tasks:List<Task>)
+
     fun findByNextRetryBefore(timestamp:Instant): Flow<Task>
 
     suspend fun findById(uuid: UUID): Task?

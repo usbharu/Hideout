@@ -28,6 +28,7 @@ import java.util.*
 
 interface TaskPublishService {
     suspend fun publishTask(publishTask: PublishTask): PublishedTask
+    suspend fun publishTasks(list: List<PublishTask>): List<PublishedTask>
 }
 
 data class PublishTask(
@@ -44,11 +45,11 @@ data class PublishedTask(
 @Singleton
 class TaskPublishServiceImpl(
     private val taskRepository: TaskRepository,
-    private val taskDefinitionRepository:TaskDefinitionRepository,
+    private val taskDefinitionRepository: TaskDefinitionRepository,
     private val retryPolicyFactory: RetryPolicyFactory
 ) : TaskPublishService {
     override suspend fun publishTask(publishTask: PublishTask): PublishedTask {
-                val id = UUID.randomUUID()
+        val id = UUID.randomUUID()
 
         val definition = taskDefinitionRepository.findByName(publishTask.name)
             ?: throw TaskNotRegisterException("Task ${publishTask.name} not definition.")
@@ -75,6 +76,37 @@ class TaskPublishServiceImpl(
             name = publishTask.name,
             id = id
         )
+    }
+
+    override suspend fun publishTasks(list: List<PublishTask>): List<PublishedTask> {
+
+        val first = list.first()
+
+        val definition = taskDefinitionRepository.findByName(first.name)
+            ?: throw TaskNotRegisterException("Task ${first.name} not definition.")
+
+        val published = Instant.now()
+
+        val nextRetry = retryPolicyFactory.factory(definition.retryPolicy).nextRetry(published, 0)
+
+        val tasks = list.map {
+            Task(
+                it.name,
+                UUID.randomUUID(),
+                first.producerId,
+                published,
+                nextRetry,
+                null,
+                0,
+                it.properties
+            )
+        }
+
+        taskRepository.saveAll(tasks)
+
+        logger.debug("Published {} tasks. name: {}", tasks.size, first.name)
+
+        return tasks.map { PublishedTask(it.name, it.id) }
     }
 
     companion object {
