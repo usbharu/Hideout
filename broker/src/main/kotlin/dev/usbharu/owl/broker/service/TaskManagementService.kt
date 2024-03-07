@@ -22,6 +22,7 @@ import dev.usbharu.owl.broker.domain.model.queuedtask.QueuedTask
 import dev.usbharu.owl.broker.domain.model.task.Task
 import dev.usbharu.owl.broker.domain.model.task.TaskRepository
 import dev.usbharu.owl.broker.domain.model.taskdefinition.TaskDefinitionRepository
+import dev.usbharu.owl.broker.domain.model.taskresult.TaskResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -40,6 +41,8 @@ interface TaskManagementService {
 
     suspend fun startManagement(coroutineScope: CoroutineScope)
     fun findAssignableTask(consumerId: UUID, numberOfConcurrent: Int): Flow<QueuedTask>
+
+    suspend fun queueProcessed(taskResult: TaskResult)
 }
 
 @Singleton
@@ -125,6 +128,13 @@ class TaskManagementServiceImpl(
         taskRepository.save(copy)
     }
 
+    override suspend fun queueProcessed(taskResult: TaskResult) {
+        val task = taskRepository.findById(taskResult.id)
+            ?: throw RecordNotFoundException("Task not found. id: ${taskResult.id}")
+
+        taskRepository.findByIdAndUpdate(taskResult.id,task.copy(completedAt = Instant.now()))
+//todo タスク完了後の処理を書く
+    }
 
     companion object {
         private val logger = LoggerFactory.getLogger(TaskManagementServiceImpl::class.java)
