@@ -60,8 +60,13 @@ class MongodbTaskRepository(database: MongoDatabase, private val propertySeriali
         })
     }
 
-    override fun findByNextRetryBefore(timestamp: Instant): Flow<Task> {
-        return collection.find(Filters.lte(TaskMongodb::nextRetry.name, timestamp))
+    override fun findByNextRetryBeforeAndCompletedAtIsNull(timestamp: Instant): Flow<Task> {
+        return collection.find(
+            Filters.and(
+                Filters.lte(TaskMongodb::nextRetry.name, timestamp),
+                Filters.eq(TaskMongodb::completedAt.name, null)
+            )
+        )
             .map { it.toTask(propertySerializerFactory) }.flowOn(Dispatchers.IO)
     }
 

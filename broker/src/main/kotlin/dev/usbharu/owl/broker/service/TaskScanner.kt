@@ -45,7 +45,7 @@ class TaskScannerImpl(private val taskRepository: TaskRepository) :
     }
 
     private fun scanTask(): Flow<Task> {
-        return taskRepository.findByNextRetryBefore(Instant.now())
+        return taskRepository.findByNextRetryBeforeAndCompletedAtIsNull(Instant.now())
     }
 
     companion object {

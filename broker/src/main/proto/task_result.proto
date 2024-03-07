@@ -10,4 +10,9 @@ message TaskResult {
   bool success = 2;
   int32 attempt = 3;
   map<string, string> result = 4;
+  string message = 5;
+}
+
+service TaskResultService{
+  rpc tasKResult(stream TaskResult) returns (google.protobuf.Empty);
 }
