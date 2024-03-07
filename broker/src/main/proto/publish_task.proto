@@ -15,11 +15,28 @@ message PublishTask {
   UUID producer_id = 4;
 }
 
+message Properties {
+  map<string,string> properties = 1;
+}
+
+message PublishTasks {
+  string name = 1;
+  google.protobuf.Timestamp publishedAt = 2;
+  repeated Properties propertiesArray = 3;
+  UUID producer_id = 4;
+}
+
 message PublishedTask {
   string name = 1;
   UUID id = 2;
 }
 
+message PublishedTasks {
+  string name = 1;
+  repeated UUID id = 2;
+}
+
 service TaskPublishService {
   rpc publishTask (PublishTask) returns (PublishedTask);
+  rpc publishTasks(PublishTasks) returns (PublishedTasks);
 }

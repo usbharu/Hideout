@@ -17,6 +17,7 @@
 package dev.usbharu.owl.broker.mongodb
 
 import com.mongodb.client.model.Filters
+import com.mongodb.client.model.ReplaceOneModel
 import com.mongodb.client.model.ReplaceOptions
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import dev.usbharu.owl.broker.domain.model.task.Task
@@ -47,6 +48,16 @@ class MongodbTaskRepository(database: MongoDatabase, private val propertySeriali
             ReplaceOptions().upsert(true)
         )
         return@withContext task
+    }
+
+    override suspend fun saveAll(tasks: List<Task>): Unit = withContext(Dispatchers.IO) {
+        collection.bulkWrite(tasks.map {
+            ReplaceOneModel(
+                Filters.eq(it.id.toString()),
+                TaskMongodb.of(propertySerializerFactory, it),
+                ReplaceOptions().upsert(true)
+            )
+        })
     }
 
     override fun findByNextRetryBefore(timestamp: Instant): Flow<Task> {

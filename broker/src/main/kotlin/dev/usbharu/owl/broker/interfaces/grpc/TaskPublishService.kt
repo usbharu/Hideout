@@ -18,6 +18,7 @@ package dev.usbharu.owl.broker.interfaces.grpc
 
 import dev.usbharu.owl.PublishTaskOuterClass
 import dev.usbharu.owl.PublishTaskOuterClass.PublishedTask
+import dev.usbharu.owl.PublishTaskOuterClass.PublishedTasks
 import dev.usbharu.owl.TaskPublishServiceGrpcKt.TaskPublishServiceCoroutineImplBase
 import dev.usbharu.owl.broker.external.toUUID
 import dev.usbharu.owl.broker.service.PublishTask
@@ -56,14 +57,28 @@ class TaskPublishService(
             )
             PublishedTask.newBuilder().setName(publishedTask.name).setId(publishedTask.id.toUUID()).build()
         } catch (e: Throwable) {
-            logger.warn("exception ",e)
+            logger.warn("exception ", e)
             throw StatusException(Status.INTERNAL)
         }
-
-
     }
 
-    companion object{
-        private val logger = LoggerFactory.getLogger(dev.usbharu.owl.broker.interfaces.grpc.TaskPublishService::class.java)
+    override suspend fun publishTasks(request: PublishTaskOuterClass.PublishTasks): PublishTaskOuterClass.PublishedTasks {
+
+        val tasks = request.propertiesArrayList.map {
+            PublishTask(
+                request.name,
+                request.producerId.toUUID(),
+                PropertySerializeUtils.deserialize(propertySerializerFactory, it.propertiesMap)
+            )
+        }
+
+        val publishTasks = taskPublishService.publishTasks(tasks)
+
+        return PublishedTasks.newBuilder().setName(request.name).addAllId(publishTasks.map { it.id.toUUID() }).build()
+    }
+
+    companion object {
+        private val logger =
+            LoggerFactory.getLogger(dev.usbharu.owl.broker.interfaces.grpc.TaskPublishService::class.java)
     }
 }
