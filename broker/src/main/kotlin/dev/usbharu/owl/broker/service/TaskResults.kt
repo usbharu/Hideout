@@ -14,22 +14,15 @@
  * limitations under the License.
  */
 
-package dev.usbharu.owl.broker.domain.model.task
+package dev.usbharu.owl.broker.service
 
-import kotlinx.coroutines.flow.Flow
-import java.time.Instant
+import dev.usbharu.owl.broker.domain.model.taskresult.TaskResult
 import java.util.*
 
-interface TaskRepository {
-    suspend fun save(task: Task):Task
-
-    suspend fun saveAll(tasks:List<Task>)
-
-    fun findByNextRetryBeforeAndCompletedAtIsNull(timestamp:Instant): Flow<Task>
-
-    suspend fun findById(uuid: UUID): Task?
-
-    suspend fun findByIdAndUpdate(id:UUID,task: Task)
-
-    suspend fun findByPublishProducerIdAndCompletedAtIsNotNull(publishProducerId:UUID):Flow<Task>
-}
+data class TaskResults(
+    val name:String,
+    val id:UUID,
+    val success:Boolean,
+    val attempt:Int,
+    val results: List<TaskResult>
+)

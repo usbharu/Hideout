@@ -21,6 +21,7 @@ import java.util.*
 
 data class TaskResult(
     val id: UUID,
+    val taskId:UUID,
     val success: Boolean,
     val attempt: Int,
     val result: Map<String, PropertyValue<*>>,

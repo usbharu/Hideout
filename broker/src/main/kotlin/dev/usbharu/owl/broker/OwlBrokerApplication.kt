@@ -33,7 +33,8 @@ class OwlBrokerApplication(
     private val producerService: ProducerService,
     private val subscribeTaskService: SubscribeTaskService,
     private val taskPublishService: TaskPublishService,
-    private val taskManagementService: TaskManagementService
+    private val taskManagementService: TaskManagementService,
+    private val taskResultSubscribeService: TaskResultSubscribeService
 ) {
 
     private lateinit var server: Server
@@ -45,6 +46,7 @@ class OwlBrokerApplication(
             .addService(producerService)
             .addService(subscribeTaskService)
             .addService(taskPublishService)
+            .addService(taskResultSubscribeService)
             .build()
 
         server.start()

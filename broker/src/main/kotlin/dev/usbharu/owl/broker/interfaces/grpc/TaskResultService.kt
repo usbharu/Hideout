@@ -27,6 +27,7 @@ import dev.usbharu.owl.common.property.PropertySerializerFactory
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
+import java.util.*
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
@@ -40,7 +41,8 @@ class TaskResultService(
         requests.onEach {
             taskManagementService.queueProcessed(
                 TaskResult(
-                    id = it.id.toUUID(),
+                    id = UUID.randomUUID(),
+                    taskId = it.id.toUUID(),
                     success = it.success,
                     attempt = it.attempt,
                     result = PropertySerializeUtils.deserialize(propertySerializerFactory, it.resultMap),
