@@ -23,14 +23,9 @@ import dev.usbharu.owl.broker.domain.model.task.Task
 import dev.usbharu.owl.broker.domain.model.task.TaskRepository
 import dev.usbharu.owl.broker.domain.model.taskdefinition.TaskDefinitionRepository
 import dev.usbharu.owl.broker.domain.model.taskresult.TaskResult
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.joinAll
-import kotlinx.coroutines.launch
+import dev.usbharu.owl.broker.domain.model.taskresult.TaskResultRepository
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import org.koin.core.annotation.Singleton
 import org.slf4j.LoggerFactory
 import java.time.Instant
@@ -43,6 +38,8 @@ interface TaskManagementService {
     fun findAssignableTask(consumerId: UUID, numberOfConcurrent: Int): Flow<QueuedTask>
 
     suspend fun queueProcessed(taskResult: TaskResult)
+
+    fun subscribeResult(producerId: UUID): Flow<TaskResults>
 }
 
 @Singleton
@@ -53,7 +50,8 @@ class TaskManagementServiceImpl(
     private val assignQueuedTaskDecider: AssignQueuedTaskDecider,
     private val retryPolicyFactory: RetryPolicyFactory,
     private val taskRepository: TaskRepository,
-    private val queueScanner: QueueScanner
+    private val queueScanner: QueueScanner,
+    private val taskResultRepository: TaskResultRepository
 ) : TaskManagementService {
 
     private var taskFlow: Flow<Task> = flowOf()
@@ -132,8 +130,49 @@ class TaskManagementServiceImpl(
         val task = taskRepository.findById(taskResult.id)
             ?: throw RecordNotFoundException("Task not found. id: ${taskResult.id}")
 
-        taskRepository.findByIdAndUpdate(taskResult.id,task.copy(completedAt = Instant.now()))
-//todo タスク完了後の処理を書く
+        val taskDefinition = taskDefinitionRepository.findByName(task.name)
+            ?: throw TaskNotRegisterException("Task ${task.name} not definition.")
+
+        val completedAt = if (taskResult.success) {
+            Instant.now()
+        } else if (taskResult.attempt >= taskDefinition.maxRetry) {
+            Instant.now()
+        } else {
+            null
+        }
+
+        taskResultRepository.save(taskResult)
+
+        taskRepository.findByIdAndUpdate(
+            taskResult.id,
+            task.copy(completedAt = completedAt, attempt = taskResult.attempt)
+        )
+
+    }
+
+    override fun subscribeResult(producerId: UUID): Flow<TaskResults> {
+        return flow {
+
+            while (currentCoroutineContext().isActive) {
+                taskRepository
+                    .findByPublishProducerIdAndCompletedAtIsNotNull(producerId)
+                    .onEach {
+                        val results = taskResultRepository.findByTaskId(it.id).toList()
+                        emit(
+                            TaskResults(
+                                it.name,
+                                it.id,
+                                results.any { it.success },
+                                it.attempt,
+                                results
+                            )
+                        )
+                    }
+                delay(500)
+            }
+
+        }
+
     }
 
     companion object {

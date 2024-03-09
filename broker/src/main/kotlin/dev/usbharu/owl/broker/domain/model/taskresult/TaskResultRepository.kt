@@ -16,6 +16,10 @@
 
 package dev.usbharu.owl.broker.domain.model.taskresult
 
+import kotlinx.coroutines.flow.Flow
+import java.util.*
+
 interface TaskResultRepository {
     suspend fun save(taskResult: TaskResult):TaskResult
+    fun findByTaskId(id:UUID): Flow<TaskResult>
 }

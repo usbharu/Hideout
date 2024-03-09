@@ -73,6 +73,19 @@ class MongodbTaskRepository(database: MongoDatabase, private val propertySeriali
     override suspend fun findById(uuid: UUID): Task? = withContext(Dispatchers.IO) {
         collection.find(Filters.eq(uuid.toString())).singleOrNull()?.toTask(propertySerializerFactory)
     }
+
+    override suspend fun findByIdAndUpdate(id: UUID, task: Task) {
+        collection.replaceOne(
+            Filters.eq("_id", task.id.toString()), TaskMongodb.of(propertySerializerFactory, task),
+            ReplaceOptions().upsert(false)
+        )
+    }
+
+    override suspend fun findByPublishProducerIdAndCompletedAtIsNotNull(publishProducerId: UUID): Flow<Task> {
+        return collection
+            .find(Filters.eq(TaskMongodb::publishProducerId.name, publishProducerId.toString()))
+            .map { it.toTask(propertySerializerFactory) }
+    }
 }
 
 data class TaskMongodb(
