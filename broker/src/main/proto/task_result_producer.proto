@@ -2,6 +2,8 @@ syntax = "proto3";
 import "uuid.proto";
 import "task_result.proto";
 
+option java_package = "dev.usbharu.owl";
+
 message TaskResults {
   string name = 1;
   UUID id = 2;

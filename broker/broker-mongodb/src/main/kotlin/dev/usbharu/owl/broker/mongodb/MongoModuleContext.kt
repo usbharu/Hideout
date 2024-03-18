@@ -36,7 +36,7 @@ class MongoModuleContext : ModuleContext {
                             ConnectionString(
                                 System.getProperty(
                                     "owl.broker.mongo.url",
-                                    "mongodb://agent1.build:27017"
+                                    "mongodb://localhost:27017"
                                 )
                             )
                         )
