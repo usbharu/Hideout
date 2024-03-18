@@ -28,6 +28,7 @@ data class QueuedTask(
     val attempt: Int,
     val queuedAt: Instant,
     val task: Task,
+    val priority: Int,
     val isActive: Boolean,
     val timeoutAt: Instant?,
     val assignedConsumer: UUID?,

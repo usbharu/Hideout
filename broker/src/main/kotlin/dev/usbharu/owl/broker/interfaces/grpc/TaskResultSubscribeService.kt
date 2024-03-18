@@ -16,18 +16,14 @@
 
 package dev.usbharu.owl.broker.interfaces.grpc
 
-import TaskResultProducer.TaskResults
-import TaskResultSubscribeServiceGrpcKt
-import dev.usbharu.owl.Uuid
+import dev.usbharu.owl.*
 import dev.usbharu.owl.broker.external.toUUID
 import dev.usbharu.owl.broker.service.TaskManagementService
 import dev.usbharu.owl.common.property.PropertySerializeUtils
 import dev.usbharu.owl.common.property.PropertySerializerFactory
-import dev.usbharu.owl.taskResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.koin.core.annotation.Singleton
-import taskResults
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
@@ -38,7 +34,7 @@ class TaskResultSubscribeService(
     coroutineContext: CoroutineContext = EmptyCoroutineContext
 ) :
     TaskResultSubscribeServiceGrpcKt.TaskResultSubscribeServiceCoroutineImplBase(coroutineContext) {
-    override fun subscribe(request: Uuid.UUID): Flow<TaskResults> {
+    override fun subscribe(request: Uuid.UUID): Flow<TaskResultProducer.TaskResults> {
         return taskManagementService
             .subscribeResult(request.toUUID())
             .map {

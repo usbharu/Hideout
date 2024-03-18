@@ -109,6 +109,7 @@ data class QueuedTaskMongodb(
     val task: TaskMongodb,
     val attempt: Int,
     val queuedAt: Instant,
+    val priority:Int,
     val isActive: Boolean,
     val timeoutAt: Instant?,
     val assignedConsumer: String?,
@@ -117,13 +118,14 @@ data class QueuedTaskMongodb(
 
     fun toQueuedTask(propertySerializerFactory: PropertySerializerFactory): QueuedTask {
         return QueuedTask(
-            attempt,
-            queuedAt,
-            task.toTask(propertySerializerFactory),
-            isActive,
-            timeoutAt,
-            assignedConsumer?.let { UUID.fromString(it) },
-            assignedAt
+            attempt = attempt,
+            queuedAt = queuedAt,
+            task = task.toTask(propertySerializerFactory),
+            priority = priority,
+            isActive = isActive,
+            timeoutAt = timeoutAt,
+            assignedConsumer = assignedConsumer?.let { UUID.fromString(it) },
+            assignedAt = assignedAt
         )
     }
 
@@ -174,6 +176,7 @@ data class QueuedTaskMongodb(
                 TaskMongodb.of(propertySerializerFactory, queuedTask.task),
                 queuedTask.attempt,
                 queuedTask.queuedAt,
+                queuedTask.priority,
                 queuedTask.isActive,
                 queuedTask.timeoutAt,
                 queuedTask.assignedConsumer?.toString(),

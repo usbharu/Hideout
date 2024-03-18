@@ -83,18 +83,20 @@ class TaskManagementServiceImpl(
 
     private suspend fun enqueueTask(task: Task): QueuedTask {
 
-        val queuedTask = QueuedTask(
-            task.attempt + 1,
-            Instant.now(),
-            task,
-            isActive = true,
-            timeoutAt = null,
-            null,
-            null
-        )
-
         val definedTask = taskDefinitionRepository.findByName(task.name)
             ?: throw TaskNotRegisterException("Task ${task.name} not definition.")
+
+        val queuedTask = QueuedTask(
+            attempt = task.attempt + 1,
+            queuedAt = Instant.now(),
+            task = task,
+            priority = definedTask.priority,
+            isActive = true,
+            timeoutAt = null,
+            assignedConsumer = null,
+            assignedAt = null
+        )
+
         val copy = task.copy(
             nextRetry = retryPolicyFactory.factory(definedTask.retryPolicy)
                 .nextRetry(Instant.now(), queuedTask.attempt)
