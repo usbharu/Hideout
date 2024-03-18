@@ -20,6 +20,7 @@ import com.mongodb.client.model.Filters.*
 import com.mongodb.client.model.FindOneAndUpdateOptions
 import com.mongodb.client.model.ReplaceOptions
 import com.mongodb.client.model.ReturnDocument
+import com.mongodb.client.model.Sorts
 import com.mongodb.client.model.Updates.set
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import dev.usbharu.owl.broker.domain.model.queuedtask.QueuedTask
@@ -88,7 +89,7 @@ class MongodbQueuedTaskRepository(
                 `in`("task.name", tasks),
                 eq(QueuedTaskMongodb::isActive.name, true)
             )
-        ).map { it.toQueuedTask(propertySerializerFactory) }.flowOn(Dispatchers.IO)
+        ).sort(Sorts.descending("priority")).map { it.toQueuedTask(propertySerializerFactory) }.flowOn(Dispatchers.IO)
     }
 
     override fun findByQueuedAtBeforeAndIsActiveIsTrue(instant: Instant): Flow<QueuedTask> {
