@@ -17,15 +17,15 @@
 package dev.usbharu.owl.common.task
 
 import dev.usbharu.owl.common.property.PropertyValue
-import dev.usbharu.owl.common.retry.RetryPolicy
 
 interface TaskDefinition<T : Task> {
     val name: String
     val priority: Int
     val maxRetry: Int
-    val retryPolicy:RetryPolicy
+    val retryPolicy: String
     val timeoutMilli: Long
     val propertyDefinition: PropertyDefinition
+    val type: Class<T>
 
     fun serialize(task: T): Map<String, PropertyValue<*>>
     fun deserialize(value: Map<String, PropertyValue<*>>): T

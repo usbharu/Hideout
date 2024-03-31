@@ -16,7 +16,9 @@
 
 package dev.usbharu.owl.producer.api
 
-interface OwlProducerBuilder<T : OwlProducerConfig> {
+interface OwlProducerBuilder<P : OwlProducer, T : OwlProducerConfig> {
     fun config(): T
     fun apply(owlProducerConfig: T)
+
+    fun build(): P
 }

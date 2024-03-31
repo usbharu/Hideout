@@ -16,6 +16,9 @@
 
 package dev.usbharu.owl.producer.api
 
-fun <T : OwlProducerBuilder<C>, C : OwlProducerConfig> OWL(owlProducerBuilder: T, config: C.() -> Unit) {
-    owlProducerBuilder.apply(owlProducerBuilder.config().apply { config() })
+fun <P : OwlProducer, T : OwlProducerBuilder<P, C>, C : OwlProducerConfig> OWL(
+    owlProducerBuilder: T,
+    configBlock: C.() -> Unit
+) {
+    owlProducerBuilder.apply(owlProducerBuilder.config().apply { configBlock() })
 }

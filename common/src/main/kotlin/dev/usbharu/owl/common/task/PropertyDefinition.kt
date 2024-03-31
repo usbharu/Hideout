@@ -18,6 +18,12 @@ package dev.usbharu.owl.common.task
 
 import dev.usbharu.owl.common.property.PropertyType
 
-class PropertyDefinition(val map: Map<String, PropertyType>) : Map<String, PropertyType> by map{
+class PropertyDefinition(val map: Map<String, PropertyType>) : Map<String, PropertyType> by map {
+    fun hash(): Long {
+        var hash = 1L
+        map.map { it.key + it.value.name }.joinToString("").map { hash *= it.code * 31 }
+        return hash
+    }
+
 
 }

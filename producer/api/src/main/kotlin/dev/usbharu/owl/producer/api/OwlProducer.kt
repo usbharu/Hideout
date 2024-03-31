@@ -22,6 +22,8 @@ import dev.usbharu.owl.common.task.TaskDefinition
 
 interface OwlProducer {
 
+    suspend fun start()
+
     suspend fun <T : Task> registerTask(taskDefinition: TaskDefinition<T>)
     suspend fun <T : Task> publishTask(task: T): PublishedTask<T>
 }

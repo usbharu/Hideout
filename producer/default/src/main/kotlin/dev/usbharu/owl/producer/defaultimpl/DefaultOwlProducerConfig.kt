@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-package dev.usbharu.producer.impl
+package dev.usbharu.dev.usbharu.owl.producer.defaultimpl
 
-import dev.usbharu.owl.common.task.PublishedTask
-import dev.usbharu.owl.common.task.Task
-import dev.usbharu.owl.common.task.TaskDefinition
-import dev.usbharu.owl.producer.api.OwlProducer
+import dev.usbharu.owl.common.property.PropertySerializerFactory
+import dev.usbharu.owl.producer.api.OwlProducerConfig
+import io.grpc.Channel
 
-class DefaultOwlProducer : OwlProducer {
-    override suspend fun <T : Task> registerTask(taskDefinition: TaskDefinition<T>) {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun <T : Task> publishTask(task: T): PublishedTask<T> {
-        TODO("Not yet implemented")
-    }
+class DefaultOwlProducerConfig : OwlProducerConfig {
+    lateinit var channel: Channel
+    lateinit var name: String
+    lateinit var hostname: String
+    lateinit var propertySerializerFactory: PropertySerializerFactory
 }
