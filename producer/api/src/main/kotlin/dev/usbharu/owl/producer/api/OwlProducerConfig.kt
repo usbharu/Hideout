@@ -16,8 +16,5 @@
 
 package dev.usbharu.owl.producer.api
 
-object OwlProducerFactory {
-    fun createProducer():OwlProducer{
-        TODO()
-    }
+interface OwlProducerConfig {
 }
