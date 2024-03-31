@@ -3,7 +3,6 @@ syntax = "proto3";
 import "google/protobuf/timestamp.proto";
 
 import "uuid.proto";
-import "property.proto";
 
 option java_package = "dev.usbharu.owl";
 
