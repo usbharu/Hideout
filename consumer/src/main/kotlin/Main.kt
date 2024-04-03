@@ -1,6 +1,10 @@
 package dev.usbharu
 
+import dev.usbharu.dev.usbharu.owl.consumer.TaskRequest
+import dev.usbharu.dev.usbharu.owl.consumer.TaskRunner
 import dev.usbharu.owl.*
+import dev.usbharu.owl.common.property.CustomPropertySerializerFactory
+import dev.usbharu.owl.common.property.PropertySerializeUtils
 import io.grpc.ManagedChannelBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
@@ -8,6 +12,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import java.time.Instant
+import java.util.*
 import kotlin.math.max
 
 suspend fun main() {
@@ -28,6 +34,11 @@ suspend fun main() {
         this.hostname = ""
         this.tasks.addAll(listOf())
     })
+
+
+    val map = mapOf<String, TaskRunner>()
+
+    val propertySerializerFactory = CustomPropertySerializerFactory(setOf())
 
     val concurrent = MutableStateFlow(64)
     val processing = MutableStateFlow(0)
@@ -66,13 +77,40 @@ suspend fun main() {
                         processing.update { it + 1 }
 
                         try {
-                            emit(taskResult {
 
+                            val taskResult = map[it.name]?.run(
+                                TaskRequest(
+                                    it.name,
+                                    UUID(it.id.mostSignificantUuidBits, it.id.leastSignificantUuidBits),
+                                    it.attempt,
+                                    Instant.ofEpochSecond(it.queuedAt.seconds, it.queuedAt.nanos.toLong()),
+                                    PropertySerializeUtils.deserialize(propertySerializerFactory, it.propertiesMap)
+                                )
+                            )
+
+                            if (taskResult == null) {
+                                throw Exception()
+                            }
+
+                            emit(taskResult {
+                                this.success = taskResult.success
+                                this.attempt = it.attempt
+                                this.id = it.id
+                                this.result.putAll(
+                                    PropertySerializeUtils.serialize(
+                                        propertySerializerFactory,
+                                        taskResult.result
+                                    )
+                                )
+                                this.message = taskResult.message
                             })
 
                         } catch (e: Exception) {
                             emit(taskResult {
                                 this.success = false
+                                this.attempt = it.attempt
+                                this.id = it.id
+                                this.message = e.localizedMessage
                             })
                         } finally {
                             processing.update { it - 1 }
