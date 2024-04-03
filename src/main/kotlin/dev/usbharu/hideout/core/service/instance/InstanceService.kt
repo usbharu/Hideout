@@ -37,7 +37,7 @@ interface InstanceService {
 class InstanceServiceImpl(
     private val instanceRepository: InstanceRepository,
     private val resourceResolveService: ResourceResolveService,
-    @Qualifier("activitypub") private val objectMapper: ObjectMapper
+    @Qualifier("activitypub") private val objectMapper: ObjectMapper,
 ) : InstanceService {
     override suspend fun fetchInstance(url: String, sharedInbox: String?): Instance {
         val u = URL(url)
@@ -50,57 +50,53 @@ class InstanceServiceImpl(
         }
 
         logger.info("Instance not found. try fetch instance info. url: {}", resolveInstanceUrl)
+        @Suppress("TooGenericExceptionCaught")
+        try {
+            val nodeinfoJson = resourceResolveService.resolve("$resolveInstanceUrl/.well-known/nodeinfo").bodyAsText()
+            val nodeinfo = objectMapper.readValue(nodeinfoJson, Nodeinfo::class.java)
+            val nodeinfoPathMap = nodeinfo.links.associate { it.rel to it.href }
 
-        val nodeinfoJson = resourceResolveService.resolve("$resolveInstanceUrl/.well-known/nodeinfo").bodyAsText()
-        val nodeinfo = objectMapper.readValue(nodeinfoJson, Nodeinfo::class.java)
-        val nodeinfoPathMap = nodeinfo.links.associate { it.rel to it.href }
+            for ((key, value) in nodeinfoPathMap) {
+                when (key) {
+                    "http://nodeinfo.diaspora.software/ns/schema/2.0",
+                    "http://nodeinfo.diaspora.software/ns/schema/2.1",
+                    -> {
+                        val nodeinfo20 = objectMapper.readValue(
+                            resourceResolveService.resolve(value!!).bodyAsText(),
+                            Nodeinfo2_0::class.java
+                        )
 
-        for ((key, value) in nodeinfoPathMap) {
-            when (key) {
-                "http://nodeinfo.diaspora.software/ns/schema/2.0" -> {
-                    val nodeinfo20 = objectMapper.readValue(
-                        resourceResolveService.resolve(value!!).bodyAsText(),
-                        Nodeinfo2_0::class.java
-                    )
+                        val instanceCreateDto = InstanceCreateDto(
+                            name = nodeinfo20.metadata?.nodeName,
+                            description = nodeinfo20.metadata?.nodeDescription,
+                            url = resolveInstanceUrl,
+                            iconUrl = "$resolveInstanceUrl/favicon.ico",
+                            sharedInbox = sharedInbox,
+                            software = nodeinfo20.software?.name,
+                            version = nodeinfo20.software?.version
+                        )
+                        return createNewInstance(instanceCreateDto)
+                    }
 
-                    val instanceCreateDto = InstanceCreateDto(
-                        name = nodeinfo20.metadata?.nodeName,
-                        description = nodeinfo20.metadata?.nodeDescription,
-                        url = resolveInstanceUrl,
-                        iconUrl = "$resolveInstanceUrl/favicon.ico",
-                        sharedInbox = sharedInbox,
-                        software = nodeinfo20.software?.name,
-                        version = nodeinfo20.software?.version
-                    )
-                    return createNewInstance(instanceCreateDto)
-                }
-
-                // TODO: 多分2.0と2.1で互換性有るのでそのまま使うけどなおす
-                "http://nodeinfo.diaspora.software/ns/schema/2.1" -> {
-                    val nodeinfo20 = objectMapper.readValue(
-                        resourceResolveService.resolve(value!!).bodyAsText(),
-                        Nodeinfo2_0::class.java
-                    )
-
-                    val instanceCreateDto = InstanceCreateDto(
-                        name = nodeinfo20.metadata?.nodeName,
-                        description = nodeinfo20.metadata?.nodeDescription,
-                        url = resolveInstanceUrl,
-                        iconUrl = "$resolveInstanceUrl/favicon.ico",
-                        sharedInbox = sharedInbox,
-                        software = nodeinfo20.software?.name,
-                        version = nodeinfo20.software?.version
-                    )
-                    return createNewInstance(instanceCreateDto)
-                }
-
-                else -> {
-                    throw IllegalStateException("Unknown nodeinfo versions: $key url: $value")
+                    else -> {
+                        throw IllegalStateException("Unknown nodeinfo versions: $key url: $value")
+                    }
                 }
             }
+        } catch (e: Exception) {
+            logger.warn("FAILED Fetch Instance", e)
         }
-
-        throw IllegalStateException("Nodeinfo aren't found.")
+        return createNewInstance(
+            InstanceCreateDto(
+                name = null,
+                description = null,
+                url = resolveInstanceUrl,
+                iconUrl = "$resolveInstanceUrl/favicon.ico",
+                sharedInbox = null,
+                software = null,
+                version = null
+            )
+        )
     }
 
     override suspend fun createNewInstance(instanceCreateDto: InstanceCreateDto): Instance {

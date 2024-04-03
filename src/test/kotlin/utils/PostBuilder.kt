@@ -22,13 +22,18 @@ import dev.usbharu.hideout.application.service.id.TwitterSnowflakeIdGenerateServ
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.Visibility
 import dev.usbharu.hideout.core.service.post.DefaultPostContentFormatter
+import jakarta.validation.Validation
 import kotlinx.coroutines.runBlocking
 import java.time.Instant
 
 object PostBuilder {
 
     private val postBuilder =
-        Post.PostBuilder(CharacterLimit(), DefaultPostContentFormatter(HtmlSanitizeConfig().policy()))
+        Post.PostBuilder(
+            CharacterLimit(),
+            DefaultPostContentFormatter(HtmlSanitizeConfig().policy()),
+            Validation.buildDefaultValidatorFactory().validator
+        )
 
     private val idGenerator = TwitterSnowflakeIdGenerateService
 
@@ -39,7 +44,7 @@ object PostBuilder {
         text: String = "Hello World",
         createdAt: Long = Instant.now().toEpochMilli(),
         visibility: Visibility = Visibility.PUBLIC,
-        url: String = "https://example.com/users/$userId/posts/$id"
+        url: String = "https://example.com/users/$userId/posts/$id",
     ): Post {
         return postBuilder.of(
             id = id,

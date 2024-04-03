@@ -78,7 +78,8 @@ class UserServiceImpl(
             following = "$userUrl/following",
             followers = "$userUrl/followers",
             keyId = "$userUrl#pubkey",
-            locked = false
+            locked = false,
+            instance = 0
         )
         val save = actorRepository.save(userEntity)
         userDetailRepository.save(UserDetail(nextId, hashedPassword, true))
@@ -95,13 +96,7 @@ class UserServiceImpl(
             throw IllegalStateException("Cannot create Deleted actor.")
         }
 
-        @Suppress("TooGenericExceptionCaught")
-        val instance = try {
-            instanceService.fetchInstance(user.url, user.sharedInbox)
-        } catch (e: Exception) {
-            logger.warn("FAILED to fetch instance. url: {}", user.url, e)
-            null
-        }
+        val instance = instanceService.fetchInstance(user.url, user.sharedInbox)
 
         val nextId = actorRepository.nextId()
         val userEntity = actorBuilder.of(
@@ -118,7 +113,7 @@ class UserServiceImpl(
             followers = user.followers,
             following = user.following,
             keyId = user.keyId,
-            instance = instance?.id,
+            instance = instance.id,
             locked = user.locked ?: false
         )
         return try {

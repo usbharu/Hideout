@@ -31,6 +31,7 @@ import org.springframework.security.web.SecurityFilterChain
 class MastodonApiSecurityConfig {
     @Bean
     @Order(4)
+    @Suppress("LongMethod")
     fun mastodonApiSecurityFilterChain(
         http: HttpSecurity,
         rf: RoleHierarchyAuthorizationManagerFactory,
