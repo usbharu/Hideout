@@ -8,7 +8,6 @@ import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 val ktor_version: String by project
 val kotlin_version: String by project
-val logback_version: String by project
 val exposed_version: String by project
 val h2_version: String by project
 val koin_version: String by project
@@ -16,13 +15,12 @@ val coroutines_version: String by project
 val serialization_version: String by project
 
 plugins {
-    kotlin("jvm") version "1.9.22"
-    id("org.graalvm.buildtools.native") version "0.10.0"
-    id("io.gitlab.arturbosch.detekt") version "1.23.5"
-    id("org.springframework.boot") version "3.2.2"
-    kotlin("plugin.spring") version "1.9.22"
-    id("org.openapi.generator") version "7.2.0"
-    id("org.jetbrains.kotlinx.kover") version "0.7.4"
+    kotlin("jvm") version "1.9.23"
+    id("io.gitlab.arturbosch.detekt") version "1.23.6"
+    id("org.springframework.boot") version "3.2.3"
+    kotlin("plugin.spring") version "1.9.23"
+    id("org.openapi.generator") version "7.4.0"
+    id("org.jetbrains.kotlinx.kover") version "0.7.6"
     id("com.github.jk1.dependency-license-report") version "2.5"
 
 }
@@ -185,7 +183,6 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
     developmentOnly("com.h2database:h2:$h2_version")
-    implementation("org.xerial:sqlite-jdbc:3.45.1.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$serialization_version")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version")
 
@@ -211,13 +208,13 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
     implementation("org.jetbrains.exposed:exposed-spring-boot-starter:$exposed_version")
     implementation("io.trbl:blurhash:1.0.0")
-    implementation("software.amazon.awssdk:s3:2.23.17")
+    implementation("software.amazon.awssdk:s3:2.25.23")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:$coroutines_version")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:$coroutines_version")
     implementation("dev.usbharu:http-signature:1.0.0")
 
-    implementation("org.postgresql:postgresql:42.7.1")
+    implementation("org.postgresql:postgresql:42.7.3")
     implementation("com.twelvemonkeys.imageio:imageio-webp:3.10.1")
     implementation("org.apache.tika:tika-core:2.9.1")
     implementation("org.apache.tika:tika-parsers:2.9.1")
@@ -242,7 +239,7 @@ dependencies {
 
     implementation("dev.usbharu:emoji-kt:2.0.0")
     implementation("org.jsoup:jsoup:1.17.2")
-    implementation("com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20220608.1")
+    implementation("com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20240325.1")
 
     implementation("io.ktor:ktor-client-logging-jvm:$ktor_version")
 
@@ -263,7 +260,7 @@ dependencies {
     implementation("org.drewcarlson:kjob-core:0.6.0")
     implementation("org.drewcarlson:kjob-mongo:0.6.0")
 
-    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.5")
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.6")
 
     intTestImplementation("org.springframework.boot:spring-boot-starter-test")
     intTestImplementation("org.springframework.security:spring-security-test")
@@ -275,7 +272,7 @@ dependencies {
     e2eTestImplementation("org.springframework.boot:spring-boot-starter-test")
     e2eTestImplementation("org.springframework.security:spring-security-test")
     e2eTestImplementation("org.springframework.boot:spring-boot-starter-webflux")
-    e2eTestImplementation("org.jsoup:jsoup:1.17.1")
+    e2eTestImplementation("org.jsoup:jsoup:1.17.2")
     e2eTestImplementation("com.intuit.karate:karate-junit5:1.4.1")
     e2eTestImplementation("com.h2database:h2:$h2_version")
 
