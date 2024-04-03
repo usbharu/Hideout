@@ -18,31 +18,40 @@ package dev.usbharu.hideout.core.domain.model.post
 
 import dev.usbharu.hideout.application.config.CharacterLimit
 import dev.usbharu.hideout.core.service.post.PostContentFormatter
+import jakarta.validation.Validator
+import jakarta.validation.constraints.Positive
+import org.hibernate.validator.constraints.URL
 import org.springframework.stereotype.Component
 import java.time.Instant
 
 data class Post private constructor(
+    @get:Positive
     val id: Long,
+    @get:Positive
     val actorId: Long,
     val overview: String? = null,
     val content: String,
     val text: String,
+    @get:Positive
     val createdAt: Long,
     val visibility: Visibility,
+    @get:URL
     val url: String,
     val repostId: Long? = null,
     val replyId: Long? = null,
     val sensitive: Boolean = false,
+    @get:URL
     val apId: String = url,
     val mediaIds: List<Long> = emptyList(),
     val delted: Boolean = false,
-    val emojiIds: List<Long> = emptyList()
+    val emojiIds: List<Long> = emptyList(),
 ) {
 
     @Component
     class PostBuilder(
         private val characterLimit: CharacterLimit,
-        private val postContentFormatter: PostContentFormatter
+        private val postContentFormatter: PostContentFormatter,
+        private val validator: Validator,
     ) {
         @Suppress("FunctionMinLength", "LongParameterList")
         fun of(
@@ -86,7 +95,7 @@ data class Post private constructor(
             require((repostId ?: 0) >= 0) { "repostId must be greater then or equal to 0." }
             require((replyId ?: 0) >= 0) { "replyId must be greater then or equal to 0." }
 
-            return Post(
+            val post = Post(
                 id = id,
                 actorId = actorId,
                 overview = limitedOverview,
@@ -103,6 +112,14 @@ data class Post private constructor(
                 delted = false,
                 emojiIds = emojiIds
             )
+
+            val validate = validator.validate(post)
+
+            for (constraintViolation in validate) {
+                throw IllegalArgumentException("${constraintViolation.propertyPath} : ${constraintViolation.message}")
+            }
+
+            return post
         }
 
         @Suppress("LongParameterList")
@@ -126,7 +143,7 @@ data class Post private constructor(
 
             require(actorId >= 0) { "actorId must be greater than or equal to 0." }
 
-            return Post(
+            val post = Post(
                 id = id,
                 actorId = actorId,
                 overview = null,
@@ -143,6 +160,14 @@ data class Post private constructor(
                 delted = false,
                 emojiIds = emptyList()
             )
+
+            val validate = validator.validate(post)
+
+            for (constraintViolation in validate) {
+                throw IllegalArgumentException("${constraintViolation.propertyPath} : ${constraintViolation.message}")
+            }
+
+            return post
         }
 
         @Suppress("LongParameterList")
@@ -193,7 +218,7 @@ data class Post private constructor(
 
             require((replyId ?: 0) >= 0) { "replyId must be greater then or equal to 0." }
 
-            return Post(
+            val post = Post(
                 id = id,
                 actorId = actorId,
                 overview = limitedOverview,
@@ -210,6 +235,14 @@ data class Post private constructor(
                 delted = false,
                 emojiIds = emojiIds
             )
+
+            val validate = validator.validate(post)
+
+            for (constraintViolation in validate) {
+                throw IllegalArgumentException("${constraintViolation.propertyPath} : ${constraintViolation.message}")
+            }
+
+            return post
         }
 
         @Suppress("LongParameterList")

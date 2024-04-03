@@ -7,11 +7,11 @@ VALUES (3733363, 'follow-test-user-1', 'example.com', 'follow-test-user-1-name',
         '-----BEGIN PUBLIC KEY-----...-----END PUBLIC KEY-----',
         '-----BEGIN PRIVATE KEY-----...-----END PRIVATE KEY-----', 12345678,
         'https://example.com/users/follow-test-user-1#pubkey', 'https://example.com/users/follow-test-user-1/following',
-        'https://example.com/users/follow-test-user-1/followers', null, false, 0, 0, 0, null),
+        'https://example.com/users/follow-test-user-1/followers', 0, false, 0, 0, 0, null),
        (37335363, 'follow-test-user-2', 'example.com', 'follow-test-user-2-name', '',
         'https://example.com/users/follow-test-user-2/inbox',
         'https://example.com/users/follow-test-user-2/outbox', 'https://example.com/users/follow-test-user-2',
         '-----BEGIN PUBLIC KEY-----...-----END PUBLIC KEY-----',
         '-----BEGIN PRIVATE KEY-----...-----END PRIVATE KEY-----', 12345678,
         'https://example.com/users/follow-test-user-2#pubkey', 'https://example.com/users/follow-test-user-2/following',
-        'https://example.com/users/follow-test-user-2/followers', null, false, 0, 0, 0, null);
+        'https://example.com/users/follow-test-user-2/followers', 0, false, 0, 0, 0, null);
