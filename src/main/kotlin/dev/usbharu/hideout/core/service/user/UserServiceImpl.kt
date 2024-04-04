@@ -59,6 +59,10 @@ class UserServiceImpl(
     }
 
     override suspend fun createLocalUser(user: UserCreateDto): Actor {
+        if (applicationConfig.private) {
+            throw IllegalStateException("Instance is a private mode.")
+        }
+
         val nextId = actorRepository.nextId()
         val hashedPassword = userAuthService.hash(user.password)
         val keyPair = userAuthService.generateKeyPair()
