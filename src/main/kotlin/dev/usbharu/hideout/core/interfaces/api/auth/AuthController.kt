@@ -16,6 +16,8 @@
 
 package dev.usbharu.hideout.core.interfaces.api.auth
 
+import dev.usbharu.hideout.application.config.ApplicationConfig
+import dev.usbharu.hideout.application.config.CaptchaConfig
 import dev.usbharu.hideout.core.service.auth.AuthApiService
 import dev.usbharu.hideout.core.service.auth.RegisterAccountDto
 import org.springframework.stereotype.Controller
@@ -26,10 +28,17 @@ import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.PostMapping
 
 @Controller
-class AuthController(private val authApiService: AuthApiService) {
+class AuthController(
+    private val authApiService: AuthApiService,
+    private val captchaConfig: CaptchaConfig,
+    private val applicationConfig: ApplicationConfig
+) {
     @GetMapping("/auth/sign_up")
-    @Suppress("FunctionOnlyReturningConstant")
-    fun signUp(): String = "sign_up"
+    fun signUp(model: Model): String {
+        model.addAttribute("siteKey", captchaConfig.reCaptchaSiteKey)
+        model.addAttribute("applicationConfig", applicationConfig)
+        return "sign_up"
+    }
 
     @PostMapping("/auth/sign_up")
     suspend fun signUp(@Validated @ModelAttribute signUpForm: SignUpForm, model: Model): String {
@@ -41,6 +50,6 @@ class AuthController(private val authApiService: AuthApiService) {
             )
         )
 
-        return "redirect:"+registerAccount.first.url
+        return "redirect:" + registerAccount.url
     }
 }
