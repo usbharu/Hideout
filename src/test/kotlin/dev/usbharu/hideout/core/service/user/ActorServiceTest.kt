@@ -28,6 +28,7 @@ import jakarta.validation.Validation
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.*
 import utils.TestApplicationConfig.testApplicationConfig
@@ -60,7 +61,7 @@ class ActorServiceTest {
                 actorRepository = actorRepository,
                 userAuthService = userAuthService,
                 actorBuilder = actorBuilder,
-                applicationConfig = testApplicationConfig,
+                applicationConfig = testApplicationConfig.copy(private = false),
                 instanceService = mock(),
                 userDetailRepository = mock(),
                 deletedActorRepository = mock(),
@@ -85,6 +86,39 @@ class ActorServiceTest {
             assertEquals(generateKeyPair.public.toPem(), firstValue.publicKey)
             assertEquals(generateKeyPair.private.toPem(), firstValue.privateKey)
         }
+    }
+
+    @Test
+    fun `createLocalUser applicationconfig privateがtrueのときアカウントを作成できない`() = runTest {
+
+        val actorRepository = mock<ActorRepository> {
+            onBlocking { nextId() } doReturn 110001L
+        }
+        val generateKeyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair()
+        val userAuthService = mock<UserAuthService> {
+            onBlocking { hash(anyString()) } doReturn "hashedPassword"
+            onBlocking { generateKeyPair() } doReturn generateKeyPair
+        }
+        val userService =
+            UserServiceImpl(
+                actorRepository = actorRepository,
+                userAuthService = userAuthService,
+                actorBuilder = actorBuilder,
+                applicationConfig = testApplicationConfig.copy(private = true),
+                instanceService = mock(),
+                userDetailRepository = mock(),
+                deletedActorRepository = mock(),
+                reactionRepository = mock(),
+                relationshipRepository = mock(),
+                postService = mock(),
+                apSendDeleteService = mock(),
+                postRepository = mock()
+            )
+
+        assertThrows<IllegalStateException> {
+            userService.createLocalUser(UserCreateDto("test", "testUser", "XXXXXXXXXXXXX", "test"))
+        }
+
     }
 
     @Test

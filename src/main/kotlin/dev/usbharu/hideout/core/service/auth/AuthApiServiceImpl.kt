@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.application.config.CaptchaConfig
 import dev.usbharu.hideout.core.domain.model.actor.Actor
-import dev.usbharu.hideout.core.domain.model.userdetails.UserDetail
 import dev.usbharu.hideout.core.service.user.UserCreateDto
 import dev.usbharu.hideout.core.service.user.UserService
 import io.ktor.client.*
@@ -22,15 +21,15 @@ class AuthApiServiceImpl(
 ) :
     AuthApiService {
     override suspend fun registerAccount(registerAccountDto: RegisterAccountDto): Actor {
-        val get =
-            httpClient.get("https://www.google.com/recaptcha/api/siteverify?secret=" + captchaConfig.reCaptchaSiteKey + "&response=" + registerAccountDto.recaptchaResponse)
+        if (captchaConfig.reCaptchaSecretKey != null && captchaConfig.reCaptchaSiteKey != null) {
+            val get =
+                httpClient.get("https://www.google.com/recaptcha/api/siteverify?secret=" + captchaConfig.reCaptchaSecretKey + "&response=" + registerAccountDto.recaptchaResponse)
+            val recaptchaResult = objectMapper.readValue<RecaptchaResult>(get.bodyAsText())
+            logger.debug("reCAPTCHA: {}", recaptchaResult)
+            require(recaptchaResult.success)
+            require(!(recaptchaResult.score < 0.5))
+        }
 
-        val recaptchaResult = objectMapper.readValue<RecaptchaResult>(get.bodyAsText())
-
-        logger.debug("reCAPTCHA: {}",recaptchaResult)
-
-        require(recaptchaResult.success)
-        require(!(recaptchaResult.score < 0.5))
 
         val createLocalUser = userService.createLocalUser(
             UserCreateDto(
