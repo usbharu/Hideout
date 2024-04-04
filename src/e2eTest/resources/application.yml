@@ -12,6 +12,7 @@ hideout:
   debug:
     trace-query-exception: true
     trace-query-call: true
+  private: false
 
 spring:
   flyway:
