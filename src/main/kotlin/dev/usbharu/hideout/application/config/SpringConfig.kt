@@ -44,7 +44,8 @@ class SpringConfig {
 
 @ConfigurationProperties("hideout")
 data class ApplicationConfig(
-    val url: URL
+    val url: URL,
+    val private:Boolean = true
 )
 
 @ConfigurationProperties("hideout.storage.s3")
