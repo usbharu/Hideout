@@ -16,7 +16,6 @@
 
 package dev.usbharu.owl.consumer
 
-import dev.usbharu.dev.usbharu.owl.consumer.ConsumerConfig
 import dev.usbharu.dev.usbharu.owl.consumer.TaskRequest
 import dev.usbharu.dev.usbharu.owl.consumer.TaskRunner
 import dev.usbharu.owl.*
@@ -30,9 +29,9 @@ import java.time.Instant
 import kotlin.math.max
 
 class Consumer(
-    private val subscribeTaskServiceCoroutineStub: SubscribeTaskServiceGrpcKt.SubscribeTaskServiceCoroutineStub,
-    private val assignmentTaskServiceCoroutineStub: AssignmentTaskServiceGrpcKt.AssignmentTaskServiceCoroutineStub,
-    private val taskResultServiceCoroutineStub: TaskResultServiceGrpcKt.TaskResultServiceCoroutineStub,
+    private val subscribeTaskStub: SubscribeTaskServiceGrpcKt.SubscribeTaskServiceCoroutineStub,
+    private val assignmentTaskStub: AssignmentTaskServiceGrpcKt.AssignmentTaskServiceCoroutineStub,
+    private val taskResultStub: TaskResultServiceGrpcKt.TaskResultServiceCoroutineStub,
     private val runnerMap: Map<String, TaskRunner>,
     private val propertySerializerFactory: PropertySerializerFactory,
     consumerConfig: ConsumerConfig
@@ -47,7 +46,7 @@ class Consumer(
     suspend fun init(name: String, hostname: String) {
         logger.info("Initialize Consumer name: {} hostname: {}", name, hostname)
         logger.debug("Registered Tasks: {}", runnerMap.keys)
-        consumerId = subscribeTaskServiceCoroutineStub.subscribeTask(subscribeTaskRequest {
+        consumerId = subscribeTaskStub.subscribeTask(subscribeTaskRequest {
             this.name = name
             this.hostname = hostname
             this.tasks.addAll(runnerMap.keys)
@@ -58,9 +57,9 @@ class Consumer(
     suspend fun start() {
         coroutineScope = CoroutineScope(Dispatchers.Default)
         coroutineScope {
-            taskResultServiceCoroutineStub
+            taskResultStub
                 .tasKResult(flow {
-                    assignmentTaskServiceCoroutineStub
+                    assignmentTaskStub
                         .ready(flow {
                             while (coroutineScope.isActive) {
                                 val andSet = concurrent.getAndUpdate { 0 }

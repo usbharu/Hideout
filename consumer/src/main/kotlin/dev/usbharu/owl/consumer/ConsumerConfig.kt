@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-package dev.usbharu.dev.usbharu.owl.consumer
+package dev.usbharu.owl.consumer
 
 data class ConsumerConfig(
-    val concurrent:Int,
-    val address: String,
-    val port: Int
+    val concurrent: Int
 )
