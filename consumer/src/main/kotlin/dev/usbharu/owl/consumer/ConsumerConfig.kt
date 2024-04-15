@@ -18,4 +18,6 @@ package dev.usbharu.dev.usbharu.owl.consumer
 
 data class ConsumerConfig(
     val concurrent:Int,
+    val address: String,
+    val port: Int
 )
