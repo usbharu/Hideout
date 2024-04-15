@@ -30,7 +30,8 @@ object StandaloneConsumerConfigLoader {
         val port = properties.getProperty("port").toInt()
         val name = properties.getProperty("name")
         val hostname = properties.getProperty("hostname")
+        val concurrency = properties.getProperty("concurrency").toInt()
 
-        return StandaloneConsumerConfig(address, port, name, hostname)
+        return StandaloneConsumerConfig(address, port, name, hostname, concurrency)
     }
 }
