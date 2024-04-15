@@ -17,29 +17,46 @@
 package dev.usbharu.owl.consumer
 
 import dev.usbharu.dev.usbharu.owl.consumer.ConsumerConfig
+import dev.usbharu.dev.usbharu.owl.consumer.TaskRunner
 import dev.usbharu.owl.AssignmentTaskServiceGrpcKt
 import dev.usbharu.owl.SubscribeTaskServiceGrpcKt
 import dev.usbharu.owl.TaskResultServiceGrpcKt
 import dev.usbharu.owl.common.property.CustomPropertySerializerFactory
 import io.grpc.ManagedChannelBuilder
 import kotlinx.coroutines.runBlocking
+import java.util.*
 
 fun main() {
 
     val consumerConfig = ConsumerConfig(20, "localhost", 50051)
 
     val channel = ManagedChannelBuilder.forAddress(consumerConfig.address, consumerConfig.port).usePlaintext().build()
-    val subscribeTaskServiceCoroutineStub = SubscribeTaskServiceGrpcKt.SubscribeTaskServiceCoroutineStub(channel)
-    val assignmentTaskServiceCoroutineStub = AssignmentTaskServiceGrpcKt.AssignmentTaskServiceCoroutineStub(channel)
-    val taskResultServiceCoroutineStub = TaskResultServiceGrpcKt.TaskResultServiceCoroutineStub(channel)
+    val subscribeStub = SubscribeTaskServiceGrpcKt.SubscribeTaskServiceCoroutineStub(channel)
+    val assignmentTaskStub = AssignmentTaskServiceGrpcKt.AssignmentTaskServiceCoroutineStub(channel)
+    val taskResultStub = TaskResultServiceGrpcKt.TaskResultServiceCoroutineStub(channel)
     val customPropertySerializerFactory = CustomPropertySerializerFactory(emptySet())
+
+    val taskRunnerMap = ServiceLoader
+        .load(TaskRunner::class.java)
+        .associateBy { it::class.qualifiedName!! }
+        .filterNot { it.key.isBlank() }
+
     val consumer = Consumer(
-        subscribeTaskServiceCoroutineStub, assignmentTaskServiceCoroutineStub, taskResultServiceCoroutineStub,
-        emptyMap(), customPropertySerializerFactory, consumerConfig
+        subscribeStub,
+        assignmentTaskStub,
+        taskResultStub,
+        taskRunnerMap,
+        customPropertySerializerFactory,
+        consumerConfig
     )
 
     runBlocking {
+        consumer.init("consumer", "consumer-1")
         consumer.start()
+
+        Runtime.getRuntime().addShutdownHook(Thread {
+            consumer.stop()
+        })
     }
 
 }
