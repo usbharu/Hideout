@@ -16,14 +16,10 @@
 
 package dev.usbharu.owl.consumer
 
-import kotlinx.coroutines.runBlocking
-
-fun main() {
-    val standaloneConsumer = StandaloneConsumer()
-
-    runBlocking {
-        standaloneConsumer.init()
-        standaloneConsumer.start()
-    }
-
-}
+data class StandaloneConsumerConfig(
+    val address: String,
+    val port: Int,
+    val name: String,
+    val hostname: String,
+    val concurrency: Int,
+)

@@ -16,14 +16,21 @@
 
 package dev.usbharu.owl.consumer
 
-import kotlinx.coroutines.runBlocking
+import java.nio.file.Files
+import java.nio.file.Path
+import java.util.*
 
-fun main() {
-    val standaloneConsumer = StandaloneConsumer()
+object StandaloneConsumerConfigLoader {
+    fun load(path: Path): StandaloneConsumerConfig {
+        val properties = Properties()
 
-    runBlocking {
-        standaloneConsumer.init()
-        standaloneConsumer.start()
+        properties.load(Files.newInputStream(path))
+
+        val address = properties.getProperty("address")
+        val port = properties.getProperty("port").toInt()
+        val name = properties.getProperty("name")
+        val hostname = properties.getProperty("hostname")
+
+        return StandaloneConsumerConfig(address, port, name, hostname)
     }
-
 }
