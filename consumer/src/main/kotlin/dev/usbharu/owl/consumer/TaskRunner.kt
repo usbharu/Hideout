@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package dev.usbharu.dev.usbharu.owl.consumer
+package dev.usbharu.owl.consumer
 
-fun interface TaskRunner {
-    suspend fun run(taskRequest: TaskRequest):TaskResult
+interface TaskRunner {
+    val name: String
+    suspend fun run(taskRequest: TaskRequest): TaskResult
 }
