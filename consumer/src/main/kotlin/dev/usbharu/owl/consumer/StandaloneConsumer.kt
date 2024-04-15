@@ -16,7 +16,6 @@
 
 package dev.usbharu.owl.consumer
 
-import dev.usbharu.dev.usbharu.owl.consumer.TaskRunner
 import dev.usbharu.owl.AssignmentTaskServiceGrpcKt
 import dev.usbharu.owl.SubscribeTaskServiceGrpcKt
 import dev.usbharu.owl.TaskResultServiceGrpcKt
@@ -50,8 +49,7 @@ class StandaloneConsumer(
 
     private val taskRunnerMap = ServiceLoader
         .load(TaskRunner::class.java)
-        .associateBy { it::class.qualifiedName!! }
-        .filterNot { it.key.isBlank() }
+        .associateBy { it.name }
 
     private val consumer = Consumer(
         subscribeStub,

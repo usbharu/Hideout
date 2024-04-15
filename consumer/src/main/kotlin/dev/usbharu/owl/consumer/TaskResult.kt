@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package dev.usbharu.dev.usbharu.owl.consumer
+package dev.usbharu.owl.consumer
 
 import dev.usbharu.owl.common.property.PropertyValue
 
