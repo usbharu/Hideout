@@ -16,6 +16,11 @@
 
 package dev.usbharu.owl.common.property
 
+/**
+ * プロパティで使用される値
+ *
+ * @param T プロパティの型
+ */
 sealed class PropertyValue<T> {
     abstract val value: T
     abstract val type: PropertyType

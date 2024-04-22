@@ -25,12 +25,19 @@ import io.grpc.ManagedChannelBuilder
 import java.nio.file.Path
 import java.util.*
 
+/**
+ * 単独で起動できるConsumer
+ *
+ * @property config Consumerの起動構成
+ * @property propertySerializerFactory [dev.usbharu.owl.common.property.PropertyValue]のシリアライザーのファクトリ
+ */
 class StandaloneConsumer(
     private val config: StandaloneConsumerConfig,
     private val propertySerializerFactory: PropertySerializerFactory
 ) {
     constructor(
-        path: Path, propertySerializerFactory: PropertySerializerFactory = CustomPropertySerializerFactory(
+        path: Path,
+        propertySerializerFactory: PropertySerializerFactory = CustomPropertySerializerFactory(
             emptySet()
         )
     ) : this(StandaloneConsumerConfigLoader.load(path), propertySerializerFactory)
@@ -52,18 +59,27 @@ class StandaloneConsumer(
         .associateBy { it.name }
 
     private val consumer = Consumer(
-        subscribeStub,
-        assignmentTaskStub,
-        taskResultStub,
-        taskRunnerMap,
-        propertySerializerFactory,
-        ConsumerConfig(config.concurrency)
+        subscribeTaskStub = subscribeStub,
+        assignmentTaskStub = assignmentTaskStub,
+        taskResultStub = taskResultStub,
+        runnerMap = taskRunnerMap,
+        propertySerializerFactory = propertySerializerFactory,
+        consumerConfig = ConsumerConfig(config.concurrency)
     )
 
+    /**
+     * Consumerを初期化します
+     *
+     */
     suspend fun init() {
         consumer.init(config.name, config.hostname)
     }
 
+    /**
+     * Consumerのワーカーを起動し、タスクの受付を開始します。
+     *
+     * シャットダウンフックに[stop]が登録されます。
+     */
     suspend fun start() {
         consumer.start()
         Runtime.getRuntime().addShutdownHook(Thread {
@@ -71,6 +87,10 @@ class StandaloneConsumer(
         })
     }
 
+    /**
+     * Consumerを停止します
+     *
+     */
     fun stop() {
         consumer.stop()
     }

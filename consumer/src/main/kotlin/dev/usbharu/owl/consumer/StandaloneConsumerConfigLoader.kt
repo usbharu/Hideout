@@ -20,7 +20,16 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.util.*
 
+/**
+ * 単独で起動できるConsumerの構成のローダー
+ */
 object StandaloneConsumerConfigLoader {
+    /**
+     * [Path]から構成を読み込みます
+     *
+     * @param path 読み込むパス
+     * @return 読み込まれた構成
+     */
     fun load(path: Path): StandaloneConsumerConfig {
         val properties = Properties()
 
