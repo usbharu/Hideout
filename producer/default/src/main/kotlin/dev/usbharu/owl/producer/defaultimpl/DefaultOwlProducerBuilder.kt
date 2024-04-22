@@ -17,6 +17,8 @@
 package dev.usbharu.dev.usbharu.owl.producer.defaultimpl
 
 import dev.usbharu.owl.producer.api.OwlProducerBuilder
+import dev.usbharu.owl.producer.defaultimpl.DefaultOwlProducer
+import dev.usbharu.owl.producer.defaultimpl.DefaultOwlProducerConfig
 import io.grpc.ManagedChannelBuilder
 
 class DefaultOwlProducerBuilder : OwlProducerBuilder<DefaultOwlProducer, DefaultOwlProducerConfig> {

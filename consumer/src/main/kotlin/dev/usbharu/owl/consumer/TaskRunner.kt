@@ -16,7 +16,21 @@
 
 package dev.usbharu.owl.consumer
 
+/**
+ * タスクを実行するランナー
+ *
+ */
 interface TaskRunner {
+    /**
+     * 実行するタスク名
+     */
     val name: String
+
+    /**
+     * タスクを実行する
+     *
+     * @param taskRequest 実行するタスク
+     * @return タスク実行結果
+     */
     suspend fun run(taskRequest: TaskRequest): TaskResult
 }

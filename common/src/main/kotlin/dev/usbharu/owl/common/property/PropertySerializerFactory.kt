@@ -16,7 +16,25 @@
 
 package dev.usbharu.owl.common.property
 
+/**
+ * [PropertyValue]のシリアライザーのファクトリ
+ *
+ */
 interface PropertySerializerFactory {
+    /**
+     * [PropertyValue]からシリアライザーを作成します
+     *
+     * @param T [PropertyValue]の型
+     * @param propertyValue シリアライザーを作成する[PropertyValue]
+     * @return 作成されたシリアライザー
+     */
     fun <T> factory(propertyValue: PropertyValue<T>): PropertySerializer<T>
+
+    /**
+     * シリアライズ済みの[PropertyValue]からシリアライザーを作成します
+     *
+     * @param string シリアライズ済みの[PropertyValue]
+     * @return 作成されたシリアライザー
+     */
     fun factory(string: String): PropertySerializer<*>
 }

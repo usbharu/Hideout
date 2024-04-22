@@ -16,6 +16,11 @@
 
 package dev.usbharu.owl.consumer
 
+/**
+ * Consumerの構成
+ *
+ * @property concurrent Consumerのワーカーの同時実行数
+ */
 data class ConsumerConfig(
     val concurrent: Int
 )

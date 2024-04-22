@@ -26,6 +26,19 @@ import org.slf4j.LoggerFactory
 import java.time.Instant
 import kotlin.math.max
 
+/**
+ * Consumer
+ *
+ * @property subscribeTaskStub
+ * @property assignmentTaskStub
+ * @property taskResultStub
+ * @property runnerMap
+ * @property propertySerializerFactory
+ * @constructor
+ * TODO
+ *
+ * @param consumerConfig
+ */
 class Consumer(
     private val subscribeTaskStub: SubscribeTaskServiceGrpcKt.SubscribeTaskServiceCoroutineStub,
     private val assignmentTaskStub: AssignmentTaskServiceGrpcKt.AssignmentTaskServiceCoroutineStub,
@@ -41,6 +54,13 @@ class Consumer(
 
     private val concurrent = MutableStateFlow(consumerConfig.concurrent)
     private val processing = MutableStateFlow(0)
+
+    /**
+     * Consumerを初期化します
+     *
+     * @param name Consumer名
+     * @param hostname Consumerのホスト名
+     */
     suspend fun init(name: String, hostname: String) {
         logger.info("Initialize Consumer name: {} hostname: {}", name, hostname)
         logger.debug("Registered Tasks: {}", runnerMap.keys)
@@ -52,6 +72,10 @@ class Consumer(
         logger.info("Success initialize consumer. ConsumerID: {}", consumerId)
     }
 
+    /**
+     * タスクの受付を開始します
+     *
+     */
     suspend fun start() {
         coroutineScope = CoroutineScope(Dispatchers.Default)
         coroutineScope {
@@ -138,6 +162,10 @@ class Consumer(
         }
     }
 
+    /**
+     * タスクの受付を停止します
+     *
+     */
     fun stop() {
         logger.info("Stop Consumer. consumerID: {}", consumerId)
         coroutineScope.cancel()

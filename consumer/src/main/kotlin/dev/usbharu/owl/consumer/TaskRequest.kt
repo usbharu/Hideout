@@ -20,6 +20,15 @@ import dev.usbharu.owl.common.property.PropertyValue
 import java.time.Instant
 import java.util.*
 
+/**
+ * タスクをConsumerに要求します
+ *
+ * @property name タスク名
+ * @property id タスクID
+ * @property attempt 試行回数
+ * @property queuedAt タスクがキューに入れられた時間
+ * @property properties タスクに渡されたパラメータ
+ */
 data class TaskRequest(
     val name:String,
     val id:UUID,
