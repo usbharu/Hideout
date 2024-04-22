@@ -18,7 +18,19 @@ package dev.usbharu.owl.common.task
 
 import dev.usbharu.owl.common.property.PropertyType
 
+/**
+ * プロパティ定義
+ *
+ * @property map プロパティ名とプロパティタイプの[Map]
+ */
 class PropertyDefinition(val map: Map<String, PropertyType>) : Map<String, PropertyType> by map {
+    /**
+     * プロパティ定義のハッシュを求めます
+     *
+     * ハッシュ値はプロパティ名とプロパティタイプ名を結合したものを結合し、各文字のUTF-16コードと31を掛け続けたものです。
+     *
+     * @return
+     */
     fun hash(): Long {
         var hash = 1L
         map.map { it.key + it.value.name }.joinToString("").map { hash *= it.code * 31 }
