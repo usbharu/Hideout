@@ -16,6 +16,15 @@
 
 package dev.usbharu.owl.consumer
 
+/**
+ * 単独で起動できるConsumerの構成
+ *
+ * @property address brokerのアドレス
+ * @property port brokerのポート
+ * @property name Consumerの名前
+ * @property hostname Consumerのホスト名
+ * @property concurrency ConsumerのWorkerの最大同時実行数
+ */
 data class StandaloneConsumerConfig(
     val address: String,
     val port: Int,
