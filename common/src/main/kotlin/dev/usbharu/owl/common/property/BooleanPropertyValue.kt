@@ -1,10 +1,19 @@
 package dev.usbharu.owl.common.property
 
+/**
+ * Boolean型のプロパティ
+ *
+ * @property value プロパティ
+ */
 class BooleanPropertyValue(override val value: Boolean) : PropertyValue<Boolean>() {
     override val type: PropertyType
         get() = PropertyType.binary
 }
 
+/**
+ * [BooleanPropertyValue]のシリアライザー
+ *
+ */
 class BooleanPropertySerializer : PropertySerializer<Boolean> {
     override fun isSupported(propertyValue: PropertyValue<*>): Boolean {
         return propertyValue.value is Boolean

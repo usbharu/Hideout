@@ -18,6 +18,19 @@ package dev.usbharu.owl.common.retry
 
 import java.time.Instant
 
+/**
+ * リトライポリシー
+ *
+ */
 interface RetryPolicy {
+    /**
+     * 次のリトライ時刻を返します。
+     *
+     * [attempt]を負の値にしてはいけません
+     *
+     * @param now 現在の時刻
+     * @param attempt 試行回数
+     * @return 次のリトライ時刻
+     */
     fun nextRetry(now: Instant, attempt: Int): Instant
 }

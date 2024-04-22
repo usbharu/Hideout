@@ -16,13 +16,30 @@
 
 package dev.usbharu.owl.common.property
 
+/**
+ * [PropertySerializer]のユーティリティークラス
+ */
 object PropertySerializeUtils {
+    /**
+     * Stringと[PropertyValue]の[Map]から[PropertyValue]をシリアライズし、StringとStringの[Map]として返します
+     *
+     * @param serializerFactory シリアライズに使用する[PropertySerializerFactory]
+     * @param properties シリアライズする[Map]
+     * @return Stringとシリアライズ済みの[PropertyValue]の[Map]
+     */
     fun serialize(
         serializerFactory: PropertySerializerFactory,
         properties: Map<String, PropertyValue<*>>
     ): Map<String, String> =
         properties.map { it.key to serializerFactory.factory(it.value).serialize(it.value) }.toMap()
 
+    /**
+     * Stringとシリアライズ済みの[PropertyValue]の[Map]からシリアライズ済みの[PropertyValue]をデシリアライズし、Stringと[PropertyValue]の[Map]として返します
+     *
+     * @param serializerFactory デシリアライズに使用する[PropertySerializerFactory]
+     * @param properties デシリアライズする[Map]
+     * @return Stringと[PropertyValue]の[Map]
+     */
     fun deserialize(
         serializerFactory: PropertySerializerFactory,
         properties: Map<String, String>

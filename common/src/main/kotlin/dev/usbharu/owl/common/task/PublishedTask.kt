@@ -17,8 +17,16 @@
 package dev.usbharu.owl.common.task
 
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
+/**
+ * 公開済みのタスク
+ *
+ * @param T タスク
+ * @property task タスク
+ * @property id タスクのID
+ * @property published 公開された時刻
+ */
 data class PublishedTask<T : Task>(
     val task: T,
     val id: UUID,

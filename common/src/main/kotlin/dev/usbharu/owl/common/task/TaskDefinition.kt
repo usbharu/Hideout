@@ -18,15 +18,62 @@ package dev.usbharu.owl.common.task
 
 import dev.usbharu.owl.common.property.PropertyValue
 
+/**
+ * タスク定義
+ *
+ * @param T タスク
+ */
 interface TaskDefinition<T : Task> {
+    /**
+     * タスク名
+     */
     val name: String
+
+    /**
+     * 優先度
+     */
     val priority: Int
+
+    /**
+     * 最大リトライ数
+     */
     val maxRetry: Int
+
+    /**
+     * リトライポリシー名
+     *
+     * ポリシーの解決は各Brokerに依存しています
+     */
     val retryPolicy: String
+
+    /**
+     * タスク実行時のタイムアウト(ミリ秒)
+     */
     val timeoutMilli: Long
+
+    /**
+     * プロパティ定義
+     */
     val propertyDefinition: PropertyDefinition
+
+    /**
+     * [Task]の[Class]
+     */
     val type: Class<T>
 
+    /**
+     * タスクをシリアライズします.
+     * プロパティのシリアライズと混同しないようにしてください。
+     * @param task シリアライズするタスク
+     * @return シリアライズされたタスク
+     */
     fun serialize(task: T): Map<String, PropertyValue<*>>
+
+    /**
+     * タスクをデシリアライズします。
+     * プロパティのデシリアライズと混同しないようにしてください
+     * @param value デシリアライズするタスク
+     * @return デシリアライズされたタスク
+     */
     fun deserialize(value: Map<String, PropertyValue<*>>): T
 }
