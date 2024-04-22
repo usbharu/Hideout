@@ -20,10 +20,32 @@ import dev.usbharu.owl.common.task.PublishedTask
 import dev.usbharu.owl.common.task.Task
 import dev.usbharu.owl.common.task.TaskDefinition
 
+/**
+ * タスクを発生させるクライアント
+ *
+ */
 interface OwlProducer {
 
+    /**
+     * Producerを開始します
+     *
+     */
     suspend fun start()
 
+    /**
+     * タスク定義を登録します
+     *
+     * @param T 登録するタスク
+     * @param taskDefinition 登録するタスクの定義
+     */
     suspend fun <T : Task> registerTask(taskDefinition: TaskDefinition<T>)
+
+    /**
+     * タスクを公開します。タスクは定義済みである必要があります。
+     *
+     * @param T 公開するタスク
+     * @param task タスクの詳細
+     * @return 公開されたタスク
+     */
     suspend fun <T : Task> publishTask(task: T): PublishedTask<T>
 }
