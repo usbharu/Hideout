@@ -1,0 +1,17 @@
+syntax = "proto3";
+import "uuid.proto";
+import "task_result.proto";
+
+option java_package = "dev.usbharu.owl";
+
+message TaskResults {
+  string name = 1;
+  UUID id = 2;
+  bool success = 3;
+  int32 attempt = 4;
+  repeated TaskResult results = 5;
+}
+
+service TaskResultSubscribeService {
+  rpc subscribe(UUID) returns (stream TaskResults);
+}

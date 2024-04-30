@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+option java_package = "dev.usbharu.owl";
+
+import "google/protobuf/empty.proto";
+import "uuid.proto";
+
+
+message TaskDefinition {
+  string name = 1;
+  int32 priority = 2;
+  int32 max_retry = 3;
+  int64 timeout_milli = 4;
+  int64 property_definition_hash = 5;
+  UUID producer_id = 6;
+  string retryPolicy = 7;
+}
+
+message TaskDefined {
+  string task_id = 1;
+}
+
+message TaskUnregister {
+  string name = 1;
+  UUID producer_id = 2;
+}
+
+service DefinitionTaskService {
+  rpc register(TaskDefinition) returns (TaskDefined);
+  rpc unregister(TaskUnregister) returns (google.protobuf.Empty);
+}
