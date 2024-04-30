@@ -16,7 +16,11 @@
 
 package dev.usbharu.owl.common.property
 
-
+/**
+ * [Set]でカスタマイズできる[PropertySerializerFactory]
+ *
+ * @property propertySerializers [PropertySerializer]の[Set]
+ */
 open class CustomPropertySerializerFactory(private val propertySerializers: Set<PropertySerializer<*>>) :
     PropertySerializerFactory {
     override fun <T> factory(propertyValue: PropertyValue<T>): PropertySerializer<T> {

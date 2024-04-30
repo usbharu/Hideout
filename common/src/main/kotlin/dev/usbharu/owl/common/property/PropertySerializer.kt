@@ -16,10 +16,41 @@
 
 package dev.usbharu.owl.common.property
 
+/**
+ * [PropertyValue]をシリアライズ・デシリアライズします
+ *
+ * @param T [PropertyValue]の型
+ */
 interface PropertySerializer<T> {
+    /**
+     * [PropertyValue]をサポートしているかを確認します
+     *
+     * @param propertyValue 確認する[PropertyValue]
+     * @return サポートしている場合true
+     */
     fun isSupported(propertyValue: PropertyValue<*>): Boolean
+
+    /**
+     * シリアライズ済みの[PropertyValue]から[PropertyValue]をサポートしているかを確認します
+     *
+     * @param string 確認するシリアライズ済みの[PropertyValue]
+     * @return サポートしている場合true
+     */
     fun isSupported(string: String): Boolean
+
+    /**
+     * [PropertyValue]をシリアライズします
+     *
+     * @param propertyValue シリアライズする[PropertyValue]
+     * @return シリアライズ済みの[PropertyValue]
+     */
     fun serialize(propertyValue: PropertyValue<*>): String
 
+    /**
+     * デシリアライズします
+     *
+     * @param string シリアライズ済みの[PropertyValue]
+     * @return デシリアライズされた[PropertyValue]
+     */
     fun deserialize(string: String): PropertyValue<T>
 }

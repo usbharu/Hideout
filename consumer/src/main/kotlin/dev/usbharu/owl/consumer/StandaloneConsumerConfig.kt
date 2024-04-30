@@ -16,23 +16,19 @@
 
 package dev.usbharu.owl.consumer
 
-import dev.usbharu.owl.common.property.PropertyValue
-import java.time.Instant
-import java.util.*
-
 /**
- * タスクをConsumerに要求します
+ * 単独で起動できるConsumerの構成
  *
- * @property name タスク名
- * @property id タスクID
- * @property attempt 試行回数
- * @property queuedAt タスクがキューに入れられた時間
- * @property properties タスクに渡されたパラメータ
+ * @property address brokerのアドレス
+ * @property port brokerのポート
+ * @property name Consumerの名前
+ * @property hostname Consumerのホスト名
+ * @property concurrency ConsumerのWorkerの最大同時実行数
  */
-data class TaskRequest(
-    val name:String,
-    val id:UUID,
-    val attempt:Int,
-    val queuedAt: Instant,
-    val properties:Map<String,PropertyValue<*>>
+data class StandaloneConsumerConfig(
+    val address: String,
+    val port: Int,
+    val name: String,
+    val hostname: String,
+    val concurrency: Int,
 )

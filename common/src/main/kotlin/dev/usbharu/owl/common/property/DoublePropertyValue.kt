@@ -1,10 +1,19 @@
 package dev.usbharu.owl.common.property
 
+/**
+ * Double型のプロパティ
+ *
+ * @property value プロパティ
+ */
 class DoublePropertyValue(override val value: Double) : PropertyValue<Double>() {
     override val type: PropertyType
         get() = PropertyType.number
 }
 
+/**
+ * [DoublePropertyValue]のシリアライザー
+ *
+ */
 class DoublePropertySerializer : PropertySerializer<Double> {
     override fun isSupported(propertyValue: PropertyValue<*>): Boolean {
         return propertyValue.value is Double
