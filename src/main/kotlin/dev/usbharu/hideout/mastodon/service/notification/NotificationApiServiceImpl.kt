@@ -116,11 +116,11 @@ class NotificationApiServiceImpl(
             reblog -> Notification.Type.reblog
             follow -> Notification.Type.follow
             follow_request -> Notification.Type.follow
-            favourite -> Notification.Type.followRequest
+            favourite -> Notification.Type.follow_request
             poll -> Notification.Type.poll
             update -> Notification.Type.update
-            admin_sign_up -> Notification.Type.adminPeriodSignUp
+            admin_sign_up -> Notification.Type.adminPeriodSign_up
             admin_report -> Notification.Type.adminPeriodReport
-            severed_relationships -> Notification.Type.severedRelationships
+            severed_relationships -> Notification.Type.severed_relationships
         }
 }
