@@ -16,9 +16,9 @@
 
 package dev.usbharu.owl.broker.interfaces.grpc
 
-import dev.usbharu.owl.AssignmentTaskServiceGrpcKt.AssignmentTaskServiceCoroutineImplBase
+
+import dev.usbharu.owl.AssignmentTaskServiceGrpcKt
 import dev.usbharu.owl.Task
-import dev.usbharu.owl.Task.TaskRequest
 import dev.usbharu.owl.broker.external.toTimestamp
 import dev.usbharu.owl.broker.external.toUUID
 import dev.usbharu.owl.broker.service.QueuedTaskAssigner
@@ -37,15 +37,15 @@ class AssignmentTaskService(
     private val queuedTaskAssigner: QueuedTaskAssigner,
     private val propertySerializerFactory: PropertySerializerFactory
 ) :
-    AssignmentTaskServiceCoroutineImplBase(coroutineContext) {
+    AssignmentTaskServiceGrpcKt.AssignmentTaskServiceCoroutineImplBase(coroutineContext) {
 
-    override fun ready(requests: Flow<Task.ReadyRequest>): Flow<TaskRequest> {
+    override fun ready(requests: Flow<Task.ReadyRequest>): Flow<Task.TaskRequest> {
         return requests
             .flatMapMerge {
                 queuedTaskAssigner.ready(it.consumerId.toUUID(), it.numberOfConcurrent)
             }
             .map {
-                TaskRequest
+                Task.TaskRequest
                     .newBuilder()
                     .setName(it.task.name)
                     .setId(it.task.id.toUUID())

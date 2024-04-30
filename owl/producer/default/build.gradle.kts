@@ -12,7 +12,7 @@ repositories {
 
 dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test")
-    implementation(project(":producer:api"))
+    api(project(":producer:api"))
     implementation("io.grpc:grpc-kotlin-stub:1.4.1")
     implementation("io.grpc:grpc-protobuf:1.61.1")
     implementation("com.google.protobuf:protobuf-kotlin:3.25.3")
