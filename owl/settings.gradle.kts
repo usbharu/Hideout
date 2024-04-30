@@ -11,3 +11,4 @@ findProject(":broker:broker-mongodb")?.name = "broker-mongodb"
 include("producer:default")
 findProject(":producer:default")?.name = "default"
 include("consumer")
+include("producer:embedded")
