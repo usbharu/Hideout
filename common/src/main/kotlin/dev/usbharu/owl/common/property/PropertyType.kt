@@ -16,8 +16,26 @@
 
 package dev.usbharu.owl.common.property
 
+/**
+ * プロパティの型
+ *
+ */
 enum class PropertyType {
+    /**
+     * 数字
+     *
+     */
     number,
+
+    /**
+     * 文字列
+     *
+     */
     string,
+
+    /**
+     * バイナリ
+     *
+     */
     binary
 }

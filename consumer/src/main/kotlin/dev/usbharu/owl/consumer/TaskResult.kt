@@ -14,10 +14,17 @@
  * limitations under the License.
  */
 
-package dev.usbharu.dev.usbharu.owl.consumer
+package dev.usbharu.owl.consumer
 
 import dev.usbharu.owl.common.property.PropertyValue
 
+/**
+ * タスクの実行結果
+ *
+ * @property success 成功したらtrue
+ * @property result タスクの実行結果のMap
+ * @property message その他メッセージ
+ */
 data class TaskResult(
     val success: Boolean,
     val result: Map<String, PropertyValue<*>>,

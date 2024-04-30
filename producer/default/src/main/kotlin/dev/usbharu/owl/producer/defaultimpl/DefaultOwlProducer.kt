@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package dev.usbharu.dev.usbharu.owl.producer.defaultimpl
+package dev.usbharu.owl.producer.defaultimpl
 
 import com.google.protobuf.timestamp
 import dev.usbharu.owl.*

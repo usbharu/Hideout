@@ -16,11 +16,20 @@
 
 package dev.usbharu.owl.common.property
 
+/**
+ * Integer型のプロパティ
+ *
+ * @property value プロパティ
+ */
 class IntegerPropertyValue(override val value: Int) : PropertyValue<Int>() {
     override val type: PropertyType
         get() = PropertyType.number
 }
 
+/**
+ * [IntegerPropertyValue]のシリアライザー
+ *
+ */
 class IntegerPropertySerializer : PropertySerializer<Int> {
     override fun isSupported(propertyValue: PropertyValue<*>): Boolean {
         return propertyValue.value is Int

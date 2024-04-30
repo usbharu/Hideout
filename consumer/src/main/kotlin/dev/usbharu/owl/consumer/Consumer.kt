@@ -16,9 +16,6 @@
 
 package dev.usbharu.owl.consumer
 
-import dev.usbharu.dev.usbharu.owl.consumer.ConsumerConfig
-import dev.usbharu.dev.usbharu.owl.consumer.TaskRequest
-import dev.usbharu.dev.usbharu.owl.consumer.TaskRunner
 import dev.usbharu.owl.*
 import dev.usbharu.owl.Uuid.UUID
 import dev.usbharu.owl.common.property.PropertySerializeUtils
@@ -29,10 +26,23 @@ import org.slf4j.LoggerFactory
 import java.time.Instant
 import kotlin.math.max
 
+/**
+ * Consumer
+ *
+ * @property subscribeTaskStub
+ * @property assignmentTaskStub
+ * @property taskResultStub
+ * @property runnerMap
+ * @property propertySerializerFactory
+ * @constructor
+ * TODO
+ *
+ * @param consumerConfig
+ */
 class Consumer(
-    private val subscribeTaskServiceCoroutineStub: SubscribeTaskServiceGrpcKt.SubscribeTaskServiceCoroutineStub,
-    private val assignmentTaskServiceCoroutineStub: AssignmentTaskServiceGrpcKt.AssignmentTaskServiceCoroutineStub,
-    private val taskResultServiceCoroutineStub: TaskResultServiceGrpcKt.TaskResultServiceCoroutineStub,
+    private val subscribeTaskStub: SubscribeTaskServiceGrpcKt.SubscribeTaskServiceCoroutineStub,
+    private val assignmentTaskStub: AssignmentTaskServiceGrpcKt.AssignmentTaskServiceCoroutineStub,
+    private val taskResultStub: TaskResultServiceGrpcKt.TaskResultServiceCoroutineStub,
     private val runnerMap: Map<String, TaskRunner>,
     private val propertySerializerFactory: PropertySerializerFactory,
     consumerConfig: ConsumerConfig
@@ -44,10 +54,17 @@ class Consumer(
 
     private val concurrent = MutableStateFlow(consumerConfig.concurrent)
     private val processing = MutableStateFlow(0)
+
+    /**
+     * Consumerを初期化します
+     *
+     * @param name Consumer名
+     * @param hostname Consumerのホスト名
+     */
     suspend fun init(name: String, hostname: String) {
         logger.info("Initialize Consumer name: {} hostname: {}", name, hostname)
         logger.debug("Registered Tasks: {}", runnerMap.keys)
-        consumerId = subscribeTaskServiceCoroutineStub.subscribeTask(subscribeTaskRequest {
+        consumerId = subscribeTaskStub.subscribeTask(subscribeTaskRequest {
             this.name = name
             this.hostname = hostname
             this.tasks.addAll(runnerMap.keys)
@@ -55,12 +72,16 @@ class Consumer(
         logger.info("Success initialize consumer. ConsumerID: {}", consumerId)
     }
 
+    /**
+     * タスクの受付を開始します
+     *
+     */
     suspend fun start() {
         coroutineScope = CoroutineScope(Dispatchers.Default)
         coroutineScope {
-            taskResultServiceCoroutineStub
+            taskResultStub
                 .tasKResult(flow {
-                    assignmentTaskServiceCoroutineStub
+                    assignmentTaskStub
                         .ready(flow {
                             while (coroutineScope.isActive) {
                                 val andSet = concurrent.getAndUpdate { 0 }
@@ -141,6 +162,10 @@ class Consumer(
         }
     }
 
+    /**
+     * タスクの受付を停止します
+     *
+     */
     fun stop() {
         logger.info("Stop Consumer. consumerID: {}", consumerId)
         coroutineScope.cancel()

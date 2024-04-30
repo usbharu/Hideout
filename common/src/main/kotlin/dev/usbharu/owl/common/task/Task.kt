@@ -16,5 +16,9 @@
 
 package dev.usbharu.owl.common.task
 
+/**
+ * タスク
+ *
+ */
 open class Task {
 }
