@@ -20,9 +20,28 @@ import dev.usbharu.owl.common.property.PropertySerializerFactory
 import dev.usbharu.owl.producer.api.OwlProducerConfig
 import io.grpc.Channel
 
+/**
+ * デフォルトの[dev.usbharu.owl.producer.api.OwlProducer]の構成
+ *
+ */
 class DefaultOwlProducerConfig : OwlProducerConfig {
+    /**
+     * gRPCで使用する[Channel]
+     */
     lateinit var channel: Channel
+
+    /**
+     * プロデューサー名
+     */
     lateinit var name: String
+
+    /**
+     * プロデューサーのホスト名
+     */
     lateinit var hostname: String
+
+    /**
+     * [dev.usbharu.owl.common.property.PropertyValue]のシリアライズに使用するファクトリ
+     */
     lateinit var propertySerializerFactory: PropertySerializerFactory
 }
