@@ -16,6 +16,15 @@
 
 package dev.usbharu.owl.producer.api
 
+/**
+ * [OwlProducerBuilder]と[OwlProducerConfig]を使用して[OwlProducer]のインスタンスを作成します。
+ *
+ * @param P 作成する[OwlProducer]
+ * @param T 作成に使用する[OwlProducerBuilder]
+ * @param C 構成
+ * @param owlProducerBuilder 作成に使用する[OwlProducerBuilder]
+ * @param configBlock 構成
+ */
 fun <P : OwlProducer, T : OwlProducerBuilder<P, C>, C : OwlProducerConfig> OWL(
     owlProducerBuilder: T,
     configBlock: C.() -> Unit

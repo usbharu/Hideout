@@ -16,5 +16,9 @@
 
 package dev.usbharu.owl.producer.api
 
+/**
+ * [OwlProducer]の構成
+ *
+ */
 interface OwlProducerConfig {
 }

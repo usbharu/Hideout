@@ -16,9 +16,31 @@
 
 package dev.usbharu.owl.producer.api
 
+/**
+ * [OwlProducer]を作成するビルダー
+ *
+ * @param P 作成する[OwlProducer]
+ * @param T [OwlProducer]の構成
+ */
 interface OwlProducerBuilder<P : OwlProducer, T : OwlProducerConfig> {
+    /**
+     * 現在の構成を返します
+     *
+     * @return 現在の構成
+     */
     fun config(): T
+
+    /**
+     * 構成を適用します
+     *
+     * @param owlProducerConfig 適用する構成
+     */
     fun apply(owlProducerConfig: T)
 
+    /**
+     * 適用されている構成を使用して[OwlProducer]のインスタンスを作成します。
+     *
+     * @return 作成された[OwlProducer]
+     */
     fun build(): P
 }
