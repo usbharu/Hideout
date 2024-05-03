@@ -1,0 +1,36 @@
+hideout:
+  debug:
+    trace-query-exception: false
+    trace-query-call: false
+  storage:
+    use-s3: true
+    endpoint: "https://76906b4e38909e314e89939ec9f8e485.r2.cloudflarestorage.com/test-hideout"
+    public-url: "https://pub-4c8363f2da784d8e8ce49c1f6c8f7137.r2.dev"
+    bucket: "test-hideout"
+    region: "auto"
+    access-key: "3550ae6e4ec230babd9bfb1cbb28ded5"
+    secret-key: "c3753d13bf8e8d9d22d379b8f4cf12c2e5d68ed408d8665f5c474a6633e15d22"
+
+#spring:
+#  datasource:
+#    driver-class-name: org.postgresql.Driver
+#    url: "jdbc:postgresql:hideout"
+#    username: postgres
+#    password:
+
+spring:
+  datasource:
+    hikari:
+      connection-timeout: 15000
+      maximum-pool-size: 50
+      leak-detection-threshold: 5000
+logging:
+  level:
+    dev:
+      usbharu:
+        trace
+    org.springframework.orm.jpa: DEBUG
+    org.springframework.transaction: DEBUG
+    org:
+      mongodb:
+        driver: info
