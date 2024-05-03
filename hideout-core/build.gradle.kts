@@ -234,7 +234,7 @@ dependencies {
     implementation("org.flywaydb:flyway-core")
 
     implementation("dev.usbharu:emoji-kt:2.0.0")
-    implementation("dev.usbharu:default:0.0.1")
+    implementation("dev.usbharu:owl-producer-default:0.0.1")
     implementation("org.jsoup:jsoup:1.17.2")
     implementation("com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20240325.1")
 
