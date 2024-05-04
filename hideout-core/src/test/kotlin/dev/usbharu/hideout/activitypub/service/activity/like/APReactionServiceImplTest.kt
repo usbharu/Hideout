@@ -55,11 +55,9 @@ class APReactionServiceImplTest {
             onBlocking { findById(eq(user.id)) }.doReturn(user)
         }
         val apReactionServiceImpl = APReactionServiceImpl(
-            jobQueueParentService = jobQueueParentService,
             actorRepository = actorRepository,
             followerQueryService = followerQueryService,
             postRepository = postQueryService,
-            objectMapper = objectMapper
         )
 
         apReactionServiceImpl.reaction(

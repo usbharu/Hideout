@@ -24,10 +24,9 @@ import dev.usbharu.hideout.core.domain.exception.resource.UserNotFoundException
 import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.post.Post
-import dev.usbharu.hideout.core.external.job.DeliverDeleteJob
 import dev.usbharu.hideout.core.external.job.DeliverDeleteJobParam
 import dev.usbharu.hideout.core.query.FollowerQueryService
-import dev.usbharu.hideout.core.service.job.JobQueueParentService
+import dev.usbharu.owl.producer.api.OwlProducer
 import org.springframework.stereotype.Service
 import java.time.Instant
 
@@ -38,11 +37,10 @@ interface APSendDeleteService {
 
 @Service
 class APSendDeleteServiceImpl(
-    private val jobQueueParentService: JobQueueParentService,
-    private val delverDeleteJob: DeliverDeleteJob,
     private val followerQueryService: FollowerQueryService,
     private val applicationConfig: ApplicationConfig,
-    private val actorRepository: ActorRepository
+    private val actorRepository: ActorRepository,
+    private val owlProducer: OwlProducer,
 ) : APSendDeleteService {
     override suspend fun sendDeleteNote(deletedPost: Post) {
         val actor =
@@ -62,7 +60,8 @@ class APSendDeleteServiceImpl(
                 it.inbox,
                 actor.id
             )
-            jobQueueParentService.scheduleTypeSafe(delverDeleteJob, jobProps)
+
+            owlProducer.publishTask(jobProps)
         }
     }
 

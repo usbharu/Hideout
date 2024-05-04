@@ -21,17 +21,15 @@ import dev.usbharu.hideout.activitypub.domain.model.Follow
 import dev.usbharu.hideout.activitypub.domain.model.Undo
 import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.core.domain.model.actor.Actor
-import dev.usbharu.hideout.core.external.job.DeliverUndoJob
 import dev.usbharu.hideout.core.external.job.DeliverUndoJobParam
-import dev.usbharu.hideout.core.service.job.JobQueueParentService
+import dev.usbharu.owl.producer.api.OwlProducer
 import org.springframework.stereotype.Service
 import java.time.Instant
 
 @Service
 class APSendUndoServiceImpl(
-    private val jobQueueParentService: JobQueueParentService,
-    private val deliverUndoJob: DeliverUndoJob,
-    private val applicationConfig: ApplicationConfig
+    private val applicationConfig: ApplicationConfig,
+    private val owlProducer: OwlProducer,
 ) : APSendUndoService {
     override suspend fun sendUndoFollow(actor: Actor, target: Actor) {
         val deliverUndoJobParam = DeliverUndoJobParam(
@@ -48,7 +46,7 @@ class APSendUndoServiceImpl(
             actor.id
         )
 
-        jobQueueParentService.scheduleTypeSafe(deliverUndoJob, deliverUndoJobParam)
+        owlProducer.publishTask(deliverUndoJobParam)
     }
 
     override suspend fun sendUndoBlock(actor: Actor, target: Actor) {
@@ -67,6 +65,6 @@ class APSendUndoServiceImpl(
             actor.id
         )
 
-        jobQueueParentService.scheduleTypeSafe(deliverUndoJob, deliverUndoJobParam)
+        owlProducer.publishTask(deliverUndoJobParam)
     }
 }

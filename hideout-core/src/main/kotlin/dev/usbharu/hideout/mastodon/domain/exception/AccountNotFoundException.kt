@@ -38,7 +38,7 @@ class AccountNotFoundException : ClientException {
     ) : super(message, cause, enableSuppression, writableStackTrace, response)
 
     fun getTypedResponse(): MastodonApiErrorResponse<NotFoundResponse> =
-        response
+        response as MastodonApiErrorResponse<NotFoundResponse>
 
     companion object {
         fun ofId(id: Long): AccountNotFoundException = AccountNotFoundException(

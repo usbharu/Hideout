@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.activitypub.domain.model.Block
 import dev.usbharu.hideout.activitypub.domain.model.Reject
+import dev.usbharu.owl.common.task.Task
 import kjob.core.dsl.ScheduleContext
 import kjob.core.job.JobProps
 import org.springframework.beans.factory.annotation.Qualifier
@@ -37,8 +38,8 @@ data class DeliverBlockJobParam(
     val signer: Long,
     val block: Block,
     val reject: Reject,
-    val inbox: String
-)
+    val inbox: String,
+) : Task()
 
 /**
  * ブロックアクティビティ配送のジョブ

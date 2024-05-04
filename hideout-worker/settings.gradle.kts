@@ -14,3 +14,5 @@ dependencyResolutionManagement {
         }
     }
 }
+
+includeBuild("../hideout-core")

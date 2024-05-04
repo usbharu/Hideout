@@ -14,20 +14,13 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.service.job
+package dev.usbharu.hideout.core.external.job
 
-import dev.usbharu.hideout.core.external.job.HideoutJob
-import kjob.core.Job
-import kjob.core.dsl.ScheduleContext
-import org.springframework.stereotype.Service
+import dev.usbharu.hideout.activitypub.domain.model.Create
+import dev.usbharu.owl.common.task.Task
 
-@Service
-@Deprecated("use owl producer")
-interface JobQueueParentService {
-
-    fun init(jobDefines: List<Job>)
-
-    @Deprecated("use type safe → scheduleTypeSafe")
-    suspend fun <J : Job> schedule(job: J, block: ScheduleContext<J>.(J) -> Unit = {})
-    suspend fun <T, J : HideoutJob<T, J>> scheduleTypeSafe(job: J, jobProps: T)
-}
+data class DeliverPostTask(
+    val create: Create,
+    val inbox: String,
+    val actor: String,
+) : Task()

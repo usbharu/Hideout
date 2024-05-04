@@ -16,17 +16,15 @@
 
 package dev.usbharu.hideout.activitypub.service.activity.like
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import dev.usbharu.hideout.core.domain.exception.resource.PostNotFoundException
 import dev.usbharu.hideout.core.domain.exception.resource.UserNotFoundException
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.domain.model.reaction.Reaction
-import dev.usbharu.hideout.core.external.job.DeliverReactionJob
-import dev.usbharu.hideout.core.external.job.DeliverRemoveReactionJob
+import dev.usbharu.hideout.core.external.job.DeliverReactionTask
+import dev.usbharu.hideout.core.external.job.DeliverRemoveReactionTask
 import dev.usbharu.hideout.core.query.FollowerQueryService
-import dev.usbharu.hideout.core.service.job.JobQueueParentService
-import org.springframework.beans.factory.annotation.Qualifier
+import dev.usbharu.owl.producer.api.OwlProducer
 import org.springframework.stereotype.Service
 
 interface APReactionService {
@@ -36,11 +34,10 @@ interface APReactionService {
 
 @Service
 class APReactionServiceImpl(
-    private val jobQueueParentService: JobQueueParentService,
     private val followerQueryService: FollowerQueryService,
     private val actorRepository: ActorRepository,
-    @Qualifier("activitypub") private val objectMapper: ObjectMapper,
-    private val postRepository: PostRepository
+    private val postRepository: PostRepository,
+    private val owlProducer: OwlProducer,
 ) : APReactionService {
     override suspend fun reaction(like: Reaction) {
         val followers = followerQueryService.findFollowersById(like.actorId)
@@ -48,13 +45,15 @@ class APReactionServiceImpl(
         val post =
             postRepository.findById(like.postId) ?: throw PostNotFoundException.withId(like.postId)
         followers.forEach { follower ->
-            jobQueueParentService.schedule(DeliverReactionJob) {
-                props[DeliverReactionJob.actor] = user.url
-                props[DeliverReactionJob.reaction] = "❤"
-                props[DeliverReactionJob.inbox] = follower.inbox
-                props[DeliverReactionJob.postUrl] = post.url
-                props[DeliverReactionJob.id] = post.id.toString()
-            }
+            owlProducer.publishTask(
+                DeliverReactionTask(
+                    actor = user.url,
+                    reaction = "❤",
+                    inbox = follower.inbox,
+                    postUrl = post.url,
+                    id = post.id
+                )
+            )
         }
     }
 
@@ -64,12 +63,14 @@ class APReactionServiceImpl(
         val post =
             postRepository.findById(like.postId) ?: throw PostNotFoundException.withId(like.postId)
         followers.forEach { follower ->
-            jobQueueParentService.schedule(DeliverRemoveReactionJob) {
-                props[DeliverRemoveReactionJob.actor] = user.url
-                props[DeliverRemoveReactionJob.inbox] = follower.inbox
-                props[DeliverRemoveReactionJob.id] = post.id.toString()
-                props[DeliverRemoveReactionJob.like] = objectMapper.writeValueAsString(like)
-            }
+            owlProducer.publishTask(
+                DeliverRemoveReactionTask(
+                    actor = user.url,
+                    inbox = follower.inbox,
+                    id = post.id,
+                    reaction = like
+                )
+            )
         }
     }
 }

@@ -17,6 +17,7 @@
 package dev.usbharu.hideout.core.external.job
 
 import dev.usbharu.hideout.activitypub.service.common.ActivityType
+import dev.usbharu.owl.common.task.Task
 import kjob.core.Job
 import kjob.core.Prop
 import kjob.core.dsl.ScheduleContext
@@ -32,8 +33,8 @@ abstract class HideoutJob<out T, out R : HideoutJob<T, R>>(name: String) : Job(n
 data class ReceiveFollowJobParam(
     val actor: String,
     val follow: String,
-    val targetActor: String
-)
+    val targetActor: String,
+) : Task()
 
 @Component
 object ReceiveFollowJob : HideoutJob<ReceiveFollowJobParam, ReceiveFollowJob>("ReceiveFollowJob") {
