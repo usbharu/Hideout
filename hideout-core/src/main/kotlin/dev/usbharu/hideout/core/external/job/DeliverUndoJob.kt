@@ -19,6 +19,7 @@ package dev.usbharu.hideout.core.external.job
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.activitypub.domain.model.Undo
+import dev.usbharu.owl.common.task.Task
 import kjob.core.dsl.ScheduleContext
 import kjob.core.job.JobProps
 import org.springframework.beans.factory.annotation.Qualifier
@@ -27,8 +28,8 @@ import org.springframework.stereotype.Component
 data class DeliverUndoJobParam(
     val undo: Undo,
     val inbox: String,
-    val signer: Long
-)
+    val signer: Long,
+) : Task()
 
 @Component
 class DeliverUndoJob(@Qualifier("activitypub") private val objectMapper: ObjectMapper) :

@@ -19,9 +19,9 @@ package dev.usbharu.hideout.activitypub.service.common
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import dev.usbharu.hideout.activitypub.domain.exception.JsonParseException
-import dev.usbharu.hideout.core.external.job.InboxJob
-import dev.usbharu.hideout.core.service.job.JobQueueParentService
+import dev.usbharu.hideout.core.external.job.InboxTask
 import dev.usbharu.httpsignature.common.HttpRequest
+import dev.usbharu.owl.producer.api.OwlProducer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
@@ -41,7 +41,7 @@ interface APService {
 @Service
 class APServiceImpl(
     @Qualifier("activitypub") private val objectMapper: ObjectMapper,
-    private val jobQueueParentService: JobQueueParentService
+    private val owlProducer: OwlProducer,
 ) : APService {
 
     val logger: Logger = LoggerFactory.getLogger(APServiceImpl::class.java)
@@ -90,13 +90,14 @@ class APServiceImpl(
         map: Map<String, List<String>>
     ) {
         logger.debug("process activity: {}", type)
-        jobQueueParentService.schedule(InboxJob) {
-            props[it.json] = json
-            props[it.type] = type.name
-            val writeValueAsString = objectMapper.writeValueAsString(httpRequest)
-            props[it.httpRequest] = writeValueAsString
-            props[it.headers] = objectMapper.writeValueAsString(map)
-        }
+        owlProducer.publishTask(
+            InboxTask(
+                json,
+                type,
+                httpRequest,
+                map
+            )
+        )
         return
     }
 }

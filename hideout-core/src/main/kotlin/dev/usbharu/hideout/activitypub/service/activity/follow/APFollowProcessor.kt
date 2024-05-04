@@ -22,16 +22,15 @@ import dev.usbharu.hideout.activitypub.service.common.AbstractActivityPubProcess
 import dev.usbharu.hideout.activitypub.service.common.ActivityPubProcessContext
 import dev.usbharu.hideout.activitypub.service.common.ActivityType
 import dev.usbharu.hideout.application.external.Transaction
-import dev.usbharu.hideout.core.external.job.ReceiveFollowJob
 import dev.usbharu.hideout.core.external.job.ReceiveFollowJobParam
-import dev.usbharu.hideout.core.service.job.JobQueueParentService
+import dev.usbharu.owl.producer.api.OwlProducer
 import org.springframework.stereotype.Service
 
 @Service
 class APFollowProcessor(
     transaction: Transaction,
-    private val jobQueueParentService: JobQueueParentService,
-    private val objectMapper: ObjectMapper
+    private val objectMapper: ObjectMapper,
+    private val owlProducer: OwlProducer,
 ) :
     AbstractActivityPubProcessor<Follow>(transaction) {
     override suspend fun internalProcess(activity: ActivityPubProcessContext<Follow>) {
@@ -43,7 +42,7 @@ class APFollowProcessor(
             objectMapper.writeValueAsString(activity.activity),
             activity.activity.apObject
         )
-        jobQueueParentService.scheduleTypeSafe(ReceiveFollowJob, jobProps)
+        owlProducer.publishTask(jobProps)
     }
 
     override fun isSupported(activityType: ActivityType): Boolean = activityType == ActivityType.Follow

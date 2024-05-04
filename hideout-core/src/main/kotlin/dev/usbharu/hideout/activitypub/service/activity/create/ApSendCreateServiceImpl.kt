@@ -24,9 +24,10 @@ import dev.usbharu.hideout.core.domain.exception.resource.PostNotFoundException
 import dev.usbharu.hideout.core.domain.exception.resource.UserNotFoundException
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.post.Post
-import dev.usbharu.hideout.core.external.job.DeliverPostJob
+import dev.usbharu.hideout.core.external.job.DeliverPostTask
 import dev.usbharu.hideout.core.query.FollowerQueryService
 import dev.usbharu.hideout.core.service.job.JobQueueParentService
+import dev.usbharu.owl.producer.api.OwlProducer
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -37,7 +38,8 @@ class ApSendCreateServiceImpl(
     private val jobQueueParentService: JobQueueParentService,
     private val noteQueryService: NoteQueryService,
     private val applicationConfig: ApplicationConfig,
-    private val actorRepository: ActorRepository
+    private val actorRepository: ActorRepository,
+    private val owlProducer: OwlProducer,
 ) : ApSendCreateService {
     override suspend fun createNote(post: Post) {
         logger.info("CREATE Create Local Note ${post.url}")
@@ -56,11 +58,7 @@ class ApSendCreateServiceImpl(
             id = "${applicationConfig.url}/create/note/${post.id}"
         )
         followers.forEach { followerEntity ->
-            jobQueueParentService.schedule(DeliverPostJob) {
-                props[DeliverPostJob.actor] = userEntity.url
-                props[DeliverPostJob.inbox] = followerEntity.inbox
-                props[DeliverPostJob.create] = objectMapper.writeValueAsString(create)
-            }
+            owlProducer.publishTask(DeliverPostTask(create, userEntity.url, followerEntity.inbox))
         }
 
         logger.debug("SUCCESS Create Local Note ${post.url}")

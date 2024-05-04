@@ -31,22 +31,22 @@ version = "0.0.1"
 
 sourceSets {
     create("intTest") {
-        test {
+//        test {
             compileClasspath += sourceSets.main.get().output
             runtimeClasspath += sourceSets.main.get().output
             kotlin.srcDirs("src/intTest/kotlin")
             java.srcDirs("src/intTest/java")
             resources.srcDirs("src/intTest/resources")
-        }
+//        }
     }
     create("e2eTest") {
-        test {
+//        test {
             compileClasspath += sourceSets.main.get().output
             runtimeClasspath += sourceSets.main.get().output
             kotlin.srcDirs("src/e2eTest/kotlin")
             java.srcDirs("src/e2eTest/java")
             resources.srcDirs("src/e2eTest/resources")
-        }
+//        }
     }
 }
 
@@ -263,7 +263,7 @@ dependencies {
 
 detekt {
     parallel = true
-    config = files("detekt.yml")
+    config = files("../detekt.yml")
     buildUponDefaultConfig = true
     basePath = "${rootDir.absolutePath}/src/main/kotlin"
     autoCorrect = true
@@ -284,14 +284,6 @@ tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
 
 tasks.withType<io.gitlab.arturbosch.detekt.DetektCreateBaselineTask>().configureEach {
     exclude("**/org/koin/ksp/generated/**", "**/generated/**")
-}
-
-configurations.matching { it.name == "detekt" }.all {
-    resolutionStrategy.eachDependency {
-        if (requested.group == "org.jetbrains.kotlin") {
-            useVersion("1.9.22")
-        }
-    }
 }
 
 configurations {

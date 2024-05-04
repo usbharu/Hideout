@@ -16,9 +16,9 @@
 
 package dev.usbharu.hideout.mastodon.interfaces.api.status
 
-import Status
 import com.fasterxml.jackson.annotation.JsonProperty
 import dev.usbharu.hideout.core.domain.model.post.Visibility
+import dev.usbharu.hideout.domain.mastodon.model.generated.Status
 import dev.usbharu.hideout.domain.mastodon.model.generated.StatusesRequestPoll
 import dev.usbharu.hideout.mastodon.interfaces.api.status.StatusesRequest.Visibility.*
 

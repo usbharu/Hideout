@@ -22,6 +22,7 @@ import dev.usbharu.hideout.core.external.job.HideoutJob as HJ
 import kjob.core.dsl.JobContextWithProps as JCWP
 import kjob.core.dsl.JobRegisterContext as JRC
 
+@Deprecated("use owl")
 @Service
 interface JobQueueWorkerService {
     fun <T, R : HJ<T, R>> init(

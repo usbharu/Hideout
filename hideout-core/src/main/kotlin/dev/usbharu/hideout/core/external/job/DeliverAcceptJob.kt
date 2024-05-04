@@ -19,6 +19,7 @@ package dev.usbharu.hideout.core.external.job
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.activitypub.domain.model.Accept
+import dev.usbharu.owl.common.task.Task
 import kjob.core.dsl.ScheduleContext
 import kjob.core.job.JobProps
 import org.springframework.stereotype.Component
@@ -26,8 +27,8 @@ import org.springframework.stereotype.Component
 data class DeliverAcceptJobParam(
     val accept: Accept,
     val inbox: String,
-    val signer: Long
-)
+    val signer: Long,
+) : Task()
 
 @Component
 class DeliverAcceptJob(private val objectMapper: ObjectMapper) :
