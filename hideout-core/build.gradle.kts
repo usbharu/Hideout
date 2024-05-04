@@ -15,13 +15,13 @@ val coroutines_version: String by project
 val serialization_version: String by project
 
 plugins {
-    kotlin("jvm") version "1.9.23"
-    id("io.gitlab.arturbosch.detekt") version "1.23.6"
-    id("org.springframework.boot") version "3.2.3"
-    kotlin("plugin.spring") version "1.9.23"
-    id("org.openapi.generator") version "7.4.0"
-    id("org.jetbrains.kotlinx.kover") version "0.7.6"
-    id("com.github.jk1.dependency-license-report") version "2.5"
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.detekt)
+    alias(libs.plugins.spring.boot)
+    alias(libs.plugins.kotlin.spring)
+    alias(libs.plugins.openapi.generator)
+    alias(libs.plugins.kover)
+    alias(libs.plugins.license.report)
 
 }
 
@@ -185,47 +185,36 @@ val os = org.gradle.nativeplatform.platform.internal
     .DefaultNativePlatform.getCurrentOperatingSystem()
 
 dependencies {
-    implementation("io.ktor:ktor-serialization-jackson:$ktor_version")
-    implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
-    implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
     developmentOnly("com.h2database:h2:$h2_version")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$serialization_version")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version")
+    detektPlugins(libs.detekt.formatting)
 
+    implementation(libs.bundles.exposed)
+    implementation(libs.bundles.coroutines)
+    implementation(libs.bundles.ktor.client)
+    implementation(libs.bundles.serialization)
+    implementation(libs.bundles.apache.tika)
+    implementation(libs.bundles.openapi)
+    implementation(libs.bundles.kjob)
+    implementation(libs.bundles.spring.boot.oauth2)
+    implementation(libs.bundles.spring.boot.data.mongodb)
+    implementation(libs.bundles.spring.boot.data.mongodb)
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
-    implementation("org.springframework.boot:spring-boot-starter-oauth2-authorization-server")
-    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
     implementation("org.springframework.boot:spring-boot-starter-log4j2")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("jakarta.validation:jakarta.validation-api")
-    implementation("jakarta.annotation:jakarta.annotation-api:2.1.0")
-    implementation("io.swagger.core.v3:swagger-annotations:2.2.6")
-    implementation("io.swagger.core.v3:swagger-models:2.2.6")
-    implementation("org.jetbrains.exposed:exposed-java-time:$exposed_version")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("org.springframework.security:spring-security-oauth2-jose")
-    implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
-    implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
-    implementation("org.jetbrains.exposed:exposed-spring-boot-starter:$exposed_version")
+
     implementation("io.trbl:blurhash:1.0.0")
     implementation("software.amazon.awssdk:s3:2.25.23")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:$coroutines_version")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:$coroutines_version")
-    implementation("dev.usbharu:http-signature:1.0.0")
-
+    implementation("org.jsoup:jsoup:1.17.2")
+    implementation("com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20240325.1")
     implementation("org.postgresql:postgresql:42.7.3")
     implementation("com.twelvemonkeys.imageio:imageio-webp:3.10.1")
-    implementation("org.apache.tika:tika-core:2.9.1")
-    implementation("org.apache.tika:tika-parsers:2.9.1")
     implementation("net.coobird:thumbnailator:0.4.20")
-    implementation("org.bytedeco:javacv:1.5.10") {
+    implementation("org.flywaydb:flyway-core")
+
+    implementation(libs.javacv) {
         exclude(module = "opencv")
         exclude(module = "flycapture")
         exclude(module = "artoolkitplus")
@@ -237,25 +226,20 @@ dependencies {
         exclude(module = "libfreenect2")
     }
     if (os.isWindows) {
-        implementation("org.bytedeco", "ffmpeg", "6.1.1-1.5.10", classifier = "windows-x86_64")
+        implementation(variantOf(libs.javacv.ffmpeg) { classifier("windows-x86_64") })
     } else {
-        implementation("org.bytedeco", "ffmpeg", "6.1.1-1.5.10", classifier = "linux-x86_64")
+        implementation(variantOf(libs.javacv.ffmpeg) { classifier("linux-x86_64") })
     }
-    implementation("org.flywaydb:flyway-core")
 
+    implementation("dev.usbharu:http-signature:1.0.0")
     implementation("dev.usbharu:emoji-kt:2.0.0")
     implementation("dev.usbharu:owl-producer-default:0.0.1")
-    implementation("org.jsoup:jsoup:1.17.2")
-    implementation("com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20240325.1")
 
-    implementation("io.ktor:ktor-client-logging-jvm:$ktor_version")
 
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version")
 
-    implementation("io.ktor:ktor-client-core:$ktor_version")
-    implementation("io.ktor:ktor-client-cio:$ktor_version")
-    implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
     testImplementation("io.ktor:ktor-client-mock:$ktor_version")
     testImplementation("com.h2database:h2:$h2_version")
 
@@ -263,11 +247,6 @@ dependencies {
     testImplementation("org.mockito:mockito-inline:5.2.0")
     testImplementation("nl.jqno.equalsverifier:equalsverifier:3.15.6")
     testImplementation("com.jparams:to-string-verifier:1.4.8")
-
-    implementation("org.drewcarlson:kjob-core:0.6.0")
-    implementation("org.drewcarlson:kjob-mongo:0.6.0")
-
-    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.6")
 
     intTestImplementation("org.springframework.boot:spring-boot-starter-test")
     intTestImplementation("org.springframework.security:spring-security-test")
@@ -337,7 +316,6 @@ project.gradle.taskGraph.whenReady {
 }
 
 kover {
-
     excludeSourceSets {
         names("aot", "e2eTest", "intTest")
     }
@@ -370,7 +348,6 @@ springBoot {
 }
 
 licenseReport {
-
     excludeOwnGroup = true
 
     importers = arrayOf<DependencyDataImporter>(XmlReportImporter("hideout", File("$projectDir/license-list.xml")))
