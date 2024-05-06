@@ -212,8 +212,8 @@ dependencies {
 
     implementation("org.postgresql:postgresql:42.7.3")
     implementation("com.twelvemonkeys.imageio:imageio-webp:3.10.1")
-    implementation("org.apache.tika:tika-core:2.9.1")
-    implementation("org.apache.tika:tika-parsers:2.9.1")
+    implementation("org.apache.tika:tika-core:2.9.2")
+    implementation("org.apache.tika:tika-parsers:2.9.2")
     implementation("net.coobird:thumbnailator:0.4.20")
     implementation("org.bytedeco:javacv:1.5.10") {
         exclude(module = "opencv")
