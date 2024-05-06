@@ -329,7 +329,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Build with Gradle
-        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+        uses: gradle/gradle-build-action@4c39dd82cd5e1ec7c6fa0173bb41b4b6bb3b86ff
         with:
           arguments: detektMain
 
