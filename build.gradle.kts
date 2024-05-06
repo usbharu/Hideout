@@ -194,7 +194,7 @@ dependencies {
     implementation("jakarta.validation:jakarta.validation-api")
     implementation("jakarta.annotation:jakarta.annotation-api:2.1.0")
     implementation("io.swagger.core.v3:swagger-annotations:2.2.21")
-    implementation("io.swagger.core.v3:swagger-models:2.2.6")
+    implementation("io.swagger.core.v3:swagger-models:2.2.21")
     implementation("org.jetbrains.exposed:exposed-java-time:$exposed_version")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
