@@ -299,14 +299,6 @@ tasks.withType<io.gitlab.arturbosch.detekt.DetektCreateBaselineTask>().configure
     exclude("**/org/koin/ksp/generated/**", "**/generated/**")
 }
 
-configurations.matching { it.name == "detekt" }.all {
-    resolutionStrategy.eachDependency {
-        if (requested.group == "org.jetbrains.kotlin") {
-            useVersion("1.9.22")
-        }
-    }
-}
-
 configurations {
     all {
         exclude("org.springframework.boot", "spring-boot-starter-logging")
