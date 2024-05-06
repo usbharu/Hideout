@@ -24,7 +24,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
     implementation(project(":common"))
     implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.23.0")
-    implementation(platform("io.insert-koin:koin-bom:3.5.3"))
+    implementation(platform("io.insert-koin:koin-bom:3.5.6"))
     implementation(platform("io.insert-koin:koin-annotations-bom:1.3.1"))
     implementation("io.insert-koin:koin-core")
     compileOnly("io.insert-koin:koin-annotations")
