@@ -16,9 +16,8 @@
 
 package dev.usbharu.owl.producer.embedded
 
-import dev.usbharu.owl.broker.ModuleContext
 import dev.usbharu.owl.broker.OwlBrokerApplication
-import dev.usbharu.owl.broker.service.RetryPolicyFactory
+import dev.usbharu.owl.common.retry.RetryPolicyFactory
 import dev.usbharu.owl.common.task.PublishedTask
 import dev.usbharu.owl.common.task.Task
 import dev.usbharu.owl.common.task.TaskDefinition
@@ -29,10 +28,7 @@ import org.koin.dsl.module
 import org.koin.ksp.generated.defaultModule
 
 class EmbeddedGrpcOwlProducer(
-    private val moduleContext: ModuleContext,
-    private val retryPolicyFactory: RetryPolicyFactory,
-    private val port: Int,
-    private val owlProducer: OwlProducer,
+    private val config: EmbeddedGrpcOwlProducerConfig,
 ) : OwlProducer {
 
     private lateinit var application: Koin
@@ -43,20 +39,20 @@ class EmbeddedGrpcOwlProducer(
 
             val module = module {
                 single<RetryPolicyFactory> {
-                    retryPolicyFactory
+                    config.retryPolicyFactory
                 }
             }
-            modules(module, defaultModule, moduleContext.module())
+            modules(module, defaultModule, config.moduleContext.module())
         }.koin
 
-        application.get<OwlBrokerApplication>().start(port)
+        application.get<OwlBrokerApplication>().start(config.port.toInt())
     }
 
     override suspend fun <T : Task> registerTask(taskDefinition: TaskDefinition<T>) {
-        owlProducer.registerTask(taskDefinition)
+        config.owlProducer.registerTask(taskDefinition)
     }
 
     override suspend fun <T : Task> publishTask(task: T): PublishedTask<T> {
-        return owlProducer.publishTask(task)
+        return config.owlProducer.publishTask(task)
     }
 }

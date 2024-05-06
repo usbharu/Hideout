@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package dev.usbharu.owl.broker.domain.exception.service
+package dev.usbharu.owl.producer.embedded
 
-class RetryPolicyNotFoundException : RuntimeException {
-    constructor() : super()
-    constructor(message: String?) : super(message)
-    constructor(message: String?, cause: Throwable?) : super(message, cause)
-    constructor(cause: Throwable?) : super(cause)
-    constructor(message: String?, cause: Throwable?, enableSuppression: Boolean, writableStackTrace: Boolean) : super(
-        message,
-        cause,
-        enableSuppression,
-        writableStackTrace
-    )
+import dev.usbharu.owl.broker.ModuleContext
+import dev.usbharu.owl.common.retry.RetryPolicyFactory
+import dev.usbharu.owl.producer.api.OwlProducerConfig
+
+class EmbeddedOwlProducerConfig : OwlProducerConfig {
+    lateinit var moduleContext: ModuleContext
+    lateinit var retryPolicyFactory: RetryPolicyFactory
+    lateinit var name: String
+    lateinit var port: String
 }

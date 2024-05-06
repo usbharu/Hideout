@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package dev.usbharu.owl.broker
+package dev.usbharu.owl.common.retry
 
-import org.koin.core.module.Module
-
-interface ModuleContext {
-    fun module():Module
-}
-
-data object EmptyModuleContext : ModuleContext {
-    override fun module(): Module {
-        return org.koin.dsl.module { }
-    }
+class RetryPolicyNotFoundException : RuntimeException {
+    constructor() : super()
+    constructor(message: String?) : super(message)
+    constructor(message: String?, cause: Throwable?) : super(message, cause)
+    constructor(cause: Throwable?) : super(cause)
+    constructor(message: String?, cause: Throwable?, enableSuppression: Boolean, writableStackTrace: Boolean) : super(
+        message,
+        cause,
+        enableSuppression,
+        writableStackTrace
+    )
 }

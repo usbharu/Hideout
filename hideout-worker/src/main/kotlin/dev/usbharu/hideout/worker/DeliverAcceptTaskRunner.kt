@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package dev.usbharu.owl.broker
+package dev.usbharu.hideout.worker
 
-import org.koin.core.module.Module
+import dev.usbharu.owl.consumer.TaskRequest
+import dev.usbharu.owl.consumer.TaskResult
+import dev.usbharu.owl.consumer.TaskRunner
 
-interface ModuleContext {
-    fun module():Module
-}
+class DeliverAcceptTaskRunner : TaskRunner {
+    override val name: String
+        get() = ""
 
-data object EmptyModuleContext : ModuleContext {
-    override fun module(): Module {
-        return org.koin.dsl.module { }
+    override suspend fun run(taskRequest: TaskRequest): TaskResult {
+        TODO("Not yet implemented")
     }
 }

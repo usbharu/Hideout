@@ -11,6 +11,7 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
+    implementation("dev.usbharu:owl-consumer:0.0.1")
 }
 
 tasks.test {

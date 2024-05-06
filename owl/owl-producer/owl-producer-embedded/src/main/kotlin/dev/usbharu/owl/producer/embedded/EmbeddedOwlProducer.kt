@@ -16,9 +16,9 @@
 
 package dev.usbharu.owl.producer.embedded
 
-import dev.usbharu.owl.broker.ModuleContext
 import dev.usbharu.owl.broker.OwlBrokerApplication
 import dev.usbharu.owl.broker.service.*
+import dev.usbharu.owl.common.retry.RetryPolicyFactory
 import dev.usbharu.owl.common.task.PublishedTask
 import dev.usbharu.owl.common.task.Task
 import dev.usbharu.owl.common.task.TaskDefinition
@@ -32,10 +32,7 @@ import java.util.*
 import dev.usbharu.owl.broker.domain.model.taskdefinition.TaskDefinition as BrokerTaskDefinition
 
 class EmbeddedOwlProducer(
-    private val moduleContext: ModuleContext,
-    private val retryPolicyFactory: RetryPolicyFactory,
-    private val name: String,
-    private val port: Int,
+    private val embeddedOwlProducerConfig: EmbeddedOwlProducerConfig,
 ) : OwlProducer {
 
     private lateinit var producerId: UUID
@@ -50,17 +47,22 @@ class EmbeddedOwlProducer(
 
             val module = module {
                 single<RetryPolicyFactory> {
-                    retryPolicyFactory
+                    embeddedOwlProducerConfig.retryPolicyFactory
                 }
             }
-            modules(module, defaultModule, moduleContext.module())
+            modules(module, defaultModule, embeddedOwlProducerConfig.moduleContext.module())
         }.koin
 
         val producerService = application.get<ProducerService>()
 
-        producerId = producerService.registerProducer(RegisterProducerRequest(name, name))
+        producerId = producerService.registerProducer(
+            RegisterProducerRequest(
+                embeddedOwlProducerConfig.name,
+                embeddedOwlProducerConfig.name
+            )
+        )
 
-        application.get<OwlBrokerApplication>().start(port)
+        application.get<OwlBrokerApplication>().start(embeddedOwlProducerConfig.port.toInt())
     }
 
     override suspend fun <T : Task> registerTask(taskDefinition: TaskDefinition<T>) {

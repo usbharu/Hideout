@@ -1,6 +1,9 @@
 hideout:
   url: "https://test-hideout.usbharu.dev"
   use-mongodb: true
+  owl:
+    producer:
+      standalone: embedded
   security:
     jwt:
       generate: true

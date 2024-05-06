@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package dev.usbharu.owl.broker
+package dev.usbharu.owl.producer.embedded
 
-import org.koin.core.module.Module
+import dev.usbharu.owl.broker.ModuleContext
+import dev.usbharu.owl.common.retry.RetryPolicyFactory
+import dev.usbharu.owl.producer.api.OwlProducer
+import dev.usbharu.owl.producer.api.OwlProducerConfig
 
-interface ModuleContext {
-    fun module():Module
-}
-
-data object EmptyModuleContext : ModuleContext {
-    override fun module(): Module {
-        return org.koin.dsl.module { }
-    }
+class EmbeddedGrpcOwlProducerConfig : OwlProducerConfig {
+    lateinit var moduleContext: ModuleContext
+    lateinit var retryPolicyFactory: RetryPolicyFactory
+    lateinit var port: String
+    lateinit var owlProducer: OwlProducer
 }

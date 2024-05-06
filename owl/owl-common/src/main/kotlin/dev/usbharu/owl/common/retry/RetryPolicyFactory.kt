@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package dev.usbharu.owl.broker.service
+package dev.usbharu.owl.common.retry
 
-import dev.usbharu.owl.broker.domain.exception.service.RetryPolicyNotFoundException
-import dev.usbharu.owl.common.retry.RetryPolicy
+
 import org.slf4j.LoggerFactory
 
 interface RetryPolicyFactory {

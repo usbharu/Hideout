@@ -192,6 +192,7 @@ dependencies {
     implementation(libs.bundles.apache.tika)
     implementation(libs.bundles.openapi)
     implementation(libs.bundles.kjob)
+    implementation(libs.bundles.owl.producer)
     implementation(libs.bundles.spring.boot.oauth2)
     implementation(libs.bundles.spring.boot.data.mongodb)
     implementation(libs.bundles.spring.boot.data.mongodb)
@@ -230,7 +231,7 @@ dependencies {
 
     implementation("dev.usbharu:http-signature:1.0.0")
     implementation("dev.usbharu:emoji-kt:2.0.0")
-    implementation("dev.usbharu:owl-producer-default:0.0.1")
+
 
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
