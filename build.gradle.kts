@@ -192,7 +192,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-log4j2")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("jakarta.validation:jakarta.validation-api")
-    implementation("jakarta.annotation:jakarta.annotation-api:2.1.0")
+    implementation("jakarta.annotation:jakarta.annotation-api:2.1.1")
     implementation("io.swagger.core.v3:swagger-annotations:2.2.21")
     implementation("io.swagger.core.v3:swagger-models:2.2.21")
     implementation("org.jetbrains.exposed:exposed-java-time:$exposed_version")
