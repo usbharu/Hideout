@@ -16,9 +16,9 @@
 
 package dev.usbharu.owl.broker
 
-import dev.usbharu.owl.broker.service.DefaultRetryPolicyFactory
-import dev.usbharu.owl.broker.service.RetryPolicyFactory
+import dev.usbharu.owl.common.retry.DefaultRetryPolicyFactory
 import dev.usbharu.owl.common.retry.ExponentialRetryPolicy
+import dev.usbharu.owl.common.retry.RetryPolicyFactory
 import kotlinx.coroutines.runBlocking
 import org.koin.core.context.startKoin
 import org.koin.dsl.module

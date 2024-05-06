@@ -15,6 +15,7 @@ dependencies {
     implementation(project(":owl-broker"))
     implementation(platform("io.insert-koin:koin-bom:3.5.3"))
     implementation("io.insert-koin:koin-core")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
 }
 
 tasks.test {

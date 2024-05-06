@@ -10,6 +10,7 @@ swagger = "2.2.6"
 serialization = "1.6.3"
 kjob = "0.6.0"
 tika = "2.9.1"
+owl = "0.0.1"
 
 [libraries]
 
@@ -55,6 +56,10 @@ apache-tika-parsers = { module = "org.apache.tika:tika-parsers", version.ref = "
 kjon-core = { module = "org.drewcarlson:kjob-core", version.ref = "kjob" }
 kjon-mongo = { module = "org.drewcarlson:kjob-mongo", version.ref = "kjob" }
 
+owl-producer-api = { module = "dev.usbharu:owl-producer-api", version.ref = "owl" }
+owl-producer-default = { module = "dev.usbharu:owl-producer-default", version.ref = "owl" }
+owl-producer-embedded = { module = "dev.usbharu:owl-producer-embedded", version.ref = "owl" }
+
 [bundles]
 
 exposed = ["exposed-core", "exposed-java-time", "exposed-jdbc", "exposed-spring"]
@@ -66,6 +71,7 @@ openapi = ["jakarta-annotation", "jakarta-validation", "swagger-annotations", "s
 serialization = ["serialization-core", "serialization-json"]
 apache-tika = ["apache-tika-core", "apache-tika-parsers"]
 kjob = ["kjon-core", "kjon-mongo"]
+owl-producer = ["owl-producer-api", "owl-producer-default", "owl-producer-embedded"]
 
 [plugins]
 

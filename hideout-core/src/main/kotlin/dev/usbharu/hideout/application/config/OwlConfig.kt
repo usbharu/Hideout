@@ -1,0 +1,68 @@
+/*
+ * Copyright (C) 2024 usbharu
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package dev.usbharu.hideout.application.config
+
+import dev.usbharu.owl.common.retry.RetryPolicyFactory
+import dev.usbharu.owl.producer.api.OWL
+import dev.usbharu.owl.producer.api.OwlProducer
+import dev.usbharu.owl.producer.defaultimpl.DEFAULT
+import dev.usbharu.owl.producer.embedded.EMBEDDED
+import dev.usbharu.owl.producer.embedded.EMBEDDED_GRPC
+import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+
+@Configuration
+class OwlConfig(private val producerConfig: ProducerConfig) {
+    @Bean
+    fun producer(retryPolicyFactory: RetryPolicyFactory? = null): OwlProducer {
+        return when (producerConfig.mode) {
+            ProducerMode.EMBEDDED -> {
+                OWL(EMBEDDED) {
+                    if (retryPolicyFactory != null) {
+                        this.retryPolicyFactory = retryPolicyFactory
+                    }
+                    if (producerConfig.port != null) {
+                        this.port = producerConfig.port.toString()
+                    }
+
+                }
+            }
+
+            ProducerMode.GRPC -> {
+                OWL(EMBEDDED_GRPC) {
+
+                }
+            }
+
+            ProducerMode.EMBEDDED_GRPC -> {
+                OWL(DEFAULT) {
+
+                }
+            }
+        }
+    }
+}
+
+@ConfigurationProperties("hideout.owl.producer")
+data class ProducerConfig(val mode: ProducerMode = ProducerMode.EMBEDDED, val port: Int? = null)
+
+enum class ProducerMode {
+    GRPC,
+    EMBEDDED,
+    EMBEDDED_GRPC
+}
