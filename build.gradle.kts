@@ -250,7 +250,7 @@ dependencies {
 
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
     testImplementation("org.mockito:mockito-inline:5.2.0")
-    testImplementation("nl.jqno.equalsverifier:equalsverifier:3.15.6")
+    testImplementation("nl.jqno.equalsverifier:equalsverifier:3.16.1")
     testImplementation("com.jparams:to-string-verifier:1.4.8")
 
     implementation("org.drewcarlson:kjob-core:0.6.0")
