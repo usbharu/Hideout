@@ -14,7 +14,7 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     implementation("io.grpc:grpc-kotlin-stub:1.4.1")
     implementation("io.grpc:grpc-protobuf:1.61.1")
-    implementation("com.google.protobuf:protobuf-kotlin:3.25.3")
+    implementation("com.google.protobuf:protobuf-kotlin:4.26.1")
     implementation("io.grpc:grpc-netty:1.61.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
     implementation(project(":common"))
