@@ -17,7 +17,7 @@ val serialization_version: String by project
 plugins {
     kotlin("jvm") version "1.9.23"
     id("io.gitlab.arturbosch.detekt") version "1.23.6"
-    id("org.springframework.boot") version "3.2.3"
+    id("org.springframework.boot") version "3.2.5"
     kotlin("plugin.spring") version "1.9.23"
     id("org.openapi.generator") version "7.4.0"
     id("org.jetbrains.kotlinx.kover") version "0.7.6"
