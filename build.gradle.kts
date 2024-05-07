@@ -21,7 +21,7 @@ plugins {
     kotlin("plugin.spring") version "1.9.23"
     id("org.openapi.generator") version "7.4.0"
     id("org.jetbrains.kotlinx.kover") version "0.7.6"
-    id("com.github.jk1.dependency-license-report") version "2.5"
+    id("com.github.jk1.dependency-license-report") version "2.7"
 
 }
 
