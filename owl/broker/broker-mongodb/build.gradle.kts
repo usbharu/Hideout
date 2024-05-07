@@ -16,7 +16,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.mongodb:mongodb-driver-kotlin-coroutine:5.0.0")
+    implementation("org.mongodb:mongodb-driver-kotlin-coroutine:5.1.0")
     implementation(project(":broker"))
     implementation(project(":common"))
     implementation(platform("io.insert-koin:koin-bom:3.5.6"))
