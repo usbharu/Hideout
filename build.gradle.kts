@@ -15,7 +15,7 @@ val coroutines_version: String by project
 val serialization_version: String by project
 
 plugins {
-    kotlin("jvm") version "1.9.23"
+    kotlin("jvm") version "1.9.24"
     id("io.gitlab.arturbosch.detekt") version "1.23.6"
     id("org.springframework.boot") version "3.2.5"
     kotlin("plugin.spring") version "1.9.24"
