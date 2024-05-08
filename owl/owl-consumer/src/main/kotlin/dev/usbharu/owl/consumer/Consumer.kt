@@ -43,9 +43,9 @@ class Consumer(
     private val subscribeTaskStub: SubscribeTaskServiceGrpcKt.SubscribeTaskServiceCoroutineStub,
     private val assignmentTaskStub: AssignmentTaskServiceGrpcKt.AssignmentTaskServiceCoroutineStub,
     private val taskResultStub: TaskResultServiceGrpcKt.TaskResultServiceCoroutineStub,
-    private val runnerMap: Map<String, TaskRunner>,
+    taskRunnerLoader: TaskRunnerLoader,
     private val propertySerializerFactory: PropertySerializerFactory,
-    consumerConfig: ConsumerConfig
+    consumerConfig: ConsumerConfig,
 ) {
 
     private lateinit var consumerId: UUID
@@ -54,6 +54,8 @@ class Consumer(
 
     private val concurrent = MutableStateFlow(consumerConfig.concurrent)
     private val processing = MutableStateFlow(0)
+
+    private val runnerMap = taskRunnerLoader.load()
 
     /**
      * Consumerを初期化します

@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.service.job
+package dev.usbharu.owl.consumer
 
-import dev.usbharu.hideout.core.external.job.HideoutJob
-import kjob.core.Job
-import kjob.core.dsl.ScheduleContext
-import org.springframework.stereotype.Service
+import dev.usbharu.owl.common.task.Task
+import dev.usbharu.owl.common.task.TaskDefinition
 
-@Service
-@Deprecated("use owl producer")
-interface JobQueueParentService {
+abstract class AbstractTaskRunner<T : Task, D : TaskDefinition<T>>(private val taskDefinition: D) : TaskRunner {
+    override val name: String
+        get() = taskDefinition.name
 
-    fun init(jobDefines: List<Job>)
+    override suspend fun run(taskRequest: TaskRequest): TaskResult {
+        val deserialize = taskDefinition.deserialize(taskRequest.properties)
+        return typedRun(deserialize, taskRequest)
+    }
 
-    @Deprecated("use type safe → scheduleTypeSafe")
-    suspend fun <J : Job> schedule(job: J, block: ScheduleContext<J>.(J) -> Unit = {})
-    suspend fun <T, J : HideoutJob<T, J>> scheduleTypeSafe(job: J, jobProps: T)
+    abstract suspend fun typedRun(typedParam: T, taskRequest: TaskRequest): TaskResult
+
 }

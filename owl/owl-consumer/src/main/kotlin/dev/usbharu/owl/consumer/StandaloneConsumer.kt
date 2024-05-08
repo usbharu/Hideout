@@ -23,7 +23,6 @@ import dev.usbharu.owl.common.property.CustomPropertySerializerFactory
 import dev.usbharu.owl.common.property.PropertySerializerFactory
 import io.grpc.ManagedChannelBuilder
 import java.nio.file.Path
-import java.util.*
 
 /**
  * 単独で起動できるConsumer
@@ -33,18 +32,27 @@ import java.util.*
  */
 class StandaloneConsumer(
     private val config: StandaloneConsumerConfig,
-    private val propertySerializerFactory: PropertySerializerFactory
+    private val propertySerializerFactory: PropertySerializerFactory,
+    taskRunnerLoader: TaskRunnerLoader,
 ) {
     constructor(
         path: Path,
         propertySerializerFactory: PropertySerializerFactory = CustomPropertySerializerFactory(
             emptySet()
-        )
-    ) : this(StandaloneConsumerConfigLoader.load(path), propertySerializerFactory)
+        ),
+        taskRunnerLoader: TaskRunnerLoader = ServiceLoaderTaskRunnerLoader(),
+    ) : this(StandaloneConsumerConfigLoader.load(path), propertySerializerFactory, taskRunnerLoader)
 
-    constructor(string: String) : this(Path.of(string))
+    constructor(
+        string: String,
+        propertySerializerFactory: PropertySerializerFactory = CustomPropertySerializerFactory(emptySet()),
+        taskRunnerLoader: TaskRunnerLoader = ServiceLoaderTaskRunnerLoader(),
+    ) : this(Path.of(string), propertySerializerFactory, taskRunnerLoader)
 
-    constructor() : this(Path.of("consumer.properties"))
+    constructor(
+        propertySerializerFactory: PropertySerializerFactory = CustomPropertySerializerFactory(emptySet()),
+        taskRunnerLoader: TaskRunnerLoader = ServiceLoaderTaskRunnerLoader(),
+    ) : this(Path.of("consumer.properties"), propertySerializerFactory, taskRunnerLoader)
 
     private val channel = ManagedChannelBuilder.forAddress(config.address, config.port)
         .usePlaintext()
@@ -54,15 +62,11 @@ class StandaloneConsumer(
     private val assignmentTaskStub = AssignmentTaskServiceGrpcKt.AssignmentTaskServiceCoroutineStub(channel)
     private val taskResultStub = TaskResultServiceGrpcKt.TaskResultServiceCoroutineStub(channel)
 
-    private val taskRunnerMap = ServiceLoader
-        .load(TaskRunner::class.java)
-        .associateBy { it.name }
-
     private val consumer = Consumer(
         subscribeTaskStub = subscribeStub,
         assignmentTaskStub = assignmentTaskStub,
         taskResultStub = taskResultStub,
-        runnerMap = taskRunnerMap,
+        taskRunnerLoader = taskRunnerLoader,
         propertySerializerFactory = propertySerializerFactory,
         consumerConfig = ConsumerConfig(config.concurrency)
     )

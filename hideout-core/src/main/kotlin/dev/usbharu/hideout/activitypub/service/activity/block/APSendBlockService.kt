@@ -16,12 +16,8 @@
 
 package dev.usbharu.hideout.activitypub.service.activity.block
 
-import dev.usbharu.hideout.activitypub.domain.model.Block
-import dev.usbharu.hideout.activitypub.domain.model.Follow
-import dev.usbharu.hideout.activitypub.domain.model.Reject
 import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.core.domain.model.actor.Actor
-import dev.usbharu.hideout.core.external.job.DeliverBlockJobParam
 import dev.usbharu.owl.producer.api.OwlProducer
 import org.springframework.stereotype.Service
 
@@ -35,23 +31,23 @@ class ApSendBlockServiceImpl(
     private val owlProducer: OwlProducer,
 ) : APSendBlockService {
     override suspend fun sendBlock(actor: Actor, target: Actor) {
-        val blockJobParam = DeliverBlockJobParam(
-            actor.id,
-            Block(
-                actor.url,
-                "${applicationConfig.url}/block/${actor.id}/${target.id}",
-                target.url
-            ),
-            Reject(
-                actor.url,
-                "${applicationConfig.url}/reject/${actor.id}/${target.id}",
-                Follow(
-                    apObject = actor.url,
-                    actor = target.url
-                )
-            ),
-            target.inbox
-        )
-        owlProducer.publishTask(blockJobParam)
+//        val blockJobParam = DeliverBlockJobParam(
+//            actor.id,
+//            Block(
+//                actor.url,
+//                "${applicationConfig.url}/block/${actor.id}/${target.id}",
+//                target.url
+//            ),
+//            Reject(
+//                actor.url,
+//                "${applicationConfig.url}/reject/${actor.id}/${target.id}",
+//                Follow(
+//                    apObject = actor.url,
+//                    actor = target.url
+//                )
+//            ),
+//            target.inbox
+//        )
+//        owlProducer.publishTask(blockJobParam)
     }
 }

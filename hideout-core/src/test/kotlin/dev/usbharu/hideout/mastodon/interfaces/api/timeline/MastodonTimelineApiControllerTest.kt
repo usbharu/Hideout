@@ -16,7 +16,6 @@
 
 package dev.usbharu.hideout.mastodon.interfaces.api.timeline
 
-import Status
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.application.infrastructure.exposed.PaginationList

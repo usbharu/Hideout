@@ -27,7 +27,7 @@ class APServiceImplTest {
     @Test
     fun `parseActivity 正常なActivityをパースできる`() {
         val apServiceImpl = APServiceImpl(
-            objectMapper = objectMapper, jobQueueParentService = mock()
+            objectMapper = objectMapper, owlProducer = mock()
         )
 
         //language=JSON
@@ -39,7 +39,7 @@ class APServiceImplTest {
     @Test
     fun `parseActivity Typeが配列のActivityをパースできる`() {
         val apServiceImpl = APServiceImpl(
-            objectMapper = objectMapper, jobQueueParentService = mock()
+            objectMapper = objectMapper, owlProducer = mock()
         )
 
         //language=JSON
@@ -51,7 +51,7 @@ class APServiceImplTest {
     @Test
     fun `parseActivity Typeが配列で関係ない物が入っていてもパースできる`() {
         val apServiceImpl = APServiceImpl(
-            objectMapper = objectMapper, jobQueueParentService = mock()
+            objectMapper = objectMapper, owlProducer = mock()
         )
 
         //language=JSON
@@ -64,7 +64,7 @@ class APServiceImplTest {
     fun `parseActivity jsonとして解釈できない場合JsonParseExceptionがthrowされる`() {
         val apServiceImpl = APServiceImpl(
 
-            objectMapper = objectMapper, jobQueueParentService = mock()
+            objectMapper = objectMapper, owlProducer = mock()
         )
 
         //language=JSON
@@ -77,7 +77,7 @@ class APServiceImplTest {
     fun `parseActivity 空の場合JsonParseExceptionがthrowされる`() {
         val apServiceImpl = APServiceImpl(
 
-            objectMapper = objectMapper, jobQueueParentService = mock()
+            objectMapper = objectMapper, owlProducer = mock()
         )
 
         //language=JSON
@@ -90,7 +90,7 @@ class APServiceImplTest {
     fun `parseActivity jsonにtypeプロパティがない場合JsonParseExceptionがthrowされる`() {
         val apServiceImpl = APServiceImpl(
 
-            objectMapper = objectMapper, jobQueueParentService = mock()
+            objectMapper = objectMapper, owlProducer = mock()
         )
 
         //language=JSON
@@ -103,7 +103,7 @@ class APServiceImplTest {
     fun `parseActivity typeが配列でないときtypeが未定義の場合IllegalArgumentExceptionがthrowされる`() {
         val apServiceImpl = APServiceImpl(
 
-            objectMapper = objectMapper, jobQueueParentService = mock()
+            objectMapper = objectMapper, owlProducer = mock()
         )
 
         //language=JSON
@@ -116,7 +116,7 @@ class APServiceImplTest {
     fun `parseActivity typeが配列のとき定義済みのtypeを見つけられなかった場合IllegalArgumentExceptionがthrowされる`() {
         val apServiceImpl = APServiceImpl(
 
-            objectMapper = objectMapper, jobQueueParentService = mock()
+            objectMapper = objectMapper, owlProducer = mock()
         )
 
         //language=JSON
@@ -129,7 +129,7 @@ class APServiceImplTest {
     fun `parseActivity typeが空の場合IllegalArgumentExceptionがthrowされる`() {
         val apServiceImpl = APServiceImpl(
 
-            objectMapper = objectMapper, jobQueueParentService = mock()
+            objectMapper = objectMapper, owlProducer = mock()
         )
 
         //language=JSON
@@ -142,7 +142,7 @@ class APServiceImplTest {
     fun `parseActivity typeに指定されている文字の判定がcase-insensitiveで行われる`() {
         val apServiceImpl = APServiceImpl(
 
-            objectMapper = objectMapper, jobQueueParentService = mock()
+            objectMapper = objectMapper, owlProducer = mock()
         )
 
         //language=JSON
@@ -155,7 +155,7 @@ class APServiceImplTest {
     fun `parseActivity typeが配列のとき指定されている文字の判定がcase-insensitiveで行われる`() {
         val apServiceImpl = APServiceImpl(
 
-            objectMapper = objectMapper, jobQueueParentService = mock()
+            objectMapper = objectMapper, owlProducer = mock()
         )
 
         //language=JSON
@@ -168,7 +168,7 @@ class APServiceImplTest {
     fun `parseActivity activityがarrayのときJsonParseExceptionがthrowされる`() {
         val apServiceImpl = APServiceImpl(
 
-            objectMapper = objectMapper, jobQueueParentService = mock()
+            objectMapper = objectMapper, owlProducer = mock()
         )
 
         //language=JSON
@@ -181,7 +181,7 @@ class APServiceImplTest {
     fun `parseActivity activityがvalueのときJsonParseExceptionがthrowされる`() {
         val apServiceImpl = APServiceImpl(
 
-            objectMapper = objectMapper, jobQueueParentService = mock()
+            objectMapper = objectMapper, owlProducer = mock()
         )
 
         //language=JSON

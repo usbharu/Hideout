@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.external.job
+package dev.usbharu.owl.consumer
 
-import dev.usbharu.hideout.activitypub.domain.model.Create
-import dev.usbharu.owl.common.task.Task
+import java.util.*
 
-data class DeliverPostTask(
-    val create: Create,
-    val inbox: String,
-    val actor: String,
-) : Task()
+class ServiceLoaderTaskRunnerLoader : TaskRunnerLoader {
+    private val taskRunnerMap = ServiceLoader
+        .load(TaskRunner::class.java)
+        .associateBy { it.name }
+
+    override fun load(): Map<String, TaskRunner> {
+        return taskRunnerMap
+    }
+}

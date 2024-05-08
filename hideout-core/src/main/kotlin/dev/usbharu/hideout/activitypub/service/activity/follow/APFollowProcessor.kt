@@ -22,7 +22,7 @@ import dev.usbharu.hideout.activitypub.service.common.AbstractActivityPubProcess
 import dev.usbharu.hideout.activitypub.service.common.ActivityPubProcessContext
 import dev.usbharu.hideout.activitypub.service.common.ActivityType
 import dev.usbharu.hideout.application.external.Transaction
-import dev.usbharu.hideout.core.external.job.ReceiveFollowJobParam
+import dev.usbharu.hideout.core.external.job.ReceiveFollowTask
 import dev.usbharu.owl.producer.api.OwlProducer
 import org.springframework.stereotype.Service
 
@@ -37,9 +37,9 @@ class APFollowProcessor(
         logger.info("FOLLOW from: {} to {}", activity.activity.actor, activity.activity.apObject)
 
         // inboxをジョブキューに乗せているので既に不要だが、フォロー承認制アカウントを実装する際に必要なので残す
-        val jobProps = ReceiveFollowJobParam(
+        val jobProps = ReceiveFollowTask(
             activity.activity.actor,
-            objectMapper.writeValueAsString(activity.activity),
+            activity.activity,
             activity.activity.apObject
         )
         owlProducer.publishTask(jobProps)

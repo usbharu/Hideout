@@ -16,16 +16,20 @@
 
 package dev.usbharu.hideout.activitypub.service.activity.like
 
+import dev.usbharu.hideout.activitypub.domain.model.Like
+import dev.usbharu.hideout.activitypub.domain.model.Undo
+import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.core.domain.exception.resource.PostNotFoundException
 import dev.usbharu.hideout.core.domain.exception.resource.UserNotFoundException
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.domain.model.reaction.Reaction
 import dev.usbharu.hideout.core.external.job.DeliverReactionTask
-import dev.usbharu.hideout.core.external.job.DeliverRemoveReactionTask
+import dev.usbharu.hideout.core.external.job.DeliverUndoTask
 import dev.usbharu.hideout.core.query.FollowerQueryService
 import dev.usbharu.owl.producer.api.OwlProducer
 import org.springframework.stereotype.Service
+import java.time.Instant
 
 interface APReactionService {
     suspend fun reaction(like: Reaction)
@@ -37,6 +41,7 @@ class APReactionServiceImpl(
     private val followerQueryService: FollowerQueryService,
     private val actorRepository: ActorRepository,
     private val postRepository: PostRepository,
+    private val applicationConfig: ApplicationConfig,
     private val owlProducer: OwlProducer,
 ) : APReactionService {
     override suspend fun reaction(like: Reaction) {
@@ -48,10 +53,13 @@ class APReactionServiceImpl(
             owlProducer.publishTask(
                 DeliverReactionTask(
                     actor = user.url,
-                    reaction = "❤",
-                    inbox = follower.inbox,
-                    postUrl = post.url,
-                    id = post.id
+                    like = Like(
+                        actor = user.url,
+                        id = "${applicationConfig.url}/like/note/${post.id}",
+                        content = "❤",
+                        apObject = post.url
+                    ),
+                    inbox = follower.inbox
                 )
             )
         }
@@ -64,11 +72,20 @@ class APReactionServiceImpl(
             postRepository.findById(like.postId) ?: throw PostNotFoundException.withId(like.postId)
         followers.forEach { follower ->
             owlProducer.publishTask(
-                DeliverRemoveReactionTask(
-                    actor = user.url,
+                DeliverUndoTask(
+                    signer = user.id,
                     inbox = follower.inbox,
-                    id = post.id,
-                    reaction = like
+                    undo = Undo(
+                        actor = user.url,
+                        id = "${applicationConfig.url}/undo/like/${post.id}",
+                        apObject = Like(
+                            actor = user.url,
+                            id = "${applicationConfig.url}/like/note/${post.id}",
+                            content = "❤",
+                            apObject = post.url
+                        ),
+                        published = Instant.now().toString(),
+                    )
                 )
             )
         }

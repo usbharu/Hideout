@@ -28,5 +28,11 @@ import dev.usbharu.owl.common.property.PropertyValue
 data class TaskResult(
     val success: Boolean,
     val result: Map<String, PropertyValue<*>>,
-    val message: String
-)
+    val message: String,
+) {
+    companion object {
+        fun ok(result: Map<String, PropertyValue<*>> = emptyMap()): TaskResult {
+            return TaskResult(true, result, "")
+        }
+    }
+}

@@ -16,38 +16,39 @@
 
 package dev.usbharu.hideout.core.external.job
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.activitypub.domain.model.Reject
+import dev.usbharu.owl.common.property.PropertyValue
+import dev.usbharu.owl.common.task.PropertyDefinition
 import dev.usbharu.owl.common.task.Task
-import kjob.core.dsl.ScheduleContext
-import kjob.core.job.JobProps
-import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.stereotype.Component
+import dev.usbharu.owl.common.task.TaskDefinition
 
-data class DeliverRejectJobParam(
+data class DeliverRejectTask(
     val reject: Reject,
     val inbox: String,
     val signer: Long,
 ) : Task()
 
-@Component
-class DeliverRejectJob(@Qualifier("activitypub") private val objectMapper: ObjectMapper) :
-    HideoutJob<DeliverRejectJobParam, DeliverRejectJob>("DeliverRejectJob") {
-    val reject = string("reject")
-    val inbox = string("inbox")
-    val signer = long("signer")
+data object DeliverRejectTaskDef : TaskDefinition<DeliverRejectTask> {
+    override val name: String
+        get() = TODO("Not yet implemented")
+    override val priority: Int
+        get() = TODO("Not yet implemented")
+    override val maxRetry: Int
+        get() = TODO("Not yet implemented")
+    override val retryPolicy: String
+        get() = TODO("Not yet implemented")
+    override val timeoutMilli: Long
+        get() = TODO("Not yet implemented")
+    override val propertyDefinition: PropertyDefinition
+        get() = TODO("Not yet implemented")
+    override val type: Class<DeliverRejectTask>
+        get() = TODO("Not yet implemented")
 
-    override fun convert(value: DeliverRejectJobParam): ScheduleContext<DeliverRejectJob>.(DeliverRejectJob) -> Unit =
-        {
-            props[reject] = objectMapper.writeValueAsString(value.reject)
-            props[inbox] = value.inbox
-            props[signer] = value.signer
-        }
+    override fun serialize(task: DeliverRejectTask): Map<String, PropertyValue<*>> {
+        TODO("Not yet implemented")
+    }
 
-    override fun convert(props: JobProps<DeliverRejectJob>): DeliverRejectJobParam = DeliverRejectJobParam(
-        objectMapper.readValue<Reject>(props[reject]),
-        props[inbox],
-        props[signer]
-    )
+    override fun deserialize(value: Map<String, PropertyValue<*>>): DeliverRejectTask {
+        TODO("Not yet implemented")
+    }
 }
