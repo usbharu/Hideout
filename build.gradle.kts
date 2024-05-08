@@ -248,7 +248,7 @@ dependencies {
     testImplementation("io.ktor:ktor-client-mock:$ktor_version")
     testImplementation("com.h2database:h2:$h2_version")
 
-    testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.3.1")
     testImplementation("org.mockito:mockito-inline:5.2.0")
     testImplementation("nl.jqno.equalsverifier:equalsverifier:3.16.1")
     testImplementation("com.jparams:to-string-verifier:1.4.8")
@@ -262,7 +262,7 @@ dependencies {
     intTestImplementation("org.springframework.security:spring-security-test")
     intTestImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     intTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version")
-    intTestImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
+    intTestImplementation("org.mockito.kotlin:mockito-kotlin:5.3.1")
     intTestImplementation("com.h2database:h2:$h2_version")
 
     e2eTestImplementation("org.springframework.boot:spring-boot-starter-test")
