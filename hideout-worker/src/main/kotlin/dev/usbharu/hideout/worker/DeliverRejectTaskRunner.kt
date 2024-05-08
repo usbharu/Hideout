@@ -19,28 +19,25 @@ package dev.usbharu.hideout.worker
 import dev.usbharu.hideout.activitypub.service.common.APRequestService
 import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
-import dev.usbharu.hideout.core.external.job.DeliverAcceptTask
-import dev.usbharu.hideout.core.external.job.DeliverAcceptTaskDef
+import dev.usbharu.hideout.core.external.job.DeliverRejectTask
+import dev.usbharu.hideout.core.external.job.DeliverRejectTaskDef
 import dev.usbharu.owl.consumer.AbstractTaskRunner
 import dev.usbharu.owl.consumer.TaskRequest
 import dev.usbharu.owl.consumer.TaskResult
 import org.springframework.stereotype.Component
 
 @Component
-class DeliverAcceptTaskRunner(
+class DeliverRejectTaskRunner(
+    private val transaction: Transaction,
     private val apRequestService: APRequestService,
     private val actorRepository: ActorRepository,
-    private val transaction: Transaction,
-) : AbstractTaskRunner<DeliverAcceptTask, DeliverAcceptTaskDef>(DeliverAcceptTaskDef) {
-    override suspend fun typedRun(typedParam: DeliverAcceptTask, taskRequest: TaskRequest): TaskResult {
-
-        transaction.transaction {
-            apRequestService.apPost(
-                typedParam.inbox,
-                typedParam.accept,
-                actorRepository.findById(typedParam.signer)
-            )
+) : AbstractTaskRunner<DeliverRejectTask, DeliverRejectTaskDef>(DeliverRejectTaskDef) {
+    override suspend fun typedRun(typedParam: DeliverRejectTask, taskRequest: TaskRequest): TaskResult {
+        val signer = transaction.transaction {
+            actorRepository.findById(typedParam.signer)
         }
+        apRequestService.apPost(typedParam.inbox, typedParam.reject, signer)
+
         return TaskResult.ok()
     }
 }

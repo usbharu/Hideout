@@ -16,7 +16,6 @@
 
 package dev.usbharu.hideout.mastodon.interfaces.api.status
 
-import Status
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import dev.usbharu.hideout.core.infrastructure.springframework.security.OAuth2JwtLoginUserContextHolder
 import dev.usbharu.hideout.domain.mastodon.model.generated.Account

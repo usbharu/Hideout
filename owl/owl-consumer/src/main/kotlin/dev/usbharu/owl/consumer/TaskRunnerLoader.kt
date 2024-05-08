@@ -14,14 +14,8 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.external.job
+package dev.usbharu.owl.consumer
 
-import dev.usbharu.hideout.core.domain.model.reaction.Reaction
-import dev.usbharu.owl.common.task.Task
-
-data class DeliverRemoveReactionTask(
-    val actor: String,
-    val inbox: String,
-    val id: Long,
-    val reaction: Reaction,
-) : Task()
+interface TaskRunnerLoader {
+    fun load(): Map<String, TaskRunner>
+}

@@ -24,7 +24,7 @@ import dev.usbharu.hideout.core.domain.exception.resource.UserNotFoundException
 import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.post.Post
-import dev.usbharu.hideout.core.external.job.DeliverDeleteJobParam
+import dev.usbharu.hideout.core.external.job.DeliverDeleteTask
 import dev.usbharu.hideout.core.query.FollowerQueryService
 import dev.usbharu.owl.producer.api.OwlProducer
 import org.springframework.stereotype.Service
@@ -55,7 +55,7 @@ class APSendDeleteServiceImpl(
         )
 
         followersById.forEach {
-            val jobProps = DeliverDeleteJobParam(
+            val jobProps = DeliverDeleteTask(
                 delete,
                 it.inbox,
                 actor.id
@@ -76,7 +76,7 @@ class APSendDeleteServiceImpl(
         )
 
         followers.forEach {
-            DeliverDeleteJobParam(
+            DeliverDeleteTask(
                 delete = delete,
                 it.inbox,
                 deletedActor.id

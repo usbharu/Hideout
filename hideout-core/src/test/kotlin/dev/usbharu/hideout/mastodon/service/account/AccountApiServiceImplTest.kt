@@ -16,7 +16,6 @@
 
 package dev.usbharu.hideout.mastodon.service.account
 
-import Status
 import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.application.infrastructure.exposed.Page
 import dev.usbharu.hideout.application.infrastructure.exposed.PaginationList

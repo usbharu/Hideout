@@ -14,27 +14,31 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.activitypub.service.activity.reject
+package dev.usbharu.hideout.worker
 
 import dev.usbharu.hideout.activitypub.service.common.APRequestService
-import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
-import dev.usbharu.hideout.core.external.job.DeliverRejectJob
-import dev.usbharu.hideout.core.external.job.DeliverRejectJobParam
-import dev.usbharu.hideout.core.service.job.JobProcessor
+import dev.usbharu.hideout.core.external.job.DeliverReactionTask
+import dev.usbharu.hideout.core.external.job.DeliverReactionTaskDef
+import dev.usbharu.owl.consumer.AbstractTaskRunner
+import dev.usbharu.owl.consumer.TaskRequest
+import dev.usbharu.owl.consumer.TaskResult
 import org.springframework.stereotype.Component
 
 @Component
-class APDeliverRejectJobProcessor(
+class DeliverReactionTaskRunner(
     private val apRequestService: APRequestService,
-    private val deliverRejectJob: DeliverRejectJob,
-    private val transaction: Transaction,
-    private val actorRepository: ActorRepository
-) :
-    JobProcessor<DeliverRejectJobParam, DeliverRejectJob> {
-    override suspend fun process(param: DeliverRejectJobParam): Unit = transaction.transaction {
-        apRequestService.apPost(param.inbox, param.reject, actorRepository.findById(param.signer))
-    }
+    private val actorRepository: ActorRepository,
+) : AbstractTaskRunner<DeliverReactionTask, DeliverReactionTaskDef>(DeliverReactionTaskDef) {
+    override suspend fun typedRun(typedParam: DeliverReactionTask, taskRequest: TaskRequest): TaskResult {
+        val signer = actorRepository.findByUrl(typedParam.actor)
 
-    override fun job(): DeliverRejectJob = deliverRejectJob
+        apRequestService.apPost(
+            typedParam.inbox,
+            typedParam.like,
+            signer
+        )
+
+        return TaskResult.ok()
+    }
 }

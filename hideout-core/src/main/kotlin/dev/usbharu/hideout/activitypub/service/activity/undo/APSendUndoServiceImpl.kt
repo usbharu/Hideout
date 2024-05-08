@@ -21,7 +21,7 @@ import dev.usbharu.hideout.activitypub.domain.model.Follow
 import dev.usbharu.hideout.activitypub.domain.model.Undo
 import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.core.domain.model.actor.Actor
-import dev.usbharu.hideout.core.external.job.DeliverUndoJobParam
+import dev.usbharu.hideout.core.external.job.DeliverUndoTask
 import dev.usbharu.owl.producer.api.OwlProducer
 import org.springframework.stereotype.Service
 import java.time.Instant
@@ -32,7 +32,7 @@ class APSendUndoServiceImpl(
     private val owlProducer: OwlProducer,
 ) : APSendUndoService {
     override suspend fun sendUndoFollow(actor: Actor, target: Actor) {
-        val deliverUndoJobParam = DeliverUndoJobParam(
+        val deliverUndoTask = DeliverUndoTask(
             Undo(
                 actor = actor.url,
                 id = "${applicationConfig.url}/undo/follow/${actor.id}/${target.url}",
@@ -46,11 +46,11 @@ class APSendUndoServiceImpl(
             actor.id
         )
 
-        owlProducer.publishTask(deliverUndoJobParam)
+        owlProducer.publishTask(deliverUndoTask)
     }
 
     override suspend fun sendUndoBlock(actor: Actor, target: Actor) {
-        val deliverUndoJobParam = DeliverUndoJobParam(
+        val deliverUndoTask = DeliverUndoTask(
             Undo(
                 actor = actor.url,
                 id = "${applicationConfig.url}/undo/block/${actor.id}/${target.url}",
@@ -65,6 +65,6 @@ class APSendUndoServiceImpl(
             actor.id
         )
 
-        owlProducer.publishTask(deliverUndoJobParam)
+        owlProducer.publishTask(deliverUndoTask)
     }
 }

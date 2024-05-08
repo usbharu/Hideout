@@ -17,30 +17,22 @@
 package dev.usbharu.hideout.worker
 
 import dev.usbharu.hideout.activitypub.service.common.APRequestService
-import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
-import dev.usbharu.hideout.core.external.job.DeliverAcceptTask
-import dev.usbharu.hideout.core.external.job.DeliverAcceptTaskDef
+import dev.usbharu.hideout.core.external.job.DeliverDeleteTask
+import dev.usbharu.hideout.core.external.job.DeliverDeleteTaskDef
 import dev.usbharu.owl.consumer.AbstractTaskRunner
 import dev.usbharu.owl.consumer.TaskRequest
 import dev.usbharu.owl.consumer.TaskResult
 import org.springframework.stereotype.Component
 
 @Component
-class DeliverAcceptTaskRunner(
+class DeliverDeleteTaskRunner(
     private val apRequestService: APRequestService,
     private val actorRepository: ActorRepository,
-    private val transaction: Transaction,
-) : AbstractTaskRunner<DeliverAcceptTask, DeliverAcceptTaskDef>(DeliverAcceptTaskDef) {
-    override suspend fun typedRun(typedParam: DeliverAcceptTask, taskRequest: TaskRequest): TaskResult {
-
-        transaction.transaction {
-            apRequestService.apPost(
-                typedParam.inbox,
-                typedParam.accept,
-                actorRepository.findById(typedParam.signer)
-            )
-        }
+) :
+    AbstractTaskRunner<DeliverDeleteTask, DeliverDeleteTaskDef>(DeliverDeleteTaskDef) {
+    override suspend fun typedRun(typedParam: DeliverDeleteTask, taskRequest: TaskRequest): TaskResult {
+        apRequestService.apPost(typedParam.inbox, typedParam.delete, actorRepository.findById(typedParam.signer))
         return TaskResult.ok()
     }
 }

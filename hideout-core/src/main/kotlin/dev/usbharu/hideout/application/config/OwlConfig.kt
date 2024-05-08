@@ -39,19 +39,16 @@ class OwlConfig(private val producerConfig: ProducerConfig) {
                     if (producerConfig.port != null) {
                         this.port = producerConfig.port.toString()
                     }
-
                 }
             }
 
             ProducerMode.GRPC -> {
                 OWL(EMBEDDED_GRPC) {
-
                 }
             }
 
             ProducerMode.EMBEDDED_GRPC -> {
                 OWL(DEFAULT) {
-
                 }
             }
         }

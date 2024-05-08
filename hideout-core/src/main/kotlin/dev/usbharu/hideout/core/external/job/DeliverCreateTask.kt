@@ -16,19 +16,19 @@
 
 package dev.usbharu.hideout.core.external.job
 
-import dev.usbharu.hideout.activitypub.domain.model.Follow
+import dev.usbharu.hideout.activitypub.domain.model.Create
 import dev.usbharu.owl.common.property.PropertyValue
 import dev.usbharu.owl.common.task.PropertyDefinition
 import dev.usbharu.owl.common.task.Task
 import dev.usbharu.owl.common.task.TaskDefinition
 
-data class ReceiveFollowTask(
+data class DeliverCreateTask(
+    val create: Create,
+    val inbox: String,
     val actor: String,
-    val follow: Follow,
-    val targetActor: String,
 ) : Task()
 
-data object ReceiveFollowTaskDef : TaskDefinition<ReceiveFollowTask> {
+data object DeliverCreateTaskDef : TaskDefinition<DeliverCreateTask> {
     override val name: String
         get() = TODO("Not yet implemented")
     override val priority: Int
@@ -41,14 +41,14 @@ data object ReceiveFollowTaskDef : TaskDefinition<ReceiveFollowTask> {
         get() = TODO("Not yet implemented")
     override val propertyDefinition: PropertyDefinition
         get() = TODO("Not yet implemented")
-    override val type: Class<ReceiveFollowTask>
+    override val type: Class<DeliverCreateTask>
         get() = TODO("Not yet implemented")
 
-    override fun deserialize(value: Map<String, PropertyValue<*>>): ReceiveFollowTask {
+    override fun serialize(task: DeliverCreateTask): Map<String, PropertyValue<*>> {
         TODO("Not yet implemented")
     }
 
-    override fun serialize(task: ReceiveFollowTask): Map<String, PropertyValue<*>> {
+    override fun deserialize(value: Map<String, PropertyValue<*>>): DeliverCreateTask {
         TODO("Not yet implemented")
     }
 }

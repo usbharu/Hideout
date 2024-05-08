@@ -16,7 +16,6 @@
 
 package dev.usbharu.hideout.activitypub.service.activity.create
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import dev.usbharu.hideout.activitypub.domain.model.Create
 import dev.usbharu.hideout.activitypub.query.NoteQueryService
 import dev.usbharu.hideout.application.config.ApplicationConfig
@@ -24,9 +23,8 @@ import dev.usbharu.hideout.core.domain.exception.resource.PostNotFoundException
 import dev.usbharu.hideout.core.domain.exception.resource.UserNotFoundException
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.post.Post
-import dev.usbharu.hideout.core.external.job.DeliverPostTask
+import dev.usbharu.hideout.core.external.job.DeliverCreateTask
 import dev.usbharu.hideout.core.query.FollowerQueryService
-import dev.usbharu.hideout.core.service.job.JobQueueParentService
 import dev.usbharu.owl.producer.api.OwlProducer
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -34,8 +32,6 @@ import org.springframework.stereotype.Service
 @Service
 class ApSendCreateServiceImpl(
     private val followerQueryService: FollowerQueryService,
-    private val objectMapper: ObjectMapper,
-    private val jobQueueParentService: JobQueueParentService,
     private val noteQueryService: NoteQueryService,
     private val applicationConfig: ApplicationConfig,
     private val actorRepository: ActorRepository,
@@ -58,7 +54,7 @@ class ApSendCreateServiceImpl(
             id = "${applicationConfig.url}/create/note/${post.id}"
         )
         followers.forEach { followerEntity ->
-            owlProducer.publishTask(DeliverPostTask(create, userEntity.url, followerEntity.inbox))
+            owlProducer.publishTask(DeliverCreateTask(create, userEntity.url, followerEntity.inbox))
         }
 
         logger.debug("SUCCESS Create Local Note ${post.url}")

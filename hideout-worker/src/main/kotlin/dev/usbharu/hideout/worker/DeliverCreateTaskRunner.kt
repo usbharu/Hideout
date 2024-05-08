@@ -19,28 +19,26 @@ package dev.usbharu.hideout.worker
 import dev.usbharu.hideout.activitypub.service.common.APRequestService
 import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
-import dev.usbharu.hideout.core.external.job.DeliverAcceptTask
-import dev.usbharu.hideout.core.external.job.DeliverAcceptTaskDef
+import dev.usbharu.hideout.core.external.job.DeliverCreateTask
+import dev.usbharu.hideout.core.external.job.DeliverCreateTaskDef
 import dev.usbharu.owl.consumer.AbstractTaskRunner
 import dev.usbharu.owl.consumer.TaskRequest
 import dev.usbharu.owl.consumer.TaskResult
 import org.springframework.stereotype.Component
 
 @Component
-class DeliverAcceptTaskRunner(
+class DeliverCreateTaskRunner(
+    private val transaction: Transaction,
     private val apRequestService: APRequestService,
     private val actorRepository: ActorRepository,
-    private val transaction: Transaction,
-) : AbstractTaskRunner<DeliverAcceptTask, DeliverAcceptTaskDef>(DeliverAcceptTaskDef) {
-    override suspend fun typedRun(typedParam: DeliverAcceptTask, taskRequest: TaskRequest): TaskResult {
-
+) : AbstractTaskRunner<DeliverCreateTask, DeliverCreateTaskDef>(DeliverCreateTaskDef) {
+    override suspend fun typedRun(typedParam: DeliverCreateTask, taskRequest: TaskRequest): TaskResult {
         transaction.transaction {
-            apRequestService.apPost(
-                typedParam.inbox,
-                typedParam.accept,
-                actorRepository.findById(typedParam.signer)
-            )
+            val signer = actorRepository.findByUrl(typedParam.actor)
+
+            apRequestService.apPost(typedParam.inbox, typedParam.create, signer)
         }
+
         return TaskResult.ok()
     }
 }
