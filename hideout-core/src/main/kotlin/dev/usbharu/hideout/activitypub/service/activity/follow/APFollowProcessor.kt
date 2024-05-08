@@ -16,7 +16,6 @@
 
 package dev.usbharu.hideout.activitypub.service.activity.follow
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import dev.usbharu.hideout.activitypub.domain.model.Follow
 import dev.usbharu.hideout.activitypub.service.common.AbstractActivityPubProcessor
 import dev.usbharu.hideout.activitypub.service.common.ActivityPubProcessContext
@@ -29,7 +28,6 @@ import org.springframework.stereotype.Service
 @Service
 class APFollowProcessor(
     transaction: Transaction,
-    private val objectMapper: ObjectMapper,
     private val owlProducer: OwlProducer,
 ) :
     AbstractActivityPubProcessor<Follow>(transaction) {
