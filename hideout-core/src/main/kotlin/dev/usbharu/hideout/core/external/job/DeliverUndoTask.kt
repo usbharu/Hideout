@@ -21,6 +21,7 @@ import dev.usbharu.owl.common.property.PropertyValue
 import dev.usbharu.owl.common.task.PropertyDefinition
 import dev.usbharu.owl.common.task.Task
 import dev.usbharu.owl.common.task.TaskDefinition
+import org.springframework.stereotype.Component
 
 data class DeliverUndoTask(
     val undo: Undo,
@@ -28,6 +29,7 @@ data class DeliverUndoTask(
     val signer: Long,
 ) : Task()
 
+@Component
 data object DeliverUndoTaskDef : TaskDefinition<DeliverUndoTask> {
     override val name: String
         get() = TODO("Not yet implemented")

@@ -191,6 +191,7 @@ dependencies {
     implementation(libs.bundles.apache.tika)
     implementation(libs.bundles.openapi)
     implementation(libs.bundles.owl.producer)
+    implementation(libs.bundles.owl.broker)
     implementation(libs.bundles.spring.boot.oauth2)
     implementation(libs.bundles.spring.boot.data.mongodb)
     implementation(libs.bundles.spring.boot.data.mongodb)

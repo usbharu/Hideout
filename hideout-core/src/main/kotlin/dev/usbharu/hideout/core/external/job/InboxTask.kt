@@ -22,6 +22,7 @@ import dev.usbharu.owl.common.property.PropertyValue
 import dev.usbharu.owl.common.task.PropertyDefinition
 import dev.usbharu.owl.common.task.Task
 import dev.usbharu.owl.common.task.TaskDefinition
+import org.springframework.stereotype.Component
 
 data class InboxTask(
     val json: String,
@@ -30,6 +31,7 @@ data class InboxTask(
     val headers: Map<String, List<String>>,
 ) : Task()
 
+@Component
 data object InboxTaskDef : TaskDefinition<InboxTask> {
     override val name: String
         get() = TODO("Not yet implemented")

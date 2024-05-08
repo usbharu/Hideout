@@ -1,5 +1,5 @@
 hideout:
-  url: "https://test-hideout.usbharu.dev"
+  url: "https://test-hideout-dev.usbharu.dev"
   use-mongodb: true
   owl:
     producer:

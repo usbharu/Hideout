@@ -60,6 +60,8 @@ kjon-mongo = { module = "org.drewcarlson:kjob-mongo", version.ref = "kjob" }
 owl-producer-api = { module = "dev.usbharu:owl-producer-api", version.ref = "owl" }
 owl-producer-default = { module = "dev.usbharu:owl-producer-default", version.ref = "owl" }
 owl-producer-embedded = { module = "dev.usbharu:owl-producer-embedded", version.ref = "owl" }
+owl-broker = { module = "dev.usbharu:owl-broker", version.ref = "owl" }
+owl-broker-mongodb = { module = "dev.usbharu:owl-broker-mongodb", version.ref = "owl" }
 
 jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
 jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
@@ -76,6 +78,7 @@ serialization = ["serialization-core", "serialization-json"]
 apache-tika = ["apache-tika-core", "apache-tika-parsers"]
 kjob = ["kjon-core", "kjon-mongo"]
 owl-producer = ["owl-producer-api", "owl-producer-default", "owl-producer-embedded"]
+owl-broker = ["owl-broker", "owl-broker-mongodb"]
 
 [plugins]
 
