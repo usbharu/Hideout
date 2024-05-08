@@ -204,7 +204,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
     implementation("org.jetbrains.exposed:exposed-spring-boot-starter:$exposed_version")
     implementation("io.trbl:blurhash:1.0.0")
-    implementation("software.amazon.awssdk:s3:2.25.45")
+    implementation("software.amazon.awssdk:s3:2.25.47")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:$coroutines_version")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:$coroutines_version")
