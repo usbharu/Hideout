@@ -21,6 +21,7 @@ import dev.usbharu.owl.common.property.PropertyValue
 import dev.usbharu.owl.common.task.PropertyDefinition
 import dev.usbharu.owl.common.task.Task
 import dev.usbharu.owl.common.task.TaskDefinition
+import org.springframework.stereotype.Component
 
 data class DeliverAcceptTask(
     val accept: Accept,
@@ -28,6 +29,7 @@ data class DeliverAcceptTask(
     val signer: Long,
 ) : Task()
 
+@Component
 data object DeliverAcceptTaskDef : TaskDefinition<DeliverAcceptTask> {
     override val name: String
         get() = TODO("Not yet implemented")

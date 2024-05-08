@@ -21,6 +21,7 @@ import dev.usbharu.owl.common.property.PropertyValue
 import dev.usbharu.owl.common.task.PropertyDefinition
 import dev.usbharu.owl.common.task.Task
 import dev.usbharu.owl.common.task.TaskDefinition
+import org.springframework.stereotype.Component
 
 data class ReceiveFollowTask(
     val actor: String,
@@ -28,6 +29,7 @@ data class ReceiveFollowTask(
     val targetActor: String,
 ) : Task()
 
+@Component
 data object ReceiveFollowTaskDef : TaskDefinition<ReceiveFollowTask> {
     override val name: String
         get() = TODO("Not yet implemented")

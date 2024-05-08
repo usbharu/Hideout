@@ -21,6 +21,7 @@ import dev.usbharu.owl.common.property.PropertyValue
 import dev.usbharu.owl.common.task.PropertyDefinition
 import dev.usbharu.owl.common.task.Task
 import dev.usbharu.owl.common.task.TaskDefinition
+import org.springframework.stereotype.Component
 
 data class DeliverCreateTask(
     val create: Create,
@@ -28,6 +29,7 @@ data class DeliverCreateTask(
     val actor: String,
 ) : Task()
 
+@Component
 data object DeliverCreateTaskDef : TaskDefinition<DeliverCreateTask> {
     override val name: String
         get() = TODO("Not yet implemented")
