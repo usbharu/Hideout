@@ -19,17 +19,25 @@ package dev.usbharu.hideout.application.external
 import dev.usbharu.owl.common.task.TaskDefinition
 import dev.usbharu.owl.producer.api.OwlProducer
 import kotlinx.coroutines.runBlocking
+import org.springframework.beans.factory.DisposableBean
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.stereotype.Component
 
 @Component
 class OwlProducerRunner(private val owlProducer: OwlProducer, private val taskDefinitions: List<TaskDefinition<*>>) :
-    ApplicationRunner {
+    ApplicationRunner, DisposableBean {
     override fun run(args: ApplicationArguments?) {
         runBlocking {
             owlProducer.start()
             taskDefinitions.forEach { taskDefinition -> owlProducer.registerTask(taskDefinition) }
+        }
+    }
+
+    override fun destroy() {
+        System.err.println("destroy aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+        runBlocking {
+            owlProducer.stop()
         }
     }
 }

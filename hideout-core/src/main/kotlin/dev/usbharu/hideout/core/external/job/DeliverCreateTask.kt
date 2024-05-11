@@ -31,5 +31,4 @@ data class DeliverCreateTask(
 data object DeliverCreateTaskDef : TaskDefinition<DeliverCreateTask> {
     override val type: Class<DeliverCreateTask>
         get() = DeliverCreateTask::class.java
-
 }

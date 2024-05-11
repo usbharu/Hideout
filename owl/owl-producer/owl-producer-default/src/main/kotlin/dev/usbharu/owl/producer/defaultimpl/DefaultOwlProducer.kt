@@ -87,4 +87,8 @@ class DefaultOwlProducer(private val defaultOwlProducerConfig: DefaultOwlProduce
             now
         )
     }
+
+    override suspend fun stop() {
+        defaultOwlProducerConfig.channel.shutdownNow()
+    }
 }

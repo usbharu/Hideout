@@ -19,6 +19,7 @@ package dev.usbharu.owl.producer.defaultimpl
 import dev.usbharu.owl.common.property.PropertySerializerFactory
 import dev.usbharu.owl.producer.api.OwlProducerConfig
 import io.grpc.Channel
+import io.grpc.ManagedChannel
 
 /**
  * デフォルトの[dev.usbharu.owl.producer.api.OwlProducer]の構成
@@ -28,7 +29,7 @@ class DefaultOwlProducerConfig : OwlProducerConfig {
     /**
      * gRPCで使用する[Channel]
      */
-    lateinit var channel: Channel
+    lateinit var channel: ManagedChannel
 
     /**
      * プロデューサー名
