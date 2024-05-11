@@ -61,7 +61,7 @@ jobs:
       - name: Build
         uses: gradle/gradle-build-action@v3.3.2
         with:
-          arguments: testClasses
+          arguments: :hideout-core:testClasses
 
   unit-test:
     name: Unit Test
@@ -113,7 +113,7 @@ jobs:
       - name: Unit Test
         uses: gradle/gradle-build-action@v3.3.2
         with:
-          arguments: test
+          arguments: :hideout-core:test
 
       - name: Save Test Report
         if: always()
@@ -177,7 +177,7 @@ jobs:
       - name: Unit Test
         uses: gradle/gradle-build-action@v3.3.2
         with:
-          arguments: integrationTest
+          arguments: :hideout-core:integrationTest
 
       - name: Save Test Report
         if: always()
@@ -236,7 +236,7 @@ jobs:
       - name: Run Kover
         uses: gradle/gradle-build-action@v3.3.2
         with:
-          arguments: koverXmlReport -x integrationTest -x e2eTest --rerun-tasks
+          arguments: :hideout-core:koverXmlReport -x :hideout-core:integrationTest -x :hideout-core:e2eTest --rerun-tasks
 
       - name: Add coverage report to PR
         if: always()
@@ -331,7 +331,7 @@ jobs:
       - name: Build with Gradle
         uses: gradle/gradle-build-action@4c39dd82cd5e1ec7c6fa0173bb41b4b6bb3b86ff
         with:
-          arguments: detektMain
+          arguments: :hideout-core:detektMain
 
       - name: "reviewdog-suggester: Suggest any code changes based on diff with reviewdog"
         if: ${{ always() }}
@@ -401,7 +401,7 @@ jobs:
       - name: E2E Test
         uses: gradle/gradle-build-action@v3.3.2
         with:
-          arguments: e2eTest
+          arguments: :hideout-core:e2eTest
 
 
       - name: Save Test Report
