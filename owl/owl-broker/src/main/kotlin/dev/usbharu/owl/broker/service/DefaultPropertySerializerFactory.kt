@@ -26,6 +26,8 @@ class DefaultPropertySerializerFactory :
             IntegerPropertySerializer(),
             StringPropertyValueSerializer(),
             DoublePropertySerializer(),
-            BooleanPropertySerializer()
+            BooleanPropertySerializer(),
+            LongPropertySerializer(),
+            FloatPropertySerializer(),
         )
     )

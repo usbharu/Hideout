@@ -45,10 +45,19 @@ dependencies {
     implementation("dev.usbharu:http-signature:1.0.0")
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("org.springframework.boot:spring-boot-starter-log4j2")
     implementation(libs.jackson.databind)
     implementation(libs.jackson.module.kotlin)
+    implementation(libs.bundles.coroutines)
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+}
+
+configurations {
+    all {
+        exclude("org.springframework.boot", "spring-boot-starter-logging")
+        exclude("ch.qos.logback", "logback-classic")
+    }
 }
 
 tasks.test {

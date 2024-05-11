@@ -16,7 +16,9 @@
 
 package dev.usbharu.hideout.application.config
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import dev.usbharu.owl.broker.ModuleContext
+import dev.usbharu.owl.common.property.*
 import dev.usbharu.owl.common.retry.RetryPolicyFactory
 import dev.usbharu.owl.producer.api.OWL
 import dev.usbharu.owl.producer.api.OwlProducer
@@ -24,6 +26,7 @@ import dev.usbharu.owl.producer.defaultimpl.DEFAULT
 import dev.usbharu.owl.producer.embedded.EMBEDDED
 import dev.usbharu.owl.producer.embedded.EMBEDDED_GRPC
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -32,7 +35,10 @@ import java.util.*
 @Configuration
 class OwlConfig(private val producerConfig: ProducerConfig) {
     @Bean
-    fun producer(@Autowired(required = false) retryPolicyFactory: RetryPolicyFactory? = null): OwlProducer {
+    fun producer(
+        @Autowired(required = false) retryPolicyFactory: RetryPolicyFactory? = null,
+        @Qualifier("activitypub") objectMapper: ObjectMapper,
+    ): OwlProducer {
         return when (producerConfig.mode) {
             ProducerMode.EMBEDDED -> {
                 OWL(EMBEDDED) {
@@ -46,6 +52,17 @@ class OwlConfig(private val producerConfig: ProducerConfig) {
                     if (moduleContext != null) {
                         this.moduleContext = moduleContext
                     }
+                    this.propertySerializerFactory = CustomPropertySerializerFactory(
+                        setOf(
+                            IntegerPropertySerializer(),
+                            StringPropertyValueSerializer(),
+                            DoublePropertySerializer(),
+                            BooleanPropertySerializer(),
+                            LongPropertySerializer(),
+                            FloatPropertySerializer(),
+                            ObjectPropertySerializer(objectMapper),
+                        )
+                    )
                 }
             }
 

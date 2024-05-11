@@ -18,10 +18,7 @@ package dev.usbharu.owl.broker.service
 
 import dev.usbharu.owl.broker.domain.exception.service.QueueCannotDequeueException
 import dev.usbharu.owl.broker.domain.model.queuedtask.QueuedTask
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import org.koin.core.annotation.Singleton
 import org.slf4j.LoggerFactory
 import java.time.Instant
@@ -37,6 +34,7 @@ class QueuedTaskAssignerImpl(
     private val queueStore: QueueStore
 ) : QueuedTaskAssigner {
     override fun ready(consumerId: UUID, numberOfConcurrent: Int): Flow<QueuedTask> {
+        logger.trace("Ready {}/{}", numberOfConcurrent, consumerId)
         return flow {
             taskManagementService.findAssignableTask(consumerId, numberOfConcurrent)
                 .onEach {
@@ -46,6 +44,7 @@ class QueuedTaskAssignerImpl(
                         emit(assignTask)
                     }
                 }
+                .catch { logger.warn("Failed to assign task {}", consumerId, it) }
                 .collect()
         }
     }

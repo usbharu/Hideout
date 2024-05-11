@@ -14,17 +14,13 @@
  * limitations under the License.
  */
 
-package dev.usbharu.owl.producer.embedded
+package dev.usbharu.hideout
 
-import dev.usbharu.owl.broker.ModuleContext
-import dev.usbharu.owl.common.property.CustomPropertySerializerFactory
-import dev.usbharu.owl.common.retry.RetryPolicyFactory
-import dev.usbharu.owl.producer.api.OwlProducerConfig
+import dev.usbharu.owl.consumer.TaskRunner
+import dev.usbharu.owl.consumer.TaskRunnerLoader
+import org.springframework.stereotype.Component
 
-class EmbeddedOwlProducerConfig : OwlProducerConfig {
-    lateinit var moduleContext: ModuleContext
-    lateinit var retryPolicyFactory: RetryPolicyFactory
-    lateinit var propertySerializerFactory: CustomPropertySerializerFactory
-    lateinit var name: String
-    lateinit var port: String
+@Component
+class SpringTaskRunnerLoader(private val taskRunners: List<TaskRunner>) : TaskRunnerLoader {
+    override fun load(): Map<String, TaskRunner> = taskRunners.associateBy { it.name }
 }

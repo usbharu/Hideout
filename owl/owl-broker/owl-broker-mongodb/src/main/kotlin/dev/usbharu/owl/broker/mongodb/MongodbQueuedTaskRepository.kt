@@ -66,7 +66,7 @@ class MongodbQueuedTaskRepository(
                     eq(QueuedTaskMongodb::isActive.name, true)
                 ),
                 listOf(
-                    set(QueuedTaskMongodb::assignedConsumer.name, update.assignedConsumer),
+                    set(QueuedTaskMongodb::assignedConsumer.name, update.assignedConsumer?.toString()),
                     set(QueuedTaskMongodb::assignedAt.name, update.assignedAt),
                     set(QueuedTaskMongodb::queuedAt.name, update.queuedAt),
                     set(QueuedTaskMongodb::isActive.name, update.isActive)

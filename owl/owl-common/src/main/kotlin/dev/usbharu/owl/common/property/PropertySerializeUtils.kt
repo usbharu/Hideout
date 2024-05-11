@@ -29,9 +29,16 @@ object PropertySerializeUtils {
      */
     fun serialize(
         serializerFactory: PropertySerializerFactory,
-        properties: Map<String, PropertyValue<*>>
-    ): Map<String, String> =
-        properties.map { it.key to serializerFactory.factory(it.value).serialize(it.value) }.toMap()
+        properties: Map<String, PropertyValue<*>>,
+    ): Map<String, String> {
+        return properties.map {
+            try {
+                it.key to serializerFactory.factory(it.value).serialize(it.value)
+            } catch (e: Exception) {
+                throw PropertySerializeException("Failed to serialize property in ${serializerFactory.javaClass}", e)
+            }
+        }.toMap()
+    }
 
     /**
      * Stringとシリアライズ済みの[PropertyValue]の[Map]からシリアライズ済みの[PropertyValue]をデシリアライズし、Stringと[PropertyValue]の[Map]として返します

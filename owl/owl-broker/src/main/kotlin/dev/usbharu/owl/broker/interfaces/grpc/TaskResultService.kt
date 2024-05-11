@@ -24,13 +24,19 @@ import dev.usbharu.owl.broker.external.toUUID
 import dev.usbharu.owl.broker.service.TaskManagementService
 import dev.usbharu.owl.common.property.PropertySerializeUtils
 import dev.usbharu.owl.common.property.PropertySerializerFactory
+import io.grpc.Status
+import io.grpc.StatusException
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
+import org.koin.core.annotation.Singleton
+import org.slf4j.LoggerFactory
 import java.util.*
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
+@Singleton
 class TaskResultService(
     coroutineContext: CoroutineContext = EmptyCoroutineContext,
     private val taskManagementService: TaskManagementService,
@@ -38,18 +44,29 @@ class TaskResultService(
 ) :
     TaskResultServiceGrpcKt.TaskResultServiceCoroutineImplBase(coroutineContext) {
     override suspend fun tasKResult(requests: Flow<TaskResultOuterClass.TaskResult>): Empty {
-        requests.onEach {
-            taskManagementService.queueProcessed(
-                TaskResult(
-                    id = UUID.randomUUID(),
-                    taskId = it.id.toUUID(),
-                    success = it.success,
-                    attempt = it.attempt,
-                    result = PropertySerializeUtils.deserialize(propertySerializerFactory, it.resultMap),
-                    message = it.message
+        try {
+            requests.onEach {
+                taskManagementService.queueProcessed(
+                    TaskResult(
+                        id = UUID.randomUUID(),
+                        taskId = it.id.toUUID(),
+                        success = it.success,
+                        attempt = it.attempt,
+                        result = PropertySerializeUtils.deserialize(propertySerializerFactory, it.resultMap),
+                        message = it.message
+                    )
                 )
-            )
-        }.collect()
+            }.collect()
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            logger.warn("Error while executing task results", e)
+            throw StatusException(Status.INTERNAL.withDescription("Error while executing task results").withCause(e))
+        }
         return Empty.getDefaultInstance()
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(TaskResultService::class.java)
     }
 }

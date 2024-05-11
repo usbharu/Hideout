@@ -107,7 +107,11 @@ interface TaskDefinition<T : Task> {
      */
     fun deserialize(value: Map<String, PropertyValue<*>>): T {
 
-        val task = type.getDeclaredConstructor().newInstance()
+        val task = try {
+            type.getDeclaredConstructor().newInstance()
+        } catch (e: Exception) {
+            throw IllegalArgumentException("Unable to deserialize value $value for type ${type.name}", e)
+        }
 
         type.fields.associateBy { it.name }.mapValues {
             when {

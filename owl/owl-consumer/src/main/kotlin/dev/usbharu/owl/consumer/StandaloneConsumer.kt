@@ -52,7 +52,11 @@ class StandaloneConsumer(
     constructor(
         propertySerializerFactory: PropertySerializerFactory = CustomPropertySerializerFactory(emptySet()),
         taskRunnerLoader: TaskRunnerLoader = ServiceLoaderTaskRunnerLoader(),
-    ) : this(Path.of("consumer.properties"), propertySerializerFactory, taskRunnerLoader)
+    ) : this(
+        Path.of(StandaloneConsumer::class.java.getClassLoader().getResource("consumer.properties").toURI()),
+        propertySerializerFactory,
+        taskRunnerLoader
+    )
 
     private val channel = ManagedChannelBuilder.forAddress(config.address, config.port)
         .usePlaintext()
@@ -68,7 +72,7 @@ class StandaloneConsumer(
         taskResultStub = taskResultStub,
         taskRunnerLoader = taskRunnerLoader,
         propertySerializerFactory = propertySerializerFactory,
-        consumerConfig = ConsumerConfig(config.concurrency)
+        consumerConfig = ConsumerConfig(config.concurrency),
     )
 
     /**
