@@ -20,6 +20,7 @@ import dev.usbharu.owl.broker.OwlBrokerApplication
 import dev.usbharu.owl.broker.domain.exception.InvalidRepositoryException
 import dev.usbharu.owl.broker.domain.model.producer.ProducerRepository
 import dev.usbharu.owl.broker.service.*
+import dev.usbharu.owl.common.property.PropertySerializerFactory
 import dev.usbharu.owl.common.retry.RetryPolicyFactory
 import dev.usbharu.owl.common.task.PublishedTask
 import dev.usbharu.owl.common.task.Task
@@ -51,8 +52,11 @@ class EmbeddedOwlProducer(
                 single<RetryPolicyFactory> {
                     embeddedOwlProducerConfig.retryPolicyFactory
                 }
+                single<PropertySerializerFactory> {
+                    embeddedOwlProducerConfig.propertySerializerFactory
+                }
             }
-            modules(module, defaultModule, embeddedOwlProducerConfig.moduleContext.module())
+            modules(defaultModule, module, embeddedOwlProducerConfig.moduleContext.module())
         }.koin
 
         application.getOrNull<ProducerRepository>()

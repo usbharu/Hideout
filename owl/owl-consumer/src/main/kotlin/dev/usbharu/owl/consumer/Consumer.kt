@@ -81,86 +81,116 @@ class Consumer(
     suspend fun start() {
         coroutineScope = CoroutineScope(Dispatchers.Default)
         coroutineScope {
-            taskResultStub
-                .tasKResult(flow {
-                    assignmentTaskStub
-                        .ready(flow {
-                            while (coroutineScope.isActive) {
-                                val andSet = concurrent.getAndUpdate { 0 }
+            while (isActive) {
+                try {
+                    taskResultStub
+                        .tasKResult(flow {
+                            assignmentTaskStub
+                                .ready(flow {
+                                    requestTask()
+                                }).onEach {
+                                    logger.info("Start Task name: {}", it.name)
+                                    processing.update { it + 1 }
 
+                                    try {
 
-                                if (andSet != 0) {
-                                    logger.debug("Request {} tasks.", andSet)
-                                    emit(readyRequest {
-                                        this.consumerId = consumerId
-                                        this.numberOfConcurrent = andSet
-                                    })
-                                    continue
-                                }
-                                delay(100)
-
-                                concurrent.update {
-                                    ((64 - it) - processing.value).coerceIn(0, 64 - max(0, processing.value))
-                                }
-                            }
-                        }).onEach {
-                            logger.info("Start Task name: {}", it.name)
-                            processing.update { it + 1 }
-
-                            try {
-
-                                val taskResult = runnerMap.getValue(it.name).run(
-                                    TaskRequest(
-                                        it.name,
-                                        java.util.UUID(it.id.mostSignificantUuidBits, it.id.leastSignificantUuidBits),
-                                        it.attempt,
-                                        Instant.ofEpochSecond(it.queuedAt.seconds, it.queuedAt.nanos.toLong()),
-                                        PropertySerializeUtils.deserialize(propertySerializerFactory, it.propertiesMap)
-                                    )
-                                )
-
-                                emit(taskResult {
-                                    this.success = taskResult.success
-                                    this.attempt = it.attempt
-                                    this.id = it.id
-                                    this.result.putAll(
-                                        PropertySerializeUtils.serialize(
-                                            propertySerializerFactory, taskResult.result
+                                        val taskResult = runnerMap.getValue(it.name).run(
+                                            TaskRequest(
+                                                it.name,
+                                                java.util.UUID(
+                                                    it.id.mostSignificantUuidBits,
+                                                    it.id.leastSignificantUuidBits
+                                                ),
+                                                it.attempt,
+                                                Instant.ofEpochSecond(it.queuedAt.seconds, it.queuedAt.nanos.toLong()),
+                                                PropertySerializeUtils.deserialize(
+                                                    propertySerializerFactory,
+                                                    it.propertiesMap
+                                                )
+                                            )
                                         )
-                                    )
-                                    this.message = taskResult.message
-                                })
-                                logger.info("Success execute task. name: {} success: {}", it.name, taskResult.success)
-                                logger.debug("TRACE RESULT {}", taskResult)
-                            } catch (e: CancellationException) {
-                                logger.warn("Cancelled execute task.", e)
-                                emit(taskResult {
-                                    this.success = false
-                                    this.attempt = it.attempt
-                                    this.id = it.id
-                                    this.message = e.localizedMessage
-                                })
-                                throw e
-                            } catch (e: Exception) {
-                                logger.warn("Failed execute task.", e)
-                                emit(taskResult {
-                                    this.success = false
-                                    this.attempt = it.attempt
-                                    this.id = it.id
-                                    this.message = e.localizedMessage
-                                })
-                            } finally {
-                                processing.update { it - 1 }
-                                concurrent.update {
-                                    if (it < 64) {
-                                        it + 1
-                                    } else {
-                                        64
+
+                                        emit(taskResult {
+                                            this.success = taskResult.success
+                                            this.attempt = it.attempt
+                                            this.id = it.id
+                                            this.result.putAll(
+                                                PropertySerializeUtils.serialize(
+                                                    propertySerializerFactory, taskResult.result
+                                                )
+                                            )
+                                            this.message = taskResult.message
+                                        })
+                                        logger.info(
+                                            "Success execute task. name: {} success: {}",
+                                            it.name,
+                                            taskResult.success
+                                        )
+                                        logger.debug("TRACE RESULT {}", taskResult)
+                                    } catch (e: CancellationException) {
+                                        logger.warn("Cancelled execute task.", e)
+                                        emit(taskResult {
+                                            this.success = false
+                                            this.attempt = it.attempt
+                                            this.id = it.id
+                                            this.message = e.localizedMessage
+                                        })
+                                        throw e
+                                    } catch (e: Exception) {
+                                        logger.warn("Failed execute task.", e)
+                                        emit(taskResult {
+                                            this.success = false
+                                            this.attempt = it.attempt
+                                            this.id = it.id
+                                            this.message = e.localizedMessage
+                                        })
+                                    } finally {
+                                        processing.update { it - 1 }
+                                        concurrent.update {
+                                            if (it < 64) {
+                                                it + 1
+                                            } else {
+                                                64
+                                            }
+                                        }
                                     }
-                                }
-                            }
-                        }.flowOn(Dispatchers.Default).collect()
-                })
+                                }.flowOn(Dispatchers.Default).collect()
+                        })
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    logger.warn("Consumer error", e)
+                }
+
+                delay(1000)
+            }
+        }
+    }
+
+    private suspend fun FlowCollector<Task.ReadyRequest>.requestTask() {
+        while (coroutineScope.isActive) {
+            val andSet = concurrent.getAndUpdate { 0 }
+
+
+            if (andSet != 0) {
+                logger.debug("Request {} tasks.", andSet)
+                try {
+                    emit(readyRequest {
+                        this.consumerId = this@Consumer.consumerId
+                        this.numberOfConcurrent = andSet
+                    })
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    logger.warn("Failed request task.", e)
+                }
+                continue
+            }
+            delay(100)
+
+            concurrent.update {
+                ((64 - it) - processing.value).coerceIn(0, 64 - max(0, processing.value))
+            }
         }
     }
 

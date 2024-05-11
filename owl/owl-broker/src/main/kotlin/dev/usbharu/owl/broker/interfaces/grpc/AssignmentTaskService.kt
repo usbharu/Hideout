@@ -24,10 +24,13 @@ import dev.usbharu.owl.broker.external.toUUID
 import dev.usbharu.owl.broker.service.QueuedTaskAssigner
 import dev.usbharu.owl.common.property.PropertySerializeUtils
 import dev.usbharu.owl.common.property.PropertySerializerFactory
+import io.grpc.Status
+import io.grpc.StatusException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.map
 import org.koin.core.annotation.Singleton
+import org.slf4j.LoggerFactory
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
@@ -40,19 +43,34 @@ class AssignmentTaskService(
     AssignmentTaskServiceGrpcKt.AssignmentTaskServiceCoroutineImplBase(coroutineContext) {
 
     override fun ready(requests: Flow<Task.ReadyRequest>): Flow<Task.TaskRequest> {
-        return requests
-            .flatMapMerge {
-                queuedTaskAssigner.ready(it.consumerId.toUUID(), it.numberOfConcurrent)
-            }
-            .map {
-                Task.TaskRequest
-                    .newBuilder()
-                    .setName(it.task.name)
-                    .setId(it.task.id.toUUID())
-                    .setAttempt(it.attempt)
-                    .setQueuedAt(it.queuedAt.toTimestamp())
-                    .putAllProperties(PropertySerializeUtils.serialize(propertySerializerFactory, it.task.properties))
-                    .build()
-            }
+
+        return try {
+            requests
+                .flatMapMerge {
+                    queuedTaskAssigner.ready(it.consumerId.toUUID(), it.numberOfConcurrent)
+                }
+                .map {
+                    Task.TaskRequest
+                        .newBuilder()
+                        .setName(it.task.name)
+                        .setId(it.task.id.toUUID())
+                        .setAttempt(it.attempt)
+                        .setQueuedAt(it.queuedAt.toTimestamp())
+                        .putAllProperties(
+                            PropertySerializeUtils.serialize(
+                                propertySerializerFactory,
+                                it.task.properties
+                            )
+                        )
+                        .build()
+                }
+        } catch (e: Exception) {
+            logger.warn("Error while reading requests", e)
+            throw StatusException(Status.INTERNAL.withDescription("Error while reading requests").withCause(e))
+        }
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(AssignmentTaskService::class.java)
     }
 }

@@ -24,13 +24,4 @@ spring:
       connection-timeout: 15000
       maximum-pool-size: 50
       leak-detection-threshold: 5000
-logging:
-  level:
-    dev:
-      usbharu:
-        trace
-    org.springframework.orm.jpa: DEBUG
-    org.springframework.transaction: DEBUG
-    org:
-      mongodb:
-        driver: info
+

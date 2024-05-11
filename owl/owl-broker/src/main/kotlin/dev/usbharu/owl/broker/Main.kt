@@ -44,7 +44,7 @@ fun main() {
                 DefaultRetryPolicyFactory(mapOf("" to ExponentialRetryPolicy()))
             }
         }
-        modules(module, defaultModule, moduleContext.module())
+        modules(defaultModule, module, moduleContext.module())
     }
 
     val application = koin.koin.get<OwlBrokerApplication>()
