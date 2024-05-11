@@ -34,7 +34,6 @@ class QueuedTaskAssignerImpl(
     private val queueStore: QueueStore
 ) : QueuedTaskAssigner {
     override fun ready(consumerId: UUID, numberOfConcurrent: Int): Flow<QueuedTask> {
-        logger.trace("Ready {}/{}", numberOfConcurrent, consumerId)
         return flow {
             taskManagementService.findAssignableTask(consumerId, numberOfConcurrent)
                 .onEach {
@@ -65,10 +64,10 @@ class QueuedTaskAssignerImpl(
 
             logger.debug(
                 "Assign Task. name: {} id: {} attempt: {} consumer: {}",
-                queuedTask.task.name,
-                queuedTask.task.id,
-                queuedTask.attempt,
-                queuedTask.assignedConsumer
+                assignedTaskQueue.task.name,
+                assignedTaskQueue.task.id,
+                assignedTaskQueue.attempt,
+                assignedTaskQueue.assignedConsumer
             )
             assignedTaskQueue
         } catch (e: QueueCannotDequeueException) {

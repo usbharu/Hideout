@@ -17,6 +17,9 @@
 package dev.usbharu.hideout.core.external.job
 
 import dev.usbharu.hideout.activitypub.domain.model.Follow
+import dev.usbharu.owl.common.property.ObjectPropertyValue
+import dev.usbharu.owl.common.property.PropertyValue
+import dev.usbharu.owl.common.property.StringPropertyValue
 import dev.usbharu.owl.common.task.Task
 import dev.usbharu.owl.common.task.TaskDefinition
 import org.springframework.stereotype.Component
@@ -32,4 +35,19 @@ data object ReceiveFollowTaskDef : TaskDefinition<ReceiveFollowTask> {
     override val type: Class<ReceiveFollowTask>
         get() = ReceiveFollowTask::class.java
 
+    override fun serialize(task: ReceiveFollowTask): Map<String, PropertyValue<*>> {
+        return mapOf(
+            "actor" to StringPropertyValue(task.actor),
+            "follow" to ObjectPropertyValue(task.follow),
+            "targetActor" to StringPropertyValue(task.targetActor)
+        )
+    }
+
+    override fun deserialize(value: Map<String, PropertyValue<*>>): ReceiveFollowTask {
+        return ReceiveFollowTask(
+            value.getValue("actor").value as String,
+            value.getValue("follow").value as Follow,
+            value.getValue("targetActor").value as String,
+        )
+    }
 }
