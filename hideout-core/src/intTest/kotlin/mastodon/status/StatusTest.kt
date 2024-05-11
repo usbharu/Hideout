@@ -22,6 +22,8 @@ import dev.usbharu.hideout.core.domain.model.emoji.UnicodeEmoji
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.CustomEmojis
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Reactions
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.toReaction
+import dev.usbharu.owl.producer.api.OwlProducer
+import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.and
@@ -236,9 +238,12 @@ class StatusTest {
     companion object {
         @JvmStatic
         @AfterAll
-        fun dropDatabase(@Autowired flyway: Flyway) {
+        fun dropDatabase(@Autowired flyway: Flyway, @Autowired owlProducer: OwlProducer) {
             flyway.clean()
             flyway.migrate()
+            runBlocking {
+                owlProducer.stop()
+            }
         }
     }
 }

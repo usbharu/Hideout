@@ -31,5 +31,4 @@ data class DeliverUndoTask(
 data object DeliverUndoTaskDef : TaskDefinition<DeliverUndoTask> {
     override val type: Class<DeliverUndoTask>
         get() = DeliverUndoTask::class.java
-
 }

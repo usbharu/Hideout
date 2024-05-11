@@ -55,4 +55,8 @@ class EmbeddedGrpcOwlProducer(
     override suspend fun <T : Task> publishTask(task: T): PublishedTask<T> {
         return config.owlProducer.publishTask(task)
     }
+
+    override suspend fun stop() {
+        config.owlProducer.stop()
+    }
 }

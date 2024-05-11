@@ -23,6 +23,8 @@ import dev.usbharu.hideout.domain.mastodon.model.generated.Notification
 import dev.usbharu.hideout.mastodon.domain.model.MastodonNotification
 import dev.usbharu.hideout.mastodon.domain.model.NotificationType
 import dev.usbharu.hideout.mastodon.infrastructure.mongorepository.MongoMastodonNotificationRepository
+import dev.usbharu.owl.producer.api.OwlProducer
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions
 import org.flywaydb.core.Flyway
@@ -178,7 +180,7 @@ class MongodbNotificationsApiPaginationTest {
         @JvmStatic
         @BeforeAll
         fun setupMongodb(
-            @Autowired mongoMastodonNotificationRepository: MongoMastodonNotificationRepository
+            @Autowired mongoMastodonNotificationRepository: MongoMastodonNotificationRepository,
         ) {
 
             mongoMastodonNotificationRepository.deleteAll()
@@ -203,11 +205,14 @@ class MongodbNotificationsApiPaginationTest {
         @AfterAll
         fun dropDatabase(
             @Autowired flyway: Flyway,
-            @Autowired mongodbMastodonNotificationRepository: MongoMastodonNotificationRepository
+            @Autowired mongodbMastodonNotificationRepository: MongoMastodonNotificationRepository,
+            @Autowired owlProducer: OwlProducer,
         ) {
             flyway.clean()
             flyway.migrate()
-
+            runBlocking {
+                owlProducer.stop()
+            }
             mongodbMastodonNotificationRepository.deleteAll()
         }
     }

@@ -20,6 +20,8 @@ import dev.usbharu.hideout.SpringApplication
 import dev.usbharu.hideout.core.service.media.MediaDataStore
 import dev.usbharu.hideout.core.service.media.MediaSaveRequest
 import dev.usbharu.hideout.core.service.media.SuccessSavedMedia
+import dev.usbharu.owl.producer.api.OwlProducer
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.flywaydb.core.Flyway
 import org.junit.jupiter.api.AfterAll
@@ -131,9 +133,12 @@ class MediaTest {
     companion object {
         @JvmStatic
         @AfterAll
-        fun dropDatabase(@Autowired flyway: Flyway) {
+        fun dropDatabase(@Autowired flyway: Flyway, @Autowired owlProducer: OwlProducer) {
             flyway.clean()
             flyway.migrate()
+            runBlocking {
+                owlProducer.stop()
+            }
         }
     }
 

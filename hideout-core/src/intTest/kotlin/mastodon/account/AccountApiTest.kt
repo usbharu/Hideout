@@ -19,6 +19,8 @@ package mastodon.account
 import dev.usbharu.hideout.SpringApplication
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.infrastructure.exposedquery.FollowerQueryServiceImpl
+import dev.usbharu.owl.producer.api.OwlProducer
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.flywaydb.core.Flyway
@@ -462,9 +464,12 @@ class AccountApiTest {
     companion object {
         @JvmStatic
         @AfterAll
-        fun dropDatabase(@Autowired flyway: Flyway) {
+        fun dropDatabase(@Autowired flyway: Flyway, @Autowired owlProducer: OwlProducer) {
             flyway.clean()
             flyway.migrate()
+            runBlocking {
+                owlProducer.stop()
+            }
         }
     }
 }

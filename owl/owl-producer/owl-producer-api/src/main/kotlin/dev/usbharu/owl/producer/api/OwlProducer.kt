@@ -48,4 +48,6 @@ interface OwlProducer {
      * @return 公開されたタスク
      */
     suspend fun <T : Task> publishTask(task: T): PublishedTask<T>
+
+    suspend fun stop()
 }

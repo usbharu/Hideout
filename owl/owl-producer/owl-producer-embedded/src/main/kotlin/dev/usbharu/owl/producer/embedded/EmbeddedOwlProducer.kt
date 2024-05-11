@@ -27,6 +27,7 @@ import dev.usbharu.owl.common.task.Task
 import dev.usbharu.owl.common.task.TaskDefinition
 import dev.usbharu.owl.producer.api.OwlProducer
 import org.koin.core.Koin
+import org.koin.core.context.GlobalContext
 import org.koin.core.context.GlobalContext.startKoin
 import org.koin.dsl.module
 import org.koin.ksp.generated.defaultModule
@@ -42,9 +43,12 @@ class EmbeddedOwlProducer(
 
     private lateinit var application: Koin
 
+    private lateinit var brokerApplication: OwlBrokerApplication
+
     private val taskMap: MutableMap<Class<*>, TaskDefinition<*>> = mutableMapOf()
 
     override suspend fun start() {
+        GlobalContext.stopKoin()
         application = startKoin {
             printLogger()
 
@@ -71,7 +75,8 @@ class EmbeddedOwlProducer(
             )
         )
 
-        application.get<OwlBrokerApplication>().start(embeddedOwlProducerConfig.port.toInt())
+        brokerApplication = application.get<OwlBrokerApplication>()
+        brokerApplication.start(embeddedOwlProducerConfig.port.toInt())
     }
 
     override suspend fun <T : Task> registerTask(taskDefinition: TaskDefinition<T>) {
@@ -107,5 +112,9 @@ class EmbeddedOwlProducer(
             publishTask.id,
             Instant.now()
         )
+    }
+
+    override suspend fun stop() {
+        brokerApplication.stop()
     }
 }

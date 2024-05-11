@@ -18,6 +18,8 @@ package mastodon.apps
 
 import dev.usbharu.hideout.SpringApplication
 import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.RegisteredClient
+import dev.usbharu.owl.producer.api.OwlProducer
+import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.selectAll
@@ -107,9 +109,12 @@ class AppTest {
     companion object {
         @JvmStatic
         @AfterAll
-        fun dropDatabase(@Autowired flyway: Flyway) {
+        fun dropDatabase(@Autowired flyway: Flyway, @Autowired owlProducer: OwlProducer) {
             flyway.clean()
             flyway.migrate()
+            runBlocking {
+                owlProducer.stop()
+            }
         }
     }
 }

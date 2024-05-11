@@ -20,6 +20,8 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import dev.usbharu.hideout.SpringApplication
 import dev.usbharu.hideout.domain.mastodon.model.generated.Status
+import dev.usbharu.owl.producer.api.OwlProducer
+import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.flywaydb.core.Flyway
 import org.junit.jupiter.api.AfterAll
@@ -152,9 +154,13 @@ class AccountApiPaginationTest {
     companion object {
         @JvmStatic
         @AfterAll
-        fun dropDatabase(@Autowired flyway: Flyway) {
+        fun dropDatabase(@Autowired flyway: Flyway, @Autowired owlProducer: OwlProducer) {
             flyway.clean()
             flyway.migrate()
+            runBlocking {
+                owlProducer.stop()
+            }
         }
+
     }
 }

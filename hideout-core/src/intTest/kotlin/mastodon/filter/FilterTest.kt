@@ -22,6 +22,8 @@ import dev.usbharu.hideout.domain.mastodon.model.generated.FilterKeywordsPostReq
 import dev.usbharu.hideout.domain.mastodon.model.generated.FilterPostRequest
 import dev.usbharu.hideout.domain.mastodon.model.generated.FilterPostRequestKeyword
 import dev.usbharu.hideout.domain.mastodon.model.generated.V1FilterPostRequest
+import dev.usbharu.owl.producer.api.OwlProducer
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.flywaydb.core.Flyway
 import org.junit.jupiter.api.AfterAll
@@ -702,9 +704,12 @@ class FilterTest {
     companion object {
         @JvmStatic
         @AfterAll
-        fun dropDatabase(@Autowired flyway: Flyway) {
+        fun dropDatabase(@Autowired flyway: Flyway, @Autowired owlProducer: OwlProducer) {
             flyway.clean()
             flyway.migrate()
+            runBlocking {
+                owlProducer.stop()
+            }
         }
     }
 }
