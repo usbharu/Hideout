@@ -17,8 +17,6 @@
 package dev.usbharu.hideout.core.external.job
 
 import dev.usbharu.hideout.activitypub.domain.model.Undo
-import dev.usbharu.owl.common.property.PropertyValue
-import dev.usbharu.owl.common.task.PropertyDefinition
 import dev.usbharu.owl.common.task.Task
 import dev.usbharu.owl.common.task.TaskDefinition
 import org.springframework.stereotype.Component
@@ -31,26 +29,7 @@ data class DeliverUndoTask(
 
 @Component
 data object DeliverUndoTaskDef : TaskDefinition<DeliverUndoTask> {
-    override val name: String
-        get() = TODO("Not yet implemented")
-    override val priority: Int
-        get() = TODO("Not yet implemented")
-    override val maxRetry: Int
-        get() = TODO("Not yet implemented")
-    override val retryPolicy: String
-        get() = TODO("Not yet implemented")
-    override val timeoutMilli: Long
-        get() = TODO("Not yet implemented")
-    override val propertyDefinition: PropertyDefinition
-        get() = TODO("Not yet implemented")
     override val type: Class<DeliverUndoTask>
-        get() = TODO("Not yet implemented")
+        get() = DeliverUndoTask::class.java
 
-    override fun deserialize(value: Map<String, PropertyValue<*>>): DeliverUndoTask {
-        TODO("Not yet implemented")
-    }
-
-    override fun serialize(task: DeliverUndoTask): Map<String, PropertyValue<*>> {
-        TODO("Not yet implemented")
-    }
 }

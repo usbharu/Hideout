@@ -40,6 +40,7 @@ dependencies {
     testImplementation(kotlin("test"))
     implementation("dev.usbharu:owl-consumer:0.0.1")
     implementation("dev.usbharu:owl-common:0.0.1")
+    implementation("dev.usbharu:owl-common-serialize-jackson:0.0.1")
     implementation("dev.usbharu:hideout-core:0.0.1")
     implementation("dev.usbharu:http-signature:1.0.0")
     implementation("org.springframework.boot:spring-boot-starter")

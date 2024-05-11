@@ -21,7 +21,7 @@ package dev.usbharu.owl.common.property
  *
  * @param T プロパティの型
  */
-sealed class PropertyValue<T> {
+abstract class PropertyValue<T> {
     /**
      * プロパティ
      */

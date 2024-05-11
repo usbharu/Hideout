@@ -18,6 +18,7 @@ package dev.usbharu.owl.producer.embedded
 
 import dev.usbharu.owl.broker.EmptyModuleContext
 import dev.usbharu.owl.common.retry.DefaultRetryPolicyFactory
+import dev.usbharu.owl.common.retry.ExponentialRetryPolicy
 import dev.usbharu.owl.producer.api.OwlProducerBuilder
 
 class EmbeddedOwlProducerBuilder : OwlProducerBuilder<EmbeddedOwlProducer, EmbeddedOwlProducerConfig> {
@@ -28,7 +29,7 @@ class EmbeddedOwlProducerBuilder : OwlProducerBuilder<EmbeddedOwlProducer, Embed
 
         with(embeddedOwlProducerConfig) {
             moduleContext = EmptyModuleContext
-            retryPolicyFactory = DefaultRetryPolicyFactory(emptyMap())
+            retryPolicyFactory = DefaultRetryPolicyFactory(mapOf("" to ExponentialRetryPolicy()))
             name = "embedded-owl-producer"
             port = "50051"
         }

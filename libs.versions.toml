@@ -79,6 +79,7 @@ apache-tika = ["apache-tika-core", "apache-tika-parsers"]
 kjob = ["kjon-core", "kjon-mongo"]
 owl-producer = ["owl-producer-api", "owl-producer-default", "owl-producer-embedded"]
 owl-broker = ["owl-broker", "owl-broker-mongodb"]
+jackson = ["jackson-databind", "jackson-module-kotlin"]
 
 [plugins]
 
