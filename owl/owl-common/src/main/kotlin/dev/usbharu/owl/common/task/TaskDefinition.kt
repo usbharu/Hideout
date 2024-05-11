@@ -16,6 +16,7 @@
 
 package dev.usbharu.owl.common.task
 
+import dev.usbharu.owl.common.allFields
 import dev.usbharu.owl.common.property.*
 
 /**
@@ -61,7 +62,7 @@ interface TaskDefinition<T : Task> {
      */
     val propertyDefinition: PropertyDefinition
         get() {
-            val mapValues = type.fields.associate { it.name to it.type }.mapValues {
+            val mapValues = type.allFields.associate { it.name to it.type }.mapValues {
                 when {
                     it.value === Int::class.java -> PropertyType.number
                     it.value === String::class.java -> PropertyType.string
@@ -86,7 +87,7 @@ interface TaskDefinition<T : Task> {
      * @return シリアライズされたタスク
      */
     fun serialize(task: T): Map<String, PropertyValue<*>> {
-        return type.fields.associateBy { it.name }.mapValues {
+        return type.allFields.associateBy { it.name }.mapValues {
             when {
                 it.value.type === Int::class.java -> IntegerPropertyValue(it.value.getInt(task))
                 it.value.type === String::class.java -> StringPropertyValue(it.value.get(task) as String)
@@ -113,7 +114,7 @@ interface TaskDefinition<T : Task> {
             throw IllegalArgumentException("Unable to deserialize value $value for type ${type.name}", e)
         }
 
-        type.fields.associateBy { it.name }.mapValues {
+        type.allFields.associateBy { it.name }.mapValues {
             when {
                 it.value.type === Int::class.java -> it.value.setInt(task, value.getValue(it.key).value as Int)
                 it.value.type === Double::class.java -> it.value.setDouble(task, value.getValue(it.key).value as Double)

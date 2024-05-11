@@ -130,8 +130,8 @@ class TaskManagementServiceImpl(
     }
 
     override suspend fun queueProcessed(taskResult: TaskResult) {
-        val task = taskRepository.findById(taskResult.id)
-            ?: throw RecordNotFoundException("Task not found. id: ${taskResult.id}")
+        val task = taskRepository.findById(taskResult.taskId)
+            ?: throw RecordNotFoundException("Task not found. id: ${taskResult.taskId}")
 
         val taskDefinition = taskDefinitionRepository.findByName(task.name)
             ?: throw TaskNotRegisterException("Task ${task.name} not definition.")
@@ -147,7 +147,7 @@ class TaskManagementServiceImpl(
         taskResultRepository.save(taskResult)
 
         taskRepository.findByIdAndUpdate(
-            taskResult.id,
+            taskResult.taskId,
             task.copy(completedAt = completedAt, attempt = taskResult.attempt)
         )
 

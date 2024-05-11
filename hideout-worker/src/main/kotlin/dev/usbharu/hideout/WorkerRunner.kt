@@ -16,19 +16,37 @@
 
 package dev.usbharu.hideout
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import dev.usbharu.owl.common.property.*
 import dev.usbharu.owl.consumer.StandaloneConsumer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.stereotype.Component
 
 @Component
-class WorkerRunner(private val springTaskRunnerLoader: SpringTaskRunnerLoader) : ApplicationRunner {
+class WorkerRunner(
+    private val springTaskRunnerLoader: SpringTaskRunnerLoader,
+    @Qualifier("activitypub") private val objectMapper: ObjectMapper,
+) : ApplicationRunner {
     override fun run(args: ApplicationArguments?) {
         GlobalScope.launch(Dispatchers.Default) {
-            val consumer = StandaloneConsumer(taskRunnerLoader = springTaskRunnerLoader)
+            val consumer = StandaloneConsumer(
+                taskRunnerLoader = springTaskRunnerLoader, propertySerializerFactory = CustomPropertySerializerFactory(
+                    setOf(
+                        IntegerPropertySerializer(),
+                        StringPropertyValueSerializer(),
+                        DoublePropertySerializer(),
+                        BooleanPropertySerializer(),
+                        LongPropertySerializer(),
+                        FloatPropertySerializer(),
+                        ObjectPropertySerializer(objectMapper),
+                    )
+                )
+            )
             consumer.init()
             consumer.start()
         }

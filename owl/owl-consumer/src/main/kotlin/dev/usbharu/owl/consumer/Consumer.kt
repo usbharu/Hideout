@@ -89,11 +89,10 @@ class Consumer(
                                 .ready(flow {
                                     requestTask()
                                 }).onEach {
-                                    logger.info("Start Task name: {}", it.name)
+                                    logger.info("Start Task name: {} id: {}", it.name, it.id)
                                     processing.update { it + 1 }
 
                                     try {
-
                                         val taskResult = runnerMap.getValue(it.name).run(
                                             TaskRequest(
                                                 it.name,
@@ -137,7 +136,7 @@ class Consumer(
                                         })
                                         throw e
                                     } catch (e: Exception) {
-                                        logger.warn("Failed execute task.", e)
+                                        logger.warn("Failed execute task. name: {} id: {}", it.name, it.id, e)
                                         emit(taskResult {
                                             this.success = false
                                             this.attempt = it.attempt
@@ -145,6 +144,7 @@ class Consumer(
                                             this.message = e.localizedMessage
                                         })
                                     } finally {
+                                        logger.debug(" Task name: {} id: {}", it.name, it.id)
                                         processing.update { it - 1 }
                                         concurrent.update {
                                             if (it < 64) {

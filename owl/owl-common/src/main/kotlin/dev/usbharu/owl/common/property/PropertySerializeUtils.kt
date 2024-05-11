@@ -49,7 +49,14 @@ object PropertySerializeUtils {
      */
     fun deserialize(
         serializerFactory: PropertySerializerFactory,
-        properties: Map<String, String>
-    ): Map<String, PropertyValue<*>> =
-        properties.map { it.key to serializerFactory.factory(it.value).deserialize(it.value) }.toMap()
+        properties: Map<String, String>,
+    ): Map<String, PropertyValue<*>> {
+        return properties.map {
+            try {
+                it.key to serializerFactory.factory(it.value).deserialize(it.value)
+            } catch (e: Exception) {
+                throw PropertySerializeException("Failed to deserialize property in ${serializerFactory.javaClass}", e)
+            }
+        }.toMap()
+    }
 }

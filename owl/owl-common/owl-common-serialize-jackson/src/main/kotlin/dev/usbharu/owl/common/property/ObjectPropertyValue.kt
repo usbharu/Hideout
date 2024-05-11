@@ -25,7 +25,6 @@ class ObjectPropertyValue(override val value: Any) : PropertyValue<Any>() {
 
 class ObjectPropertySerializer(private val objectMapper: ObjectMapper) : PropertySerializer<Any> {
     override fun isSupported(propertyValue: PropertyValue<*>): Boolean {
-        println(propertyValue::class.java)
         return propertyValue is ObjectPropertyValue
     }
 
@@ -40,10 +39,9 @@ class ObjectPropertySerializer(private val objectMapper: ObjectMapper) : Propert
     }
 
     override fun deserialize(string: String): PropertyValue<Any> {
-//todo jacksonに読み込ませるStringがjackson:classname:jsonになっているのでjsonだけを読み込ませる
         return ObjectPropertyValue(
             objectMapper.readValue(
-                string,
+                string.substringAfter("jackson:").substringAfter(":"),
                 Class.forName(string.substringAfter("jackson:").substringBefore(":"))
             )
         )
