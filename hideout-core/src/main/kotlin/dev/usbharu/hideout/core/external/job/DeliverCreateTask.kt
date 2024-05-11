@@ -17,8 +17,6 @@
 package dev.usbharu.hideout.core.external.job
 
 import dev.usbharu.hideout.activitypub.domain.model.Create
-import dev.usbharu.owl.common.property.PropertyValue
-import dev.usbharu.owl.common.task.PropertyDefinition
 import dev.usbharu.owl.common.task.Task
 import dev.usbharu.owl.common.task.TaskDefinition
 import org.springframework.stereotype.Component
@@ -31,26 +29,7 @@ data class DeliverCreateTask(
 
 @Component
 data object DeliverCreateTaskDef : TaskDefinition<DeliverCreateTask> {
-    override val name: String
-        get() = TODO("Not yet implemented")
-    override val priority: Int
-        get() = TODO("Not yet implemented")
-    override val maxRetry: Int
-        get() = TODO("Not yet implemented")
-    override val retryPolicy: String
-        get() = TODO("Not yet implemented")
-    override val timeoutMilli: Long
-        get() = TODO("Not yet implemented")
-    override val propertyDefinition: PropertyDefinition
-        get() = TODO("Not yet implemented")
     override val type: Class<DeliverCreateTask>
-        get() = TODO("Not yet implemented")
+        get() = DeliverCreateTask::class.java
 
-    override fun serialize(task: DeliverCreateTask): Map<String, PropertyValue<*>> {
-        TODO("Not yet implemented")
-    }
-
-    override fun deserialize(value: Map<String, PropertyValue<*>>): DeliverCreateTask {
-        TODO("Not yet implemented")
-    }
 }

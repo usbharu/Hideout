@@ -14,22 +14,8 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.external.job
+package dev.usbharu
 
-import dev.usbharu.hideout.activitypub.domain.model.Follow
-import dev.usbharu.owl.common.task.Task
-import dev.usbharu.owl.common.task.TaskDefinition
-import org.springframework.stereotype.Component
-
-data class ReceiveFollowTask(
-    val actor: String,
-    val follow: Follow,
-    val targetActor: String,
-) : Task()
-
-@Component
-data object ReceiveFollowTaskDef : TaskDefinition<ReceiveFollowTask> {
-    override val type: Class<ReceiveFollowTask>
-        get() = ReceiveFollowTask::class.java
-
+fun main() {
+    println("Hello World!")
 }

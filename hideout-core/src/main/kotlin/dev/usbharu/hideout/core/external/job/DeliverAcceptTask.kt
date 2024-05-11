@@ -17,7 +17,7 @@
 package dev.usbharu.hideout.core.external.job
 
 import dev.usbharu.hideout.activitypub.domain.model.Accept
-import dev.usbharu.owl.common.property.PropertyValue
+import dev.usbharu.owl.common.property.*
 import dev.usbharu.owl.common.task.PropertyDefinition
 import dev.usbharu.owl.common.task.Task
 import dev.usbharu.owl.common.task.TaskDefinition
@@ -32,25 +32,39 @@ data class DeliverAcceptTask(
 @Component
 data object DeliverAcceptTaskDef : TaskDefinition<DeliverAcceptTask> {
     override val name: String
-        get() = TODO("Not yet implemented")
+        get() = "DeliverAccept"
     override val priority: Int
-        get() = TODO("Not yet implemented")
+        get() = 10
     override val maxRetry: Int
-        get() = TODO("Not yet implemented")
+        get() = 5
     override val retryPolicy: String
-        get() = TODO("Not yet implemented")
+        get() = ""
     override val timeoutMilli: Long
-        get() = TODO("Not yet implemented")
+        get() = 1000
     override val propertyDefinition: PropertyDefinition
-        get() = TODO("Not yet implemented")
+        get() = PropertyDefinition(
+            mapOf(
+                "accept" to PropertyType.binary,
+                "inbox" to PropertyType.string,
+                "signer" to PropertyType.number,
+            )
+        )
     override val type: Class<DeliverAcceptTask>
-        get() = TODO("Not yet implemented")
+        get() = DeliverAcceptTask::class.java
 
     override fun serialize(task: DeliverAcceptTask): Map<String, PropertyValue<*>> {
-        TODO("Not yet implemented")
+        return mapOf(
+            "accept" to ObjectPropertyValue(task.accept),
+            "inbox" to StringPropertyValue(task.inbox),
+            "signer" to LongPropertyValue(task.signer)
+        )
     }
 
     override fun deserialize(value: Map<String, PropertyValue<*>>): DeliverAcceptTask {
-        TODO("Not yet implemented")
+        return DeliverAcceptTask(
+            value.getValue("accept").value as Accept,
+            value.getValue("inbox").value as String,
+            value.getValue("signer").value as Long,
+        )
     }
 }

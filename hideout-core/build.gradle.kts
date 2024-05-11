@@ -202,6 +202,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-log4j2")
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
+    implementation("dev.usbharu:owl-common-serialize-jackson:0.0.1")
     implementation("io.trbl:blurhash:1.0.0")
     implementation("software.amazon.awssdk:s3:2.25.23")
     implementation("org.jsoup:jsoup:1.17.2")
