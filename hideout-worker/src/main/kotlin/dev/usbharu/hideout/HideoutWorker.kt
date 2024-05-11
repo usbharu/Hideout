@@ -14,22 +14,16 @@
  * limitations under the License.
  */
 
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
-}
-rootProject.name = "hideout"
+package dev.usbharu.hideout
 
-includeBuild("hideout-core")
-includeBuild("hideout-worker")
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan
+import org.springframework.boot.runApplication
 
-dependencyResolutionManagement {
-    repositories {
-        mavenCentral()
-    }
+@SpringBootApplication
+@ConfigurationPropertiesScan
+class HideoutWorker
 
-    versionCatalogs {
-        create("libs") {
-            from(files("libs.versions.toml"))
-        }
-    }
+fun main(args: Array<String>) {
+    runApplication<HideoutWorker>(*args)
 }
