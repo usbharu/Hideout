@@ -31,22 +31,12 @@ version = "0.0.1"
 
 sourceSets {
     create("intTest") {
-//        test {
             compileClasspath += sourceSets.main.get().output
             runtimeClasspath += sourceSets.main.get().output
-            kotlin.srcDirs("src/intTest/kotlin")
-            java.srcDirs("src/intTest/java")
-            resources.srcDirs("src/intTest/resources")
-//        }
     }
     create("e2eTest") {
-//        test {
             compileClasspath += sourceSets.main.get().output
             runtimeClasspath += sourceSets.main.get().output
-            kotlin.srcDirs("src/e2eTest/kotlin")
-            java.srcDirs("src/e2eTest/java")
-            resources.srcDirs("src/e2eTest/resources")
-//        }
     }
 }
 
