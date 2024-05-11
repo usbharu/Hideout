@@ -14,22 +14,15 @@
  * limitations under the License.
  */
 
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
-}
-rootProject.name = "hideout"
+package dev.usbharu.hideout.worker
 
-includeBuild("hideout-core")
-includeBuild("hideout-worker")
+import org.springframework.boot.context.properties.ConfigurationProperties
 
-dependencyResolutionManagement {
-    repositories {
-        mavenCentral()
-    }
-
-    versionCatalogs {
-        create("libs") {
-            from(files("libs.versions.toml"))
-        }
-    }
-}
+@ConfigurationProperties("hideout.worker")
+data class SpringConsumerConfig(
+    val address: String = "localhost",
+    val port: Int = 50051,
+    val name: String = "hideout-worker",
+    val hostname: String = "localhost",
+    val concurrency: Int = 10,
+)

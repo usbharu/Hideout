@@ -17,8 +17,10 @@
 package dev.usbharu.hideout
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import dev.usbharu.hideout.worker.SpringConsumerConfig
 import dev.usbharu.owl.common.property.*
 import dev.usbharu.owl.consumer.StandaloneConsumer
+import dev.usbharu.owl.consumer.StandaloneConsumerConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -31,11 +33,13 @@ import org.springframework.stereotype.Component
 class WorkerRunner(
     private val springTaskRunnerLoader: SpringTaskRunnerLoader,
     @Qualifier("activitypub") private val objectMapper: ObjectMapper,
+    private val springCConsumerConfig: SpringConsumerConfig,
 ) : ApplicationRunner {
     override fun run(args: ApplicationArguments?) {
         GlobalScope.launch(Dispatchers.Default) {
             val consumer = StandaloneConsumer(
-                taskRunnerLoader = springTaskRunnerLoader, propertySerializerFactory = CustomPropertySerializerFactory(
+                taskRunnerLoader = springTaskRunnerLoader,
+                propertySerializerFactory = CustomPropertySerializerFactory(
                     setOf(
                         IntegerPropertySerializer(),
                         StringPropertyValueSerializer(),
@@ -45,6 +49,13 @@ class WorkerRunner(
                         FloatPropertySerializer(),
                         ObjectPropertySerializer(objectMapper),
                     )
+                ),
+                config = StandaloneConsumerConfig(
+                    springCConsumerConfig.address,
+                    springCConsumerConfig.port,
+                    springCConsumerConfig.name,
+                    springCConsumerConfig.hostname,
+                    springCConsumerConfig.concurrency
                 )
             )
             consumer.init()
