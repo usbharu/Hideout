@@ -13,7 +13,7 @@ dependencies {
     testImplementation(kotlin("test"))
     implementation(project(":owl-producer:owl-producer-api"))
     implementation(project(":owl-broker"))
-    implementation(platform("io.insert-koin:koin-bom:3.5.3"))
+    implementation(platform("io.insert-koin:koin-bom:3.5.6"))
     implementation("io.insert-koin:koin-core")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
 }
