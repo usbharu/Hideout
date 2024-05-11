@@ -1,11 +1,11 @@
 [versions]
 
-kotlin = "1.9.23"
+kotlin = "1.9.24"
 ktor = "2.3.9"
 exposed = "0.49.0"
 javacv-ffmpeg = "6.1.1-1.5.10"
 detekt = "1.23.6"
-coroutines = "1.8.0"
+coroutines = "1.8.1"
 swagger = "2.2.6"
 serialization = "1.6.3"
 kjob = "0.6.0"

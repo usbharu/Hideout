@@ -17,7 +17,7 @@ dependencies {
     implementation("io.grpc:grpc-protobuf:1.63.0")
     implementation("com.google.protobuf:protobuf-kotlin:4.26.1")
     implementation("io.grpc:grpc-netty:1.63.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
     implementation(project(":owl-common"))
     protobuf(files(project(":owl-broker").dependencyProject.projectDir.toString() + "/src/main/proto"))
 }
