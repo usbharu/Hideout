@@ -110,7 +110,7 @@ object CustomEmojis : Table("emojis") {
     val instanceId = long("instance_id").references(Instance.id).nullable()
     val url = varchar("url", 255).uniqueIndex()
     val category = varchar("category", 255).nullable()
-    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp())
+    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp)
 
     override val primaryKey: PrimaryKey = PrimaryKey(id)
 
