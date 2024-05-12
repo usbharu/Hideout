@@ -56,11 +56,6 @@ class APUndoProcessor(
                 return
             }
 
-            "Block" -> {
-                block(undo)
-                return
-            }
-
             "Accept" -> {
                 accept(undo)
                 return
@@ -109,16 +104,6 @@ class APUndoProcessor(
         val actor = apUserService.fetchPersonWithEntity(like.actor, signer.url).second
 
         reactionService.receiveRemoveReaction(actor.id, post.id)
-        return
-    }
-
-    private suspend fun block(undo: Undo) {
-        val block = undo.apObject as Block
-
-        val blocker = apUserService.fetchPersonWithEntity(undo.actor, block.apObject).second
-        val target = actorRepository.findByUrl(block.apObject) ?: throw UserNotFoundException.withUrl(block.apObject)
-
-        relationshipService.unblock(blocker.id, target.id)
         return
     }
 
