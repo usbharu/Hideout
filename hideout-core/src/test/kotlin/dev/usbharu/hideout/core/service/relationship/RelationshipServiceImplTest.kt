@@ -17,7 +17,6 @@
 package dev.usbharu.hideout.core.service.relationship
 
 import dev.usbharu.hideout.activitypub.service.activity.accept.ApSendAcceptService
-import dev.usbharu.hideout.activitypub.service.activity.block.APSendBlockService
 import dev.usbharu.hideout.activitypub.service.activity.follow.APSendFollowService
 import dev.usbharu.hideout.activitypub.service.activity.reject.ApSendRejectService
 import dev.usbharu.hideout.activitypub.service.activity.undo.APSendUndoService
@@ -54,9 +53,6 @@ class RelationshipServiceImplTest {
 
     @Mock
     private lateinit var apSendFollowService: APSendFollowService
-
-    @Mock
-    private lateinit var apSendBlockService: APSendBlockService
 
     @Mock
     private lateinit var apSendAcceptService: ApSendAcceptService
@@ -272,8 +268,6 @@ class RelationshipServiceImplTest {
                 )
             )
         )
-
-        verify(apSendBlockService, times(1)).sendBlock(eq(localUser), eq(remoteUser))
     }
 
     @Test
@@ -657,7 +651,6 @@ class RelationshipServiceImplTest {
 
     @Test
     fun `unblock ローカルユーザーの場合永続化される`() = runTest {
-        whenever(actorRepository.findById(eq(5678))).doReturn(UserBuilder.localUserOf(domain = "example.com"))
         whenever(relationshipRepository.findByUserIdAndTargetUserId(eq(1234), eq(5678))).doReturn(
             Relationship(
                 actorId = 1234,
@@ -685,17 +678,10 @@ class RelationshipServiceImplTest {
                 )
             )
         )
-
-        verify(apSendUndoService, never()).sendUndoBlock(any(), any())
     }
 
     @Test
     fun `unblock リモートユーザーの場合永続化されて配送される`() = runTest {
-        val localUser = UserBuilder.localUserOf(domain = "example.com")
-        whenever(actorRepository.findById(eq(1234))).doReturn(localUser)
-
-        val remoteUser = UserBuilder.remoteUserOf(domain = "remote.example.com")
-        whenever(actorRepository.findById(eq(5678))).doReturn(remoteUser)
 
         whenever(relationshipRepository.findByUserIdAndTargetUserId(eq(1234), eq(5678))).doReturn(
             Relationship(
@@ -724,8 +710,6 @@ class RelationshipServiceImplTest {
                 )
             )
         )
-
-        verify(apSendUndoService, times(1)).sendUndoBlock(eq(localUser), eq(remoteUser))
     }
 
     @Test

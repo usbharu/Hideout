@@ -60,7 +60,7 @@ class ObjectDeserializer : JsonDeserializer<Object>() {
                 ExtendedActivityVocabulary.Add -> null
                 ExtendedActivityVocabulary.Announce -> p.codec.treeToValue(treeNode, Announce::class.java)
                 ExtendedActivityVocabulary.Arrive -> null
-                ExtendedActivityVocabulary.Block -> p.codec.treeToValue(treeNode, Block::class.java)
+                ExtendedActivityVocabulary.Block -> null
                 ExtendedActivityVocabulary.Create -> p.codec.treeToValue(treeNode, Create::class.java)
                 ExtendedActivityVocabulary.Delete -> p.codec.treeToValue(treeNode, Delete::class.java)
                 ExtendedActivityVocabulary.Dislike -> null
