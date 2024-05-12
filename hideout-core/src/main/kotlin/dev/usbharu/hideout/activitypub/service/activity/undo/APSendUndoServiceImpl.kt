@@ -16,7 +16,6 @@
 
 package dev.usbharu.hideout.activitypub.service.activity.undo
 
-import dev.usbharu.hideout.activitypub.domain.model.Block
 import dev.usbharu.hideout.activitypub.domain.model.Follow
 import dev.usbharu.hideout.activitypub.domain.model.Undo
 import dev.usbharu.hideout.application.config.ApplicationConfig
@@ -49,22 +48,4 @@ class APSendUndoServiceImpl(
         owlProducer.publishTask(deliverUndoTask)
     }
 
-    override suspend fun sendUndoBlock(actor: Actor, target: Actor) {
-        val deliverUndoTask = DeliverUndoTask(
-            Undo(
-                actor = actor.url,
-                id = "${applicationConfig.url}/undo/block/${actor.id}/${target.url}",
-                apObject = Block(
-                    apObject = actor.url,
-                    actor = target.url,
-                    id = "${applicationConfig.url}/block/${actor.id}/${target.id}"
-                ),
-                published = Instant.now().toString()
-            ),
-            target.inbox,
-            actor.id
-        )
-
-        owlProducer.publishTask(deliverUndoTask)
-    }
 }

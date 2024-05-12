@@ -17,7 +17,6 @@
 package dev.usbharu.hideout.core.service.relationship
 
 import dev.usbharu.hideout.activitypub.service.activity.accept.ApSendAcceptService
-import dev.usbharu.hideout.activitypub.service.activity.block.APSendBlockService
 import dev.usbharu.hideout.activitypub.service.activity.follow.APSendFollowService
 import dev.usbharu.hideout.activitypub.service.activity.reject.ApSendRejectService
 import dev.usbharu.hideout.activitypub.service.activity.undo.APSendUndoService
@@ -39,12 +38,11 @@ class RelationshipServiceImpl(
     private val applicationConfig: ApplicationConfig,
     private val relationshipRepository: RelationshipRepository,
     private val apSendFollowService: APSendFollowService,
-    private val apSendBlockService: APSendBlockService,
     private val apSendAcceptService: ApSendAcceptService,
     private val apSendRejectService: ApSendRejectService,
     private val apSendUndoService: APSendUndoService,
     private val actorRepository: ActorRepository,
-    private val notificationService: NotificationService
+    private val notificationService: NotificationService,
 ) : RelationshipService {
     override suspend fun followRequest(actorId: Long, targetId: Long) {
         logger.info("START Follow Request userId: {} targetId: {}", actorId, targetId)
@@ -144,12 +142,6 @@ class RelationshipServiceImpl(
         relationshipRepository.save(blockedRelationship)
         if (blockedInverseRelationship != null) {
             relationshipRepository.save(blockedInverseRelationship)
-        }
-
-        val remoteUser = isRemoteUser(targetId)
-
-        if (remoteUser != null) {
-            apSendBlockService.sendBlock(user, remoteUser)
         }
     }
 
@@ -298,12 +290,6 @@ class RelationshipServiceImpl(
 
         val copy = relationship.copy(blocking = false)
         relationshipRepository.save(copy)
-
-        val remoteUser = isRemoteUser(targetId)
-        if (remoteUser != null) {
-            val user = actorRepository.findById(actorId) ?: throw UserNotFoundException.withId(actorId)
-            apSendUndoService.sendUndoBlock(user, remoteUser)
-        }
     }
 
     override suspend fun mute(actorId: Long, targetId: Long) {
