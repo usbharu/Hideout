@@ -190,7 +190,7 @@ class RegisteredClientRepositoryImpl : RegisteredClientRepository {
 object RegisteredClient : Table("registered_client") {
     val id: Column<String> = varchar("id", 100)
     val clientId: Column<String> = varchar("client_id", 100)
-    val clientIdIssuedAt: Column<Instant> = timestamp("client_id_issued_at").defaultExpression(CurrentTimestamp())
+    val clientIdIssuedAt: Column<Instant> = timestamp("client_id_issued_at").defaultExpression(CurrentTimestamp)
     val clientSecret: Column<String?> = varchar("client_secret", 200).nullable().default(null)
     val clientSecretExpiresAt: Column<Instant?> = timestamp("client_secret_expires_at").nullable().default(null)
     val clientName: Column<String> = varchar("client_name", 200)
