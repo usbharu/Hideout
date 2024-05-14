@@ -18,6 +18,7 @@ package dev.usbharu.hideout.activitypub.service.common
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import dev.usbharu.hideout.activitypub.domain.model.Follow
+import dev.usbharu.hideout.activitypub.domain.model.StringOrObject
 import dev.usbharu.hideout.util.Base64Util
 import dev.usbharu.httpsignature.common.HttpHeaders
 import dev.usbharu.httpsignature.common.HttpMethod
@@ -173,7 +174,7 @@ class APRequestServiceImplTest {
         val apRequestServiceImpl = APRequestServiceImpl(HttpClient(MockEngine {
             val readValue = objectMapper.readValue<Follow>(it.body.toByteArray())
 
-            assertThat(readValue.context).contains("https://www.w3.org/ns/activitystreams")
+            assertThat(readValue.context).contains(StringOrObject("https://www.w3.org/ns/activitystreams"))
 
             respondOk("{}")
         }), objectMapper, mock(), dateTimeFormatter)
@@ -205,7 +206,7 @@ class APRequestServiceImplTest {
             val src = it.body.toByteArray()
             val readValue = objectMapper.readValue<Follow>(src)
 
-            assertThat(readValue.context).contains("https://www.w3.org/ns/activitystreams")
+            assertThat(readValue.context).contains(StringOrObject("https://www.w3.org/ns/activitystreams"))
 
             val map = it.headers.toMap()
             assertThat(map).containsKey("Date")
@@ -238,7 +239,7 @@ class APRequestServiceImplTest {
             val src = it.body.toByteArray()
             val readValue = objectMapper.readValue<Follow>(src)
 
-            assertThat(readValue.context).contains("https://www.w3.org/ns/activitystreams")
+            assertThat(readValue.context).contains(StringOrObject("https://www.w3.org/ns/activitystreams"))
 
             val map = it.headers.toMap()
             assertThat(map).containsKey("Date")
@@ -279,7 +280,7 @@ class APRequestServiceImplTest {
             val src = it.body.toByteArray()
             val readValue = objectMapper.readValue<Follow>(src)
 
-            assertThat(readValue.context).contains("https://www.w3.org/ns/activitystreams")
+            assertThat(readValue.context).contains(StringOrObject("https://www.w3.org/ns/activitystreams"))
 
             val map = it.headers.toMap()
             assertThat(map).containsKey("Date")
@@ -340,7 +341,7 @@ class APRequestServiceImplTest {
             val src = it.body.toByteArray()
             val readValue = objectMapper.readValue<Follow>(src)
 
-            assertThat(readValue.context).contains("https://www.w3.org/ns/activitystreams")
+            assertThat(readValue.context).contains(StringOrObject("https://www.w3.org/ns/activitystreams"))
 
             respondOk(src.decodeToString())
         }), objectMapper, mock(), dateTimeFormatter)

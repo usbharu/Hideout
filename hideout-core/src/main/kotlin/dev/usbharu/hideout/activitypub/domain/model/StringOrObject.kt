@@ -50,14 +50,19 @@ open class StringOrObject {
 
 
 class StringOrObjectDeserializer : JsonDeserializer<StringOrObject>() {
-    override fun deserialize(p: JsonParser?, ctxt: DeserializationContext?): StringOrObject {
+    override fun deserialize(p: JsonParser?, ctxt: DeserializationContext): StringOrObject {
         val readTree: JsonNode = p?.codec?.readTree(p) ?: return StringOrObject("")
         return if (readTree.isValueNode) {
             StringOrObject(readTree.textValue())
         } else {
+            val map: Map<String, String> = ctxt.readTreeAsValue<Map<String, String>>(
+                readTree,
+                ctxt.typeFactory.constructType(object : TypeReference<Map<String, String>>() {})
+            )
+            println(readTree.toPrettyString())
 
-            val map = p.readValueAs<Map<String, String>>(object : TypeReference<Map<String, String>>() {})
-
+//            val map = p.codec.readValue<Map<String, String>>(p,object : TypeReference<Map<String, String>>() {})
+            println(map)
             StringOrObject(map)
         }
     }
@@ -72,8 +77,10 @@ class StringORObjectSerializer : JsonSerializer<StringOrObject>() {
         }
         if (value.contextString != null) {
             gen?.writeString(value.contextString)
+            println("serialize string")
         } else {
             serializers.defaultSerializeValue(value.contextObject, gen)
+            println("serialize string")
         }
     }
 }

@@ -17,6 +17,7 @@
 package dev.usbharu.hideout.activitypub.service.common
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import dev.usbharu.hideout.activitypub.domain.model.StringOrObject
 import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.util.Base64Util
@@ -218,8 +219,8 @@ class APRequestServiceImpl(
     }
 
     private fun <T : Object> addContextIfNotNull(body: T?) = if (body != null) {
-        val mutableListOf = mutableListOf<String>()
-        mutableListOf.add("https://www.w3.org/ns/activitystreams")
+        val mutableListOf = mutableListOf<StringOrObject>()
+        mutableListOf.add(StringOrObject("https://www.w3.org/ns/activitystreams"))
         mutableListOf.addAll(body.context)
         body.context = mutableListOf
         objectMapper.writeValueAsString(body)

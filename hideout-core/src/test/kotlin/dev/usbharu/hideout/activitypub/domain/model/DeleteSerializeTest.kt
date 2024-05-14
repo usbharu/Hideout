@@ -69,7 +69,11 @@ class DeleteSerializeTest {
             ),
             published = "2023-11-02T15:30:34.160Z",
         )
-        expected.context = listOf("https://www.w3.org/ns/activitystreams", "https://w3id.org/security/v1", "")
+        expected.context = listOf(
+            StringOrObject("https://www.w3.org/ns/activitystreams"),
+            StringOrObject("https://w3id.org/security/v1"),
+            StringOrObject("")
+        )
         assertEquals(expected, readValue)
     }
 
