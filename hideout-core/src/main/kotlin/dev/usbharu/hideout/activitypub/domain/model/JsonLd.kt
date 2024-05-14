@@ -32,7 +32,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 open class JsonLd {
     @JsonProperty("@context")
     @JsonDeserialize(contentUsing = StringOrObjectDeserializer::class)
-    @JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY, contentUsing = StringORObjectSerializer::class)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY, using = ContextSerializer::class)
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     var context: List<StringOrObject> = emptyList()
         set(value) {

@@ -54,7 +54,7 @@ class StringOrObjectDeserializer : JsonDeserializer<StringOrObject>() {
         val readTree: JsonNode = p?.codec?.readTree(p) ?: return StringOrObject("")
         return if (readTree.isValueNode) {
             StringOrObject(readTree.textValue())
-        } else {
+        } else if (readTree.isObject) {
             val map: Map<String, String> = ctxt.readTreeAsValue<Map<String, String>>(
                 readTree,
                 ctxt.typeFactory.constructType(object : TypeReference<Map<String, String>>() {})
@@ -64,6 +64,8 @@ class StringOrObjectDeserializer : JsonDeserializer<StringOrObject>() {
 //            val map = p.codec.readValue<Map<String, String>>(p,object : TypeReference<Map<String, String>>() {})
             println(map)
             StringOrObject(map)
+        } else {
+            StringOrObject("")
         }
     }
 
