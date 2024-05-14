@@ -34,15 +34,15 @@ open class JsonLd {
     @JsonDeserialize(contentUsing = ContextDeserializer::class)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY, using = ContextSerializer::class)
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    var context: List<String> = emptyList()
+    var context: List<StringOrObject> = emptyList()
         set(value) {
-            field = value.filterNotNull().filter { it.isNotBlank() }
+            field = value.filter { it.isEmpty() }
         }
 
     @JsonCreator
-    constructor(context: List<String?>?) {
+    constructor(context: List<StringOrObject?>?) {
         if (context != null) {
-            this.context = context.filterNotNull().filter { it.isNotBlank() }
+            this.context = context.filterNotNull().filter { it.isEmpty() }
         } else {
             this.context = emptyList()
         }
@@ -76,14 +76,14 @@ class ContextDeserializer : JsonDeserializer<String>() {
     }
 }
 
-class ContextSerializer : JsonSerializer<List<String>>() {
+class ContextSerializer : JsonSerializer<List<StringOrObject>>() {
 
     @Deprecated("Deprecated in Java")
-    override fun isEmpty(value: List<String>?): Boolean = value.isNullOrEmpty()
+    override fun isEmpty(value: List<StringOrObject>?): Boolean = value.isNullOrEmpty()
 
-    override fun isEmpty(provider: SerializerProvider?, value: List<String>?): Boolean = value.isNullOrEmpty()
+    override fun isEmpty(provider: SerializerProvider?, value: List<StringOrObject>?): Boolean = value.isNullOrEmpty()
 
-    override fun serialize(value: List<String>?, gen: JsonGenerator?, serializers: SerializerProvider) {
+    override fun serialize(value: List<StringOrObject>?, gen: JsonGenerator?, serializers: SerializerProvider) {
         if (value.isNullOrEmpty()) {
             serializers.defaultSerializeNull(gen)
             return
@@ -97,5 +97,9 @@ class ContextSerializer : JsonSerializer<List<String>>() {
             }
             gen?.writeEndArray()
         }
+    }
+
+    override fun serialize(value: List<StringOrObject>?, gen: JsonGenerator?, serializers: SerializerProvider?) {
+
     }
 }
