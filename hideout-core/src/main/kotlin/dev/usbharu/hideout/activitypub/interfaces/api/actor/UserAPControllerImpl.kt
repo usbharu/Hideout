@@ -35,7 +35,13 @@ class UserAPControllerImpl(private val apUserService: APUserService) : UserAPCon
         person.context += listOf(
             StringOrObject("https://www.w3.org/ns/activitystreams"),
             StringOrObject("https://w3id.org/security/v1"),
-            StringOrObject(mapOf("manuallyApprovesFollowers" to "as:manuallyApprovesFollowers"))
+            StringOrObject(
+                mapOf(
+                    "manuallyApprovesFollowers" to "as:manuallyApprovesFollowers",
+                    "sensitive" to "as:sensitive",
+                    "Hashtag" to "as:Hashtag"
+                )
+            )
         )
         return ResponseEntity(person, HttpStatus.OK)
     }
