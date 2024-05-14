@@ -32,7 +32,11 @@ class UserAPControllerImpl(private val apUserService: APUserService) : UserAPCon
         } catch (_: UserNotFoundException) {
             return ResponseEntity.notFound().build()
         }
-        person.context += listOf(StringOrObject("https://www.w3.org/ns/activitystreams"))
+        person.context += listOf(
+            StringOrObject("https://www.w3.org/ns/activitystreams"),
+            StringOrObject("https://w3id.org/security/v1"),
+            StringOrObject(mapOf("manuallyApprovesFollowers" to "as:manuallyApprovesFollowers"))
+        )
         return ResponseEntity(person, HttpStatus.OK)
     }
 }
