@@ -17,6 +17,7 @@
 package dev.usbharu.hideout.activitypub.service.common
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import dev.usbharu.hideout.activitypub.domain.Constant
 import dev.usbharu.hideout.activitypub.domain.model.StringOrObject
 import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 import dev.usbharu.hideout.core.domain.model.actor.Actor
@@ -75,7 +76,7 @@ class APRequestServiceImpl(
         date: String,
         u: URL,
         signer: Actor,
-        url: String
+        url: String,
     ): HttpResponse {
         val headers = headers {
             append("Accept", Activity)
@@ -118,7 +119,7 @@ class APRequestServiceImpl(
         url: String,
         body: T?,
         signer: Actor?,
-        responseClass: Class<R>
+        responseClass: Class<R>,
     ): R {
         val bodyAsText = apPost(url, body, signer)
         return objectMapper.readValue(bodyAsText, responseClass)
@@ -168,7 +169,7 @@ class APRequestServiceImpl(
         url: String,
         date: String?,
         digest: String,
-        requestBody: String?
+        requestBody: String?,
     ) = httpClient.post(url) {
         accept(Activity)
         header("Date", date)
@@ -184,7 +185,7 @@ class APRequestServiceImpl(
         u: URL,
         digest: String,
         signer: Actor,
-        requestBody: String?
+        requestBody: String?,
     ): HttpResponse {
         val headers = headers {
             append("Accept", Activity)
@@ -219,10 +220,10 @@ class APRequestServiceImpl(
     }
 
     private fun <T : Object> addContextIfNotNull(body: T?) = if (body != null) {
-        val mutableListOf = mutableListOf<StringOrObject>()
-        mutableListOf.add(StringOrObject("https://www.w3.org/ns/activitystreams"))
-        mutableListOf.addAll(body.context)
-        body.context = mutableListOf
+        val context = mutableListOf<StringOrObject>()
+        context.addAll(Constant.context)
+        context.addAll(body.context)
+        body.context = context
         objectMapper.writeValueAsString(body)
     } else {
         null
