@@ -49,6 +49,7 @@ class ActivityPubConfig {
             .configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true)
             .configure(JsonParser.Feature.ALLOW_TRAILING_COMMA, true)
             .addMixIn(HttpRequest::class.java, HttpRequestMixIn::class.java)
+
         return objectMapper
     }
 

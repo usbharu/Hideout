@@ -183,8 +183,8 @@ class NoteSerializeTest {
         )
 
         expected.context = listOf(
-            "https://www.w3.org/ns/activitystreams",
-            "https://w3id.org/security/v1"
+            StringOrObject("https://www.w3.org/ns/activitystreams"),
+            StringOrObject("https://w3id.org/security/v1")
         )
 
         val note = objectMapper.readValue<Note>(json)

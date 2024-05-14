@@ -17,6 +17,7 @@
 package dev.usbharu.hideout.activitypub.interfaces.api.actor
 
 import dev.usbharu.hideout.activitypub.domain.model.Person
+import dev.usbharu.hideout.activitypub.domain.model.StringOrObject
 import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
 import dev.usbharu.hideout.core.domain.exception.resource.UserNotFoundException
 import org.springframework.http.HttpStatus
@@ -31,7 +32,7 @@ class UserAPControllerImpl(private val apUserService: APUserService) : UserAPCon
         } catch (_: UserNotFoundException) {
             return ResponseEntity.notFound().build()
         }
-        person.context += listOf("https://www.w3.org/ns/activitystreams")
+        person.context += listOf(StringOrObject("https://www.w3.org/ns/activitystreams"))
         return ResponseEntity(person, HttpStatus.OK)
     }
 }

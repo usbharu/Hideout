@@ -31,7 +31,7 @@ class JsonLdSerializeTest {
 
         val readValue = objectMapper.readValue<JsonLd>(json)
 
-        assertEquals(JsonLd(listOf("https://example.com")), readValue)
+        assertEquals(JsonLd(listOf(StringOrObject("https://example.com"))), readValue)
     }
 
     @Test
@@ -43,7 +43,14 @@ class JsonLdSerializeTest {
 
         val readValue = objectMapper.readValue<JsonLd>(json)
 
-        assertEquals(JsonLd(listOf("https://example.com", "https://www.w3.org/ns/activitystreams")), readValue)
+        assertEquals(
+            JsonLd(
+                listOf(
+                    StringOrObject("https://example.com"),
+                    StringOrObject("https://www.w3.org/ns/activitystreams")
+                )
+            ), readValue
+        )
     }
 
     @Test
@@ -67,7 +74,14 @@ class JsonLdSerializeTest {
 
         val readValue = objectMapper.readValue<JsonLd>(json)
 
-        assertEquals(JsonLd(listOf("https://example.com", "https://www.w3.org/ns/activitystreams")), readValue)
+        assertEquals(
+            JsonLd(
+                listOf(
+                    StringOrObject("https://example.com"),
+                    StringOrObject("https://www.w3.org/ns/activitystreams")
+                )
+            ), readValue
+        )
     }
 
     @Test
@@ -79,7 +93,7 @@ class JsonLdSerializeTest {
 
         val readValue = objectMapper.readValue<JsonLd>(json)
 
-        assertEquals(JsonLd(emptyList()), readValue)
+        assertEquals(JsonLd(listOf(StringOrObject(mapOf("hoge" to "fuga")))), readValue)
     }
 
     @Test
@@ -91,7 +105,15 @@ class JsonLdSerializeTest {
 
         val readValue = objectMapper.readValue<JsonLd>(json)
 
-        assertEquals(JsonLd(listOf("https://example.com", "https://www.w3.org/ns/activitystreams")), readValue)
+        assertEquals(
+            JsonLd(
+                listOf(
+                    StringOrObject("https://example.com"),
+                    StringOrObject(mapOf("hoge" to "fuga")),
+                    StringOrObject("https://www.w3.org/ns/activitystreams")
+                )
+            ), readValue
+        )
     }
 
     @Test
@@ -130,7 +152,7 @@ class JsonLdSerializeTest {
 
     @Test
     fun contextが文字列のとき文字列としてシリアライズされる() {
-        val jsonLd = JsonLd(listOf("https://example.com"))
+        val jsonLd = JsonLd(listOf(StringOrObject("https://example.com")))
 
         val objectMapper = ActivityPubConfig().objectMapper()
 
@@ -141,7 +163,12 @@ class JsonLdSerializeTest {
 
     @Test
     fun contextが文字列の配列のとき配列としてシリアライズされる() {
-        val jsonLd = JsonLd(listOf("https://example.com", "https://www.w3.org/ns/activitystreams"))
+        val jsonLd = JsonLd(
+            listOf(
+                StringOrObject("https://example.com"),
+                StringOrObject("https://www.w3.org/ns/activitystreams")
+            )
+        )
 
         val objectMapper = ActivityPubConfig().objectMapper()
 

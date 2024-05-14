@@ -31,18 +31,18 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 open class JsonLd {
     @JsonProperty("@context")
-    @JsonDeserialize(contentUsing = ContextDeserializer::class)
-    @JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY, using = ContextSerializer::class)
+    @JsonDeserialize(contentUsing = StringOrObjectDeserializer::class)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY, contentUsing = StringORObjectSerializer::class)
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     var context: List<StringOrObject> = emptyList()
         set(value) {
-            field = value.filter { it.isEmpty() }
+            field = value.filterNot { it.isEmpty() }
         }
 
     @JsonCreator
     constructor(context: List<StringOrObject?>?) {
         if (context != null) {
-            this.context = context.filterNotNull().filter { it.isEmpty() }
+            this.context = context.filterNotNull().filterNot { it.isEmpty() }
         } else {
             this.context = emptyList()
         }
@@ -89,17 +89,13 @@ class ContextSerializer : JsonSerializer<List<StringOrObject>>() {
             return
         }
         if (value.size == 1) {
-            gen?.writeString(value[0])
+            serializers.findValueSerializer(StringOrObject::class.java).serialize(value[0], gen, serializers)
         } else {
             gen?.writeStartArray()
             value.forEach {
-                gen?.writeString(it)
+                serializers.findValueSerializer(StringOrObject::class.java).serialize(it, gen, serializers)
             }
             gen?.writeEndArray()
         }
-    }
-
-    override fun serialize(value: List<StringOrObject>?, gen: JsonGenerator?, serializers: SerializerProvider?) {
-
     }
 }
