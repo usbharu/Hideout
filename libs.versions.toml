@@ -1,12 +1,12 @@
 [versions]
 
 kotlin = "1.9.24"
-ktor = "2.3.9"
+ktor = "2.3.11"
 exposed = "0.50.1"
 javacv-ffmpeg = "6.1.1-1.5.10"
 detekt = "1.23.6"
 coroutines = "1.8.1"
-swagger = "2.2.6"
+swagger = "2.2.22"
 serialization = "1.6.3"
 kjob = "0.6.0"
 tika = "2.9.2"
@@ -44,7 +44,7 @@ spring-boot-data-mongodb = { module = "org.springframework.boot:spring-boot-star
 spring-boot-data-mongodb-reactive = { module = "org.springframework.boot:spring-boot-starter-data-mongodb-reactive" }
 
 jakarta-validation = { module = "jakarta.validation:jakarta.validation-api", version = "3.0.2" }
-jakarta-annotation = { module = "jakarta.annotation:jakarta.annotation-api", version = "2.1.1" }
+jakarta-annotation = { module = "jakarta.annotation:jakarta.annotation-api", version = "3.0.0" }
 swagger-annotations = { module = "io.swagger.core.v3:swagger-annotations", version.ref = "swagger" }
 swagger-models = { module = "io.swagger.core.v3:swagger-models", version.ref = "swagger" }
 
@@ -89,4 +89,4 @@ detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
 kover = { id = "org.jetbrains.kotlinx.kover", version = "0.7.6" }
 openapi-generator = { id = "org.openapi.generator", version = "7.4.0" }
-license-report = { id = "com.github.jk1.dependency-license-report", version = "2.5" }
+license-report = { id = "com.github.jk1.dependency-license-report", version = "2.7" }
