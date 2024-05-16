@@ -31,18 +31,18 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 open class JsonLd {
     @JsonProperty("@context")
-    @JsonDeserialize(contentUsing = ContextDeserializer::class)
+    @JsonDeserialize(contentUsing = StringOrObjectDeserializer::class)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY, using = ContextSerializer::class)
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    var context: List<String> = emptyList()
+    var context: List<StringOrObject> = emptyList()
         set(value) {
-            field = value.filterNotNull().filter { it.isNotBlank() }
+            field = value.filterNot { it.isEmpty() }
         }
 
     @JsonCreator
-    constructor(context: List<String?>?) {
+    constructor(context: List<StringOrObject?>?) {
         if (context != null) {
-            this.context = context.filterNotNull().filter { it.isNotBlank() }
+            this.context = context.filterNotNull().filterNot { it.isEmpty() }
         } else {
             this.context = emptyList()
         }
@@ -76,24 +76,24 @@ class ContextDeserializer : JsonDeserializer<String>() {
     }
 }
 
-class ContextSerializer : JsonSerializer<List<String>>() {
+class ContextSerializer : JsonSerializer<List<StringOrObject>>() {
 
     @Deprecated("Deprecated in Java")
-    override fun isEmpty(value: List<String>?): Boolean = value.isNullOrEmpty()
+    override fun isEmpty(value: List<StringOrObject>?): Boolean = value.isNullOrEmpty()
 
-    override fun isEmpty(provider: SerializerProvider?, value: List<String>?): Boolean = value.isNullOrEmpty()
+    override fun isEmpty(provider: SerializerProvider?, value: List<StringOrObject>?): Boolean = value.isNullOrEmpty()
 
-    override fun serialize(value: List<String>?, gen: JsonGenerator?, serializers: SerializerProvider) {
+    override fun serialize(value: List<StringOrObject>?, gen: JsonGenerator?, serializers: SerializerProvider) {
         if (value.isNullOrEmpty()) {
             serializers.defaultSerializeNull(gen)
             return
         }
         if (value.size == 1) {
-            gen?.writeString(value[0])
+            serializers.findValueSerializer(StringOrObject::class.java).serialize(value[0], gen, serializers)
         } else {
             gen?.writeStartArray()
             value.forEach {
-                gen?.writeString(it)
+                serializers.findValueSerializer(StringOrObject::class.java).serialize(it, gen, serializers)
             }
             gen?.writeEndArray()
         }
