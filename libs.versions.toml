@@ -44,7 +44,7 @@ spring-boot-data-mongodb = { module = "org.springframework.boot:spring-boot-star
 spring-boot-data-mongodb-reactive = { module = "org.springframework.boot:spring-boot-starter-data-mongodb-reactive" }
 
 jakarta-validation = { module = "jakarta.validation:jakarta.validation-api", version = "3.0.2" }
-jakarta-annotation = { module = "jakarta.annotation:jakarta.annotation-api", version = "2.1.1" }
+jakarta-annotation = { module = "jakarta.annotation:jakarta.annotation-api", version = "3.0.0" }
 swagger-annotations = { module = "io.swagger.core.v3:swagger-annotations", version.ref = "swagger" }
 swagger-models = { module = "io.swagger.core.v3:swagger-models", version.ref = "swagger" }
 
