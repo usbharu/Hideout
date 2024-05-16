@@ -17,11 +17,14 @@
 package dev.usbharu.hideout.application.config
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.databind.module.SimpleModule
 import com.nimbusds.jose.jwk.JWKSet
 import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet
 import com.nimbusds.jose.jwk.source.JWKSource
 import com.nimbusds.jose.proc.SecurityContext
+import dev.usbharu.hideout.activitypub.domain.model.StringORObjectSerializer
+import dev.usbharu.hideout.activitypub.domain.model.StringOrObject
 import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.application.infrastructure.springframework.RoleHierarchyAuthorizationManagerFactory
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
@@ -295,13 +298,16 @@ class SecurityConfig {
     @Primary
     fun jackson2ObjectMapperBuilderCustomizer(): Jackson2ObjectMapperBuilderCustomizer {
         return Jackson2ObjectMapperBuilderCustomizer {
-            it.serializationInclusion(JsonInclude.Include.ALWAYS).serializers()
+            it.serializationInclusion(JsonInclude.Include.ALWAYS)
+                .modulesToInstall(SimpleModule().addSerializer(StringOrObject::class.java, StringORObjectSerializer()))
+                .serializers()
         }
     }
 
     @Bean
     fun mappingJackson2HttpMessageConverter(): MappingJackson2HttpMessageConverter {
         val builder = Jackson2ObjectMapperBuilder().serializationInclusion(JsonInclude.Include.NON_NULL)
+        builder.modulesToInstall(SimpleModule().addSerializer(StringOrObject::class.java, StringORObjectSerializer()))
         return MappingJackson2HttpMessageConverter(builder.build())
     }
 
