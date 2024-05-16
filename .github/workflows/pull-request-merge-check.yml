@@ -393,7 +393,7 @@ jobs:
 
       - name: setup-chrome
         id: setup-chrome
-        uses: browser-actions/setup-chrome@v1.6.1
+        uses: browser-actions/setup-chrome@v1.6.2
 
       - name: Add Path
         run: echo ${{ steps.setup-chrome.outputs.chrome-path }} >> $GITHUB_PATH
