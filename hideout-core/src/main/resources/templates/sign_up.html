@@ -15,7 +15,8 @@
 </head>
 <body>
 
-<form method='post' th:action="@{/auth/sign_up}" th:disabled="${applicationConfig.private}">
+<form method='post' th:action="@{/dev/usbharu/hideout/core/service/auth/sign_up}"
+      th:disabled="${applicationConfig.private}">
     <input name='username' type='text' value=''>
     <input name='password' type='password'>
     <input type="hidden" name="recaptchaResponse" id="recaptchaResponse">
