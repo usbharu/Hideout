@@ -215,7 +215,7 @@ class SecurityConfig {
                 authorize(GET, "/users/*", permitAll)
                 authorize(GET, "/users/*/posts/*", permitAll)
 
-                authorize("/auth/sign_up", hasRole("ANONYMOUS"))
+                authorize("/dev/usbharu/hideout/core/service/auth/sign_up", hasRole("ANONYMOUS"))
                 authorize(GET, "/files/*", permitAll)
                 authorize(GET, "/users/*/icon.jpg", permitAll)
                 authorize(GET, "/users/*/header.jpg", permitAll)
