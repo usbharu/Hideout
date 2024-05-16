@@ -17,8 +17,10 @@
 package dev.usbharu.hideout.activitypub.service.common
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import dev.usbharu.hideout.activitypub.domain.Constant
 import dev.usbharu.hideout.activitypub.domain.model.Follow
 import dev.usbharu.hideout.activitypub.domain.model.StringOrObject
+import dev.usbharu.hideout.application.config.ActivityPubConfig
 import dev.usbharu.hideout.util.Base64Util
 import dev.usbharu.httpsignature.common.HttpHeaders
 import dev.usbharu.httpsignature.common.HttpMethod
@@ -36,7 +38,6 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
-import utils.JsonObjectMapper.objectMapper
 import utils.UserBuilder
 import java.net.URL
 import java.security.MessageDigest
@@ -58,7 +59,7 @@ class APRequestServiceImplTest {
                 }
                 respond("""{"type":"Follow","object": "https://example.com","actor": "https://example.com"}""")
             }),
-            objectMapper,
+            ActivityPubConfig().objectMapper(),
             mock(),
             dateTimeFormatter
         )
@@ -83,7 +84,7 @@ class APRequestServiceImplTest {
                 }
                 respond("""{"type":"Follow","object": "https://example.com","actor": "https://example.com"}""")
             }),
-            objectMapper,
+            ActivityPubConfig().objectMapper(),
             mock(),
             dateTimeFormatter
         )
@@ -123,7 +124,7 @@ class APRequestServiceImplTest {
                 }
                 respond("""{"type":"Follow","object": "https://example.com","actor": "https://example.com"}""")
             }),
-            objectMapper,
+            ActivityPubConfig().objectMapper(),
             httpSignatureSigner,
             dateTimeFormatter
         )
@@ -172,12 +173,12 @@ class APRequestServiceImplTest {
     fun `apPost bodyがnullでないときcontextにactivitystreamのURLを追加する`() = runTest {
         val dateTimeFormatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US)
         val apRequestServiceImpl = APRequestServiceImpl(HttpClient(MockEngine {
-            val readValue = objectMapper.readValue<Follow>(it.body.toByteArray())
+            val readValue = ActivityPubConfig().objectMapper().readValue<Follow>(it.body.toByteArray())
 
-            assertThat(readValue.context).contains(StringOrObject("https://www.w3.org/ns/activitystreams"))
+            assertThat(readValue.context).containsAll(Constant.context)
 
             respondOk("{}")
-        }), objectMapper, mock(), dateTimeFormatter)
+        }), ActivityPubConfig().objectMapper(), mock(), dateTimeFormatter)
 
         val body = Follow(
             apObject = "https://example.com",
@@ -194,7 +195,7 @@ class APRequestServiceImplTest {
             assertEquals(0, it.body.toByteArray().size)
 
             respondOk("{}")
-        }), objectMapper, mock(), dateTimeFormatter)
+        }), ActivityPubConfig().objectMapper(), mock(), dateTimeFormatter)
 
         apRequestServiceImpl.apPost("https://example.com", null, null)
     }
@@ -204,7 +205,7 @@ class APRequestServiceImplTest {
         val dateTimeFormatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US)
         val apRequestServiceImpl = APRequestServiceImpl(HttpClient(MockEngine {
             val src = it.body.toByteArray()
-            val readValue = objectMapper.readValue<Follow>(src)
+            val readValue = ActivityPubConfig().objectMapper().readValue<Follow>(src)
 
             assertThat(readValue.context).contains(StringOrObject("https://www.w3.org/ns/activitystreams"))
 
@@ -223,7 +224,7 @@ class APRequestServiceImplTest {
             assertEquals(digest, it.headers["Digest"].orEmpty().split("256=").last())
 
             respondOk("{}")
-        }), objectMapper, mock(), dateTimeFormatter)
+        }), ActivityPubConfig().objectMapper(), mock(), dateTimeFormatter)
 
         val body = Follow(
             apObject = "https://example.com",
@@ -237,7 +238,7 @@ class APRequestServiceImplTest {
         val dateTimeFormatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US)
         val apRequestServiceImpl = APRequestServiceImpl(HttpClient(MockEngine {
             val src = it.body.toByteArray()
-            val readValue = objectMapper.readValue<Follow>(src)
+            val readValue = ActivityPubConfig().objectMapper().readValue<Follow>(src)
 
             assertThat(readValue.context).contains(StringOrObject("https://www.w3.org/ns/activitystreams"))
 
@@ -253,7 +254,7 @@ class APRequestServiceImplTest {
             assertEquals(digest, it.headers["Digest"].orEmpty().split("256=").last())
 
             respondOk("{}")
-        }), objectMapper, mock(), dateTimeFormatter)
+        }), ActivityPubConfig().objectMapper(), mock(), dateTimeFormatter)
 
         val body = Follow(
             apObject = "https://example.com",
@@ -278,7 +279,7 @@ class APRequestServiceImplTest {
         }
         val apRequestServiceImpl = APRequestServiceImpl(HttpClient(MockEngine {
             val src = it.body.toByteArray()
-            val readValue = objectMapper.readValue<Follow>(src)
+            val readValue = ActivityPubConfig().objectMapper().readValue<Follow>(src)
 
             assertThat(readValue.context).contains(StringOrObject("https://www.w3.org/ns/activitystreams"))
 
@@ -294,7 +295,7 @@ class APRequestServiceImplTest {
             assertEquals(digest, it.headers["Digest"].orEmpty().split("256=").last())
 
             respondOk("{}")
-        }), objectMapper, httpSignatureSigner, dateTimeFormatter)
+        }), ActivityPubConfig().objectMapper(), httpSignatureSigner, dateTimeFormatter)
 
         val body = Follow(
             apObject = "https://example.com",
@@ -339,12 +340,12 @@ class APRequestServiceImplTest {
         val dateTimeFormatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US)
         val apRequestServiceImpl = APRequestServiceImpl(HttpClient(MockEngine {
             val src = it.body.toByteArray()
-            val readValue = objectMapper.readValue<Follow>(src)
+            val readValue = ActivityPubConfig().objectMapper().readValue<Follow>(src)
 
             assertThat(readValue.context).contains(StringOrObject("https://www.w3.org/ns/activitystreams"))
 
             respondOk(src.decodeToString())
-        }), objectMapper, mock(), dateTimeFormatter)
+        }), ActivityPubConfig().objectMapper(), mock(), dateTimeFormatter)
 
         val body = Follow(
             apObject = "https://example.com",
