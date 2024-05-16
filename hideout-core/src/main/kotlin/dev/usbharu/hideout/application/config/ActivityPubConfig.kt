@@ -22,7 +22,10 @@ import com.fasterxml.jackson.annotation.Nulls
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import dev.usbharu.hideout.activitypub.domain.model.StringORObjectSerializer
+import dev.usbharu.hideout.activitypub.domain.model.StringOrObject
 import dev.usbharu.hideout.core.infrastructure.httpsignature.HttpRequestMixIn
 import dev.usbharu.httpsignature.common.HttpRequest
 import dev.usbharu.httpsignature.sign.HttpSignatureSigner
@@ -39,7 +42,11 @@ class ActivityPubConfig {
     @Bean
     @Qualifier("activitypub")
     fun objectMapper(): ObjectMapper {
+
+        val module = SimpleModule().addSerializer(StringOrObject::class.java, StringORObjectSerializer())
+
         val objectMapper = jacksonObjectMapper()
+            .registerModules(module)
             .enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
             .setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
             .setDefaultSetterInfo(JsonSetter.Value.forContentNulls(Nulls.SKIP))
@@ -49,6 +56,7 @@ class ActivityPubConfig {
             .configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true)
             .configure(JsonParser.Feature.ALLOW_TRAILING_COMMA, true)
             .addMixIn(HttpRequest::class.java, HttpRequestMixIn::class.java)
+
         return objectMapper
     }
 

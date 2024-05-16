@@ -33,6 +33,7 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.whenever
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
@@ -51,7 +52,10 @@ class ActorAPControllerImplTest {
 
     @BeforeEach
     fun setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(userAPControllerImpl).build()
+        mockMvc = MockMvcBuilders
+            .standaloneSetup(userAPControllerImpl)
+            .setMessageConverters(MappingJackson2HttpMessageConverter(ActivityPubConfig().objectMapper()))
+            .build()
     }
 
     @Test
@@ -85,6 +89,7 @@ class ActorAPControllerImplTest {
         mockMvc
             .get("/users/hoge")
             .asyncDispatch()
+            .andDo { print() }
             .andExpect { status { isOk() } }
             .andExpect { content { this.json(objectMapper.writeValueAsString(person)) } }
     }

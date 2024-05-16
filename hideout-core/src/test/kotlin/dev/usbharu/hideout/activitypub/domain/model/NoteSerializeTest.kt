@@ -17,6 +17,7 @@
 package dev.usbharu.hideout.activitypub.domain.model
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import dev.usbharu.hideout.activitypub.domain.Constant
 import dev.usbharu.hideout.activitypub.service.objects.note.APNoteServiceImpl.Companion.public
 import dev.usbharu.hideout.application.config.ActivityPubConfig
 import org.assertj.core.api.Assertions.assertThat
@@ -108,15 +109,7 @@ class NoteSerializeTest {
       "discoverable": "toot:discoverable",
       "schema": "http://schema.org#",
       "PropertyValue": "schema:PropertyValue",
-      "value": "schema:value",
-      "misskey": "https://misskey-hub.net/ns#",
-      "_misskey_content": "misskey:_misskey_content",
-      "_misskey_quote": "misskey:_misskey_quote",
-      "_misskey_reaction": "misskey:_misskey_reaction",
-      "_misskey_votes": "misskey:_misskey_votes",
-      "_misskey_summary": "misskey:_misskey_summary",
-      "isCat": "misskey:isCat",
-      "vcard": "http://www.w3.org/2006/vcard/ns#"
+      "value": "schema:value"
     }
   ],
   "id": "https://misskey.usbharu.dev/notes/9nj1omt1rn",
@@ -182,10 +175,7 @@ class NoteSerializeTest {
             )
         )
 
-        expected.context = listOf(
-            "https://www.w3.org/ns/activitystreams",
-            "https://w3id.org/security/v1"
-        )
+        expected.context = Constant.context
 
         val note = objectMapper.readValue<Note>(json)
 
