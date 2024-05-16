@@ -17,6 +17,7 @@
 package dev.usbharu.hideout.activitypub.domain.model
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import dev.usbharu.hideout.activitypub.domain.Constant
 import dev.usbharu.hideout.application.config.ActivityPubConfig
 import org.assertj.core.api.Assertions.assertThat
 import org.intellij.lang.annotations.Language
@@ -38,15 +39,7 @@ class RejectTest {
     "discoverable" : "toot:discoverable",
     "schema" : "http://schema.org#",
     "PropertyValue" : "schema:PropertyValue",
-    "value" : "schema:value",
-    "misskey" : "https://misskey-hub.net/ns#",
-    "_misskey_content" : "misskey:_misskey_content",
-    "_misskey_quote" : "misskey:_misskey_quote",
-    "_misskey_reaction" : "misskey:_misskey_reaction",
-    "_misskey_votes" : "misskey:_misskey_votes",
-    "_misskey_summary" : "misskey:_misskey_summary",
-    "isCat" : "misskey:isCat",
-    "vcard" : "http://www.w3.org/2006/vcard/ns#"
+    "value" : "schema:value"
   } ],
   "type" : "Reject",
   "actor" : "https://misskey.usbharu.dev/users/97ws8y3rj6",
@@ -72,7 +65,9 @@ class RejectTest {
                 actor = "https://test-hideout.usbharu.dev/users/test-user2",
                 id = "https://misskey.usbharu.dev/follows/9mxh6mawru/97ws8y3rj6"
             )
-        ).apply { context = listOf("https://www.w3.org/ns/activitystreams", "https://w3id.org/security/v1") }
+        ).apply {
+            context = Constant.context
+        }
 
         assertThat(reject).isEqualTo(expected)
     }
@@ -88,7 +83,12 @@ class RejectTest {
                 apObject = "https://misskey.usbharu.dev/users/97ws8y3rj6",
                 actor = "https://test-hideout.usbharu.dev/users/test-user2"
             )
-        ).apply { context = listOf("https://www.w3.org/ns/activitystreams", "https://w3id.org/security/v1") }
+        ).apply {
+            context = listOf(
+                StringOrObject("https://www.w3.org/ns/activitystreams"),
+                StringOrObject("https://w3id.org/security/v1")
+            )
+        }
 
         val objectMapper = ActivityPubConfig().objectMapper()
 
