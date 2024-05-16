@@ -6,7 +6,7 @@ exposed = "0.50.1"
 javacv-ffmpeg = "6.1.1-1.5.10"
 detekt = "1.23.6"
 coroutines = "1.8.1"
-swagger = "2.2.6"
+swagger = "2.2.22"
 serialization = "1.6.3"
 kjob = "0.6.0"
 tika = "2.9.2"
@@ -89,4 +89,4 @@ detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
 kover = { id = "org.jetbrains.kotlinx.kover", version = "0.7.6" }
 openapi-generator = { id = "org.openapi.generator", version = "7.4.0" }
-license-report = { id = "com.github.jk1.dependency-license-report", version = "2.5" }
+license-report = { id = "com.github.jk1.dependency-license-report", version = "2.7" }
