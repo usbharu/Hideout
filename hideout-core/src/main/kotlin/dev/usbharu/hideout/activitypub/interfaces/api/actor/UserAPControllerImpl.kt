@@ -16,6 +16,7 @@
 
 package dev.usbharu.hideout.activitypub.interfaces.api.actor
 
+import dev.usbharu.hideout.activitypub.domain.Constant
 import dev.usbharu.hideout.activitypub.domain.model.Person
 import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
 import dev.usbharu.hideout.core.domain.exception.resource.UserNotFoundException
@@ -31,7 +32,7 @@ class UserAPControllerImpl(private val apUserService: APUserService) : UserAPCon
         } catch (_: UserNotFoundException) {
             return ResponseEntity.notFound().build()
         }
-        person.context += listOf("https://www.w3.org/ns/activitystreams")
+        person.context += Constant.context
         return ResponseEntity(person, HttpStatus.OK)
     }
 }
