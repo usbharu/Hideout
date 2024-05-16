@@ -1,0 +1,92 @@
+[versions]
+
+kotlin = "1.9.24"
+ktor = "2.3.9"
+exposed = "0.50.1"
+javacv-ffmpeg = "6.1.1-1.5.10"
+detekt = "1.23.6"
+coroutines = "1.8.1"
+swagger = "2.2.6"
+serialization = "1.6.3"
+kjob = "0.6.0"
+tika = "2.9.1"
+owl = "0.0.1"
+jackson = "2.15.4"
+
+[libraries]
+
+exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
+exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" }
+exposed-spring = { module = "org.jetbrains.exposed:exposed-spring-boot-starter", version.ref = "exposed" }
+exposed-java-time = { module = "org.jetbrains.exposed:exposed-java-time", version.ref = "exposed" }
+
+cotoutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+cotoutines-reactor = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-reactor", version.ref = "coroutines" }
+cotoutines-slf4j = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-slf4j", version.ref = "coroutines" }
+
+javacv = { module = "org.bytedeco:javacv", version = "1.5.10" }
+javacv-ffmpeg = { module = "org.bytedeco:ffmpeg", version.ref = "javacv-ffmpeg" }
+
+detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
+
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-mock = { module = "io.ktor:ktor-client-client-mock", version.ref = "ktor" }
+ktor-client-logging-jvm = { module = "io.ktor:ktor-client-logging-jvm", version.ref = "ktor" }
+ktor-serialization-jackson = { module = "io.ktor:ktor-serialization-jackson", version.ref = "ktor" }
+
+spring-boot-oauth2-authorization = { module = "org.springframework.boot:spring-boot-starter-oauth2-authorization-server" }
+spring-boot-oauth2-resource = { module = "org.springframework.boot:spring-boot-starter-oauth2-resource-server" }
+spring-boot-oauth2-jose = { module = "org.springframework.security:spring-security-oauth2-jose" }
+
+spring-boot-data-mongodb = { module = "org.springframework.boot:spring-boot-starter-data-mongodb" }
+spring-boot-data-mongodb-reactive = { module = "org.springframework.boot:spring-boot-starter-data-mongodb-reactive" }
+
+jakarta-validation = { module = "jakarta.validation:jakarta.validation-api", version = "3.0.2" }
+jakarta-annotation = { module = "jakarta.annotation:jakarta.annotation-api", version = "2.1.1" }
+swagger-annotations = { module = "io.swagger.core.v3:swagger-annotations", version.ref = "swagger" }
+swagger-models = { module = "io.swagger.core.v3:swagger-models", version.ref = "swagger" }
+
+serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "serialization" }
+serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
+
+apache-tika-core = { module = "org.apache.tika:tika-core", version.ref = "tika" }
+apache-tika-parsers = { module = "org.apache.tika:tika-parsers", version.ref = "tika" }
+
+kjon-core = { module = "org.drewcarlson:kjob-core", version.ref = "kjob" }
+kjon-mongo = { module = "org.drewcarlson:kjob-mongo", version.ref = "kjob" }
+
+owl-producer-api = { module = "dev.usbharu:owl-producer-api", version.ref = "owl" }
+owl-producer-default = { module = "dev.usbharu:owl-producer-default", version.ref = "owl" }
+owl-producer-embedded = { module = "dev.usbharu:owl-producer-embedded", version.ref = "owl" }
+owl-broker = { module = "dev.usbharu:owl-broker", version.ref = "owl" }
+owl-broker-mongodb = { module = "dev.usbharu:owl-broker-mongodb", version.ref = "owl" }
+
+jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
+jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
+
+[bundles]
+
+exposed = ["exposed-core", "exposed-java-time", "exposed-jdbc", "exposed-spring"]
+coroutines = ["cotoutines-core", "cotoutines-reactor", "cotoutines-slf4j"]
+ktor-client = ["ktor-client-cio", "ktor-client-content-negotiation", "ktor-client-core", "ktor-client-logging-jvm", "ktor-serialization-jackson"]
+spring-boot-oauth2 = ["spring-boot-oauth2-authorization", "spring-boot-oauth2-jose", "spring-boot-oauth2-resource"]
+spring-boot-data-mongodb = ["spring-boot-data-mongodb", "spring-boot-data-mongodb-reactive"]
+openapi = ["jakarta-annotation", "jakarta-validation", "swagger-annotations", "swagger-models"]
+serialization = ["serialization-core", "serialization-json"]
+apache-tika = ["apache-tika-core", "apache-tika-parsers"]
+kjob = ["kjon-core", "kjon-mongo"]
+owl-producer = ["owl-producer-api", "owl-producer-default", "owl-producer-embedded"]
+owl-broker = ["owl-broker", "owl-broker-mongodb"]
+jackson = ["jackson-databind", "jackson-module-kotlin"]
+
+[plugins]
+
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+spring-boot = { id = "org.springframework.boot", version = "3.2.5" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
+kover = { id = "org.jetbrains.kotlinx.kover", version = "0.7.6" }
+openapi-generator = { id = "org.openapi.generator", version = "7.4.0" }
+license-report = { id = "com.github.jk1.dependency-license-report", version = "2.5" }
