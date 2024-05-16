@@ -1,7 +1,7 @@
 [versions]
 
 kotlin = "1.9.24"
-ktor = "2.3.9"
+ktor = "2.3.11"
 exposed = "0.50.1"
 javacv-ffmpeg = "6.1.1-1.5.10"
 detekt = "1.23.6"
