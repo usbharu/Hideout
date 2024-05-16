@@ -9,7 +9,7 @@ coroutines = "1.8.1"
 swagger = "2.2.6"
 serialization = "1.6.3"
 kjob = "0.6.0"
-tika = "2.9.1"
+tika = "2.9.2"
 owl = "0.0.1"
 jackson = "2.15.4"
 
