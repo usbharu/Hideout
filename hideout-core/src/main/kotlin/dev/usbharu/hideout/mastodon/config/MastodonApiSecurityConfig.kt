@@ -41,7 +41,7 @@ class MastodonApiSecurityConfig {
             authorizeHttpRequests {
                 authorize(POST, "/api/v1/apps", permitAll)
                 authorize(GET, "/api/v1/instance/**", permitAll)
-                authorize(POST, "/api/v1/accounts", permitAll)
+                authorize(POST, "/api/v1/accounts", authenticated)
 
                 authorize(GET, "/api/v1/accounts/verify_credentials", rf.hasScope("read:accounts"))
                 authorize(GET, "/api/v1/accounts/relationships", rf.hasScope("read:follows"))
