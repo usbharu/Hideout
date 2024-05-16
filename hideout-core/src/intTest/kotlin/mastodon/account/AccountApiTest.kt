@@ -113,6 +113,7 @@ class AccountApiTest {
                 param("email", "test@example.com")
                 param("agreement", "true")
                 param("locale", "")
+                with(jwt())
                 with(csrf())
             }
             .asyncDispatch()
@@ -129,6 +130,7 @@ class AccountApiTest {
                 contentType = MediaType.APPLICATION_FORM_URLENCODED
                 param("username", "api-test-user-2")
                 param("password", "very-secure-password")
+                with(jwt())
                 with(csrf())
             }
             .asyncDispatch()
@@ -145,6 +147,7 @@ class AccountApiTest {
                 contentType = MediaType.APPLICATION_FORM_URLENCODED
                 param("password", "api-test-user-3")
                 with(csrf())
+                with(jwt())
             }
             .andDo { print() }
             .andExpect { status { isUnprocessableEntity() } }
@@ -158,6 +161,7 @@ class AccountApiTest {
                 contentType = MediaType.APPLICATION_FORM_URLENCODED
                 param("username", "api-test-user-4")
                 with(csrf())
+                with(jwt())
             }
             .andExpect { status { isUnprocessableEntity() } }
     }

@@ -3,12 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <title>SignUp</title>
+    <script th:src="https://www.google.com/recaptcha/api.js?render=${siteKey}"></script>
+    <script th:inline="javascript">
+        grecaptcha.ready(function () {
+            grecaptcha.execute( /*[[${siteKey}]]*/ '', {action: 'homepage'}).then(function (token) {
+                var recaptchaResponse = document.getElementById('recaptchaResponse');
+                recaptchaResponse.value = token;
+            });
+        });
+    </script>
 </head>
 <body>
 
-<form method='post' th:action="@{/api/v1/accounts}">
+<form method='post' th:action="@{/dev/usbharu/hideout/core/service/auth/sign_up}"
+      th:disabled="${applicationConfig.private}">
     <input name='username' type='text' value=''>
     <input name='password' type='password'>
+    <input type="hidden" name="recaptchaResponse" id="recaptchaResponse">
     <input type="submit">
 </form>
 </body>
