@@ -69,7 +69,8 @@ class ActorServiceTest {
                 relationshipRepository = mock(),
                 postService = mock(),
                 apSendDeleteService = mock(),
-                postRepository = mock()
+                postRepository = mock(),
+                owlProducer = mock()
             )
         userService.createLocalUser(UserCreateDto("test", "testUser", "XXXXXXXXXXXXX", "test"))
         verify(actorRepository, times(1)).save(any())
@@ -112,7 +113,8 @@ class ActorServiceTest {
                 relationshipRepository = mock(),
                 postService = mock(),
                 apSendDeleteService = mock(),
-                postRepository = mock()
+                postRepository = mock(),
+                owlProducer = mock()
             )
 
         assertThrows<IllegalStateException> {
@@ -162,7 +164,8 @@ class ActorServiceTest {
                 relationshipRepository = mock(),
                 postService = mock(),
                 apSendDeleteService = mock(),
-                postRepository = mock()
+                postRepository = mock(),
+                owlProducer = mock()
             )
         val user = RemoteUserCreateDto(
             name = "test",

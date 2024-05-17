@@ -215,21 +215,10 @@ data class Post private constructor(
                 this.repostId != null
 
     fun delete(): Post {
-        return Post(
-            id = this.id,
-            actorId = actorId,
-            overview = overview,
-            content = content,
-            text = text,
-            createdAt = createdAt,
-            visibility = visibility,
-            url = url,
-            repostId = repostId,
-            replyId = replyId,
-            sensitive = sensitive,
-            apId = apId,
-            mediaIds = mediaIds,
-            deleted = true
-        )
+        return copy(deleted = true)
+    }
+
+    fun restore(): Post {
+        return copy(deleted = false)
     }
 }

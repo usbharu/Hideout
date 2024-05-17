@@ -20,6 +20,7 @@ import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
 import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.external.job.UpdateActorTask
 import dev.usbharu.hideout.core.external.job.UpdateActorTaskDef
+import dev.usbharu.hideout.core.service.post.PostService
 import dev.usbharu.owl.consumer.AbstractTaskRunner
 import dev.usbharu.owl.consumer.TaskRequest
 import dev.usbharu.owl.consumer.TaskResult
@@ -29,10 +30,13 @@ import org.springframework.stereotype.Component
 class UpdateActorWorker(
     private val transaction: Transaction,
     private val apUserService: APUserService,
+    private val postService: PostService,
 ) : AbstractTaskRunner<UpdateActorTask, UpdateActorTaskDef>(UpdateActorTaskDef) {
     override suspend fun typedRun(typedParam: UpdateActorTask, taskRequest: TaskRequest): TaskResult {
         transaction.transaction {
             apUserService.fetchPerson(typedParam.apId, idOverride = typedParam.id)
+
+            postService.restoreByRemoteActor(typedParam.id)
         }
 
         return TaskResult.ok()

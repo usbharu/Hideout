@@ -23,6 +23,7 @@ import org.springframework.stereotype.Repository
 interface PostRepository {
     suspend fun generateId(): Long
     suspend fun save(post: Post): Post
+    suspend fun saveAll(posts: List<Post>)
     suspend fun delete(id: Long)
     suspend fun findById(id: Long): Post?
     suspend fun findByUrl(url: String): Post?
@@ -30,6 +31,7 @@ interface PostRepository {
     suspend fun findByApId(apId: String): Post?
     suspend fun existByApIdWithLock(apId: String): Boolean
     suspend fun findByActorId(actorId: Long): List<Post>
+    suspend fun findByActorIdAndDeleted(actorId: Long, deleted: Boolean): List<Post>
 
     suspend fun countByActorId(actorId: Long): Int
 }
