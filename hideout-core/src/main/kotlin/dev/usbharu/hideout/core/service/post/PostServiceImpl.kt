@@ -59,7 +59,7 @@ class PostServiceImpl(
     }
 
     override suspend fun deleteLocal(post: Post) {
-        if (post.delted) {
+        if (post.deleted) {
             return
         }
         reactionRepository.deleteByPostId(post.id)
@@ -73,7 +73,7 @@ class PostServiceImpl(
     }
 
     override suspend fun deleteRemote(post: Post) {
-        if (post.delted) {
+        if (post.deleted) {
             return
         }
         reactionRepository.deleteByPostId(post.id)
@@ -86,7 +86,7 @@ class PostServiceImpl(
     }
 
     override suspend fun deleteByActor(actorId: Long) {
-        postRepository.findByActorId(actorId).filterNot { it.delted }.forEach { postRepository.save(it.delete()) }
+        postRepository.findByActorId(actorId).filterNot { it.deleted }.forEach { postRepository.save(it.delete()) }
 
         val actor = actorRepository.findById(actorId)
             ?: throw IllegalStateException("actor: $actorId was not found.")
