@@ -71,6 +71,11 @@ class APUndoProcessor(
                 return
             }
 
+            "Delete" -> {
+                delete(undo)
+                return
+            }
+
             else -> {}
         }
         TODO()
@@ -122,6 +127,12 @@ class APUndoProcessor(
 
         val findByApId = postRepository.findByApId(announce.id) ?: return
         postService.deleteRemote(findByApId)
+    }
+
+    private suspend fun delete(undo: Undo) {
+        val announce = undo.apObject as Delete
+
+
     }
 
     override fun isSupported(activityType: ActivityType): Boolean = activityType == ActivityType.Undo
