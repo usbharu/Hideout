@@ -93,7 +93,7 @@ class UserServiceImpl(
         return save
     }
 
-    override suspend fun createRemoteUser(user: RemoteUserCreateDto): Actor {
+    override suspend fun createRemoteUser(user: RemoteUserCreateDto, idOverride: Long?): Actor {
         logger.info("START Create New remote user. name: {} url: {}", user.name, user.url)
 
         val deletedActor = deletedActorRepository.findByNameAndDomain(user.name, user.domain)
@@ -107,7 +107,7 @@ class UserServiceImpl(
 
         val nextId = actorRepository.nextId()
         val userEntity = actorBuilder.of(
-            id = nextId,
+            id = idOverride ?: nextId,
             name = user.name,
             domain = user.domain,
             screenName = user.screenName,
