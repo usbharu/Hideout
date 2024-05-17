@@ -43,7 +43,7 @@ data class Post private constructor(
     @get:URL
     val apId: String = url,
     val mediaIds: List<Long> = emptyList(),
-    val delted: Boolean = false,
+    val deleted: Boolean = false,
     val emojiIds: List<Long> = emptyList(),
 ) {
 
@@ -67,7 +67,8 @@ data class Post private constructor(
             sensitive: Boolean = false,
             apId: String = url,
             mediaIds: List<Long> = emptyList(),
-            emojiIds: List<Long> = emptyList()
+            emojiIds: List<Long> = emptyList(),
+            deleted: Boolean = false,
         ): Post {
             require(id >= 0) { "id must be greater than or equal to 0." }
 
@@ -109,7 +110,7 @@ data class Post private constructor(
                 sensitive = sensitive,
                 apId = apId,
                 mediaIds = mediaIds,
-                delted = false,
+                deleted = deleted,
                 emojiIds = emojiIds
             )
 
@@ -117,6 +118,10 @@ data class Post private constructor(
 
             for (constraintViolation in validate) {
                 throw IllegalArgumentException("${constraintViolation.propertyPath} : ${constraintViolation.message}")
+            }
+
+            if (post.deleted) {
+                return post.delete()
             }
 
             return post
@@ -130,7 +135,7 @@ data class Post private constructor(
             createdAt: Instant,
             url: String,
             repost: Post,
-            apId: String
+            apId: String,
         ): Post {
             // リポストの公開範囲は元のポストより広くてはいけない
             val fixedVisibility = if (visibility.ordinal <= repost.visibility.ordinal) {
@@ -139,16 +144,11 @@ data class Post private constructor(
                 visibility
             }
 
-            require(id >= 0) { "id must be greater than or equal to 0." }
-
-            require(actorId >= 0) { "actorId must be greater than or equal to 0." }
-
-            val post = Post(
+            val post = of(
                 id = id,
                 actorId = actorId,
                 overview = null,
                 content = "",
-                text = "",
                 createdAt = createdAt.toEpochMilli(),
                 visibility = fixedVisibility,
                 url = url,
@@ -157,16 +157,9 @@ data class Post private constructor(
                 sensitive = false,
                 apId = apId,
                 mediaIds = emptyList(),
-                delted = false,
+                deleted = false,
                 emojiIds = emptyList()
             )
-
-            val validate = validator.validate(post)
-
-            for (constraintViolation in validate) {
-                throw IllegalArgumentException("${constraintViolation.propertyPath} : ${constraintViolation.message}")
-            }
-
             return post
         }
 
@@ -184,7 +177,7 @@ data class Post private constructor(
             sensitive: Boolean = false,
             apId: String = url,
             mediaIds: List<Long> = emptyList(),
-            emojiIds: List<Long> = emptyList()
+            emojiIds: List<Long> = emptyList(),
         ): Post {
             // リポストの公開範囲は元のポストより広くてはいけない
             val fixedVisibility = if (visibility.ordinal <= repost.visibility.ordinal) {
@@ -193,37 +186,11 @@ data class Post private constructor(
                 visibility
             }
 
-            require(id >= 0) { "id must be greater than or equal to 0." }
-
-            require(actorId >= 0) { "actorId must be greater than or equal to 0." }
-
-            val limitedOverview = if ((overview?.length ?: 0) >= characterLimit.post.overview) {
-                overview?.substring(0, characterLimit.post.overview)
-            } else {
-                overview
-            }
-
-            val limitedText = if (content.length >= characterLimit.post.text) {
-                content.substring(0, characterLimit.post.text)
-            } else {
-                content
-            }
-
-            val (html, content1) = postContentFormatter.format(limitedText)
-
-            require(url.isNotBlank()) { "url must contain non-blank characters" }
-            require(url.length <= characterLimit.general.url) {
-                "url must not exceed ${characterLimit.general.url} characters."
-            }
-
-            require((replyId ?: 0) >= 0) { "replyId must be greater then or equal to 0." }
-
-            val post = Post(
+            val post = of(
                 id = id,
                 actorId = actorId,
-                overview = limitedOverview,
-                content = html,
-                text = content1,
+                overview = overview,
+                content = content,
                 createdAt = createdAt.toEpochMilli(),
                 visibility = fixedVisibility,
                 url = url,
@@ -232,70 +199,26 @@ data class Post private constructor(
                 sensitive = sensitive,
                 apId = apId,
                 mediaIds = mediaIds,
-                delted = false,
+                deleted = false,
                 emojiIds = emojiIds
             )
-
-            val validate = validator.validate(post)
-
-            for (constraintViolation in validate) {
-                throw IllegalArgumentException("${constraintViolation.propertyPath} : ${constraintViolation.message}")
-            }
-
             return post
         }
 
-        @Suppress("LongParameterList")
-        fun deleteOf(
-            id: Long,
-            visibility: Visibility,
-            url: String,
-            repostId: Long?,
-            replyId: Long?,
-            apId: String
-        ): Post {
-            return Post(
-                id = id,
-                actorId = 0,
-                overview = null,
-                content = "",
-                text = "",
-                createdAt = Instant.EPOCH.toEpochMilli(),
-                visibility = visibility,
-                url = url,
-                repostId = repostId,
-                replyId = replyId,
-                sensitive = false,
-                apId = apId,
-                mediaIds = emptyList(),
-                delted = true
-            )
-        }
     }
 
     fun isPureRepost(): Boolean =
         this.text.isEmpty() &&
-            this.content.isEmpty() &&
-            this.overview == null &&
-            this.replyId == null &&
-            this.repostId != null
+                this.content.isEmpty() &&
+                this.overview == null &&
+                this.replyId == null &&
+                this.repostId != null
 
     fun delete(): Post {
-        return Post(
-            id = this.id,
-            actorId = 0,
-            overview = null,
-            content = "",
-            text = "",
-            createdAt = Instant.EPOCH.toEpochMilli(),
-            visibility = visibility,
-            url = url,
-            repostId = repostId,
-            replyId = replyId,
-            sensitive = false,
-            apId = apId,
-            mediaIds = emptyList(),
-            delted = true
-        )
+        return copy(deleted = true)
+    }
+
+    fun restore(): Post {
+        return copy(deleted = false)
     }
 }

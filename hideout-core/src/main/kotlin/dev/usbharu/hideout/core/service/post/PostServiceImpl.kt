@@ -18,9 +18,9 @@ package dev.usbharu.hideout.core.service.post
 
 import dev.usbharu.hideout.activitypub.service.activity.create.ApSendCreateService
 import dev.usbharu.hideout.activitypub.service.activity.delete.APSendDeleteService
-import dev.usbharu.hideout.core.domain.exception.UserNotFoundException
 import dev.usbharu.hideout.core.domain.exception.resource.DuplicateException
 import dev.usbharu.hideout.core.domain.exception.resource.PostNotFoundException
+import dev.usbharu.hideout.core.domain.exception.resource.UserNotFoundException
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
@@ -38,7 +38,7 @@ class PostServiceImpl(
     private val postBuilder: Post.PostBuilder,
     private val apSendCreateService: ApSendCreateService,
     private val reactionRepository: ReactionRepository,
-    private val apSendDeleteService: APSendDeleteService
+    private val apSendDeleteService: APSendDeleteService,
 ) : PostService {
 
     override suspend fun createLocal(post: PostCreateDto): Post {
@@ -52,14 +52,14 @@ class PostServiceImpl(
     override suspend fun createRemote(post: Post): Post {
         logger.info("START Create Remote Post user: {}, remote url: {}", post.actorId, post.apId)
         val actor =
-            actorRepository.findById(post.actorId) ?: throw UserNotFoundException("${post.actorId} was not found.")
+            actorRepository.findById(post.actorId) ?: throw UserNotFoundException.withId(post.actorId)
         val createdPost = internalCreate(post, false)
         logger.info("SUCCESS Create Remote Post url: {}", createdPost.url)
         return createdPost
     }
 
     override suspend fun deleteLocal(post: Post) {
-        if (post.delted) {
+        if (post.deleted) {
             return
         }
         reactionRepository.deleteByPostId(post.id)
@@ -73,7 +73,7 @@ class PostServiceImpl(
     }
 
     override suspend fun deleteRemote(post: Post) {
-        if (post.delted) {
+        if (post.deleted) {
             return
         }
         reactionRepository.deleteByPostId(post.id)
@@ -86,12 +86,23 @@ class PostServiceImpl(
     }
 
     override suspend fun deleteByActor(actorId: Long) {
-        postRepository.findByActorId(actorId).filterNot { it.delted }.forEach { postRepository.save(it.delete()) }
-
         val actor = actorRepository.findById(actorId)
             ?: throw IllegalStateException("actor: $actorId was not found.")
 
+        postRepository.findByActorId(actorId).filterNot { it.deleted }.forEach { postRepository.save(it.delete()) }
+
+
         actorRepository.save(actor.copy(postsCount = 0, lastPostDate = null))
+    }
+
+    override suspend fun restoreByRemoteActor(actorId: Long) {
+        val actor = actorRepository.findById(actorId) ?: throw UserNotFoundException.withId(actorId)
+
+        val postList = postRepository.findByActorIdAndDeleted(actorId, true).map { it.restore() }
+
+        postRepository.saveAll(postList)
+
+        actorRepository.save(actor.copy(postsCount = actor.postsCount.plus(postList.size)))
     }
 
     private suspend fun internalCreate(post: Post, isLocal: Boolean): Post {

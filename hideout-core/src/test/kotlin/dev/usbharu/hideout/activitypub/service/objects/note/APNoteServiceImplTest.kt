@@ -154,7 +154,7 @@ class APNoteServiceImplTest {
 
         )
         val apUserService = mock<APUserService> {
-            onBlocking { fetchPersonWithEntity(eq(note.attributedTo), isNull()) } doReturn (person to user)
+            onBlocking { fetchPersonWithEntity(eq(note.attributedTo), isNull(), anyOrNull()) } doReturn (person to user)
         }
         val postRepository = mock<PostRepository> {
             onBlocking { generateId() } doReturn TwitterSnowflakeIdGenerateService.generateId()
@@ -255,7 +255,7 @@ class APNoteServiceImplTest {
             followers = user.followers
         )
         val apUserService = mock<APUserService> {
-            onBlocking { fetchPersonWithEntity(eq(user.url), anyOrNull()) } doReturn (person to user)
+            onBlocking { fetchPersonWithEntity(eq(user.url), anyOrNull(), anyOrNull()) } doReturn (person to user)
         }
         val postService = mock<PostService>()
         val noteQueryService = mock<NoteQueryService> {
