@@ -39,6 +39,7 @@ class DeletedActorRepositoryImpl : DeletedActorRepository, AbstractRepository() 
                 it[id] = deletedActor.id
                 it[name] = deletedActor.name
                 it[domain] = deletedActor.domain
+                it[apId] = deletedActor.apiId
                 it[publicKey] = deletedActor.publicKey
                 it[deletedAt] = deletedActor.deletedAt
             }
@@ -46,6 +47,7 @@ class DeletedActorRepositoryImpl : DeletedActorRepository, AbstractRepository() 
             DeletedActors.update({ DeletedActors.id eq deletedActor.id }) {
                 it[name] = deletedActor.name
                 it[domain] = deletedActor.domain
+                it[apId] = deletedActor.apiId
                 it[publicKey] = deletedActor.publicKey
                 it[deletedAt] = deletedActor.deletedAt
             }
@@ -84,6 +86,7 @@ private fun deletedActor(singleOr: ResultRow): DeletedActor {
         singleOr[DeletedActors.name],
         singleOr[DeletedActors.domain],
         singleOr[DeletedActors.publicKey],
+        singleOr[DeletedActors.apId],
         singleOr[DeletedActors.deletedAt]
     )
 }
@@ -92,6 +95,7 @@ object DeletedActors : Table("deleted_actors") {
     val id = long("id")
     val name = varchar("name", 300)
     val domain = varchar("domain", 255)
+    val apId = varchar("ap_id", 255).uniqueIndex()
     val publicKey = varchar("public_key", 10000).uniqueIndex()
     val deletedAt = timestamp("deleted_at")
     override val primaryKey: PrimaryKey = PrimaryKey(id)

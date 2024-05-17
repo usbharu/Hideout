@@ -26,4 +26,5 @@ interface PostService {
     suspend fun deleteLocal(post: Post)
     suspend fun deleteRemote(post: Post)
     suspend fun deleteByActor(actorId: Long)
+    suspend fun restoreByRemoteActor(actorId: Long)
 }
