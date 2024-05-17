@@ -194,7 +194,7 @@ dependencies {
 
     implementation("dev.usbharu:owl-common-serialize-jackson:0.0.1")
     implementation("io.trbl:blurhash:1.0.0")
-    implementation("software.amazon.awssdk:s3:2.25.53")
+    implementation("software.amazon.awssdk:s3:2.25.54")
     implementation("org.jsoup:jsoup:1.17.2")
     implementation("com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20240325.1")
     implementation("org.postgresql:postgresql:42.7.3")
