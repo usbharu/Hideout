@@ -40,9 +40,13 @@ interface APUserService {
      * @param targetActor 署名するユーザー
      * @return
      */
-    suspend fun fetchPerson(url: String, targetActor: String? = null): Person
+    suspend fun fetchPerson(url: String, targetActor: String? = null, idOverride: Long? = null): Person
 
-    suspend fun fetchPersonWithEntity(url: String, targetActor: String? = null): Pair<Person, Actor>
+    suspend fun fetchPersonWithEntity(
+        url: String,
+        targetActor: String? = null,
+        idOverride: Long? = null,
+    ): Pair<Person, Actor>
 }
 
 @Service
@@ -51,7 +55,7 @@ class APUserServiceImpl(
     private val transaction: Transaction,
     private val applicationConfig: ApplicationConfig,
     private val apResourceResolveService: APResourceResolveService,
-    private val actorRepository: ActorRepository
+    private val actorRepository: ActorRepository,
 ) :
     APUserService {
 
@@ -88,13 +92,17 @@ class APUserServiceImpl(
         )
     }
 
-    override suspend fun fetchPerson(url: String, targetActor: String?): Person =
-        fetchPersonWithEntity(url, targetActor).first
+    override suspend fun fetchPerson(url: String, targetActor: String?, idOverride: Long?): Person =
+        fetchPersonWithEntity(url, targetActor, idOverride).first
 
-    override suspend fun fetchPersonWithEntity(url: String, targetActor: String?): Pair<Person, Actor> {
+    override suspend fun fetchPersonWithEntity(
+        url: String,
+        targetActor: String?,
+        idOverride: Long?,
+    ): Pair<Person, Actor> {
         val userEntity = actorRepository.findByUrl(url)
 
-        if (userEntity != null) {
+        if (userEntity != null && idOverride == null) {
             return entityToPerson(userEntity, userEntity.url) to userEntity
         }
 
@@ -104,7 +112,7 @@ class APUserServiceImpl(
 
         val actor = actorRepository.findByUrlWithLock(id)
 
-        if (actor != null) {
+        if (actor != null && idOverride == null) {
             return person to actor
         }
 
@@ -123,13 +131,14 @@ class APUserServiceImpl(
                 followers = person.followers,
                 sharedInbox = person.endpoints["sharedInbox"],
                 locked = person.manuallyApprovesFollowers
-            )
+            ),
+            idOverride
         )
     }
 
     private fun entityToPerson(
         actorEntity: Actor,
-        id: String
+        id: String,
     ) = Person(
         type = emptyList(),
         name = actorEntity.name,

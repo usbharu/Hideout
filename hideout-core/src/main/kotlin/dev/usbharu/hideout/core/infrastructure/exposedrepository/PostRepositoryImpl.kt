@@ -20,6 +20,19 @@ import dev.usbharu.hideout.application.infrastructure.exposed.QueryMapper
 import dev.usbharu.hideout.application.service.id.IdGenerateService
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
+import dev.usbharu.hideout.core.infrastructure.exposedrepository.Posts.actorId
+import dev.usbharu.hideout.core.infrastructure.exposedrepository.Posts.apId
+import dev.usbharu.hideout.core.infrastructure.exposedrepository.Posts.content
+import dev.usbharu.hideout.core.infrastructure.exposedrepository.Posts.createdAt
+import dev.usbharu.hideout.core.infrastructure.exposedrepository.Posts.deleted
+import dev.usbharu.hideout.core.infrastructure.exposedrepository.Posts.id
+import dev.usbharu.hideout.core.infrastructure.exposedrepository.Posts.overview
+import dev.usbharu.hideout.core.infrastructure.exposedrepository.Posts.replyId
+import dev.usbharu.hideout.core.infrastructure.exposedrepository.Posts.repostId
+import dev.usbharu.hideout.core.infrastructure.exposedrepository.Posts.sensitive
+import dev.usbharu.hideout.core.infrastructure.exposedrepository.Posts.text
+import dev.usbharu.hideout.core.infrastructure.exposedrepository.Posts.url
+import dev.usbharu.hideout.core.infrastructure.exposedrepository.Posts.visibility
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.slf4j.Logger
@@ -29,7 +42,7 @@ import org.springframework.stereotype.Repository
 @Repository
 class PostRepositoryImpl(
     private val idGenerateService: IdGenerateService,
-    private val postQueryMapper: QueryMapper<Post>
+    private val postQueryMapper: QueryMapper<Post>,
 ) : PostRepository, AbstractRepository() {
     override val logger: Logger
         get() = Companion.logger
@@ -37,7 +50,7 @@ class PostRepositoryImpl(
     override suspend fun generateId(): Long = idGenerateService.generateId()
 
     override suspend fun save(post: Post): Post = query {
-        val singleOrNull = Posts.selectAll().where { Posts.id eq post.id }.forUpdate().singleOrNull()
+        val singleOrNull = Posts.selectAll().where { id eq post.id }.forUpdate().singleOrNull()
         if (singleOrNull == null) {
             Posts.insert {
                 it[id] = post.id
@@ -52,7 +65,7 @@ class PostRepositoryImpl(
                 it[replyId] = post.replyId
                 it[sensitive] = post.sensitive
                 it[apId] = post.apId
-                it[deleted] = post.delted
+                it[deleted] = post.deleted
             }
             PostsMedia.batchInsert(post.mediaIds) {
                 this[PostsMedia.postId] = post.id
@@ -77,7 +90,7 @@ class PostRepositoryImpl(
                 this[PostsEmojis.postId] = post.id
                 this[PostsEmojis.emojiId] = it
             }
-            Posts.update({ Posts.id eq post.id }) {
+            Posts.update({ id eq post.id }) {
                 it[actorId] = post.actorId
                 it[overview] = post.overview
                 it[content] = post.content
@@ -89,10 +102,43 @@ class PostRepositoryImpl(
                 it[replyId] = post.replyId
                 it[sensitive] = post.sensitive
                 it[apId] = post.apId
-                it[deleted] = post.delted
+                it[deleted] = post.deleted
             }
         }
         return@query post
+    }
+
+    override suspend fun saveAll(posts: List<Post>) {
+        Posts.batchUpsert(
+            posts, id,
+        ) {
+            this[id] = it.id
+            this[actorId] = it.actorId
+            this[overview] = it.overview
+            this[content] = it.content
+            this[text] = it.text
+            this[createdAt] = it.createdAt
+            this[visibility] = it.visibility.ordinal
+            this[url] = it.url
+            this[repostId] = it.repostId
+            this[replyId] = it.replyId
+            this[sensitive] = it.sensitive
+            this[apId] = it.apId
+            this[deleted] = it.deleted
+        }
+        val mediaIds = posts.flatMap { post -> post.mediaIds.map { post.id to it } }
+        PostsMedia.batchUpsert(
+            mediaIds, PostsMedia.postId
+        ) {
+            this[PostsMedia.postId] = it.first
+            this[PostsMedia.mediaId] = it.second
+        }
+
+        val emojiIds = posts.flatMap { post -> post.emojiIds.map { post.id to it } }
+        PostsEmojis.batchUpsert(emojiIds, PostsEmojis.postId) {
+            this[PostsEmojis.postId] = it.first
+            this[PostsEmojis.emojiId] = it.second
+        }
     }
 
     override suspend fun findById(id: Long): Post? = query {
@@ -133,6 +179,10 @@ class PostRepositoryImpl(
             .selectAll().where { Posts.actorId eq actorId }.let(postQueryMapper::map)
     }
 
+    override suspend fun findByActorIdAndDeleted(actorId: Long, deleted: Boolean): List<Post> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun countByActorId(actorId: Long): Int = query {
         return@query Posts
             .selectAll()
@@ -168,13 +218,13 @@ object Posts : Table() {
 }
 
 object PostsMedia : Table("posts_media") {
-    val postId = long("post_id").references(Posts.id, ReferenceOption.CASCADE, ReferenceOption.CASCADE)
+    val postId = long("post_id").references(id, ReferenceOption.CASCADE, ReferenceOption.CASCADE)
     val mediaId = long("media_id").references(Media.id, ReferenceOption.CASCADE, ReferenceOption.CASCADE)
     override val primaryKey = PrimaryKey(postId, mediaId)
 }
 
 object PostsEmojis : Table("posts_emojis") {
-    val postId = long("post_id").references(Posts.id)
+    val postId = long("post_id").references(id)
     val emojiId = long("emoji_id").references(CustomEmojis.id)
     override val primaryKey: PrimaryKey = PrimaryKey(postId, emojiId)
 }

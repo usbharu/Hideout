@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.domain.model.deletedActor
+package dev.usbharu.hideout.core.external.job
 
-import java.time.Instant
+import dev.usbharu.owl.common.task.Task
+import dev.usbharu.owl.common.task.TaskDefinition
+import org.springframework.stereotype.Component
 
-data class DeletedActor(
+data class UpdateActorTask(
     val id: Long,
-    val name: String,
-    val domain: String,
-    val apiId: String,
-    val publicKey: String,
-    val deletedAt: Instant,
-)
+    val apId: String,
+) : Task()
+
+
+@Component
+data object UpdateActorTaskDef : TaskDefinition<UpdateActorTask> {
+    override val type: Class<UpdateActorTask>
+        get() = UpdateActorTask::class.java
+}

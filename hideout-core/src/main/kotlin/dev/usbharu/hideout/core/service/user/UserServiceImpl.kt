@@ -29,8 +29,10 @@ import dev.usbharu.hideout.core.domain.model.reaction.ReactionRepository
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetail
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
+import dev.usbharu.hideout.core.external.job.UpdateActorTask
 import dev.usbharu.hideout.core.service.instance.InstanceService
 import dev.usbharu.hideout.core.service.post.PostService
+import dev.usbharu.owl.producer.api.OwlProducer
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.Instant
@@ -50,6 +52,7 @@ class UserServiceImpl(
     private val postService: PostService,
     private val apSendDeleteService: APSendDeleteService,
     private val postRepository: PostRepository,
+    private val owlProducer: OwlProducer,
 ) :
     UserService {
 
@@ -90,7 +93,7 @@ class UserServiceImpl(
         return save
     }
 
-    override suspend fun createRemoteUser(user: RemoteUserCreateDto): Actor {
+    override suspend fun createRemoteUser(user: RemoteUserCreateDto, idOverride: Long?): Actor {
         logger.info("START Create New remote user. name: {} url: {}", user.name, user.url)
 
         val deletedActor = deletedActorRepository.findByNameAndDomain(user.name, user.domain)
@@ -104,7 +107,7 @@ class UserServiceImpl(
 
         val nextId = actorRepository.nextId()
         val userEntity = actorBuilder.of(
-            id = nextId,
+            id = idOverride ?: nextId,
             name = user.name,
             domain = user.domain,
             screenName = user.screenName,
@@ -156,6 +159,7 @@ class UserServiceImpl(
             actor.id,
             actor.name,
             actor.domain,
+            actor.url,
             actor.publicKey,
             Instant.now()
         )
@@ -169,6 +173,15 @@ class UserServiceImpl(
         deletedActorRepository.save(deletedActor)
     }
 
+    override suspend fun restorationRemoteActor(actorId: Long) {
+        val deletedActor = deletedActorRepository.findById(actorId)
+            ?: return
+
+        deletedActorRepository.delete(deletedActor)
+
+        owlProducer.publishTask(UpdateActorTask(deletedActor.id, deletedActor.apiId))
+    }
+
     override suspend fun deleteLocalUser(userId: Long) {
         val actor = actorRepository.findByIdWithLock(userId) ?: throw UserNotFoundException.withId(userId)
         apSendDeleteService.sendDeleteActor(actor)
@@ -176,6 +189,7 @@ class UserServiceImpl(
             actor.id,
             actor.name,
             actor.domain,
+            actor.url,
             actor.publicKey,
             Instant.now()
         )

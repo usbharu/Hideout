@@ -26,11 +26,13 @@ interface UserService {
 
     suspend fun createLocalUser(user: UserCreateDto): Actor
 
-    suspend fun createRemoteUser(user: RemoteUserCreateDto): Actor
+    suspend fun createRemoteUser(user: RemoteUserCreateDto, idOverride: Long? = null): Actor
 
     suspend fun updateUser(userId: Long, updateUserDto: UpdateUserDto)
 
     suspend fun deleteRemoteActor(actorId: Long)
+
+    suspend fun restorationRemoteActor(actorId: Long)
 
     suspend fun deleteLocalUser(userId: Long)
 
