@@ -23,16 +23,18 @@ import dev.usbharu.hideout.activitypub.domain.model.Image
 import dev.usbharu.hideout.activitypub.domain.model.Key
 import dev.usbharu.hideout.activitypub.domain.model.Note
 import dev.usbharu.hideout.activitypub.domain.model.Person
+import dev.usbharu.hideout.activitypub.query.AnnounceQueryService
 import dev.usbharu.hideout.activitypub.query.NoteQueryService
 import dev.usbharu.hideout.activitypub.service.common.APResourceResolveService
+import dev.usbharu.hideout.activitypub.service.objects.emoji.EmojiService
 import dev.usbharu.hideout.activitypub.service.objects.note.APNoteServiceImpl.Companion.public
 import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
 import dev.usbharu.hideout.application.config.CharacterLimit
 import dev.usbharu.hideout.application.config.HtmlSanitizeConfig
 import dev.usbharu.hideout.application.service.id.TwitterSnowflakeIdGenerateService
-import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
+import dev.usbharu.hideout.core.service.media.MediaService
 import dev.usbharu.hideout.core.service.post.DefaultPostContentFormatter
 import dev.usbharu.hideout.core.service.post.PostService
 import io.ktor.client.*
@@ -53,18 +55,51 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.InjectMocks
+import org.mockito.Mock
+import org.mockito.Spy
+import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.*
 import utils.PostBuilder
 import utils.UserBuilder
 import java.time.Instant
 
-
+@ExtendWith(MockitoExtension::class)
 class APNoteServiceImplTest {
 
-    val postBuilder = Post.PostBuilder(
+    @Mock
+    private lateinit var postRepository: PostRepository
+
+    @Mock
+    private lateinit var apUserService: APUserService
+
+    @Mock
+    private lateinit var postService: PostService
+
+    @Mock
+    private lateinit var apResourceResolverService: APResourceResolveService
+
+    @Spy
+    private val postBuilder: Post.PostBuilder = Post.PostBuilder(
         CharacterLimit(), DefaultPostContentFormatter(HtmlSanitizeConfig().policy()),
         Validation.buildDefaultValidatorFactory().validator
     )
+
+    @Mock
+    private lateinit var noteQueryService: NoteQueryService
+
+    @Mock
+    private lateinit var mediaService: MediaService
+
+    @Mock
+    private lateinit var emojiService: EmojiService
+
+    @Mock
+    private lateinit var announceQueryService: AnnounceQueryService
+
+    @InjectMocks
+    private lateinit var apNoteServiceImpl: APNoteServiceImpl
 
     @Test
     fun `fetchNote(String,String) ノートが既に存在する場合はDBから取得したものを返す`() = runTest {
@@ -72,9 +107,6 @@ class APNoteServiceImplTest {
         val post = PostBuilder.of()
 
         val user = UserBuilder.localUserOf(id = post.actorId)
-        val actorQueryService = mock<ActorRepository> {
-            onBlocking { findById(eq(post.actorId)) } doReturn user
-        }
         val expected = Note(
             id = post.apId,
             attributedTo = user.url,
@@ -85,20 +117,8 @@ class APNoteServiceImplTest {
             cc = listOfNotNull(public, user.followers),
             inReplyTo = null
         )
-        val noteQueryService = mock<NoteQueryService> {
-            onBlocking { findByApid(eq(url)) } doReturn (expected to post)
-        }
-        val apNoteServiceImpl = APNoteServiceImpl(
-            postRepository = mock(),
-            apUserService = mock(),
-            postService = mock(),
-            apResourceResolveService = mock(),
-            postBuilder = postBuilder,
-            noteQueryService = noteQueryService,
-            mock(),
-            mock(),
-            mock()
-        )
+
+        whenever(noteQueryService.findByApid(eq(url))).doReturn(expected to post)
 
         val actual = apNoteServiceImpl.fetchNote(url)
 
@@ -123,12 +143,11 @@ class APNoteServiceImplTest {
             cc = listOfNotNull(public, user.followers),
             inReplyTo = null
         )
-        val apResourceResolveService = mock<APResourceResolveService> {
-            onBlocking { resolve<Note>(eq(url), any(), isNull<Long>()) } doReturn note
-        }
-        val noteQueryService = mock<NoteQueryService> {
-            onBlocking { findByApid(eq(url)) } doReturn null
-        }
+
+        whenever(apResourceResolverService.resolve<Note>(eq(url), any(), isNull<Long>())).doReturn(note)
+
+        whenever(noteQueryService.findByApid(eq(url))).doReturn(null)
+
         val person = Person(
             name = user.name,
             id = user.url,
@@ -153,23 +172,16 @@ class APNoteServiceImplTest {
             manuallyApprovesFollowers = false
 
         )
-        val apUserService = mock<APUserService> {
-            onBlocking { fetchPersonWithEntity(eq(note.attributedTo), isNull(), anyOrNull()) } doReturn (person to user)
-        }
-        val postRepository = mock<PostRepository> {
-            onBlocking { generateId() } doReturn TwitterSnowflakeIdGenerateService.generateId()
-        }
-        val apNoteServiceImpl = APNoteServiceImpl(
-            postRepository = postRepository,
-            apUserService = apUserService,
-            postService = mock(),
-            apResourceResolveService = apResourceResolveService,
-            postBuilder = postBuilder,
-            noteQueryService = noteQueryService,
-            mock(),
-            mock { },
-            mock()
-        )
+
+        whenever(
+            apUserService.fetchPersonWithEntity(
+                eq(note.attributedTo),
+                isNull(),
+                anyOrNull()
+            )
+        ).doReturn(person to user)
+
+        whenever(postRepository.generateId()).doReturn(TwitterSnowflakeIdGenerateService.generateId())
 
         val actual = apNoteServiceImpl.fetchNote(url)
 
@@ -181,17 +193,16 @@ class APNoteServiceImplTest {
     fun `fetchNote(String,String) ノートをリモートから取得した際にエラーが返ってきたらFailedToGetActivityPubResourceExceptionがthrowされる`() =
         runTest {
             val url = "https://example.com/note"
-
-            val apResourceResolveService = mock<APResourceResolveService> {
-                val responseData = HttpResponseData(
-                    HttpStatusCode.BadRequest,
-                    GMTDate(),
-                    Headers.Empty,
-                    HttpProtocolVersion.HTTP_1_1,
-                    NullBody,
-                    Dispatchers.IO
-                )
-                onBlocking { resolve<Note>(eq(url), any(), isNull<Long>()) } doThrow ClientRequestException(
+            val responseData = HttpResponseData(
+                HttpStatusCode.BadRequest,
+                GMTDate(),
+                Headers.Empty,
+                HttpProtocolVersion.HTTP_1_1,
+                NullBody,
+                Dispatchers.IO
+            )
+            whenever(apResourceResolverService.resolve<Note>(eq(url), any(), isNull<Long>())).doThrow(
+                ClientRequestException(
                     DefaultHttpResponse(
                         HttpClientCall(
                             HttpClient(), HttpRequestData(
@@ -205,21 +216,9 @@ class APNoteServiceImplTest {
                         ), responseData
                     ), ""
                 )
-            }
-            val noteQueryService = mock<NoteQueryService> {
-                onBlocking { findByApid(eq(url)) } doReturn null
-            }
-            val apNoteServiceImpl = APNoteServiceImpl(
-                postRepository = mock(),
-                apUserService = mock(),
-                postService = mock(),
-                apResourceResolveService = apResourceResolveService,
-                postBuilder = postBuilder,
-                noteQueryService = noteQueryService,
-                mock(),
-                mock(),
-                mock { }
             )
+
+            whenever(noteQueryService.findByApid(eq(url))).doReturn(null)
 
             assertThrows<FailedToGetActivityPubResourceException> { apNoteServiceImpl.fetchNote(url) }
 
@@ -230,9 +229,9 @@ class APNoteServiceImplTest {
         val user = UserBuilder.localUserOf()
         val generateId = TwitterSnowflakeIdGenerateService.generateId()
         val post = PostBuilder.of(id = generateId, userId = user.id)
-        val postRepository = mock<PostRepository> {
-            onBlocking { generateId() } doReturn generateId
-        }
+
+        whenever(postRepository.generateId()).doReturn(generateId)
+
         val person = Person(
             name = user.name,
             id = user.url,
@@ -254,24 +253,10 @@ class APNoteServiceImplTest {
             following = user.following,
             followers = user.followers
         )
-        val apUserService = mock<APUserService> {
-            onBlocking { fetchPersonWithEntity(eq(user.url), anyOrNull(), anyOrNull()) } doReturn (person to user)
-        }
-        val postService = mock<PostService>()
-        val noteQueryService = mock<NoteQueryService> {
-            onBlocking { findByApid(eq(post.apId)) } doReturn null
-        }
-        val apNoteServiceImpl = APNoteServiceImpl(
-            postRepository = postRepository,
-            apUserService = apUserService,
-            postService = postService,
-            apResourceResolveService = mock(),
-            postBuilder = postBuilder,
-            noteQueryService = noteQueryService,
-            mock(),
-            mock(),
-            mock()
-        )
+
+        whenever(apUserService.fetchPersonWithEntity(eq(user.url), anyOrNull(), anyOrNull())).doReturn(person to user)
+
+        whenever(noteQueryService.findByApid(eq(post.apId))).doReturn(null)
 
         val note = Note(
             id = post.apId,
@@ -312,21 +297,8 @@ class APNoteServiceImplTest {
             cc = listOfNotNull(public, user.followers),
             inReplyTo = null
         )
-        val noteQueryService = mock<NoteQueryService> {
-            onBlocking { findByApid(eq(post.apId)) } doReturn (note to post)
-        }
-        val apNoteServiceImpl = APNoteServiceImpl(
-            postRepository = mock(),
-            apUserService = mock(),
-            postService = mock(),
-            apResourceResolveService = mock(),
-            postBuilder = postBuilder,
-            noteQueryService = noteQueryService,
-            mock(),
-            mock(),
-            mock()
-        )
 
+        whenever(noteQueryService.findByApid(post.apId)).doReturn(note to post)
 
         val fetchNote = apNoteServiceImpl.fetchNote(note, null)
         assertEquals(note, fetchNote)
