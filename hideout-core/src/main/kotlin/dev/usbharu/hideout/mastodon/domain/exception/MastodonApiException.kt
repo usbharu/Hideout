@@ -18,6 +18,7 @@ package dev.usbharu.hideout.mastodon.domain.exception
 
 import dev.usbharu.hideout.mastodon.domain.model.MastodonApiErrorResponse
 
+@Suppress("UnnecessaryAbstractClass")
 abstract class MastodonApiException : RuntimeException {
 
     val response: MastodonApiErrorResponse<*>
