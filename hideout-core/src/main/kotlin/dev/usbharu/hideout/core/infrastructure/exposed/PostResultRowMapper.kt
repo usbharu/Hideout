@@ -26,7 +26,6 @@ import org.springframework.stereotype.Component
 @Component
 class PostResultRowMapper(private val postBuilder: Post.PostBuilder) : ResultRowMapper<Post> {
     override fun map(resultRow: ResultRow): Post {
-
         return postBuilder.of(
             id = resultRow[Posts.id],
             actorId = resultRow[Posts.actorId],

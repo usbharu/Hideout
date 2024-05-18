@@ -156,12 +156,12 @@ class UserServiceImpl(
     override suspend fun deleteRemoteActor(actorId: Long) {
         val actor = actorRepository.findByIdWithLock(actorId) ?: throw UserNotFoundException.withId(actorId)
         val deletedActor = DeletedActor(
-            actor.id,
-            actor.name,
-            actor.domain,
-            actor.url,
-            actor.publicKey,
-            Instant.now()
+            id = actor.id,
+            name = actor.name,
+            domain = actor.domain,
+            apiId = actor.url,
+            publicKey = actor.publicKey,
+            deletedAt = Instant.now()
         )
         relationshipRepository.deleteByActorIdOrTargetActorId(actorId, actorId)
 
@@ -186,12 +186,12 @@ class UserServiceImpl(
         val actor = actorRepository.findByIdWithLock(userId) ?: throw UserNotFoundException.withId(userId)
         apSendDeleteService.sendDeleteActor(actor)
         val deletedActor = DeletedActor(
-            actor.id,
-            actor.name,
-            actor.domain,
-            actor.url,
-            actor.publicKey,
-            Instant.now()
+            id = actor.id,
+            name = actor.name,
+            domain = actor.domain,
+            apiId = actor.url,
+            publicKey = actor.publicKey,
+            deletedAt = Instant.now()
         )
         relationshipRepository.deleteByActorIdOrTargetActorId(userId, userId)
 
