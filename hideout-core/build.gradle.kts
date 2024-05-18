@@ -31,12 +31,12 @@ version = "0.0.1"
 
 sourceSets {
     create("intTest") {
-            compileClasspath += sourceSets.main.get().output
-            runtimeClasspath += sourceSets.main.get().output
+        compileClasspath += sourceSets.main.get().output
+        runtimeClasspath += sourceSets.main.get().output
     }
     create("e2eTest") {
-            compileClasspath += sourceSets.main.get().output
-            runtimeClasspath += sourceSets.main.get().output
+        compileClasspath += sourceSets.main.get().output
+        runtimeClasspath += sourceSets.main.get().output
     }
 }
 
@@ -304,29 +304,34 @@ project.gradle.taskGraph.whenReady {
 }
 
 kover {
-    excludeSourceSets {
-        names("aot", "e2eTest", "intTest")
-    }
-}
+    currentProject {
+        sources {
+            excludedSourceSets.addAll(
+                "aot", "e2eTest", "intTest"
+            )
 
-koverReport {
-    filters {
-        excludes {
-            packages(
-                "dev.usbharu.hideout.activitypub.domain.exception",
-                "dev.usbharu.hideout.core.domain.exception",
-                "dev.usbharu.hideout.core.domain.exception.media",
-                "dev.usbharu.hideout.core.domain.exception.resource",
-                "dev.usbharu.hideout.core.domain.exception.resource.local"
-            )
-            annotatedBy("org.springframework.context.annotation.Configuration")
-            annotatedBy("org.springframework.boot.context.properties.ConfigurationProperties")
-            packages(
-                "dev.usbharu.hideout.controller.mastodon.generated",
-                "dev.usbharu.hideout.domain.mastodon.model.generated"
-            )
-            packages("org.springframework")
-            packages("org.jetbrains")
+        }
+    }
+
+    reports {
+        filters {
+            excludes {
+                packages(
+                    "dev.usbharu.hideout.activitypub.domain.exception",
+                    "dev.usbharu.hideout.core.domain.exception",
+                    "dev.usbharu.hideout.core.domain.exception.media",
+                    "dev.usbharu.hideout.core.domain.exception.resource",
+                    "dev.usbharu.hideout.core.domain.exception.resource.local"
+                )
+                annotatedBy("org.springframework.context.annotation.Configuration")
+                annotatedBy("org.springframework.boot.context.properties.ConfigurationProperties")
+                packages(
+                    "dev.usbharu.hideout.controller.mastodon.generated",
+                    "dev.usbharu.hideout.domain.mastodon.model.generated"
+                )
+                packages("org.springframework")
+                packages("org.jetbrains")
+            }
         }
     }
 }
