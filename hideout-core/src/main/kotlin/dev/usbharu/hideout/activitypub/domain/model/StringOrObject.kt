@@ -41,13 +41,8 @@ open class StringOrObject {
         return result
     }
 
-    override fun toString(): String {
-        return "StringOrObject(contextString=$contextString, contextObject=$contextObject)"
-    }
-
-
+    override fun toString(): String = "StringOrObject(contextString=$contextString, contextObject=$contextObject)"
 }
-
 
 class StringOrObjectDeserializer : JsonDeserializer<StringOrObject>() {
     override fun deserialize(p: JsonParser?, ctxt: DeserializationContext): StringOrObject {
@@ -64,7 +59,6 @@ class StringOrObjectDeserializer : JsonDeserializer<StringOrObject>() {
             StringOrObject("")
         }
     }
-
 }
 
 class StringORObjectSerializer : JsonSerializer<StringOrObject>() {

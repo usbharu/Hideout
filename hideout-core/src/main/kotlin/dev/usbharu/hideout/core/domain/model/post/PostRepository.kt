@@ -18,7 +18,7 @@ package dev.usbharu.hideout.core.domain.model.post
 
 import org.springframework.stereotype.Repository
 
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "TooManyFunctions")
 @Repository
 interface PostRepository {
     suspend fun generateId(): Long

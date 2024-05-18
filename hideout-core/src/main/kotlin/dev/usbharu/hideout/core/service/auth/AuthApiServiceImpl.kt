@@ -33,19 +33,21 @@ class AuthApiServiceImpl(
     private val httpClient: HttpClient,
     private val captchaConfig: CaptchaConfig,
     private val objectMapper: ObjectMapper,
-    private val userService: UserService
+    private val userService: UserService,
 ) :
     AuthApiService {
     override suspend fun registerAccount(registerAccountDto: RegisterAccountDto): Actor {
         if (captchaConfig.reCaptchaSecretKey != null && captchaConfig.reCaptchaSiteKey != null) {
             val get =
-                httpClient.get("https://www.google.com/recaptcha/api/siteverify?secret=" + captchaConfig.reCaptchaSecretKey + "&response=" + registerAccountDto.recaptchaResponse)
+                httpClient.get(
+                    "https://www.google.com/recaptcha/api/siteverify?secret=" +
+                            captchaConfig.reCaptchaSecretKey + "&response=" + registerAccountDto.recaptchaResponse
+                )
             val recaptchaResult = objectMapper.readValue<RecaptchaResult>(get.bodyAsText())
             logger.debug("reCAPTCHA: {}", recaptchaResult)
             require(recaptchaResult.success)
             require(!(recaptchaResult.score < 0.5))
         }
-
 
         val createLocalUser = userService.createLocalUser(
             UserCreateDto(

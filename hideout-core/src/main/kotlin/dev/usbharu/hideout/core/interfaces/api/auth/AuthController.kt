@@ -41,7 +41,7 @@ class AuthController(
     }
 
     @PostMapping("/auth/sign_up")
-    suspend fun signUp(@Validated @ModelAttribute signUpForm: SignUpForm, model: Model): String {
+    suspend fun signUp(@Validated @ModelAttribute signUpForm: SignUpForm): String {
         val registerAccount = authApiService.registerAccount(
             RegisterAccountDto(
                 signUpForm.username,
