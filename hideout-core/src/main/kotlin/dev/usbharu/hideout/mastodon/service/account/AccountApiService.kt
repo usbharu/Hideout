@@ -151,7 +151,7 @@ class AccountApiServiceImpl(
                 userService.updateUserStatistics(id)
                 return@transaction accountService.findById(id)
             }
-        } catch (e: UserNotFoundException) {
+        } catch (_: UserNotFoundException) {
             throw AccountNotFoundException.ofId(id)
         }
     }

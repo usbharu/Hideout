@@ -25,7 +25,6 @@ data class UpdateActorTask(
     val apId: String,
 ) : Task()
 
-
 @Component
 data object UpdateActorTaskDef : TaskDefinition<UpdateActorTask> {
     override val type: Class<UpdateActorTask>
