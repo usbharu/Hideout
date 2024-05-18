@@ -204,7 +204,6 @@ data class Post private constructor(
             )
             return post
         }
-
     }
 
     fun isPureRepost(): Boolean =
@@ -214,11 +213,7 @@ data class Post private constructor(
                 this.replyId == null &&
                 this.repostId != null
 
-    fun delete(): Post {
-        return copy(deleted = true)
-    }
+    fun delete(): Post = copy(deleted = true)
 
-    fun restore(): Post {
-        return copy(deleted = false)
-    }
+    fun restore(): Post = copy(deleted = false)
 }

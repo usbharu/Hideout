@@ -91,7 +91,6 @@ class PostServiceImpl(
 
         postRepository.findByActorId(actorId).filterNot { it.deleted }.forEach { postRepository.save(it.delete()) }
 
-
         actorRepository.save(actor.copy(postsCount = 0, lastPostDate = null))
     }
 

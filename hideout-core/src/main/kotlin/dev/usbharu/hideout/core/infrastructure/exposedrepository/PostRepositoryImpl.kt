@@ -110,7 +110,8 @@ class PostRepositoryImpl(
 
     override suspend fun saveAll(posts: List<Post>) {
         Posts.batchUpsert(
-            posts, id,
+            posts,
+            id,
         ) {
             this[id] = it.id
             this[actorId] = it.actorId
@@ -128,7 +129,8 @@ class PostRepositoryImpl(
         }
         val mediaIds = posts.flatMap { post -> post.mediaIds.map { post.id to it } }
         PostsMedia.batchUpsert(
-            mediaIds, PostsMedia.postId
+            mediaIds,
+            PostsMedia.postId
         ) {
             this[PostsMedia.postId] = it.first
             this[PostsMedia.mediaId] = it.second
