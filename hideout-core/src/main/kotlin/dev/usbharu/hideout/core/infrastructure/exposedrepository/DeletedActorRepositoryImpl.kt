@@ -82,12 +82,12 @@ fun ResultRow.toDeletedActor(): DeletedActor = deletedActor(this)
 
 private fun deletedActor(singleOr: ResultRow): DeletedActor {
     return DeletedActor(
-        singleOr[DeletedActors.id],
-        singleOr[DeletedActors.name],
-        singleOr[DeletedActors.domain],
-        singleOr[DeletedActors.publicKey],
-        singleOr[DeletedActors.apId],
-        singleOr[DeletedActors.deletedAt]
+        id = singleOr[DeletedActors.id],
+        name = singleOr[DeletedActors.name],
+        domain = singleOr[DeletedActors.domain],
+        apiId = singleOr[DeletedActors.publicKey],
+        publicKey = singleOr[DeletedActors.apId],
+        deletedAt = singleOr[DeletedActors.deletedAt]
     )
 }
 

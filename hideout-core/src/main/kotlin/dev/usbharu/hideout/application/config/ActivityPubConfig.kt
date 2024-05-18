@@ -42,7 +42,6 @@ class ActivityPubConfig {
     @Bean
     @Qualifier("activitypub")
     fun objectMapper(): ObjectMapper {
-
         val module = SimpleModule().addSerializer(StringOrObject::class.java, StringORObjectSerializer())
 
         val objectMapper = jacksonObjectMapper()
