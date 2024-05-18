@@ -18,18 +18,31 @@
 
 package dev.usbharu.hideout.core.service.user
 
+import dev.usbharu.hideout.activitypub.service.activity.delete.APSendDeleteService
 import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.application.config.CharacterLimit
 import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
+import dev.usbharu.hideout.core.domain.model.deletedActor.DeletedActorRepository
 import dev.usbharu.hideout.core.domain.model.instance.Instance
+import dev.usbharu.hideout.core.domain.model.post.PostRepository
+import dev.usbharu.hideout.core.domain.model.reaction.ReactionRepository
+import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
+import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
 import dev.usbharu.hideout.core.service.instance.InstanceService
+import dev.usbharu.hideout.core.service.post.PostService
+import dev.usbharu.owl.producer.api.OwlProducer
 import jakarta.validation.Validation
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.anyString
+import org.mockito.InjectMocks
+import org.mockito.Mock
+import org.mockito.Spy
+import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.*
 import utils.TestApplicationConfig.testApplicationConfig
 import java.net.URL
@@ -38,40 +51,65 @@ import java.time.Instant
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
+@ExtendWith(MockitoExtension::class)
 class ActorServiceTest {
-    val actorBuilder = Actor.UserBuilder(
+
+    @Mock
+    private lateinit var actorRepository: ActorRepository
+
+    @Mock
+    private lateinit var userAuthService: UserAuthService
+
+    @Spy
+    private val actorBuilder = Actor.UserBuilder(
         CharacterLimit(),
         ApplicationConfig(URL("https://example.com")),
         Validation.buildDefaultValidatorFactory().validator
     )
 
+    @Spy
+    private val applicationConfig: ApplicationConfig = testApplicationConfig.copy(private = false)
+
+    @Mock
+    private lateinit var instanceService: InstanceService
+
+    @Mock
+    private lateinit var userDetailRepository: UserDetailRepository
+
+    @Mock
+    private lateinit var deletedActorRepository: DeletedActorRepository
+
+    @Mock
+    private lateinit var reactionRepository: ReactionRepository
+
+    @Mock
+    private lateinit var relationshipRepository: RelationshipRepository
+
+    @Mock
+    private lateinit var postService: PostService
+
+    @Mock
+    private lateinit var apSendDeleteService: APSendDeleteService
+
+    @Mock
+    private lateinit var postRepository: PostRepository
+
+    @Mock
+    private lateinit var owlProducer: OwlProducer
+
+    @InjectMocks
+    private lateinit var userService: UserServiceImpl
+
     @Test
     fun `createLocalUser ローカルユーザーを作成できる`() = runTest {
 
-        val actorRepository = mock<ActorRepository> {
-            onBlocking { nextId() } doReturn 110001L
-        }
         val generateKeyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair()
-        val userAuthService = mock<UserAuthService> {
-            onBlocking { hash(anyString()) } doReturn "hashedPassword"
-            onBlocking { generateKeyPair() } doReturn generateKeyPair
-        }
-        val userService =
-            UserServiceImpl(
-                actorRepository = actorRepository,
-                userAuthService = userAuthService,
-                actorBuilder = actorBuilder,
-                applicationConfig = testApplicationConfig.copy(private = false),
-                instanceService = mock(),
-                userDetailRepository = mock(),
-                deletedActorRepository = mock(),
-                reactionRepository = mock(),
-                relationshipRepository = mock(),
-                postService = mock(),
-                apSendDeleteService = mock(),
-                postRepository = mock(),
-                owlProducer = mock()
-            )
+        whenever(actorRepository.nextId()).doReturn(110001L)
+        whenever(userAuthService.hash(anyString())).doReturn("hashedPassword")
+        whenever(userAuthService.generateKeyPair()).doReturn(generateKeyPair)
+
+
+
         userService.createLocalUser(UserCreateDto("test", "testUser", "XXXXXXXXXXXXX", "test"))
         verify(actorRepository, times(1)).save(any())
         argumentCaptor<Actor> {
@@ -91,31 +129,7 @@ class ActorServiceTest {
 
     @Test
     fun `createLocalUser applicationconfig privateがtrueのときアカウントを作成できない`() = runTest {
-
-        val actorRepository = mock<ActorRepository> {
-            onBlocking { nextId() } doReturn 110001L
-        }
-        val generateKeyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair()
-        val userAuthService = mock<UserAuthService> {
-            onBlocking { hash(anyString()) } doReturn "hashedPassword"
-            onBlocking { generateKeyPair() } doReturn generateKeyPair
-        }
-        val userService =
-            UserServiceImpl(
-                actorRepository = actorRepository,
-                userAuthService = userAuthService,
-                actorBuilder = actorBuilder,
-                applicationConfig = testApplicationConfig.copy(private = true),
-                instanceService = mock(),
-                userDetailRepository = mock(),
-                deletedActorRepository = mock(),
-                reactionRepository = mock(),
-                relationshipRepository = mock(),
-                postService = mock(),
-                apSendDeleteService = mock(),
-                postRepository = mock(),
-                owlProducer = mock()
-            )
+        whenever(applicationConfig.private).thenReturn(true)
 
         assertThrows<IllegalStateException> {
             userService.createLocalUser(UserCreateDto("test", "testUser", "XXXXXXXXXXXXX", "test"))
@@ -126,17 +140,9 @@ class ActorServiceTest {
     @Test
     fun `createRemoteUser リモートユーザーを作成できる`() = runTest {
 
-        val actorRepository = mock<ActorRepository> {
-            onBlocking { nextId() } doReturn 113345L
-        }
-
-        val instanceService = mock<InstanceService> {
-            onBlocking {
-                fetchInstance(
-                    eq("https://remote.example.com"),
-                    isNull()
-                )
-            } doReturn Instance(
+        whenever(actorRepository.nextId()).doReturn(113345L)
+        whenever(instanceService.fetchInstance(eq("https://remote.example.com"), isNull())).doReturn(
+            Instance(
                 12345L,
                 "",
                 "",
@@ -150,23 +156,8 @@ class ActorServiceTest {
                 "",
                 Instant.now()
             )
-        }
-        val userService =
-            UserServiceImpl(
-                actorRepository = actorRepository,
-                userAuthService = mock(),
-                actorBuilder = actorBuilder,
-                applicationConfig = testApplicationConfig,
-                instanceService = instanceService,
-                userDetailRepository = mock(),
-                deletedActorRepository = mock(),
-                reactionRepository = mock(),
-                relationshipRepository = mock(),
-                postService = mock(),
-                apSendDeleteService = mock(),
-                postRepository = mock(),
-                owlProducer = mock()
-            )
+        )
+
         val user = RemoteUserCreateDto(
             name = "test",
             domain = "remote.example.com",
