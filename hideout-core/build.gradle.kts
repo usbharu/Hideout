@@ -6,11 +6,6 @@ import com.github.jk1.license.render.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
-val ktor_version: String by project
-val kotlin_version: String by project
-val h2_version: String by project
-val coroutines_version: String by project
-
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.detekt)
@@ -172,7 +167,7 @@ val os = org.gradle.nativeplatform.platform.internal
     .DefaultNativePlatform.getCurrentOperatingSystem()
 
 dependencies {
-    developmentOnly("com.h2database:h2:$h2_version")
+    developmentOnly(libs.h2db)
     detektPlugins(libs.detekt.formatting)
 
     implementation(libs.bundles.exposed)
@@ -192,15 +187,16 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-log4j2")
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
+    implementation(libs.blurhash)
+    implementation(libs.aws.s3)
+    implementation(libs.jsoup)
+    implementation(libs.owasp.java.html.sanitizer)
+    implementation(libs.postgresql)
+    implementation(libs.imageio.webp)
+    implementation(libs.thumbnailator)
+    implementation(libs.flyway.core)
+
     implementation("dev.usbharu:owl-common-serialize-jackson:0.0.1")
-    implementation("io.trbl:blurhash:1.0.0")
-    implementation("software.amazon.awssdk:s3:2.25.55")
-    implementation("org.jsoup:jsoup:1.17.2")
-    implementation("com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20240325.1")
-    implementation("org.postgresql:postgresql:42.7.3")
-    implementation("com.twelvemonkeys.imageio:imageio-webp:3.10.1")
-    implementation("net.coobird:thumbnailator:0.4.20")
-    implementation("org.flywaydb:flyway-core")
 
     implementation(libs.javacv) {
         exclude(module = "opencv")
@@ -225,11 +221,11 @@ dependencies {
 
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version")
+    implementation(libs.kotlin.junit)
+    implementation(libs.coroutines.test)
 
-    testImplementation("io.ktor:ktor-client-mock:$ktor_version")
-    testImplementation("com.h2database:h2:$h2_version")
+    testImplementation(libs.ktor.client.mock)
+    testImplementation(libs.h2db)
 
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.3.1")
     testImplementation("org.mockito:mockito-inline:5.2.0")
@@ -238,17 +234,16 @@ dependencies {
 
     intTestImplementation("org.springframework.boot:spring-boot-starter-test")
     intTestImplementation("org.springframework.security:spring-security-test")
-    intTestImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
-    intTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version")
+    intTestImplementation(libs.kotlin.junit)
+    intTestImplementation(libs.coroutines.test)
     intTestImplementation("org.mockito.kotlin:mockito-kotlin:5.3.1")
-    intTestImplementation("com.h2database:h2:$h2_version")
+    intTestImplementation(libs.h2db)
 
     e2eTestImplementation("org.springframework.boot:spring-boot-starter-test")
     e2eTestImplementation("org.springframework.security:spring-security-test")
     e2eTestImplementation("org.springframework.boot:spring-boot-starter-webflux")
-    e2eTestImplementation("org.jsoup:jsoup:1.17.2")
     e2eTestImplementation("com.intuit.karate:karate-junit5:1.4.1")
-    e2eTestImplementation("com.h2database:h2:$h2_version")
+    e2eTestImplementation(libs.h2db)
 
 }
 
