@@ -71,7 +71,7 @@ blurhash = { module = "io.trbl:blurhash", version = "1.0.0" }
 
 aws-s3 = { module = "software.amazon.awssdk:s3", version = "2.25.55" }
 
-jsoup = { module = "org.jsoup:jsoup", version = "1.1.2" }
+jsoup = { module = "org.jsoup:jsoup", version = "1.17.2" }
 
 owasp-java-html-sanitizer = { module = "com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer", version = "20240325.1" }
 
@@ -81,7 +81,7 @@ imageio-webp = { module = "com.twelvemonkeys.imageio:imageio-webp", version = "3
 
 thumbnailator = { module = "net.coobird:thumbnailator", version = "0.4.20" }
 
-flyway-core = { module = "org.flywaydb:flyway-cor" }
+flyway-core = { module = "org.flywaydb:flyway-core" }
 
 h2db = { module = "com.h2database:h2", version = "2.2.224" }
 
