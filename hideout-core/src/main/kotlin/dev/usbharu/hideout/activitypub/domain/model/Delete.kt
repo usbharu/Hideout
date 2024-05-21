@@ -26,8 +26,8 @@ open class Delete : Object, HasId, HasActor {
     @JsonProperty("object")
     val apObject: Object
     val published: String
-    override val actor: String
-    override val id: String
+    override var actor: String = ""
+    override var id: String = ""
 
     constructor(
         type: List<String> = emptyList(),
