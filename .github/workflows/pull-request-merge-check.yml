@@ -170,7 +170,7 @@ jobs:
           distribution: 'temurin'
 
       - name: MongoDB in GitHub Actions
-        uses: supercharge/mongodb-github-action@1.10.0
+        uses: supercharge/mongodb-github-action@1.11.0
         with:
           mongodb-version: latest
 
@@ -387,7 +387,7 @@ jobs:
           distribution: 'temurin'
 
       - name: MongoDB in GitHub Actions
-        uses: supercharge/mongodb-github-action@1.10.0
+        uses: supercharge/mongodb-github-action@1.11.0
         with:
           mongodb-version: latest
 
