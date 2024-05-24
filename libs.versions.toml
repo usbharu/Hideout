@@ -105,7 +105,7 @@ jackson = ["jackson-databind", "jackson-module-kotlin"]
 [plugins]
 
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-spring-boot = { id = "org.springframework.boot", version = "3.2.5" }
+spring-boot = { id = "org.springframework.boot", version = "3.3.0" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
 kover = { id = "org.jetbrains.kotlinx.kover", version = "0.8.0" }
