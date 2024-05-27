@@ -16,8 +16,22 @@
 
 package dev.usbharu.hideout.core.usecase.actor
 
+import dev.usbharu.hideout.application.external.Transaction
+import dev.usbharu.hideout.core.domain.model.actor.Actor2Repository
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
+import org.springframework.stereotype.Service
 
-interface UnsuspendLocalActorApplicationService {
-    suspend fun unsuspend(actorId: ActorId, executor: ActorId)
+@Service
+class UnsuspendLocalActorApplicationService(
+    private val transaction: Transaction,
+    private val actor2Repository: Actor2Repository,
+) {
+    suspend fun unsuspend(actorId: Long, executor: Long) {
+        transaction.transaction {
+            val findById = actor2Repository.findById(ActorId(actorId))!!
+
+            findById.suspend = false
+        }
+
+    }
 }

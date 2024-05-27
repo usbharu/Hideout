@@ -18,6 +18,6 @@ package dev.usbharu.hideout.core.domain.model.actor
 
 interface Actor2Repository {
     suspend fun save(actor: Actor2): Actor2
-    suspend fun deleteById(actor: ActorId)
+    suspend fun delete(actor: Actor2)
     suspend fun findById(id: ActorId): Actor2?
 }
