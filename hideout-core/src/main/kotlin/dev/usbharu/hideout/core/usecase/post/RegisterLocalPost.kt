@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.domain.model.deletedActor
+package dev.usbharu.hideout.core.usecase.post
 
-import dev.usbharu.hideout.core.domain.model.actor.ActorName
-import dev.usbharu.hideout.core.domain.model.actor.ActorPublicKey
-import dev.usbharu.hideout.core.domain.model.shared.Domain
-import java.net.URI
-import java.time.Instant
+import dev.usbharu.hideout.core.domain.model.post.Visibility
 
-data class DeletedActor(
-    val id: DeletedActorId,
-    val name: ActorName,
-    val domain: Domain,
-    val apId: URI,
-    val publicKey: ActorPublicKey,
-    val deletedAt: Instant,
+data class RegisterLocalPost(
+    val actorId: Long,
+    val content: String,
+    val overview: String,
+    val visibility: Visibility,
+    val repostId: Long?,
+    val replyId: Long?,
+    val sensitive: Boolean,
+    val mediaIds: List<Long>,
 )

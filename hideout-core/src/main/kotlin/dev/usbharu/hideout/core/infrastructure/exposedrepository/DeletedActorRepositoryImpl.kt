@@ -39,7 +39,7 @@ class DeletedActorRepositoryImpl : DeletedActorRepository, AbstractRepository() 
                 it[id] = deletedActor.id
                 it[name] = deletedActor.name
                 it[domain] = deletedActor.domain
-                it[apId] = deletedActor.apiId
+                it[apId] = deletedActor.apId
                 it[publicKey] = deletedActor.publicKey
                 it[deletedAt] = deletedActor.deletedAt
             }
@@ -47,7 +47,7 @@ class DeletedActorRepositoryImpl : DeletedActorRepository, AbstractRepository() 
             DeletedActors.update({ DeletedActors.id eq deletedActor.id }) {
                 it[name] = deletedActor.name
                 it[domain] = deletedActor.domain
-                it[apId] = deletedActor.apiId
+                it[apId] = deletedActor.apId
                 it[publicKey] = deletedActor.publicKey
                 it[deletedAt] = deletedActor.deletedAt
             }
@@ -85,7 +85,7 @@ private fun deletedActor(singleOr: ResultRow): DeletedActor {
         id = singleOr[DeletedActors.id],
         name = singleOr[DeletedActors.name],
         domain = singleOr[DeletedActors.domain],
-        apiId = singleOr[DeletedActors.publicKey],
+        apId = singleOr[DeletedActors.publicKey],
         publicKey = singleOr[DeletedActors.apId],
         deletedAt = singleOr[DeletedActors.deletedAt]
     )

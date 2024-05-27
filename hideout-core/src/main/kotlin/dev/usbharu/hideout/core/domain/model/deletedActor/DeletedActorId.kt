@@ -16,17 +16,5 @@
 
 package dev.usbharu.hideout.core.domain.model.deletedActor
 
-import dev.usbharu.hideout.core.domain.model.actor.ActorName
-import dev.usbharu.hideout.core.domain.model.actor.ActorPublicKey
-import dev.usbharu.hideout.core.domain.model.shared.Domain
-import java.net.URI
-import java.time.Instant
-
-data class DeletedActor(
-    val id: DeletedActorId,
-    val name: ActorName,
-    val domain: Domain,
-    val apId: URI,
-    val publicKey: ActorPublicKey,
-    val deletedAt: Instant,
-)
+@JvmInline
+value class DeletedActorId(val id: Long)
