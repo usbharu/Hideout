@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.domain.model.deletedActor
+package dev.usbharu.hideout.core.usecase.actor
 
-import dev.usbharu.hideout.core.domain.model.actor.ActorName
-import dev.usbharu.hideout.core.domain.model.actor.ActorPublicKey
-import dev.usbharu.hideout.core.domain.model.shared.Domain
-import java.net.URI
-import java.time.Instant
+import dev.usbharu.hideout.core.domain.model.actor.Actor2Repository
+import dev.usbharu.hideout.core.domain.model.actor.ActorId
 
-data class DeletedActor(
-    val id: DeletedActorId,
-    val name: ActorName,
-    val domain: Domain,
-    val apId: URI,
-    val publicKey: ActorPublicKey,
-    val deletedAt: Instant,
-)
+class SuspendLocalActorApplicationService(private val actor2Repository: Actor2Repository) {
+    suspend fun suspend(actorId: Long, executor: ActorId) {
+        val findById = actor2Repository.findById(ActorId(actorId))!!
+
+        findById.suspend = true
+    }
+}

@@ -14,19 +14,24 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.domain.model.deletedActor
+package dev.usbharu.hideout.core.domain.model.shared.domainevent
 
-import dev.usbharu.hideout.core.domain.model.actor.ActorName
-import dev.usbharu.hideout.core.domain.model.actor.ActorPublicKey
-import dev.usbharu.hideout.core.domain.model.shared.Domain
-import java.net.URI
 import java.time.Instant
+import java.util.*
 
-data class DeletedActor(
-    val id: DeletedActorId,
-    val name: ActorName,
-    val domain: Domain,
-    val apId: URI,
-    val publicKey: ActorPublicKey,
-    val deletedAt: Instant,
-)
+data class DomainEvent(
+    private val id: String,
+    private val name: String,
+    private val occurredOn: Instant,
+    private val body: DomainEventBody,
+) {
+    companion object {
+        fun create(name: String, body: DomainEventBody): DomainEvent {
+            return DomainEvent(UUID.randomUUID().toString(), name, Instant.now(), body)
+        }
+
+        fun reconstruct(id: String, name: String, occurredOn: Instant, body: DomainEventBody): DomainEvent {
+            return DomainEvent(id, name, occurredOn, body)
+        }
+    }
+}
