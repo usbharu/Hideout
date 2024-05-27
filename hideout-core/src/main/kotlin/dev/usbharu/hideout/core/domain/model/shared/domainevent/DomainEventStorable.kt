@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.domain.model.deletedActor
+package dev.usbharu.hideout.core.domain.model.shared.domainevent
 
-import dev.usbharu.hideout.core.domain.model.actor.ActorName
-import dev.usbharu.hideout.core.domain.model.actor.ActorPublicKey
-import dev.usbharu.hideout.core.domain.model.shared.Domain
-import java.net.URI
-import java.time.Instant
+abstract class DomainEventStorable {
+    private val domainEvents: MutableList<DomainEvent> = mutableListOf()
 
-data class DeletedActor(
-    val id: DeletedActorId,
-    val name: ActorName,
-    val domain: Domain,
-    val apId: URI,
-    val publicKey: ActorPublicKey,
-    val deletedAt: Instant,
-)
+    protected fun addDomainEvent(domainEvent: DomainEvent) {
+        domainEvents.add(domainEvent)
+    }
+
+    fun clearDomainEvents() = domainEvents.clear()
+
+    fun getDomainEvents(): List<DomainEvent> = domainEvents.toList()
+}

@@ -159,7 +159,7 @@ class UserServiceImpl(
             id = actor.id,
             name = actor.name,
             domain = actor.domain,
-            apiId = actor.url,
+            apId = actor.url,
             publicKey = actor.publicKey,
             deletedAt = Instant.now()
         )
@@ -179,7 +179,7 @@ class UserServiceImpl(
 
         deletedActorRepository.delete(deletedActor)
 
-        owlProducer.publishTask(UpdateActorTask(deletedActor.id, deletedActor.apiId))
+        owlProducer.publishTask(UpdateActorTask(deletedActor.id, deletedActor.apId))
     }
 
     override suspend fun deleteLocalUser(userId: Long) {
@@ -189,7 +189,7 @@ class UserServiceImpl(
             id = actor.id,
             name = actor.name,
             domain = actor.domain,
-            apiId = actor.url,
+            apId = actor.url,
             publicKey = actor.publicKey,
             deletedAt = Instant.now()
         )

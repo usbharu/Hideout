@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.domain.model.deletedActor
+package dev.usbharu.hideout.core.domain.service.actor
 
-import dev.usbharu.hideout.core.domain.model.actor.ActorName
-import dev.usbharu.hideout.core.domain.model.actor.ActorPublicKey
-import dev.usbharu.hideout.core.domain.model.shared.Domain
-import java.net.URI
-import java.time.Instant
+import dev.usbharu.hideout.application.config.ApplicationConfig
+import dev.usbharu.hideout.core.domain.model.actor.Actor
+import org.springframework.stereotype.Service
 
-data class DeletedActor(
-    val id: DeletedActorId,
-    val name: ActorName,
-    val domain: Domain,
-    val apId: URI,
-    val publicKey: ActorPublicKey,
-    val deletedAt: Instant,
-)
+interface IRemoteActorCheckDomainService {
+    fun isRemoteActor(actor: Actor): Boolean
+}
+
+@Service
+class RemoteActorCheckDomainService(private val applicationConfig: ApplicationConfig) : IRemoteActorCheckDomainService {
+    override fun isRemoteActor(actor: Actor): Boolean = actor.domain == applicationConfig.url.host
+}

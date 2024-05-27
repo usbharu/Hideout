@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.domain.model.deletedActor
+package dev.usbharu.hideout.core.domain.model.actor
 
-import dev.usbharu.hideout.core.domain.model.actor.ActorName
-import dev.usbharu.hideout.core.domain.model.actor.ActorPublicKey
-import dev.usbharu.hideout.core.domain.model.shared.Domain
-import java.net.URI
-import java.time.Instant
+import dev.usbharu.hideout.core.domain.model.emoji.EmojiId
 
-data class DeletedActor(
-    val id: DeletedActorId,
-    val name: ActorName,
-    val domain: Domain,
-    val apId: URI,
-    val publicKey: ActorPublicKey,
-    val deletedAt: Instant,
-)
+
+class ActorScreenName private constructor(val screenName: String, val emojis: List<EmojiId>) {
+
+    abstract class ActorScreenNameFactory {
+        protected suspend fun create(screenName: String, emojis: List<EmojiId>): ActorScreenName =
+            ActorScreenName(screenName, emojis)
+    }
+}
