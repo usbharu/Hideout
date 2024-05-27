@@ -14,14 +14,7 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.domain.model.actor
+package dev.usbharu.hideout.core.domain.model.userdetails
 
-import dev.usbharu.hideout.core.domain.model.emoji.EmojiId
-
-
-class ActorDescription private constructor(val description: String, val emojis: List<EmojiId>) {
-    abstract class ActorDescriptionFactory {
-        protected suspend fun create(description: String, emojis: List<EmojiId>): ActorDescription =
-            ActorDescription(description, emojis)
-    }
-}
+@JvmInline
+value class UserDetailId(val id: Long)

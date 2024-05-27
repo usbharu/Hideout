@@ -16,8 +16,12 @@
 
 package dev.usbharu.hideout.core.domain.model.post
 
+import dev.usbharu.hideout.core.domain.model.actor.ActorId
+
 interface Post2Repository {
     suspend fun save(post: Post2): Post2
+    suspend fun saveAll(posts: List<Post2>): List<Post2>
     suspend fun findById(id: PostId): Post2?
+    suspend fun findByActorId(id: ActorId): List<Post2>
     suspend fun deleteById(id: PostId)
 }
