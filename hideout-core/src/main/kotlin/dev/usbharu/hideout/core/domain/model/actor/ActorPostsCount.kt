@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.domain.model.deletedActor
+package dev.usbharu.hideout.core.domain.model.actor
 
-import dev.usbharu.hideout.core.domain.model.actor.ActorName
-import dev.usbharu.hideout.core.domain.model.actor.ActorPublicKey
-import dev.usbharu.hideout.core.domain.model.shared.Domain
-import java.net.URI
-import java.time.Instant
+@JvmInline
+value class ActorPostsCount(private val postsCount: Long) {
+    init {
+        require(0 <= this.postsCount) { "Posts count must be greater than 0" }
+    }
 
-data class DeletedActor(
-    val id: DeletedActorId,
-    val name: ActorName,
-    val domain: Domain,
-    val apId: URI,
-    val publicKey: ActorPublicKey,
-    val deletedAt: Instant,
-)
+    operator fun inc() = ActorPostsCount(postsCount + 1)
+    operator fun dec() = ActorPostsCount(postsCount - 1)
+}

@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.domain.model.deletedActor
+package dev.usbharu.hideout.core.usecase.post
 
-import dev.usbharu.hideout.core.domain.model.actor.ActorName
-import dev.usbharu.hideout.core.domain.model.actor.ActorPublicKey
-import dev.usbharu.hideout.core.domain.model.shared.Domain
-import java.net.URI
-import java.time.Instant
+import dev.usbharu.hideout.core.domain.model.post.Post2Repository
+import dev.usbharu.hideout.core.domain.model.post.PostId
+import org.springframework.stereotype.Service
 
-data class DeletedActor(
-    val id: DeletedActorId,
-    val name: ActorName,
-    val domain: Domain,
-    val apId: URI,
-    val publicKey: ActorPublicKey,
-    val deletedAt: Instant,
-)
+@Service
+class DeleteLocalPostApplicationService(private val postRepository: Post2Repository) {
+    suspend fun delete(postId: Long) {
+        val findById = postRepository.findById(PostId(postId))!!
+        findById.delete()
+        postRepository.save(findById)
+    }
+}

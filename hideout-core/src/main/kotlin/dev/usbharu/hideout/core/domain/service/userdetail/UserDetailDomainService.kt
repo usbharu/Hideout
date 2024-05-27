@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.domain.model.deletedActor
+package dev.usbharu.hideout.core.domain.service.userdetail
 
-import dev.usbharu.hideout.core.domain.model.actor.ActorName
-import dev.usbharu.hideout.core.domain.model.actor.ActorPublicKey
-import dev.usbharu.hideout.core.domain.model.shared.Domain
-import java.net.URI
-import java.time.Instant
+import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailHashedPassword
+import org.springframework.stereotype.Service
 
-data class DeletedActor(
-    val id: DeletedActorId,
-    val name: ActorName,
-    val domain: Domain,
-    val apId: URI,
-    val publicKey: ActorPublicKey,
-    val deletedAt: Instant,
-)
+@Service
+class UserDetailDomainService(private val passwordEncoder: PasswordEncoder) {
+    suspend fun hashPassword(password: String) = UserDetailHashedPassword(passwordEncoder.encode(password))
+}
