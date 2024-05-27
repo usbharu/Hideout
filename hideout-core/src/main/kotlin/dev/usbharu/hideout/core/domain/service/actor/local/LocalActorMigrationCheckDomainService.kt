@@ -14,14 +14,22 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.domain.model.actor
+package dev.usbharu.hideout.core.domain.service.actor.local
 
-import dev.usbharu.hideout.core.domain.model.emoji.EmojiId
+import dev.usbharu.hideout.core.domain.model.actor.Actor2
 
+interface LocalActorMigrationCheckDomainService {
+    suspend fun canAccountMigration(from: Actor2, to: Actor2): AccountMigrationCheck
+}
 
-class ActorDescription private constructor(val description: String, val emojis: List<EmojiId>) {
-    abstract class ActorDescriptionFactory {
-        protected suspend fun create(description: String, emojis: List<EmojiId>): ActorDescription =
-            ActorDescription(description, emojis)
-    }
+sealed class AccountMigrationCheck(
+    val canMigration: Boolean,
+) {
+    class CanAccountMigration : AccountMigrationCheck(true)
+
+    class CircularReferences(val message: String) : AccountMigrationCheck(false)
+
+    class SelfReferences : AccountMigrationCheck(false)
+
+    class AlreadyMoved(val message: String) : AccountMigrationCheck(false)
 }
