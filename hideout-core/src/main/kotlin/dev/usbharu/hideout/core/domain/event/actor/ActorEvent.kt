@@ -38,4 +38,8 @@ class ActorEventBody(actor: Actor2) : DomainEventBody(
 enum class ActorEvent(val eventName: String) {
     update("ActorUpdate"),
     delete("ActorDelete"),
+    checkUpdate("ActorCheckUpdate"),
+    move("ActorMove"),
+    actorSuspend("ActorSuspend"),
+    actorUnsuspend("ActorUnsuspend"),
 }

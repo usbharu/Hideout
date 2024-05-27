@@ -18,9 +18,11 @@ package dev.usbharu.hideout.core.usecase.actor
 
 import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.application.external.Transaction
+import dev.usbharu.hideout.application.service.id.IdGenerateService
 import dev.usbharu.hideout.core.domain.model.actor.Actor2Repository
 import dev.usbharu.hideout.core.domain.model.instance.InstanceRepository
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetail
+import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
 import dev.usbharu.hideout.core.domain.service.actor.local.LocalActorDomainService
 import dev.usbharu.hideout.core.domain.service.userdetail.UserDetailDomainService
@@ -37,6 +39,7 @@ class RegisterLocalActorApplicationService(
     private val applicationConfig: ApplicationConfig,
     private val userDetailDomainService: UserDetailDomainService,
     private val userDetailRepository: UserDetailRepository,
+    private val idGenerateService: IdGenerateService,
 ) {
     suspend fun register(registerLocalActor: RegisterLocalActor) {
         transaction.transaction {
@@ -54,8 +57,9 @@ class RegisterLocalActorApplicationService(
             )
             actor2Repository.save(actor)
             val userDetail = UserDetail.create(
-                actor.id,
-                userDetailDomainService.hashPassword(registerLocalActor.password),
+                id = UserDetailId(idGenerateService.generateId()),
+                actorId = actor.id,
+                password = userDetailDomainService.hashPassword(registerLocalActor.password),
             )
             userDetailRepository.save(userDetail)
 
