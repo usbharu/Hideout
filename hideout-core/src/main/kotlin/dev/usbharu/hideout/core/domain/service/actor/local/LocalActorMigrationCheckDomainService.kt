@@ -32,4 +32,6 @@ sealed class AccountMigrationCheck(
     class SelfReferences : AccountMigrationCheck(false)
 
     class AlreadyMoved(val message: String) : AccountMigrationCheck(false)
+
+    class AlsoKnownAsNotFound(val message: String) : AccountMigrationCheck(false)
 }
