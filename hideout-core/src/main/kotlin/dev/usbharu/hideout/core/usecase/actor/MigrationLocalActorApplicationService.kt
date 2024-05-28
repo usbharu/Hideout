@@ -48,6 +48,7 @@ class MigrationLocalActorApplicationService(
 
                 is CircularReferences -> TODO()
                 is SelfReferences -> TODO()
+                is AlsoKnownAsNotFound -> TODO()
             }
         }
 
