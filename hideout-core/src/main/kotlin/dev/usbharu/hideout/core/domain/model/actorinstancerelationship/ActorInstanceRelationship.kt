@@ -20,7 +20,7 @@ import dev.usbharu.hideout.core.domain.event.actorinstancerelationship.ActorInst
 import dev.usbharu.hideout.core.domain.event.actorinstancerelationship.ActorInstanceRelationshipEvent.*
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.instance.InstanceId
-import dev.usbharu.hideout.core.domain.model.shared.domainevent.DomainEventStorable
+import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventStorable
 
 data class ActorInstanceRelationship(
     val actorId: ActorId,

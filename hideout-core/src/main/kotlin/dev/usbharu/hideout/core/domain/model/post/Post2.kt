@@ -20,7 +20,7 @@ import dev.usbharu.hideout.core.domain.event.post.PostDomainEventFactory
 import dev.usbharu.hideout.core.domain.event.post.PostEvent
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.media.MediaId
-import dev.usbharu.hideout.core.domain.model.shared.domainevent.DomainEventStorable
+import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventStorable
 import java.net.URI
 import java.time.Instant
 

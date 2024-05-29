@@ -20,7 +20,7 @@ import dev.usbharu.hideout.core.domain.event.actor.ActorDomainEventFactory
 import dev.usbharu.hideout.core.domain.event.actor.ActorEvent.*
 import dev.usbharu.hideout.core.domain.model.instance.InstanceId
 import dev.usbharu.hideout.core.domain.model.shared.Domain
-import dev.usbharu.hideout.core.domain.model.shared.domainevent.DomainEventStorable
+import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventStorable
 import java.net.URI
 import java.time.Instant
 
@@ -99,7 +99,7 @@ class Actor2 private constructor(
     }
 
     abstract class Actor2Factory {
-        protected suspend fun create(
+        protected suspend fun internalCreate(
             id: ActorId,
             name: ActorName,
             domain: Domain,

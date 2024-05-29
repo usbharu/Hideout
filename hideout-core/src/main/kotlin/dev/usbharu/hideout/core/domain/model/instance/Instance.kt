@@ -18,7 +18,7 @@ package dev.usbharu.hideout.core.domain.model.instance
 
 import dev.usbharu.hideout.core.domain.event.instance.InstanceEvent
 import dev.usbharu.hideout.core.domain.event.instance.InstanceEventFactory
-import dev.usbharu.hideout.core.domain.model.shared.domainevent.DomainEventStorable
+import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventStorable
 import java.net.URI
 import java.time.Instant
 

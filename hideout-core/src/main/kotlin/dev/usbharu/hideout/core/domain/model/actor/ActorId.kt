@@ -18,6 +18,9 @@ package dev.usbharu.hideout.core.domain.model.actor
 
 @JvmInline
 value class ActorId(val id: Long) {
+    init {
+        require(0 <= id)
+    }
     companion object {
         val ghost = ActorId(0L)
     }
