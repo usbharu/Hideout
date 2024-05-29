@@ -17,8 +17,8 @@
 package dev.usbharu.hideout.core.domain.event.post
 
 import dev.usbharu.hideout.core.domain.model.post.Post2
-import dev.usbharu.hideout.core.domain.model.shared.domainevent.DomainEvent
-import dev.usbharu.hideout.core.domain.model.shared.domainevent.DomainEventBody
+import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEvent
+import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventBody
 
 class PostDomainEventFactory(private val post: Post2) {
     fun createEvent(postEvent: PostEvent): DomainEvent {

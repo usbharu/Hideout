@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.domain.model.shared.domainevent
+package dev.usbharu.hideout.core.domain.shared.domainevent
 
 abstract class DomainEventBody(val map: Map<String, Any>) {
     fun toMap(): Map<String, Any> {
