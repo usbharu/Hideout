@@ -20,7 +20,7 @@ object TestActor2Factory : Actor2.Actor2Factory() {
         outbox: URI = URI.create("https://example.com/$id/outbox"),
         uri: URI = URI.create("https://example.com/$id"),
         publicKey: ActorPublicKey,
-        privateKey: ActorPrivateKey?,
+        privateKey: ActorPrivateKey? = null,
         createdAt: Instant = Instant.now(),
         keyId: String = "https://example.com/$id#key-id",
         followersEndpoint: URI = URI.create("https://example.com/$id/followers"),

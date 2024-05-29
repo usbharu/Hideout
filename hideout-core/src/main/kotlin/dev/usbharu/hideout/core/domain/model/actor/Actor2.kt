@@ -47,7 +47,7 @@ class Actor2 private constructor(
     var lastPostDate: Instant? = null,
     suspend: Boolean,
     var lastUpdate: Instant = createdAt,
-    alsoKnownAs: List<ActorId> = emptyList(),
+    alsoKnownAs: Set<ActorId> = emptySet(),
     moveTo: ActorId? = null,
 ) : DomainEventStorable() {
 
@@ -64,7 +64,7 @@ class Actor2 private constructor(
     var alsoKnownAs = alsoKnownAs
         set(value) {
             require(value.find { it == id } == null)
-            field = value.distinct()
+            field = value
         }
 
     var moveTo = moveTo
