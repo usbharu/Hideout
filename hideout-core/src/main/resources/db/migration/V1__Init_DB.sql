@@ -45,15 +45,19 @@ create table if not exists actors
     key_id          varchar(1000)  not null,
     "following"     varchar(1000)  null,
     followers       varchar(1000)  null,
-    "instance" bigint not null,
+    "instance"     bigint        not null,
     locked          boolean        not null,
     following_count int            not null,
     followers_count int            not null,
     posts_count     int            not null,
     last_post_at    timestamp      null     default null,
-    emojis          varchar(300)   not null default '',
+    last_update_at timestamp     not null,
+    suspend        boolean       not null,
+    move_to        bigint        null     default null,
+    emojis         varchar(3000) not null default '',
     unique ("name", "domain"),
-    constraint fk_actors_instance__id foreign key ("instance") references instance (id) on delete restrict on update restrict
+    constraint fk_actors_instance__id foreign key ("instance") references instance (id) on delete restrict on update restrict,
+    constraint fk_actors_actors__move_to foreign key ("move_to") references actors (id) on delete restrict on update restrict
 );
 
 create table if not exists user_details

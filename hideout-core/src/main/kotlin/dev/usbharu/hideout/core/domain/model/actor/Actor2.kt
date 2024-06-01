@@ -44,9 +44,9 @@ class Actor2 private constructor(
     var followersCount: ActorRelationshipCount?,
     var followingCount: ActorRelationshipCount?,
     var postsCount: ActorPostsCount,
-    var lastPostDate: Instant? = null,
+    var lastPostAt: Instant? = null,
     suspend: Boolean,
-    var lastUpdate: Instant = createdAt,
+    var lastUpdateAt: Instant = createdAt,
     alsoKnownAs: Set<ActorId> = emptySet(),
     moveTo: ActorId? = null,
 ) : DomainEventStorable() {
@@ -142,7 +142,7 @@ class Actor2 private constructor(
                 followersCount = followersCount,
                 followingCount = followingCount,
                 postsCount = postsCount,
-                lastPostDate = lastPostDate,
+                lastPostAt = lastPostDate,
                 suspend = suspend
             )
         }

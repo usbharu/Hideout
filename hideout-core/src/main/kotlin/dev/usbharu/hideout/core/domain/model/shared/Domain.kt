@@ -17,4 +17,8 @@
 package dev.usbharu.hideout.core.domain.model.shared
 
 @JvmInline
-value class Domain(val domain: String)
+value class Domain(val domain: String) {
+    companion object {
+        val length = 1000
+    }
+}

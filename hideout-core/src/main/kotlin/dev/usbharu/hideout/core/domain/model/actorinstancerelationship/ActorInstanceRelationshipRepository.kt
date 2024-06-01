@@ -14,15 +14,9 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.domain.model.actor
+package dev.usbharu.hideout.core.domain.model.actorinstancerelationship
 
-@JvmInline
-value class ActorName(val name: String) {
-    init {
-
-    }
-
-    companion object {
-        val length = 300
-    }
+interface ActorInstanceRelationshipRepository {
+    suspend fun save(actorInstanceRelationship: ActorInstanceRelationship): ActorInstanceRelationship
+    suspend fun delete(actorInstanceRelationship: ActorInstanceRelationship)
 }
