@@ -18,7 +18,6 @@ package dev.usbharu.hideout.core.interfaces.api.auth
 
 import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.application.config.CaptchaConfig
-import dev.usbharu.hideout.core.service.auth.RegisterAccountDto
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.validation.annotation.Validated
