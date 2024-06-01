@@ -17,4 +17,8 @@
 package dev.usbharu.hideout.core.domain.model.actor
 
 @JvmInline
-value class ActorName(val name: String)
+value class ActorName(val name: String) {
+    init {
+
+    }
+}

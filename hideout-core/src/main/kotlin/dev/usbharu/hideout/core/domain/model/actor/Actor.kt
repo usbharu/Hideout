@@ -26,6 +26,7 @@ import org.springframework.stereotype.Component
 import java.time.Instant
 import kotlin.math.max
 
+@Deprecated("Actor2を使う")
 data class Actor private constructor(
     @get:NotNull
     @get:Positive

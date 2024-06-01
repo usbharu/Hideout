@@ -39,7 +39,7 @@ class Actor2FactoryImpl(
     ): Actor2 {
         val actorName = ActorName(name)
         val userUrl = "${applicationConfig.url}/users/${actorName.name}"
-        return super.create(
+        return super.internalCreate(
             id = ActorId(idGenerateService.generateId()),
             name = actorName,
             domain = Domain(applicationConfig.url.host),

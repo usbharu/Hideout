@@ -17,8 +17,8 @@
 package dev.usbharu.hideout.core.domain.event.actorinstancerelationship
 
 import dev.usbharu.hideout.core.domain.model.actorinstancerelationship.ActorInstanceRelationship
-import dev.usbharu.hideout.core.domain.model.shared.domainevent.DomainEvent
-import dev.usbharu.hideout.core.domain.model.shared.domainevent.DomainEventBody
+import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEvent
+import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventBody
 
 class ActorInstanceRelationshipDomainEventFactory(private val actorInstanceRelationship: ActorInstanceRelationship) {
     fun createEvent(actorInstanceRelationshipEvent: ActorInstanceRelationshipEvent): DomainEvent {
