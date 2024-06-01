@@ -17,12 +17,9 @@
 package dev.usbharu.hideout.core.service.timeline
 
 import dev.usbharu.hideout.application.service.id.TwitterSnowflakeIdGenerateService
-import dev.usbharu.hideout.core.domain.model.actor.Actor
-import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.post.Visibility
 import dev.usbharu.hideout.core.domain.model.timeline.Timeline
 import dev.usbharu.hideout.core.domain.model.timeline.TimelineRepository
-import dev.usbharu.hideout.core.query.FollowerQueryService
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

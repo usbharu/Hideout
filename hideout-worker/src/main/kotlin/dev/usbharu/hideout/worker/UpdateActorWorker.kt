@@ -20,7 +20,6 @@ import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
 import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.external.job.UpdateActorTask
 import dev.usbharu.hideout.core.external.job.UpdateActorTaskDef
-import dev.usbharu.hideout.core.service.post.PostService
 import dev.usbharu.owl.consumer.AbstractTaskRunner
 import dev.usbharu.owl.consumer.TaskRequest
 import dev.usbharu.owl.consumer.TaskResult

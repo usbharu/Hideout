@@ -17,4 +17,4 @@
 package dev.usbharu.hideout.core.domain.model.emoji
 
 @JvmInline
-value class EmojiId(private val emojiId: Long)
+value class EmojiId(val emojiId: Long)

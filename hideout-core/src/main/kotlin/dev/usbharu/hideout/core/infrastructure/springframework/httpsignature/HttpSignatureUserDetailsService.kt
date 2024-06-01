@@ -18,7 +18,6 @@ package dev.usbharu.hideout.core.infrastructure.springframework.httpsignature
 
 import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.domain.exception.HttpSignatureVerifyException
-import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.util.RsaUtil
 import dev.usbharu.httpsignature.common.HttpMethod
 import dev.usbharu.httpsignature.common.HttpRequest

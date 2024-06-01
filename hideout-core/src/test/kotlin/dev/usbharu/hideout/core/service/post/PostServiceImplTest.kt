@@ -21,11 +21,7 @@ import dev.usbharu.hideout.activitypub.service.activity.delete.APSendDeleteServi
 import dev.usbharu.hideout.application.config.CharacterLimit
 import dev.usbharu.hideout.application.config.HtmlSanitizeConfig
 import dev.usbharu.hideout.core.domain.exception.resource.DuplicateException
-import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
-import dev.usbharu.hideout.core.domain.model.post.Post
-import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.domain.model.reaction.ReactionRepository
-import dev.usbharu.hideout.core.service.timeline.TimelineService
 import jakarta.validation.Validation
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat

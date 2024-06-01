@@ -21,10 +21,7 @@ import dev.usbharu.hideout.activitypub.service.activity.follow.APSendFollowServi
 import dev.usbharu.hideout.activitypub.service.activity.reject.ApSendRejectService
 import dev.usbharu.hideout.activitypub.service.activity.undo.APSendUndoService
 import dev.usbharu.hideout.application.config.ApplicationConfig
-import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.relationship.Relationship
-import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
-import dev.usbharu.hideout.core.service.follow.SendFollowDto
 import dev.usbharu.hideout.core.service.notification.NotificationService
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test

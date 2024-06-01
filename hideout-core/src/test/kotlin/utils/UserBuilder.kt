@@ -19,7 +19,6 @@ package utils
 import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.application.config.CharacterLimit
 import dev.usbharu.hideout.application.service.id.TwitterSnowflakeIdGenerateService
-import dev.usbharu.hideout.core.domain.model.actor.Actor
 import jakarta.validation.Validation
 import kotlinx.coroutines.runBlocking
 import java.net.URL

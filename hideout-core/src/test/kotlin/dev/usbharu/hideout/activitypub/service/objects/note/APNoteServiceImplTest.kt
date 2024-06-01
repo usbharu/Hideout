@@ -32,11 +32,8 @@ import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
 import dev.usbharu.hideout.application.config.CharacterLimit
 import dev.usbharu.hideout.application.config.HtmlSanitizeConfig
 import dev.usbharu.hideout.application.service.id.TwitterSnowflakeIdGenerateService
-import dev.usbharu.hideout.core.domain.model.post.Post
-import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.service.media.MediaService
 import dev.usbharu.hideout.core.service.post.DefaultPostContentFormatter
-import dev.usbharu.hideout.core.service.post.PostService
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.*

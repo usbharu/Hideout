@@ -23,5 +23,5 @@ interface Post2Repository {
     suspend fun saveAll(posts: List<Post2>): List<Post2>
     suspend fun findById(id: PostId): Post2?
     suspend fun findByActorId(id: ActorId): List<Post2>
-    suspend fun deleteById(id: PostId)
+    suspend fun delete(post: Post2)
 }

@@ -17,7 +17,6 @@
 package dev.usbharu.hideout.worker
 
 import dev.usbharu.hideout.activitypub.service.common.APRequestService
-import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.external.job.DeliverReactionTask
 import dev.usbharu.hideout.core.external.job.DeliverReactionTaskDef
 import dev.usbharu.owl.consumer.AbstractTaskRunner

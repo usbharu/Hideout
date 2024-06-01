@@ -19,10 +19,8 @@ package dev.usbharu.hideout.worker
 import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
 import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.domain.exception.resource.UserNotFoundException
-import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.external.job.ReceiveFollowTask
 import dev.usbharu.hideout.core.external.job.ReceiveFollowTaskDef
-import dev.usbharu.hideout.core.service.relationship.RelationshipService
 import dev.usbharu.owl.consumer.AbstractTaskRunner
 import dev.usbharu.owl.consumer.TaskRequest
 import dev.usbharu.owl.consumer.TaskResult

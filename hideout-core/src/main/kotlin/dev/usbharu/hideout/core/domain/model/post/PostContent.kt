@@ -22,6 +22,8 @@ class PostContent private constructor(val text: String, val content: String, val
 
     companion object {
         val empty = PostContent("", "", emptyList())
+        val contentLength = 5000
+        val textLength = 3000
     }
 
     abstract class PostContentFactory {
