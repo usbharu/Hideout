@@ -17,11 +17,11 @@
 package dev.usbharu.hideout.core.domain.model.actor
 
 @JvmInline
-value class ActorRelationshipCount(private val followersCount: Int) {
+value class ActorRelationshipCount(val relationshipCount: Int) {
     init {
-        require(0 <= followersCount) { "Followers count must be > 0" }
+        require(0 <= relationshipCount) { "Followers count must be > 0" }
     }
 
-    operator fun inc(): ActorRelationshipCount = ActorRelationshipCount(followersCount + 1)
-    operator fun dec(): ActorRelationshipCount = ActorRelationshipCount(followersCount - 1)
+    operator fun inc(): ActorRelationshipCount = ActorRelationshipCount(relationshipCount + 1)
+    operator fun dec(): ActorRelationshipCount = ActorRelationshipCount(relationshipCount - 1)
 }

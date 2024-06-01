@@ -17,4 +17,4 @@
 package dev.usbharu.hideout.core.domain.model.actor
 
 @JvmInline
-value class ActorKeyId(private val keyId: String)
+value class ActorKeyId(val keyId: String)

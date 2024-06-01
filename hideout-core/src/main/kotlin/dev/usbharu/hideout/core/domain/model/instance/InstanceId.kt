@@ -17,4 +17,4 @@
 package dev.usbharu.hideout.core.domain.model.instance
 
 @JvmInline
-value class InstanceId(private val instanceId: Long)
+value class InstanceId(val instanceId: Long)

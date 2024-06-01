@@ -3,7 +3,7 @@ package dev.usbharu.hideout.core.domain.model.actor
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-class Actor2Test {
+class Actors2Test {
     @Test
     fun alsoKnownAsに自分自身が含まれてはいけない() {
         val actor = TestActor2Factory.create(publicKey = ActorPublicKey(""))

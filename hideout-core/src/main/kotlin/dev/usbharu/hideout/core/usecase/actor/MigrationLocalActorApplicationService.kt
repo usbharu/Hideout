@@ -30,7 +30,7 @@ class MigrationLocalActorApplicationService(
     private val localActorMigrationCheckDomainService: LocalActorMigrationCheckDomainService,
 ) {
     suspend fun migration(from: Long, to: Long, executor: ActorId) {
-        transaction.transaction {
+        transaction.transaction<Unit> {
 
             val fromActorId = ActorId(from)
             val toActorId = ActorId(to)
