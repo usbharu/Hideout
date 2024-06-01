@@ -16,7 +16,6 @@
 
 package dev.usbharu.hideout.activitypub.service.common
 
-import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.service.resource.InMemoryCacheManager
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll

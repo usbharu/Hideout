@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import dev.usbharu.hideout.core.infrastructure.exposedrepository.Actors
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.selectAll
 import java.net.MalformedURLException

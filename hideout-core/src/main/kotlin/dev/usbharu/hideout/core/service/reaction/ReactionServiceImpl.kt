@@ -19,7 +19,6 @@ package dev.usbharu.hideout.core.service.reaction
 import dev.usbharu.hideout.activitypub.service.activity.like.APReactionService
 import dev.usbharu.hideout.core.domain.exception.resource.DuplicateException
 import dev.usbharu.hideout.core.domain.model.emoji.Emoji
-import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.domain.model.reaction.Reaction
 import dev.usbharu.hideout.core.domain.model.reaction.ReactionRepository
 import dev.usbharu.hideout.core.service.notification.NotificationService

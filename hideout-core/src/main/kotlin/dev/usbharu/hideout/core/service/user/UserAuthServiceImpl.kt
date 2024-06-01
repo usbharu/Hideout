@@ -17,7 +17,6 @@
 package dev.usbharu.hideout.core.service.user
 
 import dev.usbharu.hideout.application.config.ApplicationConfig
-import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import java.security.*

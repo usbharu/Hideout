@@ -18,12 +18,9 @@ package dev.usbharu.hideout.core.service.notification
 
 import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.application.service.id.TwitterSnowflakeIdGenerateService
-import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.notification.Notification
 import dev.usbharu.hideout.core.domain.model.notification.NotificationRepository
-import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.domain.model.reaction.ReactionRepository
-import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

@@ -21,16 +21,11 @@ package dev.usbharu.hideout.core.service.user
 import dev.usbharu.hideout.activitypub.service.activity.delete.APSendDeleteService
 import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.application.config.CharacterLimit
-import dev.usbharu.hideout.core.domain.model.actor.Actor
-import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.deletedActor.DeletedActorRepository
 import dev.usbharu.hideout.core.domain.model.instance.Instance
-import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.domain.model.reaction.ReactionRepository
-import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
 import dev.usbharu.hideout.core.service.instance.InstanceService
-import dev.usbharu.hideout.core.service.post.PostService
 import dev.usbharu.owl.producer.api.OwlProducer
 import jakarta.validation.Validation
 import kotlinx.coroutines.ExperimentalCoroutinesApi

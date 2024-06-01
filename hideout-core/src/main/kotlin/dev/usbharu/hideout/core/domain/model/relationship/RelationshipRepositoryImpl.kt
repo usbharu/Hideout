@@ -20,7 +20,6 @@ import dev.usbharu.hideout.application.infrastructure.exposed.Page
 import dev.usbharu.hideout.application.infrastructure.exposed.PaginationList
 import dev.usbharu.hideout.application.infrastructure.exposed.withPagination
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.AbstractRepository
-import dev.usbharu.hideout.core.infrastructure.exposedrepository.Actors
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq

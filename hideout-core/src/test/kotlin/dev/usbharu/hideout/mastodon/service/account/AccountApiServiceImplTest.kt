@@ -19,12 +19,7 @@ package dev.usbharu.hideout.mastodon.service.account
 import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.application.infrastructure.exposed.Page
 import dev.usbharu.hideout.application.infrastructure.exposed.PaginationList
-import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
-import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
-import dev.usbharu.hideout.core.query.FollowerQueryService
 import dev.usbharu.hideout.core.service.media.MediaService
-import dev.usbharu.hideout.core.service.relationship.RelationshipService
-import dev.usbharu.hideout.core.service.user.UserService
 import dev.usbharu.hideout.domain.mastodon.model.generated.Account
 import dev.usbharu.hideout.domain.mastodon.model.generated.Relationship
 import dev.usbharu.hideout.domain.mastodon.model.generated.Status

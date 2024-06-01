@@ -17,8 +17,6 @@
 package mastodon.account
 
 import dev.usbharu.hideout.SpringApplication
-import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
-import dev.usbharu.hideout.core.infrastructure.exposedquery.FollowerQueryServiceImpl
 import dev.usbharu.owl.producer.api.OwlProducer
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest

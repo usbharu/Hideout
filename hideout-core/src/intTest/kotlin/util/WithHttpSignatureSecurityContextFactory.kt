@@ -18,7 +18,6 @@ package util
 
 import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.core.domain.exception.resource.UserNotFoundException
-import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.infrastructure.springframework.httpsignature.HttpSignatureUser
 import dev.usbharu.httpsignature.common.HttpHeaders
 import dev.usbharu.httpsignature.common.HttpMethod
