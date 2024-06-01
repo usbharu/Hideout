@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.domain.service.actor
+package dev.usbharu.hideout.core.domain.shared.domainevent
 
-import dev.usbharu.hideout.application.config.ApplicationConfig
-import dev.usbharu.hideout.core.domain.model.actor.Actor2
-import org.springframework.stereotype.Service
+abstract class DomainEventStorable {
+    private val domainEvents: MutableList<DomainEvent> = mutableListOf()
 
-interface IRemoteActorCheckDomainService {
-    fun isRemoteActor(actor: Actor2): Boolean
-}
+    protected fun addDomainEvent(domainEvent: DomainEvent) {
+        domainEvents.add(domainEvent)
+    }
 
-@Service
-class RemoteActorCheckDomainService(private val applicationConfig: ApplicationConfig) : IRemoteActorCheckDomainService {
-    override fun isRemoteActor(actor: Actor2): Boolean = actor.domain.domain == applicationConfig.url.host
+    fun clearDomainEvents() = domainEvents.clear()
+
+    fun getDomainEvents(): List<DomainEvent> = domainEvents.toList()
 }

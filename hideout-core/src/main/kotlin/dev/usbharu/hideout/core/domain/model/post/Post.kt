@@ -24,6 +24,7 @@ import org.hibernate.validator.constraints.URL
 import org.springframework.stereotype.Component
 import java.time.Instant
 
+@Deprecated("Post2を使う")
 data class Post private constructor(
     @get:Positive
     val id: Long,

@@ -17,14 +17,15 @@
 package dev.usbharu.hideout.core.domain.event.actor
 
 import dev.usbharu.hideout.core.domain.model.actor.Actor2
-import dev.usbharu.hideout.core.domain.model.shared.domainevent.DomainEvent
-import dev.usbharu.hideout.core.domain.model.shared.domainevent.DomainEventBody
+import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEvent
+import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventBody
 
 class ActorDomainEventFactory(private val actor: Actor2) {
     fun createEvent(actorEvent: ActorEvent): DomainEvent {
         return DomainEvent.create(
             actorEvent.eventName,
-            ActorEventBody(actor)
+            ActorEventBody(actor),
+            actorEvent.collectable
         )
     }
 }
@@ -35,7 +36,7 @@ class ActorEventBody(actor: Actor2) : DomainEventBody(
     )
 )
 
-enum class ActorEvent(val eventName: String) {
+enum class ActorEvent(val eventName: String, val collectable: Boolean = true) {
     update("ActorUpdate"),
     delete("ActorDelete"),
     checkUpdate("ActorCheckUpdate"),

@@ -17,8 +17,8 @@
 package dev.usbharu.hideout.core.domain.event.instance
 
 import dev.usbharu.hideout.core.domain.model.instance.Instance
-import dev.usbharu.hideout.core.domain.model.shared.domainevent.DomainEvent
-import dev.usbharu.hideout.core.domain.model.shared.domainevent.DomainEventBody
+import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEvent
+import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventBody
 
 class InstanceEventFactory(private val instance: Instance) {
     fun createEvent(event: InstanceEvent): DomainEvent {

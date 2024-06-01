@@ -20,7 +20,7 @@ import dev.usbharu.hideout.core.domain.event.actor.ActorDomainEventFactory
 import dev.usbharu.hideout.core.domain.event.actor.ActorEvent.*
 import dev.usbharu.hideout.core.domain.model.instance.InstanceId
 import dev.usbharu.hideout.core.domain.model.shared.Domain
-import dev.usbharu.hideout.core.domain.model.shared.domainevent.DomainEventStorable
+import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventStorable
 import java.net.URI
 import java.time.Instant
 
@@ -47,7 +47,7 @@ class Actor2 private constructor(
     var lastPostDate: Instant? = null,
     suspend: Boolean,
     var lastUpdate: Instant = createdAt,
-    alsoKnownAs: List<ActorId> = emptyList(),
+    alsoKnownAs: Set<ActorId> = emptySet(),
     moveTo: ActorId? = null,
 ) : DomainEventStorable() {
 
@@ -64,7 +64,7 @@ class Actor2 private constructor(
     var alsoKnownAs = alsoKnownAs
         set(value) {
             require(value.find { it == id } == null)
-            field = value.distinct()
+            field = value
         }
 
     var moveTo = moveTo
@@ -99,7 +99,7 @@ class Actor2 private constructor(
     }
 
     abstract class Actor2Factory {
-        protected suspend fun create(
+        protected suspend fun internalCreate(
             id: ActorId,
             name: ActorName,
             domain: Domain,

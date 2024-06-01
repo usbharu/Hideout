@@ -17,7 +17,7 @@
 package dev.usbharu.hideout.core.domain.model.actor
 
 @JvmInline
-value class ActorPostsCount(private val postsCount: Long) {
+value class ActorPostsCount(private val postsCount: Int) {
     init {
         require(0 <= this.postsCount) { "Posts count must be greater than 0" }
     }
