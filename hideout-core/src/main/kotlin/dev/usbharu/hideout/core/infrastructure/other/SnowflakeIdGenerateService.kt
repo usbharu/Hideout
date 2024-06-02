@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.application.service.id
+package dev.usbharu.hideout.core.infrastructure.other
 
+import dev.usbharu.hideout.core.domain.shared.id.IdGenerateService
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.time.Instant
 
 @Suppress("MagicNumber")
-class SnowflakeIdGenerateService(private val baseTime: Long) : IdGenerateService {
+open class SnowflakeIdGenerateService(private val baseTime: Long) : IdGenerateService {
     var lastTimeStamp: Long = -1
     var sequenceId: Int = 0
     val mutex = Mutex()

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.application.config
+package dev.usbharu.hideout.core.config
 
 import org.owasp.html.HtmlPolicyBuilder
 import org.owasp.html.PolicyFactory

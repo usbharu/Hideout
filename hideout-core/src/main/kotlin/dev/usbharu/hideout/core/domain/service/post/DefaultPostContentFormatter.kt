@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.service.post
+package dev.usbharu.hideout.core.domain.service.post
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -23,11 +23,6 @@ import org.jsoup.nodes.TextNode
 import org.jsoup.select.Elements
 import org.owasp.html.PolicyFactory
 import org.springframework.stereotype.Service
-
-
-interface PostContentFormatter {
-    fun format(content: String): FormattedPostContent
-}
 
 @Service
 class DefaultPostContentFormatter(private val policyFactory: PolicyFactory) : PostContentFormatter {
@@ -102,8 +97,3 @@ class DefaultPostContentFormatter(private val policyFactory: PolicyFactory) : Po
         }
     }
 }
-
-data class FormattedPostContent(
-    val html: String,
-    val content: String,
-)

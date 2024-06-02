@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.application.infrastructure.exposed
+package dev.usbharu.hideout.core.infrastructure.exposed
 
-import org.jetbrains.exposed.sql.Query
+import org.jetbrains.exposed.sql.ResultRow
 
-interface QueryMapper<T> {
-    fun map(query: Query): List<T>
+interface ResultRowMapper<T> {
+    fun map(resultRow: ResultRow): T
 }

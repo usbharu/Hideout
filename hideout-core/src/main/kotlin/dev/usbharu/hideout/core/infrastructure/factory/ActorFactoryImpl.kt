@@ -17,10 +17,10 @@
 package dev.usbharu.hideout.core.infrastructure.factory
 
 import dev.usbharu.hideout.application.config.ApplicationConfig
-import dev.usbharu.hideout.application.service.id.IdGenerateService
 import dev.usbharu.hideout.core.domain.model.actor.*
 import dev.usbharu.hideout.core.domain.model.instance.InstanceId
 import dev.usbharu.hideout.core.domain.model.shared.Domain
+import dev.usbharu.hideout.core.domain.shared.id.IdGenerateService
 import org.springframework.stereotype.Component
 import java.net.URI
 import java.time.Instant

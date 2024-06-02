@@ -17,7 +17,6 @@
 package dev.usbharu.hideout.core.infrastructure.factory
 
 import dev.usbharu.hideout.application.config.ApplicationConfig
-import dev.usbharu.hideout.application.service.id.IdGenerateService
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.actor.ActorName
 import dev.usbharu.hideout.core.domain.model.media.MediaId
@@ -25,6 +24,7 @@ import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostId
 import dev.usbharu.hideout.core.domain.model.post.PostOverview
 import dev.usbharu.hideout.core.domain.model.post.Visibility
+import dev.usbharu.hideout.core.domain.shared.id.IdGenerateService
 import org.springframework.stereotype.Component
 import java.net.URI
 import java.time.Instant

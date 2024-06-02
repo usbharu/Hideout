@@ -17,7 +17,6 @@
 package dev.usbharu.hideout.core.application.actor
 
 import dev.usbharu.hideout.application.config.ApplicationConfig
-import dev.usbharu.hideout.application.service.id.IdGenerateService
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.instance.InstanceRepository
@@ -26,6 +25,7 @@ import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
 import dev.usbharu.hideout.core.domain.service.actor.local.LocalActorDomainService
 import dev.usbharu.hideout.core.domain.service.userdetail.UserDetailDomainService
+import dev.usbharu.hideout.core.domain.shared.id.IdGenerateService
 import dev.usbharu.hideout.core.infrastructure.factory.ActorFactoryImpl
 import org.springframework.stereotype.Service
 

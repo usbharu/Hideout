@@ -1,9 +1,9 @@
 package dev.usbharu.hideout.core.domain.model.actor
 
-import dev.usbharu.hideout.application.service.id.TwitterSnowflakeIdGenerateService
 import dev.usbharu.hideout.core.domain.model.emoji.EmojiId
 import dev.usbharu.hideout.core.domain.model.instance.InstanceId
 import dev.usbharu.hideout.core.domain.model.shared.Domain
+import dev.usbharu.hideout.core.infrastructure.other.TwitterSnowflakeIdGenerateService
 import kotlinx.coroutines.runBlocking
 import java.net.URI
 import java.time.Instant

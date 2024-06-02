@@ -16,8 +16,6 @@
 
 package dev.usbharu.hideout.core.infrastructure.exposed
 
-import dev.usbharu.hideout.application.infrastructure.exposed.QueryMapper
-import dev.usbharu.hideout.application.infrastructure.exposed.ResultRowMapper
 import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Actors
