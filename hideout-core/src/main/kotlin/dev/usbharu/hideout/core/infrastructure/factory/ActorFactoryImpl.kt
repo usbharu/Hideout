@@ -59,7 +59,8 @@ class ActorFactoryImpl(
             postsCount = ActorPostsCount(0),
             lastPostAt = null,
             suspend = false,
-            emojiIds = emptySet()
+            emojiIds = emptySet(),
+            deleted = false
         )
     }
 }

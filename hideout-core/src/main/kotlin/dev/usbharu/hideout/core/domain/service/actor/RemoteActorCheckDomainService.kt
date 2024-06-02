@@ -26,5 +26,5 @@ interface IRemoteActorCheckDomainService {
 
 @Service
 class RemoteActorCheckDomainService(private val applicationConfig: ApplicationConfig) : IRemoteActorCheckDomainService {
-    override fun isRemoteActor(actor: Actor): Boolean = actor.domain.domain == applicationConfig.url.host
+    override fun isRemoteActor(actor: Actor): Boolean = actor.domain.domain != applicationConfig.url.host
 }

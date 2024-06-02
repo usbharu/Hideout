@@ -36,7 +36,7 @@ class UpdateLocalNoteApplicationService(
 
             post.content = postContentFactoryImpl.create(updateLocalNote.content)
             post.overview = updateLocalNote.overview?.let { PostOverview(it) }
-            post.mediaIds = updateLocalNote.mediaIds.map { MediaId(it) }
+            post.addMediaIds(updateLocalNote.mediaIds.map { MediaId(it) })
             post.sensitive = updateLocalNote.sensitive
 
             postRepository.save(post)

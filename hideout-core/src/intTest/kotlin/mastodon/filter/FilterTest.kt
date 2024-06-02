@@ -17,7 +17,6 @@
 package mastodon.filter
 
 import dev.usbharu.hideout.SpringApplication
-import dev.usbharu.hideout.application.config.ActivityPubConfig
 import dev.usbharu.hideout.domain.mastodon.model.generated.FilterKeywordsPostRequest
 import dev.usbharu.hideout.domain.mastodon.model.generated.FilterPostRequest
 import dev.usbharu.hideout.domain.mastodon.model.generated.FilterPostRequestKeyword

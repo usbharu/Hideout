@@ -72,7 +72,7 @@ class Actor(
 
     var moveTo = moveTo
         set(value) {
-            require(moveTo != id)
+            require(value != id)
             addDomainEvent(ActorDomainEventFactory(this).createEvent(move))
             field = value
         }

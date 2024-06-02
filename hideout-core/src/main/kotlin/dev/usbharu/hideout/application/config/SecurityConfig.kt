@@ -16,43 +16,25 @@
 
 package dev.usbharu.hideout.application.config
 
-import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.databind.module.SimpleModule
 import com.nimbusds.jose.jwk.JWKSet
 import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet
 import com.nimbusds.jose.jwk.source.JWKSource
 import com.nimbusds.jose.proc.SecurityContext
-import dev.usbharu.hideout.activitypub.domain.model.StringORObjectSerializer
-import dev.usbharu.hideout.activitypub.domain.model.StringOrObject
-import dev.usbharu.hideout.core.application.shared.Transaction
-import dev.usbharu.hideout.core.infrastructure.springframework.httpsignature.HttpSignatureFilter
-import dev.usbharu.hideout.core.infrastructure.springframework.httpsignature.HttpSignatureHeaderChecker
-import dev.usbharu.hideout.core.infrastructure.springframework.httpsignature.HttpSignatureUserDetailsService
-import dev.usbharu.hideout.core.infrastructure.springframework.httpsignature.HttpSignatureVerifierComposite
 import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.UserDetailsImpl
-import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.UserDetailsServiceImpl
 import dev.usbharu.hideout.util.RsaUtil
-import dev.usbharu.httpsignature.sign.RsaSha256HttpSignatureSigner
-import dev.usbharu.httpsignature.verify.DefaultSignatureHeaderParser
-import dev.usbharu.httpsignature.verify.RsaSha256HttpSignatureVerifier
 import jakarta.annotation.PostConstruct
 import jakarta.servlet.*
 import org.springframework.beans.factory.support.BeanDefinitionRegistry
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
-import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Primary
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpMethod.GET
 import org.springframework.http.HttpMethod.POST
 import org.springframework.http.HttpStatus
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
-import org.springframework.security.authentication.AccountStatusUserDetailsChecker
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
@@ -74,8 +56,6 @@ import org.springframework.security.oauth2.server.authorization.token.JwtEncodin
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer
 import org.springframework.security.web.FilterChainProxy
 import org.springframework.security.web.SecurityFilterChain
-import org.springframework.security.web.access.ExceptionTranslationFilter
-import org.springframework.security.web.authentication.AuthenticationEntryPointFailureHandler
 import org.springframework.security.web.authentication.HttpStatusEntryPoint
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider
@@ -83,7 +63,6 @@ import org.springframework.security.web.context.AbstractSecurityWebApplicationIn
 import org.springframework.security.web.debug.DebugFilter
 import org.springframework.security.web.firewall.HttpFirewall
 import org.springframework.security.web.firewall.RequestRejectedHandler
-import org.springframework.security.web.savedrequest.RequestCacheAwareFilter
 import org.springframework.security.web.util.matcher.AnyRequestMatcher
 import org.springframework.web.filter.CompositeFilter
 import java.io.IOException
@@ -105,14 +84,9 @@ class SecurityConfig {
     @Order(1)
     fun httpSignatureFilterChain(
         http: HttpSecurity,
-        httpSignatureFilter: HttpSignatureFilter,
     ): SecurityFilterChain {
         http {
             securityMatcher("/users/*/posts/*")
-            addFilterAt<RequestCacheAwareFilter>(httpSignatureFilter)
-            addFilterBefore<HttpSignatureFilter>(
-                ExceptionTranslationFilter(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
-            )
             authorizeHttpRequests {
                 authorize(anyRequest, permitAll)
             }
@@ -130,57 +104,6 @@ class SecurityConfig {
         return http.build()
     }
 
-    @Bean
-    fun getHttpSignatureFilter(
-        authenticationManager: AuthenticationManager,
-        httpSignatureHeaderChecker: HttpSignatureHeaderChecker,
-    ): HttpSignatureFilter {
-        val httpSignatureFilter =
-            HttpSignatureFilter(DefaultSignatureHeaderParser(), httpSignatureHeaderChecker)
-        httpSignatureFilter.setAuthenticationManager(authenticationManager)
-        httpSignatureFilter.setContinueFilterChainOnUnsuccessfulAuthentication(false)
-        val authenticationEntryPointFailureHandler =
-            AuthenticationEntryPointFailureHandler(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
-        authenticationEntryPointFailureHandler.setRethrowAuthenticationServiceException(false)
-        httpSignatureFilter.setAuthenticationFailureHandler(authenticationEntryPointFailureHandler)
-        return httpSignatureFilter
-    }
-
-    @Bean
-    @Order(2)
-    fun daoAuthenticationProvider(userDetailsServiceImpl: UserDetailsServiceImpl): DaoAuthenticationProvider {
-        val daoAuthenticationProvider = DaoAuthenticationProvider()
-        daoAuthenticationProvider.setUserDetailsService(userDetailsServiceImpl)
-
-        return daoAuthenticationProvider
-    }
-
-    @Bean
-    @Order(1)
-    fun httpSignatureAuthenticationProvider(
-        transaction: Transaction,
-        actorRepository: ActorRepository,
-    ): PreAuthenticatedAuthenticationProvider {
-        val provider = PreAuthenticatedAuthenticationProvider()
-        val signatureHeaderParser = DefaultSignatureHeaderParser()
-        provider.setPreAuthenticatedUserDetailsService(
-            HttpSignatureUserDetailsService(
-                HttpSignatureVerifierComposite(
-                    mapOf(
-                        "rsa-sha256" to RsaSha256HttpSignatureVerifier(
-                            signatureHeaderParser, RsaSha256HttpSignatureSigner()
-                        )
-                    ),
-                    signatureHeaderParser
-                ),
-                transaction,
-                signatureHeaderParser,
-                actorRepository
-            )
-        )
-        provider.setUserDetailsChecker(AccountStatusUserDetailsChecker())
-        return provider
-    }
 
     @Bean
     @Order(2)
@@ -291,22 +214,6 @@ class SecurityConfig {
         }
     }
 
-    @Bean
-    @Primary
-    fun jackson2ObjectMapperBuilderCustomizer(): Jackson2ObjectMapperBuilderCustomizer {
-        return Jackson2ObjectMapperBuilderCustomizer {
-            it.serializationInclusion(JsonInclude.Include.ALWAYS)
-                .modulesToInstall(SimpleModule().addSerializer(StringOrObject::class.java, StringORObjectSerializer()))
-                .serializers()
-        }
-    }
-
-    @Bean
-    fun mappingJackson2HttpMessageConverter(): MappingJackson2HttpMessageConverter {
-        val builder = Jackson2ObjectMapperBuilder().serializationInclusion(JsonInclude.Include.NON_NULL)
-        builder.modulesToInstall(SimpleModule().addSerializer(StringOrObject::class.java, StringORObjectSerializer()))
-        return MappingJackson2HttpMessageConverter(builder.build())
-    }
 
     // Spring Security 3.2.1 に存在する EnableWebSecurity(debug = true)にすると発生するエラーに対処するためのコード
     // trueにしないときはコメントアウト

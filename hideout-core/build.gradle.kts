@@ -93,8 +93,8 @@ tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs += "-Xjsr305=strict"
     }
-    dependsOn("openApiGenerateMastodonCompatibleApi")
-    mustRunAfter("openApiGenerateMastodonCompatibleApi")
+//    dependsOn("openApiGenerateMastodonCompatibleApi")
+//    mustRunAfter("openApiGenerateMastodonCompatibleApi")
 }
 
 
