@@ -3,3 +3,16 @@ plugins {
 }
 rootProject.name = "hideout-mastodon"
 
+includeBuild("../hideout-core")
+
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+    }
+
+    versionCatalogs {
+        create("libs") {
+            from(files("../libs.versions.toml"))
+        }
+    }
+}

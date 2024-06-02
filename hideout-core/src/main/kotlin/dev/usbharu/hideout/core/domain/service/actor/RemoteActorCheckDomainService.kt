@@ -16,7 +16,7 @@
 
 package dev.usbharu.hideout.core.domain.service.actor
 
-import dev.usbharu.hideout.application.config.ApplicationConfig
+import dev.usbharu.hideout.core.config.ApplicationConfig
 import dev.usbharu.hideout.core.domain.model.actor.Actor
 import org.springframework.stereotype.Service
 
