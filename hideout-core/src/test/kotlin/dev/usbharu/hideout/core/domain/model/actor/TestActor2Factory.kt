@@ -1,13 +1,14 @@
 package dev.usbharu.hideout.core.domain.model.actor
 
 import dev.usbharu.hideout.application.service.id.TwitterSnowflakeIdGenerateService
+import dev.usbharu.hideout.core.domain.model.emoji.EmojiId
 import dev.usbharu.hideout.core.domain.model.instance.InstanceId
 import dev.usbharu.hideout.core.domain.model.shared.Domain
 import kotlinx.coroutines.runBlocking
 import java.net.URI
 import java.time.Instant
 
-object TestActor2Factory : Actor.Actor2Factory() {
+object TestActor2Factory {
     private val idGenerateService = TwitterSnowflakeIdGenerateService
 
     fun create(
@@ -32,14 +33,18 @@ object TestActor2Factory : Actor.Actor2Factory() {
         postCount: Int = 0,
         lastPostDate: Instant? = null,
         suspend: Boolean = false,
+        alsoKnownAs: Set<ActorId> = emptySet(),
+        moveTo: ActorId? = null,
+        emojiIds: Set<EmojiId> = emptySet(),
+        deleted: Boolean = false,
     ): Actor {
         return runBlocking {
-            super.internalCreate(
+            Actor(
                 id = ActorId(id),
                 name = ActorName(actorName),
                 domain = Domain(domain),
-                screenName = TestActorScreenNameFactory.create(actorScreenName),
-                description = TestActorDescriptionFactory.create(description),
+                screenName = ActorScreenName(actorScreenName),
+                description = ActorDescription(description),
                 inbox = inbox,
                 outbox = outbox,
                 url = uri,
@@ -54,29 +59,17 @@ object TestActor2Factory : Actor.Actor2Factory() {
                 followersCount = ActorRelationshipCount(followersCount),
                 followingCount = ActorRelationshipCount(followingCount),
                 postsCount = ActorPostsCount(postCount),
-                lastPostDate = lastPostDate,
-                suspend = suspend
+                lastPostAt = lastPostDate,
+                suspend = suspend,
+                alsoKnownAs = alsoKnownAs,
+                moveTo = moveTo,
+                emojiIds = emojiIds,
+                deleted = deleted,
             )
         }
     }
 
     private fun generateId(): Long = runBlocking {
         idGenerateService.generateId()
-    }
-}
-
-object TestActorScreenNameFactory : ActorScreenName.ActorScreenNameFactory() {
-    fun create(name: String): ActorScreenName {
-        return runBlocking {
-            super.create(name, emptyList())
-        }
-    }
-}
-
-object TestActorDescriptionFactory : ActorDescription.ActorDescriptionFactory() {
-    fun create(description: String): ActorDescription {
-        return runBlocking {
-            super.create(description, emptyList())
-        }
     }
 }

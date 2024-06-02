@@ -28,4 +28,18 @@ data class Media(
     val mimeType: MimeType,
     val blurHash: MediaBlurHash?,
     val description: MediaDescription? = null,
-)
+) {
+    override fun toString(): String {
+        return "Media(" +
+                "id=$id, " +
+                "name=$name, " +
+                "url=$url, " +
+                "remoteUrl=$remoteUrl, " +
+                "thumbnailUrl=$thumbnailUrl, " +
+                "type=$type, " +
+                "mimeType=$mimeType, " +
+                "blurHash=$blurHash, " +
+                "description=$description" +
+                ")"
+    }
+}

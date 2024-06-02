@@ -24,7 +24,7 @@ import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventStorable
 import java.net.URI
 import java.time.Instant
 
-class Post private constructor(
+class Post(
     val id: PostId,
     actorId: ActorId,
     overview: PostOverview? = null,
@@ -191,8 +191,8 @@ class Post private constructor(
         return id.hashCode()
     }
 
-    abstract class PostFactory {
-        protected fun create(
+    companion object {
+        fun create(
             id: PostId,
             actorId: ActorId,
             overview: PostOverview? = null,
@@ -206,24 +206,30 @@ class Post private constructor(
             apId: URI,
             deleted: Boolean,
             mediaIds: List<MediaId>,
-            hide: Boolean,
+            visibleActors: List<ActorId> = emptyList(),
+            hide: Boolean = false,
+            moveTo: PostId? = null,
         ): Post {
-            return Post(
-                id = id,
-                actorId = actorId,
-                overview = overview,
-                content = content,
-                createdAt = createdAt,
-                visibility = visibility,
-                url = url,
-                repostId = repostId,
-                replyId = replyId,
-                sensitive = sensitive,
-                apId = apId,
-                deleted = deleted,
-                mediaIds = mediaIds,
-                hide = hide
-            ).apply { addDomainEvent(PostDomainEventFactory(this).createEvent(PostEvent.create)) }
+            val post = Post(
+                id,
+                actorId,
+                overview,
+                content,
+                createdAt,
+                visibility,
+                url,
+                repostId,
+                replyId,
+                sensitive,
+                apId,
+                deleted,
+                mediaIds,
+                visibleActors,
+                hide,
+                moveTo
+            )
+            post.addDomainEvent(PostDomainEventFactory(post).createEvent(PostEvent.create))
+            return post
         }
     }
 }

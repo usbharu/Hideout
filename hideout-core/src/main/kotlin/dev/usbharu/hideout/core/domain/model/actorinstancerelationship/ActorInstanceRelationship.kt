@@ -85,4 +85,16 @@ data class ActorInstanceRelationship(
         result = 31 * result + instanceId.hashCode()
         return result
     }
+
+    override fun toString(): String {
+        return "ActorInstanceRelationship(" +
+                "actorId=$actorId, " +
+                "instanceId=$instanceId, " +
+                "blocking=$blocking, " +
+                "muting=$muting, " +
+                "doNotSendPrivate=$doNotSendPrivate" +
+                ")"
+    }
+
+
 }

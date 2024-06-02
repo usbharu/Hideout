@@ -34,7 +34,7 @@ class PostFactoryImpl(
     private val idGenerateService: IdGenerateService,
     private val postContentFactoryImpl: PostContentFactoryImpl,
     private val applicationConfig: ApplicationConfig,
-) : Post.PostFactory() {
+) {
     suspend fun createLocal(
         actorId: ActorId,
         actorName: ActorName,
@@ -48,7 +48,7 @@ class PostFactoryImpl(
     ): Post {
         val id = idGenerateService.generateId()
         val url = URI.create(applicationConfig.url.toString() + "/users/" + actorName + "/posts/" + id)
-        return super.create(
+        return Post.create(
             PostId(id),
             actorId,
             overview,
@@ -61,7 +61,7 @@ class PostFactoryImpl(
             sensitive,
             url,
             false,
-            mediaIds
+            mediaIds,
         )
     }
 }
