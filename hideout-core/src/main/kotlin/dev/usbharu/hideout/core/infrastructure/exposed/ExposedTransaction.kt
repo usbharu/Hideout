@@ -14,28 +14,27 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.application.infrastructure.exposed
+package dev.usbharu.hideout.core.infrastructure.exposed
 
 import dev.usbharu.hideout.core.application.shared.Transaction
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.slf4j.MDCContext
 import org.jetbrains.exposed.sql.Slf4jSqlDebugLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import org.jetbrains.exposed.sql.transactions.transaction
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Component
 import java.sql.Connection
 
-@Service
+@Component
 class ExposedTransaction : Transaction {
     override suspend fun <T> transaction(block: suspend () -> T): T {
-        return transaction(transactionIsolation = Connection.TRANSACTION_READ_COMMITTED) {
+        return newSuspendedTransaction(
+            transactionIsolation = Connection.TRANSACTION_READ_COMMITTED,
+            context = MDCContext()
+        ) {
             debug = true
             warnLongQueriesDuration = 1000
             addLogger(Slf4jSqlDebugLogger)
-            runBlocking(MDCContext()) {
-                block()
-            }
+            block()
         }
     }
 

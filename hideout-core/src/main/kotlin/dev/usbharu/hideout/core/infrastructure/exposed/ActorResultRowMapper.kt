@@ -16,7 +16,6 @@
 
 package dev.usbharu.hideout.core.infrastructure.exposed
 
-import dev.usbharu.hideout.application.infrastructure.exposed.ResultRowMapper
 import dev.usbharu.hideout.core.domain.model.actor.*
 import dev.usbharu.hideout.core.domain.model.emoji.EmojiId
 import dev.usbharu.hideout.core.domain.model.instance.InstanceId

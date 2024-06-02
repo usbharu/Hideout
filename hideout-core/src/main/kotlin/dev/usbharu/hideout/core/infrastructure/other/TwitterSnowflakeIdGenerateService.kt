@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.application.infrastructure.exposed
+package dev.usbharu.hideout.core.infrastructure.other
 
-import org.jetbrains.exposed.sql.ResultRow
+import org.springframework.context.annotation.Primary
+import org.springframework.stereotype.Service
 
-interface ResultRowMapper<T> {
-    fun map(resultRow: ResultRow): T
-}
+// 2010-11-04T01:42:54.657
+@Suppress("MagicNumber")
+@Service
+@Primary
+object TwitterSnowflakeIdGenerateService : SnowflakeIdGenerateService(1288834974657L)

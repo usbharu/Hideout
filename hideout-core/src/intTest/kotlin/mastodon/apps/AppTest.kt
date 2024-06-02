@@ -17,7 +17,6 @@
 package mastodon.apps
 
 import dev.usbharu.hideout.SpringApplication
-import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.RegisteredClient
 import dev.usbharu.owl.producer.api.OwlProducer
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
@@ -30,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClient
 import org.springframework.security.test.context.support.WithAnonymousUser
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers
 import org.springframework.test.web.servlet.MockMvc

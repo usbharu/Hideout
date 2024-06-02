@@ -17,7 +17,7 @@
 package dev.usbharu.hideout.core.infrastructure.factory
 
 import dev.usbharu.hideout.core.domain.model.post.PostContent
-import dev.usbharu.hideout.core.service.post.PostContentFormatter
+import dev.usbharu.hideout.core.domain.service.post.PostContentFormatter
 import org.springframework.stereotype.Component
 
 @Component

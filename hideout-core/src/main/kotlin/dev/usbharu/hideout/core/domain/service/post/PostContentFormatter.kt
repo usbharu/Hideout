@@ -14,9 +14,14 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.generate
+package dev.usbharu.hideout.core.domain.service.post
 
-@MustBeDocumented
-@Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.VALUE_PARAMETER)
-annotation class JsonOrFormBind
+
+interface PostContentFormatter {
+    fun format(content: String): FormattedPostContent
+}
+
+data class FormattedPostContent(
+    val html: String,
+    val content: String,
+)

@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.application.config
+package dev.usbharu.hideout.core.domain.shared.id
 
-import org.springframework.boot.context.properties.ConfigurationProperties
-
-@ConfigurationProperties("hideout.media")
-data class MediaConfig(
-    val remoteMediaFileSizeLimit: Long = 3000000L
-)
+interface IdGenerateService {
+    suspend fun generateId(): Long
+}
