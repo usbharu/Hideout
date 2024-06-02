@@ -25,7 +25,6 @@ import dev.usbharu.hideout.core.domain.model.deletedActor.DeletedActorRepository
 import dev.usbharu.hideout.core.domain.model.instance.Instance
 import dev.usbharu.hideout.core.domain.model.reaction.ReactionRepository
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
-import dev.usbharu.hideout.core.service.instance.InstanceService
 import dev.usbharu.owl.producer.api.OwlProducer
 import jakarta.validation.Validation
 import kotlinx.coroutines.ExperimentalCoroutinesApi

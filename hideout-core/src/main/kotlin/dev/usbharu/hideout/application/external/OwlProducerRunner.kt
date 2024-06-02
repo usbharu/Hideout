@@ -35,7 +35,6 @@ class OwlProducerRunner(private val owlProducer: OwlProducer, private val taskDe
     }
 
     override fun destroy() {
-        System.err.println("destroy aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
         runBlocking {
             owlProducer.stop()
         }

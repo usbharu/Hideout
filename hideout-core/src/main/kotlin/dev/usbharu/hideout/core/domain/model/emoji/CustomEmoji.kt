@@ -16,10 +16,13 @@
 
 package dev.usbharu.hideout.core.domain.model.emoji
 
+import dev.usbharu.hideout.core.domain.model.instance.InstanceId
+import dev.usbharu.hideout.core.domain.model.shared.Domain
+import java.net.URI
 import java.time.Instant
 
 sealed class Emoji {
-    abstract val domain: String
+    abstract val domain: Domain
     abstract val name: String
 
     @Suppress("FunctionMinLength")
@@ -33,13 +36,13 @@ sealed class Emoji {
 }
 
 data class CustomEmoji(
-    val id: Long,
+    val id: EmojiId,
     override val name: String,
-    override val domain: String,
-    val instanceId: Long?,
-    val url: String,
+    override val domain: Domain,
+    val instanceId: InstanceId,
+    val url: URI,
     val category: String?,
-    val createdAt: Instant
+    val createdAt: Instant,
 ) : Emoji() {
     override fun id(): String = id.toString()
 }
@@ -47,6 +50,6 @@ data class CustomEmoji(
 data class UnicodeEmoji(
     override val name: String
 ) : Emoji() {
-    override val domain: String = "unicode.org"
+    override val domain: Domain = Domain("unicode.org")
     override fun id(): String = name
 }

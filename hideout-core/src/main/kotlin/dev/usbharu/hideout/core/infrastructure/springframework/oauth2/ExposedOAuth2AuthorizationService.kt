@@ -19,7 +19,7 @@ package dev.usbharu.hideout.core.infrastructure.springframework.oauth2
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.readValue
-import dev.usbharu.hideout.application.external.Transaction
+import dev.usbharu.hideout.core.application.shared.Transaction
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq

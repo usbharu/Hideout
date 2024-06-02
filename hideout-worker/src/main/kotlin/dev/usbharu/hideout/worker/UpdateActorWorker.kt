@@ -17,7 +17,7 @@
 package dev.usbharu.hideout.worker
 
 import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
-import dev.usbharu.hideout.application.external.Transaction
+import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.external.job.UpdateActorTask
 import dev.usbharu.hideout.core.external.job.UpdateActorTaskDef
 import dev.usbharu.owl.consumer.AbstractTaskRunner

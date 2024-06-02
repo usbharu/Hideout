@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.domain.model.media
+package dev.usbharu.hideout.core.application.shared
 
-import java.net.URI
+import org.springframework.stereotype.Service
 
-data class Media(
-    val id: MediaId,
-    val name: MediaName,
-    val url: URI,
-    val remoteUrl: URI?,
-    val thumbnailUrl: URI?,
-    val type: FileType,
-    val mimeType: MimeType,
-    val blurHash: MediaBlurHash?,
-    val description: MediaDescription? = null,
-)
-
+@Service
+interface Transaction {
+    suspend fun <T> transaction(block: suspend () -> T): T
+    suspend fun <T> transaction(transactionLevel: Int, block: suspend () -> T): T
+}

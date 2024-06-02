@@ -14,12 +14,25 @@
  * limitations under the License.
  */
 
-package util
+package dev.usbharu.hideout.core.application.actor
 
 import dev.usbharu.hideout.core.application.shared.Transaction
+import dev.usbharu.hideout.core.domain.model.actor.Actor2Repository
+import dev.usbharu.hideout.core.domain.model.actor.ActorId
+import org.springframework.stereotype.Service
 
-object TestTransaction : Transaction {
-    override suspend fun <T> transaction(block: suspend () -> T): T = block()
+@Service
+class DeleteLocalActorApplicationService(
+    private val transaction: Transaction,
+    private val actor2Repository: Actor2Repository,
+) {
+    suspend fun delete(actorId: Long, executor: ActorId) {
+        transaction.transaction {
+            val id = ActorId(actorId)
+            val findById = actor2Repository.findById(id)!!
+            findById.delete()
+            actor2Repository.delete(findById)
+        }
 
-    override suspend fun <T> transaction(transactionLevel: Int, block: suspend () -> T): T = block()
+    }
 }

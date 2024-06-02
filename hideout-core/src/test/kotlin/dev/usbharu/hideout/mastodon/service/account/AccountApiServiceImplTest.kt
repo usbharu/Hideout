@@ -16,9 +16,9 @@
 
 package dev.usbharu.hideout.mastodon.service.account
 
-import dev.usbharu.hideout.application.external.Transaction
 import dev.usbharu.hideout.application.infrastructure.exposed.Page
 import dev.usbharu.hideout.application.infrastructure.exposed.PaginationList
+import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.service.media.MediaService
 import dev.usbharu.hideout.domain.mastodon.model.generated.Account
 import dev.usbharu.hideout.domain.mastodon.model.generated.Relationship

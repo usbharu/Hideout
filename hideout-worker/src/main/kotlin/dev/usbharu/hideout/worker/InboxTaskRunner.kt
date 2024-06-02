@@ -18,11 +18,10 @@ package dev.usbharu.hideout.worker
 
 import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.databind.ObjectMapper
-import dev.usbharu.hideout.activitypub.domain.model.objects.Object
 import dev.usbharu.hideout.activitypub.service.common.ActivityPubProcessContext
 import dev.usbharu.hideout.activitypub.service.common.ActivityPubProcessor
 import dev.usbharu.hideout.activitypub.service.objects.user.APUserService
-import dev.usbharu.hideout.application.external.Transaction
+import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.external.job.InboxTask
 import dev.usbharu.hideout.core.external.job.InboxTaskDef
 import dev.usbharu.hideout.util.RsaUtil

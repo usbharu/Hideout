@@ -16,11 +16,8 @@
 
 package dev.usbharu.hideout.application.service.init
 
-import dev.usbharu.hideout.application.external.Transaction
+import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.exception.NotInitException
-import dev.usbharu.hideout.core.domain.model.meta.Jwt
-import dev.usbharu.hideout.core.domain.model.meta.Meta
-import dev.usbharu.hideout.core.domain.model.meta.MetaRepository
 import org.springframework.stereotype.Service
 
 @Service

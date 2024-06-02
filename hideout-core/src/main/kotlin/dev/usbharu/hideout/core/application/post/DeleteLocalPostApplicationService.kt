@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.domain.model.media
+package dev.usbharu.hideout.core.application.post
 
-import java.net.URI
+import dev.usbharu.hideout.core.domain.model.post.Post2Repository
+import dev.usbharu.hideout.core.domain.model.post.PostId
+import org.springframework.stereotype.Service
 
-data class Media(
-    val id: MediaId,
-    val name: MediaName,
-    val url: URI,
-    val remoteUrl: URI?,
-    val thumbnailUrl: URI?,
-    val type: FileType,
-    val mimeType: MimeType,
-    val blurHash: MediaBlurHash?,
-    val description: MediaDescription? = null,
-)
-
+@Service
+class DeleteLocalPostApplicationService(private val postRepository: Post2Repository) {
+    suspend fun delete(postId: Long) {
+        val findById = postRepository.findById(PostId(postId))!!
+        findById.delete()
+        postRepository.save(findById)
+    }
+}
