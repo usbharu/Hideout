@@ -20,8 +20,6 @@ import dev.usbharu.hideout.SpringApplication
 import dev.usbharu.hideout.core.domain.model.emoji.CustomEmoji
 import dev.usbharu.hideout.core.domain.model.emoji.UnicodeEmoji
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.CustomEmojis
-import dev.usbharu.hideout.core.infrastructure.exposedrepository.Reactions
-import dev.usbharu.hideout.core.infrastructure.exposedrepository.toReaction
 import dev.usbharu.owl.producer.api.OwlProducer
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat

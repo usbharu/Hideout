@@ -17,7 +17,7 @@
 package dev.usbharu.hideout.core.infrastructure.springframework.oauth2
 
 import dev.usbharu.hideout.application.config.ApplicationConfig
-import dev.usbharu.hideout.application.external.Transaction
+import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.exception.resource.UserNotFoundException
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
 import kotlinx.coroutines.runBlocking

@@ -16,8 +16,6 @@
 
 package dev.usbharu.hideout.core.infrastructure.exposedrepository
 
-import dev.usbharu.hideout.core.domain.model.meta.Jwt
-import dev.usbharu.hideout.core.domain.model.meta.MetaRepository
 import org.jetbrains.exposed.sql.*
 import org.springframework.stereotype.Repository
 import java.util.*

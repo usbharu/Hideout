@@ -17,7 +17,7 @@
 package dev.usbharu.hideout.worker
 
 import dev.usbharu.hideout.activitypub.service.common.APRequestService
-import dev.usbharu.hideout.application.external.Transaction
+import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.external.job.DeliverAcceptTask
 import dev.usbharu.hideout.core.external.job.DeliverAcceptTaskDef
 import dev.usbharu.owl.consumer.AbstractTaskRunner

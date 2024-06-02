@@ -17,10 +17,9 @@
 package dev.usbharu.hideout.core.infrastructure.exposedrepository
 
 import dev.usbharu.hideout.application.service.id.IdGenerateService
+import dev.usbharu.hideout.core.domain.model.media.FileType
 import dev.usbharu.hideout.core.domain.model.media.MediaRepository
-import dev.usbharu.hideout.core.infrastructure.exposedrepository.Media.mimeType
-import dev.usbharu.hideout.core.service.media.FileType
-import dev.usbharu.hideout.core.service.media.MimeType
+import dev.usbharu.hideout.core.domain.model.media.MimeType
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.slf4j.Logger

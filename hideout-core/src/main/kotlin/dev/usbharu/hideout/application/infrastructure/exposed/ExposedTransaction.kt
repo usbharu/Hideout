@@ -16,7 +16,7 @@
 
 package dev.usbharu.hideout.application.infrastructure.exposed
 
-import dev.usbharu.hideout.application.external.Transaction
+import dev.usbharu.hideout.core.application.shared.Transaction
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.slf4j.MDCContext
 import org.jetbrains.exposed.sql.Slf4jSqlDebugLogger

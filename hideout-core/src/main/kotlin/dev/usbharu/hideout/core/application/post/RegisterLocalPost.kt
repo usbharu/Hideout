@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.domain.model.media
+package dev.usbharu.hideout.core.application.post
 
-import java.net.URI
+import dev.usbharu.hideout.core.domain.model.post.Visibility
 
-data class Media(
-    val id: MediaId,
-    val name: MediaName,
-    val url: URI,
-    val remoteUrl: URI?,
-    val thumbnailUrl: URI?,
-    val type: FileType,
-    val mimeType: MimeType,
-    val blurHash: MediaBlurHash?,
-    val description: MediaDescription? = null,
+data class RegisterLocalPost(
+    val actorId: Long,
+    val content: String,
+    val overview: String,
+    val visibility: Visibility,
+    val repostId: Long?,
+    val replyId: Long?,
+    val sensitive: Boolean,
+    val mediaIds: List<Long>,
 )
-

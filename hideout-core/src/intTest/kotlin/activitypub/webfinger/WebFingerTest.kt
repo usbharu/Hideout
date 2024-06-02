@@ -17,7 +17,7 @@
 package activitypub.webfinger
 
 import dev.usbharu.hideout.SpringApplication
-import dev.usbharu.hideout.application.external.Transaction
+import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.owl.producer.api.OwlProducer
 import kotlinx.coroutines.runBlocking
 import org.flywaydb.core.Flyway

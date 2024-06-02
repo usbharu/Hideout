@@ -18,8 +18,6 @@ package dev.usbharu.hideout.core.infrastructure.exposedrepository
 
 import dev.usbharu.hideout.application.service.id.IdGenerateService
 import dev.usbharu.hideout.core.domain.model.post.Visibility
-import dev.usbharu.hideout.core.domain.model.timeline.Timeline
-import dev.usbharu.hideout.core.domain.model.timeline.TimelineRepository
 import org.jetbrains.exposed.sql.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

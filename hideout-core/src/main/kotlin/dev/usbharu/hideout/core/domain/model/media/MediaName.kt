@@ -16,17 +16,5 @@
 
 package dev.usbharu.hideout.core.domain.model.media
 
-import java.net.URI
-
-data class Media(
-    val id: MediaId,
-    val name: MediaName,
-    val url: URI,
-    val remoteUrl: URI?,
-    val thumbnailUrl: URI?,
-    val type: FileType,
-    val mimeType: MimeType,
-    val blurHash: MediaBlurHash?,
-    val description: MediaDescription? = null,
-)
-
+@JvmInline
+value class MediaName(val name: String)

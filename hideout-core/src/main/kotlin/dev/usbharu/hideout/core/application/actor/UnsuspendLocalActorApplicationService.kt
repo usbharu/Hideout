@@ -14,12 +14,24 @@
  * limitations under the License.
  */
 
-package util
+package dev.usbharu.hideout.core.application.actor
 
 import dev.usbharu.hideout.core.application.shared.Transaction
+import dev.usbharu.hideout.core.domain.model.actor.Actor2Repository
+import dev.usbharu.hideout.core.domain.model.actor.ActorId
+import org.springframework.stereotype.Service
 
-object TestTransaction : Transaction {
-    override suspend fun <T> transaction(block: suspend () -> T): T = block()
+@Service
+class UnsuspendLocalActorApplicationService(
+    private val transaction: Transaction,
+    private val actor2Repository: Actor2Repository,
+) {
+    suspend fun unsuspend(actorId: Long, executor: Long) {
+        transaction.transaction {
+            val findById = actor2Repository.findById(ActorId(actorId))!!
 
-    override suspend fun <T> transaction(transactionLevel: Int, block: suspend () -> T): T = block()
+            findById.suspend = false
+        }
+
+    }
 }
