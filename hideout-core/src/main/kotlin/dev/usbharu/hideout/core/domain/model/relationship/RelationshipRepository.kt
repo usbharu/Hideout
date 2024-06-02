@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.domain.model.deletedActor
+package dev.usbharu.hideout.core.domain.model.relationship
 
-interface DeletedActorRepository {
-    suspend fun save(deletedActor: DeletedActor): DeletedActor
-    suspend fun delete(deletedActor: DeletedActor)
-    suspend fun findById(id: DeletedActorId): DeletedActor?
-    suspend fun findByNameAndDomain(name: String, domain: String): DeletedActor?
+interface RelationshipRepository {
+    suspend fun save(relationship: Relationship): Relationship
+    suspend fun delete(relationship: Relationship)
 }

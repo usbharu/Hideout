@@ -44,5 +44,4 @@ object RsaUtil {
     }
 
     fun decodeRsaPrivateKey(encoded: String): RSAPrivateKey = decodeRsaPrivateKey(Base64Util.decode(encoded))
-
 }

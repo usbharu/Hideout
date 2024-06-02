@@ -19,22 +19,22 @@ package dev.usbharu.hideout.core.application.actor
 import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.application.service.id.IdGenerateService
 import dev.usbharu.hideout.core.application.shared.Transaction
-import dev.usbharu.hideout.core.domain.model.actor.Actor2Repository
+import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.instance.InstanceRepository
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetail
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
 import dev.usbharu.hideout.core.domain.service.actor.local.LocalActorDomainService
 import dev.usbharu.hideout.core.domain.service.userdetail.UserDetailDomainService
-import dev.usbharu.hideout.core.infrastructure.factory.Actor2FactoryImpl
+import dev.usbharu.hideout.core.infrastructure.factory.ActorFactoryImpl
 import org.springframework.stereotype.Service
 
 @Service
 class RegisterLocalActorApplicationService(
     private val transaction: Transaction,
     private val actorDomainService: LocalActorDomainService,
-    private val actor2Repository: Actor2Repository,
-    private val actor2FactoryImpl: Actor2FactoryImpl,
+    private val actorRepository: ActorRepository,
+    private val actorFactoryImpl: ActorFactoryImpl,
     private val instanceRepository: InstanceRepository,
     private val applicationConfig: ApplicationConfig,
     private val userDetailDomainService: UserDetailDomainService,
@@ -44,26 +44,23 @@ class RegisterLocalActorApplicationService(
     suspend fun register(registerLocalActor: RegisterLocalActor) {
         transaction.transaction {
             if (actorDomainService.usernameAlreadyUse(registerLocalActor.name)) {
-                //todo 適切な例外を考える
+                // todo 適切な例外を考える
                 throw Exception("Username already exists")
             }
             val instance = instanceRepository.findByUrl(applicationConfig.url.toURI())!!
 
-
-            val actor = actor2FactoryImpl.createLocal(
+            val actor = actorFactoryImpl.createLocal(
                 registerLocalActor.name,
                 actorDomainService.generateKeyPair(),
                 instance.id
             )
-            actor2Repository.save(actor)
+            actorRepository.save(actor)
             val userDetail = UserDetail.create(
                 id = UserDetailId(idGenerateService.generateId()),
                 actorId = actor.id,
                 password = userDetailDomainService.hashPassword(registerLocalActor.password),
             )
             userDetailRepository.save(userDetail)
-
         }
-
     }
 }

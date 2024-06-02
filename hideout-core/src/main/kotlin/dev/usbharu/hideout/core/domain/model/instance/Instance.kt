@@ -37,7 +37,6 @@ class Instance(
     val createdAt: Instant,
 ) : DomainEventStorable() {
 
-
     var iconUrl = iconUrl
         set(value) {
             addDomainEvent(InstanceEventFactory(this).createEvent(InstanceEvent.update))
@@ -56,6 +55,4 @@ class Instance(
     override fun hashCode(): Int {
         return id.hashCode()
     }
-
-
 }

@@ -16,11 +16,11 @@
 
 package dev.usbharu.hideout.core.domain.event.actor
 
-import dev.usbharu.hideout.core.domain.model.actor.Actor2
+import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEvent
 import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventBody
 
-class ActorDomainEventFactory(private val actor: Actor2) {
+class ActorDomainEventFactory(private val actor: Actor) {
     fun createEvent(actorEvent: ActorEvent): DomainEvent {
         return DomainEvent.create(
             actorEvent.eventName,
@@ -30,7 +30,7 @@ class ActorDomainEventFactory(private val actor: Actor2) {
     }
 }
 
-class ActorEventBody(actor: Actor2) : DomainEventBody(
+class ActorEventBody(actor: Actor) : DomainEventBody(
     mapOf(
         "actor" to actor
     )

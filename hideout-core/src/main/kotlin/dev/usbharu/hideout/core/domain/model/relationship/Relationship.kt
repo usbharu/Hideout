@@ -21,7 +21,7 @@ import dev.usbharu.hideout.core.domain.event.relationship.RelationshipEventFacto
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventStorable
 
-class Relationship2(
+class Relationship(
     val actorId: ActorId,
     val targetActorId: ActorId,
     following: Boolean,
@@ -42,7 +42,6 @@ class Relationship2(
         private set
     var mutingFollowRequest: Boolean = mutingFollowRequest
         private set
-
 
     fun follow() {
         require(blocking.not())

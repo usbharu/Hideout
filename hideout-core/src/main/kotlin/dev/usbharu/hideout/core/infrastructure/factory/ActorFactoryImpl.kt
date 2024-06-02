@@ -26,25 +26,23 @@ import java.net.URI
 import java.time.Instant
 
 @Component
-class Actor2FactoryImpl(
+class ActorFactoryImpl(
     private val idGenerateService: IdGenerateService,
-    private val actorScreenNameFactory: ActorScreenNameFactoryImpl,
-    private val actorDescriptionFactory: ActorDescriptionFactoryImpl,
     private val applicationConfig: ApplicationConfig,
-) : Actor2.Actor2Factory() {
+) {
     suspend fun createLocal(
         name: String,
         keyPair: Pair<ActorPublicKey, ActorPrivateKey>,
         instanceId: InstanceId,
-    ): Actor2 {
+    ): Actor {
         val actorName = ActorName(name)
         val userUrl = "${applicationConfig.url}/users/${actorName.name}"
-        return super.internalCreate(
+        return Actor(
             id = ActorId(idGenerateService.generateId()),
             name = actorName,
             domain = Domain(applicationConfig.url.host),
-            screenName = actorScreenNameFactory.create(name),
-            description = actorDescriptionFactory.create(""),
+            screenName = ActorScreenName(name),
+            description = ActorDescription(""),
             inbox = URI.create("$userUrl/inbox"),
             outbox = URI.create("$userUrl/outbox"),
             url = applicationConfig.url.toURI(),
@@ -59,8 +57,11 @@ class Actor2FactoryImpl(
             followersCount = ActorRelationshipCount(0),
             followingCount = ActorRelationshipCount(0),
             postsCount = ActorPostsCount(0),
-            lastPostDate = null,
-            suspend = false
+            lastPostAt = null,
+            suspend = false,
+            emojiIds = emptySet()
         )
     }
 }
+
+// todo なんか色々おかしいので直す

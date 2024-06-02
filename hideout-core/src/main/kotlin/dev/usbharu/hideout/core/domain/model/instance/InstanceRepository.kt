@@ -19,7 +19,6 @@ package dev.usbharu.hideout.core.domain.model.instance
 import java.net.URI
 
 interface InstanceRepository {
-    suspend fun generateId(): InstanceId
     suspend fun save(instance: Instance): Instance
     suspend fun findById(id: InstanceId): Instance?
     suspend fun delete(instance: Instance)

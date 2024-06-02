@@ -17,22 +17,21 @@
 package dev.usbharu.hideout.core.application.actor
 
 import dev.usbharu.hideout.core.application.shared.Transaction
-import dev.usbharu.hideout.core.domain.model.actor.Actor2Repository
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
+import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import org.springframework.stereotype.Service
 
 @Service
 class DeleteLocalActorApplicationService(
     private val transaction: Transaction,
-    private val actor2Repository: Actor2Repository,
+    private val actorRepository: ActorRepository,
 ) {
     suspend fun delete(actorId: Long, executor: ActorId) {
         transaction.transaction {
             val id = ActorId(actorId)
-            val findById = actor2Repository.findById(id)!!
+            val findById = actorRepository.findById(id)!!
             findById.delete()
-            actor2Repository.delete(findById)
+            actorRepository.delete(findById)
         }
-
     }
 }

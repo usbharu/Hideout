@@ -18,16 +18,16 @@ package dev.usbharu.hideout.core.application.post
 
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.media.MediaId
-import dev.usbharu.hideout.core.domain.model.post.Post2Repository
 import dev.usbharu.hideout.core.domain.model.post.PostId
 import dev.usbharu.hideout.core.domain.model.post.PostOverview
+import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.infrastructure.factory.PostContentFactoryImpl
 import org.springframework.stereotype.Service
 
 @Service
 class UpdateLocalNoteApplicationService(
     private val transaction: Transaction,
-    private val postRepository: Post2Repository,
+    private val postRepository: PostRepository,
     private val postContentFactoryImpl: PostContentFactoryImpl,
 ) {
     suspend fun update(updateLocalNote: UpdateLocalNote) {

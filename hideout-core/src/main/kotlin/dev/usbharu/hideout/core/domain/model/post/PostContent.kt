@@ -29,7 +29,9 @@ class PostContent private constructor(val text: String, val content: String, val
     abstract class PostContentFactory {
         protected suspend fun create(text: String, content: String, emojiIds: List<EmojiId>): PostContent {
             return PostContent(
-                text, content, emojiIds
+                text,
+                content,
+                emojiIds
             )
         }
     }

@@ -16,69 +16,67 @@
 
 package dev.usbharu.hideout.core.infrastructure.exposedrepository
 
-import dev.usbharu.hideout.application.service.id.IdGenerateService
-import dev.usbharu.hideout.core.domain.model.instance.InstanceRepository
+import dev.usbharu.hideout.core.domain.model.instance.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.javatime.timestamp
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
+import java.net.URI
 import dev.usbharu.hideout.core.domain.model.instance.Instance as InstanceEntity
 
 @Repository
-class InstanceRepositoryImpl(private val idGenerateService: IdGenerateService) : InstanceRepository,
+class InstanceRepositoryImpl : InstanceRepository,
     AbstractRepository() {
     override val logger: Logger
         get() = Companion.logger
 
-    override suspend fun generateId(): Long = idGenerateService.generateId()
-
     override suspend fun save(instance: InstanceEntity): InstanceEntity = query {
-        if (Instance.selectAll().where { Instance.id.eq(instance.id) }.forUpdate().empty()) {
+        if (Instance.selectAll().where { Instance.id.eq(instance.id.instanceId) }.forUpdate().empty()) {
             Instance.insert {
-                it[id] = instance.id
-                it[name] = instance.name
-                it[description] = instance.description
-                it[url] = instance.url
-                it[iconUrl] = instance.iconUrl
-                it[sharedInbox] = instance.sharedInbox
-                it[software] = instance.software
-                it[version] = instance.version
+                it[id] = instance.id.instanceId
+                it[name] = instance.name.name
+                it[description] = instance.description.description
+                it[url] = instance.url.toString()
+                it[iconUrl] = instance.iconUrl.toString()
+                it[sharedInbox] = instance.sharedInbox?.toString()
+                it[software] = instance.software.software
+                it[version] = instance.version.version
                 it[isBlocked] = instance.isBlocked
                 it[isMuted] = instance.isMuted
-                it[moderationNote] = instance.moderationNote
+                it[moderationNote] = instance.moderationNote.note
                 it[createdAt] = instance.createdAt
             }
         } else {
-            Instance.update({ Instance.id eq instance.id }) {
-                it[name] = instance.name
-                it[description] = instance.description
-                it[url] = instance.url
-                it[iconUrl] = instance.iconUrl
-                it[sharedInbox] = instance.sharedInbox
-                it[software] = instance.software
-                it[version] = instance.version
+            Instance.update({ Instance.id eq instance.id.instanceId }) {
+                it[name] = instance.name.name
+                it[description] = instance.description.description
+                it[url] = instance.url.toString()
+                it[iconUrl] = instance.iconUrl.toString()
+                it[sharedInbox] = instance.sharedInbox?.toString()
+                it[software] = instance.software.software
+                it[version] = instance.version.version
                 it[isBlocked] = instance.isBlocked
                 it[isMuted] = instance.isMuted
-                it[moderationNote] = instance.moderationNote
+                it[moderationNote] = instance.moderationNote.note
                 it[createdAt] = instance.createdAt
             }
         }
         return@query instance
     }
 
-    override suspend fun findById(id: Long): InstanceEntity? = query {
-        return@query Instance.selectAll().where { Instance.id eq id }
+    override suspend fun findById(id: InstanceId): InstanceEntity? = query {
+        return@query Instance.selectAll().where { Instance.id eq id.instanceId }
             .singleOrNull()?.toInstance()
     }
 
     override suspend fun delete(instance: InstanceEntity): Unit = query {
-        Instance.deleteWhere { id eq instance.id }
+        Instance.deleteWhere { id eq instance.id.instanceId }
     }
 
-    override suspend fun findByUrl(url: String): dev.usbharu.hideout.core.domain.model.instance.Instance? = query {
-        return@query Instance.selectAll().where { Instance.url eq url }.singleOrNull()?.toInstance()
+    override suspend fun findByUrl(url: URI): dev.usbharu.hideout.core.domain.model.instance.Instance? = query {
+        return@query Instance.selectAll().where { Instance.url eq url.toString() }.singleOrNull()?.toInstance()
     }
 
     companion object {
@@ -88,17 +86,17 @@ class InstanceRepositoryImpl(private val idGenerateService: IdGenerateService) :
 
 fun ResultRow.toInstance(): InstanceEntity {
     return InstanceEntity(
-        id = this[Instance.id],
-        name = this[Instance.name],
-        description = this[Instance.description],
-        url = this[Instance.url],
-        iconUrl = this[Instance.iconUrl],
-        sharedInbox = this[Instance.sharedInbox],
-        software = this[Instance.software],
-        version = this[Instance.version],
+        id = InstanceId(this[Instance.id]),
+        name = InstanceName(this[Instance.name]),
+        description = InstanceDescription(this[Instance.description]),
+        url = URI.create(this[Instance.url]),
+        iconUrl = URI.create(this[Instance.iconUrl]),
+        sharedInbox = this[Instance.sharedInbox]?.let { URI.create(it) },
+        software = InstanceSoftware(this[Instance.software]),
+        version = InstanceVersion(this[Instance.version]),
         isBlocked = this[Instance.isBlocked],
         isMuted = this[Instance.isMuted],
-        moderationNote = this[Instance.moderationNote],
+        moderationNote = InstanceModerationNote(this[Instance.moderationNote]),
         createdAt = this[Instance.createdAt]
     )
 }

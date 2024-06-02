@@ -18,13 +18,14 @@ package dev.usbharu.hideout.core.domain.model.actor
 
 import dev.usbharu.hideout.core.domain.event.actor.ActorDomainEventFactory
 import dev.usbharu.hideout.core.domain.event.actor.ActorEvent.*
+import dev.usbharu.hideout.core.domain.model.emoji.EmojiId
 import dev.usbharu.hideout.core.domain.model.instance.InstanceId
 import dev.usbharu.hideout.core.domain.model.shared.Domain
 import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventStorable
 import java.net.URI
 import java.time.Instant
 
-class Actor2 private constructor(
+class Actor(
     val id: ActorId,
     val name: ActorName,
     val domain: Domain,
@@ -49,6 +50,8 @@ class Actor2 private constructor(
     var lastUpdateAt: Instant = createdAt,
     alsoKnownAs: Set<ActorId> = emptySet(),
     moveTo: ActorId? = null,
+    emojiIds: Set<EmojiId>,
+    deleted: Boolean,
 ) : DomainEventStorable() {
 
     var suspend = suspend
@@ -74,9 +77,8 @@ class Actor2 private constructor(
             field = value
         }
 
-
-    val emojis
-        get() = screenName.emojis + description.emojis
+    var emojis = emojiIds
+        private set
 
     var description = description
         set(value) {
@@ -89,62 +91,28 @@ class Actor2 private constructor(
             field = value
         }
 
+    var deleted = deleted
+        private set
 
     fun delete() {
-        addDomainEvent(ActorDomainEventFactory(this).createEvent(delete))
+        if (deleted.not()) {
+            addDomainEvent(ActorDomainEventFactory(this).createEvent(delete))
+            screenName = ActorScreenName.empty
+            description = ActorDescription.empty
+            emojis = emptySet()
+            lastPostAt = null
+            postsCount = ActorPostsCount.ZERO
+            followersCount = null
+            followingCount = null
+        }
+    }
+
+    fun restore() {
+        deleted = false
+        checkUpdate()
     }
 
     fun checkUpdate() {
         addDomainEvent(ActorDomainEventFactory(this).createEvent(checkUpdate))
-    }
-
-    abstract class Actor2Factory {
-        protected suspend fun internalCreate(
-            id: ActorId,
-            name: ActorName,
-            domain: Domain,
-            screenName: ActorScreenName,
-            description: ActorDescription,
-            inbox: URI,
-            outbox: URI,
-            url: URI,
-            publicKey: ActorPublicKey,
-            privateKey: ActorPrivateKey? = null,
-            createdAt: Instant,
-            keyId: ActorKeyId,
-            followersEndpoint: URI,
-            followingEndpoint: URI,
-            instance: InstanceId,
-            locked: Boolean,
-            followersCount: ActorRelationshipCount,
-            followingCount: ActorRelationshipCount,
-            postsCount: ActorPostsCount,
-            lastPostDate: Instant? = null,
-            suspend: Boolean,
-        ): Actor2 {
-            return Actor2(
-                id = id,
-                name = name,
-                domain = domain,
-                screenName = screenName,
-                description = description,
-                inbox = inbox,
-                outbox = outbox,
-                url = url,
-                publicKey = publicKey,
-                privateKey = privateKey,
-                createdAt = createdAt,
-                keyId = keyId,
-                followersEndpoint = followersEndpoint,
-                followingEndpoint = followingEndpoint,
-                instance = instance,
-                locked = locked,
-                followersCount = followersCount,
-                followingCount = followingCount,
-                postsCount = postsCount,
-                lastPostAt = lastPostDate,
-                suspend = suspend
-            )
-        }
     }
 }
