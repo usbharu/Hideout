@@ -14,23 +14,13 @@
  * limitations under the License.
  */
 
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
-}
-rootProject.name = "hideout"
+package dev.usbharu.hideout.core.config
 
-includeBuild("hideout-core")
-includeBuild("hideout-worker")
-includeBuild("hideout-mastodon")
+import org.springframework.boot.context.properties.ConfigurationProperties
+import java.net.URL
 
-dependencyResolutionManagement {
-    repositories {
-        mavenCentral()
-    }
-
-    versionCatalogs {
-        create("libs") {
-            from(files("libs.versions.toml"))
-        }
-    }
-}
+@ConfigurationProperties("hideout")
+data class ApplicationConfig(
+    val url: URL,
+    val private: Boolean = true,
+)

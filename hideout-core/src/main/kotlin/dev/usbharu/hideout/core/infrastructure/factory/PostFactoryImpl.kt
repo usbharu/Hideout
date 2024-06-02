@@ -16,7 +16,7 @@
 
 package dev.usbharu.hideout.core.infrastructure.factory
 
-import dev.usbharu.hideout.application.config.ApplicationConfig
+import dev.usbharu.hideout.core.config.ApplicationConfig
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.actor.ActorName
 import dev.usbharu.hideout.core.domain.model.media.MediaId

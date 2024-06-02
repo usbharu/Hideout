@@ -14,23 +14,9 @@
  * limitations under the License.
  */
 
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
-}
-rootProject.name = "hideout"
+package dev.usbharu.hideout.generate
 
-includeBuild("hideout-core")
-includeBuild("hideout-worker")
-includeBuild("hideout-mastodon")
-
-dependencyResolutionManagement {
-    repositories {
-        mavenCentral()
-    }
-
-    versionCatalogs {
-        create("libs") {
-            from(files("libs.versions.toml"))
-        }
-    }
-}
+@MustBeDocumented
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.VALUE_PARAMETER)
+annotation class JsonOrFormBind

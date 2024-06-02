@@ -16,8 +16,8 @@
 
 package dev.usbharu.hideout.core.application.actor
 
-import dev.usbharu.hideout.application.config.ApplicationConfig
 import dev.usbharu.hideout.core.application.shared.Transaction
+import dev.usbharu.hideout.core.config.ApplicationConfig
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.instance.InstanceRepository
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetail

@@ -4,14 +4,12 @@ import com.github.jk1.license.importer.DependencyDataImporter
 import com.github.jk1.license.importer.XmlReportImporter
 import com.github.jk1.license.render.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.detekt)
     alias(libs.plugins.spring.boot)
     alias(libs.plugins.kotlin.spring)
-    alias(libs.plugins.openapi.generator)
     alias(libs.plugins.kover)
     alias(libs.plugins.license.report)
 
@@ -100,26 +98,6 @@ tasks.withType<KotlinCompile> {
 
 tasks.clean {
     delete += listOf("$rootDir/src/main/resources/static")
-}
-
-tasks.create<GenerateTask>("openApiGenerateMastodonCompatibleApi", GenerateTask::class) {
-    generatorName.set("kotlin-spring")
-    inputSpec.set("$rootDir/src/main/resources/openapi/mastodon.yaml")
-    outputDir.set("$buildDir/generated/sources/mastodon")
-    apiPackage.set("dev.usbharu.hideout.controller.mastodon.generated")
-    modelPackage.set("dev.usbharu.hideout.domain.mastodon.model.generated")
-    configOptions.put("interfaceOnly", "true")
-    configOptions.put("useSpringBoot3", "true")
-    configOptions.put("reactive", "true")
-    additionalProperties.put("useTags", "true")
-
-    importMappings.put("org.springframework.core.io.Resource", "org.springframework.web.multipart.MultipartFile")
-    typeMappings.put("org.springframework.core.io.Resource", "org.springframework.web.multipart.MultipartFile")
-    schemaMappings.put(
-        "StatusesRequest",
-        "dev.usbharu.hideout.mastodon.interfaces.api.status.StatusesRequest"
-    )
-    templateDir.set("$rootDir/templates")
 }
 
 repositories {
