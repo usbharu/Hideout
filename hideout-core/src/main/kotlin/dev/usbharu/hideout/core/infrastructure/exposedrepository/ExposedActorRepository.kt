@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.core.infrastructure.exposedrepository
 
+import dev.usbharu.hideout.application.infrastructure.exposed.QueryMapper
 import dev.usbharu.hideout.core.domain.model.actor.*
 import dev.usbharu.hideout.core.domain.model.shared.Domain
 import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventPublisher
@@ -12,18 +13,22 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 
 @Repository
-class ExposedActor2Repository(override val domainEventPublisher: DomainEventPublisher) : AbstractRepository(),
-    DomainEventPublishableRepository<Actor2>, Actor2Repository {
+class ExposedActorRepository(
+    private val actorQueryMapper: QueryMapper<Actor>,
+    override val domainEventPublisher: DomainEventPublisher,
+) : AbstractRepository(),
+    DomainEventPublishableRepository<Actor>,
+    ActorRepository {
     override val logger: Logger
         get() = Companion.logger
 
     companion object {
-        private val logger = LoggerFactory.getLogger(ExposedActor2Repository::class.java)
+        private val logger = LoggerFactory.getLogger(ExposedActorRepository::class.java)
     }
 
-    override suspend fun save(actor: Actor2): Actor2 {
+    override suspend fun save(actor: Actor): Actor {
         query {
-            Actors2.upsert {
+            Actors.upsert {
                 it[id] = actor.id.id
                 it[name] = actor.name.name
                 it[domain] = actor.domain.domain
@@ -49,32 +54,41 @@ class ExposedActor2Repository(override val domainEventPublisher: DomainEventPubl
                 it[moveTo] = actor.moveTo?.id
                 it[emojis] = actor.emojis.joinToString(",")
             }
-            Actors2AlsoKnownAs.deleteWhere {
+            ActorsAlsoKnownAs.deleteWhere {
                 actorId eq actor.id.id
             }
-            Actors2AlsoKnownAs.batchInsert(actor.alsoKnownAs) {
-                this[Actors2AlsoKnownAs.actorId] = actor.id.id
-                this[Actors2AlsoKnownAs.alsoKnownAs] = it.id
+            ActorsAlsoKnownAs.batchInsert(actor.alsoKnownAs) {
+                this[ActorsAlsoKnownAs.actorId] = actor.id.id
+                this[ActorsAlsoKnownAs.alsoKnownAs] = it.id
             }
         }
         update(actor)
         return actor
     }
 
-    override suspend fun delete(actor: Actor2) {
+    override suspend fun delete(actor: Actor) {
         query {
-            Actors2.deleteWhere { id eq actor.id.id }
-            Actors2AlsoKnownAs.deleteWhere { actorId eq actor.id.id }
+            Actors.deleteWhere { id eq actor.id.id }
+            ActorsAlsoKnownAs.deleteWhere { actorId eq actor.id.id }
         }
         update(actor)
     }
 
-    override suspend fun findById(id: ActorId): Actor2? {
-        TODO()
+    override suspend fun findById(id: ActorId): Actor? {
+        return query {
+            Actors
+                .leftJoin(ActorsAlsoKnownAs, onColumn = { Actors.id }, otherColumn = { actorId })
+                .selectAll()
+                .where {
+                    Actors.id eq id.id
+                }
+                .let(actorQueryMapper::map)
+                .first()
+        }
     }
 }
 
-object Actors2 : Table("actors") {
+object Actors : Table("actors") {
     val id = long("id")
     val name = varchar("name", ActorName.length)
     val domain = varchar("domain", Domain.length)
@@ -99,6 +113,7 @@ object Actors2 : Table("actors") {
     val suspend = bool("suspend")
     val moveTo = long("move_to").references(id).nullable()
     val emojis = varchar("emojis", 3000)
+    val deleted = bool("deleted")
 
     override val primaryKey = PrimaryKey(id)
 
@@ -107,10 +122,10 @@ object Actors2 : Table("actors") {
     }
 }
 
-object Actors2AlsoKnownAs : Table("actor_alsoknwonas") {
+object ActorsAlsoKnownAs : Table("actor_alsoknwonas") {
     val actorId =
-        long("actor_id").references(Actors2.id, onDelete = ReferenceOption.CASCADE, onUpdate = ReferenceOption.CASCADE)
-    val alsoKnownAs = long("alsoKnownAs").references(Actors2.id, ReferenceOption.CASCADE, ReferenceOption.CASCADE)
+        long("actor_id").references(Actors.id, onDelete = ReferenceOption.CASCADE, onUpdate = ReferenceOption.CASCADE)
+    val alsoKnownAs = long("alsoKnownAs").references(Actors.id, ReferenceOption.CASCADE, ReferenceOption.CASCADE)
 
     override val primaryKey: PrimaryKey = PrimaryKey(actorId, alsoKnownAs)
 }

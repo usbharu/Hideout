@@ -16,15 +16,10 @@
 
 package dev.usbharu.hideout.core.domain.model.actor
 
-import dev.usbharu.hideout.core.domain.model.emoji.EmojiId
-
-
-class ActorDescription private constructor(val description: String, val emojis: List<EmojiId>) {
+@JvmInline
+value class ActorDescription(val description: String) {
     companion object {
         val length = 10000
-    }
-    abstract class ActorDescriptionFactory {
-        protected suspend fun create(description: String, emojis: List<EmojiId>): ActorDescription =
-            ActorDescription(description, emojis)
+        val empty = ActorDescription("")
     }
 }

@@ -21,7 +21,7 @@ import dev.usbharu.hideout.application.service.id.IdGenerateService
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.actor.ActorName
 import dev.usbharu.hideout.core.domain.model.media.MediaId
-import dev.usbharu.hideout.core.domain.model.post.Post2
+import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostId
 import dev.usbharu.hideout.core.domain.model.post.PostOverview
 import dev.usbharu.hideout.core.domain.model.post.Visibility
@@ -34,7 +34,7 @@ class PostFactoryImpl(
     private val idGenerateService: IdGenerateService,
     private val postContentFactoryImpl: PostContentFactoryImpl,
     private val applicationConfig: ApplicationConfig,
-) : Post2.PostFactory() {
+) : Post.PostFactory() {
     suspend fun createLocal(
         actorId: ActorId,
         actorName: ActorName,
@@ -45,7 +45,7 @@ class PostFactoryImpl(
         replyId: PostId?,
         sensitive: Boolean,
         mediaIds: List<MediaId>,
-    ): Post2 {
+    ): Post {
         val id = idGenerateService.generateId()
         val url = URI.create(applicationConfig.url.toString() + "/users/" + actorName + "/posts/" + id)
         return super.create(

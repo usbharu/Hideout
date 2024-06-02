@@ -29,4 +29,3 @@ data class Media(
     val blurHash: MediaBlurHash?,
     val description: MediaDescription? = null,
 )
-

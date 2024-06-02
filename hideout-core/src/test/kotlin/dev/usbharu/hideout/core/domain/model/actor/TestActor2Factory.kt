@@ -7,7 +7,7 @@ import kotlinx.coroutines.runBlocking
 import java.net.URI
 import java.time.Instant
 
-object TestActor2Factory : Actor2.Actor2Factory() {
+object TestActor2Factory : Actor.Actor2Factory() {
     private val idGenerateService = TwitterSnowflakeIdGenerateService
 
     fun create(
@@ -31,8 +31,8 @@ object TestActor2Factory : Actor2.Actor2Factory() {
         followingCount: Int = 0,
         postCount: Int = 0,
         lastPostDate: Instant? = null,
-        suspend: Boolean = false
-    ): Actor2 {
+        suspend: Boolean = false,
+    ): Actor {
         return runBlocking {
             super.internalCreate(
                 id = ActorId(id),

@@ -16,32 +16,16 @@
 
 package dev.usbharu.hideout.core.interfaces.api.auth
 
-import dev.usbharu.hideout.application.config.ApplicationConfig
-import dev.usbharu.hideout.application.config.CaptchaConfig
-import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.PostMapping
 
-@Controller
-class AuthController(
-    private val authApiService: AuthApiService,
-    private val captchaConfig: CaptchaConfig,
-    private val applicationConfig: ApplicationConfig
-) {
+interface AuthController {
     @GetMapping("/auth/sign_up")
-    fun signUp(model: Model): String {
-        model.addAttribute("siteKey", captchaConfig.reCaptchaSiteKey)
-        model.addAttribute("applicationConfig", applicationConfig)
-        return "sign_up"
-    }
+    fun signUp(model: Model): String
 
     @PostMapping("/auth/sign_up")
-    suspend fun signUp(@Validated @ModelAttribute signUpForm: SignUpForm): String {
-
-
-        return "redirect:" + registerAccount.url
-    }
+    suspend fun signUp(@Validated @ModelAttribute signUpForm: SignUpForm): String
 }

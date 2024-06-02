@@ -17,8 +17,8 @@
 package dev.usbharu.hideout.core.application.actor
 
 import dev.usbharu.hideout.core.application.shared.Transaction
-import dev.usbharu.hideout.core.domain.model.actor.Actor2Repository
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
+import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.service.actor.local.AccountMigrationCheck.*
 import dev.usbharu.hideout.core.domain.service.actor.local.LocalActorMigrationCheckDomainService
 import org.springframework.stereotype.Service
@@ -26,24 +26,23 @@ import org.springframework.stereotype.Service
 @Service
 class MigrationLocalActorApplicationService(
     private val transaction: Transaction,
-    private val actor2Repository: Actor2Repository,
+    private val actorRepository: ActorRepository,
     private val localActorMigrationCheckDomainService: LocalActorMigrationCheckDomainService,
 ) {
     suspend fun migration(from: Long, to: Long, executor: ActorId) {
         transaction.transaction<Unit> {
-
             val fromActorId = ActorId(from)
             val toActorId = ActorId(to)
 
-            val fromActor = actor2Repository.findById(fromActorId)!!
-            val toActor = actor2Repository.findById(toActorId)!!
+            val fromActor = actorRepository.findById(fromActorId)!!
+            val toActor = actorRepository.findById(toActorId)!!
 
             val canAccountMigration = localActorMigrationCheckDomainService.canAccountMigration(fromActor, toActor)
             when (canAccountMigration) {
                 is AlreadyMoved -> TODO()
                 is CanAccountMigration -> {
                     fromActor.moveTo = toActorId
-                    actor2Repository.save(fromActor)
+                    actorRepository.save(fromActor)
                 }
 
                 is CircularReferences -> TODO()
@@ -51,6 +50,5 @@ class MigrationLocalActorApplicationService(
                 is AlsoKnownAsNotFound -> TODO()
             }
         }
-
     }
 }

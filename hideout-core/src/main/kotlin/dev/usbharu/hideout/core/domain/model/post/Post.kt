@@ -24,7 +24,7 @@ import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventStorable
 import java.net.URI
 import java.time.Instant
 
-class Post2 private constructor(
+class Post private constructor(
     val id: PostId,
     actorId: ActorId,
     overview: PostOverview? = null,
@@ -143,7 +143,6 @@ class Post2 private constructor(
             content = PostContent.empty
             overview = null
             mediaIds = emptyList()
-
         }
         deleted = true
     }
@@ -157,6 +156,7 @@ class Post2 private constructor(
         this.content = content
         this.overview = overview
         this.mediaIds = mediaIds
+        checkUpdate()
     }
 
     var hide = hide
@@ -182,7 +182,7 @@ class Post2 private constructor(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as Post2
+        other as Post
 
         return id == other.id
     }
@@ -207,8 +207,8 @@ class Post2 private constructor(
             deleted: Boolean,
             mediaIds: List<MediaId>,
             hide: Boolean,
-        ): Post2 {
-            return Post2(
+        ): Post {
+            return Post(
                 id = id,
                 actorId = actorId,
                 overview = overview,

@@ -24,4 +24,8 @@ value class ActorPostsCount(val postsCount: Int) {
 
     operator fun inc() = ActorPostsCount(postsCount + 1)
     operator fun dec() = ActorPostsCount(postsCount - 1)
+
+    companion object {
+        val ZERO = ActorPostsCount(0)
+    }
 }

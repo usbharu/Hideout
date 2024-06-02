@@ -16,10 +16,10 @@
 
 package dev.usbharu.hideout.core.domain.service.actor.local
 
-import dev.usbharu.hideout.core.domain.model.actor.Actor2
+import dev.usbharu.hideout.core.domain.model.actor.Actor
 
 interface LocalActorMigrationCheckDomainService {
-    suspend fun canAccountMigration(from: Actor2, to: Actor2): AccountMigrationCheck
+    suspend fun canAccountMigration(from: Actor, to: Actor): AccountMigrationCheck
 }
 
 sealed class AccountMigrationCheck(

@@ -16,27 +16,26 @@
 
 package dev.usbharu.hideout.core.application.post
 
-import dev.usbharu.hideout.core.domain.model.actor.Actor2Repository
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
+import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.media.MediaId
-import dev.usbharu.hideout.core.domain.model.post.Post2Repository
 import dev.usbharu.hideout.core.domain.model.post.PostId
 import dev.usbharu.hideout.core.domain.model.post.PostOverview
+import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.infrastructure.factory.PostFactoryImpl
 import org.springframework.stereotype.Service
 
 @Service
 class RegisterLocalPostApplicationService(
     private val postFactory: PostFactoryImpl,
-    private val actor2Repository: Actor2Repository,
-    private val postRepository: Post2Repository,
+    private val actorRepository: ActorRepository,
+    private val postRepository: PostRepository,
 ) {
     suspend fun register(registerLocalPost: RegisterLocalPost) {
-
         val actorId = ActorId(registerLocalPost.actorId)
         val post = postFactory.createLocal(
             actorId,
-            actor2Repository.findById(actorId)!!.name,
+            actorRepository.findById(actorId)!!.name,
             PostOverview(registerLocalPost.overview),
             registerLocalPost.content,
             registerLocalPost.visibility,
