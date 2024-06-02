@@ -18,6 +18,10 @@ package dev.usbharu.hideout.core.domain.model.shared
 
 @JvmInline
 value class Domain(val domain: String) {
+    init {
+        require(domain.length <= length)
+    }
+
     companion object {
         val length = 1000
     }

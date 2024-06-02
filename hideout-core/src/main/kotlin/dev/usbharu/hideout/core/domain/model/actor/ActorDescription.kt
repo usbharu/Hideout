@@ -16,8 +16,10 @@
 
 package dev.usbharu.hideout.core.domain.model.actor
 
-@JvmInline
-value class ActorDescription(val description: String) {
+
+class ActorDescription(description: String) {
+    val description: String = description.take(length)
+
     companion object {
         val length = 10000
         val empty = ActorDescription("")

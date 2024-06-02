@@ -22,9 +22,6 @@ value class ActorPostsCount(val postsCount: Int) {
         require(0 <= this.postsCount) { "Posts count must be greater than 0" }
     }
 
-    operator fun inc() = ActorPostsCount(postsCount + 1)
-    operator fun dec() = ActorPostsCount(postsCount - 1)
-
     companion object {
         val ZERO = ActorPostsCount(0)
     }

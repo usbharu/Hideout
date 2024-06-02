@@ -14,18 +14,22 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.domain.model.actor
+package utils
 
-@JvmInline
-value class ActorName(val name: String) {
-    init {
-        require(name.isNotBlank())
-        require(name.length <= length)
-        require(regex.matches(name))
+import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventStorable
+
+object AssertDomainEvent {
+    fun assertContainsEvent(domainEventStorable: DomainEventStorable, eventName: String) {
+        val find = domainEventStorable.getDomainEvents().find { it.name == eventName }
+
+        if (find == null) {
+            throw AssertionError("Domain Event not found: $eventName")
+        }
     }
 
-    companion object {
-        val length = 300
-        private val regex = Regex("^[a-zA-Z0-9_-]{1,$length}\$")
+    fun assertEmpty(domainEventStorable: DomainEventStorable) {
+        if (domainEventStorable.getDomainEvents().isNotEmpty()) {
+            throw AssertionError("Domain Event found")
+        }
     }
 }
