@@ -21,7 +21,4 @@ value class ActorRelationshipCount(val relationshipCount: Int) {
     init {
         require(0 <= relationshipCount) { "Followers count must be > 0" }
     }
-
-    operator fun inc(): ActorRelationshipCount = ActorRelationshipCount(relationshipCount + 1)
-    operator fun dec(): ActorRelationshipCount = ActorRelationshipCount(relationshipCount - 1)
 }
