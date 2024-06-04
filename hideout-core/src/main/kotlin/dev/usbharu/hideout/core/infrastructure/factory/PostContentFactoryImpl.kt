@@ -23,10 +23,10 @@ import org.springframework.stereotype.Component
 @Component
 class PostContentFactoryImpl(
     private val postContentFormatter: PostContentFormatter,
-) : PostContent.PostContentFactory() {
+) {
     suspend fun create(content: String): PostContent {
         val format = postContentFormatter.format(content)
-        return super.create(
+        return PostContent(
             format.content,
             format.html,
             emptyList()

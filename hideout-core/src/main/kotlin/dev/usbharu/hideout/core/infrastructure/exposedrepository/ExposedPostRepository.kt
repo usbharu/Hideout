@@ -145,7 +145,11 @@ class ExposedPostRepository(override val domainEventPublisher: DomainEventPublis
     }
 
     override suspend fun findById(id: PostId): Post? {
-        TODO("Not yet implemented")
+        query {
+            Posts.selectAll().where {
+                Posts.id eq id.id
+            }
+        }
     }
 
     override suspend fun findByActorId(id: ActorId): List<Post> {
