@@ -20,6 +20,7 @@ import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.post.*
 import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventPublisher
 import dev.usbharu.hideout.core.domain.shared.repository.DomainEventPublishableRepository
+import dev.usbharu.hideout.core.infrastructure.exposed.QueryMapper
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Posts.actorId
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Posts.apId
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Posts.content
@@ -44,7 +45,10 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 
 @Repository
-class ExposedPostRepository(override val domainEventPublisher: DomainEventPublisher) :
+class ExposedPostRepository(
+    private val postQueryMapper: QueryMapper<Post>,
+    override val domainEventPublisher: DomainEventPublisher,
+) :
     PostRepository,
     AbstractRepository(),
     DomainEventPublishableRepository<Post> {
@@ -144,16 +148,23 @@ class ExposedPostRepository(override val domainEventPublisher: DomainEventPublis
         return posts
     }
 
-    override suspend fun findById(id: PostId): Post? {
-        query {
-            Posts.selectAll().where {
+    override suspend fun findById(id: PostId): Post? = query {
+        Posts
+            .selectAll()
+            .where {
                 Posts.id eq id.id
             }
-        }
+            .let(postQueryMapper::map)
+            .first()
     }
 
-    override suspend fun findByActorId(id: ActorId): List<Post> {
-        TODO("Not yet implemented")
+    override suspend fun findByActorId(id: ActorId): List<Post> = query {
+        Posts
+            .selectAll()
+            .where {
+                actorId eq id.id
+            }
+            .let(postQueryMapper::map)
     }
 
     override suspend fun delete(post: Post) {

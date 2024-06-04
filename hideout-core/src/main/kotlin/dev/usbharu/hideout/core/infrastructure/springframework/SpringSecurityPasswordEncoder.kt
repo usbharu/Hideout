@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.domain.model.actor
+package dev.usbharu.hideout.core.infrastructure.springframework
 
-interface ActorRepository {
-    suspend fun save(actor: Actor): Actor
-    suspend fun delete(actor: Actor)
-    suspend fun findById(id: ActorId): Actor?
-    suspend fun findByNameAndDomain(name: String, domain: String): Actor?
+import dev.usbharu.hideout.core.domain.service.userdetail.PasswordEncoder
+import org.springframework.stereotype.Component
+
+@Component
+class SpringSecurityPasswordEncoder(private val passwordEncoder: org.springframework.security.crypto.password.PasswordEncoder) :
+    PasswordEncoder {
+    override suspend fun encode(input: String): String {
+        return passwordEncoder.encode(input)
+    }
 }

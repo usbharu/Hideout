@@ -41,20 +41,20 @@ create table if not exists actors
     url             varchar(1000)  not null unique,
     public_key      varchar(10000) not null,
     private_key     varchar(10000) null,
-    created_at      bigint         not null,
+    created_at      timestamp     not null,
     key_id          varchar(1000)  not null,
     "following"     varchar(1000)  null,
     followers       varchar(1000)  null,
-    "instance"     bigint        not null,
+    "instance"      bigint        not null,
     locked          boolean        not null,
-    following_count int            not null,
-    followers_count int            not null,
+    following_count int           null,
+    followers_count int           null,
     posts_count     int            not null,
     last_post_at    timestamp      null     default null,
-    last_update_at timestamp     not null,
-    suspend        boolean       not null,
-    move_to        bigint        null     default null,
-    emojis         varchar(3000) not null default '',
+    last_update_at  timestamp     not null,
+    suspend         boolean       not null,
+    move_to         bigint        null     default null,
+    emojis          varchar(3000) not null default '',
     unique ("name", "domain"),
     constraint fk_actors_instance__id foreign key ("instance") references instance (id) on delete restrict on update restrict,
     constraint fk_actors_actors__move_to foreign key ("move_to") references actors (id) on delete restrict on update restrict
@@ -250,8 +250,9 @@ values (0, 'system', '', '', '', null, '', '', false, false, '', current_timesta
 
 insert into actors (id, name, domain, screen_name, description, inbox, outbox, url, public_key, private_key, created_at,
                     key_id, following, followers, instance, locked, following_count, followers_count, posts_count,
-                    last_post_at)
-values (0, 'ghost', '', '', '', '', '', '', '', null, 0, '', '', '', 0, true, 0, 0, 0, null);
+                    last_post_at, last_update_at, suspend, move_to, emojis)
+values (0, '', '', '', '', '', '', '', '', null, current_timestamp, '', null, null, 0, true, null, null, 0, null,
+        current_timestamp, false, null, '');
 
 create table if not exists deleted_actors
 (

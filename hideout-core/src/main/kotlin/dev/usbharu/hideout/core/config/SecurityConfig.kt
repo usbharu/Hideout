@@ -14,11 +14,17 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.domain.model.actor
+package dev.usbharu.hideout.core.config
 
-interface ActorRepository {
-    suspend fun save(actor: Actor): Actor
-    suspend fun delete(actor: Actor)
-    suspend fun findById(id: ActorId): Actor?
-    suspend fun findByNameAndDomain(name: String, domain: String): Actor?
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder
+
+@Configuration
+class SecurityConfig {
+    @Bean
+    fun passwordEncoder(): PasswordEncoder {
+        return BCryptPasswordEncoder()
+    }
 }

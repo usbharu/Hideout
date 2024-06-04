@@ -83,7 +83,20 @@ class ExposedActorRepository(
                     Actors.id eq id.id
                 }
                 .let(actorQueryMapper::map)
-                .first()
+                .firstOrNull()
+        }
+    }
+
+    override suspend fun findByNameAndDomain(name: String, domain: String): Actor? {
+        return query {
+            Actors
+                .leftJoin(ActorsAlsoKnownAs, onColumn = { id }, otherColumn = { actorId })
+                .selectAll()
+                .where {
+                    Actors.name eq name and (Actors.domain eq domain)
+                }
+                .let(actorQueryMapper::map)
+                .firstOrNull()
         }
     }
 }

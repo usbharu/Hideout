@@ -165,6 +165,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-log4j2")
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
+
     implementation(libs.blurhash)
     implementation(libs.aws.s3)
     implementation(libs.jsoup)
@@ -173,6 +174,7 @@ dependencies {
     implementation(libs.imageio.webp)
     implementation(libs.thumbnailator)
     implementation(libs.flyway.core)
+    runtimeOnly(libs.flyway.postgresql)
 
     implementation("dev.usbharu:owl-common-serialize-jackson:0.0.1")
 
