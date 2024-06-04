@@ -1,6 +1,6 @@
 package dev.usbharu.hideout.core.domain.service.actor
 
-import dev.usbharu.hideout.application.config.ApplicationConfig
+import dev.usbharu.hideout.core.config.ApplicationConfig
 import dev.usbharu.hideout.core.domain.model.actor.ActorPublicKey
 import dev.usbharu.hideout.core.domain.model.actor.TestActor2Factory
 import org.junit.jupiter.api.Test
