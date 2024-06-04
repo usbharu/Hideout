@@ -2,7 +2,7 @@
 
 kotlin = "2.0.0"
 ktor = "2.3.11"
-exposed = "0.51.0"
+exposed = "0.51.1"
 javacv-ffmpeg = "6.1.1-1.5.10"
 detekt = "1.23.6"
 coroutines = "1.8.1"
