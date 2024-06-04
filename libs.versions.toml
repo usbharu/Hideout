@@ -69,7 +69,7 @@ jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-
 
 blurhash = { module = "io.trbl:blurhash", version = "1.0.0" }
 
-aws-s3 = { module = "software.amazon.awssdk:s3", version = "2.25.64" }
+aws-s3 = { module = "software.amazon.awssdk:s3", version = "2.25.65" }
 
 jsoup = { module = "org.jsoup:jsoup", version = "1.17.2" }
 
