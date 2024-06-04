@@ -23,4 +23,5 @@ import java.net.URL
 data class ApplicationConfig(
     val url: URL,
     val private: Boolean = true,
+    val keySize: Int = 2048,
 )

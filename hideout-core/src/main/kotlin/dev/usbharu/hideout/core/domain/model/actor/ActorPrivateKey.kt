@@ -16,5 +16,22 @@
 
 package dev.usbharu.hideout.core.domain.model.actor
 
+import java.security.PrivateKey
+import java.util.*
+
 @JvmInline
-value class ActorPrivateKey(val privateKey: String)
+value class ActorPrivateKey(val privateKey: String) {
+    companion object {
+        fun create(privateKey: PrivateKey): ActorPrivateKey {
+            return ActorPrivateKey(
+                "-----BEGIN PRIVATE KEY-----\n" +
+                        Base64
+                            .getEncoder()
+                            .encodeToString(privateKey.encoded)
+                            .chunked(64)
+                            .joinToString("\n") +
+                        "\n-----END PRIVATE KEY-----"
+            )
+        }
+    }
+}
