@@ -18,7 +18,7 @@ package dev.usbharu.hideout.core.domain.model.post
 
 import dev.usbharu.hideout.core.domain.model.emoji.EmojiId
 
-class PostContent private constructor(val text: String, val content: String, val emojiIds: List<EmojiId>) {
+data class PostContent(val text: String, val content: String, val emojiIds: List<EmojiId>) {
 
     companion object {
         val empty = PostContent("", "", emptyList())
@@ -26,13 +26,4 @@ class PostContent private constructor(val text: String, val content: String, val
         val textLength = 3000
     }
 
-    abstract class PostContentFactory {
-        protected suspend fun create(text: String, content: String, emojiIds: List<EmojiId>): PostContent {
-            return PostContent(
-                text,
-                content,
-                emojiIds
-            )
-        }
-    }
 }
