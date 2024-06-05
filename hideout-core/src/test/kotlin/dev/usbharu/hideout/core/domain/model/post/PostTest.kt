@@ -144,6 +144,24 @@ class PostTest {
     }
 
     @Test
+    fun ゔvisibilityがDIRECT以外の時visibleActorsを変更できない() {
+        val post = TestPostFactory.create(visibility = Visibility.FOLLOWERS)
+
+        post.visibleActors = setOf(ActorId(100))
+        assertEmpty(post)
+
+        val post2 = TestPostFactory.create(visibility = Visibility.UNLISTED)
+
+        post2.visibleActors = setOf(ActorId(100))
+        assertEmpty(post2)
+
+        val post3 = TestPostFactory.create(visibility = Visibility.PUBLIC)
+
+        post3.visibleActors = setOf(ActorId(100))
+        assertEmpty(post3)
+    }
+
+    @Test
     fun visibilityがDIRECTの時visibleActorsを変更できる() {
         val post = TestPostFactory.create(visibility = Visibility.DIRECT)
 
@@ -191,4 +209,6 @@ class PostTest {
         post.content = PostContent("test", "test", emptyList())
         assertContainsEvent(post, PostEvent.update.eventName)
     }
+
+
 }
