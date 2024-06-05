@@ -54,6 +54,7 @@ class Post(
 
     var visibility = visibility
         set(value) {
+            require(visibility != Visibility.DIRECT)
             require(value != Visibility.DIRECT)
             require(field.ordinal >= value.ordinal)
 
