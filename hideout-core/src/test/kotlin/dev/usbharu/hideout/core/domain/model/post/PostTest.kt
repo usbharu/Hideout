@@ -139,7 +139,56 @@ class PostTest {
         val post = TestPostFactory.create(deleted = true)
 
         assertThrows<IllegalArgumentException> {
-            post.visibleActors = listOf(ActorId(100))
+            post.visibleActors = setOf(ActorId(100))
         }
+    }
+
+    @Test
+    fun visibilityがDIRECTの時visibleActorsを変更できる() {
+        val post = TestPostFactory.create(visibility = Visibility.DIRECT)
+
+        post.visibleActors = setOf(ActorId(100))
+        assertEquals(setOf(ActorId(100)), post.visibleActors)
+    }
+
+    @Test
+    fun visibleActorsから削除されることはない() {
+        val post = TestPostFactory.create(visibility = Visibility.DIRECT, visibleActors = listOf(100))
+
+        post.visibleActors = setOf(ActorId(200))
+        assertEquals(setOf(ActorId(100), ActorId(200)), post.visibleActors)
+    }
+
+    @Test
+    fun visibleActorsに追加された時updateイベントが発生する() {
+        val post = TestPostFactory.create(visibility = Visibility.DIRECT)
+
+        post.visibleActors = setOf(ActorId(100))
+
+        assertContainsEvent(post, PostEvent.update.eventName)
+    }
+
+    @Test
+    fun hideがtrueのときcontetnがemptyを返す() {
+        val post = TestPostFactory.create(hide = true)
+
+        assertEquals(PostContent.empty, post.content)
+    }
+
+    @Test
+    fun deletedがtrueの時contentをセットできない() {
+        val post = TestPostFactory.create(deleted = true)
+
+        assertThrows<IllegalArgumentException> {
+            post.content = PostContent("test", "test", emptyList())
+        }
+    }
+
+    @Test
+    fun contentの内容が変更されたらupdateイベントが発生する() {
+        val post = TestPostFactory.create()
+
+        post.content = PostContent("test", "test", emptyList())
+        assertContainsEvent(post, PostEvent.update.eventName)
     }
 }

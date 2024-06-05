@@ -42,7 +42,7 @@ object TestPostFactory {
             apId = apId,
             deleted = deleted,
             mediaIds.map { MediaId(it) },
-            visibleActors.map { ActorId(it) },
+            visibleActors.map { ActorId(it) }.toSet(),
             hide = hide,
             moveTo?.let { PostId(it) }
         )

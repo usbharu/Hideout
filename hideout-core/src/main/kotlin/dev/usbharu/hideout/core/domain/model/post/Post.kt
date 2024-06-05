@@ -19,6 +19,7 @@ package dev.usbharu.hideout.core.domain.model.post
 import dev.usbharu.hideout.core.domain.event.post.PostDomainEventFactory
 import dev.usbharu.hideout.core.domain.event.post.PostEvent
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
+import dev.usbharu.hideout.core.domain.model.emoji.EmojiId
 import dev.usbharu.hideout.core.domain.model.media.MediaId
 import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventStorable
 import java.net.URI
@@ -38,7 +39,7 @@ class Post(
     val apId: URI,
     deleted: Boolean,
     mediaIds: List<MediaId>,
-    visibleActors: List<ActorId> = emptyList(),
+    visibleActors: Set<ActorId> = emptySet(),
     hide: Boolean = false,
     moveTo: PostId? = null,
 ) : DomainEventStorable() {
@@ -71,7 +72,7 @@ class Post(
             require(deleted.not())
             if (visibility == Visibility.DIRECT) {
                 addDomainEvent(PostDomainEventFactory(this).createEvent(PostEvent.update))
-                field = field.plus(value).distinct()
+                field = field.plus(value)
             }
         }
 
@@ -114,11 +115,21 @@ class Post(
             field = value
         }
 
-    val text
-        get() = content.text
+    val text: String
+        get() {
+            if (hide) {
+                return PostContent.empty.text
+            }
+            return content.text
+        }
 
-    val emojiIds
-        get() = content.emojiIds
+    val emojiIds: List<EmojiId>
+        get() {
+            if (hide) {
+                return PostContent.empty.emojiIds
+            }
+            return content.emojiIds
+        }
 
     var mediaIds = mediaIds
         get() {
@@ -207,7 +218,7 @@ class Post(
             apId: URI,
             deleted: Boolean,
             mediaIds: List<MediaId>,
-            visibleActors: List<ActorId> = emptyList(),
+            visibleActors: Set<ActorId> = emptySet(),
             hide: Boolean = false,
             moveTo: PostId? = null,
         ): Post {
