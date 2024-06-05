@@ -8,7 +8,7 @@ import kotlinx.coroutines.runBlocking
 import java.net.URI
 import java.time.Instant
 
-object TestActor2Factory {
+object TestActorFactory {
     private val idGenerateService = TwitterSnowflakeIdGenerateService
 
     fun create(

@@ -12,7 +12,7 @@ import kotlin.test.assertNull
 class ActorsTest {
     @Test
     fun suspendがtrueのときactorSuspendイベントが発生する() {
-        val actor = TestActor2Factory.create(publicKey = ActorPublicKey(""))
+        val actor = TestActorFactory.create(publicKey = ActorPublicKey(""))
 
         actor.suspend = true
 
@@ -21,7 +21,7 @@ class ActorsTest {
 
     @Test
     fun suspendがfalseになったときactorUnsuspendイベントが発生する() {
-        val actor = TestActor2Factory.create(publicKey = ActorPublicKey(""), suspend = true)
+        val actor = TestActorFactory.create(publicKey = ActorPublicKey(""), suspend = true)
 
         actor.suspend = false
 
@@ -30,7 +30,7 @@ class ActorsTest {
 
     @Test
     fun alsoKnownAsに自分自身が含まれない場合更新される() {
-        val actor = TestActor2Factory.create(publicKey = ActorPublicKey(""))
+        val actor = TestActorFactory.create(publicKey = ActorPublicKey(""))
 
         val actorIds = setOf(ActorId(100), ActorId(200))
         actor.alsoKnownAs = actorIds
@@ -40,7 +40,7 @@ class ActorsTest {
 
     @Test
     fun moveToに自分自身が設定された場合moveイベントが発生し更新される() {
-        val actor = TestActor2Factory.create(publicKey = ActorPublicKey(""))
+        val actor = TestActorFactory.create(publicKey = ActorPublicKey(""))
 
 
         actor.moveTo = ActorId(100)
@@ -50,7 +50,7 @@ class ActorsTest {
 
     @Test
     fun alsoKnownAsに自分自身が含まれてはいけない() {
-        val actor = TestActor2Factory.create(publicKey = ActorPublicKey(""))
+        val actor = TestActorFactory.create(publicKey = ActorPublicKey(""))
 
         assertThrows<IllegalArgumentException> {
             actor.alsoKnownAs = setOf(actor.id)
@@ -59,7 +59,7 @@ class ActorsTest {
 
     @Test
     fun moveToに自分自身が設定されてはいけない() {
-        val actor = TestActor2Factory.create(publicKey = ActorPublicKey(""))
+        val actor = TestActorFactory.create(publicKey = ActorPublicKey(""))
 
         assertThrows<IllegalArgumentException> {
             actor.moveTo = actor.id
@@ -68,7 +68,7 @@ class ActorsTest {
 
     @Test
     fun descriptionが更新されたときupdateイベントが発生する() {
-        val actor = TestActor2Factory.create(publicKey = ActorPublicKey(""))
+        val actor = TestActorFactory.create(publicKey = ActorPublicKey(""))
 
         actor.description = ActorDescription("hoge fuga")
 
@@ -77,7 +77,7 @@ class ActorsTest {
 
     @Test
     fun screenNameが更新されたときupdateイベントが発生する() {
-        val actor = TestActor2Factory.create(publicKey = ActorPublicKey(""))
+        val actor = TestActorFactory.create(publicKey = ActorPublicKey(""))
 
         actor.screenName = ActorScreenName("fuga hoge")
 
@@ -86,7 +86,7 @@ class ActorsTest {
 
     @Test
     fun deleteが実行されたときすでにdeletedがtrueなら何もしない() {
-        val actor = TestActor2Factory.create(publicKey = ActorPublicKey(""), deleted = true)
+        val actor = TestActorFactory.create(publicKey = ActorPublicKey(""), deleted = true)
 
         actor.delete()
 
@@ -95,7 +95,7 @@ class ActorsTest {
 
     @Test
     fun deleteが実行されたときdeletedがfalseならdeleteイベントが発生する() {
-        val actor = TestActor2Factory.create(publicKey = ActorPublicKey(""))
+        val actor = TestActorFactory.create(publicKey = ActorPublicKey(""))
 
         actor.delete()
 
@@ -111,7 +111,7 @@ class ActorsTest {
 
     @Test
     fun restoreが実行されたときcheckUpdateイベントが発生する() {
-        val actor = TestActor2Factory.create(publicKey = ActorPublicKey(""), deleted = true)
+        val actor = TestActorFactory.create(publicKey = ActorPublicKey(""), deleted = true)
 
         actor.restore()
 
@@ -121,7 +121,7 @@ class ActorsTest {
 
     @Test
     fun checkUpdateが実行されたときcheckUpdateイベントがh() {
-        val actor = TestActor2Factory.create(publicKey = ActorPublicKey(""))
+        val actor = TestActorFactory.create(publicKey = ActorPublicKey(""))
 
         actor.checkUpdate()
 
