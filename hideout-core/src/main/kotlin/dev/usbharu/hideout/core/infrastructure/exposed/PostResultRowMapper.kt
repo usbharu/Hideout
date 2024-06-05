@@ -40,7 +40,7 @@ class PostResultRowMapper : ResultRowMapper<Post> {
             apId = URI.create(resultRow[Posts.apId]),
             deleted = resultRow[Posts.deleted],
             mediaIds = emptyList(),
-            visibleActors = emptyList(),
+            visibleActors = emptySet(),
             hide = resultRow[Posts.hide],
             moveTo = resultRow[Posts.moveTo]?.let { PostId(it) }
         )

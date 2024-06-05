@@ -57,7 +57,7 @@ class PostQueryMapper(private val postResultRowMapper: ResultRowMapper<Post>) : 
                             resultRow
                                 .getOrNull(PostsVisibleActors.actorId)
                                 ?.let { actorId -> ActorId(actorId) }
-                        }
+                        }.toSet()
                         clearDomainEvents()
                     }
             }
