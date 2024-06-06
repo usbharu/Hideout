@@ -8,6 +8,7 @@ import org.junit.jupiter.api.assertThrows
 import utils.AssertDomainEvent.assertContainsEvent
 import utils.AssertDomainEvent.assertEmpty
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 class PostTest {
     @Test
@@ -209,6 +210,51 @@ class PostTest {
         post.content = PostContent("test", "test", emptyList())
         assertContainsEvent(post, PostEvent.update.eventName)
     }
+
+    @Test
+    fun hideがtrueの時nullを返す() {
+        val post = TestPostFactory.create(hide = true, overview = "aaaa")
+
+        assertNull(post.overview)
+    }
+
+    @Test
+    fun hideがfalseの時overviewを返す() {
+        val post = TestPostFactory.create(hide = false, overview = "aaaa")
+
+        assertEquals(PostOverview("aaaa"), post.overview)
+    }
+
+    @Test
+    fun deletedがtrueのときセットできない() {
+        val post = TestPostFactory.create(deleted = true)
+
+        assertThrows<IllegalArgumentException> {
+            post.overview = PostOverview("aaaa")
+        }
+    }
+
+    @Test
+    fun deletedがfalseのときセットできる() {
+        val post = TestPostFactory.create(deleted = false)
+
+        val overview = PostOverview("aaaa")
+        assertDoesNotThrow {
+            post.overview = overview
+        }
+        assertEquals(overview, post.overview)
+
+        assertContainsEvent(post, PostEvent.update.eventName)
+    }
+
+    @Test
+    fun overviewの内容が更新されなかった時イベントが発生しない() {
+        val post = TestPostFactory.create(overview = "aaaa")
+        post.overview = PostOverview("aaaa")
+        assertEmpty(post)
+    }
+
+
 
 
 }
