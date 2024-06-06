@@ -16,6 +16,8 @@
 
 package dev.usbharu.hideout.core.application.actor
 
+import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
+import dev.usbharu.hideout.core.application.shared.CommandExecutor
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.config.ApplicationConfig
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
@@ -27,12 +29,13 @@ import dev.usbharu.hideout.core.domain.service.actor.local.LocalActorDomainServi
 import dev.usbharu.hideout.core.domain.service.userdetail.UserDetailDomainService
 import dev.usbharu.hideout.core.domain.shared.id.IdGenerateService
 import dev.usbharu.hideout.core.infrastructure.factory.ActorFactoryImpl
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.net.URI
 
 @Service
 class RegisterLocalActorApplicationService(
-    private val transaction: Transaction,
+    transaction: Transaction,
     private val actorDomainService: LocalActorDomainService,
     private val actorRepository: ActorRepository,
     private val actorFactoryImpl: ActorFactoryImpl,
@@ -41,28 +44,31 @@ class RegisterLocalActorApplicationService(
     private val userDetailDomainService: UserDetailDomainService,
     private val userDetailRepository: UserDetailRepository,
     private val idGenerateService: IdGenerateService,
-) {
-    suspend fun register(registerLocalActor: RegisterLocalActor): URI {
-        return transaction.transaction {
-            if (actorDomainService.usernameAlreadyUse(registerLocalActor.name)) {
-                // todo 適切な例外を考える
-                throw Exception("Username already exists")
-            }
-            val instance = instanceRepository.findByUrl(applicationConfig.url.toURI())!!
+) : AbstractApplicationService<RegisterLocalActor, URI>(transaction, Companion.logger) {
 
-            val actor = actorFactoryImpl.createLocal(
-                registerLocalActor.name,
-                actorDomainService.generateKeyPair(),
-                instance.id
-            )
-            actorRepository.save(actor)
-            val userDetail = UserDetail.create(
-                id = UserDetailId(idGenerateService.generateId()),
-                actorId = actor.id,
-                password = userDetailDomainService.hashPassword(registerLocalActor.password),
-            )
-            userDetailRepository.save(userDetail)
-            actor.url
+    override suspend fun internalExecute(command: RegisterLocalActor, executor: CommandExecutor): URI {
+        if (actorDomainService.usernameAlreadyUse(command.name)) {
+            // todo 適切な例外を考える
+            throw Exception("Username already exists")
         }
+        val instance = instanceRepository.findByUrl(applicationConfig.url.toURI())!!
+
+        val actor = actorFactoryImpl.createLocal(
+            command.name,
+            actorDomainService.generateKeyPair(),
+            instance.id
+        )
+        actorRepository.save(actor)
+        val userDetail = UserDetail.create(
+            id = UserDetailId(idGenerateService.generateId()),
+            actorId = actor.id,
+            password = userDetailDomainService.hashPassword(command.password),
+        )
+        userDetailRepository.save(userDetail)
+        return actor.url
+    }
+
+    companion object {
+        val logger = LoggerFactory.getLogger(RegisterLocalActorApplicationService::class.java)
     }
 }
