@@ -15,7 +15,7 @@ dependencies {
     api(project(":owl-producer:owl-producer-api"))
     implementation("io.grpc:grpc-kotlin-stub:1.4.1")
     implementation("io.grpc:grpc-protobuf:1.64.0")
-    implementation("com.google.protobuf:protobuf-kotlin:4.27.0")
+    implementation("com.google.protobuf:protobuf-kotlin:4.27.1")
     implementation("io.grpc:grpc-netty:1.64.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
     implementation(project(":owl-common"))
