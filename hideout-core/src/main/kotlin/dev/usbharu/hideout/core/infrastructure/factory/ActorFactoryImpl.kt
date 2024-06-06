@@ -45,7 +45,7 @@ class ActorFactoryImpl(
             description = ActorDescription(""),
             inbox = URI.create("$userUrl/inbox"),
             outbox = URI.create("$userUrl/outbox"),
-            url = applicationConfig.url.toURI(),
+            url = URI.create(userUrl),
             publicKey = keyPair.first,
             privateKey = keyPair.second,
             createdAt = Instant.now(),

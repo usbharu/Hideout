@@ -28,6 +28,7 @@ import dev.usbharu.hideout.core.domain.service.userdetail.UserDetailDomainServic
 import dev.usbharu.hideout.core.domain.shared.id.IdGenerateService
 import dev.usbharu.hideout.core.infrastructure.factory.ActorFactoryImpl
 import org.springframework.stereotype.Service
+import java.net.URI
 
 @Service
 class RegisterLocalActorApplicationService(
@@ -41,8 +42,8 @@ class RegisterLocalActorApplicationService(
     private val userDetailRepository: UserDetailRepository,
     private val idGenerateService: IdGenerateService,
 ) {
-    suspend fun register(registerLocalActor: RegisterLocalActor) {
-        transaction.transaction {
+    suspend fun register(registerLocalActor: RegisterLocalActor): URI {
+        return transaction.transaction {
             if (actorDomainService.usernameAlreadyUse(registerLocalActor.name)) {
                 // todo 適切な例外を考える
                 throw Exception("Username already exists")
@@ -61,6 +62,7 @@ class RegisterLocalActorApplicationService(
                 password = userDetailDomainService.hashPassword(registerLocalActor.password),
             )
             userDetailRepository.save(userDetail)
+            actor.url
         }
     }
 }

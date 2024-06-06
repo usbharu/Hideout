@@ -21,8 +21,6 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpMethod.*
-import org.springframework.security.access.hierarchicalroles.RoleHierarchy
-import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.invoke
 import org.springframework.security.web.SecurityFilterChain
@@ -30,7 +28,7 @@ import org.springframework.security.web.SecurityFilterChain
 @Configuration
 class MastodonSecurityConfig {
     @Bean
-    @Order(4)
+    @Order(2)
     @Suppress("LongMethod")
     fun mastodonApiSecurityFilterChain(
         http: HttpSecurity,
@@ -110,64 +108,5 @@ class MastodonSecurityConfig {
         }
 
         return http.build()
-    }
-
-    @Bean
-    fun roleHierarchy(): RoleHierarchy {
-        val roleHierarchyImpl = RoleHierarchyImpl()
-
-        roleHierarchyImpl.setHierarchy(
-            """
-            SCOPE_read > SCOPE_read:accounts
-            SCOPE_read > SCOPE_read:accounts
-            SCOPE_read > SCOPE_read:blocks
-            SCOPE_read > SCOPE_read:bookmarks
-            SCOPE_read > SCOPE_read:favourites
-            SCOPE_read > SCOPE_read:filters
-            SCOPE_read > SCOPE_read:follows
-            SCOPE_read > SCOPE_read:lists
-            SCOPE_read > SCOPE_read:mutes
-            SCOPE_read > SCOPE_read:notifications
-            SCOPE_read > SCOPE_read:search
-            SCOPE_read > SCOPE_read:statuses
-            SCOPE_write > SCOPE_write:accounts
-            SCOPE_write > SCOPE_write:blocks
-            SCOPE_write > SCOPE_write:bookmarks
-            SCOPE_write > SCOPE_write:conversations
-            SCOPE_write > SCOPE_write:favourites
-            SCOPE_write > SCOPE_write:filters
-            SCOPE_write > SCOPE_write:follows
-            SCOPE_write > SCOPE_write:lists
-            SCOPE_write > SCOPE_write:media
-            SCOPE_write > SCOPE_write:mutes
-            SCOPE_write > SCOPE_write:notifications
-            SCOPE_write > SCOPE_write:reports
-            SCOPE_write > SCOPE_write:statuses
-            SCOPE_follow > SCOPE_write:blocks
-            SCOPE_follow > SCOPE_write:follows
-            SCOPE_follow > SCOPE_write:mutes
-            SCOPE_follow > SCOPE_read:blocks
-            SCOPE_follow > SCOPE_read:follows
-            SCOPE_follow > SCOPE_read:mutes
-            SCOPE_admin > SCOPE_admin:read
-            SCOPE_admin > SCOPE_admin:write
-            SCOPE_admin:read > SCOPE_admin:read:accounts
-            SCOPE_admin:read > SCOPE_admin:read:reports
-            SCOPE_admin:read > SCOPE_admin:read:domain_allows
-            SCOPE_admin:read > SCOPE_admin:read:domain_blocks
-            SCOPE_admin:read > SCOPE_admin:read:ip_blocks
-            SCOPE_admin:read > SCOPE_admin:read:email_domain_blocks
-            SCOPE_admin:read > SCOPE_admin:read:canonical_email_blocks
-            SCOPE_admin:write > SCOPE_admin:write:accounts
-            SCOPE_admin:write > SCOPE_admin:write:reports
-            SCOPE_admin:write > SCOPE_admin:write:domain_allows
-            SCOPE_admin:write > SCOPE_admin:write:domain_blocks
-            SCOPE_admin:write > SCOPE_admin:write:ip_blocks
-            SCOPE_admin:write > SCOPE_admin:write:email_domain_blocks
-            SCOPE_admin:write > SCOPE_admin:write:canonical_email_blocks
-            """.trimIndent()
-        )
-
-        return roleHierarchyImpl
     }
 }

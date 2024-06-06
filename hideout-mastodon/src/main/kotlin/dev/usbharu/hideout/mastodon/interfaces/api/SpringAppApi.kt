@@ -16,15 +16,35 @@
 
 package dev.usbharu.hideout.mastodon.interfaces.api
 
+import dev.usbharu.hideout.core.application.application.RegisterApplication
+import dev.usbharu.hideout.core.application.application.RegisterApplicationApplicationService
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.AppApi
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.Application
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.AppsRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
+import java.net.URI
 
 @Controller
-class SpringAppApi : AppApi {
+class SpringAppApi(private val registerApplicationApplicationService: RegisterApplicationApplicationService) : AppApi {
     override suspend fun apiV1AppsPost(appsRequest: AppsRequest): ResponseEntity<Application> {
-        return super.apiV1AppsPost(appsRequest)
+
+        val registerApplication = RegisterApplication(
+            appsRequest.clientName,
+            setOf(URI.create(appsRequest.redirectUris)),
+            false,
+            appsRequest.scopes?.split(" ").orEmpty().toSet()
+        )
+        val registeredApplication = registerApplicationApplicationService.register(registerApplication)
+        return ResponseEntity.ok(
+            Application(
+                registeredApplication.name,
+                "invalid-vapid-key",
+                null,
+                registeredApplication.clientId.toString(),
+                registeredApplication.clientSecret,
+                appsRequest.redirectUris
+            )
+        )
     }
 }

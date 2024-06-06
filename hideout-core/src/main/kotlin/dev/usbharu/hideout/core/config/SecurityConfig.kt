@@ -18,13 +18,124 @@ package dev.usbharu.hideout.core.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.annotation.Order
+import org.springframework.http.HttpMethod.GET
+import org.springframework.http.HttpMethod.POST
+import org.springframework.jdbc.core.JdbcOperations
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl
+import org.springframework.security.config.annotation.web.builders.HttpSecurity
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.config.annotation.web.invoke
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository
+import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration
+import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint
 
 @Configuration
+@EnableWebSecurity(debug = false)
 class SecurityConfig {
     @Bean
     fun passwordEncoder(): PasswordEncoder {
         return BCryptPasswordEncoder()
+    }
+
+    @Bean
+    @Order(1)
+    fun oauth2Provider(http: HttpSecurity): SecurityFilterChain {
+        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http)
+        http {
+            exceptionHandling {
+                authenticationEntryPoint = LoginUrlAuthenticationEntryPoint("/login")
+            }
+        }
+        return http.build()
+    }
+
+    @Bean
+    @Order(3)
+    fun httpSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
+        http {
+            authorizeHttpRequests {
+                authorize("/error", permitAll)
+                authorize("/login", permitAll)
+                authorize(GET, "/.well-known/**", permitAll)
+                authorize(GET, "/nodeinfo/2.0", permitAll)
+
+                authorize(GET, "/auth/sign_up", hasRole("ANONYMOUS"))
+                authorize(POST, "/auth/sign_up", permitAll)
+
+                authorize(anyRequest, authenticated)
+            }
+            formLogin {
+
+            }
+        }
+        return http.build()
+    }
+
+    @Bean
+    fun registeredClientRepository(jdbcOperations: JdbcOperations): RegisteredClientRepository {
+        return JdbcRegisteredClientRepository(jdbcOperations)
+    }
+
+    @Bean
+    fun roleHierarchy(): RoleHierarchy {
+        val roleHierarchyImpl = RoleHierarchyImpl.fromHierarchy(
+            """
+            SCOPE_read > SCOPE_read:accounts
+            SCOPE_read > SCOPE_read:accounts
+            SCOPE_read > SCOPE_read:blocks
+            SCOPE_read > SCOPE_read:bookmarks
+            SCOPE_read > SCOPE_read:favourites
+            SCOPE_read > SCOPE_read:filters
+            SCOPE_read > SCOPE_read:follows
+            SCOPE_read > SCOPE_read:lists
+            SCOPE_read > SCOPE_read:mutes
+            SCOPE_read > SCOPE_read:notifications
+            SCOPE_read > SCOPE_read:search
+            SCOPE_read > SCOPE_read:statuses
+            SCOPE_write > SCOPE_write:accounts
+            SCOPE_write > SCOPE_write:blocks
+            SCOPE_write > SCOPE_write:bookmarks
+            SCOPE_write > SCOPE_write:conversations
+            SCOPE_write > SCOPE_write:favourites
+            SCOPE_write > SCOPE_write:filters
+            SCOPE_write > SCOPE_write:follows
+            SCOPE_write > SCOPE_write:lists
+            SCOPE_write > SCOPE_write:media
+            SCOPE_write > SCOPE_write:mutes
+            SCOPE_write > SCOPE_write:notifications
+            SCOPE_write > SCOPE_write:reports
+            SCOPE_write > SCOPE_write:statuses
+            SCOPE_follow > SCOPE_write:blocks
+            SCOPE_follow > SCOPE_write:follows
+            SCOPE_follow > SCOPE_write:mutes
+            SCOPE_follow > SCOPE_read:blocks
+            SCOPE_follow > SCOPE_read:follows
+            SCOPE_follow > SCOPE_read:mutes
+            SCOPE_admin > SCOPE_admin:read
+            SCOPE_admin > SCOPE_admin:write
+            SCOPE_admin:read > SCOPE_admin:read:accounts
+            SCOPE_admin:read > SCOPE_admin:read:reports
+            SCOPE_admin:read > SCOPE_admin:read:domain_allows
+            SCOPE_admin:read > SCOPE_admin:read:domain_blocks
+            SCOPE_admin:read > SCOPE_admin:read:ip_blocks
+            SCOPE_admin:read > SCOPE_admin:read:email_domain_blocks
+            SCOPE_admin:read > SCOPE_admin:read:canonical_email_blocks
+            SCOPE_admin:write > SCOPE_admin:write:accounts
+            SCOPE_admin:write > SCOPE_admin:write:reports
+            SCOPE_admin:write > SCOPE_admin:write:domain_allows
+            SCOPE_admin:write > SCOPE_admin:write:domain_blocks
+            SCOPE_admin:write > SCOPE_admin:write:ip_blocks
+            SCOPE_admin:write > SCOPE_admin:write:email_domain_blocks
+            SCOPE_admin:write > SCOPE_admin:write:canonical_email_blocks
+            """.trimIndent()
+        )
+
+        return roleHierarchyImpl
     }
 }
