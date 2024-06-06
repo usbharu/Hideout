@@ -18,6 +18,7 @@ package dev.usbharu.hideout.core.interfaces.api.auth
 
 import dev.usbharu.hideout.core.application.actor.RegisterLocalActor
 import dev.usbharu.hideout.core.application.actor.RegisterLocalActorApplicationService
+import dev.usbharu.hideout.core.infrastructure.springframework.SpringMvcCommandExecutorFactory
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.stereotype.Controller
 import org.springframework.validation.annotation.Validated
@@ -26,7 +27,10 @@ import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.PostMapping
 
 @Controller
-class AuthController(private val registerLocalActorApplicationService: RegisterLocalActorApplicationService) {
+class AuthController(
+    private val registerLocalActorApplicationService: RegisterLocalActorApplicationService,
+    private val springMvcCommandExecutorFactory: SpringMvcCommandExecutorFactory,
+) {
     @GetMapping("/auth/sign_up")
     fun signUp(): String {
         return "sign_up"
@@ -35,7 +39,10 @@ class AuthController(private val registerLocalActorApplicationService: RegisterL
     @PostMapping("/auth/sign_up")
     suspend fun signUp(@Validated @ModelAttribute signUpForm: SignUpForm, request: HttpServletRequest): String {
         val registerLocalActor = RegisterLocalActor(signUpForm.username, signUpForm.password)
-        val uri = registerLocalActorApplicationService.register(registerLocalActor)
+        val uri = registerLocalActorApplicationService.execute(
+            registerLocalActor,
+            springMvcCommandExecutorFactory.getCommandExecutor()
+        )
         request.login(signUpForm.username, signUpForm.password)
         return "redirect:$uri"
     }
