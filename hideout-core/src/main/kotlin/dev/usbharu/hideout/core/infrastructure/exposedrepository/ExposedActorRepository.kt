@@ -135,10 +135,10 @@ object Actors : Table("actors") {
     }
 }
 
-object ActorsAlsoKnownAs : Table("actor_alsoknwonas") {
+object ActorsAlsoKnownAs : Table("actor_alsoknownas") {
     val actorId =
         long("actor_id").references(Actors.id, onDelete = ReferenceOption.CASCADE, onUpdate = ReferenceOption.CASCADE)
-    val alsoKnownAs = long("alsoKnownAs").references(Actors.id, ReferenceOption.CASCADE, ReferenceOption.CASCADE)
+    val alsoKnownAs = long("also_known_as").references(Actors.id, ReferenceOption.CASCADE, ReferenceOption.CASCADE)
 
     override val primaryKey: PrimaryKey = PrimaryKey(actorId, alsoKnownAs)
 }

@@ -16,16 +16,27 @@
 
 package dev.usbharu.hideout.core.interfaces.api.auth
 
-import org.springframework.ui.Model
+import dev.usbharu.hideout.core.application.actor.RegisterLocalActor
+import dev.usbharu.hideout.core.application.actor.RegisterLocalActorApplicationService
+import jakarta.servlet.http.HttpServletRequest
+import org.springframework.stereotype.Controller
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.PostMapping
 
-interface AuthController {
+@Controller
+class AuthController(private val registerLocalActorApplicationService: RegisterLocalActorApplicationService) {
     @GetMapping("/auth/sign_up")
-    fun signUp(model: Model): String
+    fun signUp(): String {
+        return "sign_up"
+    }
 
     @PostMapping("/auth/sign_up")
-    suspend fun signUp(@Validated @ModelAttribute signUpForm: SignUpForm): String
+    suspend fun signUp(@Validated @ModelAttribute signUpForm: SignUpForm, request: HttpServletRequest): String {
+        val registerLocalActor = RegisterLocalActor(signUpForm.username, signUpForm.password)
+        val uri = registerLocalActorApplicationService.register(registerLocalActor)
+        request.login(signUpForm.username, signUpForm.password)
+        return "redirect:$uri"
+    }
 }

@@ -55,9 +55,18 @@ create table if not exists actors
     suspend         boolean       not null,
     move_to         bigint        null     default null,
     emojis          varchar(3000) not null default '',
+    deleted boolean not null default false,
     unique ("name", "domain"),
     constraint fk_actors_instance__id foreign key ("instance") references instance (id) on delete restrict on update restrict,
     constraint fk_actors_actors__move_to foreign key ("move_to") references actors (id) on delete restrict on update restrict
+);
+
+create table if not exists actor_alsoknownas
+(
+    actor_id      bigint not null,
+    also_known_as bigint not null,
+    constraint fk_actor_alsoknownas_actors__actor_id foreign key ("actor_id") references actors (id) on delete cascade on update cascade,
+    constraint fk_actor_alsoknownas_actors__also_known_as foreign key ("also_known_as") references actors (id) on delete cascade on update cascade
 );
 
 create table if not exists user_details
@@ -66,6 +75,7 @@ create table if not exists user_details
     actor_id                            bigint       not null unique,
     password                            varchar(255) not null,
     auto_accept_followee_follow_request boolean      not null,
+    last_migration timestamp null default null,
     constraint fk_user_details_actor_id__id foreign key (actor_id) references actors (id) on delete restrict on update restrict
 );
 
@@ -80,14 +90,6 @@ create table if not exists media
     blurhash      varchar(255)  null,
     mime_type     varchar(255)  not null,
     description   varchar(4000) null
-);
-create table if not exists meta_info
-(
-    id              bigint primary key,
-    version         varchar(1000)   not null,
-    kid             varchar(1000)   not null,
-    jwt_private_key varchar(100000) not null,
-    jwt_public_key  varchar(100000) not null
 );
 create table if not exists posts
 (
@@ -134,100 +136,6 @@ alter table posts_emojis
 alter table posts_emojis
     add constraint fk_posts_emojis_emoji_id__id foreign key (emoji_id) references emojis (id) on delete cascade on update cascade;
 
-create table if not exists reactions
-(
-    id              bigint primary key,
-    unicode_emoji   varchar(255) null default null,
-    custom_emoji_id bigint       null default null,
-    post_id         bigint       not null,
-    actor_id        bigint       not null,
-    unique (post_id, actor_id)
-);
-alter table reactions
-    add constraint fk_reactions_post_id__id foreign key (post_id) references posts (id) on delete restrict on update restrict;
-alter table reactions
-    add constraint fk_reactions_actor_id__id foreign key (actor_id) references actors (id) on delete restrict on update restrict;
-alter table reactions
-    add constraint fk_reactions_custom_emoji_id__id foreign key (custom_emoji_id) references emojis (id) on delete cascade on update cascade;
-
-create table if not exists timelines
-(
-    id             bigint primary key,
-    user_id        bigint       not null,
-    timeline_id    bigint       not null,
-    post_id        bigint       not null,
-    post_actor_id  bigint       not null,
-    created_at     bigint       not null,
-    reply_id       bigint       null,
-    repost_id      bigint       null,
-    visibility     int          not null,
-    "sensitive"    boolean      not null,
-    is_local       boolean      not null,
-    is_pure_repost boolean      not null,
-    media_ids      varchar(255) not null,
-    emoji_ids      varchar(255) not null
-);
-
-create table if not exists application_authorization
-(
-    id                            varchar(255) primary key,
-    registered_client_id          varchar(255)               not null,
-    principal_name                varchar(255)               not null,
-    authorization_grant_type      varchar(255)               not null,
-    authorized_scopes             varchar(1000) default null null,
-    "attributes"                  varchar(4000) default null null,
-    "state"                       varchar(500)  default null null,
-    authorization_code_value      varchar(4000) default null null,
-    authorization_code_issued_at  timestamp     default null null,
-    authorization_code_expires_at timestamp     default null null,
-    authorization_code_metadata   varchar(2000) default null null,
-    access_token_value            varchar(4000) default null null,
-    access_token_issued_at        timestamp     default null null,
-    access_token_expires_at       timestamp     default null null,
-    access_token_metadata         varchar(2000) default null null,
-    access_token_type             varchar(255)  default null null,
-    access_token_scopes           varchar(1000) default null null,
-    refresh_token_value           varchar(4000) default null null,
-    refresh_token_issued_at       timestamp     default null null,
-    refresh_token_expires_at      timestamp     default null null,
-    refresh_token_metadata        varchar(2000) default null null,
-    oidc_id_token_value           varchar(4000) default null null,
-    oidc_id_token_issued_at       timestamp     default null null,
-    oidc_id_token_expires_at      timestamp     default null null,
-    oidc_id_token_metadata        varchar(2000) default null null,
-    oidc_id_token_claims          varchar(2000) default null null,
-    user_code_value               varchar(4000) default null null,
-    user_code_issued_at           timestamp     default null null,
-    user_code_expires_at          timestamp     default null null,
-    user_code_metadata            varchar(2000) default null null,
-    device_code_value             varchar(4000) default null null,
-    device_code_issued_at         timestamp     default null null,
-    device_code_expires_at        timestamp     default null null,
-    device_code_metadata          varchar(2000) default null null
-);
-create table if not exists oauth2_authorization_consent
-(
-    registered_client_id varchar(100),
-    principal_name       varchar(200),
-    authorities          varchar(1000) not null,
-    constraint pk_oauth2_authorization_consent primary key (registered_client_id, principal_name)
-);
-create table if not exists registered_client
-(
-    id                            varchar(100) primary key,
-    client_id                     varchar(100)                            not null,
-    client_id_issued_at           timestamp     default current_timestamp not null,
-    client_secret                 varchar(200)  default null              null,
-    client_secret_expires_at      timestamp     default null              null,
-    client_name                   varchar(200)                            not null,
-    client_authentication_methods varchar(1000)                           not null,
-    authorization_grant_types     varchar(1000)                           not null,
-    redirect_uris                 varchar(1000) default null              null,
-    post_logout_redirect_uris     varchar(1000) default null              null,
-    scopes                        varchar(1000)                           not null,
-    client_settings               varchar(2000)                           not null,
-    token_settings                varchar(2000)                           not null
-);
 
 create table if not exists relationships
 (
@@ -254,40 +162,26 @@ insert into actors (id, name, domain, screen_name, description, inbox, outbox, u
 values (0, '', '', '', '', '', '', '', '', null, current_timestamp, '', null, null, 0, true, null, null, 0, null,
         current_timestamp, false, null, '');
 
-create table if not exists deleted_actors
+create table if not exists applications
 (
-    id         bigint primary key,
-    "name"     varchar(300)   not null,
-    domain     varchar(255)   not null,
-    public_key varchar(10000) not null,
-    deleted_at timestamp      not null,
-    unique ("name", domain)
+    id   bigint primary key,
+    name varchar(500) not null
 );
 
-create table if not exists notifications
+create table if not exists oauth2_registered_client
 (
-    id              bigint primary key,
-    type            varchar(100)  not null,
-    user_id         bigint        not null,
-    source_actor_id bigint        null,
-    post_id         bigint        null,
-    text            varchar(3000) null,
-    reaction_id     bigint        null,
-    created_at      timestamp     not null,
-    constraint fk_notifications_user_id__id foreign key (user_id) references actors (id) on delete cascade on update cascade,
-    constraint fk_notifications_source_actor__id foreign key (source_actor_id) references actors (id) on delete cascade on update cascade,
-    constraint fk_notifications_post_id__id foreign key (post_id) references posts (id) on delete cascade on update cascade,
-    constraint fk_notifications_reaction_id__id foreign key (reaction_id) references reactions (id) on delete cascade on update cascade
+    id                            varchar(100)                            NOT NULL,
+    client_id                     varchar(100)                            NOT NULL,
+    client_id_issued_at           timestamp     DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    client_secret                 varchar(200)  DEFAULT NULL,
+    client_secret_expires_at      timestamp     DEFAULT NULL,
+    client_name                   varchar(200)                            NOT NULL,
+    client_authentication_methods varchar(1000)                           NOT NULL,
+    authorization_grant_types     varchar(1000)                           NOT NULL,
+    redirect_uris                 varchar(1000) DEFAULT NULL,
+    post_logout_redirect_uris     varchar(1000) DEFAULT NULL,
+    scopes                        varchar(1000)                           NOT NULL,
+    client_settings               varchar(2000)                           NOT NULL,
+    token_settings                varchar(2000)                           NOT NULL,
+    PRIMARY KEY (id)
 );
-
-create table if not exists mastodon_notifications
-(
-    id                               bigint primary key,
-    user_id                          bigint       not null,
-    type                             varchar(100) not null,
-    created_at                       timestamp    not null,
-    account_id                       bigint       not null,
-    status_id                        bigint       null,
-    report_id                        bigint       null,
-    relationship_serverance_event_id bigint       null
-)

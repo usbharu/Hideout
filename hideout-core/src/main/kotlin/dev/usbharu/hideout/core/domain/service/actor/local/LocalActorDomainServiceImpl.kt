@@ -29,7 +29,7 @@ class LocalActorDomainServiceImpl(
     private val applicationConfig: ApplicationConfig,
 ) : LocalActorDomainService {
     override suspend fun usernameAlreadyUse(name: String): Boolean =
-        actorRepository.findByNameAndDomain(name, applicationConfig.url.host) == null
+        actorRepository.findByNameAndDomain(name, applicationConfig.url.host) != null
 
     override suspend fun generateKeyPair(): Pair<ActorPublicKey, ActorPrivateKey> {
         val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
