@@ -43,7 +43,7 @@ class UserDetailsServiceImpl(
             val userDetail = userDetailRepository.findByActorId(actor.id.id)
                 ?: throw UsernameNotFoundException("${actor.id.id} not found")
             HideoutUserDetails(
-                authorities = mutableListOf(),
+                authorities = HashSet(),
                 password = userDetail.password.password,
                 actor.name.name,
                 userDetailsId = userDetail.id.id

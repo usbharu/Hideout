@@ -33,7 +33,7 @@ class SpringAppApi(private val registerApplicationApplicationService: RegisterAp
             appsRequest.clientName,
             setOf(URI.create(appsRequest.redirectUris)),
             false,
-            appsRequest.scopes?.split(" ").orEmpty().toSet()
+            appsRequest.scopes?.split(" ").orEmpty().toSet().ifEmpty { setOf("read") }
         )
         val registeredApplication = registerApplicationApplicationService.register(registerApplication)
         return ResponseEntity.ok(
@@ -41,7 +41,7 @@ class SpringAppApi(private val registerApplicationApplicationService: RegisterAp
                 registeredApplication.name,
                 "invalid-vapid-key",
                 null,
-                registeredApplication.clientId.toString(),
+                registeredApplication.clientId,
                 registeredApplication.clientSecret,
                 appsRequest.redirectUris
             )

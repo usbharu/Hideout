@@ -23,5 +23,5 @@ data class RegisteredApplication(
     val name: String,
     val redirectUris: Set<URI>,
     val clientSecret: String,
-    val clientId: Long,
+    val clientId: String,
 )
