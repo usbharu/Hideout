@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.domain.model.userdetails
+package dev.usbharu.hideout.core.infrastructure.springframework.oauth2
 
-interface UserDetailRepository {
-    suspend fun save(userDetail: UserDetail): UserDetail
-    suspend fun delete(userDetail: UserDetail)
-    suspend fun findByActorId(actorId: Long): UserDetail?
-    suspend fun findById(id: Long): UserDetail?
-}
+import dev.usbharu.hideout.core.application.shared.CommandExecutor
+
+class Oauth2CommandExecutor(override val executor: String, val userDetailId: Long) : CommandExecutor

@@ -20,7 +20,7 @@ import java.util.Objects
 {{#swagger1AnnotationLibrary}}
     import io.swagger.annotations.ApiModelProperty
 {{/swagger1AnnotationLibrary}}
-
+import java.beans.ConstructorProperties
 {{#models}}
     {{#model}}
         {{#isEnum}}{{>enumClass}}{{/isEnum}}{{^isEnum}}{{>dataClass}}{{/isEnum}}

@@ -14,11 +14,6 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.domain.model.userdetails
+package dev.usbharu.hideout.core.application.actor
 
-interface UserDetailRepository {
-    suspend fun save(userDetail: UserDetail): UserDetail
-    suspend fun delete(userDetail: UserDetail)
-    suspend fun findByActorId(actorId: Long): UserDetail?
-    suspend fun findById(id: Long): UserDetail?
-}
+data class GetUserDetail(val id: Long)

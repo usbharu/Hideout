@@ -70,11 +70,20 @@ class CustomEmojiRepositoryImpl : CustomEmojiRepository,
         CustomEmojis.deleteWhere { id eq customEmoji.id.emojiId }
     }
 
-    override suspend fun findByNamesAndDomain(names: List<String>, domain: String): List<CustomEmoji> {
-        return CustomEmojis
+    override suspend fun findByNamesAndDomain(names: List<String>, domain: String): List<CustomEmoji> = query {
+        return@query CustomEmojis
             .selectAll()
             .where {
                 CustomEmojis.name inList names and (CustomEmojis.domain eq domain)
+            }
+            .map { it.toCustomEmoji() }
+    }
+
+    override suspend fun findByIds(ids: List<Long>): List<CustomEmoji> = query {
+        return@query CustomEmojis
+            .selectAll()
+            .where {
+                CustomEmojis.id inList ids
             }
             .map { it.toCustomEmoji() }
     }

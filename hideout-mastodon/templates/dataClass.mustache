@@ -5,7 +5,8 @@
 {{/vars}}
 */{{#discriminator}}
     {{>typeInfoAnnotation}}{{/discriminator}}
-{{#discriminator}}interface {{classname}}{{/discriminator}}{{^discriminator}}{{#hasVars}}data {{/hasVars}}class {{classname}}(
+
+{{#discriminator}}interface {{classname}}{{/discriminator}}{{^discriminator}}{{#hasVars}}data {{/hasVars}}class {{classname}} @ConstructorProperties( {{#vars}}"{{baseName}}",{{/vars}} ) constructor(
 {{#requiredVars}}
     {{>dataClassReqVar}}{{^-last}},
     {{/-last}}{{/requiredVars}}{{#hasRequired}}{{#hasOptional}},
