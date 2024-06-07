@@ -14,11 +14,21 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.domain.model.userdetails
+package dev.usbharu.hideout.core.infrastructure.springframework.oauth2
 
-interface UserDetailRepository {
-    suspend fun save(userDetail: UserDetail): UserDetail
-    suspend fun delete(userDetail: UserDetail)
-    suspend fun findByActorId(actorId: Long): UserDetail?
-    suspend fun findById(id: Long): UserDetail?
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.oauth2.jwt.Jwt
+import org.springframework.stereotype.Component
+
+@Component
+class Oauth2CommandExecutorFactory {
+    fun getCommandExecutor(): Oauth2CommandExecutor {
+        val principal = SecurityContextHolder.getContext().authentication.principal as Jwt
+
+        return Oauth2CommandExecutor(
+            principal.subject,
+            principal.getClaim<String>("uid").toLong()
+        )
+
+    }
 }

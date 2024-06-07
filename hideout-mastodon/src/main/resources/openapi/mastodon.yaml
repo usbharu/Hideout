@@ -242,6 +242,9 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/AppsRequest"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/AppsRequest"
 
       responses:
         200:
@@ -1660,8 +1663,6 @@ components:
         - created_at
         - last_status_at
         - statuses_count
-        - followers_count
-        - followers_count
         - source
 
     AccountSource:

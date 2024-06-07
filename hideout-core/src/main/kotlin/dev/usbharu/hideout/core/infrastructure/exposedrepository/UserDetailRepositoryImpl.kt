@@ -74,6 +74,21 @@ class UserDetailRepositoryImpl : UserDetailRepository, AbstractRepository() {
             }
     }
 
+    override suspend fun findById(id: Long): UserDetail? = query {
+        UserDetails
+            .selectAll().where { UserDetails.id eq id }
+            .singleOrNull()
+            ?.let {
+                UserDetail.create(
+                    UserDetailId(it[UserDetails.id]),
+                    ActorId(it[UserDetails.actorId]),
+                    UserDetailHashedPassword(it[UserDetails.password]),
+                    it[UserDetails.autoAcceptFolloweeFollowRequest],
+                    it[UserDetails.lastMigration]
+                )
+            }
+    }
+
     companion object {
         private val logger = LoggerFactory.getLogger(UserDetailRepositoryImpl::class.java)
     }

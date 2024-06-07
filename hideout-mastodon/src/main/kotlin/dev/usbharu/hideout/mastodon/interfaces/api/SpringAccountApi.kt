@@ -16,14 +16,19 @@
 
 package dev.usbharu.hideout.mastodon.interfaces.api
 
+import dev.usbharu.hideout.core.application.actor.GetUserDetail
+import dev.usbharu.hideout.core.application.actor.GetUserDetailApplicationService
+import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.Oauth2CommandExecutorFactory
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.AccountApi
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.*
-import kotlinx.coroutines.flow.Flow
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 
 @Controller
-class SpringAccountApi : AccountApi {
+class SpringAccountApi(
+    private val oauth2CommandExecutorFactory: Oauth2CommandExecutorFactory,
+    private val getUserDetailApplicationService: GetUserDetailApplicationService,
+) : AccountApi {
     override suspend fun apiV1AccountsIdBlockPost(id: String): ResponseEntity<Relationship> {
         return super.apiV1AccountsIdBlockPost(id)
     }
@@ -68,7 +73,55 @@ class SpringAccountApi : AccountApi {
     }
 
     override suspend fun apiV1AccountsVerifyCredentialsGet(): ResponseEntity<CredentialAccount> {
-        return super.apiV1AccountsVerifyCredentialsGet()
+        val commandExecutor = oauth2CommandExecutorFactory.getCommandExecutor()
+        val localActor =
+            getUserDetailApplicationService.execute(GetUserDetail(commandExecutor.userDetailId), commandExecutor)
+
+        return ResponseEntity.ok(
+            CredentialAccount(
+                id = localActor.id.toString(),
+                username = localActor.name,
+                acct = localActor.name + "@" + localActor.domain,
+                url = localActor.url,
+                displayName = localActor.screenName,
+                note = localActor.description,
+                avatar = localActor.iconUrl,
+                avatarStatic = localActor.iconUrl,
+                header = localActor.iconUrl,
+                headerStatic = localActor.iconUrl,
+                locked = localActor.locked,
+                fields = emptyList(),
+                emojis = localActor.emojis.map {
+                    CustomEmoji(
+                        shortcode = it.name,
+                        url = it.url.toString(),
+                        staticUrl = it.url.toString(),
+                        true,
+                        category = it.category.orEmpty()
+                    )
+                },
+                bot = false,
+                group = false,
+                discoverable = true,
+                createdAt = localActor.createdAt.toString(),
+                lastStatusAt = localActor.lastPostAt?.toString(),
+                statusesCount = localActor.postsCount,
+                followersCount = localActor.followersCount,
+                followingCount = localActor.followingCount,
+                moved = localActor.moveTo != null,
+                noindex = true,
+                suspendex = localActor.suspend,
+                limited = false,
+                role = null,
+                source = AccountSource(
+                    localActor.description,
+                    emptyList(),
+                    AccountSource.Privacy.PUBLIC,
+                    false,
+                    0
+                )
+            )
+        )
     }
 
     override suspend fun apiV1FollowRequestsAccountIdAuthorizePost(accountId: String): ResponseEntity<Relationship> {

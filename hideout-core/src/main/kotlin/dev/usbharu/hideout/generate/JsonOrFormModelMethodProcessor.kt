@@ -43,6 +43,8 @@ class JsonOrFormModelMethodProcessor(
         webRequest: NativeWebRequest,
         binderFactory: WebDataBinderFactory?,
     ): Any? {
+
+
         val contentType = webRequest.getHeader("Content-Type").orEmpty()
         logger.trace("ContentType is {}", contentType)
         if (contentType.contains(isJsonRegex)) {

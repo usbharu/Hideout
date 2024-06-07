@@ -21,4 +21,5 @@ interface CustomEmojiRepository {
     suspend fun findById(id: Long): CustomEmoji?
     suspend fun delete(customEmoji: CustomEmoji)
     suspend fun findByNamesAndDomain(names: List<String>, domain: String): List<CustomEmoji>
+    suspend fun findByIds(ids: List<Long>): List<CustomEmoji>
 }
