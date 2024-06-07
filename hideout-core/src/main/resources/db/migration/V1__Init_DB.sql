@@ -86,7 +86,7 @@ create table if not exists media
     url           varchar(255)  not null unique,
     remote_url    varchar(255)  null unique,
     thumbnail_url varchar(255)  null unique,
-    "type"        int           not null,
+    "type" varchar(100) not null,
     blurhash      varchar(255)  null,
     mime_type     varchar(255)  not null,
     description   varchar(4000) null

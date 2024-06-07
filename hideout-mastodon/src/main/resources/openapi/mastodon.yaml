@@ -1577,8 +1577,6 @@ components:
         - discoverable
         - created_at
         - statuses_count
-        - followers_count
-        - followers_count
 
     CredentialAccount:
       type: object

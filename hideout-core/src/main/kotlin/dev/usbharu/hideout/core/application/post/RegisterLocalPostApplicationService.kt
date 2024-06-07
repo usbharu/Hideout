@@ -19,7 +19,6 @@ package dev.usbharu.hideout.core.application.post
 import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.CommandExecutor
 import dev.usbharu.hideout.core.application.shared.Transaction
-import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.media.MediaId
 import dev.usbharu.hideout.core.domain.model.post.PostId
@@ -38,13 +37,13 @@ class RegisterLocalPostApplicationService(
     private val postRepository: PostRepository,
     private val userDetailRepository: UserDetailRepository,
     transaction: Transaction,
-) : AbstractApplicationService<RegisterLocalPost, Unit>(transaction, Companion.logger) {
+) : AbstractApplicationService<RegisterLocalPost, Long>(transaction, Companion.logger) {
 
     companion object {
         val logger: Logger = LoggerFactory.getLogger(RegisterLocalPostApplicationService::class.java)
     }
 
-    override suspend fun internalExecute(command: RegisterLocalPost, executor: CommandExecutor) {
+    override suspend fun internalExecute(command: RegisterLocalPost, executor: CommandExecutor): Long {
         val actorId = (userDetailRepository.findById(command.userDetailId)
             ?: throw IllegalStateException("actor not found")).actorId
 
@@ -59,5 +58,7 @@ class RegisterLocalPostApplicationService(
             command.mediaIds.map { MediaId(it) })
 
         postRepository.save(post)
+
+        return post.id.id
     }
 }
