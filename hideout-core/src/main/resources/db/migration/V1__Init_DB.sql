@@ -98,14 +98,16 @@ create table if not exists posts
     overview    varchar(100)          null,
     content     varchar(5000)         not null,
     text        varchar(3000)         not null,
-    created_at  bigint                not null,
-    visibility  int     default 0     not null,
+    created_at  timestamp                not null,
+    visibility  varchar(100)          not null,
     url         varchar(500)          not null,
     repost_id   bigint                null,
     reply_id    bigint                null,
     "sensitive" boolean default false not null,
     ap_id       varchar(100)          not null unique,
-    deleted     boolean default false not null
+    deleted     boolean default false not null,
+    hide        boolean default false not null,
+    move_to     bigint  default null  null
 );
 alter table posts
     add constraint fk_posts_actor_id__id foreign key (actor_id) references actors (id) on delete restrict on update restrict;
@@ -113,6 +115,9 @@ alter table posts
     add constraint fk_posts_repostid__id foreign key (repost_id) references posts (id) on delete restrict on update restrict;
 alter table posts
     add constraint fk_posts_replyid__id foreign key (reply_id) references posts (id) on delete restrict on update restrict;
+alter table posts
+    add constraint fk_posts_move_to__id foreign key (move_to) references posts (id) on delete CASCADE on update cascade;
+
 create table if not exists posts_media
 (
     post_id  bigint,
@@ -135,6 +140,19 @@ alter table posts_emojis
     add constraint fk_posts_emojis_post_id__id foreign key (post_id) references posts (id) on delete cascade on update cascade;
 alter table posts_emojis
     add constraint fk_posts_emojis_emoji_id__id foreign key (emoji_id) references emojis (id) on delete cascade on update cascade;
+
+
+create table if not exists posts_visible_actors
+(
+    post_id  bigint not null,
+    actor_id bigint not null,
+    constraint pk_postsvisibleactors primary key (post_id, actor_id)
+);
+
+alter table posts_visible_actors
+    add constraint fk_posts_visible_actors_post_id__id foreign key (post_id) references posts (id) on delete cascade on update cascade;
+alter table posts_visible_actors
+    add constraint fk_posts_visible_actors_actor_id__id foreign key (actor_id) references actors (id) on delete cascade on update cascade;
 
 
 create table if not exists relationships
