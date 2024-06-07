@@ -199,6 +199,7 @@ object Posts : Table("posts") {
     val deleted = bool("deleted")
     val hide = bool("hide")
     val moveTo = long("move_to").references(id).nullable()
+    override val primaryKey: PrimaryKey = PrimaryKey(id)
 }
 
 object PostsMedia : Table("posts_media") {

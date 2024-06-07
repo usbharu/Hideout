@@ -17,7 +17,9 @@
 package dev.usbharu.hideout.util
 
 import java.security.KeyFactory
+import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
+import java.security.spec.PKCS8EncodedKeySpec
 import java.security.spec.X509EncodedKeySpec
 
 object RsaUtil {
@@ -35,5 +37,12 @@ object RsaUtil {
             .replace("\n", "")
         return decodeRsaPublicKey(replace)
     }
+
+    fun decodeRsaPrivateKey(byteArray: ByteArray): RSAPrivateKey {
+        val pkcS8EncodedKeySpec = PKCS8EncodedKeySpec(byteArray)
+        return KeyFactory.getInstance("RSA").generatePrivate(pkcS8EncodedKeySpec) as RSAPrivateKey
+    }
+
+    fun decodeRsaPrivateKey(encoded: String): RSAPrivateKey = decodeRsaPrivateKey(Base64Util.decode(encoded))
 
 }
