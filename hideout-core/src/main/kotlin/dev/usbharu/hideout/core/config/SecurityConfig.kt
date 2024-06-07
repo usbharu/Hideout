@@ -16,7 +16,14 @@
 
 package dev.usbharu.hideout.core.config
 
+import com.nimbusds.jose.jwk.JWKSet
+import com.nimbusds.jose.jwk.RSAKey
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet
+import com.nimbusds.jose.jwk.source.JWKSource
+import com.nimbusds.jose.proc.SecurityContext
 import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.HideoutUserDetails
+import dev.usbharu.hideout.util.RsaUtil
+import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
@@ -118,6 +125,19 @@ class SecurityConfig {
         }
     }
 
+    @Bean
+    fun loadJwkSource(jwkConfig: JwkConfig): JWKSource<SecurityContext> {
+        val rsaKey = RSAKey.Builder(RsaUtil.decodeRsaPublicKey(jwkConfig.publicKey))
+            .privateKey(RsaUtil.decodeRsaPrivateKey(jwkConfig.privateKey)).keyID(jwkConfig.keyId).build()
+        return ImmutableJWKSet(JWKSet(rsaKey))
+    }
+
+    @ConfigurationProperties("hideout.security.jwt")
+    data class JwkConfig(
+        val keyId: String,
+        val publicKey: String,
+        val privateKey: String,
+    )
 
     @Bean
     fun roleHierarchy(): RoleHierarchy {

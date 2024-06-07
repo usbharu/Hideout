@@ -11,5 +11,6 @@
         </Root>
         <Logger name="dev.usbharu.owl.broker.service.QueuedTaskAssignerImpl" level="TRACE"/>
         <Logger name="org.mongodb.driver.cluster" level="WARN"/>
+        <Logger name="org.apache.tomcat.util.net.NioEndpoint" level="INFO"/>
     </Loggers>
 </Configuration>

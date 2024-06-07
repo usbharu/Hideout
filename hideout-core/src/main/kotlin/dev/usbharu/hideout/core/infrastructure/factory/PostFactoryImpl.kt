@@ -47,7 +47,7 @@ class PostFactoryImpl(
         mediaIds: List<MediaId>,
     ): Post {
         val id = idGenerateService.generateId()
-        val url = URI.create(applicationConfig.url.toString() + "/users/" + actorName + "/posts/" + id)
+        val url = URI.create(applicationConfig.url.toString() + "/users/" + actorName.name + "/posts/" + id)
         return Post.create(
             PostId(id),
             actorId,
