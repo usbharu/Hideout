@@ -38,7 +38,7 @@ class PostFactoryImpl(
     suspend fun createLocal(
         actorId: ActorId,
         actorName: ActorName,
-        overview: PostOverview,
+        overview: PostOverview?,
         content: String,
         visibility: Visibility,
         repostId: PostId?,

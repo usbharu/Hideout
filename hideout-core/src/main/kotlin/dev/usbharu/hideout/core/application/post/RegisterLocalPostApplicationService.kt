@@ -25,6 +25,7 @@ import dev.usbharu.hideout.core.domain.model.media.MediaId
 import dev.usbharu.hideout.core.domain.model.post.PostId
 import dev.usbharu.hideout.core.domain.model.post.PostOverview
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
+import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
 import dev.usbharu.hideout.core.infrastructure.factory.PostFactoryImpl
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -35,6 +36,7 @@ class RegisterLocalPostApplicationService(
     private val postFactory: PostFactoryImpl,
     private val actorRepository: ActorRepository,
     private val postRepository: PostRepository,
+    private val userDetailRepository: UserDetailRepository,
     transaction: Transaction,
 ) : AbstractApplicationService<RegisterLocalPost, Unit>(transaction, Companion.logger) {
 
@@ -43,10 +45,12 @@ class RegisterLocalPostApplicationService(
     }
 
     override suspend fun internalExecute(command: RegisterLocalPost, executor: CommandExecutor) {
-        val actorId = ActorId(command.actorId)
+        val actorId = (userDetailRepository.findById(command.userDetailId)
+            ?: throw IllegalStateException("actor not found")).actorId
+
         val post = postFactory.createLocal(actorId,
             actorRepository.findById(actorId)!!.name,
-            PostOverview(command.overview),
+            command.overview?.let { PostOverview(it) },
             command.content,
             command.visibility,
             command.repostId?.let { PostId(it) },
