@@ -19,9 +19,9 @@ package dev.usbharu.hideout.core.application.post
 import dev.usbharu.hideout.core.domain.model.post.Visibility
 
 data class RegisterLocalPost(
-    val actorId: Long,
+    val userDetailId: Long,
     val content: String,
-    val overview: String,
+    val overview: String?,
     val visibility: Visibility,
     val repostId: Long?,
     val replyId: Long?,
