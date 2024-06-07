@@ -19,7 +19,10 @@ package dev.usbharu.hideout.mastodon.interfaces.api
 import dev.usbharu.hideout.core.application.post.RegisterLocalPost
 import dev.usbharu.hideout.core.application.post.RegisterLocalPostApplicationService
 import dev.usbharu.hideout.core.domain.model.post.Visibility
-import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.Oauth2CommandExecutorFactory
+import dev.usbharu.hideout.core.infrastructure.springframework.DelegateCommandExecutorFactory
+import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.Oauth2CommandExecutor
+import dev.usbharu.hideout.mastodon.application.status.GetStatus
+import dev.usbharu.hideout.mastodon.application.status.GetStatusApplicationService
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.StatusApi
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.Status
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.StatusesRequest
@@ -29,8 +32,9 @@ import org.springframework.stereotype.Controller
 
 @Controller
 class SpringStatusApi(
-    private val oauth2CommandExecutorFactory: Oauth2CommandExecutorFactory,
+    private val delegateCommandExecutorFactory: DelegateCommandExecutorFactory,
     private val registerLocalPostApplicationService: RegisterLocalPostApplicationService,
+    private val getStatusApplicationService: GetStatusApplicationService,
 ) : StatusApi {
     override suspend fun apiV1StatusesIdEmojiReactionsEmojiDelete(id: String, emoji: String): ResponseEntity<Status> {
         return super.apiV1StatusesIdEmojiReactionsEmojiDelete(id, emoji)
@@ -41,12 +45,18 @@ class SpringStatusApi(
     }
 
     override suspend fun apiV1StatusesIdGet(id: String): ResponseEntity<Status> {
-        return super.apiV1StatusesIdGet(id)
+
+        return ResponseEntity.ok(
+            getStatusApplicationService.execute(
+                GetStatus(id),
+                delegateCommandExecutorFactory.getCommandExecutor()
+            )
+        )
     }
 
     override suspend fun apiV1StatusesPost(statusesRequest: StatusesRequest): ResponseEntity<Status> {
-        val executor = oauth2CommandExecutorFactory.getCommandExecutor()
-        registerLocalPostApplicationService.execute(
+        val executor = delegateCommandExecutorFactory.getCommandExecutor() as Oauth2CommandExecutor
+        val execute = registerLocalPostApplicationService.execute(
             RegisterLocalPost(
                 userDetailId = executor.userDetailId,
                 content = statusesRequest.status.orEmpty(),
@@ -65,6 +75,11 @@ class SpringStatusApi(
             ),
             executor
         )
-        return ResponseEntity.ok().build()
+
+
+        val status = getStatusApplicationService.execute(GetStatus(execute.toString()), executor)
+        return ResponseEntity.ok(
+            status
+        )
     }
 }

@@ -31,6 +31,7 @@ dependencies {
     implementation(libs.jakarta.annotation)
     implementation(libs.jakarta.validation)
 
+    implementation(libs.bundles.exposed)
     implementation(libs.bundles.openapi)
     implementation(libs.bundles.coroutines)
 }
