@@ -61,6 +61,7 @@ class RegisterApplicationApplicationService(
                 .apply {
                     if (registerApplication.useRefreshToken) {
                         authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+                    } else {
                         tokenSettings(
                             TokenSettings
                                 .builder()
@@ -84,7 +85,7 @@ class RegisterApplicationApplicationService(
                 id = id,
                 name = registerApplication.name,
                 clientSecret = clientSecret,
-                clientId = id,
+                clientId = id.toString(),
                 redirectUris = registerApplication.redirectUris
             )
         }

@@ -29,14 +29,17 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.invoke
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationConsentService
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService
 import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration
+import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint
 
 @Configuration
-@EnableWebSecurity(debug = false)
+@EnableWebSecurity(debug = true)
 class SecurityConfig {
     @Bean
     fun passwordEncoder(): PasswordEncoder {
@@ -80,6 +83,20 @@ class SecurityConfig {
     @Bean
     fun registeredClientRepository(jdbcOperations: JdbcOperations): RegisteredClientRepository {
         return JdbcRegisteredClientRepository(jdbcOperations)
+    }
+
+    @Bean
+    fun oauth2AuthorizationConsentService(
+        jdbcOperations: JdbcOperations,
+        registeredClientRepository: RegisteredClientRepository,
+    ): OAuth2AuthorizationConsentService {
+        return JdbcOAuth2AuthorizationConsentService(jdbcOperations, registeredClientRepository)
+    }
+
+    @Bean
+    fun authorizationServerSettings(): AuthorizationServerSettings {
+        return AuthorizationServerSettings.builder().authorizationEndpoint("/oauth/authorize")
+            .tokenEndpoint("/oauth/token").tokenRevocationEndpoint("/oauth/revoke").build()
     }
 
     @Bean
