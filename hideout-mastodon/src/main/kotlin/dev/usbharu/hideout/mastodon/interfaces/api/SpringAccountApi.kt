@@ -116,7 +116,7 @@ class SpringAccountApi(
                 source = AccountSource(
                     localActor.description,
                     emptyList(),
-                    AccountSource.Privacy.PUBLIC,
+                    AccountSource.Privacy.`public`,
                     false,
                     0
                 )
