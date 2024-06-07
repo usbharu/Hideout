@@ -16,6 +16,7 @@
 
 package dev.usbharu.hideout.core.config
 
+import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.HideoutUserDetails
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
@@ -27,14 +28,19 @@ import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.invoke
+import org.springframework.security.core.Authentication
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.oauth2.core.AuthorizationGrantType
 import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationConsentService
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService
+import org.springframework.security.oauth2.server.authorization.OAuth2TokenType
 import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings
+import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint
 
@@ -98,6 +104,20 @@ class SecurityConfig {
         return AuthorizationServerSettings.builder().authorizationEndpoint("/oauth/authorize")
             .tokenEndpoint("/oauth/token").tokenRevocationEndpoint("/oauth/revoke").build()
     }
+
+    @Bean
+    fun jwtTokenCustomizer(): OAuth2TokenCustomizer<JwtEncodingContext> {
+        return OAuth2TokenCustomizer { context: JwtEncodingContext ->
+
+            if (OAuth2TokenType.ACCESS_TOKEN == context.tokenType &&
+                context.authorization?.authorizationGrantType == AuthorizationGrantType.AUTHORIZATION_CODE
+            ) {
+                val userDetailsImpl = context.getPrincipal<Authentication>().principal as HideoutUserDetails
+                context.claims.claim("uid", userDetailsImpl.userDetailsId.toString())
+            }
+        }
+    }
+
 
     @Bean
     fun roleHierarchy(): RoleHierarchy {
