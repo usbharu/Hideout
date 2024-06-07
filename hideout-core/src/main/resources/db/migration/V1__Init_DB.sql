@@ -98,7 +98,7 @@ create table if not exists posts
     overview    varchar(100)          null,
     content     varchar(5000)         not null,
     text        varchar(3000)         not null,
-    created_at  timestamp                not null,
+    created_at  timestamp             not null,
     visibility  varchar(100)          not null,
     url         varchar(500)          not null,
     repost_id   bigint                null,
