@@ -16,6 +16,9 @@
 
 package dev.usbharu.hideout.core.application.post
 
+import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
+import dev.usbharu.hideout.core.application.shared.CommandExecutor
+import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.media.MediaId
@@ -23,6 +26,8 @@ import dev.usbharu.hideout.core.domain.model.post.PostId
 import dev.usbharu.hideout.core.domain.model.post.PostOverview
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.infrastructure.factory.PostFactoryImpl
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
@@ -30,20 +35,24 @@ class RegisterLocalPostApplicationService(
     private val postFactory: PostFactoryImpl,
     private val actorRepository: ActorRepository,
     private val postRepository: PostRepository,
-) {
-    suspend fun register(registerLocalPost: RegisterLocalPost) {
-        val actorId = ActorId(registerLocalPost.actorId)
-        val post = postFactory.createLocal(
-            actorId,
+    transaction: Transaction,
+) : AbstractApplicationService<RegisterLocalPost, Unit>(transaction, Companion.logger) {
+
+    companion object {
+        val logger: Logger = LoggerFactory.getLogger(RegisterLocalPostApplicationService::class.java)
+    }
+
+    override suspend fun internalExecute(command: RegisterLocalPost, executor: CommandExecutor) {
+        val actorId = ActorId(command.actorId)
+        val post = postFactory.createLocal(actorId,
             actorRepository.findById(actorId)!!.name,
-            PostOverview(registerLocalPost.overview),
-            registerLocalPost.content,
-            registerLocalPost.visibility,
-            registerLocalPost.repostId?.let { PostId(it) },
-            registerLocalPost.replyId?.let { PostId(it) },
-            registerLocalPost.sensitive,
-            registerLocalPost.mediaIds.map { MediaId(it) }
-        )
+            PostOverview(command.overview),
+            command.content,
+            command.visibility,
+            command.repostId?.let { PostId(it) },
+            command.replyId?.let { PostId(it) },
+            command.sensitive,
+            command.mediaIds.map { MediaId(it) })
 
         postRepository.save(post)
     }
