@@ -2,6 +2,8 @@ package dev.usbharu.hideout.core.domain.model.post
 
 import dev.usbharu.hideout.core.domain.event.post.PostEvent
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
+import dev.usbharu.hideout.core.domain.model.actor.ActorPublicKey
+import dev.usbharu.hideout.core.domain.model.actor.TestActorFactory
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
@@ -29,100 +31,102 @@ class PostTest {
     fun visibilityがDIRECTのとき変更できない() {
         val post = TestPostFactory.create(visibility = Visibility.DIRECT)
 
+        val actor = TestActorFactory.create(id = post.actorId.id, publicKey = ActorPublicKey(""))
+
         assertThrows<IllegalArgumentException> {
-            post.visibility = Visibility.PUBLIC
+            post.setVisibility(Visibility.PUBLIC, actor)
         }
         assertThrows<IllegalArgumentException> {
-            post.visibility = Visibility.UNLISTED
+            post.setVisibility(Visibility.UNLISTED, actor)
         }
         assertThrows<IllegalArgumentException> {
-            post.visibility = Visibility.FOLLOWERS
+            post.setVisibility(Visibility.FOLLOWERS, actor)
         }
     }
 
     @Test
     fun visibilityを小さくすることはできないPUBLIC() {
         val post = TestPostFactory.create(visibility = Visibility.PUBLIC)
-
+        val actor = TestActorFactory.create(id = post.actorId.id, publicKey = ActorPublicKey(""))
         assertThrows<IllegalArgumentException> {
-            post.visibility = Visibility.DIRECT
+            post.setVisibility(Visibility.DIRECT, actor)
         }
         assertThrows<IllegalArgumentException> {
-            post.visibility = Visibility.UNLISTED
+            post.setVisibility(Visibility.UNLISTED, actor)
         }
         assertThrows<IllegalArgumentException> {
-            post.visibility = Visibility.FOLLOWERS
+            post.setVisibility(Visibility.FOLLOWERS, actor)
         }
     }
 
     @Test
     fun visibilityを小さくすることはできないUNLISTED() {
         val post = TestPostFactory.create(visibility = Visibility.UNLISTED)
-
+        val actor = TestActorFactory.create(id = post.actorId.id, publicKey = ActorPublicKey(""))
         assertThrows<IllegalArgumentException> {
-            post.visibility = Visibility.DIRECT
+            post.setVisibility(Visibility.DIRECT, actor)
         }
         assertThrows<IllegalArgumentException> {
-            post.visibility = Visibility.FOLLOWERS
+            post.setVisibility(Visibility.FOLLOWERS, actor)
         }
     }
 
     @Test
     fun visibilityを小さくすることはできないFOLLOWERS() {
         val post = TestPostFactory.create(visibility = Visibility.FOLLOWERS)
-
+        val actor = TestActorFactory.create(id = post.actorId.id, publicKey = ActorPublicKey(""))
         assertThrows<IllegalArgumentException> {
-            post.visibility = Visibility.DIRECT
+            post.setVisibility(Visibility.DIRECT, actor)
         }
     }
 
     @Test
     fun visibilityをDIRECTにあとからすることはできない() {
         val post = TestPostFactory.create(visibility = Visibility.DIRECT)
-
+        val actor = TestActorFactory.create(id = post.actorId.id, publicKey = ActorPublicKey(""))
         assertThrows<IllegalArgumentException> {
-            post.visibility = Visibility.DIRECT
+            post.setVisibility(Visibility.DIRECT, actor)
         }
     }
 
     @Test
     fun visibilityを大きくすることができるFOLLOWERS() {
         val post = TestPostFactory.create(visibility = Visibility.FOLLOWERS)
-
+        val actor = TestActorFactory.create(id = post.actorId.id, publicKey = ActorPublicKey(""))
         assertDoesNotThrow {
-            post.visibility = Visibility.UNLISTED
+            post.setVisibility(Visibility.UNLISTED, actor)
         }
 
         val post2 = TestPostFactory.create(visibility = Visibility.FOLLOWERS)
 
         assertDoesNotThrow {
-            post2.visibility = Visibility.PUBLIC
+            post2.setVisibility(Visibility.PUBLIC, actor)
         }
     }
 
     @Test
     fun visibilityを大きくすることができるUNLISTED() {
         val post = TestPostFactory.create(visibility = Visibility.UNLISTED)
-
+        val actor = TestActorFactory.create(id = post.actorId.id, publicKey = ActorPublicKey(""))
         assertDoesNotThrow {
-            post.visibility = Visibility.PUBLIC
+            post.setVisibility(Visibility.PUBLIC, actor)
         }
     }
 
     @Test
     fun deletedがtrueのときvisibilityを変更できない() {
         val post = TestPostFactory.create(visibility = Visibility.UNLISTED, deleted = true)
-
+        val actor = TestActorFactory.create(id = post.actorId.id, publicKey = ActorPublicKey(""))
         assertThrows<IllegalArgumentException> {
-            post.visibility = Visibility.PUBLIC
+            post.setVisibility(Visibility.PUBLIC, actor)
         }
     }
 
     @Test
     fun visibilityが変更されない限りドメインイベントは発生しない() {
         val post = TestPostFactory.create(visibility = Visibility.UNLISTED)
-
-        post.visibility = Visibility.UNLISTED
+        val actor = TestActorFactory.create(id = post.actorId.id, publicKey = ActorPublicKey(""))
+        post.setVisibility(Visibility.UNLISTED, actor)
         assertEmpty(post)
 
     }
@@ -130,7 +134,8 @@ class PostTest {
     @Test
     fun visibilityが変更されるとupdateイベントが発生する() {
         val post = TestPostFactory.create(visibility = Visibility.UNLISTED)
-        post.visibility = Visibility.PUBLIC
+        val actor = TestActorFactory.create(id = post.actorId.id, publicKey = ActorPublicKey(""))
+        post.setVisibility(Visibility.PUBLIC, actor)
 
         assertContainsEvent(post, PostEvent.update.eventName)
     }
@@ -138,51 +143,51 @@ class PostTest {
     @Test
     fun deletedがtrueのときvisibleActorsを変更できない() {
         val post = TestPostFactory.create(deleted = true)
-
+        val actor = TestActorFactory.create(id = post.actorId.id, publicKey = ActorPublicKey(""))
         assertThrows<IllegalArgumentException> {
-            post.visibleActors = setOf(ActorId(100))
+            post.setVisibleActors(setOf(ActorId(100)), actor)
         }
     }
 
     @Test
     fun ゔvisibilityがDIRECT以外の時visibleActorsを変更できない() {
         val post = TestPostFactory.create(visibility = Visibility.FOLLOWERS)
-
-        post.visibleActors = setOf(ActorId(100))
+        val actor = TestActorFactory.create(id = post.actorId.id, publicKey = ActorPublicKey(""))
+        post.setVisibleActors(setOf(ActorId(100)), actor)
         assertEmpty(post)
 
         val post2 = TestPostFactory.create(visibility = Visibility.UNLISTED)
 
-        post2.visibleActors = setOf(ActorId(100))
+        post2.setVisibleActors(setOf(ActorId(100)), actor)
         assertEmpty(post2)
 
         val post3 = TestPostFactory.create(visibility = Visibility.PUBLIC)
 
-        post3.visibleActors = setOf(ActorId(100))
+        post3.setVisibleActors(setOf(ActorId(100)), actor)
         assertEmpty(post3)
     }
 
     @Test
     fun visibilityがDIRECTの時visibleActorsを変更できる() {
         val post = TestPostFactory.create(visibility = Visibility.DIRECT)
-
-        post.visibleActors = setOf(ActorId(100))
+        val actor = TestActorFactory.create(id = post.actorId.id, publicKey = ActorPublicKey(""))
+        post.setVisibleActors(setOf(ActorId(100)), actor)
         assertEquals(setOf(ActorId(100)), post.visibleActors)
     }
 
     @Test
     fun visibleActorsから削除されることはない() {
         val post = TestPostFactory.create(visibility = Visibility.DIRECT, visibleActors = listOf(100))
-
-        post.visibleActors = setOf(ActorId(200))
+        val actor = TestActorFactory.create(id = post.actorId.id, publicKey = ActorPublicKey(""))
+        post.setVisibleActors(setOf(ActorId(200)), actor)
         assertEquals(setOf(ActorId(100), ActorId(200)), post.visibleActors)
     }
 
     @Test
     fun visibleActorsに追加された時updateイベントが発生する() {
         val post = TestPostFactory.create(visibility = Visibility.DIRECT)
-
-        post.visibleActors = setOf(ActorId(100))
+        val actor = TestActorFactory.create(id = post.actorId.id, publicKey = ActorPublicKey(""))
+        post.setVisibleActors(setOf(ActorId(100)), actor)
 
         assertContainsEvent(post, PostEvent.update.eventName)
     }
@@ -197,17 +202,17 @@ class PostTest {
     @Test
     fun deletedがtrueの時contentをセットできない() {
         val post = TestPostFactory.create(deleted = true)
-
+        val actor = TestActorFactory.create(id = post.actorId.id, publicKey = ActorPublicKey(""))
         assertThrows<IllegalArgumentException> {
-            post.content = PostContent("test", "test", emptyList())
+            post.setContent(PostContent("test", "test", emptyList()), actor)
         }
     }
 
     @Test
     fun contentの内容が変更されたらupdateイベントが発生する() {
         val post = TestPostFactory.create()
-
-        post.content = PostContent("test", "test", emptyList())
+        val actor = TestActorFactory.create(id = post.actorId.id, publicKey = ActorPublicKey(""))
+        post.setContent(PostContent("test", "test", emptyList()), actor)
         assertContainsEvent(post, PostEvent.update.eventName)
     }
 
@@ -228,19 +233,19 @@ class PostTest {
     @Test
     fun deletedがtrueのときセットできない() {
         val post = TestPostFactory.create(deleted = true)
-
+        val actor = TestActorFactory.create(id = post.actorId.id, publicKey = ActorPublicKey(""))
         assertThrows<IllegalArgumentException> {
-            post.overview = PostOverview("aaaa")
+            post.setOverview(PostOverview("aaaa"), actor)
         }
     }
 
     @Test
     fun deletedがfalseのときセットできる() {
         val post = TestPostFactory.create(deleted = false)
-
+        val actor = TestActorFactory.create(id = post.actorId.id, publicKey = ActorPublicKey(""))
         val overview = PostOverview("aaaa")
         assertDoesNotThrow {
-            post.overview = overview
+            post.setOverview(overview, actor)
         }
         assertEquals(overview, post.overview)
 
@@ -250,11 +255,10 @@ class PostTest {
     @Test
     fun overviewの内容が更新されなかった時イベントが発生しない() {
         val post = TestPostFactory.create(overview = "aaaa")
-        post.overview = PostOverview("aaaa")
+        val actor = TestActorFactory.create(id = post.actorId.id, publicKey = ActorPublicKey(""))
+        post.setOverview(PostOverview("aaaa"), actor)
         assertEmpty(post)
     }
-
-
 
 
 }

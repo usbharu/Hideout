@@ -20,7 +20,7 @@ object TestActorFactory {
         inbox: URI = URI.create("https://example.com/$id/inbox"),
         outbox: URI = URI.create("https://example.com/$id/outbox"),
         uri: URI = URI.create("https://example.com/$id"),
-        publicKey: ActorPublicKey,
+        publicKey: ActorPublicKey = ActorPublicKey(""),
         privateKey: ActorPrivateKey? = null,
         createdAt: Instant = Instant.now(),
         keyId: String = "https://example.com/$id#key-id",
@@ -65,6 +65,7 @@ object TestActorFactory {
                 moveTo = moveTo,
                 emojiIds = emojiIds,
                 deleted = deleted,
+                roles = emptySet()
             )
         }
     }

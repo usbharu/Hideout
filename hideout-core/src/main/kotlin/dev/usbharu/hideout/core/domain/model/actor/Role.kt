@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.domain.shared.domainevent
+package dev.usbharu.hideout.core.domain.model.actor
 
-abstract class DomainEventBody(val map: Map<String, Any?>) {
-    fun toMap(): Map<String, Any?> {
-        return map
-    }
+enum class Role {
+    LOCAL, MODERATOR, ADMINISTRATOR, REMOTE
 }

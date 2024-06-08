@@ -19,3 +19,7 @@ package dev.usbharu.hideout.core.application.shared
 interface CommandExecutor {
     val executor: String
 }
+
+interface UserDetailGettableCommandExecutor : CommandExecutor {
+    val userDetailId: Long
+}

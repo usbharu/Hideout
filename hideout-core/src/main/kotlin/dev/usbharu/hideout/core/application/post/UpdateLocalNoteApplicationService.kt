@@ -16,30 +16,45 @@
 
 package dev.usbharu.hideout.core.application.post
 
+import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
+import dev.usbharu.hideout.core.application.shared.CommandExecutor
 import dev.usbharu.hideout.core.application.shared.Transaction
+import dev.usbharu.hideout.core.application.shared.UserDetailGettableCommandExecutor
+import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.media.MediaId
 import dev.usbharu.hideout.core.domain.model.post.PostId
 import dev.usbharu.hideout.core.domain.model.post.PostOverview
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
+import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
 import dev.usbharu.hideout.core.infrastructure.factory.PostContentFactoryImpl
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
 class UpdateLocalNoteApplicationService(
-    private val transaction: Transaction,
+    transaction: Transaction,
     private val postRepository: PostRepository,
     private val postContentFactoryImpl: PostContentFactoryImpl,
-) {
-    suspend fun update(updateLocalNote: UpdateLocalNote) {
-        transaction.transaction {
-            val post = postRepository.findById(PostId(updateLocalNote.postId))!!
+    private val userDetailRepository: UserDetailRepository,
+    private val actorRepository: ActorRepository,
+) : AbstractApplicationService<UpdateLocalNote, Unit>(transaction, logger) {
 
-            post.content = postContentFactoryImpl.create(updateLocalNote.content)
-            post.overview = updateLocalNote.overview?.let { PostOverview(it) }
-            post.addMediaIds(updateLocalNote.mediaIds.map { MediaId(it) })
-            post.sensitive = updateLocalNote.sensitive
+    override suspend fun internalExecute(command: UpdateLocalNote, executor: CommandExecutor) {
+        require(executor is UserDetailGettableCommandExecutor)
 
-            postRepository.save(post)
-        }
+        val userDetail = userDetailRepository.findById(executor.userDetailId)!!
+        val actor = actorRepository.findById(userDetail.actorId)!!
+        val post = postRepository.findById(PostId(command.postId))!!
+
+        post.setContent(postContentFactoryImpl.create(command.content), actor)
+        post.setOverview(command.overview?.let { PostOverview(it) }, actor)
+        post.addMediaIds(command.mediaIds.map { MediaId(it) }, actor)
+        post.setSensitive(command.sensitive, actor)
+
+        postRepository.save(post)
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(UpdateLocalNoteApplicationService::class.java)
     }
 }

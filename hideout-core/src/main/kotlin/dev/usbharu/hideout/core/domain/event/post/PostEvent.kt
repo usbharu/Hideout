@@ -16,20 +16,21 @@
 
 package dev.usbharu.hideout.core.domain.event.post
 
+import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEvent
 import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventBody
 
-class PostDomainEventFactory(private val post: Post) {
+class PostDomainEventFactory(private val post: Post, private val actor: Actor? = null) {
     fun createEvent(postEvent: PostEvent): DomainEvent {
         return DomainEvent.create(
             postEvent.eventName,
-            PostEventBody(post)
+            PostEventBody(post, actor)
         )
     }
 }
 
-class PostEventBody(post: Post) : DomainEventBody(mapOf("post" to post))
+class PostEventBody(post: Post, actor: Actor?) : DomainEventBody(mapOf("post" to post, "actor" to actor))
 
 enum class PostEvent(val eventName: String) {
     delete("PostDelete"),

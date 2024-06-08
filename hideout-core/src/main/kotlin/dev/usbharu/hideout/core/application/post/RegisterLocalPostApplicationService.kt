@@ -47,15 +47,19 @@ class RegisterLocalPostApplicationService(
         val actorId = (userDetailRepository.findById(command.userDetailId)
             ?: throw IllegalStateException("actor not found")).actorId
 
-        val post = postFactory.createLocal(actorId,
-            actorRepository.findById(actorId)!!.name,
-            command.overview?.let { PostOverview(it) },
-            command.content,
-            command.visibility,
-            command.repostId?.let { PostId(it) },
-            command.replyId?.let { PostId(it) },
-            command.sensitive,
-            command.mediaIds.map { MediaId(it) })
+        val actor = actorRepository.findById(actorId)!!
+
+        val post = postFactory.createLocal(
+            actor = actor,
+            actorName = actor.name,
+            overview = command.overview?.let { PostOverview(it) },
+            content = command.content,
+            visibility = command.visibility,
+            repostId = command.repostId?.let { PostId(it) },
+            replyId = command.replyId?.let { PostId(it) },
+            sensitive = command.sensitive,
+            mediaIds = command.mediaIds.map { MediaId(it) },
+        )
 
         postRepository.save(post)
 
