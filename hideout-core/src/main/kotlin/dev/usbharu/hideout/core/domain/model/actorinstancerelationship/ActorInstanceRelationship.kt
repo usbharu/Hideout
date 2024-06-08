@@ -96,5 +96,15 @@ data class ActorInstanceRelationship(
                 ")"
     }
 
-
+    companion object {
+        fun default(actorId: ActorId, instanceId: InstanceId): ActorInstanceRelationship {
+            return ActorInstanceRelationship(
+                actorId = actorId,
+                instanceId = instanceId,
+                blocking = false,
+                muting = false,
+                doNotSendPrivate = false
+            )
+        }
+    }
 }

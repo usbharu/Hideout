@@ -102,4 +102,35 @@ class Relationship(
     fun rejectFollowRequest() {
         followRequesting = false
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Relationship
+
+        if (actorId != other.actorId) return false
+        if (targetActorId != other.targetActorId) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = actorId.hashCode()
+        result = 31 * result + targetActorId.hashCode()
+        return result
+    }
+
+
+    companion object {
+        fun default(actorId: ActorId, targetActorId: ActorId): Relationship = Relationship(
+            actorId = actorId,
+            targetActorId = targetActorId,
+            following = false,
+            blocking = false,
+            muting = false,
+            followRequesting = false,
+            mutingFollowRequest = false
+        )
+    }
 }

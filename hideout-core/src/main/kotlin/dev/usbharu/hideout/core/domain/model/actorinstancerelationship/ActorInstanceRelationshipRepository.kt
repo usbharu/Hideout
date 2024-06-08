@@ -16,7 +16,11 @@
 
 package dev.usbharu.hideout.core.domain.model.actorinstancerelationship
 
+import dev.usbharu.hideout.core.domain.model.actor.ActorId
+import dev.usbharu.hideout.core.domain.model.instance.InstanceId
+
 interface ActorInstanceRelationshipRepository {
     suspend fun save(actorInstanceRelationship: ActorInstanceRelationship): ActorInstanceRelationship
     suspend fun delete(actorInstanceRelationship: ActorInstanceRelationship)
+    suspend fun findByActorIdAndInstanceId(actorId: ActorId, instanceId: InstanceId): ActorInstanceRelationship?
 }
