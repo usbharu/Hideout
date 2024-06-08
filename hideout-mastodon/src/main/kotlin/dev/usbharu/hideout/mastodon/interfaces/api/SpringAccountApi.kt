@@ -18,14 +18,32 @@ package dev.usbharu.hideout.mastodon.interfaces.api
 
 import dev.usbharu.hideout.core.application.actor.GetUserDetail
 import dev.usbharu.hideout.core.application.actor.GetUserDetailApplicationService
-import dev.usbharu.hideout.core.application.relationship.*
+import dev.usbharu.hideout.core.application.relationship.acceptfollowrequest.AcceptFollowRequest
+import dev.usbharu.hideout.core.application.relationship.acceptfollowrequest.UserAcceptFollowRequestApplicationService
+import dev.usbharu.hideout.core.application.relationship.block.Block
+import dev.usbharu.hideout.core.application.relationship.block.UserBlockApplicationService
+import dev.usbharu.hideout.core.application.relationship.followrequest.FollowRequest
+import dev.usbharu.hideout.core.application.relationship.followrequest.UserFollowRequestApplicationService
+import dev.usbharu.hideout.core.application.relationship.get.GetRelationship
+import dev.usbharu.hideout.core.application.relationship.get.GetRelationshipApplicationService
+import dev.usbharu.hideout.core.application.relationship.mute.Mute
+import dev.usbharu.hideout.core.application.relationship.mute.UserMuteApplicationService
+import dev.usbharu.hideout.core.application.relationship.rejectfollowrequest.RejectFollowRequest
+import dev.usbharu.hideout.core.application.relationship.rejectfollowrequest.UserRejectFollowRequestApplicationService
+import dev.usbharu.hideout.core.application.relationship.removefromfollowers.RemoveFromFollowers
+import dev.usbharu.hideout.core.application.relationship.removefromfollowers.UserRemoveFromFollowersApplicationService
+import dev.usbharu.hideout.core.application.relationship.unblock.Unblock
+import dev.usbharu.hideout.core.application.relationship.unblock.UserUnblockApplicationService
+import dev.usbharu.hideout.core.application.relationship.unfollow.Unfollow
+import dev.usbharu.hideout.core.application.relationship.unfollow.UserUnfollowApplicationService
+import dev.usbharu.hideout.core.application.relationship.unmute.Unmute
+import dev.usbharu.hideout.core.application.relationship.unmute.UserUnmuteApplicationService
 import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.Oauth2CommandExecutor
 import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.Oauth2CommandExecutorFactory
 import dev.usbharu.hideout.mastodon.application.accounts.GetAccount
 import dev.usbharu.hideout.mastodon.application.accounts.GetAccountApplicationService
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.AccountApi
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.*
-import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.Relationship
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 
@@ -38,7 +56,15 @@ class SpringAccountApi(
     private val getRelationshipApplicationService: GetRelationshipApplicationService,
     private val userBlockApplicationService: UserBlockApplicationService,
     private val userUnblockApplicationService: UserUnblockApplicationService,
+    private val userMuteApplicationService: UserMuteApplicationService,
+    private val userUnmuteApplicationService: UserUnmuteApplicationService,
+    private val userAcceptFollowRequestApplicationService: UserAcceptFollowRequestApplicationService,
+    private val userRejectFollowRequestApplicationService: UserRejectFollowRequestApplicationService,
+    private val userRemoveFromFollowersApplicationService: UserRemoveFromFollowersApplicationService,
+    private val userUnfollowApplicationService: UserUnfollowApplicationService,
 ) : AccountApi {
+
+
     override suspend fun apiV1AccountsIdBlockPost(id: String): ResponseEntity<Relationship> {
         val executor = oauth2CommandExecutorFactory.getCommandExecutor()
         userBlockApplicationService.execute(Block(id.toLong()), executor)
@@ -90,11 +116,19 @@ class SpringAccountApi(
     }
 
     override suspend fun apiV1AccountsIdMutePost(id: String): ResponseEntity<Relationship> {
-        return super.apiV1AccountsIdMutePost(id)
+        val executor = oauth2CommandExecutorFactory.getCommandExecutor()
+        userMuteApplicationService.execute(
+            Mute(id.toLong()), executor
+        )
+        return fetchRelationship(id, executor)
     }
 
     override suspend fun apiV1AccountsIdRemoveFromFollowersPost(id: String): ResponseEntity<Relationship> {
-        return super.apiV1AccountsIdRemoveFromFollowersPost(id)
+        val executor = oauth2CommandExecutorFactory.getCommandExecutor()
+        userRemoveFromFollowersApplicationService.execute(
+            RemoveFromFollowers(id.toLong()), executor
+        )
+        return fetchRelationship(id, executor)
     }
 
     override suspend fun apiV1AccountsIdUnblockPost(id: String): ResponseEntity<Relationship> {
@@ -106,11 +140,19 @@ class SpringAccountApi(
     }
 
     override suspend fun apiV1AccountsIdUnfollowPost(id: String): ResponseEntity<Relationship> {
-        return super.apiV1AccountsIdUnfollowPost(id)
+        val executor = oauth2CommandExecutorFactory.getCommandExecutor()
+        userUnfollowApplicationService.execute(
+            Unfollow(id.toLong()), executor
+        )
+        return fetchRelationship(id, executor)
     }
 
     override suspend fun apiV1AccountsIdUnmutePost(id: String): ResponseEntity<Relationship> {
-        return super.apiV1AccountsIdUnmutePost(id)
+        val executor = oauth2CommandExecutorFactory.getCommandExecutor()
+        userUnmuteApplicationService.execute(
+            Unmute(id.toLong()), executor
+        )
+        return fetchRelationship(id, executor)
     }
 
     override suspend fun apiV1AccountsPost(accountsCreateRequest: AccountsCreateRequest): ResponseEntity<Unit> {
@@ -174,11 +216,19 @@ class SpringAccountApi(
     }
 
     override suspend fun apiV1FollowRequestsAccountIdAuthorizePost(accountId: String): ResponseEntity<Relationship> {
-        return super.apiV1FollowRequestsAccountIdAuthorizePost(accountId)
+        val executor = oauth2CommandExecutorFactory.getCommandExecutor()
+        userAcceptFollowRequestApplicationService.execute(
+            AcceptFollowRequest(accountId.toLong()), executor
+        )
+        return fetchRelationship(accountId, executor)
     }
 
     override suspend fun apiV1FollowRequestsAccountIdRejectPost(accountId: String): ResponseEntity<Relationship> {
-        return super.apiV1FollowRequestsAccountIdRejectPost(accountId)
+        val executor = oauth2CommandExecutorFactory.getCommandExecutor()
+        userRejectFollowRequestApplicationService.execute(
+            RejectFollowRequest(accountId.toLong()), executor
+        )
+        return fetchRelationship(accountId, executor)
     }
 
 }

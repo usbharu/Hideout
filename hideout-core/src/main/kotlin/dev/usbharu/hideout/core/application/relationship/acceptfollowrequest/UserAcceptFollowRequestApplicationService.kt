@@ -14,45 +14,44 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.application.relationship
+package dev.usbharu.hideout.core.application.relationship.acceptfollowrequest
 
+import dev.usbharu.hideout.core.application.relationship.block.UserBlockApplicationService
 import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.CommandExecutor
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.application.shared.UserDetailGettableCommandExecutor
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
-import dev.usbharu.hideout.core.domain.model.relationship.Relationship
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
-class UserUnblockApplicationService(
+class UserAcceptFollowRequestApplicationService(
     private val relationshipRepository: RelationshipRepository,
     transaction: Transaction,
     private val actorRepository: ActorRepository,
     private val userDetailRepository: UserDetailRepository,
 ) :
-    AbstractApplicationService<Unblock, Unit>(transaction, logger) {
+    AbstractApplicationService<AcceptFollowRequest, Unit>(transaction, logger) {
     companion object {
         private val logger = LoggerFactory.getLogger(UserBlockApplicationService::class.java)
     }
 
-    override suspend fun internalExecute(command: Unblock, executor: CommandExecutor) {
+    override suspend fun internalExecute(command: AcceptFollowRequest, executor: CommandExecutor) {
         require(executor is UserDetailGettableCommandExecutor)
 
         val userDetail = userDetailRepository.findById(executor.userDetailId)!!
         val actor = actorRepository.findById(userDetail.actorId)!!
 
-        val targetId = ActorId(command.targetActorId)
-        val relationship = relationshipRepository.findByActorIdAndTargetId(actor.id, targetId) ?: Relationship.default(
-            actor.id,
-            targetId
-        )
+        val targetId = ActorId(command.sourceActorId)
 
-        relationship.unblock()
+        val relationship = relationshipRepository.findByActorIdAndTargetId(targetId, actor.id)
+            ?: throw Exception("Follow request not found")
+
+        relationship.acceptFollowRequest()
 
         relationshipRepository.save(relationship)
     }

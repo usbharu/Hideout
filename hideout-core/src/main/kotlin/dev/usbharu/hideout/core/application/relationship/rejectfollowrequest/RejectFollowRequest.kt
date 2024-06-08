@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.application.relationship
+package dev.usbharu.hideout.core.application.relationship.rejectfollowrequest
 
-data class Unblock(val targetActorId: Long)
+data class RejectFollowRequest(val sourceActorId: Long)

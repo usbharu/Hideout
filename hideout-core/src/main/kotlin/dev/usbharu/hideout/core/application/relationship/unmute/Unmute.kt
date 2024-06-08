@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.application.relationship
+package dev.usbharu.hideout.core.application.relationship.unmute
 
-data class Block(val targetActorId: Long)
+data class Unmute(val targetActorId: Long)
