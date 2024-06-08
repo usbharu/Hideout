@@ -58,7 +58,8 @@ class ActorResultRowMapper : ResultRowMapper<Actor> {
                 .filter { it.isNotEmpty() }
                 .map { EmojiId(it.toLong()) }
                 .toSet(),
-            deleted = resultRow[Actors.deleted]
+            deleted = resultRow[Actors.deleted],
+            roles = emptySet()
         )
     }
 }

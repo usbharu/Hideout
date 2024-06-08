@@ -16,15 +16,23 @@
 
 package dev.usbharu.hideout.core.application.post
 
+import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.post.PostId
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
+import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
 import org.springframework.stereotype.Service
 
 @Service
-class DeleteLocalPostApplicationService(private val postRepository: PostRepository) {
-    suspend fun delete(postId: Long) {
+class DeleteLocalPostApplicationService(
+    private val postRepository: PostRepository,
+    private val userDetailRepository: UserDetailRepository,
+    private val actorRepository: ActorRepository,
+) {
+    suspend fun delete(postId: Long, userDetailId: Long) {
         val findById = postRepository.findById(PostId(postId))!!
-        findById.delete()
+        val user = userDetailRepository.findById(userDetailId)!!
+        val actor = actorRepository.findById(user.actorId)!!
+        findById.delete(actor)
         postRepository.save(findById)
     }
 }

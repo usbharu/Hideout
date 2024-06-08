@@ -17,7 +17,7 @@
 package dev.usbharu.hideout.core.infrastructure.factory
 
 import dev.usbharu.hideout.core.config.ApplicationConfig
-import dev.usbharu.hideout.core.domain.model.actor.ActorId
+import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.actor.ActorName
 import dev.usbharu.hideout.core.domain.model.media.MediaId
 import dev.usbharu.hideout.core.domain.model.post.Post
@@ -36,7 +36,7 @@ class PostFactoryImpl(
     private val applicationConfig: ApplicationConfig,
 ) {
     suspend fun createLocal(
-        actorId: ActorId,
+        actor: Actor,
         actorName: ActorName,
         overview: PostOverview?,
         content: String,
@@ -49,19 +49,20 @@ class PostFactoryImpl(
         val id = idGenerateService.generateId()
         val url = URI.create(applicationConfig.url.toString() + "/users/" + actorName.name + "/posts/" + id)
         return Post.create(
-            PostId(id),
-            actorId,
-            overview,
-            postContentFactoryImpl.create(content),
-            Instant.now(),
-            visibility,
-            url,
-            repostId,
-            replyId,
-            sensitive,
-            url,
-            false,
-            mediaIds,
+            id = PostId(id),
+            actorId = actor.id,
+            overview = overview,
+            content = postContentFactoryImpl.create(content),
+            createdAt = Instant.now(),
+            visibility = visibility,
+            url = url,
+            repostId = repostId,
+            replyId = replyId,
+            sensitive = sensitive,
+            apId = url,
+            deleted = false,
+            mediaIds = mediaIds,
+            actor = actor,
         )
     }
 }

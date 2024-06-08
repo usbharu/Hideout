@@ -52,7 +52,17 @@ class Actor(
     moveTo: ActorId? = null,
     emojiIds: Set<EmojiId>,
     deleted: Boolean,
+    roles: Set<Role>,
 ) : DomainEventStorable() {
+
+    var roles = roles
+        private set
+
+    fun setRole(roles: Set<Role>, actor: Actor) {
+        require(actor.roles.contains(Role.ADMINISTRATOR).not())
+
+        this.roles = roles
+    }
 
     var suspend = suspend
         set(value) {
