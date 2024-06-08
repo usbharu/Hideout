@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.infrastructure.springframework.oauth2
+package dev.usbharu.hideout.mastodon.application.accounts
 
-import dev.usbharu.hideout.core.application.shared.CommandExecutor
-import dev.usbharu.hideout.core.application.shared.UserDetailGettableCommandExecutor
-
-class Oauth2CommandExecutor(override val executor: String, override val userDetailId: Long) : CommandExecutor,
-    UserDetailGettableCommandExecutor
+data class GetAccount(val accountId: String)

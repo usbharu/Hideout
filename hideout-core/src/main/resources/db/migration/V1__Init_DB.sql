@@ -249,3 +249,15 @@ CREATE TABLE oauth2_authorization
     device_code_metadata          varchar(4000) DEFAULT NULL,
     PRIMARY KEY (id)
 );
+
+create table if not exists actor_instance_relationships
+(
+    actor_id            bigint  not null,
+    instance_id         bigint  not null,
+    blocking            boolean not null,
+    muting              boolean not null,
+    do_not_send_private boolean not null,
+    PRIMARY KEY (actor_id, instance_id),
+    constraint fk_actor_instance_relationships_actor_id__id foreign key (actor_id) references actors (id) on delete cascade on update cascade,
+    constraint fk_actor_instance_relationships_instance_id__id foreign key (instance_id) references instance (id) on delete cascade on update cascade
+);
