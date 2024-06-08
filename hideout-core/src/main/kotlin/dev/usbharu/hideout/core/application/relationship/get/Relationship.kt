@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.application.relationship
+package dev.usbharu.hideout.core.application.relationship.get
 
 import dev.usbharu.hideout.core.domain.model.actorinstancerelationship.ActorInstanceRelationship
 import dev.usbharu.hideout.core.domain.model.relationship.Relationship
@@ -38,7 +38,7 @@ data class Relationship(
             relationship: Relationship,
             relationship2: Relationship,
             actorInstanceRelationship: ActorInstanceRelationship,
-        ): dev.usbharu.hideout.core.application.relationship.Relationship {
+        ): dev.usbharu.hideout.core.application.relationship.get.Relationship {
             return Relationship(
                 relationship.actorId.id,
                 relationship.targetActorId.id,

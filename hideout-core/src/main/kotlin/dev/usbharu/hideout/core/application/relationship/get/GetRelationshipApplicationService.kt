@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.application.relationship
+package dev.usbharu.hideout.core.application.relationship.get
 
 import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.CommandExecutor
@@ -22,48 +22,47 @@ import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.application.shared.UserDetailGettableCommandExecutor
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
-import dev.usbharu.hideout.core.domain.model.relationship.Relationship
+import dev.usbharu.hideout.core.domain.model.actorinstancerelationship.ActorInstanceRelationship
+import dev.usbharu.hideout.core.domain.model.actorinstancerelationship.ActorInstanceRelationshipRepository
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
-import dev.usbharu.hideout.core.domain.service.relationship.RelationshipDomainService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
-class UserBlockApplicationService(
+class GetRelationshipApplicationService(
     private val relationshipRepository: RelationshipRepository,
-    transaction: Transaction,
     private val actorRepository: ActorRepository,
     private val userDetailRepository: UserDetailRepository,
-    private val relationshipDomainService: RelationshipDomainService,
+    private val actorInstanceRelationshipRepository: ActorInstanceRelationshipRepository,
+    transaction: Transaction,
 ) :
-    AbstractApplicationService<Block, Unit>(transaction, logger) {
+    AbstractApplicationService<GetRelationship, Relationship>(
+        transaction, logger
+    ) {
     companion object {
-        private val logger = LoggerFactory.getLogger(UserBlockApplicationService::class.java)
+        private val logger = LoggerFactory.getLogger(GetRelationshipApplicationService::class.java)
     }
 
-    override suspend fun internalExecute(command: Block, executor: CommandExecutor) {
+    override suspend fun internalExecute(command: GetRelationship, executor: CommandExecutor): Relationship {
         require(executor is UserDetailGettableCommandExecutor)
-
         val userDetail = userDetailRepository.findById(executor.userDetailId)!!
         val actor = actorRepository.findById(userDetail.actorId)!!
-
         val targetId = ActorId(command.targetActorId)
-        val relationship = relationshipRepository.findByActorIdAndTargetId(actor.id, targetId) ?: Relationship.default(
-            actor.id,
-            targetId
-        )
+        val target = actorRepository.findById(targetId)!!
+        val relationship = (relationshipRepository.findByActorIdAndTargetId(actor.id, targetId)
+            ?: dev.usbharu.hideout.core.domain.model.relationship.Relationship.default(actor.id, targetId))
 
-        val inverseRelationship =
-            relationshipRepository.findByActorIdAndTargetId(targetId, actor.id) ?: Relationship.default(
-                targetId,
-                actor.id
-            )
+        val relationship1 = (relationshipRepository.findByActorIdAndTargetId(targetId, actor.id)
+            ?: dev.usbharu.hideout.core.domain.model.relationship.Relationship.default(targetId, actor.id))
 
-        relationshipDomainService.block(relationship, inverseRelationship)
+        val actorInstanceRelationship =
+            actorInstanceRelationshipRepository.findByActorIdAndInstanceId(actor.id, target.instance)
+                ?: ActorInstanceRelationship.default(
+                    actor.id,
+                    target.instance
+                )
 
-
-        relationshipRepository.save(relationship)
-        relationshipRepository.save(inverseRelationship)
+        return Relationship.of(relationship, relationship1, actorInstanceRelationship)
     }
 }
