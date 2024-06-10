@@ -34,7 +34,9 @@ class Filter(
             }
         }
 
-        return Regex("")
+        return (wholeWords + regexes + wholeWords)
+            .joinToString("|")
+            .toRegex()
     }
 
     companion object {
