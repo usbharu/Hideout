@@ -16,21 +16,50 @@
 
 package dev.usbharu.hideout.mastodon.interfaces.api
 
+import dev.usbharu.hideout.core.application.filter.*
+import dev.usbharu.hideout.core.domain.model.filter.FilterAction
+import dev.usbharu.hideout.core.domain.model.filter.FilterContext
+import dev.usbharu.hideout.core.domain.model.filter.FilterMode
+import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.Oauth2CommandExecutorFactory
+import dev.usbharu.hideout.mastodon.application.filter.DeleteFilterV1
+import dev.usbharu.hideout.mastodon.application.filter.DeleteFilterV1ApplicationService
+import dev.usbharu.hideout.mastodon.application.filter.GetFilterV1
+import dev.usbharu.hideout.mastodon.application.filter.GetFilterV1ApplicationService
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.FilterApi
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.*
-import kotlinx.coroutines.flow.Flow
+import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.Filter
+import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.FilterKeyword
+import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.FilterPostRequest.Context
+import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.V1FilterPostRequest.Context.*
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 
 @Controller
-class SpringFilterApi : FilterApi {
+class SpringFilterApi(
+    private val oauth2CommandExecutorFactory: Oauth2CommandExecutorFactory,
+    private val userRegisterFilterApplicationService: UserRegisterFilterApplicationService,
+    private val getFilterV1ApplicationService: GetFilterV1ApplicationService,
+    private val deleteFilterV1ApplicationService: DeleteFilterV1ApplicationService,
+    private val userDeleteFilterApplicationService: UserDeleteFilterApplicationService,
+    private val userGetFilterApplicationService: UserGetFilterApplicationService,
+) : FilterApi {
 
     override suspend fun apiV1FiltersIdDelete(id: String): ResponseEntity<Any> {
-        return super.apiV1FiltersIdDelete(id)
+        return ResponseEntity.ok(
+            deleteFilterV1ApplicationService.execute(
+                DeleteFilterV1(id.toLong()),
+                oauth2CommandExecutorFactory.getCommandExecutor()
+            )
+        )
     }
 
     override suspend fun apiV1FiltersIdGet(id: String): ResponseEntity<V1Filter> {
-        return super.apiV1FiltersIdGet(id)
+        return ResponseEntity.ok(
+            getFilterV1ApplicationService.execute(
+                GetFilterV1(id.toLong()),
+                oauth2CommandExecutorFactory.getCommandExecutor()
+            )
+        )
     }
 
     override suspend fun apiV1FiltersIdPut(
@@ -45,7 +74,33 @@ class SpringFilterApi : FilterApi {
     }
 
     override suspend fun apiV1FiltersPost(v1FilterPostRequest: V1FilterPostRequest): ResponseEntity<V1Filter> {
-        return super.apiV1FiltersPost(v1FilterPostRequest)
+        val executor = oauth2CommandExecutorFactory.getCommandExecutor()
+        val filterMode = if (v1FilterPostRequest.wholeWord == true) {
+            FilterMode.WHOLE_WORD
+        } else {
+            FilterMode.NONE
+        }
+        val filterContext = v1FilterPostRequest.context.map {
+            when (it) {
+                home -> FilterContext.home
+                notifications -> FilterContext.notifications
+                public -> FilterContext.public
+                thread -> FilterContext.thread
+                account -> FilterContext.account
+            }
+        }.toSet()
+        val filter = userRegisterFilterApplicationService.execute(
+            RegisterFilter(
+                v1FilterPostRequest.phrase, filterContext, FilterAction.warn,
+                setOf(RegisterFilterKeyword(v1FilterPostRequest.phrase, filterMode))
+            ), executor
+        )
+        return ResponseEntity.ok(
+            getFilterV1ApplicationService.execute(
+                GetFilterV1(filter.filterKeywords.first().id),
+                executor
+            )
+        )
     }
 
     override suspend fun apiV2FiltersFilterIdKeywordsPost(
@@ -63,12 +118,49 @@ class SpringFilterApi : FilterApi {
     }
 
     override suspend fun apiV2FiltersIdDelete(id: String): ResponseEntity<Any> {
-        return super.apiV2FiltersIdDelete(id)
+        userDeleteFilterApplicationService.execute(
+            DeleteFilter(id.toLong()),
+            oauth2CommandExecutorFactory.getCommandExecutor()
+        )
+        return ResponseEntity.ok(Unit)
     }
 
     override suspend fun apiV2FiltersIdGet(id: String): ResponseEntity<Filter> {
-        return super.apiV2FiltersIdGet(id)
+        val filter = userGetFilterApplicationService.execute(
+            GetFilter(id.toLong()),
+            oauth2CommandExecutorFactory.getCommandExecutor()
+        )
+        return ResponseEntity.ok(
+            filter(filter)
+        )
     }
+
+    private fun filter(filter: dev.usbharu.hideout.core.application.filter.Filter) = Filter(
+        id = filter.filterId.toString(),
+        title = filter.name,
+        context = filter.filterContext.map {
+            when (it) {
+                FilterContext.home -> Filter.Context.home
+                FilterContext.notifications -> Filter.Context.notifications
+                FilterContext.public -> Filter.Context.public
+                FilterContext.thread -> Filter.Context.thread
+                FilterContext.account -> Filter.Context.account
+            }
+        },
+        expiresAt = null,
+        filterAction = when (filter.filterAction) {
+            FilterAction.warn -> Filter.FilterAction.warn
+            FilterAction.hide -> Filter.FilterAction.hide
+
+        },
+        keywords = filter.filterKeywords.map {
+            FilterKeyword(
+                it.id.toString(),
+                it.keyword,
+                it.filterMode == FilterMode.WHOLE_WORD
+            )
+        }, statuses = null
+    )
 
     override suspend fun apiV2FiltersIdPut(
         id: String,
@@ -99,14 +191,46 @@ class SpringFilterApi : FilterApi {
     }
 
     override suspend fun apiV2FiltersPost(filterPostRequest: FilterPostRequest): ResponseEntity<Filter> {
-        return super.apiV2FiltersPost(filterPostRequest)
+        val executor = oauth2CommandExecutorFactory.getCommandExecutor()
+        val filter = userRegisterFilterApplicationService.execute(
+            RegisterFilter(
+                filterName = filterPostRequest.title,
+                filterContext = filterPostRequest.context.map {
+                    when (it) {
+                        Context.home -> FilterContext.home
+                        Context.notifications -> FilterContext.notifications
+                        Context.public -> FilterContext.public
+                        Context.thread -> FilterContext.thread
+                        Context.account -> FilterContext.account
+                    }
+                }.toSet(),
+                filterAction = when (filterPostRequest.filterAction) {
+                    FilterPostRequest.FilterAction.warn -> FilterAction.warn
+                    FilterPostRequest.FilterAction.hide -> FilterAction.hide
+                    null -> FilterAction.warn
+                },
+                filterKeywords = filterPostRequest.keywordsAttributes.orEmpty().map {
+                    RegisterFilterKeyword(
+                        it.keyword,
+                        if (it.regex == true) {
+                            FilterMode.REGEX
+                        } else if (it.wholeWord == true) {
+                            FilterMode.WHOLE_WORD
+                        } else {
+                            FilterMode.NONE
+                        }
+                    )
+                }.toSet()
+            ), executor
+        )
+        return ResponseEntity.ok(filter(filter))
     }
 
     override suspend fun apiV2FiltersStatusesIdDelete(id: String): ResponseEntity<Any> {
-        return super.apiV2FiltersStatusesIdDelete(id)
+        return ResponseEntity.notFound().build()
     }
 
     override suspend fun apiV2FiltersStatusesIdGet(id: String): ResponseEntity<FilterStatus> {
-        return super.apiV2FiltersStatusesIdGet(id)
+        return ResponseEntity.notFound().build()
     }
 }

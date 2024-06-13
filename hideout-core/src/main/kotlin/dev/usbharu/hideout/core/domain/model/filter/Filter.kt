@@ -9,9 +9,9 @@ class Filter(
     val id: FilterId,
     val userDetailId: UserDetailId,
     var name: FilterName,
-    val filterContext: List<FilterContext>,
+    val filterContext: Set<FilterContext>,
     val filterAction: FilterAction,
-    filterKeywords: Set<FilterKeyword>
+    filterKeywords: Set<FilterKeyword>,
 ) {
     var filterKeywords = filterKeywords
         private set
@@ -39,6 +39,17 @@ class Filter(
             .toRegex()
     }
 
+    fun reconstructWith(filterKeywords: Set<FilterKeyword>): Filter {
+        return Filter(
+            this.id,
+            this.userDetailId,
+            this.name,
+            this.filterContext,
+            this.filterAction,
+            filterKeywords
+        )
+    }
+
     companion object {
         fun isAllow(user: UserDetail, action: Action, resource: Filter): Boolean {
             return when (action) {
@@ -48,6 +59,24 @@ class Filter(
 
         enum class Action {
             SET_KEYWORDS
+        }
+
+        fun create(
+            id: FilterId,
+            userDetailId: UserDetailId,
+            name: FilterName,
+            filterContext: Set<FilterContext>,
+            filterAction: FilterAction,
+            filterKeywords: Set<FilterKeyword>,
+        ): Filter {
+            return Filter(
+                id,
+                userDetailId,
+                name,
+                filterContext,
+                filterAction,
+                filterKeywords
+            )
         }
     }
 }
