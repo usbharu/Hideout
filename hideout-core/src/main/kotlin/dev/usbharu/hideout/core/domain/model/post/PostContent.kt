@@ -25,5 +25,4 @@ data class PostContent(val text: String, val content: String, val emojiIds: List
         val contentLength = 5000
         val textLength = 3000
     }
-
 }

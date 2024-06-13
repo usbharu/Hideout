@@ -59,7 +59,6 @@ class Post(
         private set
 
     fun setVisibility(visibility: Visibility, actor: Actor) {
-
         require(isAllow(actor, UPDATE, this))
         require(this.visibility != Visibility.DIRECT)
         require(visibility != Visibility.DIRECT)
@@ -77,7 +76,6 @@ class Post(
         private set
 
     fun setVisibleActors(visibleActors: Set<ActorId>, actor: Actor) {
-
         require(isAllow(actor, UPDATE, this))
         require(deleted.not())
         if (visibility == Visibility.DIRECT) {
@@ -266,7 +264,6 @@ class Post(
             moveTo: PostId? = null,
             actor: Actor,
         ): Post {
-
             require(actor.deleted.not())
             require(actor.moveTo == null)
 
@@ -310,10 +307,10 @@ class Post(
                 }
 
                 MOVE -> resource.actorId == actor.id && actor.deleted.not()
-                DELETE -> resource.actorId == actor.id ||
+                DELETE ->
+                    resource.actorId == actor.id ||
                         actor.roles.contains(Role.ADMINISTRATOR) ||
                         actor.roles.contains(Role.MODERATOR)
-
             }
         }
 

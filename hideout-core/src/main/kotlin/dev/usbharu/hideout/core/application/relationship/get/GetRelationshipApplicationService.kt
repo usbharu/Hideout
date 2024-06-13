@@ -38,7 +38,8 @@ class GetRelationshipApplicationService(
     transaction: Transaction,
 ) :
     AbstractApplicationService<GetRelationship, Relationship>(
-        transaction, logger
+        transaction,
+        logger
     ) {
     companion object {
         private val logger = LoggerFactory.getLogger(GetRelationshipApplicationService::class.java)
@@ -50,11 +51,15 @@ class GetRelationshipApplicationService(
         val actor = actorRepository.findById(userDetail.actorId)!!
         val targetId = ActorId(command.targetActorId)
         val target = actorRepository.findById(targetId)!!
-        val relationship = (relationshipRepository.findByActorIdAndTargetId(actor.id, targetId)
-            ?: dev.usbharu.hideout.core.domain.model.relationship.Relationship.default(actor.id, targetId))
+        val relationship = (
+                relationshipRepository.findByActorIdAndTargetId(actor.id, targetId)
+                    ?: dev.usbharu.hideout.core.domain.model.relationship.Relationship.default(actor.id, targetId)
+                )
 
-        val relationship1 = (relationshipRepository.findByActorIdAndTargetId(targetId, actor.id)
-            ?: dev.usbharu.hideout.core.domain.model.relationship.Relationship.default(targetId, actor.id))
+        val relationship1 = (
+                relationshipRepository.findByActorIdAndTargetId(targetId, actor.id)
+                    ?: dev.usbharu.hideout.core.domain.model.relationship.Relationship.default(targetId, actor.id)
+                )
 
         val actorInstanceRelationship =
             actorInstanceRelationshipRepository.findByActorIdAndInstanceId(actor.id, target.instance)

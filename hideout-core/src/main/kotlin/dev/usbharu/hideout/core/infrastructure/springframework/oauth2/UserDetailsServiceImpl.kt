@@ -49,6 +49,5 @@ class UserDetailsServiceImpl(
                 userDetailsId = userDetail.id.id
             )
         }
-
     }
 }

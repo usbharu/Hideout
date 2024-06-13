@@ -28,10 +28,10 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 
-
 @Repository
 class ExposedActorInstanceRelationshipRepository(override val domainEventPublisher: DomainEventPublisher) :
-    ActorInstanceRelationshipRepository, AbstractRepository(),
+    ActorInstanceRelationshipRepository,
+    AbstractRepository(),
     DomainEventPublishableRepository<ActorInstanceRelationship> {
     override suspend fun save(actorInstanceRelationship: ActorInstanceRelationship): ActorInstanceRelationship {
         query {

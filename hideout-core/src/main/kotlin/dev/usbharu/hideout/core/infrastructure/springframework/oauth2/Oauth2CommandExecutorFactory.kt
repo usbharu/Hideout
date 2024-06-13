@@ -29,6 +29,5 @@ class Oauth2CommandExecutorFactory {
             principal.subject,
             principal.getClaim<String>("uid").toLong()
         )
-
     }
 }

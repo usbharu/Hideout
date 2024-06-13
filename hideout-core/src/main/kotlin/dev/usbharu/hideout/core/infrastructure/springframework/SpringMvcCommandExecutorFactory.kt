@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 
-
 @Component
 class SpringMvcCommandExecutorFactory {
     fun getCommandExecutor(): HttpCommandExecutor {

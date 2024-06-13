@@ -16,7 +16,6 @@
 
 package dev.usbharu.hideout.core.domain.service.post
 
-
 interface PostContentFormatter {
     fun format(content: String): FormattedPostContent
 }

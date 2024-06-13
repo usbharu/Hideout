@@ -16,7 +16,6 @@
 
 package dev.usbharu.hideout.core.domain.model.actor
 
-
 class ActorScreenName(screenName: String) {
 
     val screenName: String = screenName.take(length)

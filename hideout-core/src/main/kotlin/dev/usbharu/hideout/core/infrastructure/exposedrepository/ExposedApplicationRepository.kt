@@ -43,12 +43,10 @@ class ExposedApplicationRepository : ApplicationRepository, AbstractRepository()
     override val logger: Logger
         get() = Companion.logger
 
-
     companion object {
         private val logger = LoggerFactory.getLogger(ExposedApplicationRepository::class.java)
     }
 }
-
 
 object Applications : Table("applications") {
     val id = long("id")

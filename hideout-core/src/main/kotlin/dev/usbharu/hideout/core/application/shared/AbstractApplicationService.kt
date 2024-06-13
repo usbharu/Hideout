@@ -38,7 +38,6 @@ abstract class AbstractApplicationService<T : Any, R>(
             logger.warn("Command execution error", e)
             throw e
         }
-
     }
 
     protected abstract suspend fun internalExecute(command: T, executor: CommandExecutor): R

@@ -31,10 +31,10 @@ class HideoutJdbcOauth2AuthorizationService(
     @Autowired(required = false) lobHandler: LobHandler = DefaultLobHandler(),
 ) : JdbcOAuth2AuthorizationService(jdbcOperations, registeredClientRepository, lobHandler) {
 
-
-
     init {
-        super.setAuthorizationRowMapper(HideoutOAuth2AuthorizationRowMapper(registeredClientRepository = registeredClientRepository))
+        super.setAuthorizationRowMapper(
+            HideoutOAuth2AuthorizationRowMapper(registeredClientRepository = registeredClientRepository)
+        )
     }
 
     class HideoutOAuth2AuthorizationRowMapper(registeredClientRepository: RegisteredClientRepository?) :

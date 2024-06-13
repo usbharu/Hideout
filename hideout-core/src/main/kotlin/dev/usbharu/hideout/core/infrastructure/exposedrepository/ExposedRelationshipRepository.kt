@@ -28,7 +28,8 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 
 @Repository
-class ExposedRelationshipRepository(override val domainEventPublisher: DomainEventPublisher) : RelationshipRepository,
+class ExposedRelationshipRepository(override val domainEventPublisher: DomainEventPublisher) :
+    RelationshipRepository,
     AbstractRepository(),
     DomainEventPublishableRepository<Relationship> {
     override suspend fun save(relationship: Relationship): Relationship {
@@ -64,7 +65,6 @@ class ExposedRelationshipRepository(override val domainEventPublisher: DomainEve
 
     override val logger: Logger
         get() = Companion.logger
-
 
     companion object {
         private val logger = LoggerFactory.getLogger(ExposedRelationshipRepository::class.java)

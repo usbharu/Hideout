@@ -20,7 +20,9 @@ import dev.usbharu.hideout.core.domain.service.userdetail.PasswordEncoder
 import org.springframework.stereotype.Component
 
 @Component
-class SpringSecurityPasswordEncoder(private val passwordEncoder: org.springframework.security.crypto.password.PasswordEncoder) :
+class SpringSecurityPasswordEncoder(
+    private val passwordEncoder: org.springframework.security.crypto.password.PasswordEncoder,
+) :
     PasswordEncoder {
     override suspend fun encode(input: String): String {
         return passwordEncoder.encode(input)

@@ -20,7 +20,6 @@ plugins {
 rootProject.name = "hideout"
 
 includeBuild("hideout-core")
-includeBuild("hideout-worker")
 includeBuild("hideout-mastodon")
 
 dependencyResolutionManagement {

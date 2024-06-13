@@ -121,7 +121,6 @@ class Relationship(
         return result
     }
 
-
     companion object {
         fun default(actorId: ActorId, targetActorId: ActorId): Relationship = Relationship(
             actorId = actorId,
