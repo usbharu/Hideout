@@ -17,12 +17,7 @@
 package dev.usbharu.hideout.mastodon.interfaces.api
 
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.TimelineApi
-import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.Status
-import kotlinx.coroutines.flow.Flow
-import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 
 @Controller
-class SpringTimelineApi : TimelineApi {
-
-}
+class SpringTimelineApi : TimelineApi

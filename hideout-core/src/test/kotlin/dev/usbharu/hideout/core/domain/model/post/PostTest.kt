@@ -193,7 +193,7 @@ class PostTest {
     }
 
     @Test
-    fun hideがtrueのときcontetnがemptyを返す() {
+    fun hideがtrueのときcontentがemptyを返す() {
         val post = TestPostFactory.create(hide = true)
 
         assertEquals(PostContent.empty, post.content)
