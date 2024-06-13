@@ -57,7 +57,6 @@ class PostQueryMapper(private val postResultRowMapper: ResultRowMapper<Post>) : 
                                     ?.let { actorId -> ActorId(actorId) }
                             }.toSet()
                         )
-
                     }
             }
     }

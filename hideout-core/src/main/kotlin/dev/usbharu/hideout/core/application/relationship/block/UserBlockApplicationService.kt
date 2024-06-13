@@ -62,7 +62,6 @@ class UserBlockApplicationService(
 
         relationshipDomainService.block(relationship, inverseRelationship)
 
-
         relationshipRepository.save(relationship)
         relationshipRepository.save(inverseRelationship)
     }

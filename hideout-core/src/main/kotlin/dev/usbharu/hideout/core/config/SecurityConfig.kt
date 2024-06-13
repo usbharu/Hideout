@@ -87,7 +87,6 @@ class SecurityConfig {
                 authorize(anyRequest, authenticated)
             }
             formLogin {
-
             }
         }
         return http.build()

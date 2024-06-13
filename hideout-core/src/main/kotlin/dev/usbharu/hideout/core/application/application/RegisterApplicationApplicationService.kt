@@ -43,9 +43,7 @@ class RegisterApplicationApplicationService(
     private val applicationRepository: ApplicationRepository,
 ) {
     suspend fun register(registerApplication: RegisterApplication): RegisteredApplication {
-
         return transaction.transaction {
-
             val id = idGenerateService.generateId()
             val clientSecret = secureTokenGenerator.generate()
             val registeredClient = RegisteredClient
@@ -89,6 +87,5 @@ class RegisterApplicationApplicationService(
                 redirectUris = registerApplication.redirectUris
             )
         }
-
     }
 }

@@ -61,9 +61,7 @@ class FilterDomainService : IFilterDomainService {
 
                         post to filterResults
                     }
-
             }
             .map { FilteredPost(it.first, it.second) }
     }
-
 }
