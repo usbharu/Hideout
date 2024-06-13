@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("SpringJavaInjectionPointsAutowiringInspection")
+
 package mastodon.account
 
 import com.fasterxml.jackson.core.type.TypeReference
@@ -41,6 +43,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.context.WebApplicationContext
 
+@Suppress("NonAsciiCharacters")
 @SpringBootTest(classes = [SpringApplication::class])
 @AutoConfigureMockMvc
 @Transactional
@@ -48,6 +51,7 @@ import org.springframework.web.context.WebApplicationContext
 @Sql("/sql/test-user2.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 @Sql("/sql/accounts/test-accounts-statuses.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 class AccountApiPaginationTest {
+    @Suppress("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
     private lateinit var context: WebApplicationContext
 

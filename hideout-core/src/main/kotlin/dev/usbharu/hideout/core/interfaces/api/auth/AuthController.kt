@@ -32,9 +32,7 @@ class AuthController(
     private val springMvcCommandExecutorFactory: SpringMvcCommandExecutorFactory,
 ) {
     @GetMapping("/auth/sign_up")
-    fun signUp(): String {
-        return "sign_up"
-    }
+    fun signUp(): String = "sign_up"
 
     @PostMapping("/auth/sign_up")
     suspend fun signUp(@Validated @ModelAttribute signUpForm: SignUpForm, request: HttpServletRequest): String {

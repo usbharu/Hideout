@@ -25,7 +25,7 @@ abstract class AbstractApplicationService<T : Any, R>(
 ) : ApplicationService<T, R> {
     override suspend fun execute(command: T, executor: CommandExecutor): R {
         return try {
-            logger.debug("START ${command::class.simpleName} by $executor")
+            logger.debug("START {} by {}", command::class.simpleName, executor)
             val response = transaction.transaction<R> {
                 internalExecute(command, executor)
             }
