@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package util
+package dev.usbharu.hideout.core.application.media
 
-import org.springframework.boot.test.context.SpringBootTest
+import java.nio.file.Path
 
-@SpringBootTest
-abstract class SpringApplicationTestBase
+data class UploadMedia(val path: Path)
