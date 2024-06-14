@@ -3,7 +3,7 @@ import com.github.jk1.license.filter.LicenseBundleNormalizer
 import com.github.jk1.license.importer.DependencyDataImporter
 import com.github.jk1.license.importer.XmlReportImporter
 import com.github.jk1.license.render.*
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
@@ -22,58 +22,6 @@ apply {
 group = "dev.usbharu"
 version = "0.0.1"
 
-sourceSets {
-    create("intTest") {
-        compileClasspath += sourceSets.main.get().output
-        runtimeClasspath += sourceSets.main.get().output
-    }
-    create("e2eTest") {
-        compileClasspath += sourceSets.main.get().output
-        runtimeClasspath += sourceSets.main.get().output
-    }
-}
-
-val intTestImplementation by configurations.getting {
-    extendsFrom(configurations.implementation.get())
-}
-val intTestRuntimeOnly by configurations.getting {
-    extendsFrom(configurations.runtimeOnly.get())
-}
-
-val e2eTestImplementation by configurations.getting {
-    extendsFrom(configurations.implementation.get())
-}
-
-val e2eTestRuntimeOnly by configurations.getting {
-    extendsFrom(configurations.runtimeOnly.get())
-}
-
-val integrationTest = task<Test>("integrationTest") {
-    description = "Runs integration tests."
-    group = "verification"
-
-    testClassesDirs = sourceSets["intTest"].output.classesDirs
-    classpath = sourceSets["intTest"].runtimeClasspath
-    shouldRunAfter("test")
-
-    useJUnitPlatform()
-}
-
-val e2eTest = task<Test>("e2eTest") {
-    description = "Runs e2e tests."
-    group = "verification"
-
-    testClassesDirs = sourceSets["e2eTest"].output.classesDirs
-    classpath = sourceSets["e2eTest"].runtimeClasspath
-    shouldRunAfter("test")
-
-    useJUnitPlatform()
-}
-
-tasks.check {
-    dependsOn(integrationTest)
-    dependsOn(e2eTest)
-}
 
 tasks.withType<Test> {
     useJUnitPlatform()
@@ -82,23 +30,19 @@ tasks.withType<Test> {
             "--add-opens", "java.base/java.lang=ALL-UNNAMED",
             "--add-opens", "java.base/java.util=ALL-UNNAMED",
             "--add-opens", "java.naming/javax.naming=ALL-UNNAMED",
+            "--add-opens", "java.base/java.util.concurrent.locks=ALL-UNNAMED"
         ).toMutableList()
     }
 }
 
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs += "-Xjsr305=strict"
+kotlin {
+    jvmToolchain(21)
+    compilerOptions {
+        freeCompilerArgs.add("-Xjsr305=strict")
+        jvmTarget = JvmTarget.JVM_21
     }
-//    dependsOn("openApiGenerateMastodonCompatibleApi")
-//    mustRunAfter("openApiGenerateMastodonCompatibleApi")
 }
 
-
-tasks.clean {
-    delete += listOf("$rootDir/src/main/resources/static")
-}
 
 repositories {
     mavenCentral()
@@ -125,21 +69,6 @@ repositories {
     }
 }
 
-kotlin {
-    target {
-        compilations.all {
-            kotlinOptions.jvmTarget = JavaVersion.VERSION_21.toString()
-        }
-    }
-}
-
-sourceSets.main {
-    kotlin.srcDirs(
-        "$buildDir/generated/ksp/main",
-        "$buildDir/generated/sources/openapi/src/main/kotlin",
-        "$buildDir/generated/sources/mastodon/src/main/kotlin"
-    )
-}
 
 val os = org.gradle.nativeplatform.platform.internal
     .DefaultNativePlatform.getCurrentOperatingSystem()
@@ -201,29 +130,14 @@ dependencies {
 
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    implementation(libs.kotlin.junit)
-    implementation(libs.coroutines.test)
-
+    testImplementation(libs.kotlin.junit)
+    testImplementation(libs.coroutines.test)
     testImplementation(libs.ktor.client.mock)
     testImplementation(libs.h2db)
-
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.3.1")
     testImplementation("org.mockito:mockito-inline:5.2.0")
     testImplementation("nl.jqno.equalsverifier:equalsverifier:3.16.1")
     testImplementation("com.jparams:to-string-verifier:1.4.8")
-
-    intTestImplementation("org.springframework.boot:spring-boot-starter-test")
-    intTestImplementation("org.springframework.security:spring-security-test")
-    intTestImplementation(libs.kotlin.junit)
-    intTestImplementation(libs.coroutines.test)
-    intTestImplementation("org.mockito.kotlin:mockito-kotlin:5.3.1")
-    intTestImplementation(libs.h2db)
-
-    e2eTestImplementation("org.springframework.boot:spring-boot-starter-test")
-    e2eTestImplementation("org.springframework.security:spring-security-test")
-    e2eTestImplementation("org.springframework.boot:spring-boot-starter-webflux")
-    e2eTestImplementation("com.intuit.karate:karate-junit5:1.4.1")
-    e2eTestImplementation(libs.h2db)
 
 }
 
@@ -312,7 +226,9 @@ kover {
 }
 
 springBoot {
-    buildInfo()
+    buildInfo {
+
+    }
 }
 
 licenseReport {
