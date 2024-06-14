@@ -59,7 +59,7 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
       - name: Build
-        uses: gradle/gradle-build-action@v3.3.2
+        uses: gradle/gradle-build-action@v3.4.0
         with:
           arguments: :hideout-core:testClasses
 
@@ -111,7 +111,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Unit Test
-        uses: gradle/gradle-build-action@v3.3.2
+        uses: gradle/gradle-build-action@v3.4.0
         with:
           arguments: :hideout-core:test
 
@@ -175,7 +175,7 @@ jobs:
           mongodb-version: latest
 
       - name: Unit Test
-        uses: gradle/gradle-build-action@v3.3.2
+        uses: gradle/gradle-build-action@v3.4.0
         with:
           arguments: :hideout-core:integrationTest
 
@@ -234,7 +234,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Run Kover
-        uses: gradle/gradle-build-action@v3.3.2
+        uses: gradle/gradle-build-action@v3.4.0
         with:
           arguments: :hideout-core:koverXmlReport -x :hideout-core:integrationTest -x :hideout-core:e2eTest --rerun-tasks
 
@@ -399,7 +399,7 @@ jobs:
         run: echo ${{ steps.setup-chrome.outputs.chrome-path }} >> $GITHUB_PATH
 
       - name: E2E Test
-        uses: gradle/gradle-build-action@v3.3.2
+        uses: gradle/gradle-build-action@v3.4.0
         with:
           arguments: :hideout-core:e2eTest
 
