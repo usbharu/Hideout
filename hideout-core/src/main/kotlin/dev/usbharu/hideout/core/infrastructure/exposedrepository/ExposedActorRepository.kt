@@ -53,6 +53,9 @@ class ExposedActorRepository(
                 it[suspend] = actor.suspend
                 it[moveTo] = actor.moveTo?.id
                 it[emojis] = actor.emojis.joinToString(",")
+                it[icon] = actor.icon?.id
+                it[banner] = actor.banner?.id
+
             }
             ActorsAlsoKnownAs.deleteWhere {
                 actorId eq actor.id.id
@@ -127,6 +130,8 @@ object Actors : Table("actors") {
     val moveTo = long("move_to").references(id).nullable()
     val emojis = varchar("emojis", 3000)
     val deleted = bool("deleted")
+    val banner = long("banner").references(Media.id).nullable()
+    val icon = long("icon").references(Media.id).nullable()
 
     override val primaryKey = PrimaryKey(id)
 

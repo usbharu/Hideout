@@ -61,7 +61,9 @@ class ActorFactoryImpl(
             suspend = false,
             emojiIds = emptySet(),
             deleted = false,
-            roles = emptySet()
+            roles = emptySet(),
+            banner = null,
+            icon = null
         )
     }
 }

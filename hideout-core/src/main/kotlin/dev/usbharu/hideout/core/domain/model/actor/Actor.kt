@@ -20,6 +20,7 @@ import dev.usbharu.hideout.core.domain.event.actor.ActorDomainEventFactory
 import dev.usbharu.hideout.core.domain.event.actor.ActorEvent.*
 import dev.usbharu.hideout.core.domain.model.emoji.EmojiId
 import dev.usbharu.hideout.core.domain.model.instance.InstanceId
+import dev.usbharu.hideout.core.domain.model.media.MediaId
 import dev.usbharu.hideout.core.domain.model.shared.Domain
 import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventStorable
 import java.net.URI
@@ -53,7 +54,25 @@ class Actor(
     emojiIds: Set<EmojiId>,
     deleted: Boolean,
     roles: Set<Role>,
+    icon: MediaId?,
+    banner: MediaId?,
 ) : DomainEventStorable() {
+
+    var banner = banner
+        private set
+
+    fun setBannerUrl(banner: MediaId?, actor: Actor) {
+        addDomainEvent(ActorDomainEventFactory(this).createEvent(update))
+        this.banner = banner
+    }
+
+    var icon = icon
+        private set
+
+    fun setIconUrl(icon: MediaId?, actor: Actor) {
+        addDomainEvent(ActorDomainEventFactory(this).createEvent(update))
+        this.icon = icon
+    }
 
     var roles = roles
         private set

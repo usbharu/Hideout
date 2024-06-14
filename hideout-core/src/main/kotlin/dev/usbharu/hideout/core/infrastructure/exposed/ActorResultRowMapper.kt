@@ -19,6 +19,7 @@ package dev.usbharu.hideout.core.infrastructure.exposed
 import dev.usbharu.hideout.core.domain.model.actor.*
 import dev.usbharu.hideout.core.domain.model.emoji.EmojiId
 import dev.usbharu.hideout.core.domain.model.instance.InstanceId
+import dev.usbharu.hideout.core.domain.model.media.MediaId
 import dev.usbharu.hideout.core.domain.model.shared.Domain
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Actors
 import org.jetbrains.exposed.sql.ResultRow
@@ -59,7 +60,9 @@ class ActorResultRowMapper : ResultRowMapper<Actor> {
                 .map { EmojiId(it.toLong()) }
                 .toSet(),
             deleted = resultRow[Actors.deleted],
-            roles = emptySet()
+            roles = emptySet(),
+            icon = resultRow[Actors.icon]?.let { MediaId(it) },
+            banner = resultRow[Actors.banner]?.let { MediaId(it) }
         )
     }
 }
