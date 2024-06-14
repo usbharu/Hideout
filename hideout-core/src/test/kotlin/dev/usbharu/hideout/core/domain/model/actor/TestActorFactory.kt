@@ -65,7 +65,9 @@ object TestActorFactory {
                 moveTo = moveTo,
                 emojiIds = emojiIds,
                 deleted = deleted,
-                roles = emptySet()
+                roles = emptySet(),
+                icon = null,
+                banner = null
             )
         }
     }
