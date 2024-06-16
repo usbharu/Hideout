@@ -16,6 +16,7 @@
 
 package dev.usbharu.hideout.core.application.media
 
+import java.net.URI
 import java.nio.file.Path
 
-data class UploadMedia(val path: Path)
+data class UploadMedia(val path: Path, val name: String, val remoteUri: URI?, val description: String?)

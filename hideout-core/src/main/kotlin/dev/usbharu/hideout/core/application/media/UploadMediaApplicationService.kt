@@ -19,9 +19,22 @@ package dev.usbharu.hideout.core.application.media
 import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.CommandExecutor
 import dev.usbharu.hideout.core.application.shared.Transaction
+import dev.usbharu.hideout.core.domain.model.media.*
+import dev.usbharu.hideout.core.domain.shared.id.IdGenerateService
+import dev.usbharu.hideout.core.external.media.MediaProcessor
+import dev.usbharu.hideout.core.external.mediastore.MediaStore
 import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Service
+import dev.usbharu.hideout.core.domain.model.media.Media as MediaModel
 
-class UploadMediaApplicationService(transaction: Transaction) : AbstractApplicationService<UploadMedia, Media>(
+@Service
+class UploadMediaApplicationService(
+    private val mediaProcessor: MediaProcessor,
+    private val mediaStore: MediaStore,
+    private val mediaRepository: MediaRepository,
+    private val idGenerateService: IdGenerateService,
+    transaction: Transaction
+) : AbstractApplicationService<UploadMedia, Media>(
     transaction, logger
 ) {
     companion object {
@@ -29,6 +42,30 @@ class UploadMediaApplicationService(transaction: Transaction) : AbstractApplicat
     }
 
     override suspend fun internalExecute(command: UploadMedia, executor: CommandExecutor): Media {
-        TODO()
+        val process = mediaProcessor.process(command.path)
+        val id = idGenerateService.generateId()
+        val thumbnailUri = if (process.thumbnailPath != null) {
+            mediaStore.upload(process.thumbnailPath, "thumbnail-$id")
+        } else {
+            null
+        }
+        val uri = mediaStore.upload(process.path, id.toString())
+
+        val media = MediaModel(
+            MediaId(id),
+            MediaName(command.name),
+            uri,
+            command.remoteUri,
+            thumbnailUri,
+            process.fileType,
+            process.mimeType,
+            MediaBlurHash(process.blurHash),
+            command.description?.let { MediaDescription(it) }
+        )
+
+        mediaRepository.save(media)
+
+        return Media.of(media)
+
     }
 }
