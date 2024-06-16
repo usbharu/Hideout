@@ -16,11 +16,11 @@
 
 package dev.usbharu.hideout.core.infrastructure.exposedrepository
 
-import dev.usbharu.hideout.application.service.id.IdGenerateService
 import dev.usbharu.hideout.core.domain.model.filter.Filter
-import dev.usbharu.hideout.core.domain.model.filter.FilterAction
+import dev.usbharu.hideout.core.domain.model.filter.FilterId
+import dev.usbharu.hideout.core.domain.model.filter.FilterKeywordId
 import dev.usbharu.hideout.core.domain.model.filter.FilterRepository
-import dev.usbharu.hideout.core.domain.model.filter.FilterType
+import dev.usbharu.hideout.core.infrastructure.exposed.QueryMapper
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.slf4j.Logger
@@ -28,56 +28,48 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 
 @Repository
-class ExposedFilterRepository(private val idGenerateService: IdGenerateService) : FilterRepository,
+class ExposedFilterRepository(private val filterQueryMapper: QueryMapper<Filter>) : FilterRepository,
     AbstractRepository() {
     override val logger: Logger
         get() = Companion.logger
 
-    override suspend fun generateId(): Long = idGenerateService.generateId()
-
     override suspend fun save(filter: Filter): Filter = query {
-        val empty = Filters.selectAll().where {
-            Filters.id eq filter.id
-        }.forUpdate().empty()
-        if (empty) {
-            Filters.insert {
-                it[id] = filter.id
-                it[userId] = filter.userId
-                it[name] = filter.name
-                it[context] = filter.context.joinToString(",") { filterType -> filterType.name }
-                it[filterAction] = filter.filterAction.name
-            }
-        } else {
-            Filters.update({ Filters.id eq filter.id }) {
-                it[userId] = filter.userId
-                it[name] = filter.name
-                it[context] = filter.context.joinToString(",") { filterType -> filterType.name }
-                it[filterAction] = filter.filterAction.name
-            }
+        Filters.upsert {
+            it[id] = filter.id.id
+            it[userId] = filter.userDetailId.id
+            it[name] = filter.name.name
+            it[context] = filter.filterContext.joinToString(",") { it.name }
+            it[filterAction] = filter.filterAction.name
+        }
+        FilterKeywords.deleteWhere {
+            filterId eq filter.id.id
+        }
+        FilterKeywords.batchUpsert(filter.filterKeywords) {
+            this[FilterKeywords.id] = it.id.id
+            this[FilterKeywords.filterId] = filter.id.id
+            this[FilterKeywords.keyword] = it.keyword.keyword
+            this[FilterKeywords.mode] = it.mode.name
         }
         filter
     }
 
-    override suspend fun findById(id: Long): Filter? = query {
-        return@query Filters.selectAll().where { Filters.id eq id }.singleOrNull()?.toFilter()
+    override suspend fun delete(filter: Filter): Unit = query {
+        FilterKeywords.deleteWhere { filterId eq filter.id.id }
+        Filters.deleteWhere { id eq filter.id.id }
     }
 
-    override suspend fun findByUserIdAndId(userId: Long, id: Long): Filter? = query {
-        return@query Filters.selectAll().where { Filters.userId eq userId and (Filters.id eq id) }.singleOrNull()
-            ?.toFilter()
+    override suspend fun findByFilterKeywordId(filterKeywordId: FilterKeywordId): Filter? {
+        val filterId = FilterKeywords
+            .selectAll()
+            .where { FilterKeywords.id eq filterKeywordId.id }
+            .firstOrNull()?.get(FilterKeywords.filterId) ?: return null
+        val where = Filters.selectAll().where { Filters.id eq filterId }
+        return filterQueryMapper.map(where).firstOrNull()
     }
 
-    override suspend fun findByUserIdAndType(userId: Long, types: List<FilterType>): List<Filter> = query {
-        return@query Filters.selectAll().where { Filters.userId eq userId }.map { it.toFilter() }
-            .filter { it.context.containsAll(types) }
-    }
-
-    override suspend fun deleteById(id: Long): Unit = query {
-        Filters.deleteWhere { Filters.id eq id }
-    }
-
-    override suspend fun deleteByUserIdAndId(userId: Long, id: Long) {
-        Filters.deleteWhere { Filters.userId eq userId and (Filters.id eq id) }
+    override suspend fun findByFilterId(filterId: FilterId): Filter? {
+        val where = Filters.selectAll().where { Filters.id eq filterId.id }
+        return filterQueryMapper.map(where).firstOrNull()
     }
 
     companion object {
@@ -85,20 +77,22 @@ class ExposedFilterRepository(private val idGenerateService: IdGenerateService) 
     }
 }
 
-fun ResultRow.toFilter(): Filter = Filter(
-    this[Filters.id],
-    this[Filters.userId],
-    this[Filters.name],
-    this[Filters.context].split(",").filterNot(String::isEmpty).map { FilterType.valueOf(it) },
-    this[Filters.filterAction].let { FilterAction.valueOf(it) }
-)
-
-object Filters : Table() {
+object Filters : Table("filters") {
     val id = long("id")
-    val userId = long("user_id").references(Actors.id)
+    val userId = long("user_id").references(UserDetails.id, ReferenceOption.CASCADE, ReferenceOption.CASCADE)
     val name = varchar("name", 255)
     val context = varchar("context", 500)
     val filterAction = varchar("action", 255)
+
+    override val primaryKey: PrimaryKey = PrimaryKey(id)
+}
+
+object FilterKeywords : Table("filter_keywords") {
+    val id = long("id")
+    val filterId =
+        long("filter_id").references(Filters.id, onDelete = ReferenceOption.CASCADE, onUpdate = ReferenceOption.CASCADE)
+    val keyword = varchar("keyword", 1000)
+    val mode = varchar("mode", 100)
 
     override val primaryKey: PrimaryKey = PrimaryKey(id)
 }

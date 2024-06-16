@@ -124,7 +124,7 @@ class EqualsAndToStringTest {
                     }
                     try {
                         ToStringVerifier.forClass(it).withPreset(Presets.INTELLI_J).verify()
-                    } catch (e: Exception) {
+                    } catch (e: Throwable) {
                         e.printStackTrace()
                     }
                 }

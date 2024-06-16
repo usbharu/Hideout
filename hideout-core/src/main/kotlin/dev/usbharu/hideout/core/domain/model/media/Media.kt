@@ -16,34 +16,36 @@
 
 package dev.usbharu.hideout.core.domain.model.media
 
-import dev.usbharu.hideout.core.service.media.FileType
-import dev.usbharu.hideout.core.service.media.MimeType
-import dev.usbharu.hideout.domain.mastodon.model.generated.MediaAttachment
+import java.net.URI
 
-data class Media(
-    val id: Long,
-    val name: String,
-    val url: String,
-    val remoteUrl: String?,
-    val thumbnailUrl: String?,
+class Media(
+    val id: MediaId,
+    val name: MediaName,
+    url: URI,
+    val remoteUrl: URI?,
+    val thumbnailUrl: URI?,
     val type: FileType,
     val mimeType: MimeType,
-    val blurHash: String?,
-    val description: String? = null
-)
+    val blurHash: MediaBlurHash?,
+    val description: MediaDescription? = null,
+) {
+    var url = url
+        private set
 
-fun Media.toMediaAttachments(): MediaAttachment = MediaAttachment(
-    id = id.toString(),
-    type = when (type) {
-        FileType.Image -> MediaAttachment.Type.image
-        FileType.Video -> MediaAttachment.Type.video
-        FileType.Audio -> MediaAttachment.Type.audio
-        FileType.Unknown -> MediaAttachment.Type.unknown
-    },
-    url = url,
-    previewUrl = thumbnailUrl,
-    remoteUrl = remoteUrl,
-    description = description,
-    blurhash = blurHash,
-    textUrl = url
-)
+    fun setUrl(url: URI) {
+        this.url = url
+    }
+    override fun toString(): String {
+        return "Media(" +
+                "id=$id, " +
+                "name=$name, " +
+                "url=$url, " +
+                "remoteUrl=$remoteUrl, " +
+                "thumbnailUrl=$thumbnailUrl, " +
+                "type=$type, " +
+                "mimeType=$mimeType, " +
+                "blurHash=$blurHash, " +
+                "description=$description" +
+                ")"
+    }
+}

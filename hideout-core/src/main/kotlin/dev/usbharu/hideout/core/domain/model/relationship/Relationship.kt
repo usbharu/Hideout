@@ -16,23 +16,120 @@
 
 package dev.usbharu.hideout.core.domain.model.relationship
 
-/**
- * ユーザーとの関係を表します
- *
- * @property actorId ユーザー
- * @property targetActorId 相手ユーザー
- * @property following フォローしているか
- * @property blocking ブロックしているか
- * @property muting ミュートしているか
- * @property followRequest フォローリクエストを送っているか
- * @property ignoreFollowRequestToTarget フォローリクエストを無視しているか
- */
-data class Relationship(
-    val actorId: Long,
-    val targetActorId: Long,
-    val following: Boolean,
-    val blocking: Boolean,
-    val muting: Boolean,
-    val followRequest: Boolean,
-    val ignoreFollowRequestToTarget: Boolean
-)
+import dev.usbharu.hideout.core.domain.event.relationship.RelationshipEvent
+import dev.usbharu.hideout.core.domain.event.relationship.RelationshipEventFactory
+import dev.usbharu.hideout.core.domain.model.actor.ActorId
+import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventStorable
+
+class Relationship(
+    val actorId: ActorId,
+    val targetActorId: ActorId,
+    following: Boolean,
+    blocking: Boolean,
+    muting: Boolean,
+    followRequesting: Boolean,
+    mutingFollowRequest: Boolean,
+) : DomainEventStorable() {
+
+    var following: Boolean = following
+        private set
+    var blocking: Boolean = blocking
+        private set
+
+    var muting: Boolean = muting
+        private set
+    var followRequesting: Boolean = followRequesting
+        private set
+    var mutingFollowRequest: Boolean = mutingFollowRequest
+        private set
+
+    fun follow() {
+        require(blocking.not())
+        following = true
+        addDomainEvent(RelationshipEventFactory(this).createEvent(RelationshipEvent.FOLLOW))
+    }
+
+    fun unfollow() {
+        following = false
+        addDomainEvent(RelationshipEventFactory(this).createEvent(RelationshipEvent.UNFOLLOW))
+    }
+
+    fun block() {
+        require(following.not())
+        blocking = true
+        addDomainEvent(RelationshipEventFactory(this).createEvent(RelationshipEvent.BLOCK))
+    }
+
+    fun unblock() {
+        blocking = false
+        addDomainEvent(RelationshipEventFactory(this).createEvent(RelationshipEvent.UNBLOCK))
+    }
+
+    fun mute() {
+        muting = true
+        addDomainEvent(RelationshipEventFactory(this).createEvent(RelationshipEvent.MUTE))
+    }
+
+    fun unmute() {
+        muting = false
+        addDomainEvent(RelationshipEventFactory(this).createEvent(RelationshipEvent.UNMUTE))
+    }
+
+    fun muteFollowRequest() {
+        mutingFollowRequest = true
+    }
+
+    fun unmuteFollowRequest() {
+        mutingFollowRequest = false
+    }
+
+    fun followRequest() {
+        require(blocking.not())
+        followRequesting = true
+        addDomainEvent(RelationshipEventFactory(this).createEvent(RelationshipEvent.FOLLOW_REQUEST))
+    }
+
+    fun unfollowRequest() {
+        followRequesting = false
+        addDomainEvent(RelationshipEventFactory(this).createEvent(RelationshipEvent.UNFOLLOW_REQUEST))
+    }
+
+    fun acceptFollowRequest() {
+        follow()
+        followRequesting = false
+    }
+
+    fun rejectFollowRequest() {
+        followRequesting = false
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Relationship
+
+        if (actorId != other.actorId) return false
+        if (targetActorId != other.targetActorId) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = actorId.hashCode()
+        result = 31 * result + targetActorId.hashCode()
+        return result
+    }
+
+    companion object {
+        fun default(actorId: ActorId, targetActorId: ActorId): Relationship = Relationship(
+            actorId = actorId,
+            targetActorId = targetActorId,
+            following = false,
+            blocking = false,
+            muting = false,
+            followRequesting = false,
+            mutingFollowRequest = false
+        )
+    }
+}

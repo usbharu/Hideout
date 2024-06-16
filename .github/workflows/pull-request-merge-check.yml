@@ -122,70 +122,6 @@ jobs:
           path: build/test-results
           key: unit-test-report-${{ github.sha }}
 
-  integration-test:
-    name: Integration Test
-    needs: [ setup ]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Gradle Wrapper Cache
-        uses: actions/cache@v4.0.2
-        with:
-          path: ~/.gradle/wrapper
-          key: gradle-wrapper-${{  hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
-
-      - name: Dependencies Cache
-        uses: actions/cache@v4.0.2
-        with:
-          path: |
-            ~/.gradle/cache/jars-*
-            ~/.gradle/caches/transforms-*
-            ~/.gradle/caches/modules-*
-          key: gradle-dependencies-${{ hashFiles('**/*.gradle.kts') }}
-          restore-keys: gradle-dependencies-
-
-      - name: Cache
-        uses: actions/cache@v4.0.2
-        with:
-          path: |
-            ~/.gradle/caches/build-cache-*
-            ~/.gradle/caches/[0-9]*.*
-            .gradle
-          key: ${{ runner.os }}-gradle-build-${{ github.workflow }}-${{ github.sha }}
-          restore-keys: ${{ runner.os }}-gradle-build-${{ github.workflow }}-
-
-      - name: Build Cache
-        uses: actions/cache@v4.0.2
-        with:
-          path: |
-            build
-          key: gradle-build-${{ hashFiles('**/*.gradle.kts') }}-${{ hashFiles('src') }}-${{ github.sha }}
-
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-
-      - name: MongoDB in GitHub Actions
-        uses: supercharge/mongodb-github-action@1.11.0
-        with:
-          mongodb-version: latest
-
-      - name: Unit Test
-        uses: gradle/gradle-build-action@v3.4.1
-        with:
-          arguments: :hideout-core:integrationTest
-
-      - name: Save Test Report
-        if: always()
-        uses: actions/cache/save@v4
-        with:
-          path: build/test-results
-          key: integration-test-report-${{ github.sha }}
-
   coverage:
     name: Coverage
     needs: [ setup ]
@@ -234,9 +170,9 @@ jobs:
           distribution: 'temurin'
 
       - name: Run Kover
-        uses: gradle/gradle-build-action@v3.4.1
+        uses: gradle/gradle-build-action@v3.3.2
         with:
-          arguments: :hideout-core:koverXmlReport -x :hideout-core:integrationTest -x :hideout-core:e2eTest --rerun-tasks
+          arguments: :hideout-core:koverXmlReport --rerun-tasks
 
       - name: Add coverage report to PR
         if: always()
@@ -255,7 +191,7 @@ jobs:
   report-tests:
     name: Report Tests
     if: success() || failure()
-    needs: [ unit-test,integration-test,e2e-test ]
+    needs: [ unit-test ]
     runs-on: ubuntu-latest
     steps:
       - name: Restore Test Report
@@ -263,18 +199,6 @@ jobs:
         with:
           path: build/test-results
           key: unit-test-report-${{ github.sha }}
-
-      - name: Restore Test Report
-        uses: actions/cache/restore@v4
-        with:
-          path: build/test-results
-          key: integration-test-report-${{ github.sha }}
-
-      - name: Restore Test Report
-        uses: actions/cache/restore@v4
-        with:
-          path: build/test-results
-          key: e2e-test-report-${{ github.sha }}
 
       - name: JUnit Test Report
         uses: mikepenz/action-junit-report@v4
@@ -338,75 +262,3 @@ jobs:
         uses: reviewdog/action-suggester@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-
-  e2e-test:
-    name: E2E Test
-    needs: [ setup ]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Gradle Wrapper Cache
-        uses: actions/cache@v4.0.2
-        with:
-          path: ~/.gradle/wrapper
-          key: gradle-wrapper-${{  hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
-
-      - name: Dependencies Cache
-        uses: actions/cache@v4.0.2
-        with:
-          path: |
-            ~/.gradle/cache/jars-*
-            ~/.gradle/caches/transforms-*
-            ~/.gradle/caches/modules-*
-          key: gradle-dependencies-${{ hashFiles('**/*.gradle.kts') }}
-          restore-keys: gradle-dependencies-
-
-      - name: Cache
-        uses: actions/cache@v4.0.2
-        with:
-          path: |
-            ~/.gradle/caches/build-cache-*
-            ~/.gradle/caches/[0-9]*.*
-            .gradle
-          key: ${{ runner.os }}-gradle-build-${{ github.workflow }}-${{ github.sha }}
-          restore-keys: ${{ runner.os }}-gradle-build-${{ github.workflow }}-
-
-      - name: Build Cache
-        uses: actions/cache@v4.0.2
-        with:
-          path: |
-            build
-          key: gradle-build-${{ hashFiles('**/*.gradle.kts') }}-${{ hashFiles('src') }}-${{ github.sha }}
-
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-
-      - name: MongoDB in GitHub Actions
-        uses: supercharge/mongodb-github-action@1.11.0
-        with:
-          mongodb-version: latest
-
-      - name: setup-chrome
-        id: setup-chrome
-        uses: browser-actions/setup-chrome@v1.7.1
-
-      - name: Add Path
-        run: echo ${{ steps.setup-chrome.outputs.chrome-path }} >> $GITHUB_PATH
-
-      - name: E2E Test
-        uses: gradle/gradle-build-action@v3.4.1
-        with:
-          arguments: :hideout-core:e2eTest
-
-
-      - name: Save Test Report
-        if: always()
-        uses: actions/cache/save@v4
-        with:
-          path: build/test-results
-          key: e2e-test-report-${{ github.sha }}

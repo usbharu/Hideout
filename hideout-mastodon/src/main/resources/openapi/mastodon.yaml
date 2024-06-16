@@ -1,0 +1,2989 @@
+openapi: 3.0.3
+info:
+  title: Hideout Mastodon Compatible API
+  description: Hideout Mastodon Compatible API
+  version: 1.0.0
+servers:
+  - url: 'https://test-hideout.usbharu.dev'
+
+tags:
+  - name: status
+    description: status
+  - name: account
+    description: account
+  - name: app
+    description: app
+  - name: instance
+    description: instance
+  - name: timeline
+    description: timeline
+  - name: media
+    description: media
+  - name: notification
+    description: notification
+  - name: filter
+    description: filter
+
+paths:
+  /api/v2/instance:
+    get:
+      tags:
+        - instance
+      security:
+        - { }
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Instance"
+
+  /api/v1/instance/peers:
+    get:
+      tags:
+        - instance
+      security:
+        - { }
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+
+  /api/v1/instance/activity:
+    get:
+      tags:
+        - instance
+      security:
+        - { }
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/V1InstanceActivity"
+
+  /api/v1/instance/rules:
+    get:
+      tags:
+        - instance
+      security:
+        - { }
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Rule"
+
+  /api/v1/instance/domain_blocks:
+    get:
+      tags:
+        - instance
+      security:
+        - { }
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DomainBlock"
+
+  /api/v1/instance/extended_description:
+    get:
+      tags:
+        - instance
+      security:
+        - { }
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExtendedDescription"
+
+  /api/v1/instance:
+    get:
+      tags:
+        - instance
+      security:
+        - { }
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/V1Instance"
+
+  /api/v1/statuses:
+    post:
+      tags:
+        - status
+      security:
+        - OAuth2:
+            - "write:statuses"
+      requestBody:
+        description: 投稿する内容
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StatusesRequest"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/StatusesRequest"
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+
+  /api/v1/statuses/{id}:
+    get:
+      tags:
+        - status
+      security:
+        - OAuth2:
+            - "write:statuses"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+
+  /api/v1/statuses/{id}/emoji_reactions/{emoji}:
+    put:
+      tags:
+        - status
+      security:
+        - OAuth2:
+            - "write:statuses"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: emoji
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+
+    delete:
+      tags:
+        - status
+      security:
+        - OAuth2:
+            - "write:statuses"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: emoji
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+
+
+  /api/v1/apps:
+    post:
+      tags:
+        - app
+      security:
+        - { }
+      requestBody:
+        description: 作成するApp
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AppsRequest"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/AppsRequest"
+
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Application"
+        422:
+          $ref: "#/components/responses/unprocessableEntity"
+
+  /api/v1/accounts/verify_credentials:
+    get:
+      tags:
+        - account
+      security:
+        - OAuth2:
+            - "read:accounts"
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CredentialAccount"
+        401:
+          $ref: "#/components/responses/unauthorized"
+        403:
+          $ref: "#/components/responses/forbidden"
+        422:
+          $ref: "#/components/responses/unprocessableEntity"
+
+  /api/v1/accounts:
+    post:
+      tags:
+        - account
+      security:
+        - OAuth2:
+            - "write:accounts"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AccountsCreateRequest"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/AccountsCreateRequest"
+      responses:
+        200:
+          description: 成功
+        401:
+          $ref: "#/components/responses/unauthorized"
+        429:
+          $ref: "#/components/responses/rateLimited"
+
+  /api/v1/accounts/relationships:
+    get:
+      tags:
+        - account
+      security:
+        - OAuth2:
+            - "read:follows"
+      parameters:
+        - in: query
+          name: id[]
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+        - in: query
+          name: with_suspended
+          required: false
+          schema:
+            type: boolean
+            default: false
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Relationship"
+        401:
+          $ref: "#/components/responses/unauthorized"
+        422:
+          $ref: "#/components/responses/unprocessableEntity"
+
+  /api/v1/accounts/update_credentials:
+    patch:
+      tags:
+        - account
+      security:
+        - OAuth2:
+            - "write:accounts"
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCredentials"
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+        401:
+          $ref: "#/components/responses/unauthorized"
+        422:
+          $ref: "#/components/responses/unprocessableEntity"
+
+  /api/v1/accounts/{id}:
+    get:
+      tags:
+        - account
+      security:
+        - { }
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+        401:
+          $ref: "#/components/responses/unauthorized"
+        404:
+          $ref: "#/components/responses/notfound"
+
+  /api/v1/accounts/{id}/follow:
+    post:
+      tags:
+        - account
+      security:
+        - OAuth2:
+            - "write:follows"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FollowRequestBody"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/FollowRequestBody"
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Relationship"
+        401:
+          $ref: "#/components/responses/unauthorized"
+        403:
+          $ref: "#/components/responses/forbidden"
+        422:
+          $ref: "#/components/responses/unprocessableEntity"
+
+  /api/v1/accounts/{id}/block:
+    post:
+      tags:
+        - account
+      security:
+        - OAuth2:
+            - "write:blocks"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Relationship"
+        401:
+          $ref: "#/components/responses/unauthorized"
+        403:
+          $ref: "#/components/responses/forbidden"
+        422:
+          $ref: "#/components/responses/unprocessableEntity"
+
+  /api/v1/accounts/{id}/unfollow:
+    post:
+      tags:
+        - account
+      security:
+        - OAuth2:
+            - "write:follows"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Relationship"
+        401:
+          $ref: "#/components/responses/unauthorized"
+        403:
+          $ref: "#/components/responses/forbidden"
+        422:
+          $ref: "#/components/responses/unprocessableEntity"
+
+  /api/v1/accounts/{id}/unblock:
+    post:
+      tags:
+        - account
+      security:
+        - OAuth2:
+            - "write:blocks"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Relationship"
+        401:
+          $ref: "#/components/responses/unauthorized"
+        403:
+          $ref: "#/components/responses/forbidden"
+        422:
+          $ref: "#/components/responses/unprocessableEntity"
+
+  /api/v1/accounts/{id}/remove_from_followers:
+    post:
+      tags:
+        - account
+      security:
+        - OAuth2:
+            - "write:follows"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Relationship"
+        401:
+          $ref: "#/components/responses/unauthorized"
+        403:
+          $ref: "#/components/responses/forbidden"
+        422:
+          $ref: "#/components/responses/unprocessableEntity"
+
+  /api/v1/accounts/{id}/mute:
+    post:
+      tags:
+        - account
+      security:
+        - OAuth2:
+            - "write:mutes"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Relationship"
+        401:
+          $ref: "#/components/responses/unauthorized"
+        403:
+          $ref: "#/components/responses/forbidden"
+        422:
+          $ref: "#/components/responses/unprocessableEntity"
+
+  /api/v1/accounts/{id}/unmute:
+    post:
+      tags:
+        - account
+      security:
+        - OAuth2:
+            - "write:mutes"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Relationship"
+        401:
+          $ref: "#/components/responses/unauthorized"
+        403:
+          $ref: "#/components/responses/forbidden"
+        422:
+          $ref: "#/components/responses/unprocessableEntity"
+
+  /api/v1/mutes:
+    get:
+      tags:
+        - account
+      security:
+        - OAuth2:
+            - "read:mutes"
+      parameters:
+        - in: query
+          name: max_id
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: since_id
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          required: false
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/Account"
+        401:
+          $ref: "#/components/responses/unauthorized"
+        403:
+          $ref: "#/components/responses/forbidden"
+        422:
+          $ref: "#/components/responses/unprocessableEntity"
+
+  /api/v1/accounts/{id}/statuses:
+    get:
+      tags:
+        - account
+      security:
+        - OAuth2:
+            - "read:statuses"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: max_id
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: since_id
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: min_id
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+            nullable: true
+            default: 20
+        - in: query
+          name: only_media
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - in: query
+          name: exclude_replies
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - in: query
+          name: exclude_reblogs
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - in: query
+          name: pinned
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - in: query
+          required: false
+          name: tagged
+          schema:
+            type: string
+
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Status"
+
+        401:
+          $ref: "#/components/responses/unauthorized"
+        404:
+          $ref: "#/components/responses/notfound"
+
+  /api/v1/timelines/public:
+    get:
+      tags:
+        - timeline
+      parameters:
+        - in: query
+          name: local
+          required: false
+          schema:
+            type: boolean
+        - in: query
+          name: remote
+          required: false
+          schema:
+            type: boolean
+        - in: query
+          name: only_media
+          required: false
+          schema:
+            type: boolean
+        - in: query
+          name: max_id
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: since_id
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: min_id
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Status"
+
+  /api/v1/timelines/home:
+    get:
+      tags:
+        - timeline
+      security:
+        - OAuth2:
+            - "read:statuses"
+      parameters:
+        - in: query
+          name: max_id
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: since_id
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: min_id
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Status"
+        206:
+          $ref: "#/components/responses/partialContent"
+        401:
+          $ref: "#/components/responses/unauthorized"
+
+  /api/v1/media:
+    post:
+      tags:
+        - media
+      security:
+        - OAuth2:
+            - "write:media"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/V1MediaRequest"
+            encoding:
+              file:
+                contentType: image/jpeg, image/png
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaAttachment"
+        401:
+          $ref: "#/components/responses/unauthorized"
+        422:
+          $ref: "#/components/responses/unprocessableEntity"
+
+  /api/v1/follow_requests:
+    get:
+      tags:
+        - account
+      security:
+        - OAuth2:
+            - "read:follows"
+      parameters:
+        - in: query
+          name: max_id
+          schema:
+            type: string
+          required: false
+        - in: query
+          name: since_id
+          schema:
+            type: string
+          required: false
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          required: false
+      responses:
+        200:
+          description: 成功
+          headers:
+            Link:
+              schema:
+                type: string
+              description: ページネーション
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Account"
+
+  /api/v1/follow_requests/{account_id}/authorize:
+    post:
+      tags:
+        - account
+      security:
+        - OAuth2:
+            - "write:follows"
+      parameters:
+        - in: path
+          name: account_id
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Relationship"
+
+  /api/v1/follow_requests/{account_id}/reject:
+    post:
+      tags:
+        - account
+      security:
+        - OAuth2:
+            - "write:follows"
+      parameters:
+        - in: path
+          name: account_id
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Relationship"
+
+  /api/v1/notifications:
+    get:
+      tags:
+        - notifications
+      security:
+        - OAuth2:
+            - "read:notifications"
+      parameters:
+        - in: query
+          name: max_id
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: since_id
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: min_id
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+        - in: query
+          name: types[]
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+        - in: query
+          name: exclude_types[]
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+        - in: query
+          name: account_id
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Notification"
+
+  /api/v1/notifications/{id}:
+    get:
+      tags:
+        - notifications
+      security:
+        - OAuth2:
+            - "read:notifications"
+      parameters:
+        - in: path
+          required: true
+          name: id
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Notification"
+
+  /api/v1/notifications/clear:
+    post:
+      tags:
+        - notifications
+      security:
+        - OAuth2:
+            - "write:notifications"
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /api/v1/notifications/{id}/dismiss:
+    post:
+      tags:
+        - notifications
+      security:
+        - OAuth2:
+            - "write:notifications"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /api/v2/filters:
+    get:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "read:filters"
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Filter"
+    post:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "write:filters"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FilterPostRequest"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/FilterPostRequest"
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Filter"
+
+  /api/v2/filters/{id}:
+    get:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "read:filters"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Filter"
+    put:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "write:filters"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/FilterPutRequest"
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Filter"
+    delete:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "write:filters"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /api/v2/filters/{filter_id}/keywords:
+    get:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "read:filters"
+      parameters:
+        - in: path
+          name: filter_id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FilterKeyword"
+    post:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "write:filters"
+      parameters:
+        - in: path
+          name: filter_id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FilterKeywordsPostRequest"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/FilterKeywordsPostRequest"
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FilterKeyword"
+
+  /api/v2/filters/keywords/{id}:
+    get:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "read:filters"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FilterKeyword"
+
+    put:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "write:filters"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/FilterKeywordsPutRequest"
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FilterKeyword"
+
+    delete:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "write:filters"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+  /api/v2/filters/{filter_id}/statuses:
+    get:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "read:filters"
+      parameters:
+        - in: path
+          name: filter_id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FilterStatus"
+    post:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "write:filters"
+      parameters:
+        - in: path
+          name: filter_id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FilterStatusRequest"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/FilterStatusRequest"
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FilterStatus"
+
+  /api/v2/filters/statuses/{id}:
+    get:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "read:filters"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FilterStatus"
+    delete:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "write:filters"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+
+
+  /api/v1/filters:
+    get:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "read:filters"
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/V1Filter"
+    post:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "write:filters"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/V1FilterPostRequest"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/V1FilterPostRequest"
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/V1Filter"
+
+  /api/v1/filters/{id}:
+    get:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "read:filters"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/V1Filter"
+    put:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "write:filters"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/V1FilterPutRequest"
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/V1Filter"
+    delete:
+      tags:
+        - filter
+      security:
+        - OAuth2:
+            - "write:filters"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+
+
+components:
+  schemas:
+    V1MediaRequest:
+      type: object
+      properties:
+        file:
+          type: string
+          format: binary
+        thumbnail:
+          type: string
+          format: binary
+        description:
+          type: string
+          maxLength: 4000
+        focus:
+          type: string
+      required:
+        - file
+
+    AccountsCreateRequest:
+      type: object
+      properties:
+        username:
+
+          nullable: false
+          type: string
+          minLength: 1
+          maxLength: 300
+          pattern: '^[a-zA-Z0-9_-]{1,300}$'
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+        agreement:
+          type: boolean
+          default: false
+        locale:
+          type: boolean
+        reason:
+          type: string
+      required:
+        - username
+        - password
+
+    Token:
+      type: object
+      properties:
+        access_token:
+          type: string
+        token_type:
+          type: string
+        scope:
+          type: string
+        created_at:
+          type: integer
+          format: int64
+
+    Account:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+          minLength: 1
+          pattern: '^[a-zA-Z0-9_-]{1,300}$'
+        acct:
+          type: string
+        url:
+          type: string
+        display_name:
+          type: string
+        note:
+          type: string
+        avatar:
+          type: string
+        avatar_static:
+          type: string
+        header:
+          type: string
+        header_static:
+          type: string
+        locked:
+          type: boolean
+        fields:
+          type: array
+          items:
+            $ref: "#/components/schemas/Field"
+        emojis:
+          type: array
+          items:
+            $ref: "#/components/schemas/CustomEmoji"
+        bot:
+          type: boolean
+        group:
+          type: boolean
+        discoverable:
+          type: boolean
+          nullable: true
+        noindex:
+          type: boolean
+        moved:
+          type: boolean
+        suspended:
+          type: boolean
+        limited:
+          type: boolean
+        created_at:
+          type: string
+        last_status_at:
+          type: string
+          nullable: true
+        statuses_count:
+          type: integer
+        followers_count:
+          type: integer
+        following_count:
+          type: integer
+        source:
+          $ref: "#/components/schemas/AccountSource"
+
+      required:
+        - id
+        - username
+        - acct
+        - url
+        - display_name
+        - note
+        - avatar
+        - avatar_static
+        - header
+        - header_static
+        - locked
+        - fields
+        - emojis
+        - bot
+        - group
+        - discoverable
+        - created_at
+        - statuses_count
+
+    CredentialAccount:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        acct:
+          type: string
+        url:
+          type: string
+        display_name:
+          type: string
+        note:
+          type: string
+        avatar:
+          type: string
+        avatar_static:
+          type: string
+        header:
+          type: string
+        header_static:
+          type: string
+        locked:
+          type: boolean
+        fields:
+          type: array
+          items:
+            $ref: "#/components/schemas/Field"
+        emojis:
+          type: array
+          items:
+            $ref: "#/components/schemas/CustomEmoji"
+        bot:
+          type: boolean
+        group:
+          type: boolean
+        discoverable:
+          type: boolean
+          nullable: true
+        noindex:
+          type: boolean
+        moved:
+          type: boolean
+        suspendex:
+          type: boolean
+        limited:
+          type: boolean
+        created_at:
+          type: string
+        last_status_at:
+          type: string
+          nullable: true
+        statuses_count:
+          type: integer
+        followers_count:
+          type: integer
+        following_count:
+          type: integer
+        source:
+          $ref: "#/components/schemas/AccountSource"
+        role:
+          $ref: "#/components/schemas/Role"
+      required:
+        - id
+        - username
+        - acct
+        - url
+        - display_name
+        - note
+        - avatar
+        - avatar_static
+        - header
+        - header_static
+        - locked
+        - fields
+        - emojis
+        - bot
+        - group
+        - discoverable
+        - created_at
+        - last_status_at
+        - statuses_count
+        - source
+
+    AccountSource:
+      type: object
+      properties:
+        note:
+          type: string
+        fields:
+          type: array
+          items:
+            $ref: "#/components/schemas/Field"
+        privacy:
+          type: string
+          enum:
+            - public
+            - unlisted
+            - private
+            - direct
+        sensitive:
+          type: boolean
+        follow_requests_count:
+          type: integer
+
+    Role:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        color:
+          type: string
+        permissions:
+          type: integer
+        highlighted:
+          type: boolean
+
+    Field:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+        verified_at:
+          type: string
+          nullable: true
+      required:
+        - name
+        - value
+        - verified_at
+
+    CustomEmoji:
+      type: object
+      properties:
+        shortcode:
+          type: string
+        url:
+          type: string
+        static_url:
+          type: string
+        visible_in_picker:
+          type: boolean
+        category:
+          type: string
+      required:
+        - shortcode
+        - url
+        - static_url
+        - visible_in_picker
+        - category
+
+    Status:
+      type: object
+      properties:
+        id:
+          type: string
+        uri:
+          type: string
+        created_at:
+          type: string
+        account:
+          $ref: "#/components/schemas/Account"
+        content:
+          type: string
+        visibility:
+          type: string
+          enum:
+            - public
+            - unlisted
+            - private
+            - direct
+        sensitive:
+          type: boolean
+        spoiler_text:
+          type: string
+        media_attachments:
+          type: array
+          items:
+            $ref: "#/components/schemas/MediaAttachment"
+        application:
+          $ref: "#/components/schemas/StatusApplication"
+        mentions:
+          type: array
+          items:
+            $ref: "#/components/schemas/StatusMention"
+        tags:
+          type: array
+          items:
+            $ref: "#/components/schemas/StatusTag"
+        emojis:
+          type: array
+          items:
+            $ref: "#/components/schemas/CustomEmoji"
+        reblogs_count:
+          type: integer
+        favourites_count:
+          type: integer
+        replies_count:
+          type: integer
+        url:
+          type: string
+          nullable: true
+        in_reply_to_id:
+          type: string
+          nullable: true
+        in_reply_to_account_id:
+          type: string
+          nullable: true
+        reblog:
+          $ref: "#/components/schemas/Status"
+        poll:
+          $ref: "#/components/schemas/Poll"
+        card:
+          $ref: "#/components/schemas/PreviewCard"
+        language:
+          type: string
+          nullable: true
+          default: null
+        text:
+          type: string
+          nullable: true
+        edited_at:
+          type: string
+          nullable: true
+        favourited:
+          type: boolean
+        reblogged:
+          type: boolean
+        muted:
+          type: boolean
+        bookmarked:
+          type: boolean
+        pinned:
+          type: boolean
+        filtered:
+          type: array
+          items:
+            $ref: "#/components/schemas/FilterResult"
+      required:
+        - id
+        - uri
+        - created_at
+        - account
+        - content
+        - visibility
+        - sensitive
+        - spoiler_text
+        - media_attachments
+        - mentions
+        - tags
+        - emojis
+        - reblogs_count
+        - favourites_count
+        - replies_count
+        - url
+        - text
+
+    MediaAttachment:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum:
+            - unknown
+            - image
+            - gifv
+            - video
+            - audio
+        url:
+          type: string
+        preview_url:
+          type: string
+        remote_url:
+          type: string
+          nullable: true
+        description:
+          type: string
+        blurhash:
+          type: string
+        text_url:
+          type: string
+
+    StatusApplication:
+      type: object
+      properties:
+        name:
+          type: string
+        website:
+          type: string
+          nullable: true
+
+    StatusMention:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        url:
+          type: string
+        acct:
+          type: string
+
+    StatusTag:
+      type: object
+      properties:
+        name:
+          type: string
+        url:
+          type: string
+    Poll:
+      type: object
+      properties:
+        id:
+          type: string
+        expires_at:
+          type: string
+          nullable: true
+        expired:
+          type: boolean
+        multiple:
+          type: boolean
+        votes_count:
+          type: integer
+        voters_count:
+          type: integer
+          nullable: true
+        options:
+          type: array
+          items:
+            $ref: "#/components/schemas/PollOption"
+        emojis:
+          type: array
+          items:
+            $ref: "#/components/schemas/CustomEmoji"
+        voted:
+          type: boolean
+        own_votes:
+          type: array
+          items:
+            type: integer
+
+    PollOption:
+      type: object
+      properties:
+        title:
+          type: string
+        votes_count:
+          type: integer
+          nullable: true
+
+    PreviewCard:
+      type: object
+      properties:
+        url:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+          enum:
+            - link
+            - photo
+            - video
+            - rich
+        author_name:
+          type: string
+        author_url:
+          type: string
+        provider_name:
+          type: string
+        provider_url:
+          type: string
+        html:
+          type: string
+        width:
+          type: integer
+        height:
+          type: integer
+        image:
+          type: string
+          nullable: true
+        embed_url:
+          type: string
+        blurhash:
+          type: string
+          nullable: true
+
+    FilterResult:
+      type: object
+      properties:
+        filter:
+          $ref: "#/components/schemas/FilterResult"
+        keyword_matches:
+          type: array
+          items:
+            type: string
+          nullable: true
+        status_matches:
+          type: string
+          nullable: true
+
+    Filter:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        context:
+          type: array
+          items:
+            type: string
+            enum:
+              - home
+              - notifications
+              - public
+              - thread
+              - account
+        expires_at:
+          type: string
+          nullable: true
+        filter_action:
+          type: string
+          enum:
+            - warn
+            - hide
+        keywords:
+          type: array
+          items:
+            $ref: "#/components/schemas/FilterKeyword"
+        statuses:
+          type: array
+          items:
+            $ref: "#/components/schemas/FilterStatus"
+
+    FilterKeyword:
+      type: object
+      properties:
+        id:
+          type: string
+        keyword:
+          type: string
+        whole_word:
+          type: boolean
+
+    FilterStatus:
+      type: object
+      properties:
+        id:
+          type: string
+        status_id:
+          type: string
+
+    V1Filter:
+      type: object
+      properties:
+        id:
+          type: string
+        phrase:
+          type: string
+        context:
+          type: array
+          items:
+            enum:
+              - home
+              - notifications
+              - thread
+              - public
+              - account
+        expires_at:
+          type: string
+        irreversible:
+          type: boolean
+        whole_word:
+          type: boolean
+
+    V1FilterPostRequest:
+      type: object
+      properties:
+        phrase:
+          type: string
+          maxLength: 1000
+        context:
+          type: array
+          maxItems: 10
+          items:
+            type: string
+            enum:
+              - home
+              - notifications
+              - public
+              - thread
+              - account
+        irreversible:
+          type: boolean
+          default: false
+        whole_word:
+          type: boolean
+          default: false
+        expires_in:
+          type: integer
+      required:
+        - phrase
+        - context
+
+    V1FilterPutRequest:
+      type: object
+      properties:
+        phrase:
+          type: string
+          maxLength: 1000
+        context:
+          type: array
+          maxItems: 10
+          items:
+            type: string
+            enum:
+              - home
+              - notifications
+              - public
+              - thread
+              - account
+        irreversible:
+          type: boolean
+        whole_word:
+          type: boolean
+        expires_in:
+          type: integer
+
+    FilterPostRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 255
+        context:
+          type: array
+          maxItems: 10
+          items:
+            type: string
+            enum:
+              - home
+              - notifications
+              - public
+              - thread
+              - account
+        filter_action:
+          type: string
+          enum:
+            - warn
+            - hide
+        expires_in:
+          type: integer
+        keywords_attributes:
+          maxItems: 1000
+          type: array
+          items:
+            $ref: "#/components/schemas/FilterPostRequestKeyword"
+      required:
+        - title
+        - context
+
+    FilterPostRequestKeyword:
+      type: object
+      properties:
+        keyword:
+          type: string
+          maxLength: 1000
+        whole_word:
+          type: boolean
+          default: false
+        regex:
+          type: boolean
+          default: false
+      required:
+        - keyword
+
+    FilterKeywordsPostRequest:
+      type: object
+      properties:
+        keyword:
+          type: string
+          maxLength: 1000
+        whole_word:
+          type: boolean
+          default: false
+        regex:
+          type: boolean
+          default: false
+      required:
+        - keyword
+
+    FilterKeywordsPutRequest:
+      type: object
+      properties:
+        keyword:
+          type: string
+          maxLength: 1000
+        whole_word:
+          type: boolean
+        regex:
+          type: boolean
+
+    FilterPutRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 255
+        context:
+          type: array
+          maxItems: 10
+          items:
+            type: string
+            enum:
+              - homa
+              - notifications
+              - public
+              - thread
+              - account
+        filter_action:
+          type: string
+          enum:
+            - warn
+            - hide
+        expires_in:
+          type: integer
+        keywords_attributes:
+          maxItems: 1000
+          type: array
+          items:
+            $ref: "#/components/schemas/FilterPubRequestKeyword"
+
+    FilterPubRequestKeyword:
+      type: object
+      properties:
+        keyword:
+          type: string
+          maxLength: 1000
+        whole_word:
+          type: boolean
+        regex:
+          type: boolean
+        id:
+          type: string
+        _destroy:
+          type: boolean
+          default: false
+      required:
+        - id
+
+    FilterStatusRequest:
+      type: object
+      properties:
+        status_id:
+          type: string
+
+    Instance:
+      type: object
+      properties:
+        domain:
+          type: string
+        title:
+          type: string
+        version:
+          type: string
+        source_url:
+          type: string
+        description:
+          type: string
+        usage:
+          $ref: "#/components/schemas/InstanceUsage"
+        thumbnail:
+          $ref: "#/components/schemas/InstanceThumbnail"
+        languages:
+          type: array
+          items:
+            type: string
+        configuration:
+          $ref: "#/components/schemas/InstanceConfiguration"
+
+
+    InstanceUsage:
+      type: object
+      properties:
+        users:
+          $ref: "#/components/schemas/InstanceUsageUsers"
+
+
+    InstanceUsageUsers:
+      type: object
+      properties:
+        active_month:
+          type: integer
+
+    InstanceThumbnail:
+      type: object
+      properties:
+        blurhash:
+          type: string
+        versions:
+          $ref: "#/components/schemas/InstanceThumbnailVersions"
+
+    InstanceThumbnailVersions:
+      type: object
+      properties:
+        "@1x":
+          type: string
+        "@2x":
+          type: string
+
+    InstanceConfiguration:
+      type: object
+      properties:
+        urls:
+          $ref: "#/components/schemas/InstanceConfigurationUrls"
+        accounts:
+          $ref: "#/components/schemas/InstanceConfigurationAccounts"
+        statuses:
+          $ref: "#/components/schemas/InstanceConfigurationStatuses"
+        media_attachments:
+          $ref: "#/components/schemas/InstanceConfigurationMediaAttachments"
+        polls:
+          $ref: "#/components/schemas/InstanceConfigurationPolls"
+        translation:
+          $ref: "#/components/schemas/InstanceConfigurationTranslation"
+        registrations:
+          $ref: "#/components/schemas/InstanceConfigurationRegistrations"
+        contact:
+          $ref: "#/components/schemas/InstanceConfigurationContact"
+        rules:
+          type: array
+          items:
+            $ref: "#/components/schemas/Rule"
+
+    InstanceConfigurationUrls:
+      type: object
+      properties:
+        streaming_api:
+          type: string
+
+    InstanceConfigurationAccounts:
+      type: object
+      properties:
+        max_featured_tags:
+          type: integer
+
+    InstanceConfigurationStatuses:
+      type: object
+      properties:
+        max_characters:
+          type: integer
+        max_media_attachments:
+          type: integer
+        characters_reserved_per_url:
+          type: integer
+
+    InstanceConfigurationMediaAttachments:
+      type: object
+      properties:
+        supported_mime_types:
+          type: array
+          items:
+            type: string
+        image_size_limit:
+          type: integer
+        image_matrix_limit:
+          type: integer
+        video_size_limit:
+          type: integer
+        video_frame_rate_limit:
+          type: integer
+        video_matrix_limit:
+          type: integer
+
+    InstanceConfigurationPolls:
+      type: object
+      properties:
+        max_options:
+          type: integer
+        max_characters_per_option:
+          type: integer
+        min_expiration:
+          type: integer
+        max_expiration:
+          type: integer
+
+    InstanceConfigurationTranslation:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+
+    InstanceConfigurationRegistrations:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        approval_required:
+          type: boolean
+        message:
+          type: string
+          nullable: true
+
+    InstanceConfigurationContact:
+      type: object
+      properties:
+        email:
+          type: string
+        account:
+          $ref: "#/components/schemas/Account"
+
+    Rule:
+      type: object
+      properties:
+        id:
+          type: string
+        text:
+          type: string
+
+    V1Instance:
+      type: object
+      properties:
+        uri:
+          type: string
+        title:
+          type: string
+        short_description:
+          type: string
+        description:
+          type: string
+        email:
+          type: string
+        version:
+          type: string
+        urls:
+          $ref: "#/components/schemas/V1InstanceUrls"
+        stats:
+          $ref: "#/components/schemas/V1InstanceStats"
+        thumbnail:
+          type: string
+          nullable: true
+        languages:
+          type: array
+          items:
+            type: string
+        registrations:
+          type: boolean
+        approval_required:
+          type: boolean
+        invites_enabled:
+          type: boolean
+        configuration:
+          $ref: "#/components/schemas/V1InstanceConfiguration"
+        contact_account:
+          $ref: "#/components/schemas/Account"
+        rules:
+          type: array
+          items:
+            $ref: "#/components/schemas/Rule"
+      required:
+        - uri
+        - title
+        - short_description
+        - description
+        - email
+        - version
+        - urls
+        - stats
+        - thumbnail
+        - languages
+        - registrations
+        - approval_required
+        - invites_enabled
+        - configuration
+        - contact_account
+        - rules
+
+    V1InstanceUrls:
+      type: object
+      properties:
+        streaming_api:
+          type: string
+      required:
+        - streaming_api
+
+    V1InstanceStats:
+      type: object
+      properties:
+        user_count:
+          type: integer
+        status_count:
+          type: integer
+        domain_count:
+          type: integer
+      required:
+        - user_count
+        - status_count
+        - domain_count
+
+    V1InstanceConfiguration:
+      type: object
+      properties:
+        accounts:
+          $ref: "#/components/schemas/V1InstanceConfigurationAccounts"
+        statuses:
+          $ref: "#/components/schemas/V1InstanceConfigurationStatuses"
+        media_attachments:
+          $ref: "#/components/schemas/V1InstanceConfigurationMediaAttachments"
+        polls:
+          $ref: "#/components/schemas/V1InstanceConfigurationPolls"
+      required:
+        - accounts
+        - statuses
+        - media_attachments
+        - polls
+
+
+    V1InstanceConfigurationAccounts:
+      type: object
+      properties:
+        max_featured_tags:
+          type: integer
+
+    V1InstanceConfigurationStatuses:
+      type: object
+      properties:
+        max_characters:
+          type: integer
+        max_media_attachments:
+          type: integer
+        characters_reserved_per_url:
+          type: integer
+
+    V1InstanceConfigurationMediaAttachments:
+      type: object
+      properties:
+        supported_mime_types:
+          type: array
+          items:
+            type: string
+        image_size_limit:
+          type: integer
+        image_matrix_limit:
+          type: integer
+        video_size_limit:
+          type: integer
+        video_frame_rate_limit:
+          type: integer
+        video_matrix_limit:
+          type: integer
+
+    V1InstanceConfigurationPolls:
+      type: object
+      properties:
+        max_options:
+          type: integer
+        max_characters_per_option:
+          type: integer
+        min_expiration:
+          type: integer
+        max_expiration:
+          type: integer
+
+    V1InstanceActivity:
+      type: object
+      properties:
+        week:
+          type: integer
+        statuses:
+          type: integer
+        logins:
+          type: integer
+        registrations:
+          type: integer
+
+    DomainBlock:
+      type: object
+      properties:
+        domain:
+          type: string
+        digest:
+          type: string
+        severity:
+          type: string
+          enum:
+            - silence
+            - suspend
+        comment:
+          type: string
+
+    ExtendedDescription:
+      type: object
+      properties:
+        updated_at:
+          type: string
+        content:
+          type: string
+
+    StatusesRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          nullable: true
+          maxLength: 3000
+        media_ids:
+          type: array
+          items:
+            type: string
+          maxItems: 4
+        poll:
+          $ref: "#/components/schemas/StatusesRequestPoll"
+        in_reply_to_id:
+          type: string
+        sensitive:
+          type: boolean
+          default: false
+        spoiler_text:
+          type: string
+          maxLength: 100
+        visibility:
+          type: string
+          enum:
+            - public
+            - unlisted
+            - private
+            - direct
+        language:
+          type: string
+          maxLength: 100
+        scheduled_at:
+          type: string
+          format: date-time
+          example: "2019-12-05T12:33:01.000Z"
+
+    StatusesRequestPoll:
+      type: object
+      properties:
+        options:
+          type: array
+          maxItems: 10
+          items:
+            type: string
+            maxLength: 100
+        expires_in:
+          type: integer
+        multiple:
+          type: boolean
+          default: false
+        hide_totals:
+          type: boolean
+          default: false
+
+    Application:
+      type: object
+      properties:
+        name:
+          type: string
+        website:
+          type: string
+          nullable: true
+        vapid_key:
+          type: string
+        client_id:
+          type: string
+        client_secret:
+          type: string
+        redirect_uri:
+          type: string
+      required:
+        - name
+        - vapid_key
+
+    AppsRequest:
+      type: object
+      properties:
+        client_name:
+          type: string
+          maxLength: 200
+        redirect_uris:
+          type: string
+          maxLength: 1000
+        scopes:
+          type: string
+          maxLength: 1000
+        website:
+          type: string
+          maxLength: 1000
+      required:
+        - client_name
+        - redirect_uris
+
+    Relationship:
+      type: object
+      properties:
+        id:
+          type: string
+        following:
+          type: boolean
+        showing_reblogs:
+          type: boolean
+        notifying:
+          type: boolean
+        followed_by:
+          type: boolean
+        blocking:
+          type: boolean
+        blocked_by:
+          type: boolean
+        muting:
+          type: boolean
+        muting_notifications:
+          type: boolean
+        requested:
+          type: boolean
+        domain_blocking:
+          type: boolean
+        endorsed:
+          type: boolean
+        note:
+          type: string
+      required:
+        - id
+        - following
+        - showing_reblogs
+        - notifying
+        - followed_by
+        - blocking
+        - blocked_by
+        - muting
+        - muting_notifications
+        - requested
+        - domain_blocking
+        - endorsed
+        - note
+
+
+    FollowRequestBody:
+      type: object
+      properties:
+        reblogs:
+          type: boolean
+          default: true
+        notify:
+          type: boolean
+          default: false
+        languages:
+          type: array
+          maxItems: 10
+          items:
+            type: string
+            maxLength: 10
+
+    UpdateCredentials:
+      type: object
+      properties:
+        display_name:
+          type: string
+          maxLength: 300
+        note:
+          type: string
+          maxLength: 2000
+        avatar:
+          type: string
+          format: binary
+        header:
+          type: string
+          format: binary
+        locked:
+          type: boolean
+        bot:
+          type: boolean
+        discoverable:
+          type: boolean
+        hide_collections:
+          type: boolean
+        indexable:
+          type: boolean
+        fields_attributes:
+          type: object
+          additionalProperties:
+            $ref: "#/components/schemas/UpdateCredentialsFieldsAttributes"
+        source:
+          $ref: "#/components/schemas/UpdateCredentialsSource"
+
+    UpdateCredentialsSource:
+      type: object
+      properties:
+        privacy:
+          type: string
+          enum:
+            - public
+            - unlisted
+            - private
+        sensitive:
+          type: boolean
+        language:
+          type: string
+
+    UpdateCredentialsFieldsAttributes:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+
+    Report:
+      type: object
+
+    RelationshipServeranceEvent:
+      type: object
+
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum:
+            - mention
+            - status
+            - reblog
+            - follow
+            - follow_request
+            - favourite
+            - poll
+            - update
+            - admin.sign_up
+            - admin.report
+            - severed_relationships
+        created_at:
+          type: string
+        account:
+          $ref: "#/components/schemas/Account"
+        status:
+          $ref: "#/components/schemas/Status"
+        report:
+          $ref: "#/components/schemas/Report"
+        relationship_severance_event:
+          $ref: "#/components/schemas/RelationshipServeranceEvent"
+      required:
+        - id
+        - type
+        - created_at
+        - account
+
+    UnprocessableEntityResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        details:
+          type: array
+          additionalProperties:
+            type: array
+            items:
+              $ref: "#/components/schemas/UnprocessableEntityResponseDetails"
+
+    UnprocessableEntityResponseDetails:
+      type: object
+      properties:
+        error:
+          type: string
+        description:
+          type: string
+          nullable: false
+      required:
+        - error
+        - description
+
+    UnauthorizedResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          default: "The access token is invalid"
+      required:
+        - error
+
+    RateLimitedResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          default: "Too many requests"
+      required:
+        - error
+
+    ForbiddenResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    NotFoundResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    PartialContentResponse:
+      type: object
+
+
+  responses:
+    forbidden:
+      description: forbidden
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ForbiddenResponse"
+    unprocessableEntity:
+      description: Unprocessable entity
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/UnprocessableEntityResponse"
+
+    unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/UnauthorizedResponse"
+
+    rateLimited:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/RateLimitedResponse"
+
+    notfound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/NotFoundResponse"
+
+    partialContent:
+      description: Partial content
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/PartialContentResponse"
+
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      description: Mastodon Oauth
+      flows:
+        authorizationCode:
+          authorizationUrl: /oauth/authorize
+          tokenUrl: /oauth/token
+          scopes:
+            read:accounts: ""
+            read:blocks: ""
+            read:bookmarks: ""
+            read:favourites: ""
+            read:filters: ""
+            read:follows: ""
+            read:lists: ""
+            read:mutes: ""
+            read:notifications: ""
+            read:search: ""
+            read:statuses: ""
+            write:accounts: ""
+            write:blocks: ""
+            write:bookmarks: ""
+            write:conversations: ""
+            write:favourites: ""
+            write:filters: ""
+            write:follows: ""
+            write:lists: ""
+            write:media: ""
+            write:mutes: ""
+            write:notifications: ""
+            write:reports: ""
+            write:statuses: ""
+            admin:read:accounts: ""
+            admin:read:reports: ""
+            admin:read:domain_allows: ""
+            admin:read:domain_blocks: ""
+            admin:read:ip_blocks: ""
+            admin:read:email_domain_blocks: ""
+            admin:read:canonical_email_blocks: ""
+            admin:write:accounts: ""
+            admin:write:reports: ""
+            admin:write:domain_allows: ""
+            admin:write:domain_blocks: ""
+            admin:write:ip_blocks: ""
+            admin:write:email_domain_blocks: ""
+            admin:write:canonical_email_blocks: ""

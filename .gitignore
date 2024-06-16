@@ -46,3 +46,5 @@ out/
 
 *.log
 /hideout-core/files/
+/hideout-core/.kotlin/sessions/
+/hideout-mastodon/.kotlin/sessions/
