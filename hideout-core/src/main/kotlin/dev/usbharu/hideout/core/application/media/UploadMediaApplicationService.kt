@@ -46,11 +46,11 @@ class UploadMediaApplicationService(
         val process = mediaProcessor.process(command.path, command.name, null)
         val id = idGenerateService.generateId()
         val thumbnailUri = if (process.thumbnailPath != null) {
-            mediaStore.upload(process.thumbnailPath, "thumbnail-$id")
+            mediaStore.upload(process.thumbnailPath, "thumbnail-$id.${process.mimeType.subtype}")
         } else {
             null
         }
-        val uri = mediaStore.upload(process.path, id.toString())
+        val uri = mediaStore.upload(process.path, "$id.${process.mimeType.subtype}")
 
         val media = MediaModel(
             MediaId(id),

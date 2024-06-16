@@ -22,9 +22,11 @@ import dev.usbharu.hideout.core.domain.model.media.MimeType
 import java.net.URI
 
 data class Media(
+    val id: Long,
     val name: String,
     val url: URI,
     val thumbprintURI: URI?,
+    val remoteURL: URI?,
     val type: FileType,
     val mimeType: MimeType,
     val blurHash: String?,
@@ -33,13 +35,15 @@ data class Media(
     companion object {
         fun of(media: Media): dev.usbharu.hideout.core.application.media.Media {
             return Media(
-                media.name.name,
-                media.url,
-                media.thumbnailUrl,
-                media.type,
-                media.mimeType,
-                media.blurHash?.hash,
-                media.description?.description
+                id = media.id.id,
+                name = media.name.name,
+                url = media.url,
+                thumbprintURI = media.thumbnailUrl,
+                remoteURL = media.remoteUrl,
+                type = media.type,
+                mimeType = media.mimeType,
+                blurHash = media.blurHash?.hash,
+                description = media.description?.description
             )
         }
     }
