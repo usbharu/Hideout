@@ -18,10 +18,10 @@ package dev.usbharu.hideout.core.domain.model.media
 
 import java.net.URI
 
-data class Media(
+class Media(
     val id: MediaId,
     val name: MediaName,
-    val url: URI,
+    url: URI,
     val remoteUrl: URI?,
     val thumbnailUrl: URI?,
     val type: FileType,
@@ -29,6 +29,12 @@ data class Media(
     val blurHash: MediaBlurHash?,
     val description: MediaDescription? = null,
 ) {
+    var url = url
+        private set
+
+    fun setUrl(url: URI) {
+        this.url = url
+    }
     override fun toString(): String {
         return "Media(" +
                 "id=$id, " +

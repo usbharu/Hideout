@@ -16,4 +16,31 @@
 
 package dev.usbharu.hideout.core.application.media
 
-class Media
+import dev.usbharu.hideout.core.domain.model.media.FileType
+import dev.usbharu.hideout.core.domain.model.media.Media
+import dev.usbharu.hideout.core.domain.model.media.MimeType
+import java.net.URI
+
+data class Media(
+    val name: String,
+    val url: URI,
+    val thumbprintURI: URI?,
+    val type: FileType,
+    val mimeType: MimeType,
+    val blurHash: String?,
+    val description: String?
+) {
+    companion object {
+        fun of(media: Media): dev.usbharu.hideout.core.application.media.Media {
+            return Media(
+                media.name.name,
+                media.url,
+                media.thumbnailUrl,
+                media.type,
+                media.mimeType,
+                media.blurHash?.hash,
+                media.description?.description
+            )
+        }
+    }
+}
