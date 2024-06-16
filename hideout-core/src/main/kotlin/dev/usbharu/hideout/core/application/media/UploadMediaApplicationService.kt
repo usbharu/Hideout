@@ -24,12 +24,13 @@ import dev.usbharu.hideout.core.domain.shared.id.IdGenerateService
 import dev.usbharu.hideout.core.external.media.MediaProcessor
 import dev.usbharu.hideout.core.external.mediastore.MediaStore
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import dev.usbharu.hideout.core.domain.model.media.Media as MediaModel
 
 @Service
 class UploadMediaApplicationService(
-    private val mediaProcessor: MediaProcessor,
+    @Qualifier("delegate") private val mediaProcessor: MediaProcessor,
     private val mediaStore: MediaStore,
     private val mediaRepository: MediaRepository,
     private val idGenerateService: IdGenerateService,
@@ -42,7 +43,7 @@ class UploadMediaApplicationService(
     }
 
     override suspend fun internalExecute(command: UploadMedia, executor: CommandExecutor): Media {
-        val process = mediaProcessor.process(command.path)
+        val process = mediaProcessor.process(command.path, command.name, null)
         val id = idGenerateService.generateId()
         val thumbnailUri = if (process.thumbnailPath != null) {
             mediaStore.upload(process.thumbnailPath, "thumbnail-$id")
@@ -59,7 +60,7 @@ class UploadMediaApplicationService(
             thumbnailUri,
             process.fileType,
             process.mimeType,
-            MediaBlurHash(process.blurHash),
+            process.blurHash?.let { MediaBlurHash(it) },
             command.description?.let { MediaDescription(it) }
         )
 

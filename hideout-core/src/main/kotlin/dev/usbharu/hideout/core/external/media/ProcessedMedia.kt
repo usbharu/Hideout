@@ -25,5 +25,5 @@ data class ProcessedMedia(
     val thumbnailPath: Path?,
     val fileType: FileType,
     val mimeType: MimeType,
-    val blurHash: String,
+    val blurHash: String?,
 )
