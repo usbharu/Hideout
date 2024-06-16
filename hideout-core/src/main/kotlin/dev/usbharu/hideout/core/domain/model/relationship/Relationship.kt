@@ -46,33 +46,33 @@ class Relationship(
     fun follow() {
         require(blocking.not())
         following = true
-        addDomainEvent(RelationshipEventFactory(this).createEvent(RelationshipEvent.follow))
+        addDomainEvent(RelationshipEventFactory(this).createEvent(RelationshipEvent.FOLLOW))
     }
 
     fun unfollow() {
         following = false
-        addDomainEvent(RelationshipEventFactory(this).createEvent(RelationshipEvent.unfollow))
+        addDomainEvent(RelationshipEventFactory(this).createEvent(RelationshipEvent.UNFOLLOW))
     }
 
     fun block() {
         require(following.not())
         blocking = true
-        addDomainEvent(RelationshipEventFactory(this).createEvent(RelationshipEvent.block))
+        addDomainEvent(RelationshipEventFactory(this).createEvent(RelationshipEvent.BLOCK))
     }
 
     fun unblock() {
         blocking = false
-        addDomainEvent(RelationshipEventFactory(this).createEvent(RelationshipEvent.unblock))
+        addDomainEvent(RelationshipEventFactory(this).createEvent(RelationshipEvent.UNBLOCK))
     }
 
     fun mute() {
         muting = true
-        addDomainEvent(RelationshipEventFactory(this).createEvent(RelationshipEvent.mute))
+        addDomainEvent(RelationshipEventFactory(this).createEvent(RelationshipEvent.MUTE))
     }
 
     fun unmute() {
         muting = false
-        addDomainEvent(RelationshipEventFactory(this).createEvent(RelationshipEvent.unmute))
+        addDomainEvent(RelationshipEventFactory(this).createEvent(RelationshipEvent.UNMUTE))
     }
 
     fun muteFollowRequest() {
@@ -86,12 +86,12 @@ class Relationship(
     fun followRequest() {
         require(blocking.not())
         followRequesting = true
-        addDomainEvent(RelationshipEventFactory(this).createEvent(RelationshipEvent.followRequest))
+        addDomainEvent(RelationshipEventFactory(this).createEvent(RelationshipEvent.FOLLOW_REQUEST))
     }
 
     fun unfollowRequest() {
         followRequesting = false
-        addDomainEvent(RelationshipEventFactory(this).createEvent(RelationshipEvent.unfollowRequest))
+        addDomainEvent(RelationshipEventFactory(this).createEvent(RelationshipEvent.UNFOLLOW_REQUEST))
     }
 
     fun acceptFollowRequest() {

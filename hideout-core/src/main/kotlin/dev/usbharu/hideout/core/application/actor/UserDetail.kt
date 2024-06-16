@@ -47,23 +47,23 @@ data class UserDetail(
             customEmojis: List<CustomEmoji>,
         ): dev.usbharu.hideout.core.application.actor.UserDetail {
             return UserDetail(
-                actor.id.id,
-                userDetail.id.id,
-                actor.name.name,
-                actor.domain.domain,
-                actor.screenName.screenName,
-                actor.url.toString(),
-                actor.url.toString(),
-                actor.description.description,
-                actor.locked,
-                customEmojis,
-                actor.createdAt,
-                actor.lastPostAt,
-                actor.postsCount.postsCount,
-                actor.followingCount?.relationshipCount,
-                actor.followersCount?.relationshipCount,
-                actor.moveTo?.id,
-                actor.suspend
+                id = actor.id.id,
+                userDetailId = userDetail.id.id,
+                name = actor.name.name,
+                domain = actor.domain.domain,
+                screenName = actor.screenName.screenName,
+                url = actor.url.toString(),
+                iconUrl = actor.url.toString(),
+                description = actor.description.description,
+                locked = actor.locked,
+                emojis = customEmojis,
+                createdAt = actor.createdAt,
+                lastPostAt = actor.lastPostAt,
+                postsCount = actor.postsCount.postsCount,
+                followingCount = actor.followingCount?.relationshipCount,
+                followersCount = actor.followersCount?.relationshipCount,
+                moveTo = actor.moveTo?.id,
+                suspend = actor.suspend
             )
         }
     }

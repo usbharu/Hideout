@@ -27,7 +27,8 @@ import org.springframework.stereotype.Service
 @Service
 class UserGetFilterApplicationService(private val filterRepository: FilterRepository, transaction: Transaction) :
     AbstractApplicationService<GetFilter, Filter>(
-        transaction, logger
+        transaction,
+        logger
     ) {
     override suspend fun internalExecute(command: GetFilter, executor: CommandExecutor): Filter {
         val filter = filterRepository.findByFilterId(FilterId(command.filterId)) ?: throw Exception("Not Found")

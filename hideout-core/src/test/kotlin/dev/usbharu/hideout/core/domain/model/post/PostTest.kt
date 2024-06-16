@@ -137,7 +137,7 @@ class PostTest {
         val actor = TestActorFactory.create(id = post.actorId.id, publicKey = ActorPublicKey(""))
         post.setVisibility(Visibility.PUBLIC, actor)
 
-        assertContainsEvent(post, PostEvent.update.eventName)
+        assertContainsEvent(post, PostEvent.UPDATE.eventName)
     }
 
     @Test
@@ -189,7 +189,7 @@ class PostTest {
         val actor = TestActorFactory.create(id = post.actorId.id, publicKey = ActorPublicKey(""))
         post.setVisibleActors(setOf(ActorId(100)), actor)
 
-        assertContainsEvent(post, PostEvent.update.eventName)
+        assertContainsEvent(post, PostEvent.UPDATE.eventName)
     }
 
     @Test
@@ -213,7 +213,7 @@ class PostTest {
         val post = TestPostFactory.create()
         val actor = TestActorFactory.create(id = post.actorId.id, publicKey = ActorPublicKey(""))
         post.setContent(PostContent("test", "test", emptyList()), actor)
-        assertContainsEvent(post, PostEvent.update.eventName)
+        assertContainsEvent(post, PostEvent.UPDATE.eventName)
     }
 
     @Test
@@ -249,7 +249,7 @@ class PostTest {
         }
         assertEquals(overview, post.overview)
 
-        assertContainsEvent(post, PostEvent.update.eventName)
+        assertContainsEvent(post, PostEvent.UPDATE.eventName)
     }
 
     @Test

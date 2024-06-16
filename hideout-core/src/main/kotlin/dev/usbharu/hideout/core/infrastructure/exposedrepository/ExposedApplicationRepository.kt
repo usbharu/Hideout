@@ -28,6 +28,9 @@ import org.springframework.stereotype.Repository
 
 @Repository
 class ExposedApplicationRepository : ApplicationRepository, AbstractRepository() {
+    override val logger: Logger
+        get() = Companion.logger
+
     override suspend fun save(application: Application) = query {
         Applications.upsert {
             it[id] = application.applicationId.id
@@ -39,9 +42,6 @@ class ExposedApplicationRepository : ApplicationRepository, AbstractRepository()
     override suspend fun delete(application: Application): Unit = query {
         Applications.deleteWhere { id eq application.applicationId.id }
     }
-
-    override val logger: Logger
-        get() = Companion.logger
 
     companion object {
         private val logger = LoggerFactory.getLogger(ExposedApplicationRepository::class.java)

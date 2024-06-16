@@ -16,6 +16,7 @@
 
 package dev.usbharu.hideout.core.domain.shared.domainevent
 
+@Suppress("UnnecessaryAbstractClass")
 abstract class DomainEventStorable {
     private val domainEvents: MutableList<DomainEvent> = mutableListOf()
 

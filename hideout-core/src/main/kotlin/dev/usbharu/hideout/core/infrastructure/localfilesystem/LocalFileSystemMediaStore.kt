@@ -26,7 +26,8 @@ class LocalFileSystemMediaStore(
         val fileSavePathString = fileSavePath.toAbsolutePath().toString()
         logger.info("MEDIA save. path: {}", fileSavePathString)
 
-        @Suppress("TooGenericExceptionCaught") try {
+        @Suppress("TooGenericExceptionCaught")
+        try {
             path.copyTo(fileSavePath)
         } catch (e: Exception) {
             logger.warn("FAILED to Save the media.", e)
@@ -39,9 +40,7 @@ class LocalFileSystemMediaStore(
 
     private fun buildSavePath(savePath: Path, name: String): Path = savePath.resolve(name)
 
-
     companion object {
         private val logger = LoggerFactory.getLogger(LocalFileSystemMediaStore::class.java)
     }
-
 }

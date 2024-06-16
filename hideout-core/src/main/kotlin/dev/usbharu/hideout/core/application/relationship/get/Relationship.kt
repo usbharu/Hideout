@@ -40,18 +40,18 @@ data class Relationship(
             actorInstanceRelationship: ActorInstanceRelationship,
         ): dev.usbharu.hideout.core.application.relationship.get.Relationship {
             return Relationship(
-                relationship.actorId.id,
-                relationship.targetActorId.id,
-                relationship.following,
-                relationship2.following,
-                relationship.blocking,
-                relationship2.blocking,
-                relationship.muting,
-                relationship.followRequesting,
-                relationship2.followRequesting,
-                actorInstanceRelationship.isBlocking(),
-                actorInstanceRelationship.isMuting(),
-                actorInstanceRelationship.isDoNotSendPrivate()
+                actorId = relationship.actorId.id,
+                targetId = relationship.targetActorId.id,
+                following = relationship.following,
+                followedBy = relationship2.following,
+                blocking = relationship.blocking,
+                blockedBy = relationship2.blocking,
+                muting = relationship.muting,
+                followRequesting = relationship.followRequesting,
+                followRequestedBy = relationship2.followRequesting,
+                domainBlocking = actorInstanceRelationship.isBlocking(),
+                domainMuting = actorInstanceRelationship.isMuting(),
+                domainDoNotSendPrivate = actorInstanceRelationship.isDoNotSendPrivate()
             )
         }
     }

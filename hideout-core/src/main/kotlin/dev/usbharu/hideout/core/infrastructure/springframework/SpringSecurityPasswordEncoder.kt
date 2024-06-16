@@ -24,7 +24,5 @@ class SpringSecurityPasswordEncoder(
     private val passwordEncoder: org.springframework.security.crypto.password.PasswordEncoder,
 ) :
     PasswordEncoder {
-    override suspend fun encode(input: String): String {
-        return passwordEncoder.encode(input)
-    }
+    override suspend fun encode(input: String): String = passwordEncoder.encode(input)
 }

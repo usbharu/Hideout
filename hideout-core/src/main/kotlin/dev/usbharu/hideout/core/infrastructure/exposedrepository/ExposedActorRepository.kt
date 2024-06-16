@@ -22,10 +22,6 @@ class ExposedActorRepository(
     override val logger: Logger
         get() = Companion.logger
 
-    companion object {
-        private val logger = LoggerFactory.getLogger(ExposedActorRepository::class.java)
-    }
-
     override suspend fun save(actor: Actor): Actor {
         query {
             Actors.upsert {
@@ -55,7 +51,6 @@ class ExposedActorRepository(
                 it[emojis] = actor.emojis.joinToString(",")
                 it[icon] = actor.icon?.id
                 it[banner] = actor.banner?.id
-
             }
             ActorsAlsoKnownAs.deleteWhere {
                 actorId eq actor.id.id
@@ -102,12 +97,16 @@ class ExposedActorRepository(
                 .firstOrNull()
         }
     }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(ExposedActorRepository::class.java)
+    }
 }
 
 object Actors : Table("actors") {
     val id = long("id")
     val name = varchar("name", ActorName.length)
-    val domain = varchar("domain", Domain.length)
+    val domain = varchar("domain", Domain.LENGTH)
     val screenName = varchar("screen_name", ActorScreenName.length)
     val description = varchar("description", ActorDescription.length)
     val inbox = varchar("inbox", 1000).uniqueIndex()

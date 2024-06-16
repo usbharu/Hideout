@@ -34,16 +34,19 @@ class FilterQueryMapper(private val filterResultRowMapper: ResultRowMapper<Filte
                     .first()
                     .let(filterResultRowMapper::map)
                     .apply {
-                        reconstructWith(it.mapNotNull { resultRow: ResultRow ->
-                            FilterKeyword(
-                                FilterKeywordId(resultRow.getOrNull(FilterKeywords.id) ?: return@mapNotNull null),
-                                FilterKeywordKeyword(
-                                    resultRow.getOrNull(FilterKeywords.keyword) ?: return@mapNotNull null
-                                ),
-                                FilterMode.valueOf(resultRow.getOrNull(FilterKeywords.mode) ?: return@mapNotNull null)
-                            )
-
-                        }.toSet())
+                        reconstructWith(
+                            it.mapNotNull { resultRow: ResultRow ->
+                                FilterKeyword(
+                                    FilterKeywordId(resultRow.getOrNull(FilterKeywords.id) ?: return@mapNotNull null),
+                                    FilterKeywordKeyword(
+                                        resultRow.getOrNull(FilterKeywords.keyword) ?: return@mapNotNull null
+                                    ),
+                                    FilterMode.valueOf(
+                                        resultRow.getOrNull(FilterKeywords.mode) ?: return@mapNotNull null
+                                    )
+                                )
+                            }.toSet()
+                        )
                     }
             }
     }

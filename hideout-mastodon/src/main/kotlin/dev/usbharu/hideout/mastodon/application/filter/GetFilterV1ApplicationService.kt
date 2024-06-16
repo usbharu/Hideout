@@ -42,11 +42,11 @@ class GetFilterV1ApplicationService(private val filterRepository: FilterReposito
             phrase = filterKeyword?.keyword?.keyword,
             context = filter.filterContext.map {
                 when (it) {
-                    home -> V1Filter.Context.home
-                    notifications -> V1Filter.Context.notifications
-                    public -> V1Filter.Context.public
-                    thread -> V1Filter.Context.thread
-                    account -> V1Filter.Context.account
+                    HOME -> V1Filter.Context.home
+                    NOTIFICATION -> V1Filter.Context.notifications
+                    PUBLIC -> V1Filter.Context.public
+                    THREAD -> V1Filter.Context.thread
+                    ACCOUNT -> V1Filter.Context.account
                 }
             },
             expiresAt = null,

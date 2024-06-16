@@ -33,8 +33,8 @@ class PostDomainEventFactory(private val post: Post, private val actor: Actor? =
 class PostEventBody(post: Post, actor: Actor?) : DomainEventBody(mapOf("post" to post, "actor" to actor))
 
 enum class PostEvent(val eventName: String) {
-    delete("PostDelete"),
-    update("PostUpdate"),
-    create("PostCreate"),
-    checkUpdate("PostCheckUpdate"),
+    DELETE("PostDelete"),
+    UPDATE("PostUpdate"),
+    CREATE("PostCreate"),
+    CHECK_UPDATE("PostCheckUpdate"),
 }

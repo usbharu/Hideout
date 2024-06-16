@@ -41,12 +41,12 @@ class Filter(
 
     fun reconstructWith(filterKeywords: Set<FilterKeyword>): Filter {
         return Filter(
-            this.id,
-            this.userDetailId,
-            this.name,
-            this.filterContext,
-            this.filterAction,
-            filterKeywords
+            id = this.id,
+            userDetailId = this.userDetailId,
+            name = this.name,
+            filterContext = this.filterContext,
+            filterAction = this.filterAction,
+            filterKeywords = filterKeywords
         )
     }
 
@@ -61,6 +61,7 @@ class Filter(
             SET_KEYWORDS
         }
 
+        @Suppress("LongParameterList")
         fun create(
             id: FilterId,
             userDetailId: UserDetailId,

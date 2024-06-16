@@ -30,7 +30,7 @@ data class ActorInstanceRelationship(
     private var doNotSendPrivate: Boolean = false,
 ) : DomainEventStorable() {
     fun block(): ActorInstanceRelationship {
-        addDomainEvent(ActorInstanceRelationshipDomainEventFactory(this).createEvent(block))
+        addDomainEvent(ActorInstanceRelationshipDomainEventFactory(this).createEvent(BLOCK))
         blocking = true
         return this
     }
@@ -41,13 +41,13 @@ data class ActorInstanceRelationship(
     }
 
     fun mute(): ActorInstanceRelationship {
-        addDomainEvent(ActorInstanceRelationshipDomainEventFactory(this).createEvent(mute))
+        addDomainEvent(ActorInstanceRelationshipDomainEventFactory(this).createEvent(MUTE))
         muting = true
         return this
     }
 
     fun unmute(): ActorInstanceRelationship {
-        addDomainEvent(ActorInstanceRelationshipDomainEventFactory(this).createEvent(unmute))
+        addDomainEvent(ActorInstanceRelationshipDomainEventFactory(this).createEvent(UNMUTE))
         muting = false
         return this
     }

@@ -32,5 +32,5 @@ class InstanceEventFactory(private val instance: Instance) {
 class InstanceEventBody(instance: Instance) : DomainEventBody(mapOf("instance" to instance))
 
 enum class InstanceEvent(val eventName: String) {
-    update("InstanceUpdate")
+    UPDATE("InstanceUpdate")
 }

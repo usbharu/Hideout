@@ -40,17 +40,11 @@ class HideoutUserDetails(
     val userDetailsId: Long,
 ) : UserDetails {
     private val authorities: MutableSet<GrantedAuthority> = Collections.unmodifiableSet(authorities)
-    override fun getAuthorities(): MutableSet<GrantedAuthority> {
-        return authorities
-    }
+    override fun getAuthorities(): MutableSet<GrantedAuthority> = authorities
 
-    override fun getPassword(): String {
-        return password
-    }
+    override fun getPassword(): String = password
 
-    override fun getUsername(): String {
-        return username
-    }
+    override fun getUsername(): String = username
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -75,7 +69,12 @@ class HideoutUserDetails(
     }
 
     override fun toString(): String {
-        return "HideoutUserDetails(authorities=$authorities, password='$password', username='$username', userDetailsId=$userDetailsId)"
+        return "HideoutUserDetails(" +
+                "password='$password', " +
+                "username='$username', " +
+                "userDetailsId=$userDetailsId, " +
+                "authorities=$authorities" +
+                ")"
     }
 
     companion object {

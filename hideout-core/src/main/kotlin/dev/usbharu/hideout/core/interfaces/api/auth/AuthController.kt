@@ -32,6 +32,7 @@ class AuthController(
     private val springMvcCommandExecutorFactory: SpringMvcCommandExecutorFactory,
 ) {
     @GetMapping("/auth/sign_up")
+    @Suppress("FunctionOnlyReturningConstant")
     fun signUp(): String = "sign_up"
 
     @PostMapping("/auth/sign_up")

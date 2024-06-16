@@ -11,9 +11,7 @@ class DelegateMediaProcessor(
     private val fileTypeDeterminer: FileTypeDeterminer,
     private val mediaProcessors: List<MediaProcessor>
 ) : MediaProcessor {
-    override fun isSupported(mimeType: MimeType): Boolean {
-        return true
-    }
+    override fun isSupported(mimeType: MimeType): Boolean = true
 
     override suspend fun process(path: Path, filename: String, mimeType: MimeType?): ProcessedMedia {
         val fileType = fileTypeDeterminer.fileType(path, filename)

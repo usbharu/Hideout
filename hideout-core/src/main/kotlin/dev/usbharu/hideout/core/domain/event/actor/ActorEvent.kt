@@ -37,10 +37,10 @@ class ActorEventBody(actor: Actor) : DomainEventBody(
 )
 
 enum class ActorEvent(val eventName: String, val collectable: Boolean = true) {
-    update("ActorUpdate"),
-    delete("ActorDelete"),
-    checkUpdate("ActorCheckUpdate"),
-    move("ActorMove"),
-    actorSuspend("ActorSuspend"),
-    actorUnsuspend("ActorUnsuspend"),
+    UPDATE("ActorUpdate"),
+    DELETE("ActorDelete"),
+    CHECK_UPDATE("ActorCheckUpdate"),
+    MOVE("ActorMove"),
+    ACTOR_SUSPEND("ActorSuspend"),
+    ACTOR_UNSUSPEND("ActorUnsuspend"),
 }

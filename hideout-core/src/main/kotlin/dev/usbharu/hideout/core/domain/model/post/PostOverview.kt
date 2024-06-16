@@ -19,6 +19,6 @@ package dev.usbharu.hideout.core.domain.model.post
 @JvmInline
 value class PostOverview(val overview: String) {
     companion object {
-        val length = 100
+        const val LENGTH = 100
     }
 }

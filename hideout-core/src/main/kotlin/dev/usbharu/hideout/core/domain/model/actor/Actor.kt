@@ -26,6 +26,7 @@ import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventStorable
 import java.net.URI
 import java.time.Instant
 
+@Suppress("LongParameterList")
 class Actor(
     val id: ActorId,
     val name: ActorName,
@@ -62,7 +63,7 @@ class Actor(
         private set
 
     fun setBannerUrl(banner: MediaId?, actor: Actor) {
-        addDomainEvent(ActorDomainEventFactory(this).createEvent(update))
+        addDomainEvent(ActorDomainEventFactory(this).createEvent(UPDATE))
         this.banner = banner
     }
 
@@ -70,7 +71,7 @@ class Actor(
         private set
 
     fun setIconUrl(icon: MediaId?, actor: Actor) {
-        addDomainEvent(ActorDomainEventFactory(this).createEvent(update))
+        addDomainEvent(ActorDomainEventFactory(this).createEvent(UPDATE))
         this.icon = icon
     }
 
@@ -86,9 +87,9 @@ class Actor(
     var suspend = suspend
         set(value) {
             if (field != value && value) {
-                addDomainEvent(ActorDomainEventFactory(this).createEvent(actorSuspend))
+                addDomainEvent(ActorDomainEventFactory(this).createEvent(ACTOR_SUSPEND))
             } else if (field != value && !value) {
-                addDomainEvent(ActorDomainEventFactory(this).createEvent(actorUnsuspend))
+                addDomainEvent(ActorDomainEventFactory(this).createEvent(ACTOR_UNSUSPEND))
             }
             field = value
         }
@@ -102,7 +103,7 @@ class Actor(
     var moveTo = moveTo
         set(value) {
             require(value != id)
-            addDomainEvent(ActorDomainEventFactory(this).createEvent(move))
+            addDomainEvent(ActorDomainEventFactory(this).createEvent(MOVE))
             field = value
         }
 
@@ -111,12 +112,12 @@ class Actor(
 
     var description = description
         set(value) {
-            addDomainEvent(ActorDomainEventFactory(this).createEvent(update))
+            addDomainEvent(ActorDomainEventFactory(this).createEvent(UPDATE))
             field = value
         }
     var screenName = screenName
         set(value) {
-            addDomainEvent(ActorDomainEventFactory(this).createEvent(update))
+            addDomainEvent(ActorDomainEventFactory(this).createEvent(UPDATE))
             field = value
         }
 
@@ -125,7 +126,7 @@ class Actor(
 
     fun delete() {
         if (deleted.not()) {
-            addDomainEvent(ActorDomainEventFactory(this).createEvent(delete))
+            addDomainEvent(ActorDomainEventFactory(this).createEvent(DELETE))
             screenName = ActorScreenName.empty
             description = ActorDescription.empty
             emojis = emptySet()
@@ -142,6 +143,6 @@ class Actor(
     }
 
     fun checkUpdate() {
-        addDomainEvent(ActorDomainEventFactory(this).createEvent(checkUpdate))
+        addDomainEvent(ActorDomainEventFactory(this).createEvent(CHECK_UPDATE))
     }
 }

@@ -34,7 +34,8 @@ class UserRegisterFilterApplicationService(
     transaction: Transaction,
 ) :
     AbstractApplicationService<RegisterFilter, Filter>(
-        transaction, logger
+        transaction,
+        logger
     ) {
 
     companion object {
@@ -44,14 +45,13 @@ class UserRegisterFilterApplicationService(
     override suspend fun internalExecute(command: RegisterFilter, executor: CommandExecutor): Filter {
         require(executor is UserDetailGettableCommandExecutor)
 
-
         val filter = dev.usbharu.hideout.core.domain.model.filter.Filter.create(
-            FilterId(idGenerateService.generateId()),
-            UserDetailId(executor.userDetailId),
-            FilterName(command.filterName),
-            command.filterContext,
-            command.filterAction,
-            command.filterKeywords
+            id = FilterId(idGenerateService.generateId()),
+            userDetailId = UserDetailId(executor.userDetailId),
+            name = FilterName(command.filterName),
+            filterContext = command.filterContext,
+            filterAction = command.filterAction,
+            filterKeywords = command.filterKeywords
                 .map {
                     FilterKeyword(
                         FilterKeywordId(idGenerateService.generateId()),
