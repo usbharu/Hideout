@@ -16,8 +16,43 @@
 
 package dev.usbharu.hideout.core.domain.model.userdetails
 
-data class UserDetail(
-    val actorId: Long,
-    val password: String,
-    val autoAcceptFolloweeFollowRequest: Boolean
-)
+import dev.usbharu.hideout.core.domain.model.actor.ActorId
+import java.time.Instant
+
+class UserDetail private constructor(
+    val id: UserDetailId,
+    val actorId: ActorId,
+    var password: UserDetailHashedPassword,
+    var autoAcceptFolloweeFollowRequest: Boolean,
+    var lastMigration: Instant? = null,
+) {
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as UserDetail
+
+        return id == other.id
+    }
+
+    override fun hashCode(): Int = id.hashCode()
+
+    companion object {
+        fun create(
+            id: UserDetailId,
+            actorId: ActorId,
+            password: UserDetailHashedPassword,
+            autoAcceptFolloweeFollowRequest: Boolean = false,
+            lastMigration: Instant? = null,
+        ): UserDetail {
+            return UserDetail(
+                id,
+                actorId,
+                password,
+                autoAcceptFolloweeFollowRequest,
+                lastMigration
+            )
+        }
+    }
+}

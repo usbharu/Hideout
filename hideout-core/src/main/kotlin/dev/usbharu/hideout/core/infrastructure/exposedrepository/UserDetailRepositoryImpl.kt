@@ -16,14 +16,14 @@
 
 package dev.usbharu.hideout.core.infrastructure.exposedrepository
 
+import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetail
+import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailHashedPassword
+import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
-import org.jetbrains.exposed.dao.id.LongIdTable
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.update
+import org.jetbrains.exposed.sql.javatime.timestamp
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
@@ -35,24 +35,28 @@ class UserDetailRepositoryImpl : UserDetailRepository, AbstractRepository() {
 
     override suspend fun save(userDetail: UserDetail): UserDetail = query {
         val singleOrNull =
-            UserDetails.selectAll().where { UserDetails.actorId eq userDetail.actorId }.forUpdate().singleOrNull()
+            UserDetails.selectAll().where { UserDetails.id eq userDetail.id.id }.forUpdate().singleOrNull()
         if (singleOrNull == null) {
             UserDetails.insert {
-                it[actorId] = userDetail.actorId
-                it[password] = userDetail.password
+                it[id] = userDetail.id.id
+                it[actorId] = userDetail.actorId.id
+                it[password] = userDetail.password.password
                 it[autoAcceptFolloweeFollowRequest] = userDetail.autoAcceptFolloweeFollowRequest
+                it[lastMigration] = userDetail.lastMigration
             }
         } else {
-            UserDetails.update({ UserDetails.actorId eq userDetail.actorId }) {
-                it[password] = userDetail.password
+            UserDetails.update({ UserDetails.id eq userDetail.id.id }) {
+                it[actorId] = userDetail.actorId.id
+                it[password] = userDetail.password.password
                 it[autoAcceptFolloweeFollowRequest] = userDetail.autoAcceptFolloweeFollowRequest
+                it[lastMigration] = userDetail.lastMigration
             }
         }
         return@query userDetail
     }
 
     override suspend fun delete(userDetail: UserDetail): Unit = query {
-        UserDetails.deleteWhere { actorId eq userDetail.actorId }
+        UserDetails.deleteWhere { id eq userDetail.id.id }
     }
 
     override suspend fun findByActorId(actorId: Long): UserDetail? = query {
@@ -60,10 +64,27 @@ class UserDetailRepositoryImpl : UserDetailRepository, AbstractRepository() {
             .selectAll().where { UserDetails.actorId eq actorId }
             .singleOrNull()
             ?.let {
-                UserDetail(
-                    it[UserDetails.actorId],
-                    it[UserDetails.password],
-                    it[UserDetails.autoAcceptFolloweeFollowRequest]
+                UserDetail.create(
+                    UserDetailId(it[UserDetails.id]),
+                    ActorId(it[UserDetails.actorId]),
+                    UserDetailHashedPassword(it[UserDetails.password]),
+                    it[UserDetails.autoAcceptFolloweeFollowRequest],
+                    it[UserDetails.lastMigration]
+                )
+            }
+    }
+
+    override suspend fun findById(id: Long): UserDetail? = query {
+        UserDetails
+            .selectAll().where { UserDetails.id eq id }
+            .singleOrNull()
+            ?.let {
+                UserDetail.create(
+                    UserDetailId(it[UserDetails.id]),
+                    ActorId(it[UserDetails.actorId]),
+                    UserDetailHashedPassword(it[UserDetails.password]),
+                    it[UserDetails.autoAcceptFolloweeFollowRequest],
+                    it[UserDetails.lastMigration]
                 )
             }
     }
@@ -73,8 +94,11 @@ class UserDetailRepositoryImpl : UserDetailRepository, AbstractRepository() {
     }
 }
 
-object UserDetails : LongIdTable("user_details") {
+object UserDetails : Table("user_details") {
+    val id = long("id")
     val actorId = long("actor_id").references(Actors.id)
     val password = varchar("password", 255)
     val autoAcceptFolloweeFollowRequest = bool("auto_accept_followee_follow_request")
+    val lastMigration = timestamp("last_migration").nullable()
+    override val primaryKey: PrimaryKey = PrimaryKey(id)
 }

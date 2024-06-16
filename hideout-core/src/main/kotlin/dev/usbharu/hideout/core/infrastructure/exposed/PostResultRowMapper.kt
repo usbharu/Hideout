@@ -16,29 +16,33 @@
 
 package dev.usbharu.hideout.core.infrastructure.exposed
 
-import dev.usbharu.hideout.application.infrastructure.exposed.ResultRowMapper
-import dev.usbharu.hideout.core.domain.model.post.Post
-import dev.usbharu.hideout.core.domain.model.post.Visibility
+import dev.usbharu.hideout.core.domain.model.actor.ActorId
+import dev.usbharu.hideout.core.domain.model.post.*
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Posts
 import org.jetbrains.exposed.sql.ResultRow
 import org.springframework.stereotype.Component
+import java.net.URI
 
 @Component
-class PostResultRowMapper(private val postBuilder: Post.PostBuilder) : ResultRowMapper<Post> {
+class PostResultRowMapper : ResultRowMapper<Post> {
     override fun map(resultRow: ResultRow): Post {
-        return postBuilder.of(
-            id = resultRow[Posts.id],
-            actorId = resultRow[Posts.actorId],
-            overview = resultRow[Posts.overview],
-            content = resultRow[Posts.text],
+        return Post(
+            id = PostId(resultRow[Posts.id]),
+            actorId = ActorId(resultRow[Posts.actorId]),
+            overview = resultRow[Posts.overview]?.let { PostOverview(it) },
+            content = PostContent(resultRow[Posts.text], resultRow[Posts.content], emptyList()),
             createdAt = resultRow[Posts.createdAt],
-            visibility = Visibility.values().first { visibility -> visibility.ordinal == resultRow[Posts.visibility] },
-            url = resultRow[Posts.url],
-            repostId = resultRow[Posts.repostId],
-            replyId = resultRow[Posts.replyId],
+            visibility = Visibility.valueOf(resultRow[Posts.visibility]),
+            url = URI.create(resultRow[Posts.url]),
+            repostId = resultRow[Posts.repostId]?.let { PostId(it) },
+            replyId = resultRow[Posts.replyId]?.let { PostId(it) },
             sensitive = resultRow[Posts.sensitive],
-            apId = resultRow[Posts.apId],
+            apId = URI.create(resultRow[Posts.apId]),
             deleted = resultRow[Posts.deleted],
+            mediaIds = emptyList(),
+            visibleActors = emptySet(),
+            hide = resultRow[Posts.hide],
+            moveTo = resultRow[Posts.moveTo]?.let { PostId(it) }
         )
     }
 }

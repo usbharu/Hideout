@@ -30,7 +30,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestResponseBody
 @Suppress("TooGenericExceptionCaught")
 class JsonOrFormModelMethodProcessor(
     private val modelAttributeMethodProcessor: ModelAttributeMethodProcessor,
-    private val requestResponseBodyMethodProcessor: RequestResponseBodyMethodProcessor
+    private val requestResponseBodyMethodProcessor: RequestResponseBodyMethodProcessor,
 ) : HandlerMethodArgumentResolver {
     private val isJsonRegex = Regex("application/((\\w*)\\+)?json")
 
@@ -41,7 +41,7 @@ class JsonOrFormModelMethodProcessor(
         parameter: MethodParameter,
         mavContainer: ModelAndViewContainer?,
         webRequest: NativeWebRequest,
-        binderFactory: WebDataBinderFactory?
+        binderFactory: WebDataBinderFactory?,
     ): Any? {
         val contentType = webRequest.getHeader("Content-Type").orEmpty()
         logger.trace("ContentType is {}", contentType)

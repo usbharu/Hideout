@@ -44,10 +44,4 @@ object RsaUtil {
     }
 
     fun decodeRsaPrivateKey(encoded: String): RSAPrivateKey = decodeRsaPrivateKey(Base64Util.decode(encoded))
-
-    fun decodeRsaPrivateKeyPem(pem: String): RSAPrivateKey {
-        val replace = pem.replace(replaceHeaderAndFooterRegex, "")
-            .replace("\n", "")
-        return decodeRsaPrivateKey(replace)
-    }
 }

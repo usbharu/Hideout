@@ -16,45 +16,37 @@
 
 package dev.usbharu.hideout.core.infrastructure.springframework.oauth2
 
-import dev.usbharu.hideout.application.config.ApplicationConfig
-import dev.usbharu.hideout.application.external.Transaction
-import dev.usbharu.hideout.core.domain.exception.resource.UserNotFoundException
+import dev.usbharu.hideout.core.application.shared.Transaction
+import dev.usbharu.hideout.core.config.ApplicationConfig
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
 import kotlinx.coroutines.runBlocking
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Component
 
-@Service
+@Component
 class UserDetailsServiceImpl(
-    private val applicationConfig: ApplicationConfig,
+    private val actorRepository: ActorRepository,
     private val userDetailRepository: UserDetailRepository,
+    private val applicationConfig: ApplicationConfig,
     private val transaction: Transaction,
-    private val actorRepository: ActorRepository
-) :
-    UserDetailsService {
+) : UserDetailsService {
     override fun loadUserByUsername(username: String?): UserDetails = runBlocking {
         if (username == null) {
-            throw UsernameNotFoundException("$username not found")
+            throw UsernameNotFoundException("Username not found")
         }
         transaction.transaction {
-            val findById =
-                actorRepository.findByNameAndDomain(username, applicationConfig.url.host)
-                    ?: throw UserNotFoundException.withNameAndDomain(username, applicationConfig.url.host)
-
-            val userDetails = userDetailRepository.findByActorId(findById.id)
-                ?: throw UsernameNotFoundException("${findById.id} not found.")
-            UserDetailsImpl(
-                id = findById.id,
-                username = findById.name,
-                password = userDetails.password,
-                enabled = true,
-                accountNonExpired = true,
-                credentialsNonExpired = true,
-                accountNonLocked = true,
-                authorities = mutableListOf()
+            val actor = actorRepository.findByNameAndDomain(username, applicationConfig.url.host)
+                ?: throw UsernameNotFoundException("$username not found")
+            val userDetail = userDetailRepository.findByActorId(actor.id.id)
+                ?: throw UsernameNotFoundException("${actor.id.id} not found")
+            HideoutUserDetails(
+                authorities = HashSet(),
+                password = userDetail.password.password,
+                actor.name.name,
+                userDetailsId = userDetail.id.id
             )
         }
     }

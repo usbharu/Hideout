@@ -16,19 +16,44 @@
 
 package dev.usbharu.hideout.core.domain.model.instance
 
+import dev.usbharu.hideout.core.domain.event.instance.InstanceEvent
+import dev.usbharu.hideout.core.domain.event.instance.InstanceEventFactory
+import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventStorable
+import java.net.URI
 import java.time.Instant
 
-data class Instance(
-    val id: Long,
-    val name: String,
-    val description: String,
-    val url: String,
-    val iconUrl: String,
-    val sharedInbox: String?,
-    val software: String,
-    val version: String,
-    val isBlocked: Boolean,
-    val isMuted: Boolean,
-    val moderationNote: String,
-    val createdAt: Instant
-)
+@Suppress("LongParameterList")
+class Instance(
+    val id: InstanceId,
+    var name: InstanceName,
+    var description: InstanceDescription,
+    val url: URI,
+    iconUrl: URI,
+    var sharedInbox: URI?,
+    var software: InstanceSoftware,
+    var version: InstanceVersion,
+    var isBlocked: Boolean,
+    var isMuted: Boolean,
+    var moderationNote: InstanceModerationNote,
+    val createdAt: Instant,
+) : DomainEventStorable() {
+
+    var iconUrl = iconUrl
+        set(value) {
+            addDomainEvent(InstanceEventFactory(this).createEvent(InstanceEvent.UPDATE))
+            field = value
+        }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Instance
+
+        return id == other.id
+    }
+
+    override fun hashCode(): Int {
+        return id.hashCode()
+    }
+}

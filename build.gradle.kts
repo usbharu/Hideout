@@ -16,13 +16,54 @@
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.spring.boot)
+    alias(libs.plugins.kotlin.spring)
+}
+
+apply {
+    plugin("io.spring.dependency-management")
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url = uri("https://git.usbharu.dev/api/packages/usbharu/maven")
+    }
+    maven {
+        name = "GitHubPackages"
+        url = uri("https://maven.pkg.github.com/usbharu/http-signature")
+        credentials {
+
+            username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
+            password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
+        }
+    }
+    maven {
+        name = "GitHubPackages2"
+        url = uri("https://maven.pkg.github.com/multim-dev/emoji-kt")
+        credentials {
+
+            username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
+            password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
+        }
+    }
+}
+configurations {
+    all {
+        exclude("org.springframework.boot", "spring-boot-starter-logging")
+        exclude("ch.qos.logback", "logback-classic")
+    }
 }
 
 dependencies {
     implementation("dev.usbharu:hideout-core:0.0.1")
-    implementation("dev.usbharu:hideout-worker:0.0.1")
+    implementation("dev.usbharu:hideout-mastodon:1.0-SNAPSHOT")
 }
 
 tasks.register("run") {
     dependsOn(gradle.includedBuild("hideout-core").task(":run"))
+}
+
+springBoot {
+    mainClass = "dev.usbharu.hideout.SpringApplicationKt"
 }

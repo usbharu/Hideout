@@ -16,253 +16,133 @@
 
 package dev.usbharu.hideout.core.domain.model.actor
 
-import dev.usbharu.hideout.application.config.ApplicationConfig
-import dev.usbharu.hideout.application.config.CharacterLimit
-import jakarta.validation.Validator
-import jakarta.validation.constraints.*
-import org.hibernate.validator.constraints.URL
-import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Component
+import dev.usbharu.hideout.core.domain.event.actor.ActorDomainEventFactory
+import dev.usbharu.hideout.core.domain.event.actor.ActorEvent.*
+import dev.usbharu.hideout.core.domain.model.emoji.EmojiId
+import dev.usbharu.hideout.core.domain.model.instance.InstanceId
+import dev.usbharu.hideout.core.domain.model.media.MediaId
+import dev.usbharu.hideout.core.domain.model.shared.Domain
+import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventStorable
+import java.net.URI
 import java.time.Instant
-import kotlin.math.max
 
-data class Actor private constructor(
-    @get:NotNull
-    @get:Positive
-    val id: Long,
-    @get:Pattern(regexp = "^[a-zA-Z0-9_-]{1,300}\$")
-    @get:Size(min = 1)
-    val name: String,
-    val domain: String,
-    val screenName: String,
-    val description: String,
-    @get:URL
-    val inbox: String,
-    @get:URL
-    val outbox: String,
-    @get:URL
-    val url: String,
-    @get:NotBlank
-    val publicKey: String,
-    val privateKey: String? = null,
-    @get:PastOrPresent
+@Suppress("LongParameterList")
+class Actor(
+    val id: ActorId,
+    val name: ActorName,
+    val domain: Domain,
+    screenName: ActorScreenName,
+    description: ActorDescription,
+    val inbox: URI,
+    val outbox: URI,
+    val url: URI,
+    val publicKey: ActorPublicKey,
+    val privateKey: ActorPrivateKey? = null,
     val createdAt: Instant,
-    @get:NotBlank
-    val keyId: String,
-    val followers: String? = null,
-    val following: String? = null,
-    @get:PositiveOrZero
-    val instance: Long,
-    val locked: Boolean,
-    val followersCount: Int = 0,
-    val followingCount: Int = 0,
-    val postsCount: Int = 0,
-    val lastPostDate: Instant? = null,
-    val emojis: List<Long> = emptyList(),
-) {
+    val keyId: ActorKeyId,
+    val followersEndpoint: URI?,
+    val followingEndpoint: URI?,
+    val instance: InstanceId,
+    var locked: Boolean,
+    var followersCount: ActorRelationshipCount?,
+    var followingCount: ActorRelationshipCount?,
+    var postsCount: ActorPostsCount,
+    var lastPostAt: Instant? = null,
+    suspend: Boolean,
+    var lastUpdateAt: Instant = createdAt,
+    alsoKnownAs: Set<ActorId> = emptySet(),
+    moveTo: ActorId? = null,
+    emojiIds: Set<EmojiId>,
+    deleted: Boolean,
+    roles: Set<Role>,
+    icon: MediaId?,
+    banner: MediaId?,
+) : DomainEventStorable() {
 
-    @Component
-    class UserBuilder(
-        private val characterLimit: CharacterLimit,
-        private val applicationConfig: ApplicationConfig,
-        private val validator: Validator,
-    ) {
+    var banner = banner
+        private set
 
-        private val logger = LoggerFactory.getLogger(UserBuilder::class.java)
+    fun setBannerUrl(banner: MediaId?, actor: Actor) {
+        addDomainEvent(ActorDomainEventFactory(this).createEvent(UPDATE))
+        this.banner = banner
+    }
 
-        @Suppress("LongParameterList", "FunctionMinLength", "LongMethod")
-        fun of(
-            id: Long,
-            name: String,
-            domain: String,
-            screenName: String,
-            description: String,
-            inbox: String,
-            outbox: String,
-            url: String,
-            publicKey: String,
-            privateKey: String? = null,
-            createdAt: Instant,
-            keyId: String,
-            following: String? = null,
-            followers: String? = null,
-            instance: Long,
-            locked: Boolean,
-            followersCount: Int = 0,
-            followingCount: Int = 0,
-            postsCount: Int = 0,
-            lastPostDate: Instant? = null,
-            emojis: List<Long> = emptyList(),
-        ): Actor {
-            if (id == 0L) {
-                return Actor(
-                    id = id,
-                    name = name,
-                    domain = domain,
-                    screenName = screenName,
-                    description = description,
-                    inbox = inbox,
-                    outbox = outbox,
-                    url = url,
-                    publicKey = publicKey,
-                    privateKey = privateKey,
-                    createdAt = createdAt,
-                    keyId = keyId,
-                    followers = followers,
-                    following = following,
-                    instance = instance,
-                    locked = locked,
-                    followersCount = followersCount,
-                    followingCount = followingCount,
-                    postsCount = postsCount,
-                    lastPostDate = lastPostDate,
-                    emojis = emojis
-                )
+    var icon = icon
+        private set
+
+    fun setIconUrl(icon: MediaId?, actor: Actor) {
+        addDomainEvent(ActorDomainEventFactory(this).createEvent(UPDATE))
+        this.icon = icon
+    }
+
+    var roles = roles
+        private set
+
+    fun setRole(roles: Set<Role>, actor: Actor) {
+        require(actor.roles.contains(Role.ADMINISTRATOR).not())
+
+        this.roles = roles
+    }
+
+    var suspend = suspend
+        set(value) {
+            if (field != value && value) {
+                addDomainEvent(ActorDomainEventFactory(this).createEvent(ACTOR_SUSPEND))
+            } else if (field != value && !value) {
+                addDomainEvent(ActorDomainEventFactory(this).createEvent(ACTOR_UNSUSPEND))
             }
+            field = value
+        }
 
-            // idは0未満ではいけない
-            require(id >= 0) { "id must be greater than or equal to 0." }
+    var alsoKnownAs = alsoKnownAs
+        set(value) {
+            require(value.find { it == id } == null)
+            field = value
+        }
 
-            // nameは空文字以外を含める必要がある
-            require(name.isNotBlank()) { "name must contain non-blank characters." }
+    var moveTo = moveTo
+        set(value) {
+            require(value != id)
+            addDomainEvent(ActorDomainEventFactory(this).createEvent(MOVE))
+            field = value
+        }
 
-            // nameは指定された長さ以下である必要がある
-            val limitedName = if (name.length >= characterLimit.account.id) {
-                logger.warn("name must not exceed ${characterLimit.account.id} characters.")
-                name.substring(0, characterLimit.account.id)
-            } else {
-                name
-            }
+    var emojis = emojiIds
+        private set
 
-            // domainは空文字以外を含める必要がある
-            require(domain.isNotBlank()) { "domain must contain non-blank characters." }
+    var description = description
+        set(value) {
+            addDomainEvent(ActorDomainEventFactory(this).createEvent(UPDATE))
+            field = value
+        }
+    var screenName = screenName
+        set(value) {
+            addDomainEvent(ActorDomainEventFactory(this).createEvent(UPDATE))
+            field = value
+        }
 
-            // domainは指定された長さ以下である必要がある
-            require(domain.length <= characterLimit.general.domain) {
-                "domain must not exceed ${characterLimit.general.domain} characters."
-            }
+    var deleted = deleted
+        private set
 
-            // screenNameは空文字以外を含める必要がある
-            require(screenName.isNotBlank()) { "screenName must contain non-blank characters." }
-
-            // screenNameは指定された長さ以下である必要がある
-            val limitedScreenName = if (screenName.length >= characterLimit.account.name) {
-                logger.warn("screenName must not exceed ${characterLimit.account.name} characters.")
-                screenName.substring(0, characterLimit.account.name)
-            } else {
-                screenName
-            }
-
-            // descriptionは指定された長さ以下である必要がある
-            val limitedDescription = if (description.length >= characterLimit.account.description) {
-                logger.warn("description must not exceed ${characterLimit.account.description} characters.")
-                description.substring(0, characterLimit.account.description)
-            } else {
-                description
-            }
-
-            // ローカルユーザーはpasswordとprivateKeyをnullにしてはいけない
-            if (domain == applicationConfig.url.host) {
-                requireNotNull(privateKey) { "password and privateKey must not be null for local users." }
-            }
-
-            // urlは空文字以外を含める必要がある
-            require(url.isNotBlank()) { "url must contain non-blank characters." }
-
-            // urlは指定された長さ以下である必要がある
-            require(url.length <= characterLimit.general.url) {
-                "url must not exceed ${characterLimit.general.url} characters."
-            }
-
-            // inboxは空文字以外を含める必要がある
-            require(inbox.isNotBlank()) { "inbox must contain non-blank characters." }
-
-            // inboxは指定された長さ以下である必要がある
-            require(inbox.length <= characterLimit.general.url) {
-                "inbox must not exceed ${characterLimit.general.url} characters."
-            }
-
-            // outboxは空文字以外を含める必要がある
-            require(outbox.isNotBlank()) { "outbox must contain non-blank characters." }
-
-            // outboxは指定された長さ以下である必要がある
-            require(outbox.length <= characterLimit.general.url) {
-                "outbox must not exceed ${characterLimit.general.url} characters."
-            }
-
-            require(keyId.isNotBlank()) {
-                "keyId must contain non-blank characters."
-            }
-
-            val actor = Actor(
-                id = id,
-                name = limitedName,
-                domain = domain,
-                screenName = limitedScreenName,
-                description = limitedDescription,
-                inbox = inbox,
-                outbox = outbox,
-                url = url,
-                publicKey = publicKey,
-                privateKey = privateKey,
-                createdAt = createdAt,
-                keyId = keyId,
-                followers = followers,
-                following = following,
-                instance = instance,
-                locked = locked,
-                followersCount = max(0, followersCount),
-                followingCount = max(0, followingCount),
-                postsCount = max(0, postsCount),
-                lastPostDate = lastPostDate,
-                emojis = emojis
-            )
-
-            val validate = validator.validate(actor)
-
-            for (constraintViolation in validate) {
-                throw IllegalArgumentException("${constraintViolation.propertyPath} : ${constraintViolation.message}")
-            }
-            return actor
+    fun delete() {
+        if (deleted.not()) {
+            addDomainEvent(ActorDomainEventFactory(this).createEvent(DELETE))
+            screenName = ActorScreenName.empty
+            description = ActorDescription.empty
+            emojis = emptySet()
+            lastPostAt = null
+            postsCount = ActorPostsCount.ZERO
+            followersCount = null
+            followingCount = null
         }
     }
 
-    fun incrementFollowing(): Actor = this.copy(followingCount = this.followingCount + 1)
+    fun restore() {
+        deleted = false
+        checkUpdate()
+    }
 
-    fun decrementFollowing(): Actor = this.copy(followingCount = this.followingCount - 1)
-
-    fun incrementFollowers(): Actor = this.copy(followersCount = this.followersCount + 1)
-
-    fun decrementFollowers(): Actor = this.copy(followersCount = this.followersCount - 1)
-
-    fun incrementPostsCount(): Actor = this.copy(postsCount = this.postsCount + 1)
-
-    fun decrementPostsCount(): Actor = this.copy(postsCount = this.postsCount - 1)
-
-    fun withLastPostAt(lastPostDate: Instant): Actor = this.copy(lastPostDate = lastPostDate)
-    override fun toString(): String {
-        return "Actor(" +
-                "id=$id, " +
-                "name='$name', " +
-                "domain='$domain', " +
-                "screenName='$screenName', " +
-                "description='$description', " +
-                "inbox='$inbox', " +
-                "outbox='$outbox', " +
-                "url='$url', " +
-                "publicKey='$publicKey', " +
-                "privateKey=$privateKey, " +
-                "createdAt=$createdAt, " +
-                "keyId='$keyId', " +
-                "followers=$followers, " +
-                "following=$following, " +
-                "instance=$instance, " +
-                "locked=$locked, " +
-                "followersCount=$followersCount, " +
-                "followingCount=$followingCount, " +
-                "postsCount=$postsCount, " +
-                "lastPostDate=$lastPostDate, " +
-                "emojis=$emojis" +
-                ")"
+    fun checkUpdate() {
+        addDomainEvent(ActorDomainEventFactory(this).createEvent(CHECK_UPDATE))
     }
 }

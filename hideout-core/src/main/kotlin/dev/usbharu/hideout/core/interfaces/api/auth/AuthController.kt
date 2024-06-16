@@ -16,12 +16,11 @@
 
 package dev.usbharu.hideout.core.interfaces.api.auth
 
-import dev.usbharu.hideout.application.config.ApplicationConfig
-import dev.usbharu.hideout.application.config.CaptchaConfig
-import dev.usbharu.hideout.core.service.auth.AuthApiService
-import dev.usbharu.hideout.core.service.auth.RegisterAccountDto
+import dev.usbharu.hideout.core.application.actor.RegisterLocalActor
+import dev.usbharu.hideout.core.application.actor.RegisterLocalActorApplicationService
+import dev.usbharu.hideout.core.infrastructure.springframework.SpringMvcCommandExecutorFactory
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.stereotype.Controller
-import org.springframework.ui.Model
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ModelAttribute
@@ -29,27 +28,21 @@ import org.springframework.web.bind.annotation.PostMapping
 
 @Controller
 class AuthController(
-    private val authApiService: AuthApiService,
-    private val captchaConfig: CaptchaConfig,
-    private val applicationConfig: ApplicationConfig
+    private val registerLocalActorApplicationService: RegisterLocalActorApplicationService,
+    private val springMvcCommandExecutorFactory: SpringMvcCommandExecutorFactory,
 ) {
     @GetMapping("/auth/sign_up")
-    fun signUp(model: Model): String {
-        model.addAttribute("siteKey", captchaConfig.reCaptchaSiteKey)
-        model.addAttribute("applicationConfig", applicationConfig)
-        return "sign_up"
-    }
+    @Suppress("FunctionOnlyReturningConstant")
+    fun signUp(): String = "sign_up"
 
     @PostMapping("/auth/sign_up")
-    suspend fun signUp(@Validated @ModelAttribute signUpForm: SignUpForm): String {
-        val registerAccount = authApiService.registerAccount(
-            RegisterAccountDto(
-                signUpForm.username,
-                signUpForm.password,
-                signUpForm.recaptchaResponse
-            )
+    suspend fun signUp(@Validated @ModelAttribute signUpForm: SignUpForm, request: HttpServletRequest): String {
+        val registerLocalActor = RegisterLocalActor(signUpForm.username, signUpForm.password)
+        val uri = registerLocalActorApplicationService.execute(
+            registerLocalActor,
+            springMvcCommandExecutorFactory.getCommandExecutor()
         )
-
-        return "redirect:" + registerAccount.url
+        request.login(signUpForm.username, signUpForm.password)
+        return "redirect:$uri"
     }
 }

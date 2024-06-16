@@ -16,204 +16,308 @@
 
 package dev.usbharu.hideout.core.domain.model.post
 
-import dev.usbharu.hideout.application.config.CharacterLimit
-import dev.usbharu.hideout.core.service.post.PostContentFormatter
-import jakarta.validation.Validator
-import jakarta.validation.constraints.Positive
-import org.hibernate.validator.constraints.URL
-import org.springframework.stereotype.Component
+import dev.usbharu.hideout.core.domain.event.post.PostDomainEventFactory
+import dev.usbharu.hideout.core.domain.event.post.PostEvent
+import dev.usbharu.hideout.core.domain.model.actor.Actor
+import dev.usbharu.hideout.core.domain.model.actor.ActorId
+import dev.usbharu.hideout.core.domain.model.actor.Role
+import dev.usbharu.hideout.core.domain.model.emoji.EmojiId
+import dev.usbharu.hideout.core.domain.model.media.MediaId
+import dev.usbharu.hideout.core.domain.model.post.Post.Companion.Action.*
+import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventStorable
+import java.net.URI
 import java.time.Instant
 
-data class Post private constructor(
-    @get:Positive
-    val id: Long,
-    @get:Positive
-    val actorId: Long,
-    val overview: String? = null,
-    val content: String,
-    val text: String,
-    @get:Positive
-    val createdAt: Long,
-    val visibility: Visibility,
-    @get:URL
-    val url: String,
-    val repostId: Long? = null,
-    val replyId: Long? = null,
-    val sensitive: Boolean = false,
-    @get:URL
-    val apId: String = url,
-    val mediaIds: List<Long> = emptyList(),
-    val deleted: Boolean = false,
-    val emojiIds: List<Long> = emptyList(),
-) {
+@Suppress("LongParameterList", "TooManyFunctions")
+class Post(
+    val id: PostId,
+    actorId: ActorId,
+    overview: PostOverview?,
+    content: PostContent,
+    val createdAt: Instant,
+    visibility: Visibility,
+    val url: URI,
+    val repostId: PostId?,
+    val replyId: PostId?,
+    sensitive: Boolean,
+    val apId: URI,
+    deleted: Boolean,
+    mediaIds: List<MediaId>,
+    visibleActors: Set<ActorId>,
+    hide: Boolean,
+    moveTo: PostId?,
+) : DomainEventStorable() {
 
-    @Component
-    class PostBuilder(
-        private val characterLimit: CharacterLimit,
-        private val postContentFormatter: PostContentFormatter,
-        private val validator: Validator,
-    ) {
-        @Suppress("FunctionMinLength", "LongParameterList")
-        fun of(
-            id: Long,
-            actorId: Long,
-            overview: String? = null,
-            content: String,
-            createdAt: Long,
+    val actorId = actorId
+        get() {
+            if (deleted) {
+                return ActorId.ghost
+            }
+            return field
+        }
+
+    var visibility = visibility
+        private set
+
+    fun setVisibility(visibility: Visibility, actor: Actor) {
+        require(isAllow(actor, UPDATE, this))
+        require(this.visibility != Visibility.DIRECT)
+        require(visibility != Visibility.DIRECT)
+        require(this.visibility.ordinal >= visibility.ordinal)
+
+        require(deleted.not())
+
+        if (this.visibility != visibility) {
+            addDomainEvent(PostDomainEventFactory(this, actor).createEvent(PostEvent.UPDATE))
+        }
+        this.visibility = visibility
+    }
+
+    var visibleActors = visibleActors
+        private set
+
+    fun setVisibleActors(visibleActors: Set<ActorId>, actor: Actor) {
+        require(isAllow(actor, UPDATE, this))
+        require(deleted.not())
+        if (visibility == Visibility.DIRECT) {
+            addDomainEvent(PostDomainEventFactory(this, actor).createEvent(PostEvent.UPDATE))
+            this.visibleActors = this.visibleActors.plus(visibleActors)
+        }
+    }
+
+    var content = content
+        get() {
+            if (hide) {
+                return PostContent.empty
+            }
+            return field
+        }
+        private set
+
+    fun setContent(content: PostContent, actor: Actor) {
+        require(isAllow(actor, UPDATE, this))
+        require(deleted.not())
+        if (this.content != content) {
+            addDomainEvent(PostDomainEventFactory(this, actor).createEvent(PostEvent.UPDATE))
+        }
+        this.content = content
+    }
+
+    var overview = overview
+        get() {
+            if (hide) {
+                return null
+            }
+            return field
+        }
+        private set
+
+    fun setOverview(overview: PostOverview?, actor: Actor) {
+        require(isAllow(actor, UPDATE, this))
+        require(deleted.not())
+        if (this.overview != overview) {
+            addDomainEvent(PostDomainEventFactory(this, actor).createEvent(PostEvent.UPDATE))
+        }
+        this.overview = overview
+    }
+
+    var sensitive = sensitive
+        private set
+
+    fun setSensitive(sensitive: Boolean, actor: Actor) {
+        isAllow(actor, UPDATE, this)
+        require(deleted.not())
+        if (this.sensitive != sensitive) {
+            addDomainEvent(PostDomainEventFactory(this, actor).createEvent(PostEvent.UPDATE))
+        }
+        this.sensitive = sensitive
+    }
+
+    val text: String
+        get() {
+            if (hide) {
+                return PostContent.empty.text
+            }
+            return content.text
+        }
+
+    val emojiIds: List<EmojiId>
+        get() {
+            if (hide) {
+                return PostContent.empty.emojiIds
+            }
+            return content.emojiIds
+        }
+
+    var mediaIds = mediaIds
+        get() {
+            if (hide) {
+                return emptyList()
+            }
+            return field
+        }
+        private set
+
+    fun addMediaIds(mediaIds: List<MediaId>, actor: Actor) {
+        require(isAllow(actor, UPDATE, this))
+        require(deleted.not())
+        addDomainEvent(PostDomainEventFactory(this, actor).createEvent(PostEvent.UPDATE))
+        this.mediaIds = this.mediaIds.plus(mediaIds).distinct()
+    }
+
+    var deleted = deleted
+        private set
+
+    fun delete(actor: Actor) {
+        isAllow(actor, DELETE, this)
+        if (deleted.not()) {
+            addDomainEvent(PostDomainEventFactory(this, actor).createEvent(PostEvent.DELETE))
+            content = PostContent.empty
+            overview = null
+            mediaIds = emptyList()
+        }
+        deleted = true
+    }
+
+    fun checkUpdate() {
+        addDomainEvent(PostDomainEventFactory(this).createEvent(PostEvent.CHECK_UPDATE))
+    }
+
+    fun restore(content: PostContent, overview: PostOverview?, mediaIds: List<MediaId>) {
+        deleted = false
+        this.content = content
+        this.overview = overview
+        this.mediaIds = mediaIds
+        checkUpdate()
+    }
+
+    var hide = hide
+        private set
+
+    fun hide() {
+        hide = true
+    }
+
+    fun show() {
+        hide = false
+    }
+
+    var moveTo = moveTo
+        private set
+
+    fun moveTo(moveTo: PostId, actor: Actor) {
+        require(isAllow(actor, MOVE, this))
+        require(this.moveTo == null)
+        this.moveTo = moveTo
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Post
+
+        return id == other.id
+    }
+
+    override fun hashCode(): Int = id.hashCode()
+
+    fun reconstructWith(mediaIds: List<MediaId>, emojis: List<EmojiId>, visibleActors: Set<ActorId>): Post {
+        return Post(
+            id = id,
+            actorId = actorId,
+            overview = overview,
+            content = PostContent(this.content.text, this.content.content, emojis),
+            createdAt = createdAt,
+            visibility = visibility,
+            url = url,
+            repostId = repostId,
+            replyId = replyId,
+            sensitive = sensitive,
+            apId = apId,
+            deleted = deleted,
+            mediaIds = mediaIds,
+            visibleActors = visibleActors,
+            hide = hide,
+            moveTo = moveTo
+        )
+    }
+
+    companion object {
+        @Suppress("LongParameterList")
+        fun create(
+            id: PostId,
+            actorId: ActorId,
+            overview: PostOverview? = null,
+            content: PostContent,
+            createdAt: Instant,
             visibility: Visibility,
-            url: String,
-            repostId: Long? = null,
-            replyId: Long? = null,
-            sensitive: Boolean = false,
-            apId: String = url,
-            mediaIds: List<Long> = emptyList(),
-            emojiIds: List<Long> = emptyList(),
-            deleted: Boolean = false,
+            url: URI,
+            repostId: PostId?,
+            replyId: PostId?,
+            sensitive: Boolean,
+            apId: URI,
+            deleted: Boolean,
+            mediaIds: List<MediaId>,
+            visibleActors: Set<ActorId> = emptySet(),
+            hide: Boolean = false,
+            moveTo: PostId? = null,
+            actor: Actor,
         ): Post {
-            require(id >= 0) { "id must be greater than or equal to 0." }
+            require(actor.deleted.not())
+            require(actor.moveTo == null)
 
-            require(actorId >= 0) { "actorId must be greater than or equal to 0." }
-
-            val limitedOverview = if ((overview?.length ?: 0) >= characterLimit.post.overview) {
-                overview?.substring(0, characterLimit.post.overview)
+            val visibility1 = if (actor.suspend && visibility == Visibility.PUBLIC) {
+                Visibility.UNLISTED
             } else {
-                overview
+                visibility
             }
-
-            val limitedText = if (content.length >= characterLimit.post.text) {
-                content.substring(0, characterLimit.post.text)
-            } else {
-                content
-            }
-
-            val (html, content1) = postContentFormatter.format(limitedText)
-
-            require(url.isNotBlank()) { "url must contain non-blank characters" }
-            require(url.length <= characterLimit.general.url) {
-                "url must not exceed ${characterLimit.general.url} characters."
-            }
-
-            require((repostId ?: 0) >= 0) { "repostId must be greater then or equal to 0." }
-            require((replyId ?: 0) >= 0) { "replyId must be greater then or equal to 0." }
 
             val post = Post(
                 id = id,
                 actorId = actorId,
-                overview = limitedOverview,
-                content = html,
-                text = content1,
+                overview = overview,
+                content = content,
                 createdAt = createdAt,
-                visibility = visibility,
+                visibility = visibility1,
                 url = url,
                 repostId = repostId,
                 replyId = replyId,
                 sensitive = sensitive,
                 apId = apId,
-                mediaIds = mediaIds,
                 deleted = deleted,
-                emojiIds = emojiIds
-            )
-
-            val validate = validator.validate(post)
-
-            for (constraintViolation in validate) {
-                throw IllegalArgumentException("${constraintViolation.propertyPath} : ${constraintViolation.message}")
-            }
-
-            if (post.deleted) {
-                return post.delete()
-            }
-
-            return post
-        }
-
-        @Suppress("LongParameterList")
-        fun pureRepostOf(
-            id: Long,
-            actorId: Long,
-            visibility: Visibility,
-            createdAt: Instant,
-            url: String,
-            repost: Post,
-            apId: String,
-        ): Post {
-            // リポストの公開範囲は元のポストより広くてはいけない
-            val fixedVisibility = if (visibility.ordinal <= repost.visibility.ordinal) {
-                repost.visibility
-            } else {
-                visibility
-            }
-
-            val post = of(
-                id = id,
-                actorId = actorId,
-                overview = null,
-                content = "",
-                createdAt = createdAt.toEpochMilli(),
-                visibility = fixedVisibility,
-                url = url,
-                repostId = repost.id,
-                replyId = null,
-                sensitive = false,
-                apId = apId,
-                mediaIds = emptyList(),
-                deleted = false,
-                emojiIds = emptyList()
-            )
-            return post
-        }
-
-        @Suppress("LongParameterList")
-        fun quoteRepostOf(
-            id: Long,
-            actorId: Long,
-            overview: String? = null,
-            content: String,
-            createdAt: Instant,
-            visibility: Visibility,
-            url: String,
-            repost: Post,
-            replyId: Long? = null,
-            sensitive: Boolean = false,
-            apId: String = url,
-            mediaIds: List<Long> = emptyList(),
-            emojiIds: List<Long> = emptyList(),
-        ): Post {
-            // リポストの公開範囲は元のポストより広くてはいけない
-            val fixedVisibility = if (visibility.ordinal <= repost.visibility.ordinal) {
-                repost.visibility
-            } else {
-                visibility
-            }
-
-            val post = of(
-                id = id,
-                actorId = actorId,
-                overview = overview,
-                content = content,
-                createdAt = createdAt.toEpochMilli(),
-                visibility = fixedVisibility,
-                url = url,
-                repostId = repost.id,
-                replyId = replyId,
-                sensitive = sensitive,
-                apId = apId,
                 mediaIds = mediaIds,
-                deleted = false,
-                emojiIds = emojiIds
+                visibleActors = visibleActors,
+                hide = hide,
+                moveTo = moveTo
             )
+            post.addDomainEvent(PostDomainEventFactory(post).createEvent(PostEvent.CREATE))
             return post
+        }
+
+        fun isAllow(actor: Actor, action: Action, resource: Post): Boolean {
+            return when (action) {
+                UPDATE -> {
+                    if (actor.deleted) {
+                        return true
+                    }
+                    resource.actorId == actor.id || actor.roles.contains(Role.ADMINISTRATOR) || actor.roles.contains(
+                        Role.MODERATOR
+                    )
+                }
+
+                MOVE -> resource.actorId == actor.id && actor.deleted.not()
+                DELETE ->
+                    resource.actorId == actor.id ||
+                        actor.roles.contains(Role.ADMINISTRATOR) ||
+                        actor.roles.contains(Role.MODERATOR)
+            }
+        }
+
+        enum class Action {
+            UPDATE,
+            MOVE,
+            DELETE,
         }
     }
-
-    fun isPureRepost(): Boolean =
-        this.text.isEmpty() &&
-                this.content.isEmpty() &&
-                this.overview == null &&
-                this.replyId == null &&
-                this.repostId != null
-
-    fun delete(): Post = copy(deleted = true)
-
-    fun restore(): Post = copy(deleted = false)
 }

@@ -16,26 +16,48 @@
 
 package dev.usbharu.hideout.core.infrastructure.exposed
 
-import dev.usbharu.hideout.application.infrastructure.exposed.QueryMapper
-import dev.usbharu.hideout.application.infrastructure.exposed.ResultRowMapper
+import dev.usbharu.hideout.core.domain.model.actor.ActorId
+import dev.usbharu.hideout.core.domain.model.emoji.EmojiId
+import dev.usbharu.hideout.core.domain.model.media.MediaId
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Posts
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.PostsEmojis
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.PostsMedia
+import dev.usbharu.hideout.core.infrastructure.exposedrepository.PostsVisibleActors
 import org.jetbrains.exposed.sql.Query
+import org.jetbrains.exposed.sql.ResultRow
 import org.springframework.stereotype.Component
 
 @Component
 class PostQueryMapper(private val postResultRowMapper: ResultRowMapper<Post>) : QueryMapper<Post> {
     override fun map(query: Query): List<Post> {
-        return query.groupBy { it[Posts.id] }
+        return query
+            .groupBy { it[Posts.id] }
             .map { it.value }
             .map {
-                it.first().let(postResultRowMapper::map)
-                    .copy(
-                        mediaIds = it.mapNotNull { resultRow -> resultRow.getOrNull(PostsMedia.mediaId) },
-                        emojiIds = it.mapNotNull { resultRow -> resultRow.getOrNull(PostsEmojis.emojiId) }
-                    )
+                it
+                    .first()
+                    .let(postResultRowMapper::map)
+                    .apply {
+                        reconstructWith(
+                            mediaIds = it.mapNotNull { resultRow: ResultRow ->
+                                resultRow
+                                    .getOrNull(PostsMedia.mediaId)
+                                    ?.let { mediaId -> MediaId(mediaId) }
+                            },
+                            emojis = it
+                                .mapNotNull { resultRow: ResultRow ->
+                                    resultRow
+                                        .getOrNull(PostsEmojis.emojiId)
+                                        ?.let { emojiId -> EmojiId(emojiId) }
+                                },
+                            visibleActors = it.mapNotNull { resultRow: ResultRow ->
+                                resultRow
+                                    .getOrNull(PostsVisibleActors.actorId)
+                                    ?.let { actorId -> ActorId(actorId) }
+                            }.toSet()
+                        )
+                    }
             }
     }
 }
