@@ -27,7 +27,8 @@ import org.springframework.stereotype.Service
 @Service
 class UserDeleteFilterApplicationService(private val filterRepository: FilterRepository, transaction: Transaction) :
     AbstractApplicationService<DeleteFilter, Unit>(
-        transaction, logger
+        transaction,
+        logger
     ) {
     companion object {
         private val logger = LoggerFactory.getLogger(UserDeleteFilterApplicationService::class.java)

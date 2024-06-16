@@ -22,7 +22,7 @@ data class PostContent(val text: String, val content: String, val emojiIds: List
 
     companion object {
         val empty = PostContent("", "", emptyList())
-        val contentLength = 5000
-        val textLength = 3000
+        const val CONTENT_LENGTH = 5000
+        const val TEXT_LENGTH = 3000
     }
 }

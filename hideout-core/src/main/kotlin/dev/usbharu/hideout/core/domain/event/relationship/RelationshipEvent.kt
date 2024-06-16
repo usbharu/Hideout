@@ -29,12 +29,12 @@ class RelationshipEventFactory(private val relationship: Relationship) {
 class RelationshipEventBody(relationship: Relationship) : DomainEventBody(mapOf("relationship" to relationship))
 
 enum class RelationshipEvent(val eventName: String) {
-    follow("RelationshipFollow"),
-    unfollow("RelationshipUnfollow"),
-    block("RelationshipBlock"),
-    unblock("RelationshipUnblock"),
-    mute("RelationshipMute"),
-    unmute("RelationshipUnmute"),
-    followRequest("RelationshipFollowRequest"),
-    unfollowRequest("RelationshipUnfollowRequest"),
+    FOLLOW("RelationshipFollow"),
+    UNFOLLOW("RelationshipUnfollow"),
+    BLOCK("RelationshipBlock"),
+    UNBLOCK("RelationshipUnblock"),
+    MUTE("RelationshipMute"),
+    UNMUTE("RelationshipUnmute"),
+    FOLLOW_REQUEST("RelationshipFollowRequest"),
+    UNFOLLOW_REQUEST("RelationshipUnfollowRequest"),
 }

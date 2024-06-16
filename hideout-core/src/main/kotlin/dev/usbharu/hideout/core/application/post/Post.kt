@@ -39,19 +39,19 @@ data class Post(
     companion object {
         fun of(post: Post): dev.usbharu.hideout.core.application.post.Post {
             return Post(
-                post.id.id,
-                post.actorId.id,
-                post.overview?.overview,
-                post.text,
-                post.content.content,
-                post.createdAt,
-                post.visibility,
-                post.url,
-                post.repostId?.id,
-                post.replyId?.id,
-                post.sensitive,
-                post.mediaIds.map { it.id },
-                post.moveTo?.id
+                id = post.id.id,
+                actorId = post.actorId.id,
+                overview = post.overview?.overview,
+                text = post.text,
+                content = post.content.content,
+                createdAt = post.createdAt,
+                visibility = post.visibility,
+                url = post.url,
+                repostId = post.repostId?.id,
+                replyId = post.replyId?.id,
+                sensitive = post.sensitive,
+                mediaIds = post.mediaIds.map { it.id },
+                moveTo = post.moveTo?.id
             )
         }
     }

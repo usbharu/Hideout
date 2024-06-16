@@ -27,6 +27,9 @@ import dev.usbharu.hideout.core.domain.model.media.Media as EntityMedia
 
 @Repository
 class MediaRepositoryImpl : MediaRepository, AbstractRepository() {
+    override val logger: Logger
+        get() = Companion.logger
+
     override suspend fun findById(id: MediaId): dev.usbharu.hideout.core.domain.model.media.Media? {
         return query {
             return@query Media
@@ -41,9 +44,6 @@ class MediaRepositoryImpl : MediaRepository, AbstractRepository() {
             id eq id
         }
     }
-
-    override val logger: Logger
-        get() = Companion.logger
 
     override suspend fun save(media: EntityMedia): EntityMedia = query {
         if (Media.selectAll().where { Media.id eq media.id.id }.forUpdate().singleOrNull() != null

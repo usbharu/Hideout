@@ -22,6 +22,7 @@ import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventStorable
 import java.net.URI
 import java.time.Instant
 
+@Suppress("LongParameterList")
 class Instance(
     val id: InstanceId,
     var name: InstanceName,
@@ -39,7 +40,7 @@ class Instance(
 
     var iconUrl = iconUrl
         set(value) {
-            addDomainEvent(InstanceEventFactory(this).createEvent(InstanceEvent.update))
+            addDomainEvent(InstanceEventFactory(this).createEvent(InstanceEvent.UPDATE))
             field = value
         }
 

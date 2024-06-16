@@ -6,7 +6,5 @@ import java.awt.image.BufferedImage
 
 @Component
 class GenerateBlurhashImpl : GenerateBlurhash {
-    override fun generateBlurhash(bufferedImage: BufferedImage): String {
-        return BlurHash.encode(bufferedImage)
-    }
+    override fun generateBlurhash(bufferedImage: BufferedImage): String = BlurHash.encode(bufferedImage)
 }

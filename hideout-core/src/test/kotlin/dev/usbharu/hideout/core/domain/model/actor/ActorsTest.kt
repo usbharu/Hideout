@@ -16,7 +16,7 @@ class ActorsTest {
 
         actor.suspend = true
 
-        assertContainsEvent(actor, ActorEvent.actorSuspend.eventName)
+        assertContainsEvent(actor, ActorEvent.ACTOR_SUSPEND.eventName)
     }
 
     @Test
@@ -25,7 +25,7 @@ class ActorsTest {
 
         actor.suspend = false
 
-        assertContainsEvent(actor, ActorEvent.actorUnsuspend.eventName)
+        assertContainsEvent(actor, ActorEvent.ACTOR_UNSUSPEND.eventName)
     }
 
     @Test
@@ -45,7 +45,7 @@ class ActorsTest {
 
         actor.moveTo = ActorId(100)
 
-        assertContainsEvent(actor, ActorEvent.move.eventName)
+        assertContainsEvent(actor, ActorEvent.MOVE.eventName)
     }
 
     @Test
@@ -72,7 +72,7 @@ class ActorsTest {
 
         actor.description = ActorDescription("hoge fuga")
 
-        assertContainsEvent(actor, ActorEvent.update.eventName)
+        assertContainsEvent(actor, ActorEvent.UPDATE.eventName)
     }
 
     @Test
@@ -81,7 +81,7 @@ class ActorsTest {
 
         actor.screenName = ActorScreenName("fuga hoge")
 
-        assertContainsEvent(actor, ActorEvent.update.eventName)
+        assertContainsEvent(actor, ActorEvent.UPDATE.eventName)
     }
 
     @Test
@@ -106,7 +106,7 @@ class ActorsTest {
         assertEquals(ActorPostsCount.ZERO, actor.postsCount)
         assertNull(actor.followersCount)
         assertNull(actor.followingCount)
-        assertContainsEvent(actor, ActorEvent.delete.eventName)
+        assertContainsEvent(actor, ActorEvent.DELETE.eventName)
     }
 
     @Test
@@ -116,7 +116,7 @@ class ActorsTest {
         actor.restore()
 
         assertFalse(actor.deleted)
-        assertContainsEvent(actor, ActorEvent.checkUpdate.eventName)
+        assertContainsEvent(actor, ActorEvent.CHECK_UPDATE.eventName)
     }
 
     @Test
@@ -125,6 +125,6 @@ class ActorsTest {
 
         actor.checkUpdate()
 
-        assertContainsEvent(actor, ActorEvent.checkUpdate.eventName)
+        assertContainsEvent(actor, ActorEvent.CHECK_UPDATE.eventName)
     }
 }

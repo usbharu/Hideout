@@ -33,6 +33,9 @@ class ExposedActorInstanceRelationshipRepository(override val domainEventPublish
     ActorInstanceRelationshipRepository,
     AbstractRepository(),
     DomainEventPublishableRepository<ActorInstanceRelationship> {
+    override val logger: Logger
+        get() = Companion.logger
+
     override suspend fun save(actorInstanceRelationship: ActorInstanceRelationship): ActorInstanceRelationship {
         query {
             ActorInstanceRelationships.upsert {
@@ -50,7 +53,8 @@ class ExposedActorInstanceRelationshipRepository(override val domainEventPublish
     override suspend fun delete(actorInstanceRelationship: ActorInstanceRelationship) {
         query {
             ActorInstanceRelationships.deleteWhere {
-                actorId eq actorInstanceRelationship.actorId.id and (instanceId eq actorInstanceRelationship.instanceId.instanceId)
+                actorId eq actorInstanceRelationship.actorId.id and
+                        (instanceId eq actorInstanceRelationship.instanceId.instanceId)
             }
         }
         update(actorInstanceRelationship)
@@ -63,14 +67,12 @@ class ExposedActorInstanceRelationshipRepository(override val domainEventPublish
         ActorInstanceRelationships
             .selectAll()
             .where {
-                ActorInstanceRelationships.actorId eq actorId.id and (ActorInstanceRelationships.instanceId eq instanceId.instanceId)
+                ActorInstanceRelationships.actorId eq actorId.id and
+                        (ActorInstanceRelationships.instanceId eq instanceId.instanceId)
             }
             .singleOrNull()
             ?.toActorInstanceRelationship()
     }
-
-    override val logger: Logger
-        get() = Companion.logger
 
     companion object {
         private val logger = LoggerFactory.getLogger(ExposedActorInstanceRelationshipRepository::class.java)

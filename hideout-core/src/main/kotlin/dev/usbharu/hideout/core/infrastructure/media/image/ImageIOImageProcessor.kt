@@ -25,9 +25,8 @@ class ImageIOImageProcessor(
     private val imageIOImageConfig: ImageIOImageConfig,
     private val blurhash: GenerateBlurhash
 ) : MediaProcessor {
-    override fun isSupported(mimeType: MimeType): Boolean {
-        return mimeType.fileType == FileType.Image || mimeType.type == "image"
-    }
+    override fun isSupported(mimeType: MimeType): Boolean =
+        mimeType.fileType == FileType.Image || mimeType.type == "image"
 
     override suspend fun process(path: Path, filename: String, mimeType: MimeType?): ProcessedMedia {
         val read = ImageIO.read(path.inputStream())

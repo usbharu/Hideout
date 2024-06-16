@@ -82,16 +82,16 @@ class SpringFilterApi(
         }
         val filterContext = v1FilterPostRequest.context.map {
             when (it) {
-                home -> FilterContext.home
-                notifications -> FilterContext.notifications
-                public -> FilterContext.public
-                thread -> FilterContext.thread
-                account -> FilterContext.account
+                home -> FilterContext.HOME
+                notifications -> FilterContext.NOTIFICATION
+                public -> FilterContext.PUBLIC
+                thread -> FilterContext.THREAD
+                account -> FilterContext.ACCOUNT
             }
         }.toSet()
         val filter = userRegisterFilterApplicationService.execute(
             RegisterFilter(
-                v1FilterPostRequest.phrase, filterContext, FilterAction.warn,
+                v1FilterPostRequest.phrase, filterContext, FilterAction.WARN,
                 setOf(RegisterFilterKeyword(v1FilterPostRequest.phrase, filterMode))
             ), executor
         )
@@ -140,17 +140,17 @@ class SpringFilterApi(
         title = filter.name,
         context = filter.filterContext.map {
             when (it) {
-                FilterContext.home -> Filter.Context.home
-                FilterContext.notifications -> Filter.Context.notifications
-                FilterContext.public -> Filter.Context.public
-                FilterContext.thread -> Filter.Context.thread
-                FilterContext.account -> Filter.Context.account
+                FilterContext.HOME -> Filter.Context.home
+                FilterContext.NOTIFICATION -> Filter.Context.notifications
+                FilterContext.PUBLIC -> Filter.Context.public
+                FilterContext.THREAD -> Filter.Context.thread
+                FilterContext.ACCOUNT -> Filter.Context.account
             }
         },
         expiresAt = null,
         filterAction = when (filter.filterAction) {
-            FilterAction.warn -> Filter.FilterAction.warn
-            FilterAction.hide -> Filter.FilterAction.hide
+            FilterAction.WARN -> Filter.FilterAction.warn
+            FilterAction.HIDE -> Filter.FilterAction.hide
 
         },
         keywords = filter.filterKeywords.map {
@@ -197,17 +197,17 @@ class SpringFilterApi(
                 filterName = filterPostRequest.title,
                 filterContext = filterPostRequest.context.map {
                     when (it) {
-                        Context.home -> FilterContext.home
-                        Context.notifications -> FilterContext.notifications
-                        Context.public -> FilterContext.public
-                        Context.thread -> FilterContext.thread
-                        Context.account -> FilterContext.account
+                        Context.home -> FilterContext.HOME
+                        Context.notifications -> FilterContext.NOTIFICATION
+                        Context.public -> FilterContext.PUBLIC
+                        Context.thread -> FilterContext.THREAD
+                        Context.account -> FilterContext.ACCOUNT
                     }
                 }.toSet(),
                 filterAction = when (filterPostRequest.filterAction) {
-                    FilterPostRequest.FilterAction.warn -> FilterAction.warn
-                    FilterPostRequest.FilterAction.hide -> FilterAction.hide
-                    null -> FilterAction.warn
+                    FilterPostRequest.FilterAction.warn -> FilterAction.WARN
+                    FilterPostRequest.FilterAction.hide -> FilterAction.HIDE
+                    null -> FilterAction.WARN
                 },
                 filterKeywords = filterPostRequest.keywordsAttributes.orEmpty().map {
                     RegisterFilterKeyword(

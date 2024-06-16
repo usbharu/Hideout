@@ -36,9 +36,8 @@ data class DomainEvent(
     val collectable: Boolean = false
 ) {
     companion object {
-        fun create(name: String, body: DomainEventBody, collectable: Boolean = false): DomainEvent {
-            return DomainEvent(UUID.randomUUID().toString(), name, Instant.now(), body, collectable)
-        }
+        fun create(name: String, body: DomainEventBody, collectable: Boolean = false): DomainEvent =
+            DomainEvent(UUID.randomUUID().toString(), name, Instant.now(), body, collectable)
 
         fun reconstruct(
             id: String,
@@ -46,8 +45,6 @@ data class DomainEvent(
             occurredOn: Instant,
             body: DomainEventBody,
             collectable: Boolean
-        ): DomainEvent {
-            return DomainEvent(id, name, occurredOn, body, collectable)
-        }
+        ): DomainEvent = DomainEvent(id, name, occurredOn, body, collectable)
     }
 }

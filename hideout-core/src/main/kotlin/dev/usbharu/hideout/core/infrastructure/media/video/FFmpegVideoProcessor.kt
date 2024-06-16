@@ -25,9 +25,8 @@ class FFmpegVideoProcessor(
     private val fFmpegVideoConfig: FFmpegVideoConfig,
     private val generateBlurhash: GenerateBlurhash
 ) : MediaProcessor {
-    override fun isSupported(mimeType: MimeType): Boolean {
-        return mimeType.fileType == FileType.Video || mimeType.type == "video"
-    }
+    override fun isSupported(mimeType: MimeType): Boolean =
+        mimeType.fileType == FileType.Video || mimeType.type == "video"
 
     override suspend fun process(path: Path, filename: String, mimeType: MimeType?): ProcessedMedia {
         val tempFile = Files.createTempFile("hideout-movie-processor-", ".tmp")
@@ -73,7 +72,6 @@ class FFmpegVideoProcessor(
                     it.gopSize = frameRate
                     it.videoBitrate = videoBitRate
                     it.start()
-
 
                     val frameConverter = Java2DFrameConverter()
 

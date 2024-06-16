@@ -23,7 +23,5 @@ open class HttpCommandExecutor(
     val ip: String,
     val userAgent: String,
 ) : CommandExecutor {
-    override fun toString(): String {
-        return "HttpCommandExecutor(executor='$executor', ip='$ip', userAgent='$userAgent')"
-    }
+    override fun toString(): String = "HttpCommandExecutor(executor='$executor', ip='$ip', userAgent='$userAgent')"
 }

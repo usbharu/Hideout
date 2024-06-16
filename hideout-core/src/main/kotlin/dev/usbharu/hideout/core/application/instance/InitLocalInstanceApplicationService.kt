@@ -40,18 +40,18 @@ class InitLocalInstanceApplicationService(
 
         if (findByUrl == null) {
             val instance = Instance(
-                InstanceId(idGenerateService.generateId()),
-                InstanceName(applicationConfig.url.host),
-                InstanceDescription(""),
-                applicationConfig.url.toURI(),
-                applicationConfig.url.toURI(),
-                null,
-                InstanceSoftware("hideout"),
-                InstanceVersion(buildProperties.version),
-                false,
-                false,
-                InstanceModerationNote(""),
-                Instant.now(),
+                id = InstanceId(idGenerateService.generateId()),
+                name = InstanceName(applicationConfig.url.host),
+                description = InstanceDescription(""),
+                url = applicationConfig.url.toURI(),
+                iconUrl = applicationConfig.url.toURI(),
+                sharedInbox = null,
+                software = InstanceSoftware("hideout"),
+                version = InstanceVersion(buildProperties.version),
+                isBlocked = false,
+                isMuted = false,
+                moderationNote = InstanceModerationNote(""),
+                createdAt = Instant.now(),
             )
             instanceRepository.save(instance)
         }

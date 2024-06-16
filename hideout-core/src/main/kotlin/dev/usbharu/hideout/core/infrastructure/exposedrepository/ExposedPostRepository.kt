@@ -52,6 +52,8 @@ class ExposedPostRepository(
     PostRepository,
     AbstractRepository(),
     DomainEventPublishableRepository<Post> {
+    override val logger: Logger = Companion.logger
+
     override suspend fun save(post: Post): Post {
         query {
             Posts.upsert {
@@ -176,8 +178,6 @@ class ExposedPostRepository(
         update(post)
     }
 
-    override val logger: Logger = Companion.logger
-
     companion object {
         private val logger = LoggerFactory.getLogger(ExposedPostRepository::class.java)
     }
@@ -186,9 +186,9 @@ class ExposedPostRepository(
 object Posts : Table("posts") {
     val id = long("id")
     val actorId = long("actor_id").references(Actors.id)
-    val overview = varchar("overview", PostOverview.length).nullable()
-    val content = varchar("content", PostContent.contentLength)
-    val text = varchar("text", PostContent.textLength)
+    val overview = varchar("overview", PostOverview.LENGTH).nullable()
+    val content = varchar("content", PostContent.CONTENT_LENGTH)
+    val text = varchar("text", PostContent.TEXT_LENGTH)
     val createdAt = timestamp("created_at")
     val visibility = varchar("visibility", 100)
     val url = varchar("url", 1000)

@@ -30,6 +30,9 @@ import org.springframework.stereotype.Repository
 @Repository
 class ExposedFilterRepository(private val filterQueryMapper: QueryMapper<Filter>) : FilterRepository,
     AbstractRepository() {
+    override val logger: Logger
+        get() = Companion.logger
+
     override suspend fun save(filter: Filter): Filter = query {
         Filters.upsert {
             it[id] = filter.id.id
@@ -68,9 +71,6 @@ class ExposedFilterRepository(private val filterQueryMapper: QueryMapper<Filter>
         val where = Filters.selectAll().where { Filters.id eq filterId.id }
         return filterQueryMapper.map(where).firstOrNull()
     }
-
-    override val logger: Logger
-        get() = Companion.logger
 
     companion object {
         private val logger = LoggerFactory.getLogger(ExposedFilterRepository::class.java)

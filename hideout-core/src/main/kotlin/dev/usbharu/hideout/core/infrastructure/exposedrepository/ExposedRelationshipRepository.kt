@@ -32,6 +32,9 @@ class ExposedRelationshipRepository(override val domainEventPublisher: DomainEve
     RelationshipRepository,
     AbstractRepository(),
     DomainEventPublishableRepository<Relationship> {
+    override val logger: Logger
+        get() = Companion.logger
+
     override suspend fun save(relationship: Relationship): Relationship {
         query {
             Relationships.upsert {
@@ -62,9 +65,6 @@ class ExposedRelationshipRepository(override val domainEventPublisher: DomainEve
             Relationships.actorId eq actorId.id and (Relationships.targetActorId eq targetId.id)
         }.singleOrNull()?.toRelationships()
     }
-
-    override val logger: Logger
-        get() = Companion.logger
 
     companion object {
         private val logger = LoggerFactory.getLogger(ExposedRelationshipRepository::class.java)

@@ -32,8 +32,7 @@ class AWSS3MediaStore(
         withContext(Dispatchers.IO) {
             s3Client.putObject(fileUploadRequest, RequestBody.fromFile(path))
         }
-        val successSavedMedia = URI.create("${s3StorageConfig.publicUrl}/${s3StorageConfig.bucket}/${id}")
-
+        val successSavedMedia = URI.create("${s3StorageConfig.publicUrl}/${s3StorageConfig.bucket}/$id")
 
         logger.info("SUCCESS Media upload. {}", id)
         logger.debug(

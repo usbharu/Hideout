@@ -36,7 +36,8 @@ class UploadMediaApplicationService(
     private val idGenerateService: IdGenerateService,
     transaction: Transaction
 ) : AbstractApplicationService<UploadMedia, Media>(
-    transaction, logger
+    transaction,
+    logger
 ) {
     companion object {
         private val logger = LoggerFactory.getLogger(UploadMediaApplicationService::class.java)
@@ -53,20 +54,19 @@ class UploadMediaApplicationService(
         val uri = mediaStore.upload(process.path, "$id.${process.mimeType.subtype}")
 
         val media = MediaModel(
-            MediaId(id),
-            MediaName(command.name),
-            uri,
-            command.remoteUri,
-            thumbnailUri,
-            process.fileType,
-            process.mimeType,
-            process.blurHash?.let { MediaBlurHash(it) },
-            command.description?.let { MediaDescription(it) }
+            id = MediaId(id),
+            name = MediaName(command.name),
+            url = uri,
+            remoteUrl = command.remoteUri,
+            thumbnailUrl = thumbnailUri,
+            type = process.fileType,
+            mimeType = process.mimeType,
+            blurHash = process.blurHash?.let { MediaBlurHash(it) },
+            description = command.description?.let { MediaDescription(it) }
         )
 
         mediaRepository.save(media)
 
         return Media.of(media)
-
     }
 }

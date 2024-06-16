@@ -41,7 +41,7 @@ class ActorInstanceRelationshipEventBody(actorInstanceRelationship: ActorInstanc
     )
 
 enum class ActorInstanceRelationshipEvent(val eventName: String) {
-    block("ActorInstanceBlock"),
-    mute("ActorInstanceMute"),
-    unmute("ActorInstanceUnmute"),
+    BLOCK("ActorInstanceBlock"),
+    MUTE("ActorInstanceMute"),
+    UNMUTE("ActorInstanceUnmute"),
 }

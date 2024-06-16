@@ -28,6 +28,7 @@ import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventStorable
 import java.net.URI
 import java.time.Instant
 
+@Suppress("LongParameterList", "TooManyFunctions")
 class Post(
     val id: PostId,
     actorId: ActorId,
@@ -67,7 +68,7 @@ class Post(
         require(deleted.not())
 
         if (this.visibility != visibility) {
-            addDomainEvent(PostDomainEventFactory(this, actor).createEvent(PostEvent.update))
+            addDomainEvent(PostDomainEventFactory(this, actor).createEvent(PostEvent.UPDATE))
         }
         this.visibility = visibility
     }
@@ -79,7 +80,7 @@ class Post(
         require(isAllow(actor, UPDATE, this))
         require(deleted.not())
         if (visibility == Visibility.DIRECT) {
-            addDomainEvent(PostDomainEventFactory(this, actor).createEvent(PostEvent.update))
+            addDomainEvent(PostDomainEventFactory(this, actor).createEvent(PostEvent.UPDATE))
             this.visibleActors = this.visibleActors.plus(visibleActors)
         }
     }
@@ -97,7 +98,7 @@ class Post(
         require(isAllow(actor, UPDATE, this))
         require(deleted.not())
         if (this.content != content) {
-            addDomainEvent(PostDomainEventFactory(this, actor).createEvent(PostEvent.update))
+            addDomainEvent(PostDomainEventFactory(this, actor).createEvent(PostEvent.UPDATE))
         }
         this.content = content
     }
@@ -115,7 +116,7 @@ class Post(
         require(isAllow(actor, UPDATE, this))
         require(deleted.not())
         if (this.overview != overview) {
-            addDomainEvent(PostDomainEventFactory(this, actor).createEvent(PostEvent.update))
+            addDomainEvent(PostDomainEventFactory(this, actor).createEvent(PostEvent.UPDATE))
         }
         this.overview = overview
     }
@@ -127,7 +128,7 @@ class Post(
         isAllow(actor, UPDATE, this)
         require(deleted.not())
         if (this.sensitive != sensitive) {
-            addDomainEvent(PostDomainEventFactory(this, actor).createEvent(PostEvent.update))
+            addDomainEvent(PostDomainEventFactory(this, actor).createEvent(PostEvent.UPDATE))
         }
         this.sensitive = sensitive
     }
@@ -160,7 +161,7 @@ class Post(
     fun addMediaIds(mediaIds: List<MediaId>, actor: Actor) {
         require(isAllow(actor, UPDATE, this))
         require(deleted.not())
-        addDomainEvent(PostDomainEventFactory(this, actor).createEvent(PostEvent.update))
+        addDomainEvent(PostDomainEventFactory(this, actor).createEvent(PostEvent.UPDATE))
         this.mediaIds = this.mediaIds.plus(mediaIds).distinct()
     }
 
@@ -170,7 +171,7 @@ class Post(
     fun delete(actor: Actor) {
         isAllow(actor, DELETE, this)
         if (deleted.not()) {
-            addDomainEvent(PostDomainEventFactory(this, actor).createEvent(PostEvent.delete))
+            addDomainEvent(PostDomainEventFactory(this, actor).createEvent(PostEvent.DELETE))
             content = PostContent.empty
             overview = null
             mediaIds = emptyList()
@@ -179,7 +180,7 @@ class Post(
     }
 
     fun checkUpdate() {
-        addDomainEvent(PostDomainEventFactory(this).createEvent(PostEvent.checkUpdate))
+        addDomainEvent(PostDomainEventFactory(this).createEvent(PostEvent.CHECK_UPDATE))
     }
 
     fun restore(content: PostContent, overview: PostOverview?, mediaIds: List<MediaId>) {
@@ -219,9 +220,7 @@ class Post(
         return id == other.id
     }
 
-    override fun hashCode(): Int {
-        return id.hashCode()
-    }
+    override fun hashCode(): Int = id.hashCode()
 
     fun reconstructWith(mediaIds: List<MediaId>, emojis: List<EmojiId>, visibleActors: Set<ActorId>): Post {
         return Post(
@@ -245,6 +244,7 @@ class Post(
     }
 
     companion object {
+        @Suppress("LongParameterList")
         fun create(
             id: PostId,
             actorId: ActorId,
@@ -274,24 +274,24 @@ class Post(
             }
 
             val post = Post(
-                id,
-                actorId,
-                overview,
-                content,
-                createdAt,
-                visibility1,
-                url,
-                repostId,
-                replyId,
-                sensitive,
-                apId,
-                deleted,
-                mediaIds,
-                visibleActors,
-                hide,
-                moveTo
+                id = id,
+                actorId = actorId,
+                overview = overview,
+                content = content,
+                createdAt = createdAt,
+                visibility = visibility1,
+                url = url,
+                repostId = repostId,
+                replyId = replyId,
+                sensitive = sensitive,
+                apId = apId,
+                deleted = deleted,
+                mediaIds = mediaIds,
+                visibleActors = visibleActors,
+                hide = hide,
+                moveTo = moveTo
             )
-            post.addDomainEvent(PostDomainEventFactory(post).createEvent(PostEvent.create))
+            post.addDomainEvent(PostDomainEventFactory(post).createEvent(PostEvent.CREATE))
             return post
         }
 
