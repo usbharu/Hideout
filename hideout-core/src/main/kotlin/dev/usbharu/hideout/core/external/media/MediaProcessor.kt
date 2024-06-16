@@ -16,8 +16,10 @@
 
 package dev.usbharu.hideout.core.external.media
 
+import dev.usbharu.hideout.core.domain.model.media.MimeType
 import java.nio.file.Path
 
 interface MediaProcessor {
-    suspend fun process(path: Path): ProcessedMedia
+    fun isSupported(mimeType: MimeType): Boolean
+    suspend fun process(path: Path, filename: String, mimeType: MimeType?): ProcessedMedia
 }

@@ -215,7 +215,7 @@ private fun toStatus(it: ResultRow) = Status(
         followingCount = it[Actors.followingCount],
         noindex = false,
         moved = false,
-        suspendex = false,
+        suspended = false,
         limited = false
     ),
     content = it[Posts.text],
