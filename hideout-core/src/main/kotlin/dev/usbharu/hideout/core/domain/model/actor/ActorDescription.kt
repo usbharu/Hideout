@@ -17,10 +17,10 @@
 package dev.usbharu.hideout.core.domain.model.actor
 
 class ActorDescription(description: String) {
-    val description: String = description.take(length)
+    val description: String = description.take(LENGTH)
 
     companion object {
-        val length = 10000
+        const val LENGTH = 10000
         val empty = ActorDescription("")
     }
 }

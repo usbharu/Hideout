@@ -133,6 +133,8 @@ naming:
       - "**/test/**"
 
   FunctionMinLength:
+    ignoreFunction:
+      - of
     active: true
 
   LambdaParameterNaming:

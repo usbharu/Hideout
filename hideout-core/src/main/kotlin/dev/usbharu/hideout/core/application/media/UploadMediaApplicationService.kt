@@ -39,10 +39,6 @@ class UploadMediaApplicationService(
     transaction,
     logger
 ) {
-    companion object {
-        private val logger = LoggerFactory.getLogger(UploadMediaApplicationService::class.java)
-    }
-
     override suspend fun internalExecute(command: UploadMedia, executor: CommandExecutor): Media {
         val process = mediaProcessor.process(command.path, command.name, null)
         val id = idGenerateService.generateId()
@@ -68,5 +64,9 @@ class UploadMediaApplicationService(
         mediaRepository.save(media)
 
         return Media.of(media)
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(UploadMediaApplicationService::class.java)
     }
 }

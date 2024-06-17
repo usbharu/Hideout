@@ -39,25 +39,29 @@ class PostQueryMapper(private val postResultRowMapper: ResultRowMapper<Post>) : 
                     .first()
                     .let(postResultRowMapper::map)
                     .apply {
-                        reconstructWith(
-                            mediaIds = it.mapNotNull { resultRow: ResultRow ->
-                                resultRow
-                                    .getOrNull(PostsMedia.mediaId)
-                                    ?.let { mediaId -> MediaId(mediaId) }
-                            },
-                            emojis = it
-                                .mapNotNull { resultRow: ResultRow ->
-                                    resultRow
-                                        .getOrNull(PostsEmojis.emojiId)
-                                        ?.let { emojiId -> EmojiId(emojiId) }
-                                },
-                            visibleActors = it.mapNotNull { resultRow: ResultRow ->
-                                resultRow
-                                    .getOrNull(PostsVisibleActors.actorId)
-                                    ?.let { actorId -> ActorId(actorId) }
-                            }.toSet()
-                        )
+                        buildPost(it)
                     }
             }
+    }
+
+    private fun Post.buildPost(it: List<ResultRow>) {
+        reconstructWith(
+            mediaIds = it.mapNotNull { resultRow: ResultRow ->
+                resultRow
+                    .getOrNull(PostsMedia.mediaId)
+                    ?.let { mediaId -> MediaId(mediaId) }
+            },
+            emojis = it
+                .mapNotNull { resultRow: ResultRow ->
+                    resultRow
+                        .getOrNull(PostsEmojis.emojiId)
+                        ?.let { emojiId -> EmojiId(emojiId) }
+                },
+            visibleActors = it.mapNotNull { resultRow: ResultRow ->
+                resultRow
+                    .getOrNull(PostsVisibleActors.actorId)
+                    ?.let { actorId -> ActorId(actorId) }
+            }.toSet()
+        )
     }
 }

@@ -37,10 +37,6 @@ class UserMuteApplicationService(
     private val userDetailRepository: UserDetailRepository,
 ) :
     AbstractApplicationService<Mute, Unit>(transaction, logger) {
-    companion object {
-        private val logger = LoggerFactory.getLogger(UserBlockApplicationService::class.java)
-    }
-
     override suspend fun internalExecute(command: Mute, executor: CommandExecutor) {
         require(executor is UserDetailGettableCommandExecutor)
 
@@ -56,5 +52,9 @@ class UserMuteApplicationService(
         relationship.mute()
 
         relationshipRepository.save(relationship)
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(UserBlockApplicationService::class.java)
     }
 }

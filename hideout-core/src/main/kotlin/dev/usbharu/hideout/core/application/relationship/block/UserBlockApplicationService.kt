@@ -38,10 +38,6 @@ class UserBlockApplicationService(
     private val relationshipDomainService: RelationshipDomainService,
 ) :
     AbstractApplicationService<Block, Unit>(transaction, logger) {
-    companion object {
-        private val logger = LoggerFactory.getLogger(UserBlockApplicationService::class.java)
-    }
-
     override suspend fun internalExecute(command: Block, executor: CommandExecutor) {
         require(executor is UserDetailGettableCommandExecutor)
 
@@ -64,5 +60,9 @@ class UserBlockApplicationService(
 
         relationshipRepository.save(relationship)
         relationshipRepository.save(inverseRelationship)
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(UserBlockApplicationService::class.java)
     }
 }

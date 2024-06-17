@@ -28,6 +28,7 @@ class FFmpegVideoProcessor(
     override fun isSupported(mimeType: MimeType): Boolean =
         mimeType.fileType == FileType.Video || mimeType.type == "video"
 
+    @Suppress("LongMethod", "CyclomaticComplexMethod", "CognitiveComplexMethod", "NestedBlockDepth")
     override suspend fun process(path: Path, filename: String, mimeType: MimeType?): ProcessedMedia {
         val tempFile = Files.createTempFile("hideout-movie-processor-", ".tmp")
         val thumbnailFile = Files.createTempFile("hideout-movie-thumbnail-generate-", ".tmp")
