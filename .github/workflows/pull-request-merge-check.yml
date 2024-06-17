@@ -257,8 +257,8 @@ jobs:
         with:
           arguments: :hideout-core:detektMain
 
-      - name: "reviewdog-suggester: Suggest any code changes based on diff with reviewdog"
+      - name: Auto Commit
         if: ${{ always() }}
-        uses: reviewdog/action-suggester@v1
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          commit_message: "style: fix lint (CI)"
