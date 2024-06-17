@@ -9,6 +9,8 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import utils.AssertDomainEvent.assertContainsEvent
 import utils.AssertDomainEvent.assertEmpty
+import java.net.URI
+import java.time.Instant
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
@@ -260,5 +262,69 @@ class PostTest {
         assertEmpty(post)
     }
 
+    @Test
+    fun sensitiveが変更されるとupdateイベントが発生する() {
+        val post = TestPostFactory.create()
+        val actor = TestActorFactory.create(id = post.actorId.id, publicKey = ActorPublicKey(""))
+        post.setSensitive(true, actor)
+        assertContainsEvent(post, PostEvent.UPDATE.eventName)
+    }
 
+    @Test
+    fun 削除されている場合sensitiveを変更できない() {
+        val post = TestPostFactory.create(deleted = true)
+        val actor = TestActorFactory.create(id = post.actorId.id, publicKey = ActorPublicKey(""))
+        assertThrows<IllegalArgumentException> {
+            post.setSensitive(true, actor)
+        }
+    }
+
+    @Test
+    fun sensitiveが変更されなかった場合イベントが発生しない() {
+        val post = TestPostFactory.create(overview = "aaaa")
+        val actor = TestActorFactory.create(id = post.actorId.id, publicKey = ActorPublicKey(""))
+        post.setSensitive(false, actor)
+        assertEmpty(post)
+    }
+
+    @Test
+    fun hideがtrueの時emptyが帰る() {
+        val post = TestPostFactory.create(hide = true)
+
+        assertEquals(PostContent.empty.text, post.text)
+    }
+
+    @Test
+    fun hideがfalseの時textが返る() {
+        val post = TestPostFactory.create(hide = false, content = "aaaa")
+
+        assertEquals("aaaa", post.text)
+    }
+
+    @Test
+    fun `create actorが削除済みの時作成できない`() {
+        val actor = TestActorFactory.create(deleted = true)
+        assertThrows<IllegalArgumentException> {
+            Post.create(
+                id = PostId(1),
+                actorId = actor.id,
+                overview = null,
+                content = PostContent.empty,
+                createdAt = Instant.now(),
+                visibility = Visibility.PUBLIC,
+                url = URI.create("https://example.com"),
+                repostId = null,
+                replyId = null,
+                sensitive = false,
+                apId = URI.create("https://example.com"),
+                deleted = false,
+                mediaIds = emptyList(),
+                visibleActors = emptySet(),
+                hide = false,
+                moveTo = null,
+                actor = actor
+
+            )
+        }
+    }
 }
