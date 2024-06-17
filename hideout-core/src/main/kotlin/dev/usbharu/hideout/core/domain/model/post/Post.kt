@@ -298,9 +298,6 @@ class Post(
         fun isAllow(actor: Actor, action: Action, resource: Post): Boolean {
             return when (action) {
                 UPDATE -> {
-                    if (actor.deleted) {
-                        return true
-                    }
                     resource.actorId == actor.id || actor.roles.contains(Role.ADMINISTRATOR) || actor.roles.contains(
                         Role.MODERATOR
                     )
