@@ -8,6 +8,6 @@ class ActorScreenNameTest {
     fun screenNameがlengthを超えると無視される() {
         val actorScreenName = ActorScreenName("a".repeat(1000))
 
-        assertEquals(ActorScreenName.length, actorScreenName.screenName.length)
+        assertEquals(ActorScreenName.LENGTH, actorScreenName.screenName.length)
     }
 }

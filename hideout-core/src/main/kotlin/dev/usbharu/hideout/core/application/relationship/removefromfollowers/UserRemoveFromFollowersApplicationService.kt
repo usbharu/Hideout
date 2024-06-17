@@ -37,10 +37,6 @@ class UserRemoveFromFollowersApplicationService(
     private val userDetailRepository: UserDetailRepository,
 ) :
     AbstractApplicationService<RemoveFromFollowers, Unit>(transaction, logger) {
-    companion object {
-        private val logger = LoggerFactory.getLogger(UserBlockApplicationService::class.java)
-    }
-
     override suspend fun internalExecute(command: RemoveFromFollowers, executor: CommandExecutor) {
         require(executor is UserDetailGettableCommandExecutor)
 
@@ -56,5 +52,9 @@ class UserRemoveFromFollowersApplicationService(
         relationship.unfollow()
 
         relationshipRepository.save(relationship)
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(UserBlockApplicationService::class.java)
     }
 }

@@ -33,10 +33,6 @@ class GetUserDetailApplicationService(
     transaction: Transaction,
 ) :
     AbstractApplicationService<GetUserDetail, UserDetail>(transaction, Companion.logger) {
-    companion object {
-        val logger = LoggerFactory.getLogger(GetUserDetailApplicationService::class.java)
-    }
-
     override suspend fun internalExecute(command: GetUserDetail, executor: CommandExecutor): UserDetail {
         val userDetail = userDetailRepository.findById(command.id)
             ?: throw IllegalArgumentException("actor does not exist")
@@ -45,5 +41,9 @@ class GetUserDetailApplicationService(
         val emojis = customEmojiRepository.findByIds(actor.emojis.map { it.emojiId })
 
         return UserDetail.of(actor, userDetail, emojis)
+    }
+
+    companion object {
+        val logger = LoggerFactory.getLogger(GetUserDetailApplicationService::class.java)
     }
 }

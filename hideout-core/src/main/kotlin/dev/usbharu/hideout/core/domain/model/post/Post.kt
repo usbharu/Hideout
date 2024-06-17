@@ -28,7 +28,7 @@ import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventStorable
 import java.net.URI
 import java.time.Instant
 
-@Suppress("LongParameterList", "TooManyFunctions")
+@Suppress("LongParameterList", "TooManyFunctions", "ClassOrdering")
 class Post(
     val id: PostId,
     actorId: ActorId,
