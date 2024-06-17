@@ -20,12 +20,12 @@ package dev.usbharu.hideout.core.domain.model.actor
 value class ActorName(val name: String) {
     init {
         require(name.isNotBlank())
-        require(name.length <= length)
+        require(name.length <= LENGTH)
         require(regex.matches(name))
     }
 
     companion object {
-        val length = 300
-        private val regex = Regex("^[a-zA-Z0-9_-]{1,$length}\$")
+        const val LENGTH = 300
+        private val regex = Regex("^[a-zA-Z0-9_-]{1,$LENGTH}\$")
     }
 }

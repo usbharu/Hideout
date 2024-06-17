@@ -41,10 +41,6 @@ class GetRelationshipApplicationService(
         transaction,
         logger
     ) {
-    companion object {
-        private val logger = LoggerFactory.getLogger(GetRelationshipApplicationService::class.java)
-    }
-
     override suspend fun internalExecute(command: GetRelationship, executor: CommandExecutor): Relationship {
         require(executor is UserDetailGettableCommandExecutor)
         val userDetail = userDetailRepository.findById(executor.userDetailId)!!
@@ -69,5 +65,9 @@ class GetRelationshipApplicationService(
                 )
 
         return Relationship.of(relationship, relationship1, actorInstanceRelationship)
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(GetRelationshipApplicationService::class.java)
     }
 }
