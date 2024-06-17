@@ -34,12 +34,12 @@ class ExposedFilterRepository(private val filterQueryMapper: QueryMapper<Filter>
         get() = Companion.logger
 
     override suspend fun save(filter: Filter): Filter = query {
-        Filters.upsert {
-            it[id] = filter.id.id
-            it[userId] = filter.userDetailId.id
-            it[name] = filter.name.name
-            it[context] = filter.filterContext.joinToString(",") { it.name }
-            it[filterAction] = filter.filterAction.name
+        Filters.upsert { upsertStatement ->
+            upsertStatement[id] = filter.id.id
+            upsertStatement[userId] = filter.userDetailId.id
+            upsertStatement[name] = filter.name.name
+            upsertStatement[context] = filter.filterContext.joinToString(",") { it.name }
+            upsertStatement[filterAction] = filter.filterAction.name
         }
         FilterKeywords.deleteWhere {
             filterId eq filter.id.id

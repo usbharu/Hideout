@@ -35,17 +35,20 @@ class ActorQueryMapper(private val actorResultRowMapper: ResultRowMapper<Actor>)
                     .first()
                     .let(actorResultRowMapper::map)
                     .apply {
-                        alsoKnownAs = it.mapNotNull { resultRow: ResultRow ->
-                            resultRow.getOrNull(
-                                ActorsAlsoKnownAs.alsoKnownAs
-                            )?.let { actorId ->
-                                ActorId(
-                                    actorId
-                                )
-                            }
-                        }.toSet()
+                        alsoKnownAs = buildAlsoKnownAs(it)
                         clearDomainEvents()
                     }
             }
     }
+
+    private fun buildAlsoKnownAs(it: List<ResultRow>) =
+        it.mapNotNull { resultRow: ResultRow ->
+            resultRow.getOrNull(
+                ActorsAlsoKnownAs.alsoKnownAs
+            )?.let { actorId ->
+                ActorId(
+                    actorId
+                )
+            }
+        }.toSet()
 }

@@ -36,10 +36,6 @@ class UserAcceptFollowRequestApplicationService(
     private val userDetailRepository: UserDetailRepository,
 ) :
     AbstractApplicationService<AcceptFollowRequest, Unit>(transaction, logger) {
-    companion object {
-        private val logger = LoggerFactory.getLogger(UserBlockApplicationService::class.java)
-    }
-
     override suspend fun internalExecute(command: AcceptFollowRequest, executor: CommandExecutor) {
         require(executor is UserDetailGettableCommandExecutor)
 
@@ -54,5 +50,9 @@ class UserAcceptFollowRequestApplicationService(
         relationship.acceptFollowRequest()
 
         relationshipRepository.save(relationship)
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(UserBlockApplicationService::class.java)
     }
 }

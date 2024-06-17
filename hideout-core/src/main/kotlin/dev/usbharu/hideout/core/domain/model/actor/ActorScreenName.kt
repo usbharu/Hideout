@@ -18,10 +18,10 @@ package dev.usbharu.hideout.core.domain.model.actor
 
 class ActorScreenName(screenName: String) {
 
-    val screenName: String = screenName.take(length)
+    val screenName: String = screenName.take(LENGTH)
 
     companion object {
-        val length = 300
+        const val LENGTH = 300
         val empty = ActorScreenName("")
     }
 }
