@@ -34,9 +34,10 @@ object TestActorFactory {
         lastPostDate: Instant? = null,
         suspend: Boolean = false,
         alsoKnownAs: Set<ActorId> = emptySet(),
-        moveTo: ActorId? = null,
+        moveTo: Long? = null,
         emojiIds: Set<EmojiId> = emptySet(),
         deleted: Boolean = false,
+        roles: Set<Role> = emptySet(),
     ): Actor {
         return runBlocking {
             Actor(
@@ -62,12 +63,13 @@ object TestActorFactory {
                 lastPostAt = lastPostDate,
                 suspend = suspend,
                 alsoKnownAs = alsoKnownAs,
-                moveTo = moveTo,
+                moveTo = moveTo?.let { ActorId(it) },
                 emojiIds = emojiIds,
                 deleted = deleted,
-                roles = emptySet(),
+                roles = roles,
                 icon = null,
-                banner = null
+                banner = null,
+
             )
         }
     }

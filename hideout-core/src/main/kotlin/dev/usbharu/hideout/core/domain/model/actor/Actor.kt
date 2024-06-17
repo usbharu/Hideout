@@ -79,7 +79,7 @@ class Actor(
         private set
 
     fun setRole(roles: Set<Role>, actor: Actor) {
-        require(actor.roles.contains(Role.ADMINISTRATOR).not())
+        require(actor.roles.contains(Role.ADMINISTRATOR))
 
         this.roles = roles
     }

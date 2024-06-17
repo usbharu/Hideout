@@ -105,7 +105,7 @@ class ExposedActorRepository(
 
 object Actors : Table("actors") {
     val id = long("id")
-    val name = varchar("name", ActorName.length)
+    val name = varchar("name", ActorName.LENGTH)
     val domain = varchar("domain", Domain.LENGTH)
     val screenName = varchar("screen_name", ActorScreenName.length)
     val description = varchar("description", ActorDescription.length)
