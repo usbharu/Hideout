@@ -17,4 +17,12 @@
 package dev.usbharu.hideout.core.domain.model.application
 
 @JvmInline
-value class ApplicationName(val name: String)
+value class ApplicationName(val name: String) {
+    init {
+        require(name.length <= LENGTH)
+    }
+
+    companion object {
+        const val LENGTH = 300
+    }
+}

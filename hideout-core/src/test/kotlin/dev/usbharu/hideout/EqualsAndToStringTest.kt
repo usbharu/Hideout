@@ -19,7 +19,6 @@ package dev.usbharu.hideout
 import com.fasterxml.jackson.module.kotlin.isKotlinClass
 import com.jparams.verifier.tostring.ToStringVerifier
 import com.jparams.verifier.tostring.preset.Presets
-import dev.usbharu.hideout.core.domain.model.emoji.UnicodeEmoji
 import nl.jqno.equalsverifier.EqualsVerifier
 import nl.jqno.equalsverifier.Warning
 import nl.jqno.equalsverifier.internal.reflection.PackageScanner
@@ -115,7 +114,6 @@ class EqualsAndToStringTest {
             .filterNot {
                 it.superclass.isSealed
             }
-            .filterNot { it == UnicodeEmoji::class.java }
             .map {
 
                 dynamicTest(it.name) {

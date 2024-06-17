@@ -1,4 +1,12 @@
 package dev.usbharu.hideout.core.domain.model.filter
 
-@JvmInline
-value class FilterName(val name: String)
+
+class FilterName(name: String) {
+
+
+    val name = name.take(LENGTH)
+
+    companion object {
+        const val LENGTH = 300
+    }
+}
