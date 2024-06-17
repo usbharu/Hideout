@@ -49,9 +49,9 @@ data class Relationship(
                 muting = relationship.muting,
                 followRequesting = relationship.followRequesting,
                 followRequestedBy = relationship2.followRequesting,
-                domainBlocking = actorInstanceRelationship.isBlocking(),
-                domainMuting = actorInstanceRelationship.isMuting(),
-                domainDoNotSendPrivate = actorInstanceRelationship.isDoNotSendPrivate()
+                domainBlocking = actorInstanceRelationship.blocking,
+                domainMuting = actorInstanceRelationship.muting,
+                domainDoNotSendPrivate = actorInstanceRelationship.doNotSendPrivate
             )
         }
     }

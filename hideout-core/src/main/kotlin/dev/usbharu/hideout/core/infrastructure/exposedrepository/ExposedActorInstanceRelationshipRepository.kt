@@ -41,9 +41,9 @@ class ExposedActorInstanceRelationshipRepository(override val domainEventPublish
             ActorInstanceRelationships.upsert {
                 it[actorId] = actorInstanceRelationship.actorId.id
                 it[instanceId] = actorInstanceRelationship.instanceId.instanceId
-                it[blocking] = actorInstanceRelationship.isBlocking()
-                it[muting] = actorInstanceRelationship.isMuting()
-                it[doNotSendPrivate] = actorInstanceRelationship.isDoNotSendPrivate()
+                it[blocking] = actorInstanceRelationship.blocking
+                it[muting] = actorInstanceRelationship.muting
+                it[doNotSendPrivate] = actorInstanceRelationship.doNotSendPrivate
             }
         }
         update(actorInstanceRelationship)

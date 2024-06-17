@@ -22,13 +22,20 @@ import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.instance.InstanceId
 import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventStorable
 
-data class ActorInstanceRelationship(
+class ActorInstanceRelationship(
     val actorId: ActorId,
     val instanceId: InstanceId,
-    private var blocking: Boolean = false,
-    private var muting: Boolean = false,
-    private var doNotSendPrivate: Boolean = false,
+    blocking: Boolean = false,
+    muting: Boolean = false,
+    doNotSendPrivate: Boolean = false,
 ) : DomainEventStorable() {
+    var doNotSendPrivate = doNotSendPrivate
+        private set
+    var muting = muting
+        private set
+    var blocking = blocking
+        private set
+
     fun block(): ActorInstanceRelationship {
         addDomainEvent(ActorInstanceRelationshipDomainEventFactory(this).createEvent(BLOCK))
         blocking = true
@@ -61,12 +68,6 @@ data class ActorInstanceRelationship(
         doNotSendPrivate = false
         return this
     }
-
-    fun isBlocking() = blocking
-
-    fun isMuting() = muting
-
-    fun isDoNotSendPrivate() = doNotSendPrivate
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

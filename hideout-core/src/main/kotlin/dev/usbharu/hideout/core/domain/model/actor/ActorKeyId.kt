@@ -17,4 +17,8 @@
 package dev.usbharu.hideout.core.domain.model.actor
 
 @JvmInline
-value class ActorKeyId(val keyId: String)
+value class ActorKeyId(val keyId: String) {
+    init {
+        require(keyId.isNotBlank())
+    }
+}
