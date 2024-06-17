@@ -96,7 +96,7 @@ class Actor(
 
     var alsoKnownAs = alsoKnownAs
         set(value) {
-            require(value.any { it == id })
+            require(value.none { it == id })
             field = value
         }
 
