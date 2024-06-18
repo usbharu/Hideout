@@ -25,11 +25,13 @@ import org.springframework.stereotype.Component
 @Component
 class FilterResultRowMapper : ResultRowMapper<Filter> {
     override fun map(resultRow: ResultRow): Filter = Filter(
-        FilterId(resultRow[Filters.id]),
-        UserDetailId(resultRow[Filters.userId]),
-        FilterName(resultRow[Filters.name]),
-        resultRow[Filters.context].split(",").filter { it.isNotEmpty() }.map { FilterContext.valueOf(it) }.toSet(),
-        FilterAction.valueOf(resultRow[Filters.filterAction]),
-        emptySet()
+        id = FilterId(resultRow[Filters.id]),
+        userDetailId = UserDetailId(resultRow[Filters.userId]),
+        name = FilterName(resultRow[Filters.name]),
+        filterContext = resultRow[Filters.context].split(",").filter {
+            it.isNotEmpty()
+        }.map { FilterContext.valueOf(it) }.toSet(),
+        filterAction = FilterAction.valueOf(resultRow[Filters.filterAction]),
+        filterKeywords = emptySet()
     )
 }

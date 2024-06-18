@@ -4,6 +4,11 @@ on:
   pull_request:
     branches:
       - "develop"
+    types:
+      - opened # default
+      - reopened # default
+      - synchronize # default
+      - ready_for_review # 必要
 
 
 permissions:
@@ -15,6 +20,7 @@ permissions:
 jobs:
   setup:
     name: Setup
+    if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -257,8 +263,8 @@ jobs:
         with:
           arguments: :hideout-core:detektMain
 
-      - name: "reviewdog-suggester: Suggest any code changes based on diff with reviewdog"
+      - name: Auto Commit
         if: ${{ always() }}
-        uses: reviewdog/action-suggester@v1
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          commit_message: "style: fix lint (CI)"

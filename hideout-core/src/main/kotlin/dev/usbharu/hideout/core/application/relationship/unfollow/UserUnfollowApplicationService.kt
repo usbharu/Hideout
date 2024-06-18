@@ -37,10 +37,6 @@ class UserUnfollowApplicationService(
     private val userDetailRepository: UserDetailRepository,
 ) :
     AbstractApplicationService<Unfollow, Unit>(transaction, logger) {
-    companion object {
-        private val logger = LoggerFactory.getLogger(UserBlockApplicationService::class.java)
-    }
-
     override suspend fun internalExecute(command: Unfollow, executor: CommandExecutor) {
         require(executor is UserDetailGettableCommandExecutor)
 
@@ -56,5 +52,9 @@ class UserUnfollowApplicationService(
         relationship.unfollow()
 
         relationshipRepository.save(relationship)
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(UserBlockApplicationService::class.java)
     }
 }

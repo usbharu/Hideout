@@ -38,10 +38,6 @@ class UserRegisterFilterApplicationService(
         logger
     ) {
 
-    companion object {
-        private val logger = LoggerFactory.getLogger(UserRegisterFilterApplicationService::class.java)
-    }
-
     override suspend fun internalExecute(command: RegisterFilter, executor: CommandExecutor): Filter {
         require(executor is UserDetailGettableCommandExecutor)
 
@@ -63,5 +59,9 @@ class UserRegisterFilterApplicationService(
 
         filterRepository.save(filter)
         return Filter.of(filter)
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(UserRegisterFilterApplicationService::class.java)
     }
 }

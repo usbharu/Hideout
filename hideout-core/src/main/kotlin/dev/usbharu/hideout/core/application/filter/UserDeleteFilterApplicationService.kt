@@ -30,12 +30,12 @@ class UserDeleteFilterApplicationService(private val filterRepository: FilterRep
         transaction,
         logger
     ) {
-    companion object {
-        private val logger = LoggerFactory.getLogger(UserDeleteFilterApplicationService::class.java)
-    }
-
     override suspend fun internalExecute(command: DeleteFilter, executor: CommandExecutor) {
         val filter = filterRepository.findByFilterId(FilterId(command.filterId)) ?: throw Exception("not found")
         filterRepository.delete(filter)
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(UserDeleteFilterApplicationService::class.java)
     }
 }

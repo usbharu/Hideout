@@ -35,6 +35,7 @@ class PostFactoryImpl(
     private val postContentFactoryImpl: PostContentFactoryImpl,
     private val applicationConfig: ApplicationConfig,
 ) {
+    @Suppress("LongParameterList")
     suspend fun createLocal(
         actor: Actor,
         actorName: ActorName,

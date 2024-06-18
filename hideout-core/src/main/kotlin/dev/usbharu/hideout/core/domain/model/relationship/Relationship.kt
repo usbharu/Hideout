@@ -21,6 +21,7 @@ import dev.usbharu.hideout.core.domain.event.relationship.RelationshipEventFacto
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventStorable
 
+@Suppress("TooManyFunctions")
 class Relationship(
     val actorId: ActorId,
     val targetActorId: ActorId,

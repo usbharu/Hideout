@@ -55,9 +55,7 @@ import org.springframework.security.web.authentication.LoginUrlAuthenticationEnt
 @EnableWebSecurity(debug = true)
 class SecurityConfig {
     @Bean
-    fun passwordEncoder(): PasswordEncoder {
-        return BCryptPasswordEncoder()
-    }
+    fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
 
     @Bean
     @Order(1)
@@ -93,17 +91,16 @@ class SecurityConfig {
     }
 
     @Bean
-    fun registeredClientRepository(jdbcOperations: JdbcOperations): RegisteredClientRepository {
-        return JdbcRegisteredClientRepository(jdbcOperations)
-    }
+    fun registeredClientRepository(jdbcOperations: JdbcOperations): RegisteredClientRepository =
+        JdbcRegisteredClientRepository(jdbcOperations)
 
     @Bean
+    @Suppress("FunctionMaxLength")
     fun oauth2AuthorizationConsentService(
         jdbcOperations: JdbcOperations,
         registeredClientRepository: RegisteredClientRepository,
-    ): OAuth2AuthorizationConsentService {
-        return JdbcOAuth2AuthorizationConsentService(jdbcOperations, registeredClientRepository)
-    }
+    ): OAuth2AuthorizationConsentService =
+        JdbcOAuth2AuthorizationConsentService(jdbcOperations, registeredClientRepository)
 
     @Bean
     fun authorizationServerSettings(): AuthorizationServerSettings {
