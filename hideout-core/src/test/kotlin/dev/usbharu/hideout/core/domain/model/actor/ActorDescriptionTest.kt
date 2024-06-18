@@ -8,6 +8,6 @@ class ActorDescriptionTest {
     fun actorDescriptionがlength以上なら無視される() {
         val actorScreenName = ActorDescription("a".repeat(100000))
 
-        assertEquals(ActorDescription.length, actorScreenName.description.length)
+        assertEquals(ActorDescription.LENGTH, actorScreenName.description.length)
     }
 }
