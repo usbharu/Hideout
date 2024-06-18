@@ -4,6 +4,8 @@ import dev.usbharu.hideout.core.domain.event.post.PostEvent
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.actor.ActorPublicKey
 import dev.usbharu.hideout.core.domain.model.actor.TestActorFactory
+import dev.usbharu.hideout.core.domain.model.emoji.EmojiId
+import dev.usbharu.hideout.core.domain.model.media.MediaId
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
@@ -326,5 +328,226 @@ class PostTest {
 
             )
         }
+    }
+
+    @Test
+    fun `create actorがsuspedの時visibilityがpublicの登校はunlistedになる`() {
+        val actor = TestActorFactory.create(suspend = true)
+
+        val post = Post.create(
+            id = PostId(1),
+            actorId = actor.id,
+            overview = null,
+            content = PostContent.empty,
+            createdAt = Instant.now(),
+            visibility = Visibility.PUBLIC,
+            url = URI.create("https://example.com"),
+            repostId = null,
+            replyId = null,
+            sensitive = false,
+            apId = URI.create("https://example.com"),
+            deleted = false,
+            mediaIds = emptyList(),
+            visibleActors = emptySet(),
+            hide = false,
+            moveTo = null,
+            actor = actor
+        )
+
+        assertEquals(Visibility.UNLISTED, post.visibility)
+    }
+
+    @Test
+    fun `create actorがsuspedの時visibilityがunlistedの登校は変わらない`() {
+        val actor = TestActorFactory.create(suspend = true)
+
+        val post = Post.create(
+            id = PostId(1),
+            actorId = actor.id,
+            overview = null,
+            content = PostContent.empty,
+            createdAt = Instant.now(),
+            visibility = Visibility.UNLISTED,
+            url = URI.create("https://example.com"),
+            repostId = null,
+            replyId = null,
+            sensitive = false,
+            apId = URI.create("https://example.com"),
+            deleted = false,
+            mediaIds = emptyList(),
+            visibleActors = emptySet(),
+            hide = false,
+            moveTo = null,
+            actor = actor
+        )
+
+        assertEquals(Visibility.UNLISTED, post.visibility)
+    }
+
+    @Test
+    fun `create 作成できる`() {
+        val actor = TestActorFactory.create(suspend = true)
+
+
+        assertDoesNotThrow {
+
+            Post.create(
+                id = PostId(1),
+                actorId = actor.id,
+                overview = null,
+                content = PostContent.empty,
+                createdAt = Instant.now(),
+                visibility = Visibility.PUBLIC,
+                url = URI.create("https://example.com"),
+                repostId = null,
+                replyId = null,
+                sensitive = false,
+                apId = URI.create("https://example.com"),
+                deleted = false,
+                mediaIds = emptyList(),
+                visibleActors = emptySet(),
+                hide = false,
+                moveTo = null,
+                actor = actor
+            )
+        }
+    }
+
+    @Test
+    fun `create 作成できる2`() {
+        val actor = TestActorFactory.create(suspend = true)
+
+
+        assertDoesNotThrow {
+
+            Post.create(
+                id = PostId(1),
+                actorId = actor.id,
+                content = PostContent.empty,
+                createdAt = Instant.now(),
+                visibility = Visibility.PUBLIC,
+                url = URI.create("https://example.com"),
+                repostId = null,
+                replyId = null,
+                sensitive = false,
+                apId = URI.create("https://example.com"),
+                deleted = false,
+                mediaIds = emptyList(),
+                actor = actor
+            )
+        }
+    }
+
+    @Test
+    fun `emojiIds hideがtrueの時empty`() {
+        val actor = TestActorFactory.create()
+        val emojiIds = listOf(EmojiId(1), EmojiId(2))
+        val post = Post.create(
+            id = PostId(1),
+            actorId = actor.id,
+            content = PostContent("aaa", "aaa", emojiIds),
+            createdAt = Instant.now(),
+            visibility = Visibility.PUBLIC,
+            url = URI.create("https://example.com"),
+            repostId = null,
+            replyId = null,
+            sensitive = false,
+            apId = URI.create("https://example.com"),
+            deleted = false,
+            mediaIds = emptyList(),
+            actor = actor,
+            hide = true
+        )
+
+        assertEquals(PostContent.empty.emojiIds, post.emojiIds)
+
+    }
+
+    @Test
+    fun `emojiIds hideがfalseの時中身が返される`() {
+        val actor = TestActorFactory.create()
+        val emojiIds = listOf(EmojiId(1), EmojiId(2))
+        val post = Post.create(
+            id = PostId(1),
+            actorId = actor.id,
+            content = PostContent("aaa", "aaa", emojiIds),
+            createdAt = Instant.now(),
+            visibility = Visibility.PUBLIC,
+            url = URI.create("https://example.com"),
+            repostId = null,
+            replyId = null,
+            sensitive = false,
+            apId = URI.create("https://example.com"),
+            deleted = false,
+            mediaIds = emptyList(),
+            actor = actor,
+            hide = false
+        )
+
+        assertEquals(emojiIds, post.emojiIds)
+    }
+
+    @Test
+    fun `reconstructWith 与えた引数で上書きされる`() {
+        val post = TestPostFactory.create()
+        val mediaIds = listOf<MediaId>(MediaId(1))
+        val visibleActors = setOf<ActorId>((ActorId(2)))
+        val emojis = listOf<EmojiId>(EmojiId(3))
+        val reconstructWith = post.reconstructWith(mediaIds, emojis, visibleActors)
+
+        assertEquals(mediaIds, reconstructWith.mediaIds)
+        assertEquals(visibleActors, reconstructWith.visibleActors)
+        assertEquals(emojis, reconstructWith.emojiIds)
+    }
+
+    @Test
+    fun `mediaIds hideがtrueの時emptyが返される`() {
+        val actor = TestActorFactory.create()
+        val emojiIds = listOf(EmojiId(1), EmojiId(2))
+        val mediaIds = listOf(MediaId(1))
+        val post = Post.create(
+            id = PostId(1),
+            actorId = actor.id,
+            content = PostContent("aaa", "aaa", emojiIds),
+            createdAt = Instant.now(),
+            visibility = Visibility.PUBLIC,
+            url = URI.create("https://example.com"),
+            repostId = null,
+            replyId = null,
+            sensitive = false,
+            apId = URI.create("https://example.com"),
+            deleted = false,
+            mediaIds = mediaIds,
+            actor = actor,
+            hide = true
+        )
+
+        assertEquals(emptyList(), post.mediaIds)
+
+    }
+
+    @Test
+    fun `mediaIds hideがfalseの時中身が返される`() {
+        val actor = TestActorFactory.create()
+        val emojiIds = listOf(EmojiId(1), EmojiId(2))
+        val mediaIds = listOf(MediaId(2))
+        val post = Post.create(
+            id = PostId(1),
+            actorId = actor.id,
+            content = PostContent("aaa", "aaa", emojiIds),
+            createdAt = Instant.now(),
+            visibility = Visibility.PUBLIC,
+            url = URI.create("https://example.com"),
+            repostId = null,
+            replyId = null,
+            sensitive = false,
+            apId = URI.create("https://example.com"),
+            deleted = false,
+            mediaIds = mediaIds,
+            actor = actor,
+            hide = false
+        )
+
+        assertEquals(mediaIds, post.mediaIds)
     }
 }
