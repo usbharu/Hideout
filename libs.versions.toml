@@ -82,7 +82,7 @@ imageio-webp = { module = "com.twelvemonkeys.imageio:imageio-webp", version = "3
 thumbnailator = { module = "net.coobird:thumbnailator", version = "0.4.20" }
 
 flyway-core = { module = "org.flywaydb:flyway-core" }
-flyway-postgresql = { module = "org.flywaydb:flyway-database-postgresql", version = "10.14.0" }
+flyway-postgresql = { module = "org.flywaydb:flyway-database-postgresql", version = "10.15.0" }
 
 h2db = { module = "com.h2database:h2", version = "2.2.224" }
 
