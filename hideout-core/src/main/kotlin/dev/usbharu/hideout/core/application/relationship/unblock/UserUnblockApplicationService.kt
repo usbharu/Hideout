@@ -37,10 +37,6 @@ class UserUnblockApplicationService(
     private val userDetailRepository: UserDetailRepository,
 ) :
     AbstractApplicationService<Unblock, Unit>(transaction, logger) {
-    companion object {
-        private val logger = LoggerFactory.getLogger(UserBlockApplicationService::class.java)
-    }
-
     override suspend fun internalExecute(command: Unblock, executor: CommandExecutor) {
         require(executor is UserDetailGettableCommandExecutor)
 
@@ -56,5 +52,9 @@ class UserUnblockApplicationService(
         relationship.unblock()
 
         relationshipRepository.save(relationship)
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(UserBlockApplicationService::class.java)
     }
 }

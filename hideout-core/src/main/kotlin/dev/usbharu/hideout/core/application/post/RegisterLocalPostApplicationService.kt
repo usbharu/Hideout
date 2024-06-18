@@ -39,10 +39,6 @@ class RegisterLocalPostApplicationService(
     transaction: Transaction,
 ) : AbstractApplicationService<RegisterLocalPost, Long>(transaction, Companion.logger) {
 
-    companion object {
-        val logger: Logger = LoggerFactory.getLogger(RegisterLocalPostApplicationService::class.java)
-    }
-
     override suspend fun internalExecute(command: RegisterLocalPost, executor: CommandExecutor): Long {
         val actorId = (
                 userDetailRepository.findById(command.userDetailId)
@@ -66,5 +62,9 @@ class RegisterLocalPostApplicationService(
         postRepository.save(post)
 
         return post.id.id
+    }
+
+    companion object {
+        val logger: Logger = LoggerFactory.getLogger(RegisterLocalPostApplicationService::class.java)
     }
 }

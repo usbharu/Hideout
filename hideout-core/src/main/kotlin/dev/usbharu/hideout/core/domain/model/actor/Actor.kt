@@ -26,7 +26,7 @@ import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventStorable
 import java.net.URI
 import java.time.Instant
 
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "ClassOrdering")
 class Actor(
     val id: ActorId,
     val name: ActorName,
@@ -96,7 +96,7 @@ class Actor(
 
     var alsoKnownAs = alsoKnownAs
         set(value) {
-            require(value.find { it == id } == null)
+            require(value.none { it == id })
             field = value
         }
 
