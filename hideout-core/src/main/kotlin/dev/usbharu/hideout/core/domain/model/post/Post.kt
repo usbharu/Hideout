@@ -184,6 +184,7 @@ class Post(
     }
 
     fun restore(content: PostContent, overview: PostOverview?, mediaIds: List<MediaId>) {
+        require(deleted)
         deleted = false
         this.content = content
         this.overview = overview
