@@ -65,7 +65,7 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
       - name: Build
-        uses: gradle/gradle-build-action@v3.4.1
+        uses: gradle/gradle-build-action@v3.4.2
         with:
           arguments: :hideout-core:testClasses
 
@@ -117,7 +117,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Unit Test
-        uses: gradle/gradle-build-action@v3.4.1
+        uses: gradle/gradle-build-action@v3.4.2
         with:
           arguments: :hideout-core:test
 
@@ -176,7 +176,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Run Kover
-        uses: gradle/gradle-build-action@v3.3.2
+        uses: gradle/gradle-build-action@v3.4.2
         with:
           arguments: :hideout-core:koverXmlReport --rerun-tasks
 
@@ -259,7 +259,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Build with Gradle
-        uses: gradle/gradle-build-action@04b20c065cf1ab708c96e64a8811018d0a1fbc88
+        uses: gradle/gradle-build-action@66535aaf56f831b35e3a8481c9c99b665b84dd45
         with:
           arguments: :hideout-core:detektMain
 
