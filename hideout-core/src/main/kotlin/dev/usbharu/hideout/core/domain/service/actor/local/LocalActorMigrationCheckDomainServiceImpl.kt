@@ -34,7 +34,7 @@ class LocalActorMigrationCheckDomainServiceImpl : LocalActorMigrationCheckDomain
             return AccountMigrationCheck.AlreadyMoved("${from.name}@${from.domain} was move to ${from.moveTo}")
         }
 
-        if (to.alsoKnownAs.contains(to.id).not()) {
+        if (to.alsoKnownAs.contains(from.id).not()) {
             return AccountMigrationCheck.AlsoKnownAsNotFound("${to.id} has ${to.alsoKnownAs}")
         }
 
