@@ -34,9 +34,9 @@ class ActorInstanceRelationshipEventBody(actorInstanceRelationship: ActorInstanc
         mapOf(
             "actorId" to actorInstanceRelationship.actorId,
             "instanceId" to actorInstanceRelationship.instanceId,
-            "muting" to actorInstanceRelationship.isMuting(),
-            "blocking" to actorInstanceRelationship.isBlocking(),
-            "doNotSendPrivate" to actorInstanceRelationship.isDoNotSendPrivate(),
+            "muting" to actorInstanceRelationship.muting,
+            "blocking" to actorInstanceRelationship.blocking,
+            "doNotSendPrivate" to actorInstanceRelationship.doNotSendPrivate,
         )
     )
 

@@ -17,5 +17,8 @@
 package dev.usbharu.hideout.core.domain.model.actor
 
 enum class Role {
-    LOCAL, MODERATOR, ADMINISTRATOR, REMOTE
+    LOCAL,
+    MODERATOR,
+    ADMINISTRATOR,
+    REMOTE;
 }

@@ -21,6 +21,11 @@ class Filter(
         this.filterKeywords = filterKeywords
     }
 
+    /**
+     * フィルターを正規表現として表現したものを返します
+     *
+     * @return フィルターの正規表現
+     */
     fun compileFilter(): Regex {
         val words = mutableListOf<String>()
         val wholeWords = mutableListOf<String>()
@@ -33,10 +38,11 @@ class Filter(
                 NONE -> words.add(filterKeyword.keyword.keyword)
             }
         }
+        val wholeWordsRegex = wholeWords.takeIf { it.isNotEmpty() }?.joinToString("|", "\\b(", ")\\b")
+        val noneWordsRegex = words.takeIf { it.isNotEmpty() }?.joinToString("|", "(", ")")
+        val regex = regexes.takeIf { it.isNotEmpty() }?.joinToString("|", "(", ")")
 
-        return (wholeWords + regexes + wholeWords)
-            .joinToString("|")
-            .toRegex()
+        return listOfNotNull(wholeWordsRegex, noneWordsRegex, regex).joinToString("|").toRegex()
     }
 
     fun reconstructWith(filterKeywords: Set<FilterKeyword>): Filter {
