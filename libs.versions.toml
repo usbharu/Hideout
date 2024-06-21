@@ -1,7 +1,7 @@
 [versions]
 
 kotlin = "2.0.0"
-ktor = "2.3.11"
+ktor = "2.3.12"
 exposed = "0.51.1"
 javacv-ffmpeg = "6.1.1-1.5.10"
 detekt = "1.23.6"
@@ -69,7 +69,7 @@ jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-
 
 blurhash = { module = "io.trbl:blurhash", version = "1.0.0" }
 
-aws-s3 = { module = "software.amazon.awssdk:s3", version = "2.26.5" }
+aws-s3 = { module = "software.amazon.awssdk:s3", version = "2.26.7" }
 
 jsoup = { module = "org.jsoup:jsoup", version = "1.17.2" }
 
@@ -106,7 +106,7 @@ jackson = ["jackson-databind", "jackson-module-kotlin"]
 [plugins]
 
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-spring-boot = { id = "org.springframework.boot", version = "3.3.0" }
+spring-boot = { id = "org.springframework.boot", version = "3.3.1" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
 kover = { id = "org.jetbrains.kotlinx.kover", version = "0.8.1" }
