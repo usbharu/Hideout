@@ -17,4 +17,8 @@
 package dev.usbharu.hideout.core.domain.model.application
 
 @JvmInline
-value class ApplicationId(val id: Long)
+value class ApplicationId(val id: Long) {
+    init {
+        require(0 <= id)
+    }
+}
