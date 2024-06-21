@@ -24,17 +24,17 @@ spring:
     default-property-inclusion: always
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: "jdbc:postgresql:hideout3"
+    url: "jdbc:postgresql:postgres"
     username: "postgres"
-    password: ""
+    password: "postgres"
     data:
       mongodb:
         auto-index-creation: true
         host: localhost
         port: 27017
         database: hideout
-  #        username: hideoutuser
-  #        password: hideoutpass
+        username: root
+        password: password
   servlet:
     multipart:
       max-file-size: 40MB
