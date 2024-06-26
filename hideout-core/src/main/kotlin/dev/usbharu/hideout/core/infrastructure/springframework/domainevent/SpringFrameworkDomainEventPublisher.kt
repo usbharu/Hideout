@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component
 @Component
 class SpringFrameworkDomainEventPublisher(private val applicationEventPublisher: ApplicationEventPublisher) :
     DomainEventPublisher {
-    override suspend fun publishEvent(domainEvent: DomainEvent) {
+    override suspend fun publishEvent(domainEvent: DomainEvent<*>) {
         applicationEventPublisher.publishEvent(domainEvent)
     }
 }

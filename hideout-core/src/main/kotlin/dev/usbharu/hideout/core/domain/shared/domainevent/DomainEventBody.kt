@@ -17,6 +17,6 @@
 package dev.usbharu.hideout.core.domain.shared.domainevent
 
 @Suppress("UnnecessaryAbstractClass")
-abstract class DomainEventBody(val map: Map<String, Any?>) {
+abstract class DomainEventBody(private val map: Map<String, Any?>) {
     fun toMap(): Map<String, Any?> = map
 }

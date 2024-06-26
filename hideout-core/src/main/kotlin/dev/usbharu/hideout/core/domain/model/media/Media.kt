@@ -37,15 +37,15 @@ class Media(
     }
     override fun toString(): String {
         return "Media(" +
-                "id=$id, " +
-                "name=$name, " +
-                "url=$url, " +
-                "remoteUrl=$remoteUrl, " +
-                "thumbnailUrl=$thumbnailUrl, " +
-                "type=$type, " +
-                "mimeType=$mimeType, " +
-                "blurHash=$blurHash, " +
-                "description=$description" +
-                ")"
+            "id=$id, " +
+            "name=$name, " +
+            "url=$url, " +
+            "remoteUrl=$remoteUrl, " +
+            "thumbnailUrl=$thumbnailUrl, " +
+            "type=$type, " +
+            "mimeType=$mimeType, " +
+            "blurHash=$blurHash, " +
+            "description=$description" +
+            ")"
     }
 }
