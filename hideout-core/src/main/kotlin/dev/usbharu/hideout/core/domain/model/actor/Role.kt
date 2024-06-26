@@ -20,5 +20,5 @@ enum class Role {
     LOCAL,
     MODERATOR,
     ADMINISTRATOR,
-    REMOTE;
+    REMOTE
 }

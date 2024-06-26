@@ -21,7 +21,7 @@ import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEvent
 import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventBody
 
 class RelationshipEventFactory(private val relationship: Relationship) {
-    fun createEvent(relationshipEvent: RelationshipEvent): DomainEvent =
+    fun createEvent(relationshipEvent: RelationshipEvent): DomainEvent<RelationshipEventBody> =
         DomainEvent.create(relationshipEvent.eventName, RelationshipEventBody(relationship))
 }
 
