@@ -201,7 +201,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Restore Test Report
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v2
         with:
           path: build/test-results
           key: unit-test-report-${{ github.sha }}
