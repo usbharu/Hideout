@@ -10,5 +10,11 @@
     "dependencies",
     "renovate"
   ],
-  "prConcurrentLimit": 5
+  "prConcurrentLimit": 5,
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["patch","minor"],
+      "automerge": true
+    }
+  ]
 }
