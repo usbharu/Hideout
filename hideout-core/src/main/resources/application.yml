@@ -24,9 +24,9 @@ spring:
     default-property-inclusion: always
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: "jdbc:postgresql:hideout3"
+    url: "jdbc:postgresql:hideout"
     username: "postgres"
-    password: ""
+    password: "password"
     data:
       mongodb:
         auto-index-creation: true

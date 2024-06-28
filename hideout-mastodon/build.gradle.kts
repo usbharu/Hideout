@@ -19,10 +19,18 @@ repositories {
     mavenCentral()
 }
 
+configurations {
+    all {
+        exclude("org.springframework.boot", "spring-boot-starter-logging")
+        exclude("ch.qos.logback", "logback-classic")
+    }
+}
+
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+    implementation("org.springframework.boot:spring-boot-starter-log4j2")
 
     implementation("dev.usbharu:hideout-core:0.0.1")
 
@@ -67,3 +75,4 @@ sourceSets.main {
         "$buildDir/generated/sources/mastodon/src/main/kotlin"
     )
 }
+
