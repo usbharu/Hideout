@@ -244,6 +244,30 @@ class Post(
         )
     }
 
+    override fun toString(): String {
+        return "Post(" +
+                "id=$id, " +
+                "createdAt=$createdAt, " +
+                "url=$url, " +
+                "repostId=$repostId, " +
+                "replyId=$replyId, " +
+                "apId=$apId, " +
+                "actorId=$actorId, " +
+                "visibility=$visibility, " +
+                "visibleActors=$visibleActors, " +
+                "content=$content, " +
+                "overview=$overview, " +
+                "sensitive=$sensitive, " +
+                "text='$text', " +
+                "emojiIds=$emojiIds, " +
+                "mediaIds=$mediaIds, " +
+                "deleted=$deleted, " +
+                "hide=$hide, " +
+                "moveTo=$moveTo" +
+                ")"
+    }
+
+
     companion object {
         @Suppress("LongParameterList")
         fun create(

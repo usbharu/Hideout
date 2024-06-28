@@ -56,6 +56,8 @@ create table if not exists actors
     move_to         bigint         null     default null,
     emojis          varchar(3000)  not null default '',
     deleted         boolean        not null default false,
+    icon            bigint         null,
+    banner          bigint         null,
     unique ("name", "domain"),
     constraint fk_actors_instance__id foreign key ("instance") references instance (id) on delete restrict on update restrict,
     constraint fk_actors_actors__move_to foreign key ("move_to") references actors (id) on delete restrict on update restrict
@@ -91,6 +93,13 @@ create table if not exists media
     mime_type     varchar(255)  not null,
     description   varchar(4000) null
 );
+
+alter table actors
+    add constraint fk_actors_media__icon foreign key ("icon") references media (id) on delete cascade on update cascade;
+alter table actors
+    add constraint fk_actors_media__banner foreign key ("banner") references media (id) on delete cascade on update cascade;
+
+
 create table if not exists posts
 (
     id          bigint primary key,

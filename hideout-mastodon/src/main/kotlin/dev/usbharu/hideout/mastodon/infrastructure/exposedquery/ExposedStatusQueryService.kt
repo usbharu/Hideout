@@ -28,6 +28,7 @@ import dev.usbharu.hideout.mastodon.query.StatusQuery
 import dev.usbharu.hideout.mastodon.query.StatusQueryService
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.andWhere
+import org.jetbrains.exposed.sql.leftJoin
 import org.jetbrains.exposed.sql.selectAll
 import org.springframework.stereotype.Repository
 import java.net.URI
@@ -120,7 +121,7 @@ class StatusQueryServiceImpl : StatusQueryService {
         val map = Posts
             .leftJoin(PostsMedia)
             .leftJoin(Actors)
-            .leftJoin(Media)
+            .leftJoin(Media,{PostsMedia.mediaId},{Media.id})
             .selectAll()
             .where { Posts.id eq id }
             .groupBy { it[Posts.id] }
