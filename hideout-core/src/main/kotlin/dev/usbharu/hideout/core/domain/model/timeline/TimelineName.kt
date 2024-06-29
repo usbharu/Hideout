@@ -1,5 +1,4 @@
 package dev.usbharu.hideout.core.domain.model.timeline
 
-class TimelineName {
-
-}
+@JvmInline
+value class TimelineName(val value: String)

@@ -1,5 +1,4 @@
 package dev.usbharu.hideout.core.domain.model.timelinebuilder
 
-class TimelineBuilderId {
-
-}
+@JvmInline
+value class TimelineBuilderId(val value: Long)
