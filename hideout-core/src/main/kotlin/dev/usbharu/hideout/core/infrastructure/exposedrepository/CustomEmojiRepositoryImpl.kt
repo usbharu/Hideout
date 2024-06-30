@@ -20,7 +20,7 @@ import dev.usbharu.hideout.core.domain.model.emoji.CustomEmoji
 import dev.usbharu.hideout.core.domain.model.emoji.CustomEmojiRepository
 import dev.usbharu.hideout.core.domain.model.emoji.EmojiId
 import dev.usbharu.hideout.core.domain.model.instance.InstanceId
-import dev.usbharu.hideout.core.domain.model.shared.Domain
+import dev.usbharu.hideout.core.domain.model.support.domain.Domain
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.javatime.CurrentTimestamp

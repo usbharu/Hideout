@@ -20,7 +20,7 @@ import dev.usbharu.hideout.core.domain.model.actor.*
 import dev.usbharu.hideout.core.domain.model.emoji.EmojiId
 import dev.usbharu.hideout.core.domain.model.instance.InstanceId
 import dev.usbharu.hideout.core.domain.model.media.MediaId
-import dev.usbharu.hideout.core.domain.model.shared.Domain
+import dev.usbharu.hideout.core.domain.model.support.domain.Domain
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Actors
 import org.jetbrains.exposed.sql.ResultRow
 import org.springframework.stereotype.Component

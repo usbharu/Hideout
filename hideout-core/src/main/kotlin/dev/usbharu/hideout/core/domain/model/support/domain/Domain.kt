@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.domain.model.shared
+package dev.usbharu.hideout.core.domain.model.support.domain
 
 @JvmInline
 value class Domain(val domain: String) {

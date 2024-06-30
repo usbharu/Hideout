@@ -25,6 +25,4 @@ class Timeline(
 
     var name = name
         private set
-
-
 }
