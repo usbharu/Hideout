@@ -11,7 +11,7 @@ serialization = "1.7.1"
 kjob = "0.6.0"
 tika = "2.9.2"
 owl = "0.0.1"
-jackson = "2.15.4"
+jackson = "2.17.2"
 
 [libraries]
 
