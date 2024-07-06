@@ -22,4 +22,14 @@ interface RelationshipRepository {
     suspend fun save(relationship: Relationship): Relationship
     suspend fun delete(relationship: Relationship)
     suspend fun findByActorIdAndTargetId(actorId: ActorId, targetId: ActorId): Relationship?
+    suspend fun findByTargetId(targetId: ActorId, option: FindRelationshipOption? = null): List<Relationship>
 }
+
+
+data class FindRelationshipOption(
+    val follow: Boolean? = null,
+    val block: Boolean? = null,
+    val mute: Boolean? = null,
+    val followRequest: Boolean? = null,
+    val muteFollowRequest: Boolean? = null
+)

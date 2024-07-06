@@ -22,6 +22,7 @@ import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.actor.Role
 import dev.usbharu.hideout.core.domain.model.emoji.EmojiId
+import dev.usbharu.hideout.core.domain.model.instance.InstanceId
 import dev.usbharu.hideout.core.domain.model.media.MediaId
 import dev.usbharu.hideout.core.domain.model.post.Post.Companion.Action.*
 import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventStorable
@@ -32,6 +33,7 @@ import java.time.Instant
 class Post(
     val id: PostId,
     actorId: ActorId,
+    val instanceId: InstanceId,
     overview: PostOverview?,
     content: PostContent,
     val createdAt: Instant,
@@ -47,6 +49,7 @@ class Post(
     hide: Boolean,
     moveTo: PostId?,
 ) : DomainEventStorable() {
+
 
     val actorId = actorId
         get() {
@@ -227,6 +230,7 @@ class Post(
         return Post(
             id = id,
             actorId = actorId,
+            instanceId = instanceId,
             overview = overview,
             content = PostContent(this.content.text, this.content.content, emojis),
             createdAt = createdAt,
@@ -273,6 +277,7 @@ class Post(
         fun create(
             id: PostId,
             actorId: ActorId,
+            instanceId: InstanceId,
             overview: PostOverview? = null,
             content: PostContent,
             createdAt: Instant,
@@ -301,6 +306,7 @@ class Post(
             val post = Post(
                 id = id,
                 actorId = actorId,
+                instanceId = instanceId,
                 overview = overview,
                 content = content,
                 createdAt = createdAt,

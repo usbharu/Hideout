@@ -17,6 +17,7 @@
 package dev.usbharu.hideout.core.infrastructure.exposedrepository
 
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
+import dev.usbharu.hideout.core.domain.model.relationship.FindRelationshipOption
 import dev.usbharu.hideout.core.domain.model.relationship.Relationship
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
 import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventPublisher
@@ -66,8 +67,35 @@ class ExposedRelationshipRepository(override val domainEventPublisher: DomainEve
         }.singleOrNull()?.toRelationships()
     }
 
+    override suspend fun findByTargetId(targetId: ActorId, option: FindRelationshipOption?): List<Relationship> {
+        val query = Relationships.selectAll().where {
+            Relationships.targetActorId eq targetId.id
+        }
+        option.apply(query)
+        return query.map(ResultRow::toRelationships)
+    }
+
     companion object {
         private val logger = LoggerFactory.getLogger(ExposedRelationshipRepository::class.java)
+    }
+}
+
+fun FindRelationshipOption?.apply(query: Query) {
+
+    if (this?.follow != null) {
+        query.andWhere { Relationships.following eq this@apply.follow }
+    }
+    if (this?.mute != null) {
+        query.andWhere { Relationships.muting eq this@apply.mute }
+    }
+    if (this?.block != null) {
+        query.andWhere { Relationships.blocking eq this@apply.block }
+    }
+    if (this?.followRequest != null) {
+        query.andWhere { Relationships.followRequesting eq this@apply.followRequest }
+    }
+    if (this?.muteFollowRequest != null) {
+        query.andWhere { Relationships.mutingFollowRequest eq this@apply.muteFollowRequest }
     }
 }
 
