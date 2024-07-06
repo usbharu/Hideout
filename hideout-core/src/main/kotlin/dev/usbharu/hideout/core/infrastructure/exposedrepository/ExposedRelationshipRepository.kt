@@ -67,11 +67,19 @@ class ExposedRelationshipRepository(override val domainEventPublisher: DomainEve
         }.singleOrNull()?.toRelationships()
     }
 
-    override suspend fun findByTargetId(targetId: ActorId, option: FindRelationshipOption?): List<Relationship> {
-        val query = Relationships.selectAll().where {
+    override suspend fun findByTargetId(
+        targetId: ActorId,
+        option: FindRelationshipOption?,
+        inverseOption: FindRelationshipOption?
+    ): List<Relationship> {
+        val query1 = Relationships.selectAll().where { Relationships.actorId eq targetId.id }
+        inverseOption.apply(query1)
+        //todo 逆のほうがいいかも
+        val query = query1.alias("INV").selectAll().where {
             Relationships.targetActorId eq targetId.id
         }
         option.apply(query)
+
         return query.map(ResultRow::toRelationships)
     }
 
