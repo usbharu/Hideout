@@ -9,7 +9,7 @@ open class DefaultTimelineStore(
     private val timelineRepository: TimelineRepository,
     private val relationshipRepository: RelationshipRepository
 ) : AbstractTimelineStore() {
-    override suspend fun getFollowers(actorId: ActorId): List<ActorId> {
+    override suspend fun getTimeline(actorId: ActorId): List<ActorId> {
         return relationshipRepository
             .findByTargetId(
                 actorId, FindRelationshipOption(follow = true, mute = false),
