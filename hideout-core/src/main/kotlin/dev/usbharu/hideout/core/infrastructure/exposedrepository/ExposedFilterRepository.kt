@@ -20,6 +20,7 @@ import dev.usbharu.hideout.core.domain.model.filter.Filter
 import dev.usbharu.hideout.core.domain.model.filter.FilterId
 import dev.usbharu.hideout.core.domain.model.filter.FilterKeywordId
 import dev.usbharu.hideout.core.domain.model.filter.FilterRepository
+import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
 import dev.usbharu.hideout.core.infrastructure.exposed.QueryMapper
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -70,6 +71,10 @@ class ExposedFilterRepository(private val filterQueryMapper: QueryMapper<Filter>
     override suspend fun findByFilterId(filterId: FilterId): Filter? {
         val where = Filters.selectAll().where { Filters.id eq filterId.id }
         return filterQueryMapper.map(where).firstOrNull()
+    }
+
+    override suspend fun findByUserDetailId(userDetailId: UserDetailId): List<Filter> {
+        return Filters.selectAll().where { Filters.userId eq userDetailId.id }.let(filterQueryMapper::map)
     }
 
     companion object {

@@ -186,6 +186,7 @@ class ExposedPostRepository(
 object Posts : Table("posts") {
     val id = long("id")
     val actorId = long("actor_id").references(Actors.id)
+    val instanceId = long("instance_id").references(Instance.id)
     val overview = varchar("overview", PostOverview.LENGTH).nullable()
     val content = varchar("content", PostContent.CONTENT_LENGTH)
     val text = varchar("text", PostContent.TEXT_LENGTH)

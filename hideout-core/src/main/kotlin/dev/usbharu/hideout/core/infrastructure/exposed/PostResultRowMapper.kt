@@ -17,6 +17,7 @@
 package dev.usbharu.hideout.core.infrastructure.exposed
 
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
+import dev.usbharu.hideout.core.domain.model.instance.InstanceId
 import dev.usbharu.hideout.core.domain.model.post.*
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Posts
 import org.jetbrains.exposed.sql.ResultRow
@@ -29,6 +30,7 @@ class PostResultRowMapper : ResultRowMapper<Post> {
         return Post(
             id = PostId(resultRow[Posts.id]),
             actorId = ActorId(resultRow[Posts.actorId]),
+            instanceId = InstanceId(resultRow[Posts.instanceId]),
             overview = resultRow[Posts.overview]?.let { PostOverview(it) },
             content = PostContent(resultRow[Posts.text], resultRow[Posts.content], emptyList()),
             createdAt = resultRow[Posts.createdAt],
