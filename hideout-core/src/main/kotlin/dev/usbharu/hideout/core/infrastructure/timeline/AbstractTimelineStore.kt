@@ -8,12 +8,13 @@ import dev.usbharu.hideout.core.domain.model.post.PostId
 import dev.usbharu.hideout.core.domain.model.timeline.Timeline
 import dev.usbharu.hideout.core.domain.model.timelineobject.TimelineObject
 import dev.usbharu.hideout.core.domain.model.timelineobject.TimelineObjectId
+import dev.usbharu.hideout.core.domain.model.timelinerelationship.TimelineRelationship
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
 import dev.usbharu.hideout.core.domain.shared.id.IdGenerateService
 import dev.usbharu.hideout.core.external.timeline.TimelineStore
 
 abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateService) : TimelineStore {
-    override suspend fun newPost(post: Post) {
+    override suspend fun addPost(post: Post) {
         val timelineList = getTimeline(post.actorId)
 
         val repost = post.repostId?.let { getPost(it) }
@@ -57,4 +58,44 @@ abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateSe
     protected abstract suspend fun getPost(postId: PostId): Post?
 
     protected abstract suspend fun insertTimelineObject(timelineObjectList: List<TimelineObject>)
+
+    protected abstract suspend fun getTimelineObjectByPostId(postId: PostId): List<TimelineObject>
+
+    protected abstract suspend fun removeTimelineObject(postId: PostId)
+
+    override suspend fun updatePost(post: Post) {
+
+
+        val timelineObjectByPostId = getTimelineObjectByPostId(post.id)
+
+        val repost = post.repostId?.let { getPost(it) }
+
+        if (repost != null) {
+            timelineObjectByPostId.map {
+                val filters = getFilters(it.userDetailId)
+                val applyFilters = applyFilters(post, filters)
+                it.updateWith(post, repost, applyFilters.filterResults)
+            }
+        }
+    }
+
+    override suspend fun removePost(post: Post) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun addTimelineRelationship(timelineRelationship: TimelineRelationship) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun removeTimelineRelationship(timelineRelationship: TimelineRelationship) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun addTimeline(timeline: Timeline, timelineRelationshipList: List<TimelineRelationship>) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun removeTimeline(timeline: Timeline) {
+        TODO("Not yet implemented")
+    }
 }

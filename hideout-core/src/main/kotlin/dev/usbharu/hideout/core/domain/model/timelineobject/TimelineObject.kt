@@ -22,16 +22,53 @@ class TimelineObject(
     val postCreatedAt: Instant,
     val replyId: PostId?,
     val repostId: PostId?,
-    val visibility: Visibility,
-    val isPureRepost: Boolean,
-    val mediaIds: List<MediaId>,
-    val emojiIds: List<EmojiId>,
-    val visibleActors: List<ActorId>,
-    val hasMedia: Boolean,
-    val hasMediaInRepost: Boolean,
-    val lastUpdatedAt: Instant,
-    val warnFilters: List<TimelineObjectWarnFilter>,
-) {
+    visibility: Visibility,
+    isPureRepost: Boolean,
+    mediaIds: List<MediaId>,
+    emojiIds: List<EmojiId>,
+    visibleActors: List<ActorId>,
+    hasMediaInRepost: Boolean,
+    lastUpdatedAt: Instant,
+    var warnFilters: List<TimelineObjectWarnFilter>,
+
+    ) {
+    var isPureRepost = isPureRepost
+        private set
+    var visibleActors = visibleActors
+        private set
+    var hasMediaInRepost = hasMediaInRepost
+        private set
+    val hasMedia
+        get() = mediaIds.isNotEmpty()
+
+    var lastUpdatedAt = lastUpdatedAt
+        private set
+    var visibility = visibility
+        private set
+    var mediaIds = mediaIds
+        private set
+    var emojiIds = emojiIds
+        private set
+
+    fun updateWith(post: Post, filterResults: List<FilterResult>) {
+        visibleActors = post.visibleActors.toList()
+        visibility = post.visibility
+        mediaIds = post.mediaIds.toList()
+        emojiIds = post.emojiIds.toList()
+        lastUpdatedAt = Instant.now()
+        isPureRepost =
+            post.repostId != null && post.replyId == null && post.text.isEmpty() && post.overview?.overview.isNullOrEmpty()
+        warnFilters = filterResults.map { TimelineObjectWarnFilter(it.filter.id, it.matchedKeyword) }
+    }
+
+    fun updateWith(post: Post, repost: Post, filterResults: List<FilterResult>) {
+        require(repost.id == post.repostId)
+        require(repostId == post.repostId)
+
+        updateWith(post, filterResults)
+        hasMediaInRepost = repost.mediaIds.isNotEmpty()
+    }
+
     companion object {
 
         fun create(
@@ -54,7 +91,6 @@ class TimelineObject(
                 mediaIds = post.mediaIds,
                 emojiIds = post.emojiIds,
                 visibleActors = post.visibleActors.toList(),
-                hasMedia = post.mediaIds.isNotEmpty(),
                 hasMediaInRepost = false,
                 lastUpdatedAt = Instant.now(),
                 warnFilters = filterResults.map { TimelineObjectWarnFilter(it.filter.id, it.matchedKeyword) }
@@ -88,7 +124,6 @@ class TimelineObject(
                 mediaIds = post.mediaIds,
                 emojiIds = post.emojiIds,
                 visibleActors = post.visibleActors.toList(),
-                hasMedia = post.mediaIds.isNotEmpty(),
                 hasMediaInRepost = repost.mediaIds.isNotEmpty(),
                 lastUpdatedAt = Instant.now(),
                 warnFilters = filterResults.map { TimelineObjectWarnFilter(it.filter.id, it.matchedKeyword) }
