@@ -84,7 +84,7 @@ thumbnailator = { module = "net.coobird:thumbnailator", version = "0.4.20" }
 flyway-core = { module = "org.flywaydb:flyway-core" }
 flyway-postgresql = { module = "org.flywaydb:flyway-database-postgresql", version = "10.15.2" }
 
-h2db = { module = "com.h2database:h2", version = "2.2.224" }
+h2db = { module = "com.h2database:h2", version = "2.3.230" }
 
 kotlin-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 
