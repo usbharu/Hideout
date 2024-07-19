@@ -18,6 +18,8 @@ package dev.usbharu.hideout.core.infrastructure.exposedrepository
 
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.post.*
+import dev.usbharu.hideout.core.domain.model.support.page.Page
+import dev.usbharu.hideout.core.domain.model.support.page.PaginationList
 import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventPublisher
 import dev.usbharu.hideout.core.domain.shared.repository.DomainEventPublishableRepository
 import dev.usbharu.hideout.core.infrastructure.exposed.QueryMapper
@@ -160,14 +162,14 @@ class ExposedPostRepository(
             .first()
     }
 
-    override suspend fun findByActorId(id: ActorId): List<Post> = query {
+    override suspend fun findByActorId(id: ActorId, page: Page?): PaginationList<Post, PostId> = PaginationList(query {
         Posts
             .selectAll()
             .where {
-                actorId eq id.id
+                actorId eq actorId
             }
             .let(postQueryMapper::map)
-    }
+    }, null, null)
 
     override suspend fun delete(post: Post) {
         query {
