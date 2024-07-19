@@ -9,6 +9,7 @@ import dev.usbharu.hideout.core.domain.model.filter.FilteredPost
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostId
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
+import dev.usbharu.hideout.core.domain.model.support.page.Page
 import dev.usbharu.hideout.core.domain.model.timeline.Timeline
 import dev.usbharu.hideout.core.domain.model.timeline.TimelineId
 import dev.usbharu.hideout.core.domain.model.timeline.TimelineRepository
@@ -28,7 +29,8 @@ open class DefaultTimelineStore(
     private val postRepository: PostRepository,
     private val filterDomainService: FilterDomainService,
     idGenerateService: IdGenerateService,
-    private val defaultTimelineStoreConfig: DefaultTimelineStoreConfig
+    private val defaultTimelineStoreConfig: DefaultTimelineStoreConfig,
+    private val internalTimelineObjectRepository: InternalTimelineObjectRepository
 ) : AbstractTimelineStore(idGenerateService) {
     override suspend fun getTimelines(actorId: ActorId): List<Timeline> {
         return timelineRepository.findByIds(
@@ -56,30 +58,34 @@ open class DefaultTimelineStore(
     }
 
     override suspend fun insertTimelineObject(timelineObjectList: List<TimelineObject>) {
-        TODO("Not yet implemented")
+        internalTimelineObjectRepository.saveAll(timelineObjectList)
+    }
+
+    override suspend fun updateTimelineObject(timelineObjectList: List<TimelineObject>) {
+        internalTimelineObjectRepository.saveAll(timelineObjectList)
     }
 
     override suspend fun getTimelineObjectByPostId(postId: PostId): List<TimelineObject> {
-        TODO("Not yet implemented")
+        return internalTimelineObjectRepository.findByPostId(postId)
     }
 
     override suspend fun removeTimelineObject(postId: PostId) {
-        TODO("Not yet implemented")
+        internalTimelineObjectRepository.deleteByPostId(postId)
     }
 
     override suspend fun removeTimelineObject(timelineId: TimelineId, actorId: ActorId) {
-        TODO("Not yet implemented")
+        internalTimelineObjectRepository.deleteByTimelineIdAndActorId(timelineId, actorId)
     }
 
     override suspend fun removeTimelineObject(timelineId: TimelineId) {
-        TODO("Not yet implemented")
+        internalTimelineObjectRepository.deleteByTimelineId(timelineId)
     }
 
     override suspend fun getPosts(timelineRelationshipList: List<TimelineRelationship>): List<Post> {
-        TODO("Not yet implemented")
+        return timelineRelationshipList.map { it.actorId }.flatMap { getActorPost(it) }
     }
 
     override suspend fun getActorPost(actorId: ActorId): List<Post> {
-        postRepository.findByActorId()
+        return postRepository.findByActorId(actorId, Page.of(limit = defaultTimelineStoreConfig.actorPostsCount))
     }
 }

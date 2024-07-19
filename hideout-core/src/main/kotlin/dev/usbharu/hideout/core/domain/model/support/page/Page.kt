@@ -1,0 +1,46 @@
+package dev.usbharu.hideout.core.domain.model.support.page
+
+sealed class Page {
+    abstract val maxId: Long?
+    abstract val sinceId: Long?
+    abstract val minId: Long?
+    abstract val limit: Int?
+
+    data class PageByMaxId(
+        override val maxId: Long?,
+        override val sinceId: Long?,
+        override val limit: Int?
+    ) : Page() {
+        override val minId: Long? = null
+    }
+
+    data class PageByMinId(
+        override val maxId: Long?,
+        override val minId: Long?,
+        override val limit: Int?
+    ) : Page() {
+        override val sinceId: Long? = null
+    }
+
+    companion object {
+        fun of(
+            maxId: Long? = null,
+            sinceId: Long? = null,
+            minId: Long? = null,
+            limit: Int? = null
+        ): Page =
+            if (minId != null) {
+                PageByMinId(
+                    maxId,
+                    minId,
+                    limit
+                )
+            } else {
+                PageByMaxId(
+                    maxId,
+                    sinceId,
+                    limit
+                )
+            }
+    }
+}

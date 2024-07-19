@@ -55,6 +55,8 @@ abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateSe
 
     protected abstract suspend fun insertTimelineObject(timelineObjectList: List<TimelineObject>)
 
+    protected abstract suspend fun updateTimelineObject(timelineObjectList: List<TimelineObject>)
+
     protected abstract suspend fun getTimelineObjectByPostId(postId: PostId): List<TimelineObject>
 
     protected abstract suspend fun removeTimelineObject(postId: PostId)
@@ -66,19 +68,27 @@ abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateSe
     protected abstract suspend fun getPosts(timelineRelationshipList: List<TimelineRelationship>): List<Post>
 
     override suspend fun updatePost(post: Post) {
-
-
         val timelineObjectByPostId = getTimelineObjectByPostId(post.id)
 
         val repost = post.repostId?.let { getPost(it) }
 
-        if (repost != null) {
+        val timelineObjectList = if (repost != null) {
             timelineObjectByPostId.map {
                 val filters = getFilters(it.userDetailId)
                 val applyFilters = applyFilters(post, filters)
                 it.updateWith(post, repost, applyFilters.filterResults)
+                it
+            }
+        } else {
+            timelineObjectByPostId.map {
+                val filters = getFilters(it.userDetailId)
+                val applyFilters = applyFilters(post, filters)
+                it.updateWith(post, applyFilters.filterResults)
+                it
             }
         }
+
+        updateTimelineObject(timelineObjectList)
     }
 
     protected abstract suspend fun getActorPost(actorId: ActorId): List<Post>
