@@ -1,6 +1,6 @@
 plugins {
 //    alias(libs.plugins.kotlin.jvm)
-    id("org.jetbrains.kotlin.jvm") version "1.9.24"
+    id("org.jetbrains.kotlin.jvm") version "1.9.25"
 }
 
 
