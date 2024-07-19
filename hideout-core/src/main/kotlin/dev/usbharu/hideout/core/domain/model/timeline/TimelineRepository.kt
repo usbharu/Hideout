@@ -5,4 +5,6 @@ interface TimelineRepository {
     suspend fun delete(timeline: Timeline)
 
     suspend fun findByIds(ids: List<TimelineId>): List<Timeline>
+
+    suspend fun findById(id: TimelineId): Timeline?
 }

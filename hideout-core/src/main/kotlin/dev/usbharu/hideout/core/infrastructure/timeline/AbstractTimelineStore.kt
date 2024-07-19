@@ -6,6 +6,7 @@ import dev.usbharu.hideout.core.domain.model.filter.FilteredPost
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostId
 import dev.usbharu.hideout.core.domain.model.timeline.Timeline
+import dev.usbharu.hideout.core.domain.model.timeline.TimelineId
 import dev.usbharu.hideout.core.domain.model.timelineobject.TimelineObject
 import dev.usbharu.hideout.core.domain.model.timelineobject.TimelineObjectId
 import dev.usbharu.hideout.core.domain.model.timelinerelationship.TimelineRelationship
@@ -15,7 +16,7 @@ import dev.usbharu.hideout.core.external.timeline.TimelineStore
 
 abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateService) : TimelineStore {
     override suspend fun addPost(post: Post) {
-        val timelineList = getTimeline(post.actorId)
+        val timelineList = getTimelines(post.actorId)
 
         val repost = post.repostId?.let { getPost(it) }
 
@@ -26,7 +27,9 @@ abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateSe
         insertTimelineObject(timelineObjectList)
     }
 
-    protected abstract suspend fun getTimeline(actorId: ActorId): List<Timeline>
+    protected abstract suspend fun getTimelines(actorId: ActorId): List<Timeline>
+
+    protected abstract suspend fun getTimeline(timelineId: TimelineId): Timeline?
 
     protected suspend fun createTimelineObject(post: Post, repost: Post?, timeline: Timeline): TimelineObject {
         val filters = getFilters(timeline.userDetailId)
@@ -35,19 +38,12 @@ abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateSe
 
         if (repost != null) {
             return TimelineObject.create(
-                TimelineObjectId(idGenerateService.generateId()),
-                timeline,
-                post,
-                repost,
-                applyFilters.filterResults
+                TimelineObjectId(idGenerateService.generateId()), timeline, post, repost, applyFilters.filterResults
             )
         }
 
         return TimelineObject.create(
-            TimelineObjectId(idGenerateService.generateId()),
-            timeline,
-            post,
-            applyFilters.filterResults
+            TimelineObjectId(idGenerateService.generateId()), timeline, post, applyFilters.filterResults
         )
     }
 
@@ -62,6 +58,12 @@ abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateSe
     protected abstract suspend fun getTimelineObjectByPostId(postId: PostId): List<TimelineObject>
 
     protected abstract suspend fun removeTimelineObject(postId: PostId)
+
+    protected abstract suspend fun removeTimelineObject(timelineId: TimelineId, actorId: ActorId)
+
+    protected abstract suspend fun removeTimelineObject(timelineId: TimelineId)
+
+    protected abstract suspend fun getPosts(timelineRelationshipList: List<TimelineRelationship>): List<Post>
 
     override suspend fun updatePost(post: Post) {
 
@@ -79,23 +81,39 @@ abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateSe
         }
     }
 
+    protected abstract suspend fun getActorPost(actorId: ActorId): List<Post>
+
     override suspend fun removePost(post: Post) {
-        TODO("Not yet implemented")
+        removeTimelineObject(post.id)
     }
 
     override suspend fun addTimelineRelationship(timelineRelationship: TimelineRelationship) {
-        TODO("Not yet implemented")
+        val postList = getActorPost(timelineRelationship.actorId)
+        val timeline = getTimeline(timelineRelationship.timelineId) ?: return
+        val timelineObjects = postList.map { post ->
+            val repost = post.repostId?.let { getPost(it) }
+            createTimelineObject(post, repost, timeline)
+        }
+
+        insertTimelineObject(timelineObjects)
     }
 
     override suspend fun removeTimelineRelationship(timelineRelationship: TimelineRelationship) {
-        TODO("Not yet implemented")
+        removeTimelineObject(timelineRelationship.timelineId, timelineRelationship.actorId)
     }
 
     override suspend fun addTimeline(timeline: Timeline, timelineRelationshipList: List<TimelineRelationship>) {
-        TODO("Not yet implemented")
+        val postList = getPosts(timelineRelationshipList)
+
+        val timelineObjectList = postList.map { post ->
+            val repost = post.repostId?.let { getPost(it) }
+            createTimelineObject(post, repost, timeline)
+        }
+
+        insertTimelineObject(timelineObjectList)
     }
 
     override suspend fun removeTimeline(timeline: Timeline) {
-        TODO("Not yet implemented")
+        removeTimelineObject(timeline.id)
     }
 }
