@@ -17,6 +17,7 @@
 package dev.usbharu.hideout.core.domain.model.userdetails
 
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
+import dev.usbharu.hideout.core.domain.model.timeline.TimelineId
 import java.time.Instant
 
 class UserDetail private constructor(
@@ -25,6 +26,7 @@ class UserDetail private constructor(
     var password: UserDetailHashedPassword,
     var autoAcceptFolloweeFollowRequest: Boolean,
     var lastMigration: Instant? = null,
+    val homeTimelineId: TimelineId?
 ) {
 
     override fun equals(other: Any?): Boolean {
@@ -45,13 +47,15 @@ class UserDetail private constructor(
             password: UserDetailHashedPassword,
             autoAcceptFolloweeFollowRequest: Boolean = false,
             lastMigration: Instant? = null,
+            homeTimelineId: TimelineId?
         ): UserDetail {
             return UserDetail(
                 id,
                 actorId,
                 password,
                 autoAcceptFolloweeFollowRequest,
-                lastMigration
+                lastMigration,
+                homeTimelineId
             )
         }
     }

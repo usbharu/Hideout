@@ -17,6 +17,7 @@
 package dev.usbharu.hideout.core.infrastructure.exposedrepository
 
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
+import dev.usbharu.hideout.core.domain.model.timeline.TimelineId
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetail
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailHashedPassword
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
@@ -64,13 +65,7 @@ class UserDetailRepositoryImpl : UserDetailRepository, AbstractRepository() {
             .selectAll().where { UserDetails.actorId eq actorId }
             .singleOrNull()
             ?.let {
-                UserDetail.create(
-                    UserDetailId(it[UserDetails.id]),
-                    ActorId(it[UserDetails.actorId]),
-                    UserDetailHashedPassword(it[UserDetails.password]),
-                    it[UserDetails.autoAcceptFolloweeFollowRequest],
-                    it[UserDetails.lastMigration]
-                )
+                userDetail(it)
             }
     }
 
@@ -79,13 +74,7 @@ class UserDetailRepositoryImpl : UserDetailRepository, AbstractRepository() {
             .selectAll().where { UserDetails.id eq id }
             .singleOrNull()
             ?.let {
-                UserDetail.create(
-                    UserDetailId(it[UserDetails.id]),
-                    ActorId(it[UserDetails.actorId]),
-                    UserDetailHashedPassword(it[UserDetails.password]),
-                    it[UserDetails.autoAcceptFolloweeFollowRequest],
-                    it[UserDetails.lastMigration]
-                )
+                userDetail(it)
             }
     }
 
@@ -95,16 +84,19 @@ class UserDetailRepositoryImpl : UserDetailRepository, AbstractRepository() {
                 .selectAll()
                 .where { UserDetails.id inList idList.map { it.id } }
                 .map {
-                    UserDetail.create(
-                        UserDetailId(it[UserDetails.id]),
-                        ActorId(it[UserDetails.actorId]),
-                        UserDetailHashedPassword(it[UserDetails.password]),
-                        it[UserDetails.autoAcceptFolloweeFollowRequest],
-                        it[UserDetails.lastMigration]
-                    )
+                    userDetail(it)
                 }
         }
     }
+
+    private fun userDetail(it: ResultRow) = UserDetail.create(
+        UserDetailId(it[UserDetails.id]),
+        ActorId(it[UserDetails.actorId]),
+        UserDetailHashedPassword(it[UserDetails.password]),
+        it[UserDetails.autoAcceptFolloweeFollowRequest],
+        it[UserDetails.lastMigration],
+        it[UserDetails.homeTimelineId]?.let { it1 -> TimelineId(it1) }
+    )
 
     companion object {
         private val logger = LoggerFactory.getLogger(UserDetailRepositoryImpl::class.java)
@@ -117,5 +109,6 @@ object UserDetails : Table("user_details") {
     val password = varchar("password", 255)
     val autoAcceptFolloweeFollowRequest = bool("auto_accept_followee_follow_request")
     val lastMigration = timestamp("last_migration").nullable()
+    val homeTimelineId = long("home_timeline_id").references(Timelines.id).nullable()
     override val primaryKey: PrimaryKey = PrimaryKey(id)
 }

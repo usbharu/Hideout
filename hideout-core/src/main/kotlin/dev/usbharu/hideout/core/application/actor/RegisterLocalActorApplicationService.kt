@@ -63,6 +63,9 @@ class RegisterLocalActorApplicationService(
             id = UserDetailId(idGenerateService.generateId()),
             actorId = actor.id,
             password = userDetailDomainService.hashPassword(command.password),
+            autoAcceptFolloweeFollowRequest = false,
+            lastMigration = null,
+            homeTimelineId = null
         )
         userDetailRepository.save(userDetail)
         return actor.url

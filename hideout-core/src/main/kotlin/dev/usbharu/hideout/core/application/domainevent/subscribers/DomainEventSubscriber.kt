@@ -7,4 +7,4 @@ interface DomainEventSubscriber {
     fun <T : DomainEventBody> subscribe(eventName: String, domainEventConsumer: DomainEventConsumer<T>)
 }
 
-typealias DomainEventConsumer<T> = (DomainEvent<T>) -> Unit
+typealias DomainEventConsumer<T> = suspend (DomainEvent<T>) -> Unit

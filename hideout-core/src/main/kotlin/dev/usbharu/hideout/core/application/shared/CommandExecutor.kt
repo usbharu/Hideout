@@ -23,3 +23,8 @@ interface CommandExecutor {
 interface UserDetailGettableCommandExecutor : CommandExecutor {
     val userDetailId: Long
 }
+
+data class DomainEventCommandExecutor(
+    override val executor: String,
+    val commandExecutor: CommandExecutor?
+) : CommandExecutor

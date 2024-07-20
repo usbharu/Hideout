@@ -25,7 +25,11 @@ class RelationshipEventFactory(private val relationship: Relationship) {
         DomainEvent.create(relationshipEvent.eventName, RelationshipEventBody(relationship))
 }
 
-class RelationshipEventBody(relationship: Relationship) : DomainEventBody(mapOf("relationship" to relationship))
+class RelationshipEventBody(relationship: Relationship) : DomainEventBody(mapOf("relationship" to relationship)) {
+    fun getRelationship(): Relationship {
+        return toMap()["relationship"] as Relationship
+    }
+}
 
 enum class RelationshipEvent(val eventName: String) {
     FOLLOW("RelationshipFollow"),

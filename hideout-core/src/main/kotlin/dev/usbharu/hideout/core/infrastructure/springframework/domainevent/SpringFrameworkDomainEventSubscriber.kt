@@ -17,7 +17,7 @@ class SpringFrameworkDomainEventSubscriber : DomainEventSubscriber {
     }
 
     @EventListener
-    fun onDomainEventPublished(domainEvent: DomainEvent<*>) {
+    suspend fun onDomainEventPublished(domainEvent: DomainEvent<*>) {
         map[domainEvent.name]?.forEach {
             try {
                 it.invoke(domainEvent)
