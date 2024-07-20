@@ -51,6 +51,11 @@ class MongoInternalTimelineObjectRepository(private val springDataMongoTimelineO
         springDataMongoTimelineObjectRepository.deleteByTimelineId(timelineId.value)
     }
 
+    override suspend fun findByTimelineId(timelineId: TimelineId): List<TimelineObject> {
+        return springDataMongoTimelineObjectRepository.findByTimelineId(timelineId).map { it.toTimelineObject() }
+            .toList()
+    }
+
 
 }
 
@@ -63,7 +68,9 @@ data class SpringDataMongoTimelineObject(
     val postActorId: Long,
     val postCreatedAt: Long,
     val replyId: Long?,
+    val replyActorId: Long?,
     val repostId: Long?,
+    val repostActorId: Long?,
     val visibility: Visibility,
     val isPureRepost: Boolean,
     val mediaIds: List<Long>,
@@ -83,7 +90,9 @@ data class SpringDataMongoTimelineObject(
             ActorId(postActorId),
             Instant.ofEpochSecond(postCreatedAt),
             replyId?.let { PostId(it) },
+            replyActorId?.let { ActorId(it) },
             repostId?.let { PostId(it) },
+            repostActorId?.let { ActorId(it) },
             visibility,
             isPureRepost,
             mediaIds.map { MediaId(it) },
@@ -105,7 +114,9 @@ data class SpringDataMongoTimelineObject(
                 timelineObject.postActorId.id,
                 timelineObject.postCreatedAt.epochSecond,
                 timelineObject.replyId?.id,
+                timelineObject.replyActorId?.id,
                 timelineObject.repostId?.id,
+                timelineObject.repostActorId?.id,
                 timelineObject.visibility,
                 timelineObject.isPureRepost,
                 timelineObject.mediaIds.map { it.id },
@@ -149,4 +160,6 @@ interface SpringDataMongoTimelineObjectRepository : CoroutineCrudRepository<Spri
     suspend fun deleteByTimelineIdAndPostActorId(timelineId: Long, postActorId: Long)
 
     suspend fun deleteByTimelineId(timelineId: Long)
+
+    suspend fun findByTimelineId(timelineId: TimelineId): Flow<SpringDataMongoTimelineObject>
 }

@@ -21,7 +21,9 @@ class TimelineObject(
     val postActorId: ActorId,
     val postCreatedAt: Instant,
     val replyId: PostId?,
+    val replyActorId: ActorId?,
     val repostId: PostId?,
+    val repostActorId: ActorId?,
     visibility: Visibility,
     isPureRepost: Boolean,
     mediaIds: List<MediaId>,
@@ -75,6 +77,7 @@ class TimelineObject(
             timelineObjectId: TimelineObjectId,
             timeline: Timeline,
             post: Post,
+            replyActorId: ActorId?,
             filterResults: List<FilterResult>
         ): TimelineObject {
             return TimelineObject(
@@ -85,7 +88,9 @@ class TimelineObject(
                 postActorId = post.actorId,
                 postCreatedAt = post.createdAt,
                 replyId = post.replyId,
+                replyActorId = replyActorId,
                 repostId = null,
+                repostActorId = null,
                 visibility = post.visibility,
                 isPureRepost = true,
                 mediaIds = post.mediaIds,
@@ -101,6 +106,7 @@ class TimelineObject(
             timelineObjectId: TimelineObjectId,
             timeline: Timeline,
             post: Post,
+            replyActorId: ActorId?,
             repost: Post,
             filterResults: List<FilterResult>
         ): TimelineObject {
@@ -115,7 +121,9 @@ class TimelineObject(
                 postActorId = post.actorId,
                 postCreatedAt = post.createdAt,
                 replyId = post.replyId,
+                replyActorId = replyActorId,
                 repostId = repost.id,
+                repostActorId = repost.actorId,
                 visibility = post.visibility,
                 isPureRepost = repost.mediaIds.isEmpty() &&
                         repost.overview == null &&

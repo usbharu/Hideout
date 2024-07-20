@@ -162,6 +162,18 @@ class ExposedPostRepository(
             .first()
     }
 
+    override suspend fun findAllById(ids: List<PostId>): List<Post> {
+        return query {
+            Posts
+                .selectAll()
+                .where {
+                    Posts.id inList ids.map { it.id }
+                }
+                .let(postQueryMapper::map)
+        }
+
+    }
+
     override suspend fun findByActorId(id: ActorId, page: Page?): PaginationList<Post, PostId> = PaginationList(query {
         Posts
             .selectAll()
@@ -178,6 +190,21 @@ class ExposedPostRepository(
             }
         }
         update(post)
+    }
+
+    override suspend fun findByActorIdAndVisibilityInList(
+        actorId: ActorId,
+        visibilityList: List<Visibility>,
+        of: Page?
+    ): PaginationList<Post, PostId> {
+        return PaginationList(query {
+            Posts
+                .selectAll()
+                .where {
+                    Posts.actorId eq actorId.id and (visibility inList visibilityList.map { it.name })
+                }
+                .let(postQueryMapper::map)
+        }, null, null)
     }
 
     companion object {

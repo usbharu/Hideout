@@ -98,6 +98,18 @@ class ExposedActorRepository(
         }
     }
 
+    override suspend fun findAllById(actorIds: List<ActorId>): List<Actor> {
+        return query {
+            Actors
+                .leftJoin(ActorsAlsoKnownAs, onColumn = { id }, otherColumn = { actorId })
+                .selectAll()
+                .where {
+                    Actors.id inList actorIds.map { it.id }
+                }
+                .let(actorQueryMapper::map)
+        }
+    }
+
     companion object {
         private val logger = LoggerFactory.getLogger(ExposedActorRepository::class.java)
     }

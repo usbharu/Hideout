@@ -17,4 +17,5 @@ interface InternalTimelineObjectRepository {
     suspend fun deleteByTimelineIdAndActorId(timelineId: TimelineId, actorId: ActorId)
 
     suspend fun deleteByTimelineId(timelineId: TimelineId)
+    suspend fun findByTimelineId(timelineId: TimelineId): List<TimelineObject>
 }

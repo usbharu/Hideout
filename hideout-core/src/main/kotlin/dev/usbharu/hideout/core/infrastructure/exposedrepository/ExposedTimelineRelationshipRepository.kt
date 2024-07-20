@@ -5,6 +5,7 @@ import dev.usbharu.hideout.core.domain.model.timeline.TimelineId
 import dev.usbharu.hideout.core.domain.model.timelinerelationship.TimelineRelationship
 import dev.usbharu.hideout.core.domain.model.timelinerelationship.TimelineRelationshipId
 import dev.usbharu.hideout.core.domain.model.timelinerelationship.TimelineRelationshipRepository
+import dev.usbharu.hideout.core.domain.model.timelinerelationship.Visible
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.slf4j.Logger
@@ -22,6 +23,7 @@ class ExposedTimelineRelationshipRepository : AbstractRepository(), TimelineRela
                 it[id] = timelineRelationship.id.value
                 it[timelineId] = timelineRelationship.timelineId.value
                 it[actorId] = timelineRelationship.actorId.id
+                it[visible] = timelineRelationship.visible.name
             }
         }
         return timelineRelationship
@@ -53,6 +55,7 @@ fun ResultRow.toTimelineRelationship(): TimelineRelationship {
         TimelineRelationshipId(this[TimelineRelationships.id]),
         TimelineId(this[TimelineRelationships.timelineId]),
         ActorId(this[TimelineRelationships.actorId]),
+        Visible.valueOf(this[TimelineRelationships.visible])
     )
 }
 
@@ -60,5 +63,6 @@ object TimelineRelationships : Table("timeline_relationships") {
     val id = long("id")
     val timelineId = long("timeline_id").references(Timelines.id)
     val actorId = long("actor_id").references(Actors.id)
+    val visible = varchar("visible", 100)
     override val primaryKey: PrimaryKey = PrimaryKey(id)
 }

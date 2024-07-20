@@ -89,6 +89,23 @@ class UserDetailRepositoryImpl : UserDetailRepository, AbstractRepository() {
             }
     }
 
+    override suspend fun findAllById(idList: List<UserDetailId>): List<UserDetail> {
+        return query {
+            UserDetails
+                .selectAll()
+                .where { UserDetails.id inList idList.map { it.id } }
+                .map {
+                    UserDetail.create(
+                        UserDetailId(it[UserDetails.id]),
+                        ActorId(it[UserDetails.actorId]),
+                        UserDetailHashedPassword(it[UserDetails.password]),
+                        it[UserDetails.autoAcceptFolloweeFollowRequest],
+                        it[UserDetails.lastMigration]
+                    )
+                }
+        }
+    }
+
     companion object {
         private val logger = LoggerFactory.getLogger(UserDetailRepositoryImpl::class.java)
     }

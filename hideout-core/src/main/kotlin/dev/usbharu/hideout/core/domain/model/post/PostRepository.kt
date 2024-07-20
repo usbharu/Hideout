@@ -24,6 +24,12 @@ interface PostRepository {
     suspend fun save(post: Post): Post
     suspend fun saveAll(posts: List<Post>): List<Post>
     suspend fun findById(id: PostId): Post?
+    suspend fun findAllById(ids: List<PostId>): List<Post>
     suspend fun findByActorId(id: ActorId, page: Page? = null): PaginationList<Post, PostId>
     suspend fun delete(post: Post)
+    suspend fun findByActorIdAndVisibilityInList(
+        actorId: ActorId,
+        visibilityList: List<Visibility>,
+        of: Page? = null
+    ): PaginationList<Post, PostId>
 }

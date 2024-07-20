@@ -21,4 +21,5 @@ interface UserDetailRepository {
     suspend fun delete(userDetail: UserDetail)
     suspend fun findByActorId(actorId: Long): UserDetail?
     suspend fun findById(id: Long): UserDetail?
+    suspend fun findAllById(idList: List<UserDetailId>): List<UserDetail>
 }

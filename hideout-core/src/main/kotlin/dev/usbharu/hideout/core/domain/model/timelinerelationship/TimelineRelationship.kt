@@ -6,5 +6,13 @@ import dev.usbharu.hideout.core.domain.model.timeline.TimelineId
 class TimelineRelationship(
     val id: TimelineRelationshipId,
     val timelineId: TimelineId,
-    val actorId: ActorId
+    val actorId: ActorId,
+    val visible: Visible
 )
+
+enum class Visible {
+    PUBLIC,
+    UNLISTED,
+    FOLLOWERS,
+    DIRECT
+}
