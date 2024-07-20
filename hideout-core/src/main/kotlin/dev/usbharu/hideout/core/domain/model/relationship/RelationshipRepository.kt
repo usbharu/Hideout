@@ -29,7 +29,6 @@ interface RelationshipRepository {
     ): List<Relationship>
 }
 
-
 data class FindRelationshipOption(
     val follow: Boolean? = null,
     val block: Boolean? = null,

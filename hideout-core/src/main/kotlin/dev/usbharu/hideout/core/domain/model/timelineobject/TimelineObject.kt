@@ -110,7 +110,6 @@ class TimelineObject(
             repost: Post,
             filterResults: List<FilterResult>
         ): TimelineObject {
-
             require(post.repostId == repost.id)
 
             return TimelineObject(

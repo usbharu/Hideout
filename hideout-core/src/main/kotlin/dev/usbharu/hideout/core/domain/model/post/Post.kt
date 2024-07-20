@@ -50,7 +50,6 @@ class Post(
     moveTo: PostId?,
 ) : DomainEventStorable() {
 
-
     val actorId = actorId
         get() {
             if (deleted) {
@@ -270,7 +269,6 @@ class Post(
                 "moveTo=$moveTo" +
                 ")"
     }
-
 
     companion object {
         @Suppress("LongParameterList")

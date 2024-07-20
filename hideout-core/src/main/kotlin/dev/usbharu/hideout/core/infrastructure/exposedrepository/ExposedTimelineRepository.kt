@@ -11,8 +11,10 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 
 @Repository
-class ExposedTimelineRepository(override val domainEventPublisher: DomainEventPublisher) : TimelineRepository,
-    AbstractRepository(), DomainEventPublishableRepository<Timeline> {
+class ExposedTimelineRepository(override val domainEventPublisher: DomainEventPublisher) :
+    TimelineRepository,
+    AbstractRepository(),
+    DomainEventPublishableRepository<Timeline> {
     override suspend fun save(timeline: Timeline): Timeline {
         query {
             Timelines.insert {
@@ -54,7 +56,6 @@ class ExposedTimelineRepository(override val domainEventPublisher: DomainEventPu
 
     override val logger: Logger
         get() = Companion.logger
-
 }
 
 fun ResultRow.toTimeline(): Timeline {

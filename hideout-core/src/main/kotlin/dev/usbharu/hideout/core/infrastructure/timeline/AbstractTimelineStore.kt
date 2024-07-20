@@ -72,7 +72,11 @@ abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateSe
         }
 
         return TimelineObject.create(
-            TimelineObjectId(idGenerateService.generateId()), timeline, post, replyActorId, applyFilters.filterResults
+            TimelineObjectId(idGenerateService.generateId()),
+            timeline,
+            post,
+            replyActorId,
+            applyFilters.filterResults
         )
     }
 
@@ -198,12 +202,20 @@ abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateSe
         val newerFilters = getNewerFilters(timeline.userDetailId, lastUpdatedAt)
 
         val posts =
-            getPostsByPostId(timelineObjectList.map { it.postId } + timelineObjectList.mapNotNull { it.repostId } + timelineObjectList.mapNotNull { it.replyId })
+            getPostsByPostId(
+                timelineObjectList.map {
+                    it.postId
+                } + timelineObjectList.mapNotNull { it.repostId } + timelineObjectList.mapNotNull { it.replyId }
+            )
 
         val userDetails = getUserDetails(timelineObjectList.map { it.userDetailId })
 
         val actors =
-            getActors(timelineObjectList.map { it.postActorId } + timelineObjectList.mapNotNull { it.repostActorId } + timelineObjectList.mapNotNull { it.replyActorId })
+            getActors(
+                timelineObjectList.map {
+                    it.postActorId
+                } + timelineObjectList.mapNotNull { it.repostActorId } + timelineObjectList.mapNotNull { it.replyActorId }
+            )
 
         val postMap = posts.associate { post ->
             post.id to applyFilters(post, newerFilters)

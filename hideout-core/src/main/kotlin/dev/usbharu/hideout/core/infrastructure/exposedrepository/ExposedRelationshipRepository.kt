@@ -74,7 +74,7 @@ class ExposedRelationshipRepository(override val domainEventPublisher: DomainEve
     ): List<Relationship> {
         val query1 = Relationships.selectAll().where { Relationships.actorId eq targetId.id }
         inverseOption.apply(query1)
-        //todo 逆のほうがいいかも
+        // todo 逆のほうがいいかも
         val query = query1.alias("INV").selectAll().where {
             Relationships.targetActorId eq targetId.id
         }
@@ -89,7 +89,6 @@ class ExposedRelationshipRepository(override val domainEventPublisher: DomainEve
 }
 
 fun FindRelationshipOption?.apply(query: Query) {
-
     if (this?.follow != null) {
         query.andWhere { Relationships.following eq this@apply.follow }
     }

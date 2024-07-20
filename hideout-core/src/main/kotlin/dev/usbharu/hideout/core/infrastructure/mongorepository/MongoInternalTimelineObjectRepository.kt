@@ -22,7 +22,9 @@ import org.springframework.stereotype.Repository
 import java.time.Instant
 
 @Repository
-class MongoInternalTimelineObjectRepository(private val springDataMongoTimelineObjectRepository: SpringDataMongoTimelineObjectRepository) :
+class MongoInternalTimelineObjectRepository(
+    private val springDataMongoTimelineObjectRepository: SpringDataMongoTimelineObjectRepository
+) :
     InternalTimelineObjectRepository {
     override suspend fun save(timelineObject: TimelineObject): TimelineObject {
         springDataMongoTimelineObjectRepository.save(SpringDataMongoTimelineObject.of(timelineObject))
@@ -55,8 +57,6 @@ class MongoInternalTimelineObjectRepository(private val springDataMongoTimelineO
         return springDataMongoTimelineObjectRepository.findByTimelineId(timelineId).map { it.toTimelineObject() }
             .toList()
     }
-
-
 }
 
 @Document
