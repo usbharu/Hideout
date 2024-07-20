@@ -86,7 +86,6 @@ dependencies {
     implementation(libs.bundles.owl.broker)
     implementation(libs.bundles.spring.boot.oauth2)
     implementation(libs.bundles.spring.boot.data.mongodb)
-    implementation(libs.bundles.spring.boot.data.mongodb)
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-security")

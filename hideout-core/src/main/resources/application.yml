@@ -33,8 +33,6 @@ spring:
         host: localhost
         port: 27017
         database: hideout
-  #        username: hideoutuser
-  #        password: hideoutpass
   servlet:
     multipart:
       max-file-size: 40MB
