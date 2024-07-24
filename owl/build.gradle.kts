@@ -1,6 +1,6 @@
 plugins {
 //    alias(libs.plugins.kotlin.jvm)
-    id("org.jetbrains.kotlin.jvm") version "1.9.24"
+    id("org.jetbrains.kotlin.jvm") version "1.9.25"
 }
 
 
@@ -24,7 +24,7 @@ subprojects {
 
     dependencies {
         implementation("org.slf4j:slf4j-api:2.0.13")
-        testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
+        testImplementation("org.junit.jupiter:junit-jupiter:5.10.3")
 
 
     }
