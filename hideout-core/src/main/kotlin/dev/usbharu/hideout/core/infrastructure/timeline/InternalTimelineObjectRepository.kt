@@ -2,6 +2,7 @@ package dev.usbharu.hideout.core.infrastructure.timeline
 
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.post.PostId
+import dev.usbharu.hideout.core.domain.model.support.page.Page
 import dev.usbharu.hideout.core.domain.model.timeline.TimelineId
 import dev.usbharu.hideout.core.domain.model.timelineobject.TimelineObject
 
@@ -17,5 +18,15 @@ interface InternalTimelineObjectRepository {
     suspend fun deleteByTimelineIdAndActorId(timelineId: TimelineId, actorId: ActorId)
 
     suspend fun deleteByTimelineId(timelineId: TimelineId)
-    suspend fun findByTimelineId(timelineId: TimelineId): List<TimelineObject>
+    suspend fun findByTimelineId(
+        timelineId: TimelineId,
+        internalTimelineObjectOption: InternalTimelineObjectOption? = null,
+        page: Page? = null
+    ): List<TimelineObject>
 }
+
+data class InternalTimelineObjectOption(
+    val localOnly: Boolean? = null,
+    val remoteOnly: Boolean? = null,
+    val mediaOnly: Boolean? = null
+)

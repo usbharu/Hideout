@@ -7,6 +7,7 @@ import dev.usbharu.hideout.core.domain.model.filter.FilteredPost
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostId
 import dev.usbharu.hideout.core.domain.model.post.Visibility
+import dev.usbharu.hideout.core.domain.model.support.page.Page
 import dev.usbharu.hideout.core.domain.model.support.timelineobjectdetail.TimelineObjectDetail
 import dev.usbharu.hideout.core.domain.model.timeline.Timeline
 import dev.usbharu.hideout.core.domain.model.timeline.TimelineId
@@ -19,6 +20,7 @@ import dev.usbharu.hideout.core.domain.model.timelinerelationship.Visible
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetail
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
 import dev.usbharu.hideout.core.domain.shared.id.IdGenerateService
+import dev.usbharu.hideout.core.external.timeline.ReadTimelineOption
 import dev.usbharu.hideout.core.external.timeline.TimelineStore
 import java.time.Instant
 
@@ -104,7 +106,11 @@ abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateSe
 
     protected abstract suspend fun getPostsByPostId(postIds: List<PostId>): List<Post>
 
-    protected abstract suspend fun getTimelineObject(timelineId: TimelineId): List<TimelineObject>
+    protected abstract suspend fun getTimelineObject(
+        timelineId: TimelineId,
+        readTimelineOption: ReadTimelineOption?,
+        page: Page?
+    ): List<TimelineObject>
 
     override suspend fun updatePost(post: Post) {
         val timelineObjectByPostId = getTimelineObjectByPostId(post.id)
@@ -195,8 +201,12 @@ abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateSe
         removeTimelineObject(timeline.id)
     }
 
-    override suspend fun readTimeline(timeline: Timeline): List<TimelineObjectDetail> {
-        val timelineObjectList = getTimelineObject(timeline.id)
+    override suspend fun readTimeline(
+        timeline: Timeline,
+        option: ReadTimelineOption?,
+        page: Page?
+    ): List<TimelineObjectDetail> {
+        val timelineObjectList = getTimelineObject(timeline.id, option, page)
         val lastUpdatedAt = timelineObjectList.minBy { it.lastUpdatedAt }.lastUpdatedAt
 
         val newerFilters = getNewerFilters(timeline.userDetailId, lastUpdatedAt)

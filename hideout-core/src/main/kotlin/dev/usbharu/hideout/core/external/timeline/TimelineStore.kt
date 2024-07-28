@@ -1,6 +1,7 @@
 package dev.usbharu.hideout.core.external.timeline
 
 import dev.usbharu.hideout.core.domain.model.post.Post
+import dev.usbharu.hideout.core.domain.model.support.page.Page
 import dev.usbharu.hideout.core.domain.model.support.timelineobjectdetail.TimelineObjectDetail
 import dev.usbharu.hideout.core.domain.model.timeline.Timeline
 import dev.usbharu.hideout.core.domain.model.timelinerelationship.TimelineRelationship
@@ -16,5 +17,9 @@ interface TimelineStore {
     suspend fun addTimeline(timeline: Timeline, timelineRelationshipList: List<TimelineRelationship>)
     suspend fun removeTimeline(timeline: Timeline)
 
-    suspend fun readTimeline(timeline: Timeline): List<TimelineObjectDetail>
+    suspend fun readTimeline(
+        timeline: Timeline,
+        option: ReadTimelineOption? = null,
+        page: Page? = null
+    ): List<TimelineObjectDetail>
 }

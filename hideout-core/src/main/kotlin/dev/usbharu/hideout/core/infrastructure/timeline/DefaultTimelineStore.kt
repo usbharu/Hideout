@@ -24,6 +24,7 @@ import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
 import dev.usbharu.hideout.core.domain.service.filter.FilterDomainService
 import dev.usbharu.hideout.core.domain.shared.id.IdGenerateService
+import dev.usbharu.hideout.core.external.timeline.ReadTimelineOption
 import org.springframework.stereotype.Component
 import java.time.Instant
 
@@ -101,8 +102,20 @@ open class DefaultTimelineStore(
         return postRepository.findAllById(postIds)
     }
 
-    override suspend fun getTimelineObject(timelineId: TimelineId): List<TimelineObject> {
-        return internalTimelineObjectRepository.findByTimelineId(timelineId)
+    override suspend fun getTimelineObject(
+        timelineId: TimelineId,
+        readTimelineOption: ReadTimelineOption?,
+        page: Page?
+    ): List<TimelineObject> {
+        return internalTimelineObjectRepository.findByTimelineId(
+            timelineId,
+            InternalTimelineObjectOption(
+                readTimelineOption?.local,
+                readTimelineOption?.remote,
+                readTimelineOption?.mediaOnly
+            ),
+            page
+        )
     }
 
     override suspend fun getActorPost(actorId: ActorId, visibilityList: List<Visibility>): List<Post> {
