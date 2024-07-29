@@ -44,30 +44,38 @@ dependencies {
     implementation(libs.bundles.coroutines)
 }
 
-tasks.test {
-    useJUnitPlatform()
+tasks {
+    test {
+        useJUnitPlatform()
+    }
+
+    compileKotlin {
+        dependsOn("openApiGenerateMastodonCompatibleApi")
+        mustRunAfter("openApiGenerateMastodonCompatibleApi")
+    }
+
+    create<GenerateTask>("openApiGenerateMastodonCompatibleApi") {
+        generatorName.set("kotlin-spring")
+        inputSpec.set("$rootDir/src/main/resources/openapi/mastodon.yaml")
+        outputDir.set("$buildDir/generated/sources/mastodon")
+        apiPackage.set("dev.usbharu.hideout.mastodon.interfaces.api.generated")
+        modelPackage.set("dev.usbharu.hideout.mastodon.interfaces.api.generated.model")
+        configOptions.put("interfaceOnly", "true")
+        configOptions.put("useSpringBoot3", "true")
+        configOptions.put("reactive", "true")
+        configOptions.put("gradleBuildFile", "false")
+        configOptions.put("useSwaggerUI", "false")
+        configOptions.put("enumPropertyNaming", "UPPERCASE")
+        additionalProperties.put("useTags", "true")
+
+        importMappings.put("org.springframework.core.io.Resource", "org.springframework.web.multipart.MultipartFile")
+        typeMappings.put("org.springframework.core.io.Resource", "org.springframework.web.multipart.MultipartFile")
+        templateDir.set("$rootDir/templates")
+    }
 }
+
 kotlin {
     jvmToolchain(21)
-}
-
-tasks.create<GenerateTask>("openApiGenerateMastodonCompatibleApi", GenerateTask::class) {
-    generatorName.set("kotlin-spring")
-    inputSpec.set("$rootDir/src/main/resources/openapi/mastodon.yaml")
-    outputDir.set("$buildDir/generated/sources/mastodon")
-    apiPackage.set("dev.usbharu.hideout.mastodon.interfaces.api.generated")
-    modelPackage.set("dev.usbharu.hideout.mastodon.interfaces.api.generated.model")
-    configOptions.put("interfaceOnly", "true")
-    configOptions.put("useSpringBoot3", "true")
-    configOptions.put("reactive", "true")
-    configOptions.put("gradleBuildFile", "false")
-    configOptions.put("useSwaggerUI", "false")
-    configOptions.put("enumPropertyNaming", "UPPERCASE")
-    additionalProperties.put("useTags", "true")
-
-    importMappings.put("org.springframework.core.io.Resource", "org.springframework.web.multipart.MultipartFile")
-    typeMappings.put("org.springframework.core.io.Resource", "org.springframework.web.multipart.MultipartFile")
-    templateDir.set("$rootDir/templates")
 }
 
 sourceSets.main {
