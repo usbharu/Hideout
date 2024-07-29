@@ -26,39 +26,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Gradle Wrapper Cache
-        uses: actions/cache@v4.0.2
-        with:
-          path: ~/.gradle/wrapper
-          key: gradle-wrapper-${{  hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
-
-      - name: Dependencies Cache
-        uses: actions/cache@v4.0.2
-        with:
-          path: |
-            ~/.gradle/cache/jars-*
-            ~/.gradle/caches/transforms-*
-            ~/.gradle/caches/modules-*
-          key: gradle-dependencies-${{ hashFiles('**/*.gradle.kts') }}
-          restore-keys: gradle-dependencies-
-
-      - name: Cache
-        uses: actions/cache@v4.0.2
-        with:
-          path: |
-            ~/.gradle/caches/build-cache-*
-            ~/.gradle/caches/[0-9]*.*
-            .gradle
-          key: ${{ runner.os }}-gradle-build-${{ github.workflow }}-${{ github.sha }}
-          restore-keys: ${{ runner.os }}-gradle-build-${{ github.workflow }}-
-
-      - name: Build Cache
-        uses: actions/cache@v4.0.2
-        with:
-          path: |
-            build
-          key: gradle-build-${{ hashFiles('**/*.gradle.kts') }}-${{ hashFiles('**/*.kt') }}-${{ github.sha }}
-
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
@@ -76,39 +43,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Gradle Wrapper Cache
-        uses: actions/cache@v4.0.2
-        with:
-          path: ~/.gradle/wrapper
-          key: gradle-wrapper-${{  hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
-
-      - name: Dependencies Cache
-        uses: actions/cache@v4.0.2
-        with:
-          path: |
-            ~/.gradle/cache/jars-*
-            ~/.gradle/caches/transforms-*
-            ~/.gradle/caches/modules-*
-          key: gradle-dependencies-${{ hashFiles('**/*.gradle.kts') }}
-          restore-keys: gradle-dependencies-
-
-      - name: Cache
-        uses: actions/cache@v4.0.2
-        with:
-          path: |
-            ~/.gradle/caches/build-cache-*
-            ~/.gradle/caches/[0-9]*.*
-            .gradle
-          key: ${{ runner.os }}-gradle-build-${{ github.workflow }}-${{ github.sha }}
-          restore-keys: ${{ runner.os }}-gradle-build-${{ github.workflow }}-
-
-      - name: Build Cache
-        uses: actions/cache@v4.0.2
-        with:
-          path: |
-            build
-          key: gradle-build-${{ hashFiles('**/*.gradle.kts') }}-${{ hashFiles('src') }}-${{ github.sha }}
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -135,39 +69,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Gradle Wrapper Cache
-        uses: actions/cache@v4.0.2
-        with:
-          path: ~/.gradle/wrapper
-          key: gradle-wrapper-${{  hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
-
-      - name: Dependencies Cache
-        uses: actions/cache@v4.0.2
-        with:
-          path: |
-            ~/.gradle/cache/jars-*
-            ~/.gradle/caches/transforms-*
-            ~/.gradle/caches/modules-*
-          key: gradle-dependencies-${{ hashFiles('**/*.gradle.kts') }}
-          restore-keys: gradle-dependencies-
-
-      - name: Cache
-        uses: actions/cache@v4.0.2
-        with:
-          path: |
-            ~/.gradle/caches/build-cache-*
-            ~/.gradle/caches/[0-9]*.*
-            .gradle
-          key: ${{ runner.os }}-gradle-build-${{ github.workflow }}-${{ github.sha }}
-          restore-keys: ${{ runner.os }}-gradle-build-${{ github.workflow }}-
-
-      - name: Build Cache
-        uses: actions/cache@v4.0.2
-        with:
-          path: |
-            build
-          key: gradle-build-${{ hashFiles('**/*.gradle.kts') }}-${{ hashFiles('src') }}-${{ github.sha }}
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -219,39 +120,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Gradle Wrapper Cache
-        uses: actions/cache@v4.0.2
-        with:
-          path: ~/.gradle/wrapper
-          key: gradle-wrapper-${{  hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
-
-      - name: Dependencies Cache
-        uses: actions/cache@v4.0.2
-        with:
-          path: |
-            ~/.gradle/cache/jars-*
-            ~/.gradle/caches/transforms-*
-            ~/.gradle/caches/modules-*
-          key: gradle-dependencies-${{ hashFiles('**/*.gradle.kts') }}
-          restore-keys: gradle-dependencies-
-
-      - name: Cache
-        uses: actions/cache@v4.0.2
-        with:
-          path: |
-            ~/.gradle/caches/build-cache-*
-            ~/.gradle/caches/[0-9]*.*
-            .gradle
-          key: ${{ runner.os }}-gradle-build-${{ github.workflow }}-${{ github.sha }}
-          restore-keys: ${{ runner.os }}-gradle-build-${{ github.workflow }}-
-
-      - name: Build Cache
-        uses: actions/cache@v4.0.2
-        with:
-          path: |
-            build
-          key: gradle-build-${{ hashFiles('**/*.gradle.kts') }}-${{ hashFiles('src') }}-${{ github.sha }}
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
