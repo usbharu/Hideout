@@ -21,11 +21,10 @@ import dev.usbharu.owl.ProducerServiceGrpcKt.ProducerServiceCoroutineImplBase
 import dev.usbharu.owl.broker.external.toUUID
 import dev.usbharu.owl.broker.service.ProducerService
 import dev.usbharu.owl.broker.service.RegisterProducerRequest
-import org.koin.core.annotation.Singleton
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
-@Singleton
+
 class ProducerService(
     coroutineContext: CoroutineContext = EmptyCoroutineContext,
     private val producerService: ProducerService

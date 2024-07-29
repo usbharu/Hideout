@@ -17,6 +17,7 @@
 package dev.usbharu.owl.producer.embedded
 
 import dev.usbharu.owl.broker.OwlBrokerApplication
+import dev.usbharu.owl.broker.mainModule
 import dev.usbharu.owl.common.retry.RetryPolicyFactory
 import dev.usbharu.owl.common.task.PublishedTask
 import dev.usbharu.owl.common.task.Task
@@ -25,7 +26,6 @@ import dev.usbharu.owl.producer.api.OwlProducer
 import org.koin.core.Koin
 import org.koin.core.context.GlobalContext.startKoin
 import org.koin.dsl.module
-import org.koin.ksp.generated.defaultModule
 
 class EmbeddedGrpcOwlProducer(
     private val config: EmbeddedGrpcOwlProducerConfig,
@@ -42,7 +42,7 @@ class EmbeddedGrpcOwlProducer(
                     config.retryPolicyFactory
                 }
             }
-            modules(module, defaultModule, config.moduleContext.module())
+            modules(mainModule, module, config.moduleContext.module())
         }.koin
 
         application.get<OwlBrokerApplication>().start(config.port.toInt())

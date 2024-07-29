@@ -19,6 +19,7 @@ package dev.usbharu.owl.producer.embedded
 import dev.usbharu.owl.broker.OwlBrokerApplication
 import dev.usbharu.owl.broker.domain.exception.InvalidRepositoryException
 import dev.usbharu.owl.broker.domain.model.producer.ProducerRepository
+import dev.usbharu.owl.broker.mainModule
 import dev.usbharu.owl.broker.service.*
 import dev.usbharu.owl.common.property.PropertySerializerFactory
 import dev.usbharu.owl.common.retry.RetryPolicyFactory
@@ -30,7 +31,6 @@ import org.koin.core.Koin
 import org.koin.core.context.GlobalContext
 import org.koin.core.context.GlobalContext.startKoin
 import org.koin.dsl.module
-import org.koin.ksp.generated.defaultModule
 import java.time.Instant
 import java.util.*
 import dev.usbharu.owl.broker.domain.model.taskdefinition.TaskDefinition as BrokerTaskDefinition
@@ -60,7 +60,7 @@ class EmbeddedOwlProducer(
                     embeddedOwlProducerConfig.propertySerializerFactory
                 }
             }
-            modules(defaultModule, module, embeddedOwlProducerConfig.moduleContext.module())
+            modules(mainModule, module, embeddedOwlProducerConfig.moduleContext.module())
         }.koin
 
         application.getOrNull<ProducerRepository>()

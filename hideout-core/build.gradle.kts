@@ -92,7 +92,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     implementation("org.springframework.boot:spring-boot-starter-log4j2")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-
+    annotationProcessor("org.springframework:spring-context-indexer")
 
     implementation(libs.blurhash)
     implementation(libs.aws.s3)
@@ -133,7 +133,7 @@ dependencies {
     testImplementation(libs.coroutines.test)
     testImplementation(libs.ktor.client.mock)
     testImplementation(libs.h2db)
-    testImplementation("org.mockito.kotlin:mockito-kotlin:5.3.1")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
     testImplementation("org.mockito:mockito-inline:5.2.0")
     testImplementation("nl.jqno.equalsverifier:equalsverifier:3.16.1")
     testImplementation("com.jparams:to-string-verifier:1.4.8")

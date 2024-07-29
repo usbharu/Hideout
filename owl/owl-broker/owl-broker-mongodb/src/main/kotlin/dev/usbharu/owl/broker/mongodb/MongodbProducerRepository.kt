@@ -23,11 +23,9 @@ import dev.usbharu.owl.broker.domain.model.producer.Producer
 import dev.usbharu.owl.broker.domain.model.producer.ProducerRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.koin.core.annotation.Singleton
 import java.time.Instant
 import java.util.*
 
-@Singleton
 class MongodbProducerRepository(database: MongoDatabase) : ProducerRepository {
 
     private val collection = database.getCollection<ProducerMongodb>("producers")

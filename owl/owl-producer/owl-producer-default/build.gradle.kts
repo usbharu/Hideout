@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm")
+    alias(libs.plugins.kotlin.jvm)
     id("com.google.protobuf") version "0.9.4"
 }
 
@@ -14,9 +14,9 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     api(project(":owl-producer:owl-producer-api"))
     implementation("io.grpc:grpc-kotlin-stub:1.4.1")
-    implementation("io.grpc:grpc-protobuf:1.65.0")
+    implementation("io.grpc:grpc-protobuf:1.65.1")
     implementation("com.google.protobuf:protobuf-kotlin:4.27.2")
-    implementation("io.grpc:grpc-netty:1.65.0")
+    implementation("io.grpc:grpc-netty:1.65.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
     implementation(project(":owl-common"))
     protobuf(files(project(":owl-broker").dependencyProject.projectDir.toString() + "/src/main/proto"))
@@ -26,7 +26,7 @@ tasks.test {
     useJUnitPlatform()
 }
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(21)
 }
 
 protobuf {
@@ -35,7 +35,7 @@ protobuf {
     }
     plugins {
         create("grpc") {
-            artifact = "io.grpc:protoc-gen-grpc-java:1.65.0"
+            artifact = "io.grpc:protoc-gen-grpc-java:1.65.1"
         }
         create("grpckt") {
             artifact = "io.grpc:protoc-gen-grpc-kotlin:1.4.1:jdk8@jar"

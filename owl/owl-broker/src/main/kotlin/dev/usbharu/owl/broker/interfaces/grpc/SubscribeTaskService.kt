@@ -21,11 +21,9 @@ import dev.usbharu.owl.SubscribeTaskServiceGrpcKt.SubscribeTaskServiceCoroutineI
 import dev.usbharu.owl.broker.external.toUUID
 import dev.usbharu.owl.broker.service.ConsumerService
 import dev.usbharu.owl.broker.service.RegisterConsumerRequest
-import org.koin.core.annotation.Singleton
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
-@Singleton
 class SubscribeTaskService(
     coroutineContext: CoroutineContext = EmptyCoroutineContext,
     private val consumerService: ConsumerService

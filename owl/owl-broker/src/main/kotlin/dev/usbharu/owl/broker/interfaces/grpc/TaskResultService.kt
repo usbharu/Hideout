@@ -30,13 +30,11 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
-import org.koin.core.annotation.Singleton
 import org.slf4j.LoggerFactory
 import java.util.*
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
-@Singleton
 class TaskResultService(
     coroutineContext: CoroutineContext = EmptyCoroutineContext,
     private val taskManagementService: TaskManagementService,

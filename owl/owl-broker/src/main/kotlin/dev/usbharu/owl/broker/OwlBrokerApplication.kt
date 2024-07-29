@@ -24,9 +24,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import org.koin.core.annotation.Singleton
 
-@Singleton
 class OwlBrokerApplication(
     private val assignmentTaskService: AssignmentTaskService,
     private val definitionTaskService: DefinitionTaskService,
