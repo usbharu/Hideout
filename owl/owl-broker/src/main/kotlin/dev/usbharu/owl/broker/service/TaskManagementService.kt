@@ -27,7 +27,6 @@ import dev.usbharu.owl.broker.domain.model.taskresult.TaskResultRepository
 import dev.usbharu.owl.common.retry.RetryPolicyFactory
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import org.koin.core.annotation.Singleton
 import org.slf4j.LoggerFactory
 import java.time.Instant
 import java.util.*
@@ -43,7 +42,6 @@ interface TaskManagementService {
     fun subscribeResult(producerId: UUID): Flow<TaskResults>
 }
 
-@Singleton
 class TaskManagementServiceImpl(
     private val taskScanner: TaskScanner,
     private val queueStore: QueueStore,

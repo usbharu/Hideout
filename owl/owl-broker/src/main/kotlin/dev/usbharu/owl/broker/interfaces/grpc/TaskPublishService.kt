@@ -27,12 +27,10 @@ import dev.usbharu.owl.common.property.PropertySerializeUtils
 import dev.usbharu.owl.common.property.PropertySerializerFactory
 import io.grpc.Status
 import io.grpc.StatusException
-import org.koin.core.annotation.Singleton
 import org.slf4j.LoggerFactory
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
-@Singleton
 class TaskPublishService(
     coroutineContext: CoroutineContext = EmptyCoroutineContext,
     private val taskPublishService: TaskPublishService,

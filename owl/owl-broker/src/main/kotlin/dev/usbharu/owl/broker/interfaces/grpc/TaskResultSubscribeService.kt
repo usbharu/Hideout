@@ -23,11 +23,9 @@ import dev.usbharu.owl.common.property.PropertySerializeUtils
 import dev.usbharu.owl.common.property.PropertySerializerFactory
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import org.koin.core.annotation.Singleton
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
-@Singleton
 class TaskResultSubscribeService(
     private val taskManagementService: TaskManagementService,
     private val propertySerializerFactory: PropertySerializerFactory,

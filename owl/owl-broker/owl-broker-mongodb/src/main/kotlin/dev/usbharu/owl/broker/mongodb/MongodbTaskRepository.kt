@@ -33,11 +33,10 @@ import kotlinx.coroutines.withContext
 import org.bson.BsonType
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.codecs.pojo.annotations.BsonRepresentation
-import org.koin.core.annotation.Singleton
 import java.time.Instant
 import java.util.*
 
-@Singleton
+
 class MongodbTaskRepository(database: MongoDatabase, private val propertySerializerFactory: PropertySerializerFactory) :
     TaskRepository {
 

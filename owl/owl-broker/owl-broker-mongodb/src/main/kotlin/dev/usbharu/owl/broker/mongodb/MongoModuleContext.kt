@@ -20,15 +20,20 @@ import com.mongodb.ConnectionString
 import com.mongodb.MongoClientSettings
 import com.mongodb.kotlin.client.coroutine.MongoClient
 import dev.usbharu.owl.broker.ModuleContext
+import dev.usbharu.owl.broker.domain.model.consumer.ConsumerRepository
+import dev.usbharu.owl.broker.domain.model.producer.ProducerRepository
+import dev.usbharu.owl.broker.domain.model.queuedtask.QueuedTaskRepository
+import dev.usbharu.owl.broker.domain.model.task.TaskRepository
+import dev.usbharu.owl.broker.domain.model.taskdefinition.TaskDefinitionRepository
+import dev.usbharu.owl.broker.domain.model.taskresult.TaskResultRepository
 import org.bson.UuidRepresentation
 import org.koin.core.module.Module
 import org.koin.dsl.module
-import org.koin.ksp.generated.module
 
 class MongoModuleContext : ModuleContext {
     override fun module(): Module {
-        val module = MongoModule().module
-        module.includes(module {
+
+        return module {
             single {
                 val clientSettings =
                     MongoClientSettings.builder()
@@ -46,7 +51,12 @@ class MongoModuleContext : ModuleContext {
                 MongoClient.create(clientSettings)
                     .getDatabase(System.getProperty("owl.broker.mongo.database", "mongo-test"))
             }
-        })
-        return module
+            single<ConsumerRepository> { MongodbConsumerRepository(get()) }
+            single<ProducerRepository> { MongodbProducerRepository(get()) }
+            single<QueuedTaskRepository> { MongodbQueuedTaskRepository(get(), get()) }
+            single<TaskDefinitionRepository> { MongodbTaskDefinitionRepository(get()) }
+            single<TaskRepository> { MongodbTaskRepository(get(), get()) }
+            single<TaskResultRepository> { MongodbTaskResultRepository(get(), get()) }
+        }
     }
 }

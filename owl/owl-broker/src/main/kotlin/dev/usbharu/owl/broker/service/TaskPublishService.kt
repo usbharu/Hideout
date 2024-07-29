@@ -22,7 +22,6 @@ import dev.usbharu.owl.broker.domain.model.task.TaskRepository
 import dev.usbharu.owl.broker.domain.model.taskdefinition.TaskDefinitionRepository
 import dev.usbharu.owl.common.property.PropertyValue
 import dev.usbharu.owl.common.retry.RetryPolicyFactory
-import org.koin.core.annotation.Singleton
 import org.slf4j.LoggerFactory
 import java.time.Instant
 import java.util.*
@@ -43,7 +42,6 @@ data class PublishedTask(
     val id: UUID
 )
 
-@Singleton
 class TaskPublishServiceImpl(
     private val taskRepository: TaskRepository,
     private val taskDefinitionRepository: TaskDefinitionRepository,

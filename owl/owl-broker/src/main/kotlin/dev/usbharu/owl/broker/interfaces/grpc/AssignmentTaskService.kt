@@ -29,12 +29,11 @@ import io.grpc.StatusException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.map
-import org.koin.core.annotation.Singleton
 import org.slf4j.LoggerFactory
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
-@Singleton
+
 class AssignmentTaskService(
     coroutineContext: CoroutineContext = EmptyCoroutineContext,
     private val queuedTaskAssigner: QueuedTaskAssigner,
