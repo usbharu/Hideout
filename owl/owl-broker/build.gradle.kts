@@ -1,6 +1,5 @@
 plugins {
-//    alias(libs.plugins.kotlin.jvm)
-    kotlin("jvm")
+    alias(libs.plugins.kotlin.jvm)
     id("com.google.protobuf") version "0.9.4"
 }
 

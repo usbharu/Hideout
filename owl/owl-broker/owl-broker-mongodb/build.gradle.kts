@@ -1,6 +1,6 @@
 plugins {
     application
-    kotlin("jvm")
+    alias(libs.plugins.kotlin.jvm)
 }
 
 group = "dev.usbharu"
