@@ -32,6 +32,57 @@ import java.util.*
 
 val logger = LoggerFactory.getLogger("MAIN")
 
+val mainModule = module {
+    single<AssignQueuedTaskDecider> {
+        AssignQueuedTaskDeciderImpl(get(), get())
+    }
+    single<TaskScanner> { TaskScannerImpl(get()) }
+    single<TaskPublishService> { TaskPublishServiceImpl(get(), get(), get()) }
+    single<TaskManagementService> {
+        TaskManagementServiceImpl(
+            taskScanner = get(),
+            queueStore = get(),
+            taskDefinitionRepository = get(),
+            assignQueuedTaskDecider = get(),
+            retryPolicyFactory = get(),
+            taskRepository = get(),
+            queueScanner = get(),
+            taskResultRepository = get()
+        )
+    }
+    single<RegisterTaskService> { RegisterTaskServiceImpl(get()) }
+    single<QueueStore> { QueueStoreImpl(get()) }
+    single<QueueScanner> { QueueScannerImpl(get()) }
+    single<QueuedTaskAssigner> { QueuedTaskAssignerImpl(get(), get()) }
+    single<ProducerService> { ProducerServiceImpl(get()) }
+    single<PropertySerializerFactory> { DefaultPropertySerializerFactory() }
+    single<ConsumerService> { ConsumerServiceImpl(get()) }
+    single {
+        OwlBrokerApplication(
+            assignmentTaskService = get(),
+            definitionTaskService = get(),
+            producerService = get(),
+            subscribeTaskService = get(),
+            taskPublishService = get(),
+            taskManagementService = get(),
+            taskResultSubscribeService = get(),
+            taskResultService = get()
+        )
+    }
+    single { AssignmentTaskService(queuedTaskAssigner = get(), propertySerializerFactory = get()) }
+    single { DefinitionTaskService(registerTaskService = get()) }
+    single { dev.usbharu.owl.broker.interfaces.grpc.ProducerService(producerService = get()) }
+    single { SubscribeTaskService(consumerService = get()) }
+    single {
+        dev.usbharu.owl.broker.interfaces.grpc.TaskPublishService(
+            taskPublishService = get(),
+            propertySerializerFactory = get()
+        )
+    }
+    single { TaskResultService(taskManagementService = get(), propertySerializerFactory = get()) }
+    single { TaskResultSubscribeService(taskManagementService = get(), propertySerializerFactory = get()) }
+}
+
 fun main() {
     val moduleContexts = ServiceLoader.load(ModuleContext::class.java)
 
@@ -47,56 +98,9 @@ fun main() {
             single<RetryPolicyFactory> {
                 DefaultRetryPolicyFactory(mapOf("" to ExponentialRetryPolicy()))
             }
-            single<AssignQueuedTaskDecider> {
-                AssignQueuedTaskDeciderImpl(get(), get())
-            }
-            single<TaskScanner> { TaskScannerImpl(get()) }
-            single<TaskPublishService> { TaskPublishServiceImpl(get(), get(), get()) }
-            single<TaskManagementService> {
-                TaskManagementServiceImpl(
-                    taskScanner = get(),
-                    queueStore = get(),
-                    taskDefinitionRepository = get(),
-                    assignQueuedTaskDecider = get(),
-                    retryPolicyFactory = get(),
-                    taskRepository = get(),
-                    queueScanner = get(),
-                    taskResultRepository = get()
-                )
-            }
-            single<RegisterTaskService> { RegisterTaskServiceImpl(get()) }
-            single<QueueStore> { QueueStoreImpl(get()) }
-            single<QueueScanner> { QueueScannerImpl(get()) }
-            single<QueuedTaskAssigner> { QueuedTaskAssignerImpl(get(), get()) }
-            single<ProducerService> { ProducerServiceImpl(get()) }
-            single<PropertySerializerFactory> { DefaultPropertySerializerFactory() }
-            single<ConsumerService> { ConsumerServiceImpl(get()) }
-            single {
-                OwlBrokerApplication(
-                    assignmentTaskService = get(),
-                    definitionTaskService = get(),
-                    producerService = get(),
-                    subscribeTaskService = get(),
-                    taskPublishService = get(),
-                    taskManagementService = get(),
-                    taskResultSubscribeService = get(),
-                    taskResultService = get()
-                )
-            }
-            single { AssignmentTaskService(queuedTaskAssigner = get(), propertySerializerFactory = get()) }
-            single { DefinitionTaskService(registerTaskService = get()) }
-            single { dev.usbharu.owl.broker.interfaces.grpc.ProducerService(producerService = get()) }
-            single { SubscribeTaskService(consumerService = get()) }
-            single {
-                dev.usbharu.owl.broker.interfaces.grpc.TaskPublishService(
-                    taskPublishService = get(),
-                    propertySerializerFactory = get()
-                )
-            }
-            single { TaskResultService(taskManagementService = get(), propertySerializerFactory = get()) }
-            single { TaskResultSubscribeService(taskManagementService = get(), propertySerializerFactory = get()) }
+
         }
-        modules(module, moduleContext.module())
+        modules(mainModule, module, moduleContext.module())
     }
 
     val application = koin.koin.get<OwlBrokerApplication>()
