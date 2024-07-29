@@ -43,7 +43,7 @@ jobs:
           gradle-home-cache-cleanup: true
 
       - name: Build
-        run: ./gradlew :hideout-core:testClasses
+        run: ./gradlew :hideout-core:classes
 
   unit-test:
     name: Unit Test
@@ -59,37 +59,13 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-home-cache-cleanup: true
+
       - name: Unit Test
-        uses: gradle/gradle-build-action@v3.5.0
-        with:
-          arguments: :hideout-core:test
-
-      - name: Save Test Report
-        if: always()
-        uses: actions/cache/save@v4
-        with:
-          path: build/test-results
-          key: unit-test-report-${{ github.sha }}
-
-  coverage:
-    name: Coverage
-    needs: [ setup ]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-
-      - name: Run Kover
-
-        uses: gradle/gradle-build-action@v3.5.0
-        with:
-          arguments: :hideout-core:koverXmlReport --rerun-tasks
+        run: :hideout-core:koverXmlReport
 
       - name: Add coverage report to PR
         if: always()
@@ -104,18 +80,6 @@ jobs:
           min-coverage-overall: 80
           min-coverage-changed-files: 80
           coverage-counter-type: LINE
-
-  report-tests:
-    name: Report Tests
-    if: success() || failure()
-    needs: [ unit-test ]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Restore Test Report
-        uses: actions/cache/restore@v4
-        with:
-          path: build/test-results
-          key: unit-test-report-${{ github.sha }}
 
       - name: JUnit Test Report
         uses: mikepenz/action-junit-report@v4
@@ -136,10 +100,13 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Build with Gradle
-        uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
         with:
-          arguments: :hideout-core:detektMain
+          gradle-home-cache-cleanup: true
+
+      - name: Build with Gradle
+        run: :hideout-core:detektMain
 
       - name: Auto Commit
         if: ${{ always() }}
