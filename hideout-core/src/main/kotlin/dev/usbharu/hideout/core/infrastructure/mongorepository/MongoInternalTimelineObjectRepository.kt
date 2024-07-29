@@ -6,24 +6,32 @@ import dev.usbharu.hideout.core.domain.model.filter.FilterId
 import dev.usbharu.hideout.core.domain.model.media.MediaId
 import dev.usbharu.hideout.core.domain.model.post.PostId
 import dev.usbharu.hideout.core.domain.model.post.Visibility
+import dev.usbharu.hideout.core.domain.model.support.page.Page
+import dev.usbharu.hideout.core.domain.model.support.page.PaginationList
 import dev.usbharu.hideout.core.domain.model.timeline.TimelineId
 import dev.usbharu.hideout.core.domain.model.timelineobject.TimelineObject
 import dev.usbharu.hideout.core.domain.model.timelineobject.TimelineObjectId
 import dev.usbharu.hideout.core.domain.model.timelineobject.TimelineObjectWarnFilter
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
+import dev.usbharu.hideout.core.infrastructure.timeline.InternalTimelineObjectOption
 import dev.usbharu.hideout.core.infrastructure.timeline.InternalTimelineObjectRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
+import org.springframework.data.domain.Sort
+import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.mapping.Document
+import org.springframework.data.mongodb.core.query.Criteria
+import org.springframework.data.mongodb.core.query.Query
 import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 import org.springframework.stereotype.Repository
 import java.time.Instant
 
 @Repository
 class MongoInternalTimelineObjectRepository(
-    private val springDataMongoTimelineObjectRepository: SpringDataMongoTimelineObjectRepository
+    private val springDataMongoTimelineObjectRepository: SpringDataMongoTimelineObjectRepository,
+    private val mongoTemplate: MongoTemplate
 ) :
     InternalTimelineObjectRepository {
     override suspend fun save(timelineObject: TimelineObject): TimelineObject {
@@ -53,9 +61,33 @@ class MongoInternalTimelineObjectRepository(
         springDataMongoTimelineObjectRepository.deleteByTimelineId(timelineId.value)
     }
 
-    override suspend fun findByTimelineId(timelineId: TimelineId): List<TimelineObject> {
-        return springDataMongoTimelineObjectRepository.findByTimelineId(timelineId).map { it.toTimelineObject() }
-            .toList()
+    override suspend fun findByTimelineId(
+        timelineId: TimelineId,
+        internalTimelineObjectOption: InternalTimelineObjectOption?,
+        page: Page?
+    ): PaginationList<TimelineObject, TimelineObjectId> {
+        val query = Query()
+
+        if (page?.minId != null) {
+            query.with(Sort.by(Sort.Direction.ASC, "postCreatedAt"))
+            page.minId?.let { query.addCriteria(Criteria.where("id").gt(it)) }
+            page.maxId?.let { query.addCriteria(Criteria.where("id").lt(it)) }
+        } else {
+            query.with(Sort.by(Sort.Direction.DESC, "postCreatedAt"))
+            page?.sinceId?.let { query.addCriteria(Criteria.where("id").gt(it)) }
+            page?.maxId?.let { query.addCriteria(Criteria.where("id").lt(it)) }
+        }
+
+        page?.limit?.let { query.limit(it) }
+
+        val timelineObjects =
+            mongoTemplate.find(query, SpringDataMongoTimelineObject::class.java).map { it.toTimelineObject() }
+
+        return PaginationList(
+            timelineObjects,
+            timelineObjects.lastOrNull()?.id,
+            timelineObjects.firstOrNull()?.id
+        )
     }
 }
 
