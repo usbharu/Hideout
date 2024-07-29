@@ -65,7 +65,7 @@ jobs:
           gradle-home-cache-cleanup: true
 
       - name: Unit Test
-        run: :hideout-core:koverXmlReport
+        run: ./gradlew :hideout-core:koverXmlReport
 
       - name: Add coverage report to PR
         if: always()
@@ -106,7 +106,7 @@ jobs:
           gradle-home-cache-cleanup: true
 
       - name: Build with Gradle
-        run: :hideout-core:detektMain
+        run: ./gradlew :hideout-core:detektMain
 
       - name: Auto Commit
         if: ${{ always() }}
