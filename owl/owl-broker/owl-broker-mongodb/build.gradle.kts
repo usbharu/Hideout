@@ -1,7 +1,7 @@
 plugins {
     application
     kotlin("jvm")
-    id("com.google.devtools.ksp") version "1.9.24-1.0.20"
+    id("com.google.devtools.ksp") version "1.9.25-1.0.20"
 }
 
 apply {
@@ -16,7 +16,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.mongodb:mongodb-driver-kotlin-coroutine:5.1.1")
+    implementation("org.mongodb:mongodb-driver-kotlin-coroutine:5.1.2")
     implementation(project(":owl-broker"))
     implementation(project(":owl-common"))
     implementation(platform("io.insert-koin:koin-bom:3.5.6"))

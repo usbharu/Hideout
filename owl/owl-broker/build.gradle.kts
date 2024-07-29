@@ -2,7 +2,7 @@ plugins {
 //    alias(libs.plugins.kotlin.jvm)
     kotlin("jvm")
     id("com.google.protobuf") version "0.9.4"
-    id("com.google.devtools.ksp") version "1.9.24-1.0.20"
+    id("com.google.devtools.ksp") version "1.9.25-1.0.20"
 }
 
 apply {
@@ -19,9 +19,9 @@ repositories {
 
 dependencies {
     implementation("io.grpc:grpc-kotlin-stub:1.4.1")
-    implementation("io.grpc:grpc-protobuf:1.65.0")
+    implementation("io.grpc:grpc-protobuf:1.65.1")
     implementation("com.google.protobuf:protobuf-kotlin:4.27.2")
-    implementation("io.grpc:grpc-netty:1.65.0")
+    implementation("io.grpc:grpc-netty:1.65.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
     implementation(project(":owl-common"))
     implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.23.1")
@@ -45,7 +45,7 @@ protobuf {
     }
     plugins {
         create("grpc") {
-            artifact = "io.grpc:protoc-gen-grpc-java:1.65.0"
+            artifact = "io.grpc:protoc-gen-grpc-java:1.65.1"
         }
         create("grpckt") {
             artifact = "io.grpc:protoc-gen-grpc-kotlin:1.4.1:jdk8@jar"

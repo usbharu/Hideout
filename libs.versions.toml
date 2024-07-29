@@ -11,7 +11,7 @@ serialization = "1.7.1"
 kjob = "0.6.0"
 tika = "2.9.2"
 owl = "0.0.1"
-jackson = "2.15.4"
+jackson = "2.17.2"
 
 [libraries]
 
@@ -69,9 +69,9 @@ jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-
 
 blurhash = { module = "io.trbl:blurhash", version = "1.0.0" }
 
-aws-s3 = { module = "software.amazon.awssdk:s3", version = "2.26.12" }
+aws-s3 = { module = "software.amazon.awssdk:s3", version = "2.26.25" }
 
-jsoup = { module = "org.jsoup:jsoup", version = "1.17.2" }
+jsoup = { module = "org.jsoup:jsoup", version = "1.18.1" }
 
 owasp-java-html-sanitizer = { module = "com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer", version = "20240325.1" }
 
@@ -82,9 +82,9 @@ imageio-webp = { module = "com.twelvemonkeys.imageio:imageio-webp", version = "3
 thumbnailator = { module = "net.coobird:thumbnailator", version = "0.4.20" }
 
 flyway-core = { module = "org.flywaydb:flyway-core" }
-flyway-postgresql = { module = "org.flywaydb:flyway-database-postgresql", version = "10.15.0" }
+flyway-postgresql = { module = "org.flywaydb:flyway-database-postgresql", version = "10.16.0" }
 
-h2db = { module = "com.h2database:h2", version = "2.2.224" }
+h2db = { module = "com.h2database:h2", version = "2.3.230" }
 
 kotlin-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 
@@ -106,9 +106,9 @@ jackson = ["jackson-databind", "jackson-module-kotlin"]
 [plugins]
 
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-spring-boot = { id = "org.springframework.boot", version = "3.3.1" }
+spring-boot = { id = "org.springframework.boot", version = "3.3.2" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
-kover = { id = "org.jetbrains.kotlinx.kover", version = "0.8.2" }
-openapi-generator = { id = "org.openapi.generator", version = "7.6.0" }
+kover = { id = "org.jetbrains.kotlinx.kover", version = "0.8.3" }
+openapi-generator = { id = "org.openapi.generator", version = "7.7.0" }
 license-report = { id = "com.github.jk1.dependency-license-report", version = "2.8" }
