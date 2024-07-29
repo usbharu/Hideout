@@ -23,14 +23,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.isActive
-import org.koin.core.annotation.Singleton
 import java.time.Instant
 
 interface QueueScanner {
     fun startScan(): Flow<QueuedTask>
 }
 
-@Singleton
+
 class QueueScannerImpl(private val queueStore: QueueStore) : QueueScanner {
     override fun startScan(): Flow<QueuedTask> {
         return flow {

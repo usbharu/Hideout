@@ -18,7 +18,6 @@ package dev.usbharu.owl.broker.service
 
 import dev.usbharu.owl.broker.domain.model.consumer.Consumer
 import dev.usbharu.owl.broker.domain.model.consumer.ConsumerRepository
-import org.koin.core.annotation.Singleton
 import org.slf4j.LoggerFactory
 import java.util.*
 
@@ -26,7 +25,6 @@ interface ConsumerService {
     suspend fun registerConsumer(registerConsumerRequest: RegisterConsumerRequest): UUID
 }
 
-@Singleton
 class ConsumerServiceImpl(private val consumerRepository: ConsumerRepository) : ConsumerService {
     override suspend fun registerConsumer(registerConsumerRequest: RegisterConsumerRequest): UUID {
         val id = UUID.randomUUID()

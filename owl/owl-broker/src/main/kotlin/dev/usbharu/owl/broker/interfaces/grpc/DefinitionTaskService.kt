@@ -22,11 +22,9 @@ import dev.usbharu.owl.DefinitionTask.TaskDefined
 import dev.usbharu.owl.DefinitionTaskServiceGrpcKt.DefinitionTaskServiceCoroutineImplBase
 import dev.usbharu.owl.broker.domain.model.taskdefinition.TaskDefinition
 import dev.usbharu.owl.broker.service.RegisterTaskService
-import org.koin.core.annotation.Singleton
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
-@Singleton
 class DefinitionTaskService(coroutineContext: CoroutineContext = EmptyCoroutineContext,private val registerTaskService: RegisterTaskService) :
     DefinitionTaskServiceCoroutineImplBase(coroutineContext) {
     override suspend fun register(request: DefinitionTask.TaskDefinition): TaskDefined {

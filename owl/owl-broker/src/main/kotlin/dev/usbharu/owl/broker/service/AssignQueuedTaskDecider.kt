@@ -23,12 +23,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.take
-import org.koin.core.annotation.Singleton
 import java.util.*
 interface AssignQueuedTaskDecider {
     fun findAssignableQueue(consumerId: UUID, numberOfConcurrent: Int): Flow<QueuedTask>
 }
-@Singleton
 class AssignQueuedTaskDeciderImpl(
     private val consumerRepository: ConsumerRepository,
     private val queueStore: QueueStore

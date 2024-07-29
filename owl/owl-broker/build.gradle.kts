@@ -2,11 +2,6 @@ plugins {
 //    alias(libs.plugins.kotlin.jvm)
     kotlin("jvm")
     id("com.google.protobuf") version "0.9.4"
-    id("com.google.devtools.ksp") version "1.9.25-1.0.20"
-}
-
-apply {
-    plugin("com.google.devtools.ksp")
 }
 
 
@@ -26,10 +21,7 @@ dependencies {
     implementation(project(":owl-common"))
     implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.23.1")
     implementation(platform("io.insert-koin:koin-bom:3.5.6"))
-    implementation(platform("io.insert-koin:koin-annotations-bom:1.3.1"))
     implementation("io.insert-koin:koin-core")
-    compileOnly("io.insert-koin:koin-annotations")
-    ksp("io.insert-koin:koin-ksp-compiler:1.3.1")
 }
 
 tasks.test {

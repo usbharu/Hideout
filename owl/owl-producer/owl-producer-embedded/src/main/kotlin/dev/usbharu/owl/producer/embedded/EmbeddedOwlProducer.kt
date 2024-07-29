@@ -30,7 +30,6 @@ import org.koin.core.Koin
 import org.koin.core.context.GlobalContext
 import org.koin.core.context.GlobalContext.startKoin
 import org.koin.dsl.module
-import org.koin.ksp.generated.defaultModule
 import java.time.Instant
 import java.util.*
 import dev.usbharu.owl.broker.domain.model.taskdefinition.TaskDefinition as BrokerTaskDefinition
@@ -60,7 +59,7 @@ class EmbeddedOwlProducer(
                     embeddedOwlProducerConfig.propertySerializerFactory
                 }
             }
-            modules(defaultModule, module, embeddedOwlProducerConfig.moduleContext.module())
+            modules(module, embeddedOwlProducerConfig.moduleContext.module())
         }.koin
 
         application.getOrNull<ProducerRepository>()

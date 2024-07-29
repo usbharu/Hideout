@@ -19,7 +19,6 @@ package dev.usbharu.owl.broker.service
 import dev.usbharu.owl.broker.domain.exception.service.QueueCannotDequeueException
 import dev.usbharu.owl.broker.domain.model.queuedtask.QueuedTask
 import kotlinx.coroutines.flow.*
-import org.koin.core.annotation.Singleton
 import org.slf4j.LoggerFactory
 import java.time.Instant
 import java.util.*
@@ -28,7 +27,7 @@ interface QueuedTaskAssigner {
     fun ready(consumerId: UUID, numberOfConcurrent: Int): Flow<QueuedTask>
 }
 
-@Singleton
+
 class QueuedTaskAssignerImpl(
     private val taskManagementService: TaskManagementService,
     private val queueStore: QueueStore

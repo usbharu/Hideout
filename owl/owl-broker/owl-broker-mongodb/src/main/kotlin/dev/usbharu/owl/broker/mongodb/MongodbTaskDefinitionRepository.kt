@@ -27,9 +27,7 @@ import kotlinx.coroutines.withContext
 import org.bson.BsonType
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.codecs.pojo.annotations.BsonRepresentation
-import org.koin.core.annotation.Singleton
 
-@Singleton
 class MongodbTaskDefinitionRepository(database: MongoDatabase) : TaskDefinitionRepository {
 
     private val collection = database.getCollection<TaskDefinitionMongodb>("task_definition")

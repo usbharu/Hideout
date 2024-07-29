@@ -19,7 +19,6 @@ package dev.usbharu.owl.broker.service
 import dev.usbharu.owl.broker.domain.model.queuedtask.QueuedTask
 import dev.usbharu.owl.broker.domain.model.queuedtask.QueuedTaskRepository
 import kotlinx.coroutines.flow.Flow
-import org.koin.core.annotation.Singleton
 import java.time.Instant
 
 interface QueueStore {
@@ -33,7 +32,7 @@ interface QueueStore {
     fun findByQueuedAtBeforeAndIsActiveIsTrue(instant: Instant): Flow<QueuedTask>
 }
 
-@Singleton
+
 class QueueStoreImpl(private val queuedTaskRepository: QueuedTaskRepository) : QueueStore {
     override suspend fun enqueue(queuedTask: QueuedTask) {
         queuedTaskRepository.save(queuedTask)

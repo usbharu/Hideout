@@ -19,7 +19,6 @@ package dev.usbharu.owl.broker.service
 import dev.usbharu.owl.broker.domain.exception.service.IncompatibleTaskException
 import dev.usbharu.owl.broker.domain.model.taskdefinition.TaskDefinition
 import dev.usbharu.owl.broker.domain.model.taskdefinition.TaskDefinitionRepository
-import org.koin.core.annotation.Singleton
 import org.slf4j.LoggerFactory
 
 interface RegisterTaskService {
@@ -28,7 +27,7 @@ interface RegisterTaskService {
     suspend fun unregisterTask(name:String)
 }
 
-@Singleton
+
 class RegisterTaskServiceImpl(private val taskDefinitionRepository: TaskDefinitionRepository) : RegisterTaskService {
     override suspend fun registerTask(taskDefinition: TaskDefinition) {
         val definedTask = taskDefinitionRepository.findByName(taskDefinition.name)

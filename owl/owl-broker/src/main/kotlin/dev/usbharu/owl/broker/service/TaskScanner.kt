@@ -24,7 +24,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.isActive
-import org.koin.core.annotation.Singleton
 import org.slf4j.LoggerFactory
 import java.time.Instant
 
@@ -33,7 +32,6 @@ interface TaskScanner {
     fun startScan(): Flow<Task>
 }
 
-@Singleton
 class TaskScannerImpl(private val taskRepository: TaskRepository) :
     TaskScanner {
 

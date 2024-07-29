@@ -18,16 +18,15 @@ package dev.usbharu.owl.broker.service
 
 import dev.usbharu.owl.broker.domain.model.producer.Producer
 import dev.usbharu.owl.broker.domain.model.producer.ProducerRepository
-import org.koin.core.annotation.Singleton
 import org.slf4j.LoggerFactory
 import java.time.Instant
 import java.util.*
 
 interface ProducerService {
-    suspend fun registerProducer(producer: RegisterProducerRequest):UUID
+    suspend fun registerProducer(producer: RegisterProducerRequest): UUID
 }
 
-@Singleton
+
 class ProducerServiceImpl(private val producerRepository: ProducerRepository) : ProducerService {
     override suspend fun registerProducer(producer: RegisterProducerRequest): UUID {
 
@@ -43,11 +42,11 @@ class ProducerServiceImpl(private val producerRepository: ProducerRepository) : 
 
         producerRepository.save(saveProducer)
 
-        logger.info("Register a new Producer. name: {} hostname: {}",saveProducer.name,saveProducer.hostname)
+        logger.info("Register a new Producer. name: {} hostname: {}", saveProducer.name, saveProducer.hostname)
         return id
     }
 
-    companion object{
+    companion object {
         private val logger = LoggerFactory.getLogger(ProducerServiceImpl::class.java)
     }
 }
