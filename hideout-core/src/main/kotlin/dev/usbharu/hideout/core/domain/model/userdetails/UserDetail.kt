@@ -47,7 +47,7 @@ class UserDetail private constructor(
             password: UserDetailHashedPassword,
             autoAcceptFolloweeFollowRequest: Boolean = false,
             lastMigration: Instant? = null,
-            homeTimelineId: TimelineId?
+            homeTimelineId: TimelineId? = null
         ): UserDetail {
             return UserDetail(
                 id,

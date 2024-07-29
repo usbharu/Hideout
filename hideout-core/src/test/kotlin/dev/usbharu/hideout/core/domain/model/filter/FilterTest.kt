@@ -24,7 +24,8 @@ class FilterTest {
             actorId = ActorId(1),
             password = UserDetailHashedPassword(""),
             autoAcceptFolloweeFollowRequest = false,
-            lastMigration = null
+            lastMigration = null,
+            null
         )
 
         assertDoesNotThrow {
