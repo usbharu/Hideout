@@ -93,7 +93,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     implementation("org.springframework.boot:spring-boot-starter-log4j2")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-
+    annotationProcessor("org.springframework:spring-context-indexer")
 
     implementation(libs.blurhash)
     implementation(libs.aws.s3)

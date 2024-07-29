@@ -18,6 +18,8 @@ hideout:
 
 
 spring:
+  jmx:
+    enabled: false
   jackson:
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false
