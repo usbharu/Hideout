@@ -8,6 +8,7 @@ import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostId
 import dev.usbharu.hideout.core.domain.model.post.Visibility
 import dev.usbharu.hideout.core.domain.model.support.page.Page
+import dev.usbharu.hideout.core.domain.model.support.page.PaginationList
 import dev.usbharu.hideout.core.domain.model.support.timelineobjectdetail.TimelineObjectDetail
 import dev.usbharu.hideout.core.domain.model.timeline.Timeline
 import dev.usbharu.hideout.core.domain.model.timeline.TimelineId
@@ -110,7 +111,7 @@ abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateSe
         timelineId: TimelineId,
         readTimelineOption: ReadTimelineOption?,
         page: Page?
-    ): List<TimelineObject>
+    ): PaginationList<TimelineObject, PostId>
 
     override suspend fun updatePost(post: Post) {
         val timelineObjectByPostId = getTimelineObjectByPostId(post.id)
@@ -205,7 +206,7 @@ abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateSe
         timeline: Timeline,
         option: ReadTimelineOption?,
         page: Page?
-    ): List<TimelineObjectDetail> {
+    ): PaginationList<TimelineObjectDetail, PostId> {
         val timelineObjectList = getTimelineObject(timeline.id, option, page)
         val lastUpdatedAt = timelineObjectList.minBy { it.lastUpdatedAt }.lastUpdatedAt
 
@@ -231,31 +232,35 @@ abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateSe
             post.id to applyFilters(post, newerFilters)
         }
 
-        return timelineObjectList.mapNotNull<TimelineObject, TimelineObjectDetail> {
-            val timelineUserDetail = userDetails[it.userDetailId] ?: return@mapNotNull null
-            val actor = actors[it.postActorId] ?: return@mapNotNull null
-            val post = postMap[it.postId] ?: return@mapNotNull null
-            val reply = postMap[it.replyId]
-            val replyActor = actors[it.replyActorId]
-            val repost = postMap[it.repostId]
-            val repostActor = actors[it.repostActorId]
-            TimelineObjectDetail.of(
-                timelineObject = it,
-                timelineUserDetail = timelineUserDetail,
-                post = post.post,
-                postActor = actor,
-                replyPost = reply?.post,
-                replyPostActor = replyActor,
-                repostPost = repost?.post,
-                repostPostActor = repostActor,
-                warnFilter = it.warnFilters + post.filterResults.map {
-                    TimelineObjectWarnFilter(
-                        it.filter.id,
-                        it.matchedKeyword
-                    )
-                }
-            )
-        }
+        return PaginationList(
+            timelineObjectList.mapNotNull<TimelineObject, TimelineObjectDetail> {
+                val timelineUserDetail = userDetails[it.userDetailId] ?: return@mapNotNull null
+                val actor = actors[it.postActorId] ?: return@mapNotNull null
+                val post = postMap[it.postId] ?: return@mapNotNull null
+                val reply = postMap[it.replyId]
+                val replyActor = actors[it.replyActorId]
+                val repost = postMap[it.repostId]
+                val repostActor = actors[it.repostActorId]
+                TimelineObjectDetail.of(
+                    timelineObject = it,
+                    timelineUserDetail = timelineUserDetail,
+                    post = post.post,
+                    postActor = actor,
+                    replyPost = reply?.post,
+                    replyPostActor = replyActor,
+                    repostPost = repost?.post,
+                    repostPostActor = repostActor,
+                    warnFilter = it.warnFilters + post.filterResults.map {
+                        TimelineObjectWarnFilter(
+                            it.filter.id,
+                            it.matchedKeyword
+                        )
+                    }
+                )
+            },
+            timelineObjectList.lastOrNull()?.postId,
+            timelineObjectList.firstOrNull()?.postId
+        )
     }
 
     abstract suspend fun getActors(actorIds: List<ActorId>): Map<ActorId, Actor>

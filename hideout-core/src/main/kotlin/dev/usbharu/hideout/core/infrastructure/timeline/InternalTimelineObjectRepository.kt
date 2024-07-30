@@ -6,7 +6,6 @@ import dev.usbharu.hideout.core.domain.model.support.page.Page
 import dev.usbharu.hideout.core.domain.model.support.page.PaginationList
 import dev.usbharu.hideout.core.domain.model.timeline.TimelineId
 import dev.usbharu.hideout.core.domain.model.timelineobject.TimelineObject
-import dev.usbharu.hideout.core.domain.model.timelineobject.TimelineObjectId
 
 interface InternalTimelineObjectRepository {
     suspend fun save(timelineObject: TimelineObject): TimelineObject
@@ -24,7 +23,7 @@ interface InternalTimelineObjectRepository {
         timelineId: TimelineId,
         internalTimelineObjectOption: InternalTimelineObjectOption? = null,
         page: Page? = null
-    ): PaginationList<TimelineObject, TimelineObjectId>
+    ): PaginationList<TimelineObject, PostId>
 }
 
 data class InternalTimelineObjectOption(

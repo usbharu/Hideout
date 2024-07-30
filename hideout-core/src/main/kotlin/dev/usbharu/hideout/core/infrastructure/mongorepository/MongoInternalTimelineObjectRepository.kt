@@ -65,7 +65,7 @@ class MongoInternalTimelineObjectRepository(
         timelineId: TimelineId,
         internalTimelineObjectOption: InternalTimelineObjectOption?,
         page: Page?
-    ): PaginationList<TimelineObject, TimelineObjectId> {
+    ): PaginationList<TimelineObject, PostId> {
         val query = Query()
 
         if (page?.minId != null) {
@@ -85,8 +85,8 @@ class MongoInternalTimelineObjectRepository(
 
         return PaginationList(
             timelineObjects,
-            timelineObjects.lastOrNull()?.id,
-            timelineObjects.firstOrNull()?.id
+            timelineObjects.lastOrNull()?.postId,
+            timelineObjects.firstOrNull()?.postId
         )
     }
 }

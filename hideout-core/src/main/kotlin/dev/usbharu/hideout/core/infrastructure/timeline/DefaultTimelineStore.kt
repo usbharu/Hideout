@@ -13,6 +13,7 @@ import dev.usbharu.hideout.core.domain.model.post.PostId
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.domain.model.post.Visibility
 import dev.usbharu.hideout.core.domain.model.support.page.Page
+import dev.usbharu.hideout.core.domain.model.support.page.PaginationList
 import dev.usbharu.hideout.core.domain.model.timeline.Timeline
 import dev.usbharu.hideout.core.domain.model.timeline.TimelineId
 import dev.usbharu.hideout.core.domain.model.timeline.TimelineRepository
@@ -106,7 +107,7 @@ open class DefaultTimelineStore(
         timelineId: TimelineId,
         readTimelineOption: ReadTimelineOption?,
         page: Page?
-    ): List<TimelineObject> {
+    ): PaginationList<TimelineObject, PostId> {
         return internalTimelineObjectRepository.findByTimelineId(
             timelineId,
             InternalTimelineObjectOption(
