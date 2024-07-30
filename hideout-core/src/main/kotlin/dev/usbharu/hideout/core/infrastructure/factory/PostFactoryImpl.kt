@@ -52,6 +52,7 @@ class PostFactoryImpl(
         return Post.create(
             id = PostId(id),
             actorId = actor.id,
+            instanceId = actor.instance,
             overview = overview,
             content = postContentFactoryImpl.create(content),
             createdAt = Instant.now(),

@@ -44,7 +44,7 @@ create table if not exists actors
     created_at      timestamp      not null,
     key_id          varchar(1000)  not null,
     "following"     varchar(1000)  null,
-    followers       varchar(1000)  null,
+    "followers" varchar(1000) null,
     "instance"      bigint         not null,
     locked          boolean        not null,
     following_count int            null,
@@ -53,9 +53,11 @@ create table if not exists actors
     last_post_at    timestamp      null     default null,
     last_update_at  timestamp      not null,
     suspend         boolean        not null,
-    move_to         bigint         null     default null,
+    "move_to"   bigint        null default null,
     emojis          varchar(3000)  not null default '',
     deleted         boolean        not null default false,
+    "icon"      bigint        null,
+    "banner"    bigint        null,
     unique ("name", "domain"),
     constraint fk_actors_instance__id foreign key ("instance") references instance (id) on delete restrict on update restrict,
     constraint fk_actors_actors__move_to foreign key ("move_to") references actors (id) on delete restrict on update restrict
@@ -63,8 +65,8 @@ create table if not exists actors
 
 create table if not exists actor_alsoknownas
 (
-    actor_id      bigint not null,
-    also_known_as bigint not null,
+    "actor_id"      bigint not null,
+    "also_known_as" bigint not null,
     constraint fk_actor_alsoknownas_actors__actor_id foreign key ("actor_id") references actors (id) on delete cascade on update cascade,
     constraint fk_actor_alsoknownas_actors__also_known_as foreign key ("also_known_as") references actors (id) on delete cascade on update cascade
 );
@@ -91,6 +93,13 @@ create table if not exists media
     mime_type     varchar(255)  not null,
     description   varchar(4000) null
 );
+
+alter table actors
+    add constraint fk_actors_media__icon foreign key ("icon") references media (id) on delete cascade on update cascade;
+alter table actors
+    add constraint fk_actors_media__banner foreign key ("banner") references media (id) on delete cascade on update cascade;
+
+
 create table if not exists posts
 (
     id          bigint primary key,
@@ -170,13 +179,14 @@ create table if not exists relationships
     unique (actor_id, target_actor_id)
 );
 
-insert into instance (id, name, description, url, icon_url, shared_inbox, software, version, is_blocked, is_muted,
+insert into instance (id, "name", description, url, icon_url, shared_inbox, software, version, is_blocked, is_muted,
                       moderation_note, created_at)
 values (0, 'system', '', '', '', null, '', '', false, false, '', current_timestamp);
 
-insert into actors (id, name, domain, screen_name, description, inbox, outbox, url, public_key, private_key, created_at,
-                    key_id, following, followers, instance, locked, following_count, followers_count, posts_count,
-                    last_post_at, last_update_at, suspend, move_to, emojis)
+insert into actors (id, "name", "domain", screen_name, description, inbox, outbox, url, public_key, private_key,
+                    created_at,
+                    key_id, "following", "followers", "instance", locked, following_count, followers_count, posts_count,
+                    last_post_at, last_update_at, suspend, "move_to", emojis)
 values (0, '', '', '', '', '', '', '', '', null, current_timestamp, '', null, null, 0, true, null, null, 0, null,
         current_timestamp, false, null, '');
 

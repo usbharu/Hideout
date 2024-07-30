@@ -21,7 +21,7 @@ import dev.usbharu.hideout.core.domain.event.actor.ActorEvent.*
 import dev.usbharu.hideout.core.domain.model.emoji.EmojiId
 import dev.usbharu.hideout.core.domain.model.instance.InstanceId
 import dev.usbharu.hideout.core.domain.model.media.MediaId
-import dev.usbharu.hideout.core.domain.model.shared.Domain
+import dev.usbharu.hideout.core.domain.model.support.domain.Domain
 import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventStorable
 import java.net.URI
 import java.time.Instant

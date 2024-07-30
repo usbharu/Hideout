@@ -18,13 +18,13 @@ package dev.usbharu.hideout.core.domain.shared.domainevent
 
 @Suppress("UnnecessaryAbstractClass")
 abstract class DomainEventStorable {
-    private val domainEvents: MutableList<DomainEvent> = mutableListOf()
+    private val domainEvents: MutableList<DomainEvent<*>> = mutableListOf()
 
-    protected fun addDomainEvent(domainEvent: DomainEvent) {
+    protected fun addDomainEvent(domainEvent: DomainEvent<*>) {
         domainEvents.add(domainEvent)
     }
 
     fun clearDomainEvents() = domainEvents.clear()
 
-    fun getDomainEvents(): List<DomainEvent> = domainEvents.toList()
+    fun getDomainEvents(): List<DomainEvent<*>> = domainEvents.toList()
 }

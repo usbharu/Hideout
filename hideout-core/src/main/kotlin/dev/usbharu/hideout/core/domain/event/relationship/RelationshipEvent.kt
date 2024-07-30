@@ -21,11 +21,15 @@ import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEvent
 import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventBody
 
 class RelationshipEventFactory(private val relationship: Relationship) {
-    fun createEvent(relationshipEvent: RelationshipEvent): DomainEvent =
+    fun createEvent(relationshipEvent: RelationshipEvent): DomainEvent<RelationshipEventBody> =
         DomainEvent.create(relationshipEvent.eventName, RelationshipEventBody(relationship))
 }
 
-class RelationshipEventBody(relationship: Relationship) : DomainEventBody(mapOf("relationship" to relationship))
+class RelationshipEventBody(relationship: Relationship) : DomainEventBody(mapOf("relationship" to relationship)) {
+    fun getRelationship(): Relationship {
+        return toMap()["relationship"] as Relationship
+    }
+}
 
 enum class RelationshipEvent(val eventName: String) {
     FOLLOW("RelationshipFollow"),

@@ -312,6 +312,7 @@ class PostTest {
             Post.create(
                 id = PostId(1),
                 actorId = actor.id,
+                instanceId = actor.instance,
                 overview = null,
                 content = PostContent.empty,
                 createdAt = Instant.now(),
@@ -327,7 +328,6 @@ class PostTest {
                 hide = false,
                 moveTo = null,
                 actor = actor
-
             )
         }
     }
@@ -339,6 +339,7 @@ class PostTest {
         val post = Post.create(
             id = PostId(1),
             actorId = actor.id,
+            instanceId = actor.instance,
             overview = null,
             content = PostContent.empty,
             createdAt = Instant.now(),
@@ -366,6 +367,7 @@ class PostTest {
         val post = Post.create(
             id = PostId(1),
             actorId = actor.id,
+            instanceId = actor.instance,
             overview = null,
             content = PostContent.empty,
             createdAt = Instant.now(),
@@ -396,6 +398,7 @@ class PostTest {
             Post.create(
                 id = PostId(1),
                 actorId = actor.id,
+                instanceId = actor.instance,
                 overview = null,
                 content = PostContent.empty,
                 createdAt = Instant.now(),
@@ -425,6 +428,7 @@ class PostTest {
             Post.create(
                 id = PostId(1),
                 actorId = actor.id,
+                instanceId = actor.instance,
                 content = PostContent.empty,
                 createdAt = Instant.now(),
                 visibility = Visibility.PUBLIC,
@@ -447,6 +451,7 @@ class PostTest {
         val post = Post.create(
             id = PostId(1),
             actorId = actor.id,
+            instanceId = actor.instance,
             content = PostContent("aaa", "aaa", emojiIds),
             createdAt = Instant.now(),
             visibility = Visibility.PUBLIC,
@@ -472,6 +477,7 @@ class PostTest {
         val post = Post.create(
             id = PostId(1),
             actorId = actor.id,
+            instanceId = actor.instance,
             content = PostContent("aaa", "aaa", emojiIds),
             createdAt = Instant.now(),
             visibility = Visibility.PUBLIC,
@@ -510,6 +516,7 @@ class PostTest {
         val post = Post.create(
             id = PostId(1),
             actorId = actor.id,
+            instanceId = actor.instance,
             content = PostContent("aaa", "aaa", emojiIds),
             createdAt = Instant.now(),
             visibility = Visibility.PUBLIC,
@@ -536,6 +543,7 @@ class PostTest {
         val post = Post.create(
             id = PostId(1),
             actorId = actor.id,
+            instanceId = actor.instance,
             content = PostContent("aaa", "aaa", emojiIds),
             createdAt = Instant.now(),
             visibility = Visibility.PUBLIC,

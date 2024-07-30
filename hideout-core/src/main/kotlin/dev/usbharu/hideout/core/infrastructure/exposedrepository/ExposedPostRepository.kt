@@ -18,6 +18,8 @@ package dev.usbharu.hideout.core.infrastructure.exposedrepository
 
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.post.*
+import dev.usbharu.hideout.core.domain.model.support.page.Page
+import dev.usbharu.hideout.core.domain.model.support.page.PaginationList
 import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventPublisher
 import dev.usbharu.hideout.core.domain.shared.repository.DomainEventPublishableRepository
 import dev.usbharu.hideout.core.infrastructure.exposed.QueryMapper
@@ -160,14 +162,29 @@ class ExposedPostRepository(
             .first()
     }
 
-    override suspend fun findByActorId(id: ActorId): List<Post> = query {
-        Posts
-            .selectAll()
-            .where {
-                actorId eq id.id
-            }
-            .let(postQueryMapper::map)
+    override suspend fun findAllById(ids: List<PostId>): List<Post> {
+        return query {
+            Posts
+                .selectAll()
+                .where {
+                    Posts.id inList ids.map { it.id }
+                }
+                .let(postQueryMapper::map)
+        }
     }
+
+    override suspend fun findByActorId(id: ActorId, page: Page?): PaginationList<Post, PostId> = PaginationList(
+        query {
+            Posts
+                .selectAll()
+                .where {
+                    actorId eq actorId
+                }
+                .let(postQueryMapper::map)
+        },
+        null,
+        null
+    )
 
     override suspend fun delete(post: Post) {
         query {
@@ -178,6 +195,25 @@ class ExposedPostRepository(
         update(post)
     }
 
+    override suspend fun findByActorIdAndVisibilityInList(
+        actorId: ActorId,
+        visibilityList: List<Visibility>,
+        of: Page?
+    ): PaginationList<Post, PostId> {
+        return PaginationList(
+            query {
+                Posts
+                    .selectAll()
+                    .where {
+                        Posts.actorId eq actorId.id and (visibility inList visibilityList.map { it.name })
+                    }
+                    .let(postQueryMapper::map)
+            },
+            null,
+            null
+        )
+    }
+
     companion object {
         private val logger = LoggerFactory.getLogger(ExposedPostRepository::class.java)
     }
@@ -186,6 +222,7 @@ class ExposedPostRepository(
 object Posts : Table("posts") {
     val id = long("id")
     val actorId = long("actor_id").references(Actors.id)
+    val instanceId = long("instance_id").references(Instance.id)
     val overview = varchar("overview", PostOverview.LENGTH).nullable()
     val content = varchar("content", PostContent.CONTENT_LENGTH)
     val text = varchar("text", PostContent.TEXT_LENGTH)

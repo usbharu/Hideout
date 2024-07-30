@@ -1,7 +1,7 @@
 package dev.usbharu.hideout.core.infrastructure.exposedrepository
 
 import dev.usbharu.hideout.core.domain.model.actor.*
-import dev.usbharu.hideout.core.domain.model.shared.Domain
+import dev.usbharu.hideout.core.domain.model.support.domain.Domain
 import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventPublisher
 import dev.usbharu.hideout.core.domain.shared.repository.DomainEventPublishableRepository
 import dev.usbharu.hideout.core.infrastructure.exposed.QueryMapper
@@ -95,6 +95,18 @@ class ExposedActorRepository(
                 }
                 .let(actorQueryMapper::map)
                 .firstOrNull()
+        }
+    }
+
+    override suspend fun findAllById(actorIds: List<ActorId>): List<Actor> {
+        return query {
+            Actors
+                .leftJoin(ActorsAlsoKnownAs, onColumn = { id }, otherColumn = { actorId })
+                .selectAll()
+                .where {
+                    Actors.id inList actorIds.map { it.id }
+                }
+                .let(actorQueryMapper::map)
         }
     }
 

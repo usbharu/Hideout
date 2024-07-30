@@ -21,4 +21,5 @@ interface ActorRepository {
     suspend fun delete(actor: Actor)
     suspend fun findById(id: ActorId): Actor?
     suspend fun findByNameAndDomain(name: String, domain: String): Actor?
+    suspend fun findAllById(actorIds: List<ActorId>): List<Actor>
 }

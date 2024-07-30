@@ -17,7 +17,7 @@
 package dev.usbharu.hideout.core.domain.model.emoji
 
 import dev.usbharu.hideout.core.domain.model.instance.InstanceId
-import dev.usbharu.hideout.core.domain.model.shared.Domain
+import dev.usbharu.hideout.core.domain.model.support.domain.Domain
 import java.net.URI
 import java.time.Instant
 

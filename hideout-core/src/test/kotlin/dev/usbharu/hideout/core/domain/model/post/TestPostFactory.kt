@@ -1,6 +1,7 @@
 package dev.usbharu.hideout.core.domain.model.post
 
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
+import dev.usbharu.hideout.core.domain.model.instance.InstanceId
 import dev.usbharu.hideout.core.domain.model.media.MediaId
 import dev.usbharu.hideout.core.infrastructure.other.TwitterSnowflakeIdGenerateService
 import kotlinx.coroutines.runBlocking
@@ -13,6 +14,7 @@ object TestPostFactory {
     fun create(
         id: Long = generateId(),
         actorId: Long = 1,
+        instanceId: Long = 1,
         overview: String? = null,
         content: String = "This is test content",
         createdAt: Instant = Instant.now(),
@@ -31,20 +33,21 @@ object TestPostFactory {
         return Post(
             PostId(id),
             ActorId(actorId),
+            instanceId = InstanceId(instanceId),
             overview = overview?.let { PostOverview(it) },
             content = PostContent(content, content, emptyList()),
             createdAt = createdAt,
             visibility = visibility,
             url = url,
             repostId = repostId?.let { PostId(it) },
-            replyId?.let { PostId(it) },
+            replyId = replyId?.let { PostId(it) },
             sensitive = sensitive,
             apId = apId,
             deleted = deleted,
-            mediaIds.map { MediaId(it) },
-            visibleActors.map { ActorId(it) }.toSet(),
+            mediaIds = mediaIds.map { MediaId(it) },
+            visibleActors = visibleActors.map { ActorId(it) }.toSet(),
             hide = hide,
-            moveTo?.let { PostId(it) }
+            moveTo = moveTo?.let { PostId(it) }
         )
     }
 

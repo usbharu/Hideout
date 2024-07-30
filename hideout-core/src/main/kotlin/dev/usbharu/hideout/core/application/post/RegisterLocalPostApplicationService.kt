@@ -41,9 +41,9 @@ class RegisterLocalPostApplicationService(
 
     override suspend fun internalExecute(command: RegisterLocalPost, executor: CommandExecutor): Long {
         val actorId = (
-                userDetailRepository.findById(command.userDetailId)
-                    ?: throw IllegalStateException("actor not found")
-                ).actorId
+            userDetailRepository.findById(command.userDetailId)
+                ?: throw IllegalStateException("actor not found")
+            ).actorId
 
         val actor = actorRepository.findById(actorId)!!
 

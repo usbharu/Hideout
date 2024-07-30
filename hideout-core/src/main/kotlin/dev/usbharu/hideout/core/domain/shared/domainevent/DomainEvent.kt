@@ -28,23 +28,23 @@ import java.util.*
  * @property body ドメインイベントのボディ
  * @property collectable trueで同じドメインイベント名でをまとめる
  */
-data class DomainEvent(
+data class DomainEvent<out T : DomainEventBody>(
     val id: String,
     val name: String,
     val occurredOn: Instant,
-    val body: DomainEventBody,
+    val body: T,
     val collectable: Boolean = false
 ) {
     companion object {
-        fun create(name: String, body: DomainEventBody, collectable: Boolean = false): DomainEvent =
-            DomainEvent(UUID.randomUUID().toString(), name, Instant.now(), body, collectable)
+        fun <T : DomainEventBody> create(name: String, body: T, collectable: Boolean = false): DomainEvent<T> =
+            DomainEvent<T>(UUID.randomUUID().toString(), name, Instant.now(), body, collectable)
 
-        fun reconstruct(
+        fun <T : DomainEventBody> reconstruct(
             id: String,
             name: String,
             occurredOn: Instant,
-            body: DomainEventBody,
+            body: T,
             collectable: Boolean
-        ): DomainEvent = DomainEvent(id, name, occurredOn, body, collectable)
+        ): DomainEvent<T> = DomainEvent(id, name, occurredOn, body, collectable)
     }
 }

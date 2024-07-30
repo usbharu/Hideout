@@ -67,3 +67,4 @@ tasks.register("run") {
 springBoot {
     mainClass = "dev.usbharu.hideout.SpringApplicationKt"
 }
+
