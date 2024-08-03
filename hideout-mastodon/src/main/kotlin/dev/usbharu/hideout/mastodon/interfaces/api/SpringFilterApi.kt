@@ -47,8 +47,7 @@ class SpringFilterApi(
     override suspend fun apiV1FiltersIdDelete(id: String): ResponseEntity<Any> {
         return ResponseEntity.ok(
             deleteFilterV1ApplicationService.execute(
-                DeleteFilterV1(id.toLong()),
-                oauth2CommandExecutorFactory.getCommandExecutor()
+                DeleteFilterV1(id.toLong())
             )
         )
     }
@@ -56,8 +55,7 @@ class SpringFilterApi(
     override suspend fun apiV1FiltersIdGet(id: String): ResponseEntity<V1Filter> {
         return ResponseEntity.ok(
             getFilterV1ApplicationService.execute(
-                GetFilterV1(id.toLong()),
-                oauth2CommandExecutorFactory.getCommandExecutor()
+                GetFilterV1(id.toLong())
             )
         )
     }
@@ -93,12 +91,11 @@ class SpringFilterApi(
             RegisterFilter(
                 v1FilterPostRequest.phrase, filterContext, FilterAction.WARN,
                 setOf(RegisterFilterKeyword(v1FilterPostRequest.phrase, filterMode))
-            ), executor
+            )
         )
         return ResponseEntity.ok(
             getFilterV1ApplicationService.execute(
-                GetFilterV1(filter.filterKeywords.first().id),
-                executor
+                GetFilterV1(filter.filterKeywords.first().id)
             )
         )
     }
@@ -119,16 +116,14 @@ class SpringFilterApi(
 
     override suspend fun apiV2FiltersIdDelete(id: String): ResponseEntity<Any> {
         userDeleteFilterApplicationService.execute(
-            DeleteFilter(id.toLong()),
-            oauth2CommandExecutorFactory.getCommandExecutor()
+            DeleteFilter(id.toLong())
         )
         return ResponseEntity.ok(Unit)
     }
 
     override suspend fun apiV2FiltersIdGet(id: String): ResponseEntity<Filter> {
         val filter = userGetFilterApplicationService.execute(
-            GetFilter(id.toLong()),
-            oauth2CommandExecutorFactory.getCommandExecutor()
+            GetFilter(id.toLong())
         )
         return ResponseEntity.ok(
             filter(filter)
@@ -221,7 +216,7 @@ class SpringFilterApi(
                         }
                     )
                 }.toSet()
-            ), executor
+            )
         )
         return ResponseEntity.ok(filter(filter))
     }

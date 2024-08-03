@@ -18,9 +18,7 @@ package dev.usbharu.hideout.core.application.relationship.rejectfollowrequest
 
 import dev.usbharu.hideout.core.application.relationship.block.UserBlockApplicationService
 import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
-import dev.usbharu.hideout.core.application.shared.CommandExecutor
 import dev.usbharu.hideout.core.application.shared.Transaction
-import dev.usbharu.hideout.core.application.shared.UserDetailGettableCommandExecutor
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
@@ -36,10 +34,9 @@ class UserRejectFollowRequestApplicationService(
     private val userDetailRepository: UserDetailRepository,
 ) :
     AbstractApplicationService<RejectFollowRequest, Unit>(transaction, logger) {
-    override suspend fun internalExecute(command: RejectFollowRequest, executor: CommandExecutor) {
-        require(executor is UserDetailGettableCommandExecutor)
+    override suspend fun internalExecute(command: RejectFollowRequest) {
 
-        val userDetail = userDetailRepository.findById(executor.userDetailId)!!
+        val userDetail = userDetailRepository.findById(command.userDetailId)!!
         val actor = actorRepository.findById(userDetail.actorId)!!
 
         val targetId = ActorId(command.sourceActorId)

@@ -54,7 +54,6 @@ class Actor(
     moveTo: ActorId? = null,
     emojiIds: Set<EmojiId>,
     deleted: Boolean,
-    roles: Set<Role>,
     icon: MediaId?,
     banner: MediaId?,
 ) : DomainEventStorable() {
@@ -62,7 +61,7 @@ class Actor(
     var banner = banner
         private set
 
-    fun setBannerUrl(banner: MediaId?, actor: Actor) {
+    fun setBannerUrl(banner: MediaId?) {
         addDomainEvent(ActorDomainEventFactory(this).createEvent(UPDATE))
         this.banner = banner
     }
@@ -70,18 +69,9 @@ class Actor(
     var icon = icon
         private set
 
-    fun setIconUrl(icon: MediaId?, actor: Actor) {
+    fun setIconUrl(icon: MediaId?) {
         addDomainEvent(ActorDomainEventFactory(this).createEvent(UPDATE))
         this.icon = icon
-    }
-
-    var roles = roles
-        private set
-
-    fun setRole(roles: Set<Role>, actor: Actor) {
-        require(actor.roles.contains(Role.ADMINISTRATOR))
-
-        this.roles = roles
     }
 
     var suspend = suspend

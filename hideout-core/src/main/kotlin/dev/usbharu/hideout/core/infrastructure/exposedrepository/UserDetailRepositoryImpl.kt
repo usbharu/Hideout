@@ -69,9 +69,9 @@ class UserDetailRepositoryImpl : UserDetailRepository, AbstractRepository() {
             }
     }
 
-    override suspend fun findById(id: Long): UserDetail? = query {
+    override suspend fun findById(id: UserDetailId): UserDetail? = query {
         UserDetails
-            .selectAll().where { UserDetails.id eq id }
+            .selectAll().where { UserDetails.id eq id.id }
             .singleOrNull()
             ?.let {
                 userDetail(it)

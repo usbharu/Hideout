@@ -17,7 +17,6 @@
 package dev.usbharu.hideout.core.application.media
 
 import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
-import dev.usbharu.hideout.core.application.shared.CommandExecutor
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.media.*
 import dev.usbharu.hideout.core.domain.shared.id.IdGenerateService
@@ -39,7 +38,7 @@ class UploadMediaApplicationService(
     transaction,
     logger
 ) {
-    override suspend fun internalExecute(command: UploadMedia, executor: CommandExecutor): Media {
+    override suspend fun internalExecute(command: UploadMedia): Media {
         val process = mediaProcessor.process(command.path, command.name, null)
         val id = idGenerateService.generateId()
         val thumbnailUri = if (process.thumbnailPath != null) {

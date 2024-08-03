@@ -17,9 +17,7 @@
 package dev.usbharu.hideout.core.application.relationship.get
 
 import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
-import dev.usbharu.hideout.core.application.shared.CommandExecutor
 import dev.usbharu.hideout.core.application.shared.Transaction
-import dev.usbharu.hideout.core.application.shared.UserDetailGettableCommandExecutor
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.actorinstancerelationship.ActorInstanceRelationship
@@ -41,9 +39,8 @@ class GetRelationshipApplicationService(
         transaction,
         logger
     ) {
-    override suspend fun internalExecute(command: GetRelationship, executor: CommandExecutor): Relationship {
-        require(executor is UserDetailGettableCommandExecutor)
-        val userDetail = userDetailRepository.findById(executor.userDetailId)!!
+    override suspend fun internalExecute(command: GetRelationship): Relationship {
+        val userDetail = userDetailRepository.findById(command.userDetailId)!!
         val actor = actorRepository.findById(userDetail.actorId)!!
         val targetId = ActorId(command.targetActorId)
         val target = actorRepository.findById(targetId)!!

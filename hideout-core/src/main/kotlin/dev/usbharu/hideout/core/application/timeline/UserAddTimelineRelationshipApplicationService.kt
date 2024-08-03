@@ -1,7 +1,6 @@
 package dev.usbharu.hideout.core.application.timeline
 
 import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
-import dev.usbharu.hideout.core.application.shared.CommandExecutor
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.timelinerelationship.TimelineRelationshipRepository
 import org.slf4j.LoggerFactory
@@ -15,7 +14,7 @@ class UserAddTimelineRelationshipApplicationService(
     AbstractApplicationService<AddTimelineRelationship, Unit>(
         transaction, logger
     ) {
-    override suspend fun internalExecute(command: AddTimelineRelationship, executor: CommandExecutor) {
+    override suspend fun internalExecute(command: AddTimelineRelationship) {
         timelineRelationshipRepository.save(command.timelineRelationship)
 
     }

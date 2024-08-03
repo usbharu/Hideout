@@ -66,7 +66,6 @@ object TestActorFactory {
                 moveTo = moveTo?.let { ActorId(it) },
                 emojiIds = emojiIds,
                 deleted = deleted,
-                roles = roles,
                 icon = null,
                 banner = null,
 

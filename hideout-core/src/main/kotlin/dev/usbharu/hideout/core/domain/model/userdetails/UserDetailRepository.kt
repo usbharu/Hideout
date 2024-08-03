@@ -20,6 +20,6 @@ interface UserDetailRepository {
     suspend fun save(userDetail: UserDetail): UserDetail
     suspend fun delete(userDetail: UserDetail)
     suspend fun findByActorId(actorId: Long): UserDetail?
-    suspend fun findById(id: Long): UserDetail?
+    suspend fun findById(userDetailId: UserDetailId): UserDetail?
     suspend fun findAllById(idList: List<UserDetailId>): List<UserDetail>
 }

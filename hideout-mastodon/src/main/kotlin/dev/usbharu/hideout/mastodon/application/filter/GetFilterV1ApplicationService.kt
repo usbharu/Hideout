@@ -17,7 +17,6 @@
 package dev.usbharu.hideout.mastodon.application.filter
 
 import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
-import dev.usbharu.hideout.core.application.shared.CommandExecutor
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.filter.FilterContext.*
 import dev.usbharu.hideout.core.domain.model.filter.FilterKeywordId
@@ -32,7 +31,7 @@ class GetFilterV1ApplicationService(private val filterRepository: FilterReposito
     AbstractApplicationService<GetFilterV1, V1Filter>(
         transaction, logger
     ) {
-    override suspend fun internalExecute(command: GetFilterV1, executor: CommandExecutor): V1Filter {
+    override suspend fun internalExecute(command: GetFilterV1): V1Filter {
         val filter = filterRepository.findByFilterKeywordId(FilterKeywordId(command.filterKeywordId))
             ?: throw Exception("Not Found")
 

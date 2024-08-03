@@ -134,7 +134,7 @@ class ActorsTest {
     fun bannerが設定されたらupdateイベントが発生する() {
         val actor = TestActorFactory.create(publicKey = ActorPublicKey(""))
 
-        actor.setBannerUrl(MediaId(1), actor)
+        actor.setBannerUrl(MediaId(1))
 
         assertContainsEvent(actor, ActorEvent.UPDATE.eventName)
     }
@@ -143,7 +143,7 @@ class ActorsTest {
     fun iconが設定されたらupdateイベントが発生する() {
         val actor = TestActorFactory.create(publicKey = ActorPublicKey(""))
 
-        actor.setIconUrl(MediaId(1), actor)
+        actor.setIconUrl(MediaId(1))
 
         assertContainsEvent(actor, ActorEvent.UPDATE.eventName)
     }

@@ -52,8 +52,7 @@ class SpringMediaApi(
                 file.originalFilename ?: file.name,
                 null,
                 description
-            ),
-            oauth2CommandExecutorFactory.getCommandExecutor()
+            )
         )
 
         return ResponseEntity.ok(

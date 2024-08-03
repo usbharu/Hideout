@@ -17,7 +17,6 @@
 package dev.usbharu.hideout.core.application.post
 
 import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
-import dev.usbharu.hideout.core.application.shared.CommandExecutor
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.post.PostId
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
@@ -28,7 +27,7 @@ import org.springframework.stereotype.Service
 class GetPostApplicationService(private val postRepository: PostRepository, transaction: Transaction) :
     AbstractApplicationService<GetPost, Post>(transaction, logger) {
 
-    override suspend fun internalExecute(command: GetPost, executor: CommandExecutor): Post {
+    override suspend fun internalExecute(command: GetPost): Post {
         val post = postRepository.findById(PostId(command.postId)) ?: throw Exception("Post not found")
 
         return Post.of(post)

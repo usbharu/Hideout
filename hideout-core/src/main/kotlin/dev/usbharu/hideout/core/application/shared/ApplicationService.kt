@@ -17,5 +17,5 @@
 package dev.usbharu.hideout.core.application.shared
 
 interface ApplicationService<T : Any, R> {
-    suspend fun execute(command: T, executor: CommandExecutor): R
+    suspend fun execute(command: T): R
 }

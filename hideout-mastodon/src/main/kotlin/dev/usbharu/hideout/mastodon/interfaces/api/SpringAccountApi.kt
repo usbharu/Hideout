@@ -67,7 +67,7 @@ class SpringAccountApi(
 
     override suspend fun apiV1AccountsIdBlockPost(id: String): ResponseEntity<Relationship> {
         val executor = oauth2CommandExecutorFactory.getCommandExecutor()
-        userBlockApplicationService.execute(Block(id.toLong()), executor)
+        userBlockApplicationService.execute(Block(id.toLong()))
         return fetchRelationship(id, executor)
     }
 
@@ -77,7 +77,7 @@ class SpringAccountApi(
     ): ResponseEntity<Relationship> {
         val executor = oauth2CommandExecutorFactory.getCommandExecutor()
         userFollowRequestApplicationService.execute(
-            FollowRequest(id.toLong()), executor
+            FollowRequest(id.toLong())
         )
         return fetchRelationship(id, executor)
     }
@@ -86,7 +86,7 @@ class SpringAccountApi(
         id: String,
         executor: Oauth2CommandExecutor,
     ): ResponseEntity<Relationship> {
-        val relationship = getRelationshipApplicationService.execute(GetRelationship(id.toLong()), executor)
+        val relationship = getRelationshipApplicationService.execute(GetRelationship(id.toLong()))
         return ResponseEntity.ok(
             Relationship(
                 id = relationship.targetId.toString(),
@@ -109,8 +109,7 @@ class SpringAccountApi(
     override suspend fun apiV1AccountsIdGet(id: String): ResponseEntity<Account> {
         return ResponseEntity.ok(
             getAccountApplicationService.execute(
-                GetAccount(id),
-                oauth2CommandExecutorFactory.getCommandExecutor()
+                GetAccount(id)
             )
         )
     }
@@ -118,7 +117,7 @@ class SpringAccountApi(
     override suspend fun apiV1AccountsIdMutePost(id: String): ResponseEntity<Relationship> {
         val executor = oauth2CommandExecutorFactory.getCommandExecutor()
         userMuteApplicationService.execute(
-            Mute(id.toLong()), executor
+            Mute(id.toLong())
         )
         return fetchRelationship(id, executor)
     }
@@ -126,7 +125,7 @@ class SpringAccountApi(
     override suspend fun apiV1AccountsIdRemoveFromFollowersPost(id: String): ResponseEntity<Relationship> {
         val executor = oauth2CommandExecutorFactory.getCommandExecutor()
         userRemoveFromFollowersApplicationService.execute(
-            RemoveFromFollowers(id.toLong()), executor
+            RemoveFromFollowers(id.toLong())
         )
         return fetchRelationship(id, executor)
     }
@@ -134,7 +133,7 @@ class SpringAccountApi(
     override suspend fun apiV1AccountsIdUnblockPost(id: String): ResponseEntity<Relationship> {
         val executor = oauth2CommandExecutorFactory.getCommandExecutor()
         userUnblockApplicationService.execute(
-            Unblock(id.toLong()), executor
+            Unblock(id.toLong())
         )
         return fetchRelationship(id, executor)
     }
@@ -142,7 +141,7 @@ class SpringAccountApi(
     override suspend fun apiV1AccountsIdUnfollowPost(id: String): ResponseEntity<Relationship> {
         val executor = oauth2CommandExecutorFactory.getCommandExecutor()
         userUnfollowApplicationService.execute(
-            Unfollow(id.toLong()), executor
+            Unfollow(id.toLong())
         )
         return fetchRelationship(id, executor)
     }
@@ -150,7 +149,7 @@ class SpringAccountApi(
     override suspend fun apiV1AccountsIdUnmutePost(id: String): ResponseEntity<Relationship> {
         val executor = oauth2CommandExecutorFactory.getCommandExecutor()
         userUnmuteApplicationService.execute(
-            Unmute(id.toLong()), executor
+            Unmute(id.toLong())
         )
         return fetchRelationship(id, executor)
     }
@@ -166,7 +165,7 @@ class SpringAccountApi(
     override suspend fun apiV1AccountsVerifyCredentialsGet(): ResponseEntity<CredentialAccount> {
         val commandExecutor = oauth2CommandExecutorFactory.getCommandExecutor()
         val localActor =
-            getUserDetailApplicationService.execute(GetUserDetail(commandExecutor.userDetailId), commandExecutor)
+            getUserDetailApplicationService.execute(GetUserDetail(commandExecutor.userDetailId))
 
         return ResponseEntity.ok(
             CredentialAccount(
@@ -218,7 +217,7 @@ class SpringAccountApi(
     override suspend fun apiV1FollowRequestsAccountIdAuthorizePost(accountId: String): ResponseEntity<Relationship> {
         val executor = oauth2CommandExecutorFactory.getCommandExecutor()
         userAcceptFollowRequestApplicationService.execute(
-            AcceptFollowRequest(accountId.toLong()), executor
+            AcceptFollowRequest(accountId.toLong())
         )
         return fetchRelationship(accountId, executor)
     }
@@ -226,7 +225,7 @@ class SpringAccountApi(
     override suspend fun apiV1FollowRequestsAccountIdRejectPost(accountId: String): ResponseEntity<Relationship> {
         val executor = oauth2CommandExecutorFactory.getCommandExecutor()
         userRejectFollowRequestApplicationService.execute(
-            RejectFollowRequest(accountId.toLong()), executor
+            RejectFollowRequest(accountId.toLong())
         )
         return fetchRelationship(accountId, executor)
     }

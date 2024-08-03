@@ -17,9 +17,7 @@
 package dev.usbharu.hideout.core.application.relationship.followrequest
 
 import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
-import dev.usbharu.hideout.core.application.shared.CommandExecutor
 import dev.usbharu.hideout.core.application.shared.Transaction
-import dev.usbharu.hideout.core.application.shared.UserDetailGettableCommandExecutor
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.relationship.Relationship
@@ -39,10 +37,9 @@ class UserFollowRequestApplicationService(
     logger
 ) {
 
-    override suspend fun internalExecute(command: FollowRequest, executor: CommandExecutor) {
-        require(executor is UserDetailGettableCommandExecutor)
+    override suspend fun internalExecute(command: FollowRequest) {
 
-        val userDetail = userDetailRepository.findById(executor.userDetailId)!!
+        val userDetail = userDetailRepository.findById(command.userDetailId)!!
         val actor = actorRepository.findById(userDetail.actorId)!!
 
         val targetId = ActorId(command.targetActorId)

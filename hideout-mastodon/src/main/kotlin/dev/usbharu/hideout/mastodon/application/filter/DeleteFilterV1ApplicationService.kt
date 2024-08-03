@@ -17,7 +17,6 @@
 package dev.usbharu.hideout.mastodon.application.filter
 
 import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
-import dev.usbharu.hideout.core.application.shared.CommandExecutor
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.filter.FilterKeywordId
 import dev.usbharu.hideout.core.domain.model.filter.FilterRepository
@@ -33,7 +32,7 @@ class DeleteFilterV1ApplicationService(private val filterRepository: FilterRepos
         private val logger = LoggerFactory.getLogger(DeleteFilterV1ApplicationService::class.java)
     }
 
-    override suspend fun internalExecute(command: DeleteFilterV1, executor: CommandExecutor) {
+    override suspend fun internalExecute(command: DeleteFilterV1) {
         val filter = filterRepository.findByFilterKeywordId(FilterKeywordId(command.filterKeywordId))
             ?: throw Exception("Not Found")
         filterRepository.delete(filter)
