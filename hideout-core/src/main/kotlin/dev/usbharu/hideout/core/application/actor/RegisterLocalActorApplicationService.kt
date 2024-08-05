@@ -17,11 +17,11 @@
 package dev.usbharu.hideout.core.application.actor
 
 import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
-import dev.usbharu.hideout.core.application.shared.CommandExecutor
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.config.ApplicationConfig
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.instance.InstanceRepository
+import dev.usbharu.hideout.core.domain.model.support.principal.Principal
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetail
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
@@ -46,7 +46,7 @@ class RegisterLocalActorApplicationService(
     private val idGenerateService: IdGenerateService,
 ) : AbstractApplicationService<RegisterLocalActor, URI>(transaction, Companion.logger) {
 
-    override suspend fun internalExecute(command: RegisterLocalActor, executor: CommandExecutor): URI {
+    override suspend fun internalExecute(command: RegisterLocalActor, principal: Principal): URI {
         if (actorDomainService.usernameAlreadyUse(command.name)) {
             // todo 適切な例外を考える
             throw Exception("Username already exists")

@@ -48,8 +48,7 @@ class SpringStatusApi(
 
         return ResponseEntity.ok(
             getStatusApplicationService.execute(
-                GetStatus(id),
-                delegateCommandExecutorFactory.getCommandExecutor()
+                GetStatus(id)
             )
         )
     }
@@ -72,12 +71,11 @@ class SpringStatusApi(
                 replyId = statusesRequest.inReplyToId?.toLong(),
                 sensitive = statusesRequest.sensitive == true,
                 mediaIds = statusesRequest.mediaIds.orEmpty().map { it.toLong() }
-            ),
-            executor
+            )
         )
 
 
-        val status = getStatusApplicationService.execute(GetStatus(execute.toString()), executor)
+        val status = getStatusApplicationService.execute(GetStatus(execute.toString()))
         return ResponseEntity.ok(
             status
         )

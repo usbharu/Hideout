@@ -16,6 +16,7 @@
 
 package dev.usbharu.hideout.core.application.shared
 
+import dev.usbharu.hideout.core.domain.model.support.principal.Principal
 import kotlinx.coroutines.CancellationException
 import org.slf4j.Logger
 
@@ -23,13 +24,13 @@ abstract class AbstractApplicationService<T : Any, R>(
     protected val transaction: Transaction,
     protected val logger: Logger,
 ) : ApplicationService<T, R> {
-    override suspend fun execute(command: T, executor: CommandExecutor): R {
+    override suspend fun execute(command: T, principal: Principal): R {
         return try {
-            logger.debug("START {} by {}", command::class.simpleName, executor)
+            logger.debug("START {}", command::class.simpleName)
             val response = transaction.transaction<R> {
-                internalExecute(command, executor)
+                internalExecute(command, principal)
             }
-            logger.info("SUCCESS ${command::class.simpleName} by ${executor.executor}")
+            logger.info("SUCCESS ${command::class.simpleName}")
             response
         } catch (e: CancellationException) {
             logger.debug("Coroutine canceled", e)
@@ -40,5 +41,5 @@ abstract class AbstractApplicationService<T : Any, R>(
         }
     }
 
-    protected abstract suspend fun internalExecute(command: T, executor: CommandExecutor): R
+    protected abstract suspend fun internalExecute(command: T, principal: Principal): R
 }

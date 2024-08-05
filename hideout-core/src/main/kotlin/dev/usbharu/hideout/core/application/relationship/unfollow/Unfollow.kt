@@ -16,4 +16,6 @@
 
 package dev.usbharu.hideout.core.application.relationship.unfollow
 
-data class Unfollow(val targetActorId: Long)
+import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
+
+data class Unfollow(val targetActorId: Long, val userDetailId: UserDetailId)

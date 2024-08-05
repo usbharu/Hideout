@@ -16,4 +16,6 @@
 
 package dev.usbharu.hideout.core.application.relationship.unblock
 
-data class Unblock(val targetActorId: Long)
+import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
+
+data class Unblock(val targetActorId: Long, val userDetailId: UserDetailId)

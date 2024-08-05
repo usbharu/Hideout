@@ -16,4 +16,4 @@
 
 package dev.usbharu.hideout.core.application.relationship.removefromfollowers
 
-data class RemoveFromFollowers(val targetActorId: Long)
+data class RemoveFromFollowers(val targetActorId: Long, val userDetailId: Long)

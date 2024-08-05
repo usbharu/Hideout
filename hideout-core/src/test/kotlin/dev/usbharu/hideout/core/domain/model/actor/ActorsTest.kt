@@ -3,7 +3,6 @@ package dev.usbharu.hideout.core.domain.model.actor
 import dev.usbharu.hideout.core.domain.event.actor.ActorEvent
 import dev.usbharu.hideout.core.domain.model.media.MediaId
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import utils.AssertDomainEvent.assertContainsEvent
 import utils.AssertDomainEvent.assertEmpty
@@ -134,7 +133,7 @@ class ActorsTest {
     fun bannerが設定されたらupdateイベントが発生する() {
         val actor = TestActorFactory.create(publicKey = ActorPublicKey(""))
 
-        actor.setBannerUrl(MediaId(1), actor)
+        actor.setBannerUrl(MediaId(1))
 
         assertContainsEvent(actor, ActorEvent.UPDATE.eventName)
     }
@@ -143,30 +142,8 @@ class ActorsTest {
     fun iconが設定されたらupdateイベントが発生する() {
         val actor = TestActorFactory.create(publicKey = ActorPublicKey(""))
 
-        actor.setIconUrl(MediaId(1), actor)
+        actor.setIconUrl(MediaId(1))
 
         assertContainsEvent(actor, ActorEvent.UPDATE.eventName)
-    }
-
-    @Test
-    fun administratorロールを持っている人はroleを設定できる() {
-        val admin = TestActorFactory.create(roles = setOf(Role.ADMINISTRATOR))
-
-        val actor = TestActorFactory.create()
-
-        assertDoesNotThrow {
-            actor.setRole(setOf(Role.MODERATOR), admin)
-        }
-    }
-
-    @Test
-    fun administratorロールを持ってないとはroleを設定できない() {
-        val admin = TestActorFactory.create(roles = setOf(Role.MODERATOR))
-
-        val actor = TestActorFactory.create()
-
-        assertThrows<IllegalArgumentException> {
-            actor.setRole(setOf(Role.MODERATOR), admin)
-        }
     }
 }

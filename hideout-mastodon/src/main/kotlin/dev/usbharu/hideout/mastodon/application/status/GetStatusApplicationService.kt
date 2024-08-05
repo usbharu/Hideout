@@ -17,8 +17,8 @@
 package dev.usbharu.hideout.mastodon.application.status
 
 import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
-import dev.usbharu.hideout.core.application.shared.CommandExecutor
 import dev.usbharu.hideout.core.application.shared.Transaction
+import dev.usbharu.hideout.core.domain.model.support.principal.Principal
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.Status
 import dev.usbharu.hideout.mastodon.query.StatusQueryService
 import org.slf4j.LoggerFactory
@@ -36,7 +36,7 @@ class GetStatusApplicationService(
         val logger = LoggerFactory.getLogger(GetStatusApplicationService::class.java)!!
     }
 
-    override suspend fun internalExecute(command: GetStatus, executor: CommandExecutor): Status {
+    override suspend fun internalExecute(command: GetStatus, principal: Principal): Status {
         return statusQueryService.findByPostId(command.id.toLong()) ?: throw Exception("Not fount")
     }
 }

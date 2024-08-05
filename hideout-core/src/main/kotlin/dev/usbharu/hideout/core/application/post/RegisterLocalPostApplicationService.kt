@@ -17,13 +17,14 @@
 package dev.usbharu.hideout.core.application.post
 
 import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
-import dev.usbharu.hideout.core.application.shared.CommandExecutor
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.media.MediaId
 import dev.usbharu.hideout.core.domain.model.post.PostId
 import dev.usbharu.hideout.core.domain.model.post.PostOverview
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
+import dev.usbharu.hideout.core.domain.model.support.principal.Principal
+import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
 import dev.usbharu.hideout.core.infrastructure.factory.PostFactoryImpl
 import org.slf4j.Logger
@@ -39,9 +40,9 @@ class RegisterLocalPostApplicationService(
     transaction: Transaction,
 ) : AbstractApplicationService<RegisterLocalPost, Long>(transaction, Companion.logger) {
 
-    override suspend fun internalExecute(command: RegisterLocalPost, executor: CommandExecutor): Long {
+    override suspend fun internalExecute(command: RegisterLocalPost, principal: Principal): Long {
         val actorId = (
-            userDetailRepository.findById(command.userDetailId)
+                userDetailRepository.findById(UserDetailId(command.userDetailId))
                 ?: throw IllegalStateException("actor not found")
             ).actorId
 

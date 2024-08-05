@@ -20,11 +20,9 @@ import dev.usbharu.hideout.core.domain.event.post.PostDomainEventFactory
 import dev.usbharu.hideout.core.domain.event.post.PostEvent
 import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
-import dev.usbharu.hideout.core.domain.model.actor.Role
 import dev.usbharu.hideout.core.domain.model.emoji.EmojiId
 import dev.usbharu.hideout.core.domain.model.instance.InstanceId
 import dev.usbharu.hideout.core.domain.model.media.MediaId
-import dev.usbharu.hideout.core.domain.model.post.Post.Companion.Action.*
 import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventStorable
 import java.net.URI
 import java.time.Instant
@@ -62,7 +60,6 @@ class Post(
         private set
 
     fun setVisibility(visibility: Visibility, actor: Actor) {
-        require(isAllow(actor, UPDATE, this))
         require(this.visibility != Visibility.DIRECT)
         require(visibility != Visibility.DIRECT)
         require(this.visibility.ordinal >= visibility.ordinal)
@@ -79,7 +76,6 @@ class Post(
         private set
 
     fun setVisibleActors(visibleActors: Set<ActorId>, actor: Actor) {
-        require(isAllow(actor, UPDATE, this))
         require(deleted.not())
         if (visibility == Visibility.DIRECT) {
             addDomainEvent(PostDomainEventFactory(this, actor).createEvent(PostEvent.UPDATE))
@@ -97,7 +93,6 @@ class Post(
         private set
 
     fun setContent(content: PostContent, actor: Actor) {
-        require(isAllow(actor, UPDATE, this))
         require(deleted.not())
         if (this.content != content) {
             addDomainEvent(PostDomainEventFactory(this, actor).createEvent(PostEvent.UPDATE))
@@ -115,7 +110,6 @@ class Post(
         private set
 
     fun setOverview(overview: PostOverview?, actor: Actor) {
-        require(isAllow(actor, UPDATE, this))
         require(deleted.not())
         if (this.overview != overview) {
             addDomainEvent(PostDomainEventFactory(this, actor).createEvent(PostEvent.UPDATE))
@@ -127,7 +121,6 @@ class Post(
         private set
 
     fun setSensitive(sensitive: Boolean, actor: Actor) {
-        isAllow(actor, UPDATE, this)
         require(deleted.not())
         if (this.sensitive != sensitive) {
             addDomainEvent(PostDomainEventFactory(this, actor).createEvent(PostEvent.UPDATE))
@@ -161,7 +154,6 @@ class Post(
         private set
 
     fun addMediaIds(mediaIds: List<MediaId>, actor: Actor) {
-        require(isAllow(actor, UPDATE, this))
         require(deleted.not())
         addDomainEvent(PostDomainEventFactory(this, actor).createEvent(PostEvent.UPDATE))
         this.mediaIds = this.mediaIds.plus(mediaIds).distinct()
@@ -171,7 +163,6 @@ class Post(
         private set
 
     fun delete(actor: Actor) {
-        isAllow(actor, DELETE, this)
         if (deleted.not()) {
             addDomainEvent(PostDomainEventFactory(this, actor).createEvent(PostEvent.DELETE))
             content = PostContent.empty
@@ -209,7 +200,6 @@ class Post(
         private set
 
     fun moveTo(moveTo: PostId, actor: Actor) {
-        require(isAllow(actor, MOVE, this))
         require(this.moveTo == null)
         this.moveTo = moveTo
     }
@@ -324,26 +314,5 @@ class Post(
             return post
         }
 
-        fun isAllow(actor: Actor, action: Action, resource: Post): Boolean {
-            return when (action) {
-                UPDATE -> {
-                    resource.actorId == actor.id || actor.roles.contains(Role.ADMINISTRATOR) || actor.roles.contains(
-                        Role.MODERATOR
-                    )
-                }
-
-                MOVE -> resource.actorId == actor.id && actor.deleted.not()
-                DELETE ->
-                    resource.actorId == actor.id ||
-                        actor.roles.contains(Role.ADMINISTRATOR) ||
-                        actor.roles.contains(Role.MODERATOR)
-            }
-        }
-
-        enum class Action {
-            UPDATE,
-            MOVE,
-            DELETE,
-        }
     }
 }

@@ -60,7 +60,6 @@ class ActorResultRowMapper : ResultRowMapper<Actor> {
                 .map { EmojiId(it.toLong()) }
                 .toSet(),
             deleted = resultRow[Actors.deleted],
-            roles = emptySet(),
             icon = resultRow[Actors.icon]?.let { MediaId(it) },
             banner = resultRow[Actors.banner]?.let { MediaId(it) }
         )

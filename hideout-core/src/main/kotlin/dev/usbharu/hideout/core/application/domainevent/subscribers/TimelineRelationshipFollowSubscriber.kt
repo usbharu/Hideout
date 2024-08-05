@@ -1,7 +1,5 @@
 package dev.usbharu.hideout.core.application.domainevent.subscribers
 
-import dev.usbharu.hideout.core.application.shared.DomainEventCommandExecutor
-import dev.usbharu.hideout.core.application.shared.UserDetailGettableCommandExecutor
 import dev.usbharu.hideout.core.application.timeline.AddTimelineRelationship
 import dev.usbharu.hideout.core.application.timeline.UserAddTimelineRelationshipApplicationService
 import dev.usbharu.hideout.core.domain.event.relationship.RelationshipEvent
@@ -38,12 +36,7 @@ class TimelineRelationshipFollowSubscriber(
                         relationship.targetActorId,
                         Visible.FOLLOWERS
                     )
-                ), DomainEventCommandExecutor("", object : UserDetailGettableCommandExecutor {
-                    override val userDetailId: Long
-                        get() = userDetail.id.id
-                    override val executor: String
-                        get() = userDetail.id.id.toString()
-                })
+                ), it.body.principal
             )
 
 

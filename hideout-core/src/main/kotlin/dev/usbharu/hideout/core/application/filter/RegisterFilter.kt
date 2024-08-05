@@ -18,10 +18,12 @@ package dev.usbharu.hideout.core.application.filter
 
 import dev.usbharu.hideout.core.domain.model.filter.FilterAction
 import dev.usbharu.hideout.core.domain.model.filter.FilterContext
+import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
 
 data class RegisterFilter(
     val filterName: String,
     val filterContext: Set<FilterContext>,
     val filterAction: FilterAction,
     val filterKeywords: Set<RegisterFilterKeyword>,
+    val userDetailId: UserDetailId
 )

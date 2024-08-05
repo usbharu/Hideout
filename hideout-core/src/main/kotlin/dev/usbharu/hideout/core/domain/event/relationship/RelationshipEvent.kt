@@ -17,15 +17,20 @@
 package dev.usbharu.hideout.core.domain.event.relationship
 
 import dev.usbharu.hideout.core.domain.model.relationship.Relationship
+import dev.usbharu.hideout.core.domain.model.support.principal.Anonymous
+import dev.usbharu.hideout.core.domain.model.support.principal.Principal
 import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEvent
 import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventBody
 
-class RelationshipEventFactory(private val relationship: Relationship) {
+class RelationshipEventFactory(private val relationship: Relationship, private val principal: Principal = Anonymous) {
     fun createEvent(relationshipEvent: RelationshipEvent): DomainEvent<RelationshipEventBody> =
-        DomainEvent.create(relationshipEvent.eventName, RelationshipEventBody(relationship))
+        DomainEvent.create(relationshipEvent.eventName, RelationshipEventBody(relationship, principal))
 }
 
-class RelationshipEventBody(relationship: Relationship) : DomainEventBody(mapOf("relationship" to relationship)) {
+class RelationshipEventBody(
+    relationship: Relationship,
+    override val principal: Principal
+) : DomainEventBody(mapOf("relationship" to relationship), principal) {
     fun getRelationship(): Relationship {
         return toMap()["relationship"] as Relationship
     }
