@@ -22,6 +22,7 @@ import dev.usbharu.hideout.core.domain.model.filter.FilterContext.*
 import dev.usbharu.hideout.core.domain.model.filter.FilterKeywordId
 import dev.usbharu.hideout.core.domain.model.filter.FilterMode
 import dev.usbharu.hideout.core.domain.model.filter.FilterRepository
+import dev.usbharu.hideout.core.domain.model.support.principal.Principal
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.V1Filter
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
@@ -31,7 +32,7 @@ class GetFilterV1ApplicationService(private val filterRepository: FilterReposito
     AbstractApplicationService<GetFilterV1, V1Filter>(
         transaction, logger
     ) {
-    override suspend fun internalExecute(command: GetFilterV1): V1Filter {
+    override suspend fun internalExecute(command: GetFilterV1, principal: Principal): V1Filter {
         val filter = filterRepository.findByFilterKeywordId(FilterKeywordId(command.filterKeywordId))
             ?: throw Exception("Not Found")
 

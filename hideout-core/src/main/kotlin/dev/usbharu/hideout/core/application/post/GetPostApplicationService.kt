@@ -20,6 +20,7 @@ import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.post.PostId
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
+import dev.usbharu.hideout.core.domain.model.support.principal.Principal
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -27,7 +28,7 @@ import org.springframework.stereotype.Service
 class GetPostApplicationService(private val postRepository: PostRepository, transaction: Transaction) :
     AbstractApplicationService<GetPost, Post>(transaction, logger) {
 
-    override suspend fun internalExecute(command: GetPost): Post {
+    override suspend fun internalExecute(command: GetPost, principal: Principal): Post {
         val post = postRepository.findById(PostId(command.postId)) ?: throw Exception("Post not found")
 
         return Post.of(post)

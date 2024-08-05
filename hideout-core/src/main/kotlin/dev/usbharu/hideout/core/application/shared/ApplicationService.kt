@@ -16,6 +16,8 @@
 
 package dev.usbharu.hideout.core.application.shared
 
+import dev.usbharu.hideout.core.domain.model.support.principal.Principal
+
 interface ApplicationService<T : Any, R> {
-    suspend fun execute(command: T): R
+    suspend fun execute(command: T, principal: Principal): R
 }

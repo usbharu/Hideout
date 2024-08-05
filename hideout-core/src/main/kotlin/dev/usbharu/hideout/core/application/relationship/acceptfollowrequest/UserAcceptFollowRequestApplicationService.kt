@@ -22,6 +22,7 @@ import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
+import dev.usbharu.hideout.core.domain.model.support.principal.Principal
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -34,7 +35,7 @@ class UserAcceptFollowRequestApplicationService(
     private val userDetailRepository: UserDetailRepository,
 ) :
     AbstractApplicationService<AcceptFollowRequest, Unit>(transaction, logger) {
-    override suspend fun internalExecute(command: AcceptFollowRequest) {
+    override suspend fun internalExecute(command: AcceptFollowRequest, principal: Principal) {
 
         val userDetail = userDetailRepository.findById(command.userDetailId)!!
         val actor = actorRepository.findById(userDetail.actorId)!!

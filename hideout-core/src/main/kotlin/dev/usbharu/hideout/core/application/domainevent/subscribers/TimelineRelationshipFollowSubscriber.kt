@@ -36,7 +36,7 @@ class TimelineRelationshipFollowSubscriber(
                         relationship.targetActorId,
                         Visible.FOLLOWERS
                     )
-                )
+                ), it.body.principal
             )
 
 

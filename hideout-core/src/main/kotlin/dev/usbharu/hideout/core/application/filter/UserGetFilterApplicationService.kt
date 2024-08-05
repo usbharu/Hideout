@@ -20,6 +20,7 @@ import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.filter.FilterId
 import dev.usbharu.hideout.core.domain.model.filter.FilterRepository
+import dev.usbharu.hideout.core.domain.model.support.principal.Principal
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -29,7 +30,7 @@ class UserGetFilterApplicationService(private val filterRepository: FilterReposi
         transaction,
         logger
     ) {
-    override suspend fun internalExecute(command: GetFilter): Filter {
+    override suspend fun internalExecute(command: GetFilter, principal: Principal): Filter {
         val filter = filterRepository.findByFilterId(FilterId(command.filterId)) ?: throw Exception("Not Found")
 
         return Filter.of(filter)

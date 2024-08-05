@@ -23,6 +23,7 @@ import dev.usbharu.hideout.core.domain.model.media.MediaId
 import dev.usbharu.hideout.core.domain.model.post.PostId
 import dev.usbharu.hideout.core.domain.model.post.PostOverview
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
+import dev.usbharu.hideout.core.domain.model.support.principal.Principal
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
 import dev.usbharu.hideout.core.infrastructure.factory.PostContentFactoryImpl
 import org.slf4j.LoggerFactory
@@ -37,7 +38,7 @@ class UpdateLocalNoteApplicationService(
     private val actorRepository: ActorRepository,
 ) : AbstractApplicationService<UpdateLocalNote, Unit>(transaction, logger) {
 
-    override suspend fun internalExecute(command: UpdateLocalNote) {
+    override suspend fun internalExecute(command: UpdateLocalNote, principal: Principal) {
 
         val userDetail = userDetailRepository.findById(command.userDetailId)!!
         val actor = actorRepository.findById(userDetail.actorId)!!

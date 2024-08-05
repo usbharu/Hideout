@@ -18,6 +18,7 @@ package dev.usbharu.hideout.core.interfaces.api.auth
 
 import dev.usbharu.hideout.core.application.actor.RegisterLocalActor
 import dev.usbharu.hideout.core.application.actor.RegisterLocalActorApplicationService
+import dev.usbharu.hideout.core.domain.model.support.principal.Anonymous
 import dev.usbharu.hideout.core.infrastructure.springframework.SpringMvcCommandExecutorFactory
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.stereotype.Controller
@@ -39,7 +40,7 @@ class AuthController(
     suspend fun signUp(@Validated @ModelAttribute signUpForm: SignUpForm, request: HttpServletRequest): String {
         val registerLocalActor = RegisterLocalActor(signUpForm.username, signUpForm.password)
         val uri = registerLocalActorApplicationService.execute(
-            registerLocalActor
+            registerLocalActor, Anonymous
         )
         request.login(signUpForm.username, signUpForm.password)
         return "redirect:$uri"

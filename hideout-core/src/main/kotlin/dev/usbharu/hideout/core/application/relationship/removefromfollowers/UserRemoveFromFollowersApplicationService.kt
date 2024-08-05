@@ -23,6 +23,7 @@ import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.relationship.Relationship
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
+import dev.usbharu.hideout.core.domain.model.support.principal.Principal
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
 import org.slf4j.LoggerFactory
@@ -36,7 +37,7 @@ class UserRemoveFromFollowersApplicationService(
     private val userDetailRepository: UserDetailRepository,
 ) :
     AbstractApplicationService<RemoveFromFollowers, Unit>(transaction, logger) {
-    override suspend fun internalExecute(command: RemoveFromFollowers) {
+    override suspend fun internalExecute(command: RemoveFromFollowers, principal: Principal) {
 
         val userDetail = userDetailRepository.findById(UserDetailId(command.userDetailId))!!
         val actor = actorRepository.findById(userDetail.actorId)!!

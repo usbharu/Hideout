@@ -33,7 +33,7 @@ class ActorDomainEventFactory(private val actor: Actor) {
 class ActorEventBody(actor: Actor) : DomainEventBody(
     mapOf(
         "actor" to actor
-    )
+    ),
 )
 
 enum class ActorEvent(val eventName: String, val collectable: Boolean = true) {

@@ -23,6 +23,7 @@ import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.relationship.Relationship
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
+import dev.usbharu.hideout.core.domain.model.support.principal.Principal
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -35,7 +36,7 @@ class UserUnblockApplicationService(
     private val userDetailRepository: UserDetailRepository,
 ) :
     AbstractApplicationService<Unblock, Unit>(transaction, logger) {
-    override suspend fun internalExecute(command: Unblock) {
+    override suspend fun internalExecute(command: Unblock, principal: Principal) {
 
         val userDetail = userDetailRepository.findById(command.userDetailId)!!
         val actor = actorRepository.findById(userDetail.actorId)!!

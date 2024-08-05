@@ -39,7 +39,7 @@ class ActorInstanceRelationshipEventBody(actorInstanceRelationship: ActorInstanc
             "muting" to actorInstanceRelationship.muting,
             "blocking" to actorInstanceRelationship.blocking,
             "doNotSendPrivate" to actorInstanceRelationship.doNotSendPrivate,
-        )
+        ),
     )
 
 enum class ActorInstanceRelationshipEvent(val eventName: String) {

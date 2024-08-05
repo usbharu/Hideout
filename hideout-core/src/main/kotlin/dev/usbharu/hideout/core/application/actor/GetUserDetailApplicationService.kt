@@ -20,6 +20,7 @@ import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.emoji.CustomEmojiRepository
+import dev.usbharu.hideout.core.domain.model.support.principal.Principal
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
 import org.slf4j.LoggerFactory
@@ -33,7 +34,7 @@ class GetUserDetailApplicationService(
     transaction: Transaction,
 ) :
     AbstractApplicationService<GetUserDetail, UserDetail>(transaction, Companion.logger) {
-    override suspend fun internalExecute(command: GetUserDetail): UserDetail {
+    override suspend fun internalExecute(command: GetUserDetail, principal: Principal): UserDetail {
         val userDetail = userDetailRepository.findById(UserDetailId(command.id))
             ?: throw IllegalArgumentException("actor does not exist")
         val actor = actorRepository.findById(userDetail.actorId)!!

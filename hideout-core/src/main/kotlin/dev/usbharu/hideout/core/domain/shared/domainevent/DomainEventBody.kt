@@ -16,7 +16,9 @@
 
 package dev.usbharu.hideout.core.domain.shared.domainevent
 
+import dev.usbharu.hideout.core.domain.model.support.principal.Principal
+
 @Suppress("UnnecessaryAbstractClass")
-abstract class DomainEventBody(private val map: Map<String, Any?>) {
+abstract class DomainEventBody(private val map: Map<String, Any?>, open val principal: Principal? = null) {
     fun toMap(): Map<String, Any?> = map
 }

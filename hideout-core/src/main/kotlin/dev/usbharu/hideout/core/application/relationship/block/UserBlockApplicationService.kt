@@ -22,6 +22,7 @@ import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.relationship.Relationship
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
+import dev.usbharu.hideout.core.domain.model.support.principal.Principal
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
 import dev.usbharu.hideout.core.domain.service.relationship.RelationshipDomainService
 import org.slf4j.LoggerFactory
@@ -36,7 +37,7 @@ class UserBlockApplicationService(
     private val relationshipDomainService: RelationshipDomainService,
 ) :
     AbstractApplicationService<Block, Unit>(transaction, logger) {
-    override suspend fun internalExecute(command: Block) {
+    override suspend fun internalExecute(command: Block, principal: Principal) {
 
         val userDetail = userDetailRepository.findById(command.userDetailId)!!
         val actor = actorRepository.findById(userDetail.actorId)!!
