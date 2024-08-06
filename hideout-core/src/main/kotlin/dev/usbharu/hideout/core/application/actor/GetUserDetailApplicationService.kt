@@ -16,6 +16,7 @@
 
 package dev.usbharu.hideout.core.application.actor
 
+import dev.usbharu.hideout.core.application.exception.InternalServerException
 import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
@@ -36,8 +37,9 @@ class GetUserDetailApplicationService(
     AbstractApplicationService<GetUserDetail, UserDetail>(transaction, Companion.logger) {
     override suspend fun internalExecute(command: GetUserDetail, principal: Principal): UserDetail {
         val userDetail = userDetailRepository.findById(UserDetailId(command.id))
-            ?: throw IllegalArgumentException("actor does not exist")
-        val actor = actorRepository.findById(userDetail.actorId)!!
+            ?: throw IllegalArgumentException("User ${command.id} does not exist")
+        val actor = actorRepository.findById(userDetail.actorId)
+            ?: throw InternalServerException("Actor ${userDetail.actorId} not found")
 
         val emojis = customEmojiRepository.findByIds(actor.emojis.map { it.emojiId })
 

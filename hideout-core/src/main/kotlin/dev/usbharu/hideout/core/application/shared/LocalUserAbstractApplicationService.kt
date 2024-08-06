@@ -11,5 +11,5 @@ abstract class LocalUserAbstractApplicationService<T : Any, R>(transaction: Tran
         return internalExecute(command, principal)
     }
 
-    abstract suspend fun internalExecute(command: T, principal: FromApi): R
+    protected abstract suspend fun internalExecute(command: T, principal: FromApi): R
 }

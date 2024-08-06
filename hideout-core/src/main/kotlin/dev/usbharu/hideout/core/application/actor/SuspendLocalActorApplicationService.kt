@@ -30,8 +30,8 @@ class SuspendLocalActorApplicationService(
         transaction.transaction {
             val id = ActorId(actorId)
 
-            val findById = actorRepository.findById(id)!!
-            findById.suspend = true
+            val actor = actorRepository.findById(id)!!
+            actor.suspend = true
         }
     }
 }

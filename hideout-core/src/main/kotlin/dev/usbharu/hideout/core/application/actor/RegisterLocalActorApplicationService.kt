@@ -16,6 +16,7 @@
 
 package dev.usbharu.hideout.core.application.actor
 
+import dev.usbharu.hideout.core.application.exception.InternalServerException
 import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.config.ApplicationConfig
@@ -49,9 +50,10 @@ class RegisterLocalActorApplicationService(
     override suspend fun internalExecute(command: RegisterLocalActor, principal: Principal): URI {
         if (actorDomainService.usernameAlreadyUse(command.name)) {
             // todo 適切な例外を考える
-            throw Exception("Username already exists")
+            throw IllegalArgumentException("Username already exists")
         }
-        val instance = instanceRepository.findByUrl(applicationConfig.url.toURI())!!
+        val instance = instanceRepository.findByUrl(applicationConfig.url.toURI())
+            ?: throw InternalServerException("Local instance not found.")
 
         val actor = actorFactoryImpl.createLocal(
             command.name,
