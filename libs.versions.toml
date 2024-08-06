@@ -1,6 +1,6 @@
 [versions]
 
-kotlin = "2.0.0"
+kotlin = "2.0.10"
 ktor = "2.3.12"
 exposed = "0.53.0"
 javacv-ffmpeg = "6.1.1-1.5.10"
