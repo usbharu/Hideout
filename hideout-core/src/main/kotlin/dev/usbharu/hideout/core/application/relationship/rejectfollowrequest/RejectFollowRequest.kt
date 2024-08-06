@@ -16,6 +16,4 @@
 
 package dev.usbharu.hideout.core.application.relationship.rejectfollowrequest
 
-import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
-
-data class RejectFollowRequest(val sourceActorId: Long, val userDetailId: UserDetailId)
+data class RejectFollowRequest(val sourceActorId: Long)

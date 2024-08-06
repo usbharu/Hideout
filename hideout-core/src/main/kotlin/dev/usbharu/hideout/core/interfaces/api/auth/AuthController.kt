@@ -19,7 +19,6 @@ package dev.usbharu.hideout.core.interfaces.api.auth
 import dev.usbharu.hideout.core.application.actor.RegisterLocalActor
 import dev.usbharu.hideout.core.application.actor.RegisterLocalActorApplicationService
 import dev.usbharu.hideout.core.domain.model.support.principal.Anonymous
-import dev.usbharu.hideout.core.infrastructure.springframework.SpringMvcCommandExecutorFactory
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.stereotype.Controller
 import org.springframework.validation.annotation.Validated
@@ -30,7 +29,6 @@ import org.springframework.web.bind.annotation.PostMapping
 @Controller
 class AuthController(
     private val registerLocalActorApplicationService: RegisterLocalActorApplicationService,
-    private val springMvcCommandExecutorFactory: SpringMvcCommandExecutorFactory,
 ) {
     @GetMapping("/auth/sign_up")
     @Suppress("FunctionOnlyReturningConstant")

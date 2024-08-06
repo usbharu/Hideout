@@ -19,8 +19,7 @@ package dev.usbharu.hideout.mastodon.interfaces.api
 import dev.usbharu.hideout.core.application.post.RegisterLocalPost
 import dev.usbharu.hideout.core.application.post.RegisterLocalPostApplicationService
 import dev.usbharu.hideout.core.domain.model.post.Visibility
-import dev.usbharu.hideout.core.infrastructure.springframework.DelegateCommandExecutorFactory
-import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.Oauth2CommandExecutor
+import dev.usbharu.hideout.core.domain.model.support.principal.PrincipalContextHolder
 import dev.usbharu.hideout.mastodon.application.status.GetStatus
 import dev.usbharu.hideout.mastodon.application.status.GetStatusApplicationService
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.StatusApi
@@ -32,9 +31,9 @@ import org.springframework.stereotype.Controller
 
 @Controller
 class SpringStatusApi(
-    private val delegateCommandExecutorFactory: DelegateCommandExecutorFactory,
     private val registerLocalPostApplicationService: RegisterLocalPostApplicationService,
     private val getStatusApplicationService: GetStatusApplicationService,
+    private val principalContextHolder: PrincipalContextHolder
 ) : StatusApi {
     override suspend fun apiV1StatusesIdEmojiReactionsEmojiDelete(id: String, emoji: String): ResponseEntity<Status> {
         return super.apiV1StatusesIdEmojiReactionsEmojiDelete(id, emoji)
@@ -48,16 +47,15 @@ class SpringStatusApi(
 
         return ResponseEntity.ok(
             getStatusApplicationService.execute(
-                GetStatus(id)
+                GetStatus(id), principalContextHolder.getPrincipal()
             )
         )
     }
 
     override suspend fun apiV1StatusesPost(statusesRequest: StatusesRequest): ResponseEntity<Status> {
-        val executor = delegateCommandExecutorFactory.getCommandExecutor() as Oauth2CommandExecutor
+
         val execute = registerLocalPostApplicationService.execute(
             RegisterLocalPost(
-                userDetailId = executor.userDetailId,
                 content = statusesRequest.status.orEmpty(),
                 overview = statusesRequest.spoilerText,
                 visibility = when (statusesRequest.visibility) {
@@ -71,11 +69,12 @@ class SpringStatusApi(
                 replyId = statusesRequest.inReplyToId?.toLong(),
                 sensitive = statusesRequest.sensitive == true,
                 mediaIds = statusesRequest.mediaIds.orEmpty().map { it.toLong() }
-            )
+            ), principalContextHolder.getPrincipal()
         )
 
 
-        val status = getStatusApplicationService.execute(GetStatus(execute.toString()))
+        val status =
+            getStatusApplicationService.execute(GetStatus(execute.toString()), principalContextHolder.getPrincipal())
         return ResponseEntity.ok(
             status
         )

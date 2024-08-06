@@ -20,7 +20,7 @@ import dev.usbharu.hideout.core.application.filter.*
 import dev.usbharu.hideout.core.domain.model.filter.FilterAction
 import dev.usbharu.hideout.core.domain.model.filter.FilterContext
 import dev.usbharu.hideout.core.domain.model.filter.FilterMode
-import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.Oauth2CommandExecutorFactory
+import dev.usbharu.hideout.core.domain.model.support.principal.PrincipalContextHolder
 import dev.usbharu.hideout.mastodon.application.filter.DeleteFilterV1
 import dev.usbharu.hideout.mastodon.application.filter.DeleteFilterV1ApplicationService
 import dev.usbharu.hideout.mastodon.application.filter.GetFilterV1
@@ -36,18 +36,18 @@ import org.springframework.stereotype.Controller
 
 @Controller
 class SpringFilterApi(
-    private val oauth2CommandExecutorFactory: Oauth2CommandExecutorFactory,
     private val userRegisterFilterApplicationService: UserRegisterFilterApplicationService,
     private val getFilterV1ApplicationService: GetFilterV1ApplicationService,
     private val deleteFilterV1ApplicationService: DeleteFilterV1ApplicationService,
     private val userDeleteFilterApplicationService: UserDeleteFilterApplicationService,
     private val userGetFilterApplicationService: UserGetFilterApplicationService,
+    private val principalContextHolder: PrincipalContextHolder
 ) : FilterApi {
 
     override suspend fun apiV1FiltersIdDelete(id: String): ResponseEntity<Any> {
         return ResponseEntity.ok(
             deleteFilterV1ApplicationService.execute(
-                DeleteFilterV1(id.toLong())
+                DeleteFilterV1(id.toLong()), principalContextHolder.getPrincipal()
             )
         )
     }
@@ -55,7 +55,7 @@ class SpringFilterApi(
     override suspend fun apiV1FiltersIdGet(id: String): ResponseEntity<V1Filter> {
         return ResponseEntity.ok(
             getFilterV1ApplicationService.execute(
-                GetFilterV1(id.toLong())
+                GetFilterV1(id.toLong()), principalContextHolder.getPrincipal()
             )
         )
     }
@@ -72,7 +72,7 @@ class SpringFilterApi(
     }
 
     override suspend fun apiV1FiltersPost(v1FilterPostRequest: V1FilterPostRequest): ResponseEntity<V1Filter> {
-        val executor = oauth2CommandExecutorFactory.getCommandExecutor()
+
         val filterMode = if (v1FilterPostRequest.wholeWord == true) {
             FilterMode.WHOLE_WORD
         } else {
@@ -91,11 +91,11 @@ class SpringFilterApi(
             RegisterFilter(
                 v1FilterPostRequest.phrase, filterContext, FilterAction.WARN,
                 setOf(RegisterFilterKeyword(v1FilterPostRequest.phrase, filterMode))
-            )
+            ), principalContextHolder.getPrincipal()
         )
         return ResponseEntity.ok(
             getFilterV1ApplicationService.execute(
-                GetFilterV1(filter.filterKeywords.first().id)
+                GetFilterV1(filter.filterKeywords.first().id), principalContextHolder.getPrincipal()
             )
         )
     }
@@ -116,14 +116,14 @@ class SpringFilterApi(
 
     override suspend fun apiV2FiltersIdDelete(id: String): ResponseEntity<Any> {
         userDeleteFilterApplicationService.execute(
-            DeleteFilter(id.toLong())
+            DeleteFilter(id.toLong()), principalContextHolder.getPrincipal()
         )
         return ResponseEntity.ok(Unit)
     }
 
     override suspend fun apiV2FiltersIdGet(id: String): ResponseEntity<Filter> {
         val filter = userGetFilterApplicationService.execute(
-            GetFilter(id.toLong())
+            GetFilter(id.toLong()), principalContextHolder.getPrincipal()
         )
         return ResponseEntity.ok(
             filter(filter)
@@ -186,7 +186,7 @@ class SpringFilterApi(
     }
 
     override suspend fun apiV2FiltersPost(filterPostRequest: FilterPostRequest): ResponseEntity<Filter> {
-        val executor = oauth2CommandExecutorFactory.getCommandExecutor()
+
         val filter = userRegisterFilterApplicationService.execute(
             RegisterFilter(
                 filterName = filterPostRequest.title,
@@ -216,7 +216,7 @@ class SpringFilterApi(
                         }
                     )
                 }.toSet()
-            )
+            ), principalContextHolder.getPrincipal()
         )
         return ResponseEntity.ok(filter(filter))
     }

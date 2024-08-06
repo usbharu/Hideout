@@ -16,13 +16,13 @@
 
 package dev.usbharu.hideout.core.application.relationship.block
 
-import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
+import dev.usbharu.hideout.core.application.shared.LocalUserAbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.relationship.Relationship
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
-import dev.usbharu.hideout.core.domain.model.support.principal.Principal
+import dev.usbharu.hideout.core.domain.model.support.principal.FromApi
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
 import dev.usbharu.hideout.core.domain.service.relationship.RelationshipDomainService
 import org.slf4j.LoggerFactory
@@ -36,10 +36,10 @@ class UserBlockApplicationService(
     private val userDetailRepository: UserDetailRepository,
     private val relationshipDomainService: RelationshipDomainService,
 ) :
-    AbstractApplicationService<Block, Unit>(transaction, logger) {
-    override suspend fun internalExecute(command: Block, principal: Principal) {
+    LocalUserAbstractApplicationService<Block, Unit>(transaction, logger) {
+    override suspend fun internalExecute(command: Block, principal: FromApi) {
 
-        val userDetail = userDetailRepository.findById(command.userDetailId)!!
+        val userDetail = userDetailRepository.findById(principal.userDetailId)!!
         val actor = actorRepository.findById(userDetail.actorId)!!
 
         val targetId = ActorId(command.targetActorId)

@@ -17,12 +17,12 @@
 package dev.usbharu.hideout.core.application.relationship.rejectfollowrequest
 
 import dev.usbharu.hideout.core.application.relationship.block.UserBlockApplicationService
-import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
+import dev.usbharu.hideout.core.application.shared.LocalUserAbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
-import dev.usbharu.hideout.core.domain.model.support.principal.Principal
+import dev.usbharu.hideout.core.domain.model.support.principal.FromApi
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -34,10 +34,10 @@ class UserRejectFollowRequestApplicationService(
     private val actorRepository: ActorRepository,
     private val userDetailRepository: UserDetailRepository,
 ) :
-    AbstractApplicationService<RejectFollowRequest, Unit>(transaction, logger) {
-    override suspend fun internalExecute(command: RejectFollowRequest, principal: Principal) {
+    LocalUserAbstractApplicationService<RejectFollowRequest, Unit>(transaction, logger) {
+    override suspend fun internalExecute(command: RejectFollowRequest, principal: FromApi) {
 
-        val userDetail = userDetailRepository.findById(command.userDetailId)!!
+        val userDetail = userDetailRepository.findById(principal.userDetailId)!!
         val actor = actorRepository.findById(userDetail.actorId)!!
 
         val targetId = ActorId(command.sourceActorId)
