@@ -43,8 +43,6 @@ class DefaultPostContentFormatter(private val policyFactory: PolicyFactory) : Po
 
         // 文字だけのHTMLなどはここでpタグで囲む
         val flattenHtml = unsafeElement.childNodes().mapNotNull {
-            println(it.toString())
-            println(it.javaClass)
             if (it is Element) {
                 it
             } else if (it is TextNode) {
@@ -58,8 +56,6 @@ class DefaultPostContentFormatter(private val policyFactory: PolicyFactory) : Po
         val unsafeHtml = Elements(flattenHtml).outerHtml()
 
         val safeHtml = policyFactory.sanitize(unsafeHtml)
-
-        println(safeHtml)
 
         val safeDocument =
             Jsoup.parseBodyFragment(safeHtml).getElementsByTag("body").first() ?: return FormattedPostContent("", "")
@@ -97,6 +93,9 @@ class DefaultPostContentFormatter(private val policyFactory: PolicyFactory) : Po
         }
 
         val elements = Elements(formattedHtml)
+        val document1 = Document("")
+        document1.outputSettings().syntax(Document.OutputSettings.Syntax.xml)
+        document1.insertChildren(0, elements)
 
         return FormattedPostContent(elements.outerHtml().replace("\n", ""), printHtml(elements))
     }
