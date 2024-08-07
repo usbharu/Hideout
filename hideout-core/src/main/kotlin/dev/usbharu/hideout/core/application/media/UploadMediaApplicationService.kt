@@ -16,10 +16,10 @@
 
 package dev.usbharu.hideout.core.application.media
 
-import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
+import dev.usbharu.hideout.core.application.shared.LocalUserAbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.media.*
-import dev.usbharu.hideout.core.domain.model.support.principal.Principal
+import dev.usbharu.hideout.core.domain.model.support.principal.FromApi
 import dev.usbharu.hideout.core.domain.shared.id.IdGenerateService
 import dev.usbharu.hideout.core.external.media.MediaProcessor
 import dev.usbharu.hideout.core.external.mediastore.MediaStore
@@ -35,11 +35,11 @@ class UploadMediaApplicationService(
     private val mediaRepository: MediaRepository,
     private val idGenerateService: IdGenerateService,
     transaction: Transaction
-) : AbstractApplicationService<UploadMedia, Media>(
+) : LocalUserAbstractApplicationService<UploadMedia, Media>(
     transaction,
     logger
 ) {
-    override suspend fun internalExecute(command: UploadMedia, principal: Principal): Media {
+    override suspend fun internalExecute(command: UploadMedia, principal: FromApi): Media {
         val process = mediaProcessor.process(command.path, command.name, null)
         val id = idGenerateService.generateId()
         val thumbnailUri = if (process.thumbnailPath != null) {

@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.domain.service.post
+package dev.usbharu.hideout.core.infrastructure.other
 
+import dev.usbharu.hideout.core.domain.service.post.FormattedPostContent
+import dev.usbharu.hideout.core.domain.service.post.PostContentFormatter
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
