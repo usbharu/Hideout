@@ -43,6 +43,8 @@ class DefaultPostContentFormatter(private val policyFactory: PolicyFactory) : Po
 
         // 文字だけのHTMLなどはここでpタグで囲む
         val flattenHtml = unsafeElement.childNodes().mapNotNull {
+            println(it.toString())
+            println(it.javaClass)
             if (it is Element) {
                 it
             } else if (it is TextNode) {
@@ -56,6 +58,8 @@ class DefaultPostContentFormatter(private val policyFactory: PolicyFactory) : Po
         val unsafeHtml = Elements(flattenHtml).outerHtml()
 
         val safeHtml = policyFactory.sanitize(unsafeHtml)
+
+        println(safeHtml)
 
         val safeDocument =
             Jsoup.parseBodyFragment(safeHtml).getElementsByTag("body").first() ?: return FormattedPostContent("", "")
@@ -71,11 +75,25 @@ class DefaultPostContentFormatter(private val policyFactory: PolicyFactory) : Po
                 if (childNode is Element && childNode.tagName() == "br") {
                     brCount++
                 } else if (brCount >= 2) {
-                    formattedHtml.add(Element("p").appendChildren(childNodes.subList(prevIndex, index - brCount)))
+                    formattedHtml.add(
+                        Element(element.tag(), element.baseUri(), element.attributes()).appendChildren(
+                            childNodes.subList(
+                                prevIndex,
+                                index - brCount
+                            )
+                        )
+                    )
                     prevIndex = index
                 }
             }
-            formattedHtml.add(Element("p").appendChildren(childNodes.subList(prevIndex, childNodes.size)))
+            formattedHtml.add(
+                Element(element.tag(), element.baseUri(), element.attributes()).appendChildren(
+                    childNodes.subList(
+                        prevIndex,
+                        childNodes.size
+                    )
+                )
+            )
         }
 
         val elements = Elements(formattedHtml)
