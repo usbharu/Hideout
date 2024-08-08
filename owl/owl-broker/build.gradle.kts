@@ -13,9 +13,9 @@ repositories {
 
 dependencies {
     implementation("io.grpc:grpc-kotlin-stub:1.4.1")
-    implementation("io.grpc:grpc-protobuf:1.65.1")
+    implementation("io.grpc:grpc-protobuf:1.66.0")
     implementation("com.google.protobuf:protobuf-kotlin:4.27.3")
-    implementation("io.grpc:grpc-netty:1.65.1")
+    implementation("io.grpc:grpc-netty:1.66.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
     implementation(project(":owl-common"))
     implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.23.1")
@@ -36,7 +36,7 @@ protobuf {
     }
     plugins {
         create("grpc") {
-            artifact = "io.grpc:protoc-gen-grpc-java:1.65.1"
+            artifact = "io.grpc:protoc-gen-grpc-java:1.66.0"
         }
         create("grpckt") {
             artifact = "io.grpc:protoc-gen-grpc-kotlin:1.4.1:jdk8@jar"
