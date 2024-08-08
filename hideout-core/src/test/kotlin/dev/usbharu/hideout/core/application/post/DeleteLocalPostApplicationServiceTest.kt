@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.core.application.post
 
+import dev.usbharu.hideout.core.application.exception.PermissionDeniedException
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.actor.TestActorFactory
@@ -11,6 +12,7 @@ import dev.usbharu.hideout.core.domain.model.support.principal.FromApi
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
@@ -40,5 +42,14 @@ class DeleteLocalPostApplicationServiceTest {
         whenever(actorRepository.findById(ActorId(2))).doReturn(TestActorFactory.create(id = 2))
 
         service.execute(DeleteLocalPost(1), FromApi(ActorId(2), UserDetailId(2), Acct("test", "example.com")))
+    }
+
+    @Test
+    fun Post主以外はローカルPostを削除できない() = runTest {
+        whenever(postRepository.findById(PostId(1))).doReturn(TestPostFactory.create(actorId = 2))
+
+        assertThrows<PermissionDeniedException> {
+            service.execute(DeleteLocalPost(1), FromApi(ActorId(3), UserDetailId(3), Acct("test", "example.com")))
+        }
     }
 }

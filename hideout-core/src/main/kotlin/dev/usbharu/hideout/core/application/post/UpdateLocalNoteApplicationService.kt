@@ -16,14 +16,16 @@
 
 package dev.usbharu.hideout.core.application.post
 
-import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
+import dev.usbharu.hideout.core.application.exception.InternalServerException
+import dev.usbharu.hideout.core.application.exception.PermissionDeniedException
+import dev.usbharu.hideout.core.application.shared.LocalUserAbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.media.MediaId
 import dev.usbharu.hideout.core.domain.model.post.PostId
 import dev.usbharu.hideout.core.domain.model.post.PostOverview
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
-import dev.usbharu.hideout.core.domain.model.support.principal.Principal
+import dev.usbharu.hideout.core.domain.model.support.principal.FromApi
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
 import dev.usbharu.hideout.core.infrastructure.factory.PostContentFactoryImpl
 import org.slf4j.LoggerFactory
@@ -36,13 +38,19 @@ class UpdateLocalNoteApplicationService(
     private val postContentFactoryImpl: PostContentFactoryImpl,
     private val userDetailRepository: UserDetailRepository,
     private val actorRepository: ActorRepository,
-) : AbstractApplicationService<UpdateLocalNote, Unit>(transaction, logger) {
+) : LocalUserAbstractApplicationService<UpdateLocalNote, Unit>(transaction, logger) {
 
-    override suspend fun internalExecute(command: UpdateLocalNote, principal: Principal) {
+    override suspend fun internalExecute(command: UpdateLocalNote, principal: FromApi) {
+        val post = postRepository.findById(PostId(command.postId))
+            ?: throw IllegalArgumentException("Post ${command.postId} not found.")
+        if (post.actorId != principal.actorId) {
+            throw PermissionDeniedException()
+        }
 
-        val userDetail = userDetailRepository.findById(command.userDetailId)!!
-        val actor = actorRepository.findById(userDetail.actorId)!!
-        val post = postRepository.findById(PostId(command.postId))!!
+        val userDetail = userDetailRepository.findById(principal.userDetailId)
+            ?: throw InternalServerException("User detail ${principal.userDetailId} not found.")
+        val actor = actorRepository.findById(userDetail.actorId)
+            ?: throw InternalServerException("Actor ${principal.actorId} not found.")
 
         post.setContent(postContentFactoryImpl.create(command.content), actor)
         post.setOverview(command.overview?.let { PostOverview(it) }, actor)
