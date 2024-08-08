@@ -11,7 +11,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.mongodb:mongodb-driver-kotlin-coroutine:5.1.2")
+    implementation("org.mongodb:mongodb-driver-kotlin-coroutine:5.1.3")
     implementation(project(":owl-broker"))
     implementation(project(":owl-common"))
     implementation(platform("io.insert-koin:koin-bom:3.5.6"))
