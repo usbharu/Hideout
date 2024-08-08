@@ -49,7 +49,6 @@ class RegisterLocalActorApplicationService(
 
     override suspend fun internalExecute(command: RegisterLocalActor, principal: Principal): URI {
         if (actorDomainService.usernameAlreadyUse(command.name)) {
-            // todo 適切な例外を考える
             throw IllegalArgumentException("Username already exists")
         }
         val instance = instanceRepository.findByUrl(applicationConfig.url.toURI())
@@ -74,6 +73,6 @@ class RegisterLocalActorApplicationService(
     }
 
     companion object {
-        val logger = LoggerFactory.getLogger(RegisterLocalActorApplicationService::class.java)
+        private val logger = LoggerFactory.getLogger(RegisterLocalActorApplicationService::class.java)
     }
 }

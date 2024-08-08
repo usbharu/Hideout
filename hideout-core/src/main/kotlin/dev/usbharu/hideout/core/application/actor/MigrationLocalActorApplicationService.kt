@@ -16,39 +16,59 @@
 
 package dev.usbharu.hideout.core.application.actor
 
+import dev.usbharu.hideout.core.application.exception.InternalServerException
+import dev.usbharu.hideout.core.application.exception.PermissionDeniedException
+import dev.usbharu.hideout.core.application.shared.LocalUserAbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
+import dev.usbharu.hideout.core.domain.model.support.principal.FromApi
+import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
 import dev.usbharu.hideout.core.domain.service.actor.local.AccountMigrationCheck.*
 import dev.usbharu.hideout.core.domain.service.actor.local.LocalActorMigrationCheckDomainService
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
 class MigrationLocalActorApplicationService(
-    private val transaction: Transaction,
     private val actorRepository: ActorRepository,
     private val localActorMigrationCheckDomainService: LocalActorMigrationCheckDomainService,
-) {
-    suspend fun migration(from: Long, to: Long, executor: ActorId) {
-        transaction.transaction<Unit> {
-            val fromActorId = ActorId(from)
-            val toActorId = ActorId(to)
+    transaction: Transaction,
+    private val userDetailRepository: UserDetailRepository,
+) : LocalUserAbstractApplicationService<MigrationLocalActor, Unit>(transaction, logger) {
 
-            val fromActor = actorRepository.findById(fromActorId)!!
-            val toActor = actorRepository.findById(toActorId)!!
-
-            val canAccountMigration = localActorMigrationCheckDomainService.canAccountMigration(fromActor, toActor)
-            when (canAccountMigration) {
-                is AlreadyMoved -> TODO()
-                is CanAccountMigration -> {
-                    fromActor.moveTo = toActorId
-                    actorRepository.save(fromActor)
-                }
-
-                is CircularReferences -> TODO()
-                is SelfReferences -> TODO()
-                is AlsoKnownAsNotFound -> TODO()
-            }
+    override suspend fun internalExecute(command: MigrationLocalActor, principal: FromApi) {
+        if (command.from != principal.actorId.id) {
+            throw PermissionDeniedException()
         }
+
+        val userDetail = userDetailRepository.findById(principal.userDetailId)
+            ?: throw InternalServerException("User detail ${principal.userDetailId} not found.")
+
+        val fromActorId = ActorId(command.from)
+        val toActorId = ActorId(command.to)
+
+        val fromActor =
+            actorRepository.findById(fromActorId) ?: throw IllegalArgumentException("Actor ${command.from} not found.")
+        val toActor =
+            actorRepository.findById(toActorId) ?: throw IllegalArgumentException("Actor ${command.to} not found.")
+
+        val canAccountMigration =
+            localActorMigrationCheckDomainService.canAccountMigration(userDetail, fromActor, toActor)
+        if (canAccountMigration.canMigration) {
+            fromActor.moveTo = toActorId
+            actorRepository.save(fromActor)
+        } else when (canAccountMigration) {
+            is AlreadyMoved -> throw IllegalArgumentException(canAccountMigration.message)
+            is CanAccountMigration -> throw InternalServerException()
+            is CircularReferences -> throw IllegalArgumentException(canAccountMigration.message)
+            is SelfReferences -> throw IllegalArgumentException("Self references are not supported")
+            is AlsoKnownAsNotFound -> throw IllegalArgumentException(canAccountMigration.message)
+            is MigrationCoolDown -> throw IllegalArgumentException(canAccountMigration.message)
+        }
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(MigrationLocalActorApplicationService::class.java)
     }
 }
