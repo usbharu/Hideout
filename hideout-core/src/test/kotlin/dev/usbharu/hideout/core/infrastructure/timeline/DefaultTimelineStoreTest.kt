@@ -345,4 +345,150 @@ class DefaultTimelineStoreTest {
             }
         }
     }
+
+    @Test
+    fun repostがあるときはRepostを含めたTimelineObjectが作成される() = runTest {
+        val repost = TestPostFactory.create()
+        val post = TestPostFactory.create(repostId = repost.id.id)
+
+        whenever(postRepository.findById(repost.id)).doReturn(repost)
+        whenever(timelineRelationshipRepository.findByActorId(post.actorId)).doReturn(
+            listOf(
+                TimelineRelationship(
+                    TimelineRelationshipId(1),
+                    TimelineId(12),
+                    post.actorId,
+                    Visible.PUBLIC
+                )
+            )
+        )
+
+        whenever(timelineRepository.findByIds(listOf(TimelineId(12)))).doReturn(
+            listOf(
+                Timeline(
+                    id = TimelineId(12),
+                    userDetailId = UserDetailId(post.actorId.id),
+                    name = TimelineName("timeline"),
+                    visibility = TimelineVisibility.PUBLIC,
+                    isSystem = false
+                )
+            )
+        )
+
+        val filters = listOf(
+            Filter(
+                id = FilterId(13),
+                userDetailId = UserDetailId(post.actorId.id),
+                name = FilterName("filter"),
+                filterContext = setOf(FilterContext.HOME),
+                filterAction = FilterAction.HIDE,
+                filterKeywords = setOf(
+                    FilterKeyword(FilterKeywordId(14), FilterKeywordKeyword("aa"), FilterMode.NONE)
+                )
+            )
+        )
+
+        whenever(filterRepository.findByUserDetailId(UserDetailId(post.actorId.id))).doReturn(filters)
+
+        whenever(filterDomainService.apply(post, FilterContext.HOME, filters)).doReturn(
+            FilteredPost(
+                post, listOf(
+                    FilterResult(filters.first(), "aaa")
+                )
+            )
+        )
+
+        timelineStore.addPost(post)
+
+        argumentCaptor<List<TimelineObject>> {
+            verify(internalTimelineObjectRepository, times(1)).saveAll(capture())
+            val timelineObjectList = allValues.first()
+
+            assertThat(timelineObjectList).allSatisfy {
+                assertThat(it.postId).isEqualTo(post.id)
+                assertThat(it.postActorId).isEqualTo(post.actorId)
+                assertThat(it.replyId).isNull()
+                assertThat(it.replyActorId).isNull()
+                assertThat(it.repostId).isEqualTo(repost.id)
+                assertThat(it.repostActorId).isEqualTo(repost.actorId)
+
+                assertThat(it.userDetailId).isEqualTo(UserDetailId(post.actorId.id))
+                assertThat(it.timelineId).isEqualTo(TimelineId(12))
+                assertThat(it.warnFilters).contains(TimelineObjectWarnFilter(FilterId(13), "aaa"))
+            }
+        }
+    }
+
+    @Test
+    fun replyがあるときはReplyを含めたTimeineObjectが作成される() = runTest {
+        val reply = TestPostFactory.create()
+        val post = TestPostFactory.create(replyId = reply.id.id)
+
+        whenever(postRepository.findById(reply.id)).doReturn(reply)
+        whenever(timelineRelationshipRepository.findByActorId(post.actorId)).doReturn(
+            listOf(
+                TimelineRelationship(
+                    TimelineRelationshipId(1),
+                    TimelineId(12),
+                    post.actorId,
+                    Visible.PUBLIC
+                )
+            )
+        )
+
+        whenever(timelineRepository.findByIds(listOf(TimelineId(12)))).doReturn(
+            listOf(
+                Timeline(
+                    id = TimelineId(12),
+                    userDetailId = UserDetailId(post.actorId.id),
+                    name = TimelineName("timeline"),
+                    visibility = TimelineVisibility.PUBLIC,
+                    isSystem = false
+                )
+            )
+        )
+
+        val filters = listOf(
+            Filter(
+                id = FilterId(13),
+                userDetailId = UserDetailId(post.actorId.id),
+                name = FilterName("filter"),
+                filterContext = setOf(FilterContext.HOME),
+                filterAction = FilterAction.HIDE,
+                filterKeywords = setOf(
+                    FilterKeyword(FilterKeywordId(14), FilterKeywordKeyword("aa"), FilterMode.NONE)
+                )
+            )
+        )
+
+        whenever(filterRepository.findByUserDetailId(UserDetailId(post.actorId.id))).doReturn(filters)
+
+        whenever(filterDomainService.apply(post, FilterContext.HOME, filters)).doReturn(
+            FilteredPost(
+                post, listOf(
+                    FilterResult(filters.first(), "aaa")
+                )
+            )
+        )
+
+        timelineStore.addPost(post)
+
+        argumentCaptor<List<TimelineObject>> {
+            verify(internalTimelineObjectRepository, times(1)).saveAll(capture())
+            val timelineObjectList = allValues.first()
+
+            assertThat(timelineObjectList).allSatisfy {
+                assertThat(it.postId).isEqualTo(post.id)
+                assertThat(it.postActorId).isEqualTo(post.actorId)
+                assertThat(it.repostId).isNull()
+                assertThat(it.repostActorId).isNull()
+                assertThat(it.replyId).isEqualTo(reply.id)
+                assertThat(it.replyActorId).isEqualTo(reply.actorId)
+
+                assertThat(it.userDetailId).isEqualTo(UserDetailId(post.actorId.id))
+                assertThat(it.timelineId).isEqualTo(TimelineId(12))
+                assertThat(it.warnFilters).contains(TimelineObjectWarnFilter(FilterId(13), "aaa"))
+            }
+        }
+    }
 }

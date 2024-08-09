@@ -18,6 +18,7 @@ package dev.usbharu.hideout.mastodon.interfaces.api
 
 import dev.usbharu.hideout.core.application.application.RegisterApplication
 import dev.usbharu.hideout.core.application.application.RegisterApplicationApplicationService
+import dev.usbharu.hideout.core.domain.model.support.principal.Anonymous
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.AppApi
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.Application
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.AppsRequest
@@ -35,7 +36,7 @@ class SpringAppApi(private val registerApplicationApplicationService: RegisterAp
             false,
             appsRequest.scopes?.split(" ").orEmpty().toSet().ifEmpty { setOf("read") }
         )
-        val registeredApplication = registerApplicationApplicationService.register(registerApplication)
+        val registeredApplication = registerApplicationApplicationService.execute(registerApplication, Anonymous)
         return ResponseEntity.ok(
             Application(
                 registeredApplication.name,
