@@ -12,7 +12,6 @@ plugins {
     alias(libs.plugins.kotlin.spring)
     alias(libs.plugins.kover)
     alias(libs.plugins.license.report)
-
 }
 
 apply {
