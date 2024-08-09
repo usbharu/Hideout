@@ -16,6 +16,7 @@
 
 package dev.usbharu.hideout.core.application.post
 
+import dev.usbharu.hideout.core.application.exception.InternalServerException
 import dev.usbharu.hideout.core.application.shared.LocalUserAbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
@@ -24,7 +25,6 @@ import dev.usbharu.hideout.core.domain.model.post.PostId
 import dev.usbharu.hideout.core.domain.model.post.PostOverview
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.domain.model.support.principal.FromApi
-import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
 import dev.usbharu.hideout.core.infrastructure.factory.PostFactoryImpl
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -35,17 +35,13 @@ class RegisterLocalPostApplicationService(
     private val postFactory: PostFactoryImpl,
     private val actorRepository: ActorRepository,
     private val postRepository: PostRepository,
-    private val userDetailRepository: UserDetailRepository,
     transaction: Transaction,
 ) : LocalUserAbstractApplicationService<RegisterLocalPost, Long>(transaction, Companion.logger) {
 
     override suspend fun internalExecute(command: RegisterLocalPost, principal: FromApi): Long {
-        val actorId = (
-                userDetailRepository.findById(principal.userDetailId)
-                ?: throw IllegalStateException("actor not found")
-            ).actorId
+        val actorId = principal.actorId
 
-        val actor = actorRepository.findById(actorId)!!
+        val actor = actorRepository.findById(actorId) ?: throw InternalServerException("Actor $actorId not found.")
 
         val post = postFactory.createLocal(
             actor = actor,

@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.core.application.post
 
+import dev.usbharu.hideout.core.application.exception.InternalServerException
 import dev.usbharu.hideout.core.application.exception.PermissionDeniedException
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
@@ -105,5 +106,47 @@ class UpdateLocalNoteApplicationServiceTest {
         }
     }
 
+    @Test
+    fun userDetailが見つからない場合失敗() = runTest {
+        whenever(postRepository.findById(PostId(1))).doReturn(TestPostFactory.create(id = 1, actorId = 1))
 
+        assertThrows<InternalServerException> {
+            service.execute(
+                UpdateLocalNote(1, null, "test", false, emptyList()), FromApi(
+                    ActorId(1),
+                    UserDetailId(1), Acct("test", "example.com")
+                )
+            )
+        }
+
+        verify(userDetailRepository, times(1)).findById(UserDetailId(1))
+        verify(actorRepository, never()).findById(any())
+    }
+
+    @Test
+    fun actorが見つからない場合失敗() = runTest {
+        val post = TestPostFactory.create()
+
+        whenever(postRepository.findById(post.id)).doReturn(post)
+        whenever(userDetailRepository.findById(UserDetailId(1))).doReturn(
+            UserDetail.create(
+                UserDetailId(1), post.actorId,
+                UserDetailHashedPassword("")
+            )
+        )
+
+
+        assertThrows<InternalServerException> {
+            service.execute(
+                UpdateLocalNote(post.id.id, null, "test", false, emptyList()), FromApi(
+                    post.actorId,
+                    UserDetailId(1),
+                    Acct("test", "example.com")
+                )
+            )
+        }
+        verify(userDetailRepository, times(1)).findById(UserDetailId(1))
+        verify(actorRepository, times(1)).findById(ActorId(1))
+        verify(postRepository, never()).save(any())
+    }
 }
