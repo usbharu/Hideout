@@ -1,6 +1,6 @@
 [versions]
 
-kotlin = "2.0.0"
+kotlin = "2.0.10"
 ktor = "2.3.12"
 exposed = "0.53.0"
 javacv-ffmpeg = "6.1.1-1.5.10"
@@ -69,7 +69,7 @@ jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-
 
 blurhash = { module = "io.trbl:blurhash", version = "1.0.0" }
 
-aws-s3 = { module = "software.amazon.awssdk:s3", version = "2.26.29" }
+aws-s3 = { module = "software.amazon.awssdk:s3", version = "2.27.0" }
 
 jsoup = { module = "org.jsoup:jsoup", version = "1.18.1" }
 
