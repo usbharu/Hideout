@@ -17,9 +17,10 @@
 package dev.usbharu.hideout.core.domain.service.actor.local
 
 import dev.usbharu.hideout.core.domain.model.actor.Actor
+import dev.usbharu.hideout.core.domain.model.userdetails.UserDetail
 
 interface LocalActorMigrationCheckDomainService {
-    suspend fun canAccountMigration(from: Actor, to: Actor): AccountMigrationCheck
+    suspend fun canAccountMigration(userDetail: UserDetail, from: Actor, to: Actor): AccountMigrationCheck
 }
 
 sealed class AccountMigrationCheck(
@@ -34,4 +35,6 @@ sealed class AccountMigrationCheck(
     class AlreadyMoved(val message: String) : AccountMigrationCheck(false)
 
     class AlsoKnownAsNotFound(val message: String) : AccountMigrationCheck(false)
+
+    class MigrationCoolDown(val message: String) : AccountMigrationCheck(false)
 }

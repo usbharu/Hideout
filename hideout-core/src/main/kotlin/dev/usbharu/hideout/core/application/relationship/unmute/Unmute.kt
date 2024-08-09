@@ -16,6 +16,4 @@
 
 package dev.usbharu.hideout.core.application.relationship.unmute
 
-import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
-
-data class Unmute(val targetActorId: Long, val userDetailId: UserDetailId)
+data class Unmute(val targetActorId: Long)

@@ -16,24 +16,33 @@
 
 package dev.usbharu.hideout.core.application.post
 
+import dev.usbharu.hideout.core.application.exception.PermissionDeniedException
+import dev.usbharu.hideout.core.application.shared.LocalUserAbstractApplicationService
+import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.post.PostId
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
-import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
-import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
+import dev.usbharu.hideout.core.domain.model.support.principal.FromApi
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
 class DeleteLocalPostApplicationService(
     private val postRepository: PostRepository,
-    private val userDetailRepository: UserDetailRepository,
-    private val actorRepository: ActorRepository,
-) {
-    suspend fun delete(postId: Long, userDetailId: Long) {
-        val findById = postRepository.findById(PostId(postId))!!
-        val user = userDetailRepository.findById(UserDetailId(userDetailId))!!
-        val actor = actorRepository.findById(user.actorId)!!
+    private val actorRepository: ActorRepository, transaction: Transaction,
+) : LocalUserAbstractApplicationService<DeleteLocalPost, Unit>(transaction, logger) {
+
+    override suspend fun internalExecute(command: DeleteLocalPost, principal: FromApi) {
+        val findById = postRepository.findById(PostId(command.postId))!!
+        if (findById.actorId != principal.actorId) {
+            throw PermissionDeniedException()
+        }
+        val actor = actorRepository.findById(principal.actorId)!!
         findById.delete(actor)
         postRepository.save(findById)
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(DeleteLocalPostApplicationService::class.java)
     }
 }

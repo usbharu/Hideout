@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.domain.service.post
+package dev.usbharu.hideout.core.infrastructure.other
 
+import dev.usbharu.hideout.core.domain.service.post.FormattedPostContent
+import dev.usbharu.hideout.core.domain.service.post.PostContentFormatter
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -69,14 +71,31 @@ class DefaultPostContentFormatter(private val policyFactory: PolicyFactory) : Po
                 if (childNode is Element && childNode.tagName() == "br") {
                     brCount++
                 } else if (brCount >= 2) {
-                    formattedHtml.add(Element("p").appendChildren(childNodes.subList(prevIndex, index - brCount)))
+                    formattedHtml.add(
+                        Element(element.tag(), element.baseUri(), element.attributes()).appendChildren(
+                            childNodes.subList(
+                                prevIndex,
+                                index - brCount
+                            )
+                        )
+                    )
                     prevIndex = index
                 }
             }
-            formattedHtml.add(Element("p").appendChildren(childNodes.subList(prevIndex, childNodes.size)))
+            formattedHtml.add(
+                Element(element.tag(), element.baseUri(), element.attributes()).appendChildren(
+                    childNodes.subList(
+                        prevIndex,
+                        childNodes.size
+                    )
+                )
+            )
         }
 
         val elements = Elements(formattedHtml)
+        val document1 = Document("")
+        document1.outputSettings().syntax(Document.OutputSettings.Syntax.xml)
+        document1.insertChildren(0, elements)
 
         return FormattedPostContent(elements.outerHtml().replace("\n", ""), printHtml(elements))
     }

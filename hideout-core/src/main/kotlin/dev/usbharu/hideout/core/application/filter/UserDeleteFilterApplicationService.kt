@@ -16,22 +16,27 @@
 
 package dev.usbharu.hideout.core.application.filter
 
-import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
+import dev.usbharu.hideout.core.application.exception.PermissionDeniedException
+import dev.usbharu.hideout.core.application.shared.LocalUserAbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.filter.FilterId
 import dev.usbharu.hideout.core.domain.model.filter.FilterRepository
-import dev.usbharu.hideout.core.domain.model.support.principal.Principal
+import dev.usbharu.hideout.core.domain.model.support.principal.FromApi
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
 class UserDeleteFilterApplicationService(private val filterRepository: FilterRepository, transaction: Transaction) :
-    AbstractApplicationService<DeleteFilter, Unit>(
+    LocalUserAbstractApplicationService<DeleteFilter, Unit>(
         transaction,
         logger
     ) {
-    override suspend fun internalExecute(command: DeleteFilter, principal: Principal) {
-        val filter = filterRepository.findByFilterId(FilterId(command.filterId)) ?: throw Exception("not found")
+    override suspend fun internalExecute(command: DeleteFilter, principal: FromApi) {
+        val filter =
+            filterRepository.findByFilterId(FilterId(command.filterId)) ?: throw IllegalArgumentException("not found")
+        if (filter.userDetailId != principal.userDetailId) {
+            throw PermissionDeniedException()
+        }
         filterRepository.delete(filter)
     }
 

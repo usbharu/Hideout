@@ -263,7 +263,7 @@ abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateSe
         )
     }
 
-    abstract suspend fun getActors(actorIds: List<ActorId>): Map<ActorId, Actor>
+    protected abstract suspend fun getActors(actorIds: List<ActorId>): Map<ActorId, Actor>
 
-    abstract suspend fun getUserDetails(userDetailIdList: List<UserDetailId>): Map<UserDetailId, UserDetail>
+    protected abstract suspend fun getUserDetails(userDetailIdList: List<UserDetailId>): Map<UserDetailId, UserDetail>
 }

@@ -16,6 +16,4 @@
 
 package dev.usbharu.hideout.core.application.relationship.get
 
-import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
-
-data class GetRelationship(val targetActorId: Long, val userDetailId: UserDetailId)
+data class GetRelationship(val targetActorId: Long)

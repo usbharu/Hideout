@@ -17,11 +17,23 @@
 package dev.usbharu.hideout.core.domain.service.actor.local
 
 import dev.usbharu.hideout.core.domain.model.actor.Actor
+import dev.usbharu.hideout.core.domain.model.userdetails.UserDetail
 import org.springframework.stereotype.Service
+import java.time.Instant
+import kotlin.time.Duration.Companion.days
+import kotlin.time.toJavaDuration
 
 @Service
 class LocalActorMigrationCheckDomainServiceImpl : LocalActorMigrationCheckDomainService {
-    override suspend fun canAccountMigration(from: Actor, to: Actor): AccountMigrationCheck {
+    override suspend fun canAccountMigration(userDetail: UserDetail, from: Actor, to: Actor): AccountMigrationCheck {
+        val lastMigration = userDetail.lastMigration
+        if (lastMigration != null) {
+            val instant = lastMigration.plus(30.days.toJavaDuration())
+            if (instant.isAfter(Instant.now())) {
+                return AccountMigrationCheck.MigrationCoolDown("You can migration at $instant.")
+            }
+        }
+
         if (to == from) {
             return AccountMigrationCheck.SelfReferences()
         }

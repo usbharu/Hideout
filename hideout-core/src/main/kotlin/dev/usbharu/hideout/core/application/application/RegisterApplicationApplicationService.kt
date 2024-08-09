@@ -16,14 +16,17 @@
 
 package dev.usbharu.hideout.core.application.application
 
+import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.application.Application
 import dev.usbharu.hideout.core.domain.model.application.ApplicationId
 import dev.usbharu.hideout.core.domain.model.application.ApplicationName
 import dev.usbharu.hideout.core.domain.model.application.ApplicationRepository
+import dev.usbharu.hideout.core.domain.model.support.principal.Principal
 import dev.usbharu.hideout.core.domain.service.userdetail.PasswordEncoder
 import dev.usbharu.hideout.core.domain.shared.id.IdGenerateService
 import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.SecureTokenGenerator
+import org.slf4j.LoggerFactory
 import org.springframework.security.oauth2.core.AuthorizationGrantType
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient
@@ -39,53 +42,57 @@ class RegisterApplicationApplicationService(
     private val passwordEncoder: PasswordEncoder,
     private val secureTokenGenerator: SecureTokenGenerator,
     private val registeredClientRepository: RegisteredClientRepository,
-    private val transaction: Transaction,
+    transaction: Transaction,
     private val applicationRepository: ApplicationRepository,
-) {
-    suspend fun register(registerApplication: RegisterApplication): RegisteredApplication {
-        return transaction.transaction {
-            val id = idGenerateService.generateId()
-            val clientSecret = secureTokenGenerator.generate()
-            val registeredClient = RegisteredClient
-                .withId(id.toString())
-                .clientId(id.toString())
-                .clientSecret(passwordEncoder.encode(clientSecret))
-                .clientName(registerApplication.name)
-                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
-                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_JWT)
-                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-                .apply {
-                    if (registerApplication.useRefreshToken) {
-                        authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                    } else {
-                        tokenSettings(
-                            TokenSettings
-                                .builder()
-                                .accessTokenTimeToLive(Duration.ofSeconds(31536000000))
-                                .build()
-                        )
-                    }
-                }
-                .redirectUris { set ->
-                    set.addAll(registerApplication.redirectUris.map { it.toString() })
-                }
-                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
-                .scopes { it.addAll(registerApplication.scopes) }
-                .build()
-            registeredClientRepository.save(registeredClient)
+) : AbstractApplicationService<RegisterApplication, RegisteredApplication>(transaction, logger) {
 
-            val application = Application(ApplicationId(id), ApplicationName(registerApplication.name))
+    override suspend fun internalExecute(command: RegisterApplication, principal: Principal): RegisteredApplication {
+        val id = idGenerateService.generateId()
+        val clientSecret = secureTokenGenerator.generate()
+        val registeredClient = RegisteredClient
+            .withId(id.toString())
+            .clientId(id.toString())
+            .clientSecret(passwordEncoder.encode(clientSecret))
+            .clientName(command.name)
+            .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
+            .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_JWT)
+            .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+            .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+            .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+            .apply {
+                if (command.useRefreshToken) {
+                    authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+                } else {
+                    tokenSettings(
+                        TokenSettings
+                            .builder()
+                            .accessTokenTimeToLive(Duration.ofSeconds(31536000000))
+                            .build()
+                    )
+                }
+            }
+            .redirectUris { set ->
+                set.addAll(command.redirectUris.map { it.toString() })
+            }
+            .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
+            .scopes { it.addAll(command.scopes) }
+            .build()
+        registeredClientRepository.save(registeredClient)
 
-            applicationRepository.save(application)
-            RegisteredApplication(
-                id = id,
-                name = registerApplication.name,
-                clientSecret = clientSecret,
-                clientId = id.toString(),
-                redirectUris = registerApplication.redirectUris
-            )
-        }
+        val application = Application(ApplicationId(id), ApplicationName(command.name))
+
+        applicationRepository.save(application)
+        return RegisteredApplication(
+            id = id,
+            name = command.name,
+            clientSecret = clientSecret,
+            clientId = id.toString(),
+            redirectUris = command.redirectUris
+        )
+    }
+
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(RegisterApplicationApplicationService::class.java)
     }
 }

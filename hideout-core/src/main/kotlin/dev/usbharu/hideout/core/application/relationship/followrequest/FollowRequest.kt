@@ -16,6 +16,4 @@
 
 package dev.usbharu.hideout.core.application.relationship.followrequest
 
-import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
-
-data class FollowRequest(val targetActorId: Long, val userDetailId: UserDetailId)
+data class FollowRequest(val targetActorId: Long)

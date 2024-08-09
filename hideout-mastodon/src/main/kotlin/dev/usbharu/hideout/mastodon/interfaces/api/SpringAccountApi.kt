@@ -38,8 +38,7 @@ import dev.usbharu.hideout.core.application.relationship.unfollow.Unfollow
 import dev.usbharu.hideout.core.application.relationship.unfollow.UserUnfollowApplicationService
 import dev.usbharu.hideout.core.application.relationship.unmute.Unmute
 import dev.usbharu.hideout.core.application.relationship.unmute.UserUnmuteApplicationService
-import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.Oauth2CommandExecutor
-import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.Oauth2CommandExecutorFactory
+import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.SpringSecurityOauth2PrincipalContextHolder
 import dev.usbharu.hideout.mastodon.application.accounts.GetAccount
 import dev.usbharu.hideout.mastodon.application.accounts.GetAccountApplicationService
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.AccountApi
@@ -49,7 +48,6 @@ import org.springframework.stereotype.Controller
 
 @Controller
 class SpringAccountApi(
-    private val oauth2CommandExecutorFactory: Oauth2CommandExecutorFactory,
     private val getUserDetailApplicationService: GetUserDetailApplicationService,
     private val getAccountApplicationService: GetAccountApplicationService,
     private val userFollowRequestApplicationService: UserFollowRequestApplicationService,
@@ -62,31 +60,33 @@ class SpringAccountApi(
     private val userRejectFollowRequestApplicationService: UserRejectFollowRequestApplicationService,
     private val userRemoveFromFollowersApplicationService: UserRemoveFromFollowersApplicationService,
     private val userUnfollowApplicationService: UserUnfollowApplicationService,
+    private val principalContextHolder: SpringSecurityOauth2PrincipalContextHolder
 ) : AccountApi {
 
 
     override suspend fun apiV1AccountsIdBlockPost(id: String): ResponseEntity<Relationship> {
-        val executor = oauth2CommandExecutorFactory.getCommandExecutor()
-        userBlockApplicationService.execute(Block(id.toLong()))
-        return fetchRelationship(id, executor)
+        userBlockApplicationService.execute(Block(id.toLong()), principalContextHolder.getPrincipal())
+        return fetchRelationship(id)
     }
 
     override suspend fun apiV1AccountsIdFollowPost(
         id: String,
         followRequestBody: FollowRequestBody?,
     ): ResponseEntity<Relationship> {
-        val executor = oauth2CommandExecutorFactory.getCommandExecutor()
+
         userFollowRequestApplicationService.execute(
-            FollowRequest(id.toLong())
+            FollowRequest(id.toLong()), principalContextHolder.getPrincipal()
         )
-        return fetchRelationship(id, executor)
+        return fetchRelationship(id)
     }
 
     private suspend fun fetchRelationship(
         id: String,
-        executor: Oauth2CommandExecutor,
     ): ResponseEntity<Relationship> {
-        val relationship = getRelationshipApplicationService.execute(GetRelationship(id.toLong()))
+        val relationship = getRelationshipApplicationService.execute(
+            GetRelationship(id.toLong()),
+            principalContextHolder.getPrincipal()
+        )
         return ResponseEntity.ok(
             Relationship(
                 id = relationship.targetId.toString(),
@@ -109,49 +109,44 @@ class SpringAccountApi(
     override suspend fun apiV1AccountsIdGet(id: String): ResponseEntity<Account> {
         return ResponseEntity.ok(
             getAccountApplicationService.execute(
-                GetAccount(id)
+                GetAccount(id), principalContextHolder.getPrincipal()
             )
         )
     }
 
     override suspend fun apiV1AccountsIdMutePost(id: String): ResponseEntity<Relationship> {
-        val executor = oauth2CommandExecutorFactory.getCommandExecutor()
         userMuteApplicationService.execute(
-            Mute(id.toLong())
+            Mute(id.toLong()), principalContextHolder.getPrincipal()
         )
-        return fetchRelationship(id, executor)
+        return fetchRelationship(id)
     }
 
     override suspend fun apiV1AccountsIdRemoveFromFollowersPost(id: String): ResponseEntity<Relationship> {
-        val executor = oauth2CommandExecutorFactory.getCommandExecutor()
         userRemoveFromFollowersApplicationService.execute(
-            RemoveFromFollowers(id.toLong())
+            RemoveFromFollowers(id.toLong()), principalContextHolder.getPrincipal()
         )
-        return fetchRelationship(id, executor)
+        return fetchRelationship(id)
     }
 
     override suspend fun apiV1AccountsIdUnblockPost(id: String): ResponseEntity<Relationship> {
-        val executor = oauth2CommandExecutorFactory.getCommandExecutor()
         userUnblockApplicationService.execute(
-            Unblock(id.toLong())
+            Unblock(id.toLong()), principalContextHolder.getPrincipal()
         )
-        return fetchRelationship(id, executor)
+        return fetchRelationship(id)
     }
 
     override suspend fun apiV1AccountsIdUnfollowPost(id: String): ResponseEntity<Relationship> {
-        val executor = oauth2CommandExecutorFactory.getCommandExecutor()
         userUnfollowApplicationService.execute(
-            Unfollow(id.toLong())
+            Unfollow(id.toLong()), principalContextHolder.getPrincipal()
         )
-        return fetchRelationship(id, executor)
+        return fetchRelationship(id)
     }
 
     override suspend fun apiV1AccountsIdUnmutePost(id: String): ResponseEntity<Relationship> {
-        val executor = oauth2CommandExecutorFactory.getCommandExecutor()
         userUnmuteApplicationService.execute(
-            Unmute(id.toLong())
+            Unmute(id.toLong()), principalContextHolder.getPrincipal()
         )
-        return fetchRelationship(id, executor)
+        return fetchRelationship(id)
     }
 
     override suspend fun apiV1AccountsPost(accountsCreateRequest: AccountsCreateRequest): ResponseEntity<Unit> {
@@ -163,9 +158,9 @@ class SpringAccountApi(
     }
 
     override suspend fun apiV1AccountsVerifyCredentialsGet(): ResponseEntity<CredentialAccount> {
-        val commandExecutor = oauth2CommandExecutorFactory.getCommandExecutor()
+        val principal = principalContextHolder.getPrincipal()
         val localActor =
-            getUserDetailApplicationService.execute(GetUserDetail(commandExecutor.userDetailId))
+            getUserDetailApplicationService.execute(GetUserDetail(principal.userDetailId.id), principal)
 
         return ResponseEntity.ok(
             CredentialAccount(
@@ -215,19 +210,19 @@ class SpringAccountApi(
     }
 
     override suspend fun apiV1FollowRequestsAccountIdAuthorizePost(accountId: String): ResponseEntity<Relationship> {
-        val executor = oauth2CommandExecutorFactory.getCommandExecutor()
+
         userAcceptFollowRequestApplicationService.execute(
-            AcceptFollowRequest(accountId.toLong())
+            AcceptFollowRequest(accountId.toLong()), principalContextHolder.getPrincipal()
         )
-        return fetchRelationship(accountId, executor)
+        return fetchRelationship(accountId)
     }
 
     override suspend fun apiV1FollowRequestsAccountIdRejectPost(accountId: String): ResponseEntity<Relationship> {
-        val executor = oauth2CommandExecutorFactory.getCommandExecutor()
+
         userRejectFollowRequestApplicationService.execute(
-            RejectFollowRequest(accountId.toLong())
+            RejectFollowRequest(accountId.toLong()), principalContextHolder.getPrincipal()
         )
-        return fetchRelationship(accountId, executor)
+        return fetchRelationship(accountId)
     }
 
 }

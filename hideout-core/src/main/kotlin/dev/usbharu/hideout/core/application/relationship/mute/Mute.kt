@@ -16,6 +16,4 @@
 
 package dev.usbharu.hideout.core.application.relationship.mute
 
-import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
-
-data class Mute(val targetActorId: Long, val userDetailId: UserDetailId)
+data class Mute(val targetActorId: Long)

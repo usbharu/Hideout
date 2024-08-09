@@ -16,13 +16,10 @@
 
 package dev.usbharu.hideout.core.application.post
 
-import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
-
 data class UpdateLocalNote(
     val postId: Long,
     val overview: String?,
     val content: String,
     val sensitive: Boolean,
-    val mediaIds: List<Long>,
-    val userDetailId: UserDetailId
+    val mediaIds: List<Long>
 )

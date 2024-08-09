@@ -16,14 +16,14 @@
 
 package dev.usbharu.hideout.core.application.relationship.acceptfollowrequest
 
+import dev.usbharu.hideout.core.application.exception.InternalServerException
 import dev.usbharu.hideout.core.application.relationship.block.UserBlockApplicationService
-import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
+import dev.usbharu.hideout.core.application.shared.LocalUserAbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
-import dev.usbharu.hideout.core.domain.model.support.principal.Principal
-import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
+import dev.usbharu.hideout.core.domain.model.support.principal.FromApi
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -32,18 +32,17 @@ class UserAcceptFollowRequestApplicationService(
     private val relationshipRepository: RelationshipRepository,
     transaction: Transaction,
     private val actorRepository: ActorRepository,
-    private val userDetailRepository: UserDetailRepository,
 ) :
-    AbstractApplicationService<AcceptFollowRequest, Unit>(transaction, logger) {
-    override suspend fun internalExecute(command: AcceptFollowRequest, principal: Principal) {
+    LocalUserAbstractApplicationService<AcceptFollowRequest, Unit>(transaction, logger) {
+    override suspend fun internalExecute(command: AcceptFollowRequest, principal: FromApi) {
 
-        val userDetail = userDetailRepository.findById(command.userDetailId)!!
-        val actor = actorRepository.findById(userDetail.actorId)!!
+        val actor = actorRepository.findById(principal.actorId)
+            ?: throw InternalServerException("Actor ${principal.actorId} not found")
 
         val targetId = ActorId(command.sourceActorId)
 
         val relationship = relationshipRepository.findByActorIdAndTargetId(targetId, actor.id)
-            ?: throw Exception("Follow request not found")
+            ?: throw InternalServerException("Follow request not found")
 
         relationship.acceptFollowRequest()
 
