@@ -32,7 +32,7 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     implementation("org.springframework.boot:spring-boot-starter-log4j2")
 
-    implementation("dev.usbharu:hideout-core:0.0.1")
+    implementation(project(":hideout-core"))
 
     implementation(libs.jackson.databind)
     implementation(libs.jackson.module.kotlin)
@@ -50,13 +50,13 @@ tasks {
     }
 
     compileKotlin {
-        dependsOn("openApiGenerateMastodonCompatibleApi")
-        mustRunAfter("openApiGenerateMastodonCompatibleApi")
+//        dependsOn("openApiGenerateMastodonCompatibleApi")
+//        mustRunAfter("openApiGenerateMastodonCompatibleApi")
     }
 
     create<GenerateTask>("openApiGenerateMastodonCompatibleApi") {
         generatorName.set("kotlin-spring")
-        inputSpec.set("$rootDir/src/main/resources/openapi/mastodon.yaml")
+        inputSpec.set("$projectDir/src/main/resources/openapi/mastodon.yaml")
         outputDir.set("$buildDir/generated/sources/mastodon")
         apiPackage.set("dev.usbharu.hideout.mastodon.interfaces.api.generated")
         modelPackage.set("dev.usbharu.hideout.mastodon.interfaces.api.generated.model")
@@ -70,7 +70,7 @@ tasks {
 
         importMappings.put("org.springframework.core.io.Resource", "org.springframework.web.multipart.MultipartFile")
         typeMappings.put("org.springframework.core.io.Resource", "org.springframework.web.multipart.MultipartFile")
-        templateDir.set("$rootDir/templates")
+        templateDir.set("$projectDir/templates")
     }
 }
 

@@ -2202,7 +2202,7 @@ components:
           items:
             type: string
             enum:
-              - homa
+              - home
               - notifications
               - public
               - thread

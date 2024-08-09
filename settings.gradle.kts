@@ -19,8 +19,9 @@ plugins {
 }
 rootProject.name = "hideout"
 
-includeBuild("hideout-core")
-includeBuild("hideout-mastodon")
+include("hideout-core")
+include("hideout-mastodon")
+includeBuild("owl")
 
 dependencyResolutionManagement {
     repositories {
