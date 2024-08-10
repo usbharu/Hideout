@@ -33,7 +33,7 @@ jobs:
                 const command = "git diff origin/" + baseRef + " -- HEAD --name-only --relative=" + key + "\n";
                 const output = execSync(command, {encoding: 'utf8'});
                 console.log(output)
-                if (output.length !== 0) {
+                if (output.trim() === '') {
                     tags.push(value)
                 }
             }
