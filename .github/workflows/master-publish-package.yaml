@@ -76,3 +76,7 @@ jobs:
 
         if: ${{ github.base_ref == 'master' && contains( needs.release-diff-check.outputs.diff , 'owl')}}
         run: ./owl/gradlew :owl:publishMavenPublicationToGiteaRepository
+        env:
+          USERNAME: ${{ github.actor }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITEA: ${{ secrets.GITEA }}
