@@ -16,6 +16,7 @@
 
 package dev.usbharu.hideout.core.application.relationship.get
 
+import dev.usbharu.hideout.core.application.exception.InternalServerException
 import dev.usbharu.hideout.core.application.shared.LocalUserAbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
@@ -24,7 +25,6 @@ import dev.usbharu.hideout.core.domain.model.actorinstancerelationship.ActorInst
 import dev.usbharu.hideout.core.domain.model.actorinstancerelationship.ActorInstanceRelationshipRepository
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
 import dev.usbharu.hideout.core.domain.model.support.principal.FromApi
-import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -32,7 +32,6 @@ import org.springframework.stereotype.Service
 class GetRelationshipApplicationService(
     private val relationshipRepository: RelationshipRepository,
     private val actorRepository: ActorRepository,
-    private val userDetailRepository: UserDetailRepository,
     private val actorInstanceRelationshipRepository: ActorInstanceRelationshipRepository,
     transaction: Transaction,
 ) :
@@ -41,19 +40,20 @@ class GetRelationshipApplicationService(
         logger
     ) {
     override suspend fun internalExecute(command: GetRelationship, principal: FromApi): Relationship {
-        val userDetail = userDetailRepository.findById(principal.userDetailId)!!
-        val actor = actorRepository.findById(userDetail.actorId)!!
+        val actor = actorRepository.findById(principal.actorId)
+            ?: throw InternalServerException("Actor ${principal.actorId} not found.")
         val targetId = ActorId(command.targetActorId)
-        val target = actorRepository.findById(targetId)!!
+        val target = actorRepository.findById(targetId)
+            ?: throw IllegalArgumentException("Actor ${command.targetActorId} not found.")
         val relationship = (
-            relationshipRepository.findByActorIdAndTargetId(actor.id, targetId)
-                ?: dev.usbharu.hideout.core.domain.model.relationship.Relationship.default(actor.id, targetId)
-            )
+                relationshipRepository.findByActorIdAndTargetId(actor.id, targetId)
+                    ?: dev.usbharu.hideout.core.domain.model.relationship.Relationship.default(actor.id, targetId)
+                )
 
         val relationship1 = (
-            relationshipRepository.findByActorIdAndTargetId(targetId, actor.id)
-                ?: dev.usbharu.hideout.core.domain.model.relationship.Relationship.default(targetId, actor.id)
-            )
+                relationshipRepository.findByActorIdAndTargetId(targetId, actor.id)
+                    ?: dev.usbharu.hideout.core.domain.model.relationship.Relationship.default(targetId, actor.id)
+                )
 
         val actorInstanceRelationship =
             actorInstanceRelationshipRepository.findByActorIdAndInstanceId(actor.id, target.instance)
