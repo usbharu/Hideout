@@ -2,6 +2,8 @@ name: PullRequest Merge Check
 
 on:
   pull_request:
+    paths-ignore:
+      - 'owl/**'
     branches:
       - "develop"
     types:
