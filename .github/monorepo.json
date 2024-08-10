@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "./hideout-activitypub": "hideout-activitypub",
+    "./hideout-core": "hideout-core",
+    "./hideout-mastodon": "hideout-mastodon",
+    "./owl": "owl"
+  }
+}

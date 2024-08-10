@@ -1,100 +1,70 @@
-val ktor_version: String by project
-val kotlin_version: String by project
-val logback_version: String by project
-val exposed_version: String by project
-val h2_version: String by project
-val koin_version: String by project
+/*
+ * Copyright (C) 2024 usbharu
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 plugins {
-    kotlin("jvm") version "1.8.10"
-    id("io.ktor.plugin") version "2.2.4"
-//    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.spring.boot)
+    alias(libs.plugins.kotlin.spring)
 }
 
-group = "dev.usbharu"
-version = "0.0.1"
-application {
-    mainClass.set("io.ktor.server.netty.EngineMain")
-
-    val isDevelopment: Boolean = project.ext.has("development")
-    applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
+apply {
+    plugin("io.spring.dependency-management")
 }
 
 repositories {
     mavenCentral()
-}
+    maven {
+        url = uri("https://git.usbharu.dev/api/packages/usbharu/maven")
+    }
+    maven {
+        name = "GitHubPackages"
+        url = uri("https://maven.pkg.github.com/usbharu/http-signature")
+        credentials {
 
-kotlin {
-    target {
-        compilations.all {
-            kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
+            username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
+            password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
         }
+    }
+    maven {
+        name = "GitHubPackages2"
+        url = uri("https://maven.pkg.github.com/multim-dev/emoji-kt")
+        credentials {
+
+            username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
+            password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
+        }
+    }
+}
+configurations {
+    all {
+        exclude("org.springframework.boot", "spring-boot-starter-logging")
+        exclude("ch.qos.logback", "logback-classic")
     }
 }
 
 dependencies {
-    implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-auth-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-sessions-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-auto-head-response-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-cors-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-default-headers-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-forwarded-header-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-call-logging-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktor_version")
-    implementation("io.ktor:ktor-serialization-jackson:$ktor_version")
-    implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
-    implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
-    implementation("com.h2database:h2:$h2_version")
-    implementation("org.xerial:sqlite-jdbc:3.40.1.0")
-    implementation("io.ktor:ktor-server-websockets-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
-    implementation("ch.qos.logback:logback-classic:$logback_version")
-
-    implementation("io.insert-koin:koin-core:$koin_version")
-    implementation("io.insert-koin:koin-ktor:$koin_version")
-    implementation("io.insert-koin:koin-logger-slf4j:$koin_version")
-    implementation("io.ktor:ktor-client-logging-jvm:2.2.4")
-    implementation("io.ktor:ktor-server-host-common-jvm:2.2.4")
-    implementation("io.ktor:ktor-server-status-pages-jvm:2.2.4")
-
-    testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
-    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
-    testImplementation("io.ktor:ktor-client-mock:$ktor_version")
-
-    implementation("io.ktor:ktor-client-core:$ktor_version")
-    implementation("io.ktor:ktor-client-cio:$ktor_version")
-    implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
-    testImplementation("io.ktor:ktor-client-mock:$ktor_version")
-    implementation("tech.barbero.http-messages-signing:http-messages-signing-core:1.0.0")
-
-    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
-    testImplementation("org.mockito:mockito-inline:5.2.0")
-
-
-    implementation("org.drewcarlson:kjob-core:0.6.0")
-    testImplementation("io.ktor:ktor-server-test-host-jvm:2.2.4")
-
-    testImplementation("org.slf4j:slf4j-simple:2.0.7")
-
+    implementation("dev.usbharu:hideout-core:0.0.1")
+    implementation("dev.usbharu:hideout-mastodon:1.0-SNAPSHOT")
 }
 
-jib {
-    if (System.getProperty("os.name").toLowerCase().contains("windows")) {
-        dockerClient.environment = mapOf(
-            "DOCKER_HOST" to "localhost:2375"
-        )
-    }
+tasks.register("run") {
+    dependsOn(gradle.includedBuild("hideout-core").task(":run"))
 }
 
-ktor {
-    docker {
-        localImageName.set("hideout")
-    }
+springBoot {
+    mainClass = "dev.usbharu.hideout.SpringApplicationKt"
 }
+
