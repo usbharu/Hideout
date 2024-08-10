@@ -69,4 +69,4 @@ jobs:
 
       - name: Publish OWL
         if: contains(${{ needs.release-diff-check.outputs.diff }}, 'owl')
-        run: ./gradlew :owl:publishMavenPublicationToMavenLocal
+        run: ./owl/gradlew :owl:publishMavenPublicationToMavenLocal
