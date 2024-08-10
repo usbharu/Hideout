@@ -49,7 +49,7 @@ subprojects {
                 name = "Gitea"
                 url = uri("https://git.usbharu.dev/api/packages/usbharu/maven")
 
-                credentials(HttpHeaderCredentials::class.java) {
+                credentials(HttpHeaderCredentials::class) {
                     name = "Authorization"
                     value = "token " + (project.findProperty("gpr.gitea") as String? ?: System.getenv("GITEA"))
                 }
