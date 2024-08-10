@@ -12,6 +12,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: fetch git
+        run: git fetch --depth 1 origin ${{ github.event.before }}
+
       - name: Check diff
         id: check-diff
         uses: actions/github-script@v3
