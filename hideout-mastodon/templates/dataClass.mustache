@@ -1,0 +1,34 @@
+/**
+* {{{description}}}
+{{#vars}}
+    * @param {{name}} {{{description}}}
+{{/vars}}
+*/{{#discriminator}}
+    {{>typeInfoAnnotation}}{{/discriminator}}
+
+{{#discriminator}}interface {{classname}}{{/discriminator}}{{^discriminator}}{{#hasVars}}data {{/hasVars}}class {{classname}} @ConstructorProperties( {{#vars}}"{{baseName}}",{{/vars}} ) constructor(
+{{#requiredVars}}
+    {{>dataClassReqVar}}{{^-last}},
+    {{/-last}}{{/requiredVars}}{{#hasRequired}}{{#hasOptional}},
+{{/hasOptional}}{{/hasRequired}}{{#optionalVars}}{{>dataClassOptVar}}{{^-last}},
+{{/-last}}{{/optionalVars}}
+) {{/discriminator}}{{#parent}}: {{{.}}}{{/parent}}{
+{{#discriminator}}
+    {{#requiredVars}}
+        {{>interfaceReqVar}}
+    {{/requiredVars}}
+    {{#optionalVars}}
+        {{>interfaceOptVar}}
+    {{/optionalVars}}
+{{/discriminator}}
+{{#hasEnums}}{{#vars}}{{#isEnum}}
+    /**
+    * {{{description}}}
+    * Values: {{#allowableValues}}{{#enumVars}}{{&name}}{{^-last}},{{/-last}}{{/enumVars}}{{/allowableValues}}
+    */
+    enum class {{{nameInPascalCase}}}(val value: {{#isContainer}}{{#items}}{{{dataType}}}{{/items}}{{/isContainer}}{{^isContainer}}{{{dataType}}}{{/isContainer}}) {
+    {{#allowableValues}}{{#values}}
+        @JsonProperty("{{.}}") `{{.}}`("{{.}}"){{^-last}},{{/-last}}{{/values}}{{/allowableValues}}
+    }
+{{/isEnum}}{{/vars}}{{/hasEnums}}
+}

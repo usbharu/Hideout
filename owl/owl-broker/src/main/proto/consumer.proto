@@ -1,0 +1,18 @@
+syntax = "proto3";
+import "uuid.proto";
+
+option java_package = "dev.usbharu.owl";
+
+message SubscribeTaskRequest {
+  string name = 1;
+  string hostname = 2;
+  repeated string tasks = 3;;
+}
+
+message SubscribeTaskResponse {
+  UUID id = 1;
+}
+
+service SubscribeTaskService {
+  rpc SubscribeTask (SubscribeTaskRequest) returns (SubscribeTaskResponse);
+}

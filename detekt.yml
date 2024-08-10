@@ -1,0 +1,179 @@
+build:
+  maxIssues: 20
+  weights:
+    Indentation: 0
+    MagicNumber: 0
+    EnumEntryNameCase: 0
+    VariableNaming: 0
+    NoNameShadowing: 0
+
+style:
+  ClassOrdering:
+    active: true
+
+  MandatoryBracesIfStatements:
+    active: true
+
+  MandatoryBracesLoops:
+    active: true
+
+  MultilineLambdaItParameter:
+    active: false
+
+  UseEmptyCounterpart:
+    active: true
+
+  ExpressionBodySyntax:
+    active: true
+
+  WildcardImport:
+    active: false
+
+  ReturnCount:
+    active: false
+
+  MagicNumber:
+    ignorePropertyDeclaration: true
+
+  ForbiddenComment:
+    active: false
+
+  ThrowsCount:
+    active: false
+
+  UseCheckOrError:
+    active: false
+
+  UseRequire:
+    active: false
+
+  VarCouldBeVal:
+    ignoreLateinitVar: true
+
+complexity:
+  CognitiveComplexMethod:
+    active: true
+
+  ComplexCondition:
+    active: true
+
+  ComplexInterface:
+    active: true
+    threshold: 30
+
+  LabeledExpression:
+    active: false
+
+  NamedArguments:
+    active: true
+    ignoreArgumentsMatchingNames: true
+    threshold: 5
+
+  NestedBlockDepth:
+    active: true
+
+  NestedScopeFunctions:
+    active: true
+
+  ReplaceSafeCallChainWithRun:
+    active: false
+
+  StringLiteralDuplication:
+    active: false
+
+  LongParameterList:
+    constructorThreshold: 10
+
+  TooManyFunctions:
+    ignoreDeprecated: true
+    ignoreOverridden: true
+    ignorePrivate: true
+
+  LongMethod:
+    active: true
+    excludes:
+      - "**/test/**"
+
+exceptions:
+  ExceptionRaisedInUnexpectedLocation:
+    active: true
+
+  NotImplementedDeclaration:
+    active: false
+
+  ObjectExtendsThrowable:
+    active: true
+
+  ThrowingExceptionInMain:
+    active: true
+
+  ThrowingExceptionsWithoutMessageOrCause:
+    active: true
+
+  ThrowingNewInstanceOfSameException:
+    active: true
+
+  TooGenericExceptionCaught:
+    active: true
+
+  TooGenericExceptionThrown:
+    active: true
+
+formatting:
+  Indentation:
+    indentSize: 4
+
+  NoWildcardImports:
+    active: false
+
+naming:
+  FunctionMaxLength:
+    active: true
+    excludes:
+      - "**/test/**"
+
+  FunctionMinLength:
+    ignoreFunction:
+      - of
+    active: true
+
+  LambdaParameterNaming:
+    active: true
+
+  ConstructorParameterNaming:
+    excludes:
+      - "**/domain/model/ap/*"
+    ignoreOverridden: true
+
+  VariableNaming:
+    excludes:
+      - "**/domain/model/ap/*"
+
+performance:
+  UnnecessaryPartOfBinaryExpression:
+    active: true
+
+  UnnecessaryTemporaryInstantiation:
+    active: true
+
+  SpreadOperator:
+    active: false
+
+potential-bugs:
+  CastToNullableType:
+    active: true
+
+  DontDowncastCollectionTypes:
+    active: true
+
+  ElseCaseInsteadOfExhaustiveWhen:
+    active: true
+
+  HasPlatformType:
+    active: false
+
+coroutines:
+  RedundantSuspendModifier:
+    active: false
+  InjectDispatcher:
+    active: false

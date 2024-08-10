@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic SYSTEM "html-entities.dtd">
+<topic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="topic.v2.xsd" id="hideout"
+       title="hideout">
+    <chunk include-id="hideout">
+        <chapter title="hideout" id="hideout">
+            <table>
+                <tr>
+                    <td>Project</td>
+                    <td>Version</td>
+                    <td>License</td>
+                </tr>
+                <tr>
+                    <td>com.fasterxml.jackson:jackson-bom</td>
+                    <td>2.15.3</td>
+                    <td>Apache License, Version 2.0</td>
+                </tr>
+                <tr>
+                    <td>io.ktor:ktor-client-cio</td>
+                    <td>2.3.8</td>
+                    <td>Apache License, Version 2.0</td>
+                </tr>
+                <tr>
+                    <td>io.ktor:ktor-client-content-negotiation</td>
+                    <td>2.3.8</td>
+                    <td>Apache License, Version 2.0</td>
+                </tr>
+                <tr>
+                    <td>io.ktor:ktor-client-core</td>
+                    <td>2.3.8</td>
+                    <td>Apache License, Version 2.0</td>
+                </tr>
+                <tr>
+                    <td>io.ktor:ktor-events</td>
+                    <td>2.3.8</td>
+                    <td>Apache License, Version 2.0</td>
+                </tr>
+                <tr>
+                    <td>io.ktor:ktor-http</td>
+                    <td>2.3.8</td>
+                    <td>Apache License, Version 2.0</td>
+                </tr>
+                <tr>
+                    <td>io.ktor:ktor-http-cio</td>
+                    <td>2.3.8</td>
+                    <td>Apache License, Version 2.0</td>
+                </tr>
+                <tr>
+                    <td>io.ktor:ktor-io</td>
+                    <td>2.3.8</td>
+                    <td>Apache License, Version 2.0</td>
+                </tr>
+                <tr>
+                    <td>io.ktor:ktor-network</td>
+                    <td>2.3.8</td>
+                    <td>Apache License, Version 2.0</td>
+                </tr>
+                <tr>
+                    <td>io.ktor:ktor-network-tls</td>
+                    <td>2.3.8</td>
+                    <td>Apache License, Version 2.0</td>
+                </tr>
+                <tr>
+                    <td>io.ktor:ktor-serialization</td>
+                    <td>2.3.8</td>
+                    <td>Apache License, Version 2.0</td>
+                </tr>
+                <tr>
+                    <td>io.ktor:ktor-serialization-jackson</td>
+                    <td>2.3.8</td>
+                    <td>Apache License, Version 2.0</td>
+                </tr>
+                <tr>
+                    <td>io.ktor:ktor-utils</td>
+                    <td>2.3.8</td>
+                    <td>Apache License, Version 2.0</td>
+                </tr>
+                <tr>
+                    <td>io.ktor:ktor-websocket-serialization</td>
+                    <td>2.3.8</td>
+                    <td>Apache License, Version 2.0</td>
+                </tr>
+                <tr>
+                    <td>io.ktor:ktor-websockets</td>
+                    <td>2.3.8</td>
+                    <td>Apache License, Version 2.0</td>
+                </tr>
+                <tr>
+                    <td>org.apache.tika:tika-parsers</td>
+                    <td>2.9.1</td>
+                    <td>Apache License, Version 2.0</td>
+                </tr>
+                <tr>
+                    <td>org.jetbrains.kotlin:kotlin-stdlib-common</td>
+                    <td>1.9.22</td>
+                    <td>Apache License, Version 2.0</td>
+                </tr>
+                <tr>
+                    <td>org.jetbrains.kotlinx:kotlinx-coroutines-bom</td>
+                    <td>1.7.3</td>
+                    <td>Apache License, Version 2.0</td>
+                </tr>
+                <tr>
+                    <td>org.jetbrains.kotlinx:kotlinx-coroutines-core</td>
+                    <td>1.7.3</td>
+                    <td>Apache License, Version 2.0</td>
+                </tr>
+                <tr>
+                    <td>org.jetbrains.kotlinx:kotlinx-serialization-bom</td>
+                    <td>1.6.2</td>
+                    <td>Apache License, Version 2.0</td>
+                </tr>
+                <tr>
+                    <td>org.jetbrains.kotlinx:kotlinx-serialization-core</td>
+                    <td>1.6.2</td>
+                    <td>Apache License, Version 2.0</td>
+                </tr>
+                <tr>
+                    <td>org.jetbrains.kotlinx:kotlinx-serialization-json</td>
+                    <td>1.6.2</td>
+                    <td>Apache License, Version 2.0</td>
+                </tr>
+            </table>
+        </chapter>
+    </chunk>
+</topic>

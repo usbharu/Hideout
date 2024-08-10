@@ -1,0 +1,82 @@
+name: master-publish-package.yaml
+on:
+  pull_request:
+    branches:
+      - "master"
+      - "release-test-master"
+jobs:
+  release-diff-check:
+    name: Release diff check
+    runs-on: ubuntu-latest
+    outputs:
+      diff: ${{ steps.check-diff.outputs.result }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: fetch git
+        run: git fetch --depth 1 origin
+
+      - name: Check diff
+        id: check-diff
+        uses: actions/github-script@v3
+        with:
+          result-encoding: 'json'
+          script: |
+            const fs = require('fs')
+            const {execSync} = require('child_process');
+            const jsonData = JSON.parse(fs.readFileSync('./.github/monorepo.json', 'utf8'));
+            const baseRef = context.payload.pull_request.base.ref
+            console.log(baseRef)
+            var tags = []
+            
+            for (let [key, value] of Object.entries(jsonData.projects)) {
+                console.log(execSync("git branch", {encoding: 'utf8'}))
+                const command = "git diff origin/" + baseRef + " -- HEAD --name-only --relative=" + key + "\n";
+                const output = execSync(command, {encoding: 'utf8'});
+                console.log(output)
+                if (output.trim() === '') {
+                    tags.push(value)
+                }
+            }
+            return tags
+
+      - name: show diff
+        env:
+          DIFF: ${{ steps.check-diff.outputs.result }}
+        run: echo "$DIFF"
+
+  publish-package:
+    runs-on: ubuntu-latest
+    needs: release-diff-check
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Gradle Wrapper Validation
+        uses: gradle/actions/wrapper-validation@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: false
+          gradle-home-cache-cleanup: true
+
+      - name: Publish OWL Local
+        if: ${{ github.base_ref == 'release-test-master' && contains( needs.release-diff-check.outputs.diff, 'owl') }}
+        run: ./owl/gradlew :owl:publishMavenPublicationToMavenLocal
+
+      - name: Publish OWL Gitea
+
+        if: ${{ github.base_ref == 'master' && contains( needs.release-diff-check.outputs.diff , 'owl')}}
+        run: ./owl/gradlew :owl:publishMavenPublicationToGiteaRepository
+        env:
+          USERNAME: ${{ github.actor }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITEA: ${{ secrets.GITEA }}

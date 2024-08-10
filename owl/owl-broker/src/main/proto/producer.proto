@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+import "uuid.proto";
+
+option java_package = "dev.usbharu.owl";
+
+message Producer {
+  string name = 1;
+  string hostname = 2;
+}
+
+message RegisterProducerResponse {
+  UUID id = 1;
+}
+
+service ProducerService {
+  rpc registerProducer (Producer) returns (RegisterProducerResponse);
+}
