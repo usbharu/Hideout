@@ -29,10 +29,11 @@ jobs:
             var tags = []
             
             for (let [key, value] of Object.entries(jsonData.projects)) {
-            console.log(execSync("git branch",{encoding: 'utf8'}))
+                console.log(execSync("git branch", {encoding: 'utf8'}))
                 const command = "git diff origin/" + baseRef + " -- HEAD --name-only --relative=" + key + "\n";
                 const output = execSync(command, {encoding: 'utf8'});
-                if (output.length != 0) {
+                console.log(output)
+                if (output.length !== 0) {
                     tags.push(value)
                 }
             }
