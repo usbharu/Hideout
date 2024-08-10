@@ -4,6 +4,8 @@ on:
     branches:
       - 'master'
       - 'release-test-master'
+    branches-ignore:
+      - 'develop'
 jobs:
   release-diff-check:
     name: Release diff check
