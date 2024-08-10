@@ -68,15 +68,6 @@ jobs:
           cache-read-only: false
           gradle-home-cache-cleanup: true
 
-      - name: Show GitHub Base Ref
-        run: |
-          echo ${{ github.base_ref }}
-          echo ${{ github.base_ref == 'master' }}
-          echo ${{ github.base_ref == 'release-test-master' }}
-          echo ${{ contains( needs.release-diff-check.outputs.diff, 'owl') }}
-          echo ${{ github.base_ref == 'master' && contains( needs.release-diff-check.outputs.diff , 'owl')}}
-          echo ${{ github.base_ref == 'release-test-master' && contains( needs.release-diff-check.outputs.diff, 'owl') }}
-
       - name: Publish OWL Local
         if: ${{ github.base_ref == 'release-test-master' && contains( needs.release-diff-check.outputs.diff, 'owl') }}
         run: ./owl/gradlew :owl:publishMavenPublicationToMavenLocal
