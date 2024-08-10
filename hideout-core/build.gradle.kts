@@ -81,8 +81,8 @@ dependencies {
     implementation(libs.bundles.ktor.client)
     implementation(libs.bundles.apache.tika)
     implementation(libs.bundles.openapi)
-//    implementation(libs.bundles.owl.producer)
-//    implementation(libs.bundles.owl.broker)
+    implementation(libs.bundles.owl.producer)
+    implementation(libs.bundles.owl.broker)
     implementation(libs.bundles.spring.boot.oauth2)
     implementation(libs.bundles.spring.boot.data.mongodb)
     implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -103,7 +103,7 @@ dependencies {
     implementation(libs.flyway.core)
     runtimeOnly(libs.flyway.postgresql)
 
-//    implementation("dev.usbharu:owl-common-serialize-jackson:0.0.1")
+    implementation("dev.usbharu:owl-common-serialize-jackson:0.0.1")
 
     implementation(libs.javacv) {
         exclude(module = "opencv")
