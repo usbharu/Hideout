@@ -1,0 +1,39 @@
+name: master-publish-package.yaml
+on:
+  pull_request:
+    branches:
+      - "master"
+      - "release-test-master"
+jobs:
+  release-diff-check:
+    name: Release diff check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check diff
+        id: check-diff
+        uses: actions/github-script@v3
+        with:
+          result-encoding: 'json'
+          script: |
+            const fs = require('fs')
+            const {execSync} = require('child_process');
+            const jsonData = JSON.parse(fs.readFileSync('./.github/monorepo.json', 'utf8'));
+            
+            var tags = []
+            
+            for (let [key, value] of Object.entries(jsonData.projects)) {
+                const command = "git diff origin/master HEAD --name-only --relative=" + key + "\n";
+                const output = execSync(command, {encoding: 'utf8'});
+                if (output.length != 0) {
+                    tags.push(value)
+                }
+            }
+            return tags
+
+      - name: show diff
+        env:
+          DIFF: ${{ steps.check-diff.outputs.result }}
+        run: echo "$DIFF"
