@@ -77,5 +77,6 @@ jobs:
         run: ./owl/gradlew :owl:publishMavenPublicationToMavenLocal
 
       - name: Publish OWL Gitea
-        if: github.base_ref == 'master' && contains(${{ needs.release-diff-check.outputs.diff }}, 'owl')
+        #        if: github.base_ref == 'master' && contains(${{ needs.release-diff-check.outputs.diff }}, 'owl')
+        if: false
         run: ./owl/gradlew :owl:publishMavenPublicationToGiteaRepository
