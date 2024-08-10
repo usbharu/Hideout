@@ -2,8 +2,8 @@ name: master-publish-package.yaml
 on:
   pull_request:
     branches:
-      - "master"
-      - "release-test-master"
+      - 'master'
+      - 'release-test-master'
 jobs:
   release-diff-check:
     name: Release diff check
