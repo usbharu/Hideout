@@ -21,11 +21,12 @@ jobs:
             const fs = require('fs')
             const {execSync} = require('child_process');
             const jsonData = JSON.parse(fs.readFileSync('./.github/monorepo.json', 'utf8'));
-            
+            const baseRef = github.context.payload.pull_request.base.ref
+            console.log(baseRef)
             var tags = []
             
             for (let [key, value] of Object.entries(jsonData.projects)) {
-                const command = "git diff origin/master HEAD --name-only --relative=" + key + "\n";
+                const command = "git diff " + baseRef + " HEAD --name-only --relative=" + key + "\n";
                 const output = execSync(command, {encoding: 'utf8'});
                 if (output.length != 0) {
                     tags.push(value)
