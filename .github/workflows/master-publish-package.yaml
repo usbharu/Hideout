@@ -19,7 +19,7 @@ jobs:
 
       - name: Check diff
         id: check-diff
-        uses: actions/github-script@v3
+        uses: actions/github-script@v7
         with:
           result-encoding: 'json'
           script: |
