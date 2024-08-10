@@ -33,7 +33,7 @@ subprojects {
     }
 
     dependencies {
-        implementation("org.slf4j:slf4j-api:2.0.15")
+        implementation("org.slf4j:slf4j-api:2.0.16")
         testImplementation("org.junit.jupiter:junit-jupiter:5.10.3")
 
 
