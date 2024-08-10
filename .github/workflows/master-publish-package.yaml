@@ -68,9 +68,9 @@ jobs:
           gradle-home-cache-cleanup: true
 
       - name: Publish OWL Local
-        if: github.base_ref == release-test-master && contains(${{ needs.release-diff-check.outputs.diff }}, 'owl')
+        if: github.base_ref == 'release-test-master' && contains(${{ needs.release-diff-check.outputs.diff }}, 'owl')
         run: ./owl/gradlew :owl:publishMavenPublicationToMavenLocal
 
       - name: Publish OWL Gitea
-        if: github.base_ref == master && contains(${{ needs.release-diff-check.outputs.diff }}, 'owl')
+        if: github.base_ref == 'master' && contains(${{ needs.release-diff-check.outputs.diff }}, 'owl')
         run: ./owl/gradlew :owl:publishMavenPublicationToGiteaRepository
