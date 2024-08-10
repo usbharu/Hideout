@@ -21,7 +21,7 @@ jobs:
             const fs = require('fs')
             const {execSync} = require('child_process');
             const jsonData = JSON.parse(fs.readFileSync('./.github/monorepo.json', 'utf8'));
-            const baseRef = github.context.payload.pull_request.base.ref
+            const baseRef = context.payload.pull_request.base.ref
             console.log(baseRef)
             var tags = []
             
