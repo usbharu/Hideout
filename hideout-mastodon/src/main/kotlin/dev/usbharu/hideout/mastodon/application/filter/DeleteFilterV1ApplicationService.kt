@@ -16,26 +16,30 @@
 
 package dev.usbharu.hideout.mastodon.application.filter
 
-import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
+import dev.usbharu.hideout.core.application.exception.PermissionDeniedException
+import dev.usbharu.hideout.core.application.shared.LocalUserAbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.filter.FilterKeywordId
 import dev.usbharu.hideout.core.domain.model.filter.FilterRepository
-import dev.usbharu.hideout.core.domain.model.support.principal.Principal
+import dev.usbharu.hideout.core.domain.model.support.principal.FromApi
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
 class DeleteFilterV1ApplicationService(private val filterRepository: FilterRepository, transaction: Transaction) :
-    AbstractApplicationService<DeleteFilterV1, Unit>(
+    LocalUserAbstractApplicationService<DeleteFilterV1, Unit>(
         transaction, logger
     ) {
-    companion object {
-        private val logger = LoggerFactory.getLogger(DeleteFilterV1ApplicationService::class.java)
+    override suspend fun internalExecute(command: DeleteFilterV1, principal: FromApi) {
+        val filter = filterRepository.findByFilterKeywordId(FilterKeywordId(command.filterKeywordId))
+            ?: throw IllegalArgumentException("Filter ${command.filterKeywordId} not found")
+        if (principal.userDetailId != filter.userDetailId) {
+            throw PermissionDeniedException()
+        }
+        filterRepository.delete(filter)
     }
 
-    override suspend fun internalExecute(command: DeleteFilterV1, principal: Principal) {
-        val filter = filterRepository.findByFilterKeywordId(FilterKeywordId(command.filterKeywordId))
-            ?: throw Exception("Not Found")
-        filterRepository.delete(filter)
+    companion object {
+        private val logger = LoggerFactory.getLogger(DeleteFilterV1ApplicationService::class.java)
     }
 }

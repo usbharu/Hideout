@@ -16,9 +16,9 @@
 
 package dev.usbharu.hideout.mastodon.application.status
 
-import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
+import dev.usbharu.hideout.core.application.shared.LocalUserAbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
-import dev.usbharu.hideout.core.domain.model.support.principal.Principal
+import dev.usbharu.hideout.core.domain.model.support.principal.FromApi
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.Status
 import dev.usbharu.hideout.mastodon.query.StatusQueryService
 import org.slf4j.LoggerFactory
@@ -28,7 +28,7 @@ import org.springframework.stereotype.Service
 class GetStatusApplicationService(
     private val statusQueryService: StatusQueryService,
     transaction: Transaction,
-) : AbstractApplicationService<GetStatus, Status>(
+) : LocalUserAbstractApplicationService<GetStatus, Status>(
     transaction,
     logger
 ) {
@@ -36,7 +36,9 @@ class GetStatusApplicationService(
         val logger = LoggerFactory.getLogger(GetStatusApplicationService::class.java)!!
     }
 
-    override suspend fun internalExecute(command: GetStatus, principal: Principal): Status {
-        return statusQueryService.findByPostId(command.id.toLong()) ?: throw Exception("Not fount")
+    override suspend fun internalExecute(command: GetStatus, principal: FromApi): Status {
+        return statusQueryService.findByPostId(command.id.toLong())
+            ?: throw IllegalArgumentException("Post ${command.id} not found.")
+
     }
 }

@@ -19,6 +19,7 @@ package dev.usbharu.hideout.mastodon.infrastructure.exposedquery
 import dev.usbharu.hideout.core.domain.model.emoji.CustomEmoji
 import dev.usbharu.hideout.core.domain.model.media.*
 import dev.usbharu.hideout.core.domain.model.post.Visibility
+import dev.usbharu.hideout.core.domain.model.support.principal.Principal
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.*
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.Account
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.MediaAttachment
@@ -117,7 +118,7 @@ class StatusQueryServiceImpl : StatusQueryService {
         return statuses
     }
 
-    override suspend fun findByPostId(id: Long): Status? {
+    override suspend fun findByPostId(id: Long, principal: Principal?): Status? {
         val map = Posts
             .leftJoin(PostsMedia)
             .leftJoin(Actors)

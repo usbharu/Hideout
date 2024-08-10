@@ -16,9 +16,9 @@
 
 package dev.usbharu.hideout.mastodon.application.accounts
 
-import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
+import dev.usbharu.hideout.core.application.shared.LocalUserAbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
-import dev.usbharu.hideout.core.domain.model.support.principal.Principal
+import dev.usbharu.hideout.core.domain.model.support.principal.FromApi
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.Account
 import dev.usbharu.hideout.mastodon.query.AccountQueryService
 import org.slf4j.LoggerFactory
@@ -26,11 +26,11 @@ import org.springframework.stereotype.Service
 
 @Service
 class GetAccountApplicationService(private val accountQueryService: AccountQueryService, transaction: Transaction) :
-    AbstractApplicationService<GetAccount, Account>(
+    LocalUserAbstractApplicationService<GetAccount, Account>(
         transaction,
         logger
     ) {
-    override suspend fun internalExecute(command: GetAccount, principal: Principal): Account {
+    override suspend fun internalExecute(command: GetAccount, principal: FromApi): Account {
         return accountQueryService.findById(command.accountId.toLong()) ?: throw Exception("Account not found")
     }
 
