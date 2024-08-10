@@ -4,7 +4,7 @@ plugins {
 rootProject.name = "hideout-core"
 
 //ローカルで変更した時、リリースまではアンコメント リリース後はコメントアウト
-includeBuild("../owl")
+//includeBuild("../owl")
 
 dependencyResolutionManagement {
     repositories {
