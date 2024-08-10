@@ -3,11 +3,15 @@ plugins {
 }
 rootProject.name = "hideout-core"
 
-includeBuild("../owl")
+//ローカルで変更した時、リリースまではアンコメント リリース後はコメントアウト
+//includeBuild("../owl")
 
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
+        maven {
+            url = uri("https://git.usbharu.dev/api/packages/usbharu/maven")
+        }
     }
 
     versionCatalogs {
