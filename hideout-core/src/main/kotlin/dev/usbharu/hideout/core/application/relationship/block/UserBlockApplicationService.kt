@@ -23,7 +23,6 @@ import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.relationship.Relationship
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
 import dev.usbharu.hideout.core.domain.model.support.principal.FromApi
-import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
 import dev.usbharu.hideout.core.domain.service.relationship.RelationshipDomainService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -33,14 +32,14 @@ class UserBlockApplicationService(
     private val relationshipRepository: RelationshipRepository,
     transaction: Transaction,
     private val actorRepository: ActorRepository,
-    private val userDetailRepository: UserDetailRepository,
     private val relationshipDomainService: RelationshipDomainService,
 ) :
     LocalUserAbstractApplicationService<Block, Unit>(transaction, logger) {
     override suspend fun internalExecute(command: Block, principal: FromApi) {
 
-        val userDetail = userDetailRepository.findById(principal.userDetailId)!!
-        val actor = actorRepository.findById(userDetail.actorId)!!
+
+        val actor = actorRepository.findById(principal.actorId)
+            ?: throw IllegalStateException("Actor ${principal.actorId} not found")
 
         val targetId = ActorId(command.targetActorId)
         val relationship = relationshipRepository.findByActorIdAndTargetId(actor.id, targetId) ?: Relationship.default(

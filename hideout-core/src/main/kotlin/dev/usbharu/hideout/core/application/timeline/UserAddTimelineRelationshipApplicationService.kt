@@ -1,8 +1,8 @@
 package dev.usbharu.hideout.core.application.timeline
 
-import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
+import dev.usbharu.hideout.core.application.shared.LocalUserAbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
-import dev.usbharu.hideout.core.domain.model.support.principal.Principal
+import dev.usbharu.hideout.core.domain.model.support.principal.FromApi
 import dev.usbharu.hideout.core.domain.model.timelinerelationship.TimelineRelationshipRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -12,12 +12,11 @@ class UserAddTimelineRelationshipApplicationService(
     private val timelineRelationshipRepository: TimelineRelationshipRepository,
     transaction: Transaction
 ) :
-    AbstractApplicationService<AddTimelineRelationship, Unit>(
+    LocalUserAbstractApplicationService<AddTimelineRelationship, Unit>(
         transaction, logger
     ) {
-    override suspend fun internalExecute(command: AddTimelineRelationship, principal: Principal) {
+    override suspend fun internalExecute(command: AddTimelineRelationship, principal: FromApi) {
         timelineRelationshipRepository.save(command.timelineRelationship)
-
     }
 
     companion object {

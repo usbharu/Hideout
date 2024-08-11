@@ -16,6 +16,7 @@
 
 package dev.usbharu.hideout.mastodon.query
 
+import dev.usbharu.hideout.core.domain.model.support.principal.Principal
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.Status
 
 interface StatusQueryService {
@@ -33,7 +34,7 @@ interface StatusQueryService {
         includeFollowers: Boolean = false,
     ): List<Status>
 
-    suspend fun findByPostId(id: Long): Status?
+    suspend fun findByPostId(id: Long, principal: Principal? = null): Status?
 }
 
 data class StatusQuery(

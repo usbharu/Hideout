@@ -16,6 +16,7 @@
 
 package dev.usbharu.hideout.mastodon.application.filter
 
+import dev.usbharu.hideout.core.application.exception.PermissionDeniedException
 import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.filter.FilterContext.*
@@ -34,7 +35,11 @@ class GetFilterV1ApplicationService(private val filterRepository: FilterReposito
     ) {
     override suspend fun internalExecute(command: GetFilterV1, principal: Principal): V1Filter {
         val filter = filterRepository.findByFilterKeywordId(FilterKeywordId(command.filterKeywordId))
-            ?: throw Exception("Not Found")
+            ?: throw IllegalArgumentException("Filter ${command.filterKeywordId} not found")
+
+        if (filter.userDetailId != principal.userDetailId) {
+            throw PermissionDeniedException()
+        }
 
         val filterKeyword = filter.filterKeywords.find { it.id.id == command.filterKeywordId }
         return V1Filter(

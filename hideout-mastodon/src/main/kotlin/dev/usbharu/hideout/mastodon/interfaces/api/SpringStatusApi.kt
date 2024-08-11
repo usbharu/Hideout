@@ -54,6 +54,7 @@ class SpringStatusApi(
 
     override suspend fun apiV1StatusesPost(statusesRequest: StatusesRequest): ResponseEntity<Status> {
 
+        val principal = principalContextHolder.getPrincipal()
         val execute = registerLocalPostApplicationService.execute(
             RegisterLocalPost(
                 content = statusesRequest.status.orEmpty(),
@@ -69,12 +70,12 @@ class SpringStatusApi(
                 replyId = statusesRequest.inReplyToId?.toLong(),
                 sensitive = statusesRequest.sensitive == true,
                 mediaIds = statusesRequest.mediaIds.orEmpty().map { it.toLong() }
-            ), principalContextHolder.getPrincipal()
+            ), principal
         )
 
 
         val status =
-            getStatusApplicationService.execute(GetStatus(execute.toString()), principalContextHolder.getPrincipal())
+            getStatusApplicationService.execute(GetStatus(execute.toString()), principal)
         return ResponseEntity.ok(
             status
         )
