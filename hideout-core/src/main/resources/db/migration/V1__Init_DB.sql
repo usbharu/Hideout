@@ -71,6 +71,14 @@ create table if not exists actor_alsoknownas
     constraint fk_actor_alsoknownas_actors__also_known_as foreign key ("also_known_as") references actors (id) on delete cascade on update cascade
 );
 
+create table timelines
+(
+    id             bigint primary key,
+    user_detail_id bigint       not null,
+    name           varchar(255) not null,
+    visibility     varchar(100) not null,
+    is_system      boolean      not null default false
+);
 create table if not exists user_details
 (
     id                                  bigserial primary key,
@@ -78,8 +86,13 @@ create table if not exists user_details
     password                            varchar(255) not null,
     auto_accept_followee_follow_request boolean      not null,
     last_migration                      timestamp    null default null,
-    constraint fk_user_details_actor_id__id foreign key (actor_id) references actors (id) on delete restrict on update restrict
+    home_timeline_id bigint null default null,
+    constraint fk_user_details_actor_id__id foreign key (actor_id) references actors (id) on delete restrict on update restrict,
+    constraint fk_user_details_timelines_id__id foreign key (home_timeline_id) references timelines (id) on delete cascade on update cascade
 );
+
+alter table timelines
+    add constraint fk_timelines_user_details__user_detail_id foreign key ("user_detail_id") references user_details (id) on delete cascade on update cascade;
 
 create table if not exists media
 (
@@ -104,6 +117,7 @@ create table if not exists posts
 (
     id          bigint primary key,
     actor_id    bigint                not null,
+    instance_id bigint not null,
     overview    varchar(100)          null,
     content     varchar(5000)         not null,
     text        varchar(3000)         not null,
@@ -118,6 +132,8 @@ create table if not exists posts
     hide        boolean default false not null,
     move_to     bigint  default null  null
 );
+alter table posts
+    add constraint fk_posts_instance_id__id foreign key (instance_id) references instance (id) on delete cascade on update cascade;
 alter table posts
     add constraint fk_posts_actor_id__id foreign key (actor_id) references actors (id) on delete restrict on update restrict;
 alter table posts

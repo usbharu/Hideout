@@ -17,12 +17,11 @@
 package dev.usbharu.hideout.core.application.actor
 
 import dev.usbharu.hideout.core.application.exception.InternalServerException
-import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
+import dev.usbharu.hideout.core.application.shared.LocalUserAbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.emoji.CustomEmojiRepository
-import dev.usbharu.hideout.core.domain.model.support.principal.Principal
-import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
+import dev.usbharu.hideout.core.domain.model.support.principal.FromApi
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -34,10 +33,10 @@ class GetUserDetailApplicationService(
     private val customEmojiRepository: CustomEmojiRepository,
     transaction: Transaction,
 ) :
-    AbstractApplicationService<GetUserDetail, UserDetail>(transaction, Companion.logger) {
-    override suspend fun internalExecute(command: GetUserDetail, principal: Principal): UserDetail {
-        val userDetail = userDetailRepository.findById(UserDetailId(command.id))
-            ?: throw IllegalArgumentException("User ${command.id} does not exist")
+    LocalUserAbstractApplicationService<Unit, UserDetail>(transaction, Companion.logger) {
+    override suspend fun internalExecute(command: Unit, principal: FromApi): UserDetail {
+        val userDetail = userDetailRepository.findById(principal.userDetailId)
+            ?: throw IllegalArgumentException("User ${principal.userDetailId} does not exist")
         val actor = actorRepository.findById(userDetail.actorId)
             ?: throw InternalServerException("Actor ${userDetail.actorId} not found")
 
@@ -47,6 +46,6 @@ class GetUserDetailApplicationService(
     }
 
     companion object {
-        val logger = LoggerFactory.getLogger(GetUserDetailApplicationService::class.java)
+        private val logger = LoggerFactory.getLogger(GetUserDetailApplicationService::class.java)
     }
 }
