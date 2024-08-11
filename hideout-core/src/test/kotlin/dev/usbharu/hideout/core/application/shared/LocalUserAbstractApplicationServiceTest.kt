@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.core.application.shared
 
+import dev.usbharu.hideout.core.application.exception.PermissionDeniedException
 import dev.usbharu.hideout.core.domain.model.support.principal.Anonymous
 import dev.usbharu.hideout.core.domain.model.support.principal.FromApi
 import kotlinx.coroutines.test.runTest
@@ -17,7 +18,7 @@ class LocalUserAbstractApplicationServiceTest {
             }
         }
 
-        org.junit.jupiter.api.assertThrows<IllegalArgumentException> {
+        org.junit.jupiter.api.assertThrows<PermissionDeniedException> {
             value.execute(Unit, Anonymous)
         }
     }

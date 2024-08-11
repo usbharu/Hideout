@@ -19,6 +19,7 @@ package dev.usbharu.hideout.mastodon.infrastructure.exposedquery
 import dev.usbharu.hideout.core.domain.model.emoji.CustomEmoji
 import dev.usbharu.hideout.core.domain.model.media.*
 import dev.usbharu.hideout.core.domain.model.post.Visibility
+import dev.usbharu.hideout.core.domain.model.support.principal.Principal
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.*
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.Account
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.MediaAttachment
@@ -26,10 +27,7 @@ import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.Status
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.Status.Visibility.*
 import dev.usbharu.hideout.mastodon.query.StatusQuery
 import dev.usbharu.hideout.mastodon.query.StatusQueryService
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.andWhere
-import org.jetbrains.exposed.sql.leftJoin
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
 import org.springframework.stereotype.Repository
 import java.net.URI
 import dev.usbharu.hideout.core.domain.model.media.Media as EntityMedia
@@ -38,6 +36,37 @@ import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.CustomEmoji a
 @Suppress("IncompleteDestructuring")
 @Repository
 class StatusQueryServiceImpl : StatusQueryService {
+
+    protected fun authorizedQuery(principal: Principal? = null): QueryAlias {
+        if (principal == null) {
+            return Posts
+                .selectAll()
+                .where {
+                    Posts.visibility eq Visibility.PUBLIC.name or (Posts.visibility eq Visibility.UNLISTED.name)
+                }
+                .alias("authorized_table")
+        }
+
+        val relationshipsAlias = Relationships.alias("inverse_relationships")
+
+        return Posts
+            .leftJoin(PostsVisibleActors)
+            .leftJoin(Relationships, onColumn = { Posts.actorId }, otherColumn = { actorId })
+            .leftJoin(
+                relationshipsAlias,
+                onColumn = { Posts.actorId },
+                otherColumn = { relationshipsAlias[Relationships.targetActorId] })
+            .select(Posts.columns)
+            .where {
+                Posts.visibility eq Visibility.PUBLIC.name or
+                        (Posts.visibility eq Visibility.UNLISTED.name) or
+                        (Posts.visibility eq Visibility.DIRECT.name and (PostsVisibleActors.actorId eq principal.actorId.id)) or
+                        (Posts.visibility eq Visibility.FOLLOWERS.name and (Relationships.blocking eq false and (relationshipsAlias[Relationships.following] eq true))) or
+                        (Posts.actorId eq principal.actorId.id)
+            }
+            .alias("authorized_table")
+    }
+
     override suspend fun findByPostIds(ids: List<Long>): List<Status> = findByPostIdsWithMedia(ids)
 
     override suspend fun findByPostIdsWithMediaIds(statusQueries: List<StatusQuery>): List<Status> {
@@ -49,10 +78,12 @@ class StatusQueryServiceImpl : StatusQueryService {
         val emojiIdSet = mutableSetOf<Long>()
         emojiIdSet.addAll(statusQueries.flatMap { it.emojiIds })
 
+        val qa = authorizedQuery()
+
         val postMap = Posts
             .leftJoin(Actors)
             .selectAll().where { Posts.id inList postIdSet }
-            .associate { it[Posts.id] to toStatus(it) }
+            .associate { it[Posts.id] to toStatus(it, qa) }
         val mediaMap = Media.selectAll().where { Media.id inList mediaIdSet }
             .associate {
                 it[Media.id] to it.toMedia().toMediaAttachments()
@@ -81,7 +112,8 @@ class StatusQueryServiceImpl : StatusQueryService {
         tagged: String?,
         includeFollowers: Boolean,
     ): List<Status> {
-        val query = Posts
+        val qa = authorizedQuery()
+        val query = qa
             .leftJoin(PostsMedia)
             .leftJoin(Actors)
             .leftJoin(Media)
@@ -106,7 +138,7 @@ class StatusQueryServiceImpl : StatusQueryService {
             .groupBy { it[Posts.id] }
             .map { it.value }
             .map {
-                toStatus(it.first()).copy(
+                toStatus(it.first(), qa).copy(
                     mediaAttachments = it.mapNotNull { resultRow ->
                         resultRow.toMediaOrNull()?.toMediaAttachments()
                     }
@@ -117,22 +149,23 @@ class StatusQueryServiceImpl : StatusQueryService {
         return statuses
     }
 
-    override suspend fun findByPostId(id: Long): Status? {
-        val map = Posts
-            .leftJoin(PostsMedia)
-            .leftJoin(Actors)
-            .leftJoin(Media,{PostsMedia.mediaId},{Media.id})
+    override suspend fun findByPostId(id: Long, principal: Principal?): Status? {
+        val aq = authorizedQuery(principal)
+        val map = aq
+            .leftJoin(PostsMedia, { aq[Posts.id] }, { PostsMedia.postId })
+            .leftJoin(Actors, { aq[Posts.actorId] }, { Actors.id })
+            .leftJoin(Media, { PostsMedia.mediaId }, { Media.id })
             .selectAll()
-            .where { Posts.id eq id }
-            .groupBy { it[Posts.id] }
+            .where { aq[Posts.id] eq id }
+            .groupBy { it[aq[Posts.id]] }
             .map { it.value }
             .map {
-                toStatus(it.first()).copy(
+                toStatus(it.first(), aq).copy(
                     mediaAttachments = it.mapNotNull { resultRow ->
                         resultRow.toMediaOrNull()?.toMediaAttachments()
                     },
                     emojis = it.mapNotNull { resultRow -> resultRow.toCustomEmojiOrNull()?.toMastodonEmoji() }
-                ) to it.first()[Posts.repostId]
+                ) to it.first()[aq[Posts.repostId]]
             }
         return resolveReplyAndRepost(map).singleOrNull()
     }
@@ -159,6 +192,7 @@ class StatusQueryServiceImpl : StatusQueryService {
     }
 
     private suspend fun findByPostIdsWithMedia(ids: List<Long>): List<Status> {
+        val qa = authorizedQuery()
         val pairs = Posts
             .leftJoin(PostsMedia)
             .leftJoin(PostsEmojis)
@@ -169,7 +203,7 @@ class StatusQueryServiceImpl : StatusQueryService {
             .groupBy { it[Posts.id] }
             .map { it.value }
             .map {
-                toStatus(it.first()).copy(
+                toStatus(it.first(), qa).copy(
                     mediaAttachments = it.mapNotNull { resultRow ->
                         resultRow.toMediaOrNull()?.toMediaAttachments()
                     },
@@ -188,10 +222,10 @@ private fun CustomEmoji.toMastodonEmoji(): MastodonEmoji = MastodonEmoji(
     category = this.category.orEmpty()
 )
 
-private fun toStatus(it: ResultRow) = Status(
-    id = it[Posts.id].toString(),
-    uri = it[Posts.apId],
-    createdAt = it[Posts.createdAt].toString(),
+private fun toStatus(it: ResultRow, queryAlias: QueryAlias) = Status(
+    id = it[queryAlias[Posts.id]].toString(),
+    uri = it[queryAlias[Posts.apId]],
+    createdAt = it[queryAlias[Posts.createdAt]].toString(),
     account = Account(
         id = it[Actors.id].toString(),
         username = it[Actors.name],
@@ -219,15 +253,15 @@ private fun toStatus(it: ResultRow) = Status(
         suspended = false,
         limited = false
     ),
-    content = it[Posts.text],
-    visibility = when (Visibility.valueOf(it[Posts.visibility])) {
+    content = it[queryAlias[Posts.text]],
+    visibility = when (Visibility.valueOf(it[queryAlias[Posts.visibility]])) {
         Visibility.PUBLIC -> public
         Visibility.UNLISTED -> unlisted
         Visibility.FOLLOWERS -> private
         Visibility.DIRECT -> direct
     },
-    sensitive = it[Posts.sensitive],
-    spoilerText = it[Posts.overview].orEmpty(),
+    sensitive = it[queryAlias[Posts.sensitive]],
+    spoilerText = it[queryAlias[Posts.overview]].orEmpty(),
     mediaAttachments = emptyList(),
     mentions = emptyList(),
     tags = emptyList(),
@@ -235,11 +269,11 @@ private fun toStatus(it: ResultRow) = Status(
     reblogsCount = 0,
     favouritesCount = 0,
     repliesCount = 0,
-    url = it[Posts.apId],
-    inReplyToId = it[Posts.replyId]?.toString(),
+    url = it[queryAlias[Posts.apId]],
+    inReplyToId = it[queryAlias[Posts.replyId]]?.toString(),
     inReplyToAccountId = null,
     language = null,
-    text = it[Posts.text],
+    text = it[queryAlias[Posts.text]],
     editedAt = null
 )
 

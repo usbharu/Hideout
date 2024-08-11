@@ -30,6 +30,7 @@ import dev.usbharu.hideout.core.infrastructure.exposedrepository.Posts.createdAt
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Posts.deleted
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Posts.hide
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Posts.id
+import dev.usbharu.hideout.core.infrastructure.exposedrepository.Posts.instanceId
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Posts.moveTo
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Posts.overview
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Posts.replyId
@@ -61,6 +62,7 @@ class ExposedPostRepository(
             Posts.upsert {
                 it[id] = post.id.id
                 it[actorId] = post.actorId.id
+                it[instanceId] = post.instanceId.instanceId
                 it[overview] = post.overview?.overview
                 it[content] = post.content.content
                 it[text] = post.content.text
@@ -106,6 +108,7 @@ class ExposedPostRepository(
             Posts.batchUpsert(posts, id) {
                 this[id] = it.id.id
                 this[actorId] = it.actorId.id
+                this[instanceId] = it.instanceId.instanceId
                 this[overview] = it.overview?.overview
                 this[content] = it.content.content
                 this[text] = it.content.text

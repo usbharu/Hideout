@@ -18,6 +18,7 @@ package dev.usbharu.hideout.mastodon.interfaces.api
 
 import dev.usbharu.hideout.core.application.actor.GetUserDetail
 import dev.usbharu.hideout.core.application.actor.GetUserDetailApplicationService
+import dev.usbharu.hideout.core.application.exception.PermissionDeniedException
 import dev.usbharu.hideout.core.application.relationship.acceptfollowrequest.AcceptFollowRequest
 import dev.usbharu.hideout.core.application.relationship.acceptfollowrequest.UserAcceptFollowRequestApplicationService
 import dev.usbharu.hideout.core.application.relationship.block.Block
@@ -160,7 +161,11 @@ class SpringAccountApi(
     override suspend fun apiV1AccountsVerifyCredentialsGet(): ResponseEntity<CredentialAccount> {
         val principal = principalContextHolder.getPrincipal()
         val localActor =
-            getUserDetailApplicationService.execute(GetUserDetail(principal.userDetailId.id), principal)
+            getUserDetailApplicationService.execute(
+                GetUserDetail(
+                    principal.userDetailId?.id ?: throw PermissionDeniedException()
+                ), principal
+            )
 
         return ResponseEntity.ok(
             CredentialAccount(
