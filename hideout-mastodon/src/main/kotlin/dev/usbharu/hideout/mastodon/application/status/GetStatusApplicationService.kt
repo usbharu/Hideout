@@ -37,7 +37,7 @@ class GetStatusApplicationService(
     }
 
     override suspend fun internalExecute(command: GetStatus, principal: FromApi): Status {
-        return statusQueryService.findByPostId(command.id.toLong())
+        return statusQueryService.findByPostId(command.id.toLong(), principal)
             ?: throw IllegalArgumentException("Post ${command.id} not found.")
 
     }

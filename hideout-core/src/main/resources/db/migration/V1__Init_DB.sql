@@ -188,8 +188,8 @@ create table if not exists relationships
     following             boolean not null,
     blocking              boolean not null,
     muting                boolean not null,
-    follow_request        boolean not null,
-    ignore_follow_request boolean not null,
+    follow_requesting     boolean not null,
+    muting_follow_request boolean not null,
     constraint fk_relationships_actor_id__id foreign key (actor_id) references actors (id) on delete restrict on update restrict,
     constraint fk_relationships_target_actor_id__id foreign key (target_actor_id) references actors (id) on delete restrict on update restrict,
     unique (actor_id, target_actor_id)
