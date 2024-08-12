@@ -6,7 +6,7 @@ import dev.usbharu.hideout.core.domain.model.filter.*
 import dev.usbharu.hideout.core.domain.model.filter.Filter
 import dev.usbharu.hideout.core.domain.model.filter.FilterKeyword
 import dev.usbharu.hideout.core.domain.model.support.acct.Acct
-import dev.usbharu.hideout.core.domain.model.support.principal.FromApi
+import dev.usbharu.hideout.core.domain.model.support.principal.LocalUser
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
@@ -43,7 +43,7 @@ class UserGetFilterApplicationServiceTest {
         whenever(filterRepository.findByFilterId(FilterId(1))).doReturn(filter)
 
         service.execute(
-            GetFilter(1), FromApi(
+            GetFilter(1), LocalUser(
                 ActorId(1), UserDetailId(1),
                 Acct("test", "example.com")
             )
@@ -64,7 +64,7 @@ class UserGetFilterApplicationServiceTest {
 
         assertThrows<PermissionDeniedException> {
             service.execute(
-                GetFilter(1), FromApi(
+                GetFilter(1), LocalUser(
                     ActorId(3), UserDetailId(3),
                     Acct("test", "example.com")
                 )
@@ -76,7 +76,7 @@ class UserGetFilterApplicationServiceTest {
     fun フィルターが見つからない場合失敗() = runTest {
         assertThrows<IllegalArgumentException> {
             service.execute(
-                GetFilter(1), FromApi(
+                GetFilter(1), LocalUser(
                     ActorId(3), UserDetailId(3),
                     Acct("test", "example.com")
                 )

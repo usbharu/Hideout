@@ -20,7 +20,7 @@ import dev.usbharu.hideout.core.application.shared.LocalUserAbstractApplicationS
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.filter.*
 import dev.usbharu.hideout.core.domain.model.filter.FilterKeyword
-import dev.usbharu.hideout.core.domain.model.support.principal.FromApi
+import dev.usbharu.hideout.core.domain.model.support.principal.LocalUser
 import dev.usbharu.hideout.core.domain.shared.id.IdGenerateService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -36,7 +36,7 @@ class UserRegisterFilterApplicationService(
         logger
     ) {
 
-    override suspend fun internalExecute(command: RegisterFilter, principal: FromApi): Filter {
+    override suspend fun internalExecute(command: RegisterFilter, principal: LocalUser): Filter {
 
         val filter = dev.usbharu.hideout.core.domain.model.filter.Filter.create(
             id = FilterId(idGenerateService.generateId()),

@@ -39,6 +39,15 @@ class MediaRepositoryImpl : MediaRepository, AbstractRepository() {
         }
     }
 
+    override suspend fun findByIds(ids: List<MediaId>): List<dev.usbharu.hideout.core.domain.model.media.Media> {
+        return query {
+            return@query Media
+                .selectAll()
+                .where { Media.id inList ids.map { it.id } }
+                .map { it.toMedia() }
+        }
+    }
+
     override suspend fun delete(media: dev.usbharu.hideout.core.domain.model.media.Media): Unit = query {
         Media.deleteWhere {
             id eq id

@@ -24,7 +24,7 @@ import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.relationship.Relationship
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
-import dev.usbharu.hideout.core.domain.model.support.principal.FromApi
+import dev.usbharu.hideout.core.domain.model.support.principal.LocalUser
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -39,7 +39,7 @@ class UserUnmuteApplicationService(
         private val logger = LoggerFactory.getLogger(UserBlockApplicationService::class.java)
     }
 
-    override suspend fun internalExecute(command: Unmute, principal: FromApi) {
+    override suspend fun internalExecute(command: Unmute, principal: LocalUser) {
         val actor = actorRepository.findById(principal.actorId)
             ?: throw InternalServerException("Actor ${principal.actorId} not found.")
 

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+<article class="post" th:fragment="single-simple-post(post)">
+    <!--/*@thymesVar id="post" type="dev.usbharu.hideout.core.application.post.PostDetail"*/-->
+    <img alt="" height="80px" src="" th:src="${post.actor.icon}" width="80px">
+    <div style="display: inline-block">
+        <p th:text="${post.actor.screenName}+'('+${post.actor.name}+'@'+${post.actor.domain}+')'"></p>
+    </div>
+
+    <div th:utext="${post.content}">
+
+    </div>
+    <div th:each=" media : ${post.mediaDetailList} ">
+        <th:block th:switch="${media.type}">
+            <picture th:case="Image">
+                <source media="(min-width: 600px)" th:srcset="${media.url}">
+                <img alt="" src="" th:alt="${media.description}" th:src="${media.thumbnailUrl}" width="260">
+            </picture>
+            <video controls loop preload="metadata" th:case="Video" th:poster="${media.thumbnailUrl}" th:src="${media.url}"
+                   th:text="#{common.video-download-link}"
+                   width="260">
+                <a th:href="${media.url}" th:text="#{common.video}">Video</a>
+                <a th:href="${media.thumbnailUrl}" th:text="#{common.thumbnail}">Thumbnail</a>
+            </video>
+            <audio controls preload="metadata" th:case="Audio" th:src="${media.url}"
+                   th:text="#{common.audio-download-link}">
+                <a th:href="${media.url}" th:text="#{common.audio}">Audio</a>
+            </audio>
+            <th:block th:case="*">
+                <p th:text="#{common.unknwon-file-type}">Unknown filetype</p>
+            </th:block>
+        </th:block>
+        <a href="" th:href="${media.url}" th:text="#{common.media-original-link}"></a>
+    </div>
+</article>
+
+<div class="post-controller" th:fragment="single-post-controller(post)">
+    <!--/*@thymesVar id="post" type="dev.usbharu.hideout.core.application.post.PostDetail"*/-->
+    <a th:href="${post.apId}">
+        <time th:datetime="${post.createdAt}" th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}"></time>
+    </a>
+</div>
+
+
+</body>
+</html>

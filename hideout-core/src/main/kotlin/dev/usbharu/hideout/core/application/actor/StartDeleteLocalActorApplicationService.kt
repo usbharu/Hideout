@@ -21,7 +21,7 @@ import dev.usbharu.hideout.core.application.exception.PermissionDeniedException
 import dev.usbharu.hideout.core.application.shared.LocalUserAbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
-import dev.usbharu.hideout.core.domain.model.support.principal.FromApi
+import dev.usbharu.hideout.core.domain.model.support.principal.LocalUser
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -30,7 +30,7 @@ class StartDeleteLocalActorApplicationService(
     transaction: Transaction,
     private val actorRepository: ActorRepository,
 ) : LocalUserAbstractApplicationService<DeleteLocalActor, Unit>(transaction, logger) {
-    override suspend fun internalExecute(command: DeleteLocalActor, principal: FromApi) {
+    override suspend fun internalExecute(command: DeleteLocalActor, principal: LocalUser) {
         if (command.actorId != principal.actorId) {
             throw PermissionDeniedException()
         }

@@ -24,7 +24,7 @@ import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.relationship.Relationship
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
-import dev.usbharu.hideout.core.domain.model.support.principal.FromApi
+import dev.usbharu.hideout.core.domain.model.support.principal.LocalUser
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -35,7 +35,7 @@ class UserUnblockApplicationService(
     private val actorRepository: ActorRepository,
 ) :
     LocalUserAbstractApplicationService<Unblock, Unit>(transaction, logger) {
-    override suspend fun internalExecute(command: Unblock, principal: FromApi) {
+    override suspend fun internalExecute(command: Unblock, principal: LocalUser) {
         val actor = actorRepository.findById(principal.actorId)
             ?: throw InternalServerException("Actor ${principal.actorId} not found.")
 

@@ -24,7 +24,7 @@ import dev.usbharu.hideout.core.domain.model.media.MediaId
 import dev.usbharu.hideout.core.domain.model.post.PostId
 import dev.usbharu.hideout.core.domain.model.post.PostOverview
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
-import dev.usbharu.hideout.core.domain.model.support.principal.FromApi
+import dev.usbharu.hideout.core.domain.model.support.principal.LocalUser
 import dev.usbharu.hideout.core.infrastructure.factory.PostFactoryImpl
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -38,7 +38,7 @@ class RegisterLocalPostApplicationService(
     transaction: Transaction,
 ) : LocalUserAbstractApplicationService<RegisterLocalPost, Long>(transaction, Companion.logger) {
 
-    override suspend fun internalExecute(command: RegisterLocalPost, principal: FromApi): Long {
+    override suspend fun internalExecute(command: RegisterLocalPost, principal: LocalUser): Long {
         val actorId = principal.actorId
 
         val actor = actorRepository.findById(actorId) ?: throw InternalServerException("Actor $actorId not found.")

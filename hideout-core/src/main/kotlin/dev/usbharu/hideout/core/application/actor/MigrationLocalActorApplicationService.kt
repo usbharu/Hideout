@@ -22,7 +22,7 @@ import dev.usbharu.hideout.core.application.shared.LocalUserAbstractApplicationS
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
-import dev.usbharu.hideout.core.domain.model.support.principal.FromApi
+import dev.usbharu.hideout.core.domain.model.support.principal.LocalUser
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
 import dev.usbharu.hideout.core.domain.service.actor.local.AccountMigrationCheck.*
 import dev.usbharu.hideout.core.domain.service.actor.local.LocalActorMigrationCheckDomainService
@@ -37,7 +37,7 @@ class MigrationLocalActorApplicationService(
     private val userDetailRepository: UserDetailRepository,
 ) : LocalUserAbstractApplicationService<MigrationLocalActor, Unit>(transaction, logger) {
 
-    override suspend fun internalExecute(command: MigrationLocalActor, principal: FromApi) {
+    override suspend fun internalExecute(command: MigrationLocalActor, principal: LocalUser) {
         if (command.from != principal.actorId.id) {
             throw PermissionDeniedException()
         }

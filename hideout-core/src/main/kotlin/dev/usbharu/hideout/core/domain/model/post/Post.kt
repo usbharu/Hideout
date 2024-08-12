@@ -83,6 +83,8 @@ class Post(
         }
     }
 
+    val isPureRepost = content == PostContent.empty && overview == null && replyId == null && repostId != null
+
     var content = content
         get() {
             if (hide) {

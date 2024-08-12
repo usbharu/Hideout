@@ -157,6 +157,7 @@ class ExposedPostRepository(
 
     override suspend fun findById(id: PostId): Post? = query {
         Posts
+            .leftJoin(PostsMedia)
             .selectAll()
             .where {
                 Posts.id eq id.id

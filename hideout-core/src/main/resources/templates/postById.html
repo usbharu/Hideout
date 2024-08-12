@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{post-by-id.title(${post.actor.screenName},${instance.name})}">Posts - hideout</title>
+</head>
+<body>
+<noscript>
+    <th:block th:if=" ${post.reply != null}">
+        <th:block th:replace="fragments-post :: single-simple-post(${post.reply})"></th:block>
+        <hr>
+    </th:block>
+    <main>
+        <p th:if="${post.pureRepost}" th:text="#{post.repost-by(${post.actor.name})}">Repost by user</p>
+        <th:block th:unless="${post.pureRepost}">
+            <th:block th:replace="fragments-post :: single-simple-post(${post})"></th:block>
+            <th:block th:replace="fragments-post :: single-post-controller(${post})"></th:block>
+        </th:block>
+        <th:block th:if="${post.pureRepost}">
+            <th:block th:replace="fragments-post :: single-simple-post(${post.repost})"></th:block>
+            <th:block th:replace="fragments-post :: single-post-controller(${post.repost})"></th:block>
+        </th:block>
+
+    </main>
+    <th:block th:if="${post.repost != null && !post.pureRepost}">
+        <hr>
+        <th:block th:replace="fragments-post :: single-simple-post(${post.repost})"></th:block>
+        <cite th:text="${post.repost.apId}"></cite>
+    </th:block>
+</noscript>
+</body>
+</html>

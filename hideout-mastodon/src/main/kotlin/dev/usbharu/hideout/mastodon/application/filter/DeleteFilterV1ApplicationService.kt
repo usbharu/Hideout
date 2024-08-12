@@ -21,7 +21,7 @@ import dev.usbharu.hideout.core.application.shared.LocalUserAbstractApplicationS
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.filter.FilterKeywordId
 import dev.usbharu.hideout.core.domain.model.filter.FilterRepository
-import dev.usbharu.hideout.core.domain.model.support.principal.FromApi
+import dev.usbharu.hideout.core.domain.model.support.principal.LocalUser
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -30,7 +30,7 @@ class DeleteFilterV1ApplicationService(private val filterRepository: FilterRepos
     LocalUserAbstractApplicationService<DeleteFilterV1, Unit>(
         transaction, logger
     ) {
-    override suspend fun internalExecute(command: DeleteFilterV1, principal: FromApi) {
+    override suspend fun internalExecute(command: DeleteFilterV1, principal: LocalUser) {
         val filter = filterRepository.findByFilterKeywordId(FilterKeywordId(command.filterKeywordId))
             ?: throw IllegalArgumentException("Filter ${command.filterKeywordId} not found")
         if (principal.userDetailId != filter.userDetailId) {

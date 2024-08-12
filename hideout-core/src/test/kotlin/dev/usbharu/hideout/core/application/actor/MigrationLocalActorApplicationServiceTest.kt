@@ -7,7 +7,7 @@ import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.actor.TestActorFactory
 import dev.usbharu.hideout.core.domain.model.support.acct.Acct
-import dev.usbharu.hideout.core.domain.model.support.principal.FromApi
+import dev.usbharu.hideout.core.domain.model.support.principal.LocalUser
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetail
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailHashedPassword
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
@@ -48,7 +48,7 @@ class MigrationLocalActorApplicationServiceTest {
         assertThrows<PermissionDeniedException> {
             service.execute(
                 MigrationLocalActor(1, 2),
-                FromApi(ActorId(3), UserDetailId(3), Acct("test", "example.com"))
+                LocalUser(ActorId(3), UserDetailId(3), Acct("test", "example.com"))
             )
         }
     }
@@ -64,7 +64,7 @@ class MigrationLocalActorApplicationServiceTest {
         assertThrows<IllegalArgumentException> {
             service.execute(
                 MigrationLocalActor(1, 2),
-                FromApi(ActorId(1), UserDetailId(1), Acct("test", "example.com"))
+                LocalUser(ActorId(1), UserDetailId(1), Acct("test", "example.com"))
             )
         }
     }
@@ -81,7 +81,7 @@ class MigrationLocalActorApplicationServiceTest {
         assertThrows<IllegalArgumentException> {
             service.execute(
                 MigrationLocalActor(1, 2),
-                FromApi(ActorId(1), UserDetailId(1), Acct("test", "example.com"))
+                LocalUser(ActorId(1), UserDetailId(1), Acct("test", "example.com"))
             )
         }
     }
@@ -91,7 +91,7 @@ class MigrationLocalActorApplicationServiceTest {
         assertThrows<InternalServerException> {
             service.execute(
                 MigrationLocalActor(1, 2),
-                FromApi(ActorId(1), UserDetailId(1), Acct("test", "example.com"))
+                LocalUser(ActorId(1), UserDetailId(1), Acct("test", "example.com"))
             )
         }
     }
@@ -119,7 +119,7 @@ class MigrationLocalActorApplicationServiceTest {
 
         service.execute(
             MigrationLocalActor(1, 2),
-            FromApi(ActorId(1), UserDetailId(1), Acct("test", "example.com"))
+            LocalUser(ActorId(1), UserDetailId(1), Acct("test", "example.com"))
         )
 
         argumentCaptor<Actor> {
@@ -161,7 +161,7 @@ class MigrationLocalActorApplicationServiceTest {
             assertThrows<IllegalArgumentException> {
                 service.execute(
                     MigrationLocalActor(1, 2),
-                    FromApi(ActorId(1), UserDetailId(1), Acct("test", "example.com"))
+                    LocalUser(ActorId(1), UserDetailId(1), Acct("test", "example.com"))
                 )
             }
         }

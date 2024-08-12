@@ -19,7 +19,7 @@ package dev.usbharu.hideout.mastodon.interfaces.api
 import dev.usbharu.hideout.core.application.post.RegisterLocalPost
 import dev.usbharu.hideout.core.application.post.RegisterLocalPostApplicationService
 import dev.usbharu.hideout.core.domain.model.post.Visibility
-import dev.usbharu.hideout.core.domain.model.support.principal.PrincipalContextHolder
+import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.SpringSecurityOauth2PrincipalContextHolder
 import dev.usbharu.hideout.mastodon.application.status.GetStatus
 import dev.usbharu.hideout.mastodon.application.status.GetStatusApplicationService
 import dev.usbharu.hideout.mastodon.interfaces.api.StatusesRequest.Visibility.*
@@ -32,7 +32,7 @@ import org.springframework.stereotype.Controller
 class SpringStatusApi(
     private val registerLocalPostApplicationService: RegisterLocalPostApplicationService,
     private val getStatusApplicationService: GetStatusApplicationService,
-    private val principalContextHolder: PrincipalContextHolder
+    private val principalContextHolder: SpringSecurityOauth2PrincipalContextHolder
 ) : StatusApi {
     override suspend fun apiV1StatusesIdEmojiReactionsEmojiDelete(id: String, emoji: String): ResponseEntity<Status> {
         return super.apiV1StatusesIdEmojiReactionsEmojiDelete(id, emoji)

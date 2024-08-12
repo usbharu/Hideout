@@ -22,7 +22,7 @@ import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.post.PostId
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
-import dev.usbharu.hideout.core.domain.model.support.principal.FromApi
+import dev.usbharu.hideout.core.domain.model.support.principal.LocalUser
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -32,7 +32,7 @@ class DeleteLocalPostApplicationService(
     private val actorRepository: ActorRepository, transaction: Transaction,
 ) : LocalUserAbstractApplicationService<DeleteLocalPost, Unit>(transaction, logger) {
 
-    override suspend fun internalExecute(command: DeleteLocalPost, principal: FromApi) {
+    override suspend fun internalExecute(command: DeleteLocalPost, principal: LocalUser) {
         val findById = postRepository.findById(PostId(command.postId))!!
         if (findById.actorId != principal.actorId) {
             throw PermissionDeniedException()

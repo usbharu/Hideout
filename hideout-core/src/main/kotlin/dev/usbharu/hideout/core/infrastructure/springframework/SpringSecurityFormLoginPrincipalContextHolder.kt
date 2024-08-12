@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.core.infrastructure.springframework.oauth2
+package dev.usbharu.hideout.core.infrastructure.springframework
 
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.support.acct.Acct
@@ -7,30 +7,29 @@ import dev.usbharu.hideout.core.domain.model.support.principal.LocalUser
 import dev.usbharu.hideout.core.domain.model.support.principal.Principal
 import dev.usbharu.hideout.core.domain.model.support.principal.PrincipalContextHolder
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
+import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.HideoutUserDetails
 import dev.usbharu.hideout.core.query.principal.PrincipalQueryService
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.stereotype.Component
 
-@Component("oauth2")
-class SpringSecurityOauth2PrincipalContextHolder(
-    private val principalQueryService: PrincipalQueryService,
-    private val transaction: Transaction
-) :
-    PrincipalContextHolder {
+@Component("formLogin")
+class SpringSecurityFormLoginPrincipalContextHolder(
+    private val transaction: Transaction,
+    private val principalQueryService: PrincipalQueryService
+) : PrincipalContextHolder {
     override suspend fun getPrincipal(): Principal {
-        val principal =
-            SecurityContextHolder.getContext().authentication?.principal as? Jwt ?: return Anonymous
+        val hideoutUserDetails =
+            SecurityContextHolder.getContext().authentication?.principal as? HideoutUserDetails ?: return Anonymous
 
         return transaction.transaction {
-            val id = principal.getClaim<String>("uid").toLong()
-            val userDetail = principalQueryService.findByUserDetailId(UserDetailId(id))
 
-            return@transaction LocalUser(
+            val userDetail = principalQueryService.findByUserDetailId(UserDetailId(hideoutUserDetails.userDetailsId))
+            LocalUser(
                 userDetail.actorId,
                 userDetail.userDetailId,
                 Acct(userDetail.username, userDetail.host)
             )
         }
+
     }
 }

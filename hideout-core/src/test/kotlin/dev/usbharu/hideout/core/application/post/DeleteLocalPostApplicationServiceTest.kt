@@ -8,7 +8,7 @@ import dev.usbharu.hideout.core.domain.model.post.PostId
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.domain.model.post.TestPostFactory
 import dev.usbharu.hideout.core.domain.model.support.acct.Acct
-import dev.usbharu.hideout.core.domain.model.support.principal.FromApi
+import dev.usbharu.hideout.core.domain.model.support.principal.LocalUser
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
@@ -41,7 +41,7 @@ class DeleteLocalPostApplicationServiceTest {
         whenever(postRepository.findById(PostId(1))).doReturn(TestPostFactory.create(actorId = 2))
         whenever(actorRepository.findById(ActorId(2))).doReturn(TestActorFactory.create(id = 2))
 
-        service.execute(DeleteLocalPost(1), FromApi(ActorId(2), UserDetailId(2), Acct("test", "example.com")))
+        service.execute(DeleteLocalPost(1), LocalUser(ActorId(2), UserDetailId(2), Acct("test", "example.com")))
     }
 
     @Test
@@ -49,7 +49,7 @@ class DeleteLocalPostApplicationServiceTest {
         whenever(postRepository.findById(PostId(1))).doReturn(TestPostFactory.create(actorId = 2))
 
         assertThrows<PermissionDeniedException> {
-            service.execute(DeleteLocalPost(1), FromApi(ActorId(3), UserDetailId(3), Acct("test", "example.com")))
+            service.execute(DeleteLocalPost(1), LocalUser(ActorId(3), UserDetailId(3), Acct("test", "example.com")))
         }
     }
 }

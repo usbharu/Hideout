@@ -7,7 +7,7 @@ import dev.usbharu.hideout.core.domain.model.actor.TestActorFactory
 import dev.usbharu.hideout.core.domain.model.relationship.Relationship
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
 import dev.usbharu.hideout.core.domain.model.support.acct.Acct
-import dev.usbharu.hideout.core.domain.model.support.principal.FromApi
+import dev.usbharu.hideout.core.domain.model.support.principal.LocalUser
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -42,7 +42,7 @@ class UserAcceptFollowRequestApplicationServiceTest {
     @Test
     fun actorが見つからない場合失敗() = runTest {
         assertThrows<InternalServerException> {
-            service.execute(AcceptFollowRequest(1), FromApi(ActorId(2), UserDetailId(2), Acct("test", "example.com")))
+            service.execute(AcceptFollowRequest(1), LocalUser(ActorId(2), UserDetailId(2), Acct("test", "example.com")))
         }
     }
 
@@ -51,7 +51,7 @@ class UserAcceptFollowRequestApplicationServiceTest {
         whenever(actorRepository.findById(ActorId(2))).doReturn(TestActorFactory.create(id = 2))
 
         assertThrows<InternalServerException> {
-            service.execute(AcceptFollowRequest(1), FromApi(ActorId(2), UserDetailId(2), Acct("test", "example.com")))
+            service.execute(AcceptFollowRequest(1), LocalUser(ActorId(2), UserDetailId(2), Acct("test", "example.com")))
         }
     }
 
@@ -68,7 +68,7 @@ class UserAcceptFollowRequestApplicationServiceTest {
                 followRequesting = true, mutingFollowRequest = false
             )
         )
-        service.execute(AcceptFollowRequest(1), FromApi(ActorId(2), UserDetailId(2), Acct("test", "example.com")))
+        service.execute(AcceptFollowRequest(1), LocalUser(ActorId(2), UserDetailId(2), Acct("test", "example.com")))
 
         argumentCaptor<Relationship> {
             verify(relationshipRepository).save(capture())

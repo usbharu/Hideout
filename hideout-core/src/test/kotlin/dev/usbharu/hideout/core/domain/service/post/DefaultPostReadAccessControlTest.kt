@@ -7,7 +7,7 @@ import dev.usbharu.hideout.core.domain.model.relationship.Relationship
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
 import dev.usbharu.hideout.core.domain.model.support.acct.Acct
 import dev.usbharu.hideout.core.domain.model.support.principal.Anonymous
-import dev.usbharu.hideout.core.domain.model.support.principal.FromApi
+import dev.usbharu.hideout.core.domain.model.support.principal.LocalUser
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -44,7 +44,7 @@ class DefaultPostReadAccessControlTest {
 
         val actual = service.isAllow(
             TestPostFactory.create(actorId = 1),
-            FromApi(ActorId(2), UserDetailId(2), Acct("test", "example.com"))
+            LocalUser(ActorId(2), UserDetailId(2), Acct("test", "example.com"))
         )
 
         assertFalse(actual)
@@ -72,7 +72,7 @@ class DefaultPostReadAccessControlTest {
     fun DirectでvisibleActorsに含まれていたら見れる() = runTest {
         val actual = service.isAllow(
             TestPostFactory.create(actorId = 1, visibility = Visibility.DIRECT, visibleActors = listOf(2)),
-            FromApi(ActorId(2), UserDetailId(2), Acct("test", "example.com"))
+            LocalUser(ActorId(2), UserDetailId(2), Acct("test", "example.com"))
         )
 
         assertTrue(actual)
@@ -82,7 +82,7 @@ class DefaultPostReadAccessControlTest {
     fun DirectでvisibleActorsに含まれていなかったら見れない() = runTest {
         val actual = service.isAllow(
             TestPostFactory.create(actorId = 1, visibility = Visibility.DIRECT, visibleActors = listOf(3)),
-            FromApi(ActorId(2), UserDetailId(2), Acct("test", "example.com"))
+            LocalUser(ActorId(2), UserDetailId(2), Acct("test", "example.com"))
         )
 
         assertFalse(actual)
@@ -111,7 +111,7 @@ class DefaultPostReadAccessControlTest {
 
         val actual = service.isAllow(
             TestPostFactory.create(actorId = 1, visibility = Visibility.FOLLOWERS),
-            FromApi(ActorId(2), UserDetailId(2), Acct("test", "example.com"))
+            LocalUser(ActorId(2), UserDetailId(2), Acct("test", "example.com"))
         )
 
         assertTrue(actual)
@@ -121,7 +121,7 @@ class DefaultPostReadAccessControlTest {
     fun relationshipが見つからない場合見れない() = runTest {
         val actual = service.isAllow(
             TestPostFactory.create(actorId = 1, visibility = Visibility.FOLLOWERS),
-            FromApi(ActorId(2), UserDetailId(2), Acct("test", "example.com"))
+            LocalUser(ActorId(2), UserDetailId(2), Acct("test", "example.com"))
         )
 
         assertFalse(actual)
@@ -150,7 +150,7 @@ class DefaultPostReadAccessControlTest {
 
         val actual = service.isAllow(
             TestPostFactory.create(actorId = 1, visibility = Visibility.FOLLOWERS),
-            FromApi(ActorId(2), UserDetailId(2), Acct("test", "example.com"))
+            LocalUser(ActorId(2), UserDetailId(2), Acct("test", "example.com"))
         )
 
         assertFalse(actual)
