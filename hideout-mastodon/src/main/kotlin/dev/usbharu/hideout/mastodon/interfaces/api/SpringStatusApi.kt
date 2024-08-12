@@ -22,10 +22,9 @@ import dev.usbharu.hideout.core.domain.model.post.Visibility
 import dev.usbharu.hideout.core.domain.model.support.principal.PrincipalContextHolder
 import dev.usbharu.hideout.mastodon.application.status.GetStatus
 import dev.usbharu.hideout.mastodon.application.status.GetStatusApplicationService
+import dev.usbharu.hideout.mastodon.interfaces.api.StatusesRequest.Visibility.*
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.StatusApi
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.Status
-import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.StatusesRequest
-import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.StatusesRequest.Visibility.*
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 
@@ -52,13 +51,13 @@ class SpringStatusApi(
         )
     }
 
-    override suspend fun apiV1StatusesPost(statusesRequest: StatusesRequest): ResponseEntity<Status> {
+    override suspend fun apiV1StatusesPost(statusesRequest: dev.usbharu.hideout.mastodon.interfaces.api.StatusesRequest): ResponseEntity<Status> {
 
         val principal = principalContextHolder.getPrincipal()
         val execute = registerLocalPostApplicationService.execute(
             RegisterLocalPost(
                 content = statusesRequest.status.orEmpty(),
-                overview = statusesRequest.spoilerText,
+                overview = statusesRequest.spoiler_text,
                 visibility = when (statusesRequest.visibility) {
                     public -> Visibility.PUBLIC
                     unlisted -> Visibility.UNLISTED
@@ -67,9 +66,9 @@ class SpringStatusApi(
                     null -> Visibility.PUBLIC
                 },
                 repostId = null,
-                replyId = statusesRequest.inReplyToId?.toLong(),
+                replyId = statusesRequest.in_reply_to_id?.toLong(),
                 sensitive = statusesRequest.sensitive == true,
-                mediaIds = statusesRequest.mediaIds.orEmpty().map { it.toLong() }
+                mediaIds = statusesRequest.media_ids.map { it.toLong() }
             ), principal
         )
 

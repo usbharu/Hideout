@@ -79,11 +79,11 @@ class StatusQueryServiceImpl : StatusQueryService {
         emojiIdSet.addAll(statusQueries.flatMap { it.emojiIds })
 
         val qa = authorizedQuery()
-
-        val postMap = Posts
+        val replyToAlias = Posts.alias("reply_to")
+        val postMap = qa
             .leftJoin(Actors)
             .selectAll().where { Posts.id inList postIdSet }
-            .associate { it[Posts.id] to toStatus(it, qa) }
+            .associate { it[Posts.id] to toStatus(it, qa, replyToAlias) }
         val mediaMap = Media.selectAll().where { Media.id inList mediaIdSet }
             .associate {
                 it[Media.id] to it.toMedia().toMediaAttachments()
@@ -112,6 +112,7 @@ class StatusQueryServiceImpl : StatusQueryService {
         tagged: String?,
         includeFollowers: Boolean,
     ): List<Status> {
+        val inReplyToAlias = Posts.alias("reply_to")
         val qa = authorizedQuery()
         val query = qa
             .leftJoin(PostsMedia)
@@ -138,7 +139,7 @@ class StatusQueryServiceImpl : StatusQueryService {
             .groupBy { it[Posts.id] }
             .map { it.value }
             .map {
-                toStatus(it.first(), qa).copy(
+                toStatus(it.first(), qa, inReplyToAlias).copy(
                     mediaAttachments = it.mapNotNull { resultRow ->
                         resultRow.toMediaOrNull()?.toMediaAttachments()
                     }
@@ -151,16 +152,18 @@ class StatusQueryServiceImpl : StatusQueryService {
 
     override suspend fun findByPostId(id: Long, principal: Principal?): Status? {
         val aq = authorizedQuery(principal)
+        val inReplyTo = Posts.alias("reply_to")
         val map = aq
             .leftJoin(PostsMedia, { aq[Posts.id] }, { PostsMedia.postId })
             .leftJoin(Actors, { aq[Posts.actorId] }, { Actors.id })
             .leftJoin(Media, { PostsMedia.mediaId }, { Media.id })
+            .leftJoin(inReplyTo, { aq[Posts.replyId] }, { inReplyTo[Posts.id] })
             .selectAll()
             .where { aq[Posts.id] eq id }
             .groupBy { it[aq[Posts.id]] }
             .map { it.value }
             .map {
-                toStatus(it.first(), aq).copy(
+                toStatus(it.first(), aq, inReplyTo).copy(
                     mediaAttachments = it.mapNotNull { resultRow ->
                         resultRow.toMediaOrNull()?.toMediaAttachments()
                     },
@@ -180,18 +183,10 @@ class StatusQueryServiceImpl : StatusQueryService {
                     it.first
                 }
             }
-            .map {
-                if (it.inReplyToId != null) {
-                    println("statuses trace: $statuses")
-                    println("inReplyToId trace: ${it.inReplyToId}")
-                    it.copy(inReplyToAccountId = statuses.find { (id) -> id == it.inReplyToId }?.account?.id)
-                } else {
-                    it
-                }
-            }
     }
 
     private suspend fun findByPostIdsWithMedia(ids: List<Long>): List<Status> {
+        val inReplyToAlias = Posts.alias("reply_to")
         val qa = authorizedQuery()
         val pairs = Posts
             .leftJoin(PostsMedia)
@@ -203,7 +198,7 @@ class StatusQueryServiceImpl : StatusQueryService {
             .groupBy { it[Posts.id] }
             .map { it.value }
             .map {
-                toStatus(it.first(), qa).copy(
+                toStatus(it.first(), qa, inReplyToAlias).copy(
                     mediaAttachments = it.mapNotNull { resultRow ->
                         resultRow.toMediaOrNull()?.toMediaAttachments()
                     },
@@ -222,7 +217,7 @@ private fun CustomEmoji.toMastodonEmoji(): MastodonEmoji = MastodonEmoji(
     category = this.category.orEmpty()
 )
 
-private fun toStatus(it: ResultRow, queryAlias: QueryAlias) = Status(
+private fun toStatus(it: ResultRow, queryAlias: QueryAlias, inReplyToAlias: Alias<Posts>) = Status(
     id = it[queryAlias[Posts.id]].toString(),
     uri = it[queryAlias[Posts.apId]],
     createdAt = it[queryAlias[Posts.createdAt]].toString(),
@@ -271,7 +266,7 @@ private fun toStatus(it: ResultRow, queryAlias: QueryAlias) = Status(
     repliesCount = 0,
     url = it[queryAlias[Posts.apId]],
     inReplyToId = it[queryAlias[Posts.replyId]]?.toString(),
-    inReplyToAccountId = null,
+    inReplyToAccountId = it.getOrNull(inReplyToAlias[Posts.actorId])?.toString(),
     language = null,
     text = it[queryAlias[Posts.text]],
     editedAt = null
@@ -305,12 +300,12 @@ fun ResultRow.toMediaOrNull(): EntityMedia? {
         type = FileType.valueOf(this[Media.type]),
         blurHash = this[Media.blurhash]?.let { MediaBlurHash(it) },
         mimeType = MimeType(mimeType.substringBefore("/"), mimeType.substringAfter("/"), fileType),
-        description = MediaDescription(this[Media.description] ?: return null)
+        description = this[Media.description]?.let { MediaDescription(it) }
     )
 }
 
 fun EntityMedia.toMediaAttachments(): MediaAttachment = MediaAttachment(
-    id = id.toString(),
+    id = id.id.toString(),
     type = when (type) {
         FileType.Image -> MediaAttachment.Type.image
         FileType.Video -> MediaAttachment.Type.video
