@@ -1,6 +1,6 @@
 plugins {
     alias(libs.plugins.kotlin.jvm)
-    id("com.google.protobuf") version "0.9.4"
+    alias(libs.plugins.protobuf.plugin)
 }
 
 
@@ -11,15 +11,12 @@ repositories {
 }
 
 dependencies {
-    implementation("io.grpc:grpc-kotlin-stub:1.4.1")
-    implementation("io.grpc:grpc-protobuf:1.66.0")
-    implementation("com.google.protobuf:protobuf-kotlin:4.27.3")
-    implementation("io.grpc:grpc-netty:1.66.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+    implementation(libs.bundles.grpc.kotlin)
+    implementation(libs.coroutines.core)
     implementation(project(":owl-common"))
-    implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.23.1")
-    implementation(platform("io.insert-koin:koin-bom:3.5.6"))
-    implementation("io.insert-koin:koin-core")
+    implementation(libs.log4j2.slf4j)
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.core)
 }
 
 tasks.test {
@@ -31,14 +28,14 @@ kotlin {
 
 protobuf {
     protoc {
-        artifact = "com.google.protobuf:protoc:4.27.3"
+        artifact = libs.protoc.asProvider().get().toString()
     }
     plugins {
         create("grpc") {
-            artifact = "io.grpc:protoc-gen-grpc-java:1.66.0"
+            artifact = libs.protoc.gen.grpc.java.get().toString()
         }
         create("grpckt") {
-            artifact = "io.grpc:protoc-gen-grpc-kotlin:1.4.1:jdk8@jar"
+            artifact = libs.protoc.gen.grpc.kotlin.get().toString() + "jdk8@jar"
         }
     }
     generateProtoTasks {

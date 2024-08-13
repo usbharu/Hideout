@@ -36,15 +36,13 @@ class TimelineRelationshipFollowSubscriber(
                         relationship.targetActorId,
                         Visible.FOLLOWERS
                     )
-                ), it.body.principal
+                ),
+                it.body.principal
             )
-
-
         }
     }
 
     companion object {
         private val logger = LoggerFactory.getLogger(TimelineRelationshipFollowSubscriber::class.java)
     }
-
 }

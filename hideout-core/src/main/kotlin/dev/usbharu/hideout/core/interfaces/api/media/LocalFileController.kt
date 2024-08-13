@@ -30,7 +30,6 @@ import org.springframework.web.bind.annotation.PathVariable
 import java.nio.file.Path
 import kotlin.io.path.name
 
-
 @Controller
 @ConditionalOnProperty("hideout.storage.type", havingValue = "local", matchIfMissing = true)
 class LocalFileController(

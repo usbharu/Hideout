@@ -29,7 +29,8 @@ import org.springframework.stereotype.Service
 @Service
 class DeleteLocalPostApplicationService(
     private val postRepository: PostRepository,
-    private val actorRepository: ActorRepository, transaction: Transaction,
+    private val actorRepository: ActorRepository,
+    transaction: Transaction,
 ) : LocalUserAbstractApplicationService<DeleteLocalPost, Unit>(transaction, logger) {
 
     override suspend fun internalExecute(command: DeleteLocalPost, principal: LocalUser) {

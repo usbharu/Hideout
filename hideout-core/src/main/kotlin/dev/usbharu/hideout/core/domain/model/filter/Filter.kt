@@ -69,7 +69,6 @@ class Filter(
         return id.hashCode()
     }
 
-
     companion object {
         fun isAllow(user: UserDetail, action: Action, resource: Filter): Boolean {
             return when (action) {

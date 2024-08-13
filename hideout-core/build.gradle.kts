@@ -103,7 +103,7 @@ dependencies {
     implementation(libs.flyway.core)
     runtimeOnly(libs.flyway.postgresql)
 
-    implementation("dev.usbharu:owl-common-serialize-jackson:0.0.1")
+    implementation(libs.owl.common.serialize.jackson)
 
     implementation(libs.javacv) {
         exclude(module = "opencv")
@@ -122,8 +122,8 @@ dependencies {
         implementation(variantOf(libs.javacv.ffmpeg) { classifier("linux-x86_64") })
     }
 
-    implementation("dev.usbharu:http-signature:1.0.0")
-    implementation("dev.usbharu:emoji-kt:2.0.0")
+    implementation(libs.http.signature)
+    implementation(libs.emoji.kt)
 
 
 
@@ -132,16 +132,13 @@ dependencies {
     testImplementation(libs.coroutines.test)
     testImplementation(libs.ktor.client.mock)
     testImplementation(libs.h2db)
-    testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
-    testImplementation("org.mockito:mockito-inline:5.2.0")
-    testImplementation("nl.jqno.equalsverifier:equalsverifier:3.16.1")
-    testImplementation("com.jparams:to-string-verifier:1.4.8")
+    testImplementation(libs.mockito.kotlin)
 
 }
 
 detekt {
     parallel = true
-    config = files("../detekt.yml")
+    config.setFrom(files("../detekt.yml"))
     buildUponDefaultConfig = true
     basePath = "${rootDir.absolutePath}/src/main/kotlin"
     autoCorrect = true
