@@ -1,7 +1,6 @@
 package dev.usbharu.hideout.core.application.post
 
 import dev.usbharu.hideout.core.application.exception.InternalServerException
-import dev.usbharu.hideout.core.application.exception.PermissionDeniedException
 import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.actor.Actor
@@ -32,7 +31,7 @@ class GetPostDetailApplicationService(
         val post = postRepository.findById(PostId(command.postId))
             ?: throw IllegalArgumentException("Post ${command.postId} not found.")
         if (iPostReadAccessControl.isAllow(post, principal).not()) {
-            throw PermissionDeniedException()
+            throw IllegalArgumentException("Post ${command.postId} not found.")
         }
         val actor =
             actorRepository.findById(post.actorId) ?: throw InternalServerException("Actor ${post.actorId} not found.")
@@ -65,7 +64,7 @@ class GetPostDetailApplicationService(
         val post = postRepository.findById(postId) ?: return null
 
         if (iPostReadAccessControl.isAllow(post, principal).not()) {
-            throw PermissionDeniedException()
+            return null
         }
 
         val (first, second: Instance, third) = if (actor.id != post.actorId) {

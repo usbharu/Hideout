@@ -16,6 +16,12 @@ interface IPostReadAccessControl {
 class DefaultPostReadAccessControl(private val relationshipRepository: RelationshipRepository) :
     IPostReadAccessControl {
     override suspend fun isAllow(post: Post, principal: Principal): Boolean {
+
+        //ポスト主は無条件で見れる
+        if (post.actorId == principal.actorId) {
+            return true
+        }
+
         val relationship = (relationshipRepository.findByActorIdAndTargetId(post.actorId, principal.actorId)
             ?: Relationship.default(post.actorId, principal.actorId))
 
