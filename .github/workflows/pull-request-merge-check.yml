@@ -46,7 +46,7 @@ jobs:
           gradle-home-cache-cleanup: true
 
       - name: Build
-        run: ./hideout-core/gradlew :hideout-core:classes
+        run: ./hideout-core/gradlew :hideout-core:classes --no-daemon
 
   unit-test:
     name: Unit Test
