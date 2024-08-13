@@ -69,7 +69,7 @@ jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-
 
 blurhash = { module = "io.trbl:blurhash", version = "1.0.0" }
 
-aws-s3 = { module = "software.amazon.awssdk:s3", version = "2.27.2" }
+aws-s3 = { module = "software.amazon.awssdk:s3", version = "2.27.3" }
 
 jsoup = { module = "org.jsoup:jsoup", version = "1.18.1" }
 
@@ -84,7 +84,7 @@ thumbnailator = { module = "net.coobird:thumbnailator", version = "0.4.20" }
 flyway-core = { module = "org.flywaydb:flyway-core" }
 flyway-postgresql = { module = "org.flywaydb:flyway-database-postgresql", version = "10.17.0" }
 
-h2db = { module = "com.h2database:h2", version = "2.3.230" }
+h2db = { module = "com.h2database:h2", version = "2.3.232" }
 
 kotlin-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 
