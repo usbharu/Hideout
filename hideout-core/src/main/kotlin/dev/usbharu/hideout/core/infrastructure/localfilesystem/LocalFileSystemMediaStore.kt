@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
 import java.net.URI
+import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.copyTo
 
@@ -19,9 +20,16 @@ class LocalFileSystemMediaStore(
     MediaStore {
 
     private val publicUrl = localStorageConfig.publicUrl ?: "${applicationConfig.url}/files/"
+
+    private val savePath = Path.of(localStorageConfig.path)
+
+    init {
+        Files.createDirectories(savePath)
+    }
+
     override suspend fun upload(path: Path, id: String): URI {
         logger.info("START Media upload. {}", id)
-        val fileSavePath = buildSavePath(path, id)
+        val fileSavePath = buildSavePath(savePath, id)
 
         val fileSavePathString = fileSavePath.toAbsolutePath().toString()
         logger.info("MEDIA save. path: {}", fileSavePathString)

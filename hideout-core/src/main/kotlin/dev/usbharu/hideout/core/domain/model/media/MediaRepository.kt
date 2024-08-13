@@ -19,5 +19,6 @@ package dev.usbharu.hideout.core.domain.model.media
 interface MediaRepository {
     suspend fun save(media: Media): Media
     suspend fun findById(id: MediaId): Media?
+    suspend fun findByIds(ids: List<MediaId>): List<Media>
     suspend fun delete(media: Media)
 }

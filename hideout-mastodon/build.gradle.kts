@@ -97,6 +97,10 @@ tasks {
 
         importMappings.put("org.springframework.core.io.Resource", "org.springframework.web.multipart.MultipartFile")
         typeMappings.put("org.springframework.core.io.Resource", "org.springframework.web.multipart.MultipartFile")
+        schemaMappings.put(
+            "StatusesRequest",
+            "dev.usbharu.hideout.mastodon.interfaces.api.StatusesRequest"
+        )
         templateDir.set("$rootDir/templates")
     }
 }

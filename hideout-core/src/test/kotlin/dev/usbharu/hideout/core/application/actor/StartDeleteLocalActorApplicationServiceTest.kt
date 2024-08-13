@@ -6,7 +6,7 @@ import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.actor.TestActorFactory
 import dev.usbharu.hideout.core.domain.model.support.acct.Acct
-import dev.usbharu.hideout.core.domain.model.support.principal.FromApi
+import dev.usbharu.hideout.core.domain.model.support.principal.LocalUser
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
@@ -38,7 +38,7 @@ class StartDeleteLocalActorApplicationServiceTest {
 
         service.execute(
             DeleteLocalActor(ActorId(1)),
-            FromApi(ActorId(1), UserDetailId((1)), Acct("test", "example.com"))
+            LocalUser(ActorId(1), UserDetailId((1)), Acct("test", "example.com"))
         )
     }
 
@@ -47,7 +47,7 @@ class StartDeleteLocalActorApplicationServiceTest {
         assertThrows<PermissionDeniedException> {
             service.execute(
                 DeleteLocalActor(ActorId(2)),
-                FromApi(ActorId(1), UserDetailId((1)), Acct("test", "example.com"))
+                LocalUser(ActorId(1), UserDetailId((1)), Acct("test", "example.com"))
             )
         }
     }
@@ -57,7 +57,7 @@ class StartDeleteLocalActorApplicationServiceTest {
         assertThrows<InternalServerException> {
             service.execute(
                 DeleteLocalActor(ActorId(1)),
-                FromApi(ActorId(1), UserDetailId((1)), Acct("test", "example.com"))
+                LocalUser(ActorId(1), UserDetailId((1)), Acct("test", "example.com"))
             )
         }
     }

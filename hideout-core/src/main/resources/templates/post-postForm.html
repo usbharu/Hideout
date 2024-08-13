@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head prefix="og: http://ogp.me/ns#">
+    <meta charset="UTF-8">
+    <title th:text="#{post-form.new-posts}">New Posts!</title>
+    <meta property="og:url" th:content="${instance.url + '/publish'}">
+    <meta property="og:title" th:content="#{post-form.new-posts}">
+</head>
+<body>
+
+<noscript>
+    <div>
+        <img alt="" height="80px" src="" th:src="${user.iconUrl}" width="80px">
+        <div style="display: inline-block">
+            <p th:text="${user.screenName}+'('+${user.name}+'@'+${user.domain}+')'"></p>
+        </div>
+    </div>
+    <form action="/publish" method="post" th:action="@{/publish}" th:object="${form}">
+        <div>
+            <label for="stats-form-overview" th:text="#{post-form.new-posts-cw}"
+                   th:title="#{post-form.new-posts-cw-title}"
+                   title="Add content warning">CW</label>
+            <input id="stats-form-overview" name="overview" type="text">
+        </div>
+        <div>
+            <label for="status-form" th:text="#{post-form.new-posts-form-label}">What's on your mind?</label>
+            <br>
+            <textarea cols="33" id="status-form" name="status" rows="5"></textarea>
+        </div>
+        <div>
+            <fieldset>
+                <legend th:text="#{common.visibility}">Visibility</legend>
+                <label for="status-form-visibility-public" th:text="#{common.visibility-public}">Public</label>
+                <input id="status-form-visibility-public" name="visibility" th:checked="${form.visibility == 'PUBLIC'}" type="radio"
+                       value="PUBLIC">
+                <label for="status-form-visibility-unlisted" th:text="#{common.visibility-unlisted}">Unlisted</label>
+                <input id="status-form-visibility-unlisted" name="visibility" th:checked="${form.visibility == 'UNLISTED'}" type="radio"
+                       value="UNLISTED">
+                <label for="status-form-visibility-followers" th:text="#{common.visibility-followers}">Followers</label>
+                <input id="status-form-visibility-followers" name="visibility" th:checked="${form.visibility == 'FOLLOWERS'}" type="radio"
+                       value="FOLLOWERS">
+            </fieldset>
+        </div>
+        <div>
+            <input th:value="#{post-form.new-posts-submit}" type="submit" value="Publish!">
+        </div>
+    </form>
+</noscript>
+
+</body>
+</html>

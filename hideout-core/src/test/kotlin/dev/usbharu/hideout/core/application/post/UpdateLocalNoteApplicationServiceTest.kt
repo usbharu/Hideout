@@ -8,7 +8,7 @@ import dev.usbharu.hideout.core.domain.model.actor.TestActorFactory
 import dev.usbharu.hideout.core.domain.model.post.*
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.support.acct.Acct
-import dev.usbharu.hideout.core.domain.model.support.principal.FromApi
+import dev.usbharu.hideout.core.domain.model.support.principal.LocalUser
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetail
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailHashedPassword
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
@@ -63,7 +63,7 @@ class UpdateLocalNoteApplicationServiceTest {
         whenever(postContentFactoryImpl.create(eq("test"))).doReturn(content)
 
         service.execute(
-            UpdateLocalNote(post.id.id, null, "test", false, emptyList()), FromApi(
+            UpdateLocalNote(post.id.id, null, "test", false, emptyList()), LocalUser(
                 post.actorId,
                 UserDetailId(1),
                 Acct("test", "example.com")
@@ -84,7 +84,7 @@ class UpdateLocalNoteApplicationServiceTest {
     fun postが見つからない場合失敗() = runTest {
         assertThrows<IllegalArgumentException> {
             service.execute(
-                UpdateLocalNote(1, null, "test", false, emptyList()), FromApi(
+                UpdateLocalNote(1, null, "test", false, emptyList()), LocalUser(
                     ActorId(1),
                     UserDetailId(1), Acct("test", "example.com")
                 )
@@ -98,7 +98,7 @@ class UpdateLocalNoteApplicationServiceTest {
 
         assertThrows<PermissionDeniedException> {
             service.execute(
-                UpdateLocalNote(1, null, "test", false, emptyList()), FromApi(
+                UpdateLocalNote(1, null, "test", false, emptyList()), LocalUser(
                     ActorId(1),
                     UserDetailId(1), Acct("test", "example.com")
                 )
@@ -112,7 +112,7 @@ class UpdateLocalNoteApplicationServiceTest {
 
         assertThrows<InternalServerException> {
             service.execute(
-                UpdateLocalNote(1, null, "test", false, emptyList()), FromApi(
+                UpdateLocalNote(1, null, "test", false, emptyList()), LocalUser(
                     ActorId(1),
                     UserDetailId(1), Acct("test", "example.com")
                 )
@@ -138,7 +138,7 @@ class UpdateLocalNoteApplicationServiceTest {
 
         assertThrows<InternalServerException> {
             service.execute(
-                UpdateLocalNote(post.id.id, null, "test", false, emptyList()), FromApi(
+                UpdateLocalNote(post.id.id, null, "test", false, emptyList()), LocalUser(
                     post.actorId,
                     UserDetailId(1),
                     Acct("test", "example.com")

@@ -38,14 +38,14 @@ class PostQueryMapper(private val postResultRowMapper: ResultRowMapper<Post>) : 
                 it
                     .first()
                     .let(postResultRowMapper::map)
-                    .apply {
-                        buildPost(it)
+                    .run {
+                        buildPost(this, it)
                     }
             }
     }
 
-    private fun Post.buildPost(it: List<ResultRow>) {
-        reconstructWith(
+    private fun buildPost(post: Post, it: List<ResultRow>): Post {
+        return post.reconstructWith(
             mediaIds = it.mapNotNull { resultRow: ResultRow ->
                 resultRow
                     .getOrNull(PostsMedia.mediaId)

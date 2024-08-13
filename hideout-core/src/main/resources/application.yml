@@ -47,6 +47,8 @@ spring:
   threads:
     virtual:
       enabled: true
+  messages:
+    basename: messages.hideout-web-messages
 server:
   tomcat:
     basedir: tomcat

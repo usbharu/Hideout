@@ -8,7 +8,7 @@ import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.domain.model.post.TestPostFactory
 import dev.usbharu.hideout.core.domain.model.post.Visibility
 import dev.usbharu.hideout.core.domain.model.support.acct.Acct
-import dev.usbharu.hideout.core.domain.model.support.principal.FromApi
+import dev.usbharu.hideout.core.domain.model.support.principal.LocalUser
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
 import dev.usbharu.hideout.core.infrastructure.factory.PostFactoryImpl
 import kotlinx.coroutines.test.runTest
@@ -59,7 +59,7 @@ class RegisterLocalPostApplicationServiceTest {
         ).doReturn(post)
 
         service.execute(
-            RegisterLocalPost("content test", null, Visibility.PUBLIC, null, null, false, emptyList()), FromApi(
+            RegisterLocalPost("content test", null, Visibility.PUBLIC, null, null, false, emptyList()), LocalUser(
                 ActorId(1), UserDetailId(1), Acct("test", "example.com")
             )
         )
@@ -71,7 +71,7 @@ class RegisterLocalPostApplicationServiceTest {
     fun actorが見つからないと失敗() = runTest {
         assertThrows<InternalServerException> {
             service.execute(
-                RegisterLocalPost("content test", null, Visibility.PUBLIC, null, null, false, emptyList()), FromApi(
+                RegisterLocalPost("content test", null, Visibility.PUBLIC, null, null, false, emptyList()), LocalUser(
                     ActorId(1), UserDetailId(1), Acct("test", "example.com")
                 )
             )

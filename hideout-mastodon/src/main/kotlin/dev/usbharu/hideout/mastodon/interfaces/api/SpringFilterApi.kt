@@ -20,7 +20,7 @@ import dev.usbharu.hideout.core.application.filter.*
 import dev.usbharu.hideout.core.domain.model.filter.FilterAction
 import dev.usbharu.hideout.core.domain.model.filter.FilterContext
 import dev.usbharu.hideout.core.domain.model.filter.FilterMode
-import dev.usbharu.hideout.core.domain.model.support.principal.PrincipalContextHolder
+import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.SpringSecurityOauth2PrincipalContextHolder
 import dev.usbharu.hideout.mastodon.application.filter.DeleteFilterV1
 import dev.usbharu.hideout.mastodon.application.filter.DeleteFilterV1ApplicationService
 import dev.usbharu.hideout.mastodon.application.filter.GetFilterV1
@@ -41,7 +41,7 @@ class SpringFilterApi(
     private val deleteFilterV1ApplicationService: DeleteFilterV1ApplicationService,
     private val userDeleteFilterApplicationService: UserDeleteFilterApplicationService,
     private val userGetFilterApplicationService: UserGetFilterApplicationService,
-    private val principalContextHolder: PrincipalContextHolder
+    private val principalContextHolder: SpringSecurityOauth2PrincipalContextHolder
 ) : FilterApi {
 
     override suspend fun apiV1FiltersIdDelete(id: String): ResponseEntity<Any> {

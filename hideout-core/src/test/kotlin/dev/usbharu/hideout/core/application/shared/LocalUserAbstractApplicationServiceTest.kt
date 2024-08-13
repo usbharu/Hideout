@@ -2,7 +2,7 @@ package dev.usbharu.hideout.core.application.shared
 
 import dev.usbharu.hideout.core.application.exception.PermissionDeniedException
 import dev.usbharu.hideout.core.domain.model.support.principal.Anonymous
-import dev.usbharu.hideout.core.domain.model.support.principal.FromApi
+import dev.usbharu.hideout.core.domain.model.support.principal.LocalUser
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
@@ -13,7 +13,7 @@ class LocalUserAbstractApplicationServiceTest {
     fun requireFromAPI() = runTest {
         val logger = LoggerFactory.getLogger(javaClass)
         val value = object : LocalUserAbstractApplicationService<Unit, Unit>(TestTransaction, logger) {
-            override suspend fun internalExecute(command: Unit, principal: FromApi) {
+            override suspend fun internalExecute(command: Unit, principal: LocalUser) {
 
             }
         }

@@ -24,7 +24,7 @@ import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.actorinstancerelationship.ActorInstanceRelationship
 import dev.usbharu.hideout.core.domain.model.actorinstancerelationship.ActorInstanceRelationshipRepository
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
-import dev.usbharu.hideout.core.domain.model.support.principal.FromApi
+import dev.usbharu.hideout.core.domain.model.support.principal.LocalUser
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -39,7 +39,7 @@ class GetRelationshipApplicationService(
         transaction,
         logger
     ) {
-    override suspend fun internalExecute(command: GetRelationship, principal: FromApi): Relationship {
+    override suspend fun internalExecute(command: GetRelationship, principal: LocalUser): Relationship {
         val actor = actorRepository.findById(principal.actorId)
             ?: throw InternalServerException("Actor ${principal.actorId} not found.")
         val targetId = ActorId(command.targetActorId)

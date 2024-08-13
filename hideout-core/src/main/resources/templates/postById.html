@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head prefix="og: http://ogp.me/ns#">
+    <meta charset="UTF-8">
+    <title th:text="#{post-by-id.title(${post.actor.screenName},${instance.name})}">Posts - hideout</title>
+    <meta property="og:url" th:content="${post.url}">
+    <meta property="og:title" th:content="#{post-by-id.title(${post.actor.screenName},${instance.name})}">
+    <meta property="og:description" th:content="${post.text}">
+    <th:block
+            th:if="${post.mediaDetailList.isEmpty() || (post.mediaDetailList.get(0).thumbnailUrl == null && (post.mediaDetailList.get(0).type != 'Image' || post.mediaDetailList.get(0).type != 'Video'))}">
+        <meta property="og:image" th:content="${post.actor.icon}">
+    </th:block>
+    <th:block
+            th:unless="${post.mediaDetailList.isEmpty() || (post.mediaDetailList.get(0).thumbnailUrl == null && (post.mediaDetailList.get(0).type != 'Image' || post.mediaDetailList.get(0).type != 'Video'))}">
+        <meta property="og:image" th:content="${post.mediaDetailList.get(0).thumbnailUrl}">
+    </th:block>
+
+
+</head>
+<body>
+<noscript>
+    <th:block th:if=" ${post.reply != null}">
+        <th:block th:replace="fragments-post :: single-simple-post(${post.reply})"></th:block>
+        <hr>
+    </th:block>
+    <main>
+        <p th:if="${post.pureRepost}" th:text="#{post.repost-by(${post.actor.name})}">Repost by user</p>
+        <th:block th:unless="${post.pureRepost}">
+            <th:block th:replace="fragments-post :: single-simple-post(${post})"></th:block>
+            <th:block th:replace="fragments-post :: single-post-controller(${post})"></th:block>
+        </th:block>
+        <th:block th:if="${post.pureRepost}">
+            <th:block th:replace="fragments-post :: single-simple-post(${post.repost})"></th:block>
+            <th:block th:replace="fragments-post :: single-post-controller(${post.repost})"></th:block>
+        </th:block>
+
+    </main>
+    <th:block th:if="${post.repost != null && !post.pureRepost}">
+        <hr>
+        <th:block th:replace="fragments-post :: single-simple-post(${post.repost})"></th:block>
+        <cite th:text="${post.repost.apId}"></cite>
+    </th:block>
+</noscript>
+</body>
+</html>
