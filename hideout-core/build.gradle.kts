@@ -138,7 +138,7 @@ dependencies {
 
 detekt {
     parallel = true
-    config = files("../detekt.yml")
+    config.setFrom(files("../detekt.yml"))
     buildUponDefaultConfig = true
     basePath = "${rootDir.absolutePath}/src/main/kotlin"
     autoCorrect = true
