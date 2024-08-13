@@ -10,12 +10,11 @@ repositories {
 }
 
 dependencies {
-    implementation("org.mongodb:mongodb-driver-kotlin-coroutine:5.1.3")
+    implementation(libs.mongodb.kotlin.coroutine)
     implementation(project(":owl-broker"))
     implementation(project(":owl-common"))
-    implementation(platform("io.insert-koin:koin-bom:3.5.6"))
-    implementation(platform("io.insert-koin:koin-annotations-bom:1.3.1"))
-    implementation("io.insert-koin:koin-core")
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.core)
 }
 
 tasks.test {

@@ -1,6 +1,6 @@
 plugins {
     alias(libs.plugins.kotlin.jvm)
-    id("com.google.protobuf") version "0.9.4"
+    alias(libs.plugins.protobuf.plugin)
 }
 
 group = "dev.usbharu"
@@ -10,12 +10,9 @@ repositories {
 }
 
 dependencies {
-    testImplementation("org.jetbrains.kotlin:kotlin-test")
-    implementation("io.grpc:grpc-kotlin-stub:1.4.1")
-    implementation("io.grpc:grpc-protobuf:1.66.0")
-    implementation("com.google.protobuf:protobuf-kotlin:4.27.3")
-    implementation("io.grpc:grpc-netty:1.66.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+    testImplementation(libs.kotlin.junit)
+    implementation(libs.bundles.grpc.kotlin)
+    implementation(libs.coroutines.core)
     implementation(project(":owl-common"))
     protobuf(files(project(":owl-broker").dependencyProject.projectDir.toString() + "/src/main/proto"))
 }
@@ -29,14 +26,14 @@ kotlin {
 
 protobuf {
     protoc {
-        artifact = "com.google.protobuf:protoc:4.27.3"
+        artifact = libs.protoc.asProvider().get().toString()
     }
     plugins {
         create("grpc") {
-            artifact = "io.grpc:protoc-gen-grpc-java:1.66.0"
+            artifact = libs.protoc.gen.grpc.java.get().toString()
         }
         create("grpckt") {
-            artifact = "io.grpc:protoc-gen-grpc-kotlin:1.4.1:jdk8@jar"
+            artifact = libs.protoc.gen.grpc.kotlin.get().toString() + "jdk8@jar"
         }
     }
     generateProtoTasks {
