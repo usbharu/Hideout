@@ -35,7 +35,6 @@ class UserAcceptFollowRequestApplicationService(
 ) :
     LocalUserAbstractApplicationService<AcceptFollowRequest, Unit>(transaction, logger) {
     override suspend fun internalExecute(command: AcceptFollowRequest, principal: LocalUser) {
-
         val actor = actorRepository.findById(principal.actorId)
             ?: throw InternalServerException("Actor ${principal.actorId} not found")
 

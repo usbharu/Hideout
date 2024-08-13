@@ -36,8 +36,6 @@ class UserBlockApplicationService(
 ) :
     LocalUserAbstractApplicationService<Block, Unit>(transaction, logger) {
     override suspend fun internalExecute(command: Block, principal: LocalUser) {
-
-
         val actor = actorRepository.findById(principal.actorId)
             ?: throw IllegalStateException("Actor ${principal.actorId} not found")
 

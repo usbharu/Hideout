@@ -37,7 +37,6 @@ class UserRegisterFilterApplicationService(
     ) {
 
     override suspend fun internalExecute(command: RegisterFilter, principal: LocalUser): Filter {
-
         val filter = dev.usbharu.hideout.core.domain.model.filter.Filter.create(
             id = FilterId(idGenerateService.generateId()),
             userDetailId = principal.userDetailId,

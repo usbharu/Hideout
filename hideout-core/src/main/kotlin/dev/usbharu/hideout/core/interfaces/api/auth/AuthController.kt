@@ -38,7 +38,8 @@ class AuthController(
     suspend fun signUp(@Validated @ModelAttribute signUpForm: SignUpForm, request: HttpServletRequest): String {
         val registerLocalActor = RegisterLocalActor(signUpForm.username, signUpForm.password)
         val uri = registerLocalActorApplicationService.execute(
-            registerLocalActor, Anonymous
+            registerLocalActor,
+            Anonymous
         )
         request.login(signUpForm.username, signUpForm.password)
         return "redirect:$uri"

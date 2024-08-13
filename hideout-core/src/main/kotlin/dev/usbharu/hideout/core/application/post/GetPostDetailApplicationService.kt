@@ -25,7 +25,8 @@ class GetPostDetailApplicationService(
     private val mediaRepository: MediaRepository,
     private val iPostReadAccessControl: IPostReadAccessControl
 ) : AbstractApplicationService<GetPostDetail, PostDetail>(
-    transaction, logger
+    transaction,
+    logger
 ) {
     override suspend fun internalExecute(command: GetPostDetail, principal: Principal): PostDetail {
         val post = postRepository.findById(PostId(command.postId))
@@ -79,9 +80,12 @@ class GetPostDetailApplicationService(
 
         val mediaList = mediaRepository.findByIds(post.mediaIds)
         return PostDetail.of(
-            post, first, second, third, mediaList
+            post,
+            first,
+            second,
+            third,
+            mediaList
         )
-
     }
 
     companion object {

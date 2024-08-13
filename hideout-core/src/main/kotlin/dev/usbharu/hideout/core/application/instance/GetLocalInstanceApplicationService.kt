@@ -16,18 +16,20 @@ class GetLocalInstanceApplicationService(
     transaction: Transaction
 ) :
     AbstractApplicationService<Unit, Instance>(
-        transaction, logger
+        transaction,
+        logger
     ) {
     var cachedInstance: Instance? = null
 
     override suspend fun internalExecute(command: Unit, principal: Principal): Instance {
-
         if (cachedInstance != null) {
             return cachedInstance!!
         }
 
-        val instance = (instanceRepository.findByUrl(applicationConfig.url.toURI())
-            ?: throw InternalServerException("Local instance not found."))
+        val instance = (
+            instanceRepository.findByUrl(applicationConfig.url.toURI())
+                ?: throw InternalServerException("Local instance not found.")
+            )
 
         cachedInstance = Instance.of(instance)
         return cachedInstance!!

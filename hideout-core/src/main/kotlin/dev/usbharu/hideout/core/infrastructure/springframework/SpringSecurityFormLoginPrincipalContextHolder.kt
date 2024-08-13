@@ -22,7 +22,6 @@ class SpringSecurityFormLoginPrincipalContextHolder(
             SecurityContextHolder.getContext().authentication?.principal as? HideoutUserDetails ?: return Anonymous
 
         return transaction.transaction {
-
             val userDetail = principalQueryService.findByUserDetailId(UserDetailId(hideoutUserDetails.userDetailsId))
             LocalUser(
                 userDetail.actorId,
@@ -30,6 +29,5 @@ class SpringSecurityFormLoginPrincipalContextHolder(
                 Acct(userDetail.username, userDetail.host)
             )
         }
-
     }
 }

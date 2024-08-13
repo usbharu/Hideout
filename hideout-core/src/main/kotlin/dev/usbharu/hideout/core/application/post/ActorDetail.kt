@@ -1,6 +1,5 @@
 package dev.usbharu.hideout.core.application.post
 
-
 import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.instance.Instance
 import dev.usbharu.hideout.core.domain.model.media.Media

@@ -13,7 +13,8 @@ class UserAddTimelineRelationshipApplicationService(
     transaction: Transaction
 ) :
     LocalUserAbstractApplicationService<AddTimelineRelationship, Unit>(
-        transaction, logger
+        transaction,
+        logger
     ) {
     override suspend fun internalExecute(command: AddTimelineRelationship, principal: LocalUser) {
         timelineRelationshipRepository.save(command.timelineRelationship)

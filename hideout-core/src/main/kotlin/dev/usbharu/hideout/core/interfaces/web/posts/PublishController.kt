@@ -55,6 +55,6 @@ class PublishController(
         )
         val id = userRegisterLocalPostApplicationService.execute(command, principal)
 
-        return "redirect:/users/${principal.acct?.userpart}/posts/${id}"
+        return "redirect:/users/${principal.acct?.userpart}/posts/$id"
     }
 }

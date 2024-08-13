@@ -58,13 +58,15 @@ class MigrationLocalActorApplicationService(
         if (canAccountMigration.canMigration) {
             fromActor.moveTo = toActorId
             actorRepository.save(fromActor)
-        } else when (canAccountMigration) {
-            is AlreadyMoved -> throw IllegalArgumentException(canAccountMigration.message)
-            is CanAccountMigration -> throw InternalServerException()
-            is CircularReferences -> throw IllegalArgumentException(canAccountMigration.message)
-            is SelfReferences -> throw IllegalArgumentException("Self references are not supported")
-            is AlsoKnownAsNotFound -> throw IllegalArgumentException(canAccountMigration.message)
-            is MigrationCoolDown -> throw IllegalArgumentException(canAccountMigration.message)
+        } else {
+            when (canAccountMigration) {
+                is AlreadyMoved -> throw IllegalArgumentException(canAccountMigration.message)
+                is CanAccountMigration -> throw InternalServerException()
+                is CircularReferences -> throw IllegalArgumentException(canAccountMigration.message)
+                is SelfReferences -> throw IllegalArgumentException("Self references are not supported")
+                is AlsoKnownAsNotFound -> throw IllegalArgumentException(canAccountMigration.message)
+                is MigrationCoolDown -> throw IllegalArgumentException(canAccountMigration.message)
+            }
         }
     }
 

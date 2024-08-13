@@ -91,7 +91,6 @@ class RegisterApplicationApplicationService(
         )
     }
 
-
     companion object {
         private val logger = LoggerFactory.getLogger(RegisterApplicationApplicationService::class.java)
     }
