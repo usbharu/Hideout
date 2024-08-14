@@ -4,11 +4,14 @@ import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.filter.Filter
 import dev.usbharu.hideout.core.domain.model.filter.FilteredPost
+import dev.usbharu.hideout.core.domain.model.media.Media
+import dev.usbharu.hideout.core.domain.model.media.MediaId
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostId
 import dev.usbharu.hideout.core.domain.model.post.Visibility
 import dev.usbharu.hideout.core.domain.model.support.page.Page
 import dev.usbharu.hideout.core.domain.model.support.page.PaginationList
+import dev.usbharu.hideout.core.domain.model.support.principal.Principal
 import dev.usbharu.hideout.core.domain.model.support.timelineobjectdetail.TimelineObjectDetail
 import dev.usbharu.hideout.core.domain.model.timeline.Timeline
 import dev.usbharu.hideout.core.domain.model.timeline.TimelineId
@@ -105,7 +108,7 @@ abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateSe
 
     protected abstract suspend fun getPostsByTimelineRelationshipList(timelineRelationshipList: List<TimelineRelationship>): List<Post>
 
-    protected abstract suspend fun getPostsByPostId(postIds: List<PostId>): List<Post>
+    protected abstract suspend fun getPostsByPostId(postIds: List<PostId>, principal: Principal): List<Post>
 
     protected abstract suspend fun getTimelineObject(
         timelineId: TimelineId,
@@ -205,7 +208,8 @@ abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateSe
     override suspend fun readTimeline(
         timeline: Timeline,
         option: ReadTimelineOption?,
-        page: Page?
+        page: Page?,
+        principal: Principal
     ): PaginationList<TimelineObjectDetail, PostId> {
         val timelineObjectList = getTimelineObject(timeline.id, option, page)
         val lastUpdatedAt = timelineObjectList.minBy { it.lastUpdatedAt }.lastUpdatedAt
@@ -216,7 +220,8 @@ abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateSe
             getPostsByPostId(
                 timelineObjectList.map {
                     it.postId
-                } + timelineObjectList.mapNotNull { it.repostId } + timelineObjectList.mapNotNull { it.replyId }
+                } + timelineObjectList.mapNotNull { it.repostId } + timelineObjectList.mapNotNull { it.replyId },
+                principal
             )
 
         val userDetails = getUserDetails(timelineObjectList.map { it.userDetailId })
@@ -232,24 +237,35 @@ abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateSe
             post.id to applyFilters(post, newerFilters)
         }
 
+        val mediaMap = getMedias(posts.flatMap { it.mediaIds } + actors.mapNotNull { it.value.icon })
+
         return PaginationList(
             timelineObjectList.mapNotNull<TimelineObject, TimelineObjectDetail> {
                 val timelineUserDetail = userDetails[it.userDetailId] ?: return@mapNotNull null
                 val actor = actors[it.postActorId] ?: return@mapNotNull null
                 val post = postMap[it.postId] ?: return@mapNotNull null
+                val postMedias = post.post.mediaIds.mapNotNull { mediaId -> mediaMap[mediaId] }
                 val reply = postMap[it.replyId]
+                val replyMedias = reply?.post?.mediaIds?.mapNotNull { mediaId -> mediaMap[mediaId] }
                 val replyActor = actors[it.replyActorId]
                 val repost = postMap[it.repostId]
+                val repostMedias = repost?.post?.mediaIds?.mapNotNull { mediaId -> mediaMap[mediaId] }
                 val repostActor = actors[it.repostActorId]
                 TimelineObjectDetail.of(
                     timelineObject = it,
                     timelineUserDetail = timelineUserDetail,
                     post = post.post,
+                    postMedias = postMedias,
                     postActor = actor,
+                    postActorIconMedia = mediaMap[actor.icon],
                     replyPost = reply?.post,
+                    replyPostMedias = replyMedias,
                     replyPostActor = replyActor,
+                    replyPostActorIconMedia = mediaMap[replyActor?.icon],
                     repostPost = repost?.post,
+                    repostPostMedias = repostMedias,
                     repostPostActor = repostActor,
+                    repostPostActorIconMedia = mediaMap[repostActor?.icon],
                     warnFilter = it.warnFilters + post.filterResults.map {
                         TimelineObjectWarnFilter(
                             it.filter.id,
@@ -264,6 +280,8 @@ abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateSe
     }
 
     protected abstract suspend fun getActors(actorIds: List<ActorId>): Map<ActorId, Actor>
+
+    protected abstract suspend fun getMedias(mediaIds: List<MediaId>): Map<MediaId, Media>
 
     protected abstract suspend fun getUserDetails(userDetailIdList: List<UserDetailId>): Map<UserDetailId, UserDetail>
 }

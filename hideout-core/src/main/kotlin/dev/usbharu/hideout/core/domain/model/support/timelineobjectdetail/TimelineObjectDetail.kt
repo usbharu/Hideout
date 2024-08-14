@@ -1,6 +1,7 @@
 package dev.usbharu.hideout.core.domain.model.support.timelineobjectdetail
 
 import dev.usbharu.hideout.core.domain.model.actor.Actor
+import dev.usbharu.hideout.core.domain.model.media.Media
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostId
 import dev.usbharu.hideout.core.domain.model.timelineobject.TimelineObject
@@ -14,11 +15,17 @@ data class TimelineObjectDetail(
     val postId: PostId,
     val timelineUserDetail: UserDetail,
     val post: Post,
+    val postMedias: List<Media>,
     val postActor: Actor,
+    val postActorIconMedia: Media?,
     val replyPost: Post?,
+    val replyPostMedias: List<Media>?,
     val replyPostActor: Actor?,
+    val replyPostActorIconMedia: Media?,
     val repostPost: Post?,
+    val repostPostMedias: List<Media>?,
     val repostPostActor: Actor?,
+    val repostPostActorIconMedia: Media?,
     val isPureRepost: Boolean,
     val lastUpdateAt: Instant,
     val hasMediaInRepost: Boolean,
@@ -29,27 +36,39 @@ data class TimelineObjectDetail(
             timelineObject: TimelineObject,
             timelineUserDetail: UserDetail,
             post: Post,
+            postMedias: List<Media>,
             postActor: Actor,
+            postActorIconMedia: Media?,
             replyPost: Post?,
+            replyPostMedias: List<Media>?,
             replyPostActor: Actor?,
+            replyPostActorIconMedia: Media?,
             repostPost: Post?,
+            repostPostMedias: List<Media>?,
             repostPostActor: Actor?,
+            repostPostActorIconMedia: Media?,
             warnFilter: List<TimelineObjectWarnFilter>
         ): TimelineObjectDetail {
             return TimelineObjectDetail(
-                timelineObject.id,
-                post.id,
-                timelineUserDetail,
-                post,
-                postActor,
-                replyPost,
-                replyPostActor,
-                repostPost,
-                repostPostActor,
-                timelineObject.isPureRepost,
-                timelineObject.lastUpdatedAt,
-                timelineObject.hasMediaInRepost,
-                warnFilter
+                id = timelineObject.id,
+                postId = post.id,
+                timelineUserDetail = timelineUserDetail,
+                post = post,
+                postMedias = postMedias,
+                postActor = postActor,
+                postActorIconMedia = postActorIconMedia,
+                replyPost = replyPost,
+                replyPostMedias = replyPostMedias,
+                replyPostActor = replyPostActor,
+                replyPostActorIconMedia = replyPostActorIconMedia,
+                repostPost = repostPost,
+                repostPostMedias = repostPostMedias,
+                repostPostActor = repostPostActor,
+                repostPostActorIconMedia = repostPostActorIconMedia,
+                isPureRepost = timelineObject.isPureRepost,
+                lastUpdateAt = timelineObject.lastUpdatedAt,
+                hasMediaInRepost = timelineObject.hasMediaInRepost,
+                warnFilter = warnFilter
             )
         }
     }

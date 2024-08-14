@@ -67,6 +67,26 @@ class ExposedRelationshipRepository(override val domainEventPublisher: DomainEve
         }.singleOrNull()?.toRelationships()
     }
 
+    override suspend fun findByActorIdsAndTargetIdAndBlocking(
+        actorIds: List<ActorId>,
+        targetId: ActorId,
+        blocking: Boolean
+    ): List<Relationship> = query {
+        Relationships.selectAll().where {
+            Relationships.actorId inList actorIds.map { it.id } and (Relationships.targetActorId eq targetId.id)
+        }.map { it.toRelationships() }
+    }
+
+    override suspend fun findByActorIdAndTargetIdsAndFollowing(
+        actorId: ActorId,
+        targetIds: List<ActorId>,
+        following: Boolean
+    ): List<Relationship> = query {
+        Relationships.selectAll().where {
+            Relationships.actorId eq actorId.id and (Relationships.targetActorId inList targetIds.map { it.id })
+        }.map { it.toRelationships() }
+    }
+
     override suspend fun findByTargetId(
         targetId: ActorId,
         option: FindRelationshipOption?,

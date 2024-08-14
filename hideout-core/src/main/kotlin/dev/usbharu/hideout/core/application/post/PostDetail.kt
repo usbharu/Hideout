@@ -1,7 +1,6 @@
 package dev.usbharu.hideout.core.application.post
 
 import dev.usbharu.hideout.core.domain.model.actor.Actor
-import dev.usbharu.hideout.core.domain.model.instance.Instance
 import dev.usbharu.hideout.core.domain.model.media.Media
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.Visibility
@@ -30,7 +29,6 @@ data class PostDetail(
         fun of(
             post: Post,
             actor: Actor,
-            instance: Instance,
             iconMedia: Media?,
             mediaList: List<Media>,
             reply: PostDetail? = null,
@@ -39,7 +37,7 @@ data class PostDetail(
         ): PostDetail {
             return PostDetail(
                 id = post.id.id,
-                actor = ActorDetail.of(actor, instance, iconMedia),
+                actor = ActorDetail.of(actor, iconMedia),
                 overview = post.overview?.overview,
                 text = post.text,
                 content = post.content.content,
