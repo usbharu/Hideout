@@ -25,4 +25,24 @@ class Timeline(
 
     var name = name
         private set
+
+    companion object {
+        fun create(
+            id: TimelineId,
+            userDetailId: UserDetailId,
+            name: TimelineName,
+            visibility: TimelineVisibility,
+            isSystem: Boolean
+        ): Timeline {
+            val timeline = Timeline(
+                id = id,
+                userDetailId = userDetailId,
+                name = name,
+                visibility = visibility,
+                isSystem = isSystem
+            )
+            timeline.addDomainEvent(TimelineEventFactory(timeline).createEvent(TimelineEvent.CREATE))
+            return timeline
+        }
+    }
 }

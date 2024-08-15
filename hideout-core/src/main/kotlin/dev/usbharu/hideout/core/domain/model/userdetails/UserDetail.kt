@@ -16,18 +16,21 @@
 
 package dev.usbharu.hideout.core.domain.model.userdetails
 
+import dev.usbharu.hideout.core.domain.event.userdetail.UserDetailDomainEventFactory
+import dev.usbharu.hideout.core.domain.event.userdetail.UserDetailEvent
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.timeline.TimelineId
+import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventStorable
 import java.time.Instant
 
-class UserDetail private constructor(
+class UserDetail(
     val id: UserDetailId,
     val actorId: ActorId,
     var password: UserDetailHashedPassword,
     var autoAcceptFolloweeFollowRequest: Boolean,
     var lastMigration: Instant? = null,
-    val homeTimelineId: TimelineId?
-) {
+    var homeTimelineId: TimelineId?
+) : DomainEventStorable() {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -49,7 +52,7 @@ class UserDetail private constructor(
             lastMigration: Instant? = null,
             homeTimelineId: TimelineId? = null
         ): UserDetail {
-            return UserDetail(
+            val userDetail = UserDetail(
                 id,
                 actorId,
                 password,
@@ -57,6 +60,8 @@ class UserDetail private constructor(
                 lastMigration,
                 homeTimelineId
             )
+            userDetail.addDomainEvent(UserDetailDomainEventFactory(userDetail).createEvent(UserDetailEvent.CREATE))
+            return userDetail
         }
     }
 }
