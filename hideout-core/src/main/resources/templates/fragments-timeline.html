@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<th:block th:fragment="simple-timline(timelineObject,href)">
+    <!--/*@thymesVar id="timelineObject" type="dev.usbharu.hideout.core.domain.model.support.page.PaginationList<dev.usbharu.hideout.core.application.post.PostDetail,dev.usbharu.hideout.core.domain.model.post.PostId>"*/-->
+    <div th:if="${timelineObject.prev == null}">
+        <a th:href="${href + '/?maxId=' + timelineObject.prev}"></a>
+    </div>
+    <div th:each="postDetail : ${timelineObject}">
+        <th:block th:replace="fragments-post :: single-simple-post(${postDetail})"></th:block>
+    </div>
+    <div th:if="${timelineObject.next == null}">
+        <a th:href="${href + '/?sinceId=' + timelineObject.next}"></a>
+    </div>
+</th:block>
+</body>
+</html>
