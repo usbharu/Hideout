@@ -81,7 +81,7 @@ create table timelines
 );
 create table if not exists user_details
 (
-    id                                  bigserial primary key,
+    id               bigint primary key,
     actor_id                            bigint       not null unique,
     password                            varchar(255) not null,
     auto_accept_followee_follow_request boolean      not null,
@@ -287,3 +287,33 @@ create table if not exists actor_instance_relationships
     constraint fk_actor_instance_relationships_actor_id__id foreign key (actor_id) references actors (id) on delete cascade on update cascade,
     constraint fk_actor_instance_relationships_instance_id__id foreign key (instance_id) references instance (id) on delete cascade on update cascade
 );
+
+create table if not exists timeline_relationships
+(
+    id          bigint primary key,
+    timeline_id bigint       not null,
+    actor_id    bigint       not null,
+    visible     varchar(100) not null,
+    constraint fk_timeline_relationships_timeline_id__id foreign key (timeline_id) references timelines (id) on delete cascade on update cascade,
+    constraint fk_timeline_relationships_actor_id__id foreign key (actor_id) references actors (id) on delete cascade on update cascade
+
+);
+
+create table if not exists filters
+(
+    id      bigint primary key,
+    user_id bigint       not null,
+    name    varchar(255) not null,
+    context varchar(500) not null,
+    action  varchar(255) not null,
+    constraint fk_filters_user_id__id foreign key (user_id) references user_details (id) on delete cascade on update cascade
+);
+
+create table if not exists filter_keywords
+(
+    id        bigint primary key,
+    filter_id bigint        not null,
+    keyword   varchar(1000) not null,
+    mode      varchar(100)  not null,
+    constraint fk_filter_keywords_filter_id__id foreign key (filter_id) references filters (id) on delete cascade on update cascade
+)

@@ -4,6 +4,10 @@ import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.support.principal.Principal
 import dev.usbharu.hideout.core.domain.model.timeline.*
+import dev.usbharu.hideout.core.domain.model.timelinerelationship.TimelineRelationship
+import dev.usbharu.hideout.core.domain.model.timelinerelationship.TimelineRelationshipId
+import dev.usbharu.hideout.core.domain.model.timelinerelationship.TimelineRelationshipRepository
+import dev.usbharu.hideout.core.domain.model.timelinerelationship.Visible
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
 import dev.usbharu.hideout.core.domain.shared.id.IdGenerateService
@@ -15,6 +19,7 @@ class UserRegisterHomeTimelineApplicationService(
     private val userDetailRepository: UserDetailRepository,
     private val timelineRepository: TimelineRepository,
     private val idGenerateService: IdGenerateService, transaction: Transaction,
+    private val timelineRelationshipRepository: TimelineRelationshipRepository
 ) : AbstractApplicationService<RegisterHomeTimeline, Unit>(transaction, logger) {
     override suspend fun internalExecute(command: RegisterHomeTimeline, principal: Principal) {
 
@@ -30,6 +35,15 @@ class UserRegisterHomeTimelineApplicationService(
         )
         timelineRepository.save(timeline)
         userDetail.homeTimelineId = timeline.id
+
+        val timelineRelationship = TimelineRelationship(
+            TimelineRelationshipId(idGenerateService.generateId()),
+            timeline.id,
+            userDetail.actorId,
+            Visible.DIRECT
+        )
+
+        timelineRelationshipRepository.save(timelineRelationship)
 
         userDetailRepository.save(userDetail)
     }
