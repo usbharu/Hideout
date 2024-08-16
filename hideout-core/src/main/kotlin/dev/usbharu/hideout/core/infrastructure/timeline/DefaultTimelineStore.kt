@@ -67,7 +67,7 @@ open class DefaultTimelineStore(
     }
 
     override suspend fun getNewerFilters(userDetailId: UserDetailId, lastUpdateAt: Instant): List<Filter> {
-        TODO("Not yet implemented")
+        return filterRepository.findByUserDetailId(userDetailId)
     }
 
     override suspend fun applyFilters(post: Post, filters: List<Filter>): FilteredPost {

@@ -8,6 +8,5 @@ interface FilterRepository {
 
     suspend fun findByFilterKeywordId(filterKeywordId: FilterKeywordId): Filter?
     suspend fun findByFilterId(filterId: FilterId): Filter?
-
     suspend fun findByUserDetailId(userDetailId: UserDetailId): List<Filter>
 }
