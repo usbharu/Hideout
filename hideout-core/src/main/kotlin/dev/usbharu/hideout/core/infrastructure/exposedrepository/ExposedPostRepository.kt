@@ -98,8 +98,11 @@ class ExposedPostRepository(
                 this[PostsVisibleActors.postId] = post.id.id
                 this[PostsVisibleActors.actorId] = it.id
             }
+            onComplete {
+                update(post)
+            }
         }
-        update(post)
+
         return post
     }
 
@@ -148,9 +151,11 @@ class ExposedPostRepository(
                 this[PostsVisibleActors.postId] = it.first
                 this[PostsVisibleActors.actorId] = it.second
             }
-        }
-        posts.forEach {
-            update(it)
+            onComplete {
+                posts.forEach {
+                    update(it)
+                }
+            }
         }
         return posts
     }
@@ -195,8 +200,11 @@ class ExposedPostRepository(
             Posts.deleteWhere {
                 id eq post.id.id
             }
+            onComplete {
+                update(post)
+            }
         }
-        update(post)
+
     }
 
     override suspend fun findByActorIdAndVisibilityInList(

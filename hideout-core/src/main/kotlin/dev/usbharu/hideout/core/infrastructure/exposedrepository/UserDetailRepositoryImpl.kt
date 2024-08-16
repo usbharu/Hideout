@@ -48,6 +48,7 @@ class UserDetailRepositoryImpl(override val domainEventPublisher: DomainEventPub
                     it[password] = userDetail.password.password
                     it[autoAcceptFolloweeFollowRequest] = userDetail.autoAcceptFolloweeFollowRequest
                     it[lastMigration] = userDetail.lastMigration
+                    it[homeTimelineId] = userDetail.homeTimelineId?.value
                 }
             } else {
                 UserDetails.update({ UserDetails.id eq userDetail.id.id }) {
@@ -55,20 +56,26 @@ class UserDetailRepositoryImpl(override val domainEventPublisher: DomainEventPub
                     it[password] = userDetail.password.password
                     it[autoAcceptFolloweeFollowRequest] = userDetail.autoAcceptFolloweeFollowRequest
                     it[lastMigration] = userDetail.lastMigration
+                    it[homeTimelineId] = userDetail.homeTimelineId?.value
                 }
             }
-
+            onComplete {
+                update(userDetail)
+            }
             userDetail
         }
-        update(userDetail)
+
         return userDetail1
     }
 
     override suspend fun delete(userDetail: UserDetail): Unit {
         query {
             UserDetails.deleteWhere { id eq userDetail.id.id }
+            onComplete {
+                update(userDetail)
+            }
         }
-        update(userDetail)
+
     }
 
     override suspend fun findByActorId(actorId: Long): UserDetail? = query {

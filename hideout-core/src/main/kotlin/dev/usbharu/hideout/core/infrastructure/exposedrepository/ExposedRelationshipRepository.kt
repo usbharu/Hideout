@@ -47,8 +47,11 @@ class ExposedRelationshipRepository(override val domainEventPublisher: DomainEve
                 it[followRequesting] = relationship.followRequesting
                 it[mutingFollowRequest] = relationship.mutingFollowRequest
             }
+            onComplete {
+                update(relationship)
+            }
         }
-        update(relationship)
+
         return relationship
     }
 
@@ -57,8 +60,11 @@ class ExposedRelationshipRepository(override val domainEventPublisher: DomainEve
             Relationships.deleteWhere {
                 actorId eq relationship.actorId.id and (targetActorId eq relationship.targetActorId.id)
             }
+            onComplete {
+                update(relationship)
+            }
         }
-        update(relationship)
+
     }
 
     override suspend fun findByActorIdAndTargetId(actorId: ActorId, targetId: ActorId): Relationship? = query {

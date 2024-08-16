@@ -45,8 +45,11 @@ class ExposedActorInstanceRelationshipRepository(override val domainEventPublish
                 it[muting] = actorInstanceRelationship.muting
                 it[doNotSendPrivate] = actorInstanceRelationship.doNotSendPrivate
             }
+            onComplete {
+                update(actorInstanceRelationship)
+            }
         }
-        update(actorInstanceRelationship)
+
         return actorInstanceRelationship
     }
 
@@ -56,8 +59,11 @@ class ExposedActorInstanceRelationshipRepository(override val domainEventPublish
                 actorId eq actorInstanceRelationship.actorId.id and
                     (instanceId eq actorInstanceRelationship.instanceId.instanceId)
             }
+            onComplete {
+                update(actorInstanceRelationship)
+            }
         }
-        update(actorInstanceRelationship)
+
     }
 
     override suspend fun findByActorIdAndInstanceId(

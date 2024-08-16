@@ -17,6 +17,10 @@
 package dev.usbharu.hideout.core.infrastructure.exposedrepository
 
 import dev.usbharu.hideout.core.domain.exception.SpringDataAccessExceptionSQLExceptionTranslator
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.slf4j.MDCContext
+import org.jetbrains.exposed.sql.Transaction
+import org.jetbrains.exposed.sql.statements.StatementInterceptor
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.slf4j.Logger
 import org.springframework.beans.factory.annotation.Value
@@ -35,7 +39,20 @@ abstract class AbstractRepository {
     @Value("\${hideout.debug.trace-query-call:false}")
     private var traceQueryCall: Boolean = false
 
-    protected suspend fun <T> query(block: () -> T): T = try {
+    class TransactionInterceptor(private val transaction: Transaction) {
+
+        fun onComplete(block: suspend (transaction: Transaction) -> Unit) {
+            transaction.registerInterceptor(object : StatementInterceptor {
+                override fun afterCommit(transaction: Transaction) {
+                    runBlocking(MDCContext()) {
+                        block(transaction)
+                    }
+                }
+            })
+        }
+    }
+
+    protected suspend fun <T> query(block: TransactionInterceptor.() -> T): T = try {
         if (traceQueryCall) {
             @Suppress("ThrowingExceptionsWithoutMessageOrCause")
             logger.trace(
@@ -49,7 +66,7 @@ ${Throwable().stackTrace.joinToString("\n")}
             )
         }
 
-        block.invoke()
+        block.invoke(TransactionInterceptor(TransactionManager.current()))
     } catch (e: SQLException) {
         if (traceQueryException) {
             logger.trace("FAILED EXECUTE SQL", e)
