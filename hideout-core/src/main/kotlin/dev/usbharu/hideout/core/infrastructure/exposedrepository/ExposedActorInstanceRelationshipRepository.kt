@@ -63,7 +63,6 @@ class ExposedActorInstanceRelationshipRepository(override val domainEventPublish
                 update(actorInstanceRelationship)
             }
         }
-
     }
 
     override suspend fun findByActorIdAndInstanceId(

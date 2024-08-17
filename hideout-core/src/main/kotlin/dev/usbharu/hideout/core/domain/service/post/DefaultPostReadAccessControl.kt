@@ -23,9 +23,9 @@ class DefaultPostReadAccessControl(private val relationshipRepository: Relations
         }
 
         val relationship = (
-                relationshipRepository.findByActorIdAndTargetId(post.actorId, principal.actorId)
-                    ?: Relationship.default(post.actorId, principal.actorId)
-                )
+            relationshipRepository.findByActorIdAndTargetId(post.actorId, principal.actorId)
+                ?: Relationship.default(post.actorId, principal.actorId)
+            )
 
         // ブロックされてたら見れない
         if (relationship.blocking) {

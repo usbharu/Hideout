@@ -204,7 +204,6 @@ class ExposedPostRepository(
                 update(post)
             }
         }
-
     }
 
     override suspend fun findByActorIdAndVisibilityInList(

@@ -41,7 +41,6 @@ class ReadTimelineApplicationService(
         )
 
         val postDetailList = timeline.map {
-
             val reply = if (it.replyPost != null) {
                 PostDetail.of(
                     it.replyPost,

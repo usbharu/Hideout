@@ -32,8 +32,10 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 
 @Repository
-class UserDetailRepositoryImpl(override val domainEventPublisher: DomainEventPublisher) : UserDetailRepository,
-    AbstractRepository(), DomainEventPublishableRepository<UserDetail> {
+class UserDetailRepositoryImpl(override val domainEventPublisher: DomainEventPublisher) :
+    UserDetailRepository,
+    AbstractRepository(),
+    DomainEventPublishableRepository<UserDetail> {
     override val logger: Logger
         get() = Companion.logger
 
@@ -68,14 +70,13 @@ class UserDetailRepositoryImpl(override val domainEventPublisher: DomainEventPub
         return userDetail1
     }
 
-    override suspend fun delete(userDetail: UserDetail): Unit {
+    override suspend fun delete(userDetail: UserDetail) {
         query {
             UserDetails.deleteWhere { id eq userDetail.id.id }
             onComplete {
                 update(userDetail)
             }
         }
-
     }
 
     override suspend fun findByActorId(actorId: Long): UserDetail? = query {

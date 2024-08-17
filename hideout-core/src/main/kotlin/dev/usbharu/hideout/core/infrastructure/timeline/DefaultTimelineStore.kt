@@ -156,8 +156,6 @@ open class DefaultTimelineStore(
             )
         }
         return PaginationList(emptyList(), page?.maxId?.let { PostId(it) }, page?.minId?.let { PostId(it) })
-
-
     }
 
     override suspend fun getActors(actorIds: List<ActorId>): Map<ActorId, Actor> {

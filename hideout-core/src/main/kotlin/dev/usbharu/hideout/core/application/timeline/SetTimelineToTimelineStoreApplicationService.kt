@@ -15,7 +15,8 @@ class SetTimelineToTimelineStoreApplicationService(
     private val timelineRepository: TimelineRepository
 ) :
     AbstractApplicationService<SetTimleineStore, Unit>(
-        transaction, logger
+        transaction,
+        logger
     ) {
     override suspend fun internalExecute(command: SetTimleineStore, principal: Principal) {
         val findById = timelineRepository.findById(command.timelineId)

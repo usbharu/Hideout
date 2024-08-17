@@ -29,7 +29,6 @@ class ExposedTimelineRepository(override val domainEventPublisher: DomainEventPu
             }
         }
 
-
         return timeline
     }
 
@@ -42,7 +41,6 @@ class ExposedTimelineRepository(override val domainEventPublisher: DomainEventPu
                 update(timeline)
             }
         }
-
     }
 
     override suspend fun findByIds(ids: List<TimelineId>): List<Timeline> {

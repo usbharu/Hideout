@@ -45,7 +45,8 @@ class TimelineController(
                     minId = minId?.toLongOrNull(),
                     limit = 20
                 )
-            ), principal
+            ),
+            principal
         )
 
         model.addAttribute("timeline", execute)

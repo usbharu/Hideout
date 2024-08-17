@@ -64,7 +64,6 @@ class ExposedRelationshipRepository(override val domainEventPublisher: DomainEve
                 update(relationship)
             }
         }
-
     }
 
     override suspend fun findByActorIdAndTargetId(actorId: ActorId, targetId: ActorId): Relationship? = query {

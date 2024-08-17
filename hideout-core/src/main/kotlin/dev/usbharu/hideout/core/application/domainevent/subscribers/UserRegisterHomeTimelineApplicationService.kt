@@ -18,13 +18,15 @@ import org.springframework.stereotype.Component
 class UserRegisterHomeTimelineApplicationService(
     private val userDetailRepository: UserDetailRepository,
     private val timelineRepository: TimelineRepository,
-    private val idGenerateService: IdGenerateService, transaction: Transaction,
+    private val idGenerateService: IdGenerateService,
+    transaction: Transaction,
     private val timelineRelationshipRepository: TimelineRelationshipRepository
 ) : AbstractApplicationService<RegisterHomeTimeline, Unit>(transaction, logger) {
     override suspend fun internalExecute(command: RegisterHomeTimeline, principal: Principal) {
-
-        val userDetail = (userDetailRepository.findById(UserDetailId(command.userDetailId))
-            ?: throw IllegalArgumentException("UserDetail ${command.userDetailId} not found."))
+        val userDetail = (
+            userDetailRepository.findById(UserDetailId(command.userDetailId))
+                ?: throw IllegalArgumentException("UserDetail ${command.userDetailId} not found.")
+            )
 
         val timeline = Timeline.create(
             TimelineId(idGenerateService.generateId()),
