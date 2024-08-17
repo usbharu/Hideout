@@ -205,6 +205,11 @@ abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateSe
         removeTimelineObject(timeline.id)
     }
 
+    protected abstract suspend fun getNextPaging(
+        timelineId: TimelineId,
+        page: Page?
+    ): PaginationList<TimelineObjectDetail, PostId>
+
     override suspend fun readTimeline(
         timeline: Timeline,
         option: ReadTimelineOption?,
@@ -212,6 +217,9 @@ abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateSe
         principal: Principal
     ): PaginationList<TimelineObjectDetail, PostId> {
         val timelineObjectList = getTimelineObject(timeline.id, option, page)
+        if (timelineObjectList.isEmpty()) {
+            return getNextPaging(timeline.id, page)
+        }
         val lastUpdatedAt = timelineObjectList.minBy { it.lastUpdatedAt }.lastUpdatedAt
 
         val newerFilters = getNewerFilters(timeline.userDetailId, lastUpdatedAt)

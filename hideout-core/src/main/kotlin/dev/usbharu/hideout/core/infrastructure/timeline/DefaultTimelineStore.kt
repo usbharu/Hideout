@@ -18,6 +18,7 @@ import dev.usbharu.hideout.core.domain.model.post.Visibility
 import dev.usbharu.hideout.core.domain.model.support.page.Page
 import dev.usbharu.hideout.core.domain.model.support.page.PaginationList
 import dev.usbharu.hideout.core.domain.model.support.principal.Principal
+import dev.usbharu.hideout.core.domain.model.support.timelineobjectdetail.TimelineObjectDetail
 import dev.usbharu.hideout.core.domain.model.timeline.Timeline
 import dev.usbharu.hideout.core.domain.model.timeline.TimelineId
 import dev.usbharu.hideout.core.domain.model.timeline.TimelineRepository
@@ -133,6 +134,30 @@ open class DefaultTimelineStore(
             visibilityList,
             Page.of(limit = defaultTimelineStoreConfig.actorPostsCount)
         )
+    }
+
+    override suspend fun getNextPaging(
+        timelineId: TimelineId,
+        page: Page?
+    ): PaginationList<TimelineObjectDetail, PostId> {
+        if (page?.maxId != null) {
+            return PaginationList(
+                emptyList(),
+                null,
+                internalTimelineObjectRepository.findByTimelineIdAndPostIdLT(timelineId, PostId(page.maxId!!))?.postId
+                    ?: PostId(0)
+            )
+        } else if (page?.minId != null) {
+            return PaginationList(
+                emptyList(),
+                internalTimelineObjectRepository.findByTimelineIdAndPostIdGT(timelineId, PostId(page.minId!!))?.postId
+                    ?: PostId(Long.MAX_VALUE),
+                null
+            )
+        }
+        return PaginationList(emptyList(), page?.maxId?.let { PostId(it) }, page?.minId?.let { PostId(it) })
+
+
     }
 
     override suspend fun getActors(actorIds: List<ActorId>): Map<ActorId, Actor> {

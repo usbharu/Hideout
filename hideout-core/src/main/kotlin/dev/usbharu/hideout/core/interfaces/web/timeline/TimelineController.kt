@@ -20,7 +20,12 @@ class TimelineController(
     private val transaction: Transaction
 ) {
     @GetMapping("/home")
-    suspend fun homeTimeline(model: Model, @RequestParam sinceId: String?, @RequestParam maxId: String?): String {
+    suspend fun homeTimeline(
+        model: Model,
+        @RequestParam sinceId: String?,
+        @RequestParam maxId: String?,
+        @RequestParam minId: String?
+    ): String {
         val principal = springSecurityFormLoginPrincipalContextHolder.getPrincipal()
         val userDetail = transaction.transaction {
             userDetailRepository.findByActorId(principal.actorId.id)
@@ -36,7 +41,9 @@ class TimelineController(
                 remoteOnly = false,
                 page = Page.of(
                     maxId = maxId?.toLongOrNull(),
-                    sinceId = sinceId?.toLongOrNull()
+                    sinceId = sinceId?.toLongOrNull(),
+                    minId = minId?.toLongOrNull(),
+                    limit = 20
                 )
             ), principal
         )
