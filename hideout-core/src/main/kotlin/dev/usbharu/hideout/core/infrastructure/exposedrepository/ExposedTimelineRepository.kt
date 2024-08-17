@@ -24,8 +24,11 @@ class ExposedTimelineRepository(override val domainEventPublisher: DomainEventPu
                 it[visibility] = timeline.visibility.name
                 it[isSystem] = timeline.isSystem
             }
+            onComplete {
+                update(timeline)
+            }
         }
-        update(timeline)
+
         return timeline
     }
 
@@ -34,8 +37,10 @@ class ExposedTimelineRepository(override val domainEventPublisher: DomainEventPu
             Timelines.deleteWhere {
                 Timelines.id eq timeline.id.value
             }
+            onComplete {
+                update(timeline)
+            }
         }
-        update(timeline)
     }
 
     override suspend fun findByIds(ids: List<TimelineId>): List<Timeline> {

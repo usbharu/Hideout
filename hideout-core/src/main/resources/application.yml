@@ -20,6 +20,12 @@ hideout:
 
 
 spring:
+  data:
+    mongodb:
+      auto-index-creation: true
+      host: localhost
+      port: 27017
+      database: hideout
   jmx:
     enabled: false
   jackson:
@@ -31,12 +37,6 @@ spring:
     url: "jdbc:postgresql:hideout"
     username: "postgres"
     password: "password"
-    data:
-      mongodb:
-        auto-index-creation: true
-        host: localhost
-        port: 27017
-        database: hideout
   servlet:
     multipart:
       max-file-size: 40MB

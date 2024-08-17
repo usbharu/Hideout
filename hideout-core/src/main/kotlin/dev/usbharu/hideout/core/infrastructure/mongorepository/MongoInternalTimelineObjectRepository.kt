@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
+import org.springframework.data.annotation.Id
 import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.mapping.Document
@@ -61,6 +62,22 @@ class MongoInternalTimelineObjectRepository(
         springDataMongoTimelineObjectRepository.deleteByTimelineId(timelineId.value)
     }
 
+    override suspend fun findByTimelineIdAndPostIdGT(timelineId: TimelineId, postId: PostId): TimelineObject? {
+        return springDataMongoTimelineObjectRepository.findFirstByTimelineIdAndPostIdGreaterThanOrderByIdAsc(
+            timelineId.value,
+            postId.id
+        )
+            ?.toTimelineObject()
+    }
+
+    override suspend fun findByTimelineIdAndPostIdLT(timelineId: TimelineId, postId: PostId): TimelineObject? {
+        return springDataMongoTimelineObjectRepository.findFirstByTimelineIdAndPostIdLessThanOrderByIdDesc(
+            timelineId.value,
+            postId.id
+        )
+            ?.toTimelineObject()
+    }
+
     override suspend fun findByTimelineId(
         timelineId: TimelineId,
         internalTimelineObjectOption: InternalTimelineObjectOption?,
@@ -70,12 +87,12 @@ class MongoInternalTimelineObjectRepository(
 
         if (page?.minId != null) {
             query.with(Sort.by(Sort.Direction.ASC, "postCreatedAt"))
-            page.minId?.let { query.addCriteria(Criteria.where("id").gt(it)) }
-            page.maxId?.let { query.addCriteria(Criteria.where("id").lt(it)) }
+            page.minId?.let { query.addCriteria(Criteria.where("postId").gt(it)) }
+            page.maxId?.let { query.addCriteria(Criteria.where("postId").lt(it)) }
         } else {
             query.with(Sort.by(Sort.Direction.DESC, "postCreatedAt"))
-            page?.sinceId?.let { query.addCriteria(Criteria.where("id").gt(it)) }
-            page?.maxId?.let { query.addCriteria(Criteria.where("id").lt(it)) }
+            page?.sinceId?.let { query.addCriteria(Criteria.where("postId").gt(it)) }
+            page?.maxId?.let { query.addCriteria(Criteria.where("postId").lt(it)) }
         }
 
         page?.limit?.let { query.limit(it) }
@@ -83,16 +100,23 @@ class MongoInternalTimelineObjectRepository(
         val timelineObjects =
             mongoTemplate.find(query, SpringDataMongoTimelineObject::class.java).map { it.toTimelineObject() }
 
+        val objectList = if (page?.minId != null) {
+            timelineObjects.reversed()
+        } else {
+            timelineObjects
+        }
+
         return PaginationList(
-            timelineObjects,
-            timelineObjects.lastOrNull()?.postId,
-            timelineObjects.firstOrNull()?.postId
+            objectList,
+            objectList.lastOrNull()?.postId,
+            objectList.firstOrNull()?.postId
         )
     }
 }
 
 @Document
 data class SpringDataMongoTimelineObject(
+    @Id
     val id: Long,
     val userDetailId: Long,
     val timelineId: Long,
@@ -194,4 +218,14 @@ interface SpringDataMongoTimelineObjectRepository : CoroutineCrudRepository<Spri
     suspend fun deleteByTimelineId(timelineId: Long)
 
     suspend fun findByTimelineId(timelineId: TimelineId): Flow<SpringDataMongoTimelineObject>
+
+    suspend fun findFirstByTimelineIdAndPostIdGreaterThanOrderByIdAsc(
+        timelineId: Long,
+        postId: Long
+    ): SpringDataMongoTimelineObject?
+
+    suspend fun findFirstByTimelineIdAndPostIdLessThanOrderByIdDesc(
+        timelineId: Long,
+        postId: Long
+    ): SpringDataMongoTimelineObject?
 }

@@ -22,6 +22,8 @@ import dev.usbharu.hideout.core.domain.model.userdetails.UserDetail
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailHashedPassword
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
+import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventPublisher
+import dev.usbharu.hideout.core.domain.shared.repository.DomainEventPublishableRepository
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.javatime.timestamp
@@ -30,34 +32,51 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 
 @Repository
-class UserDetailRepositoryImpl : UserDetailRepository, AbstractRepository() {
+class UserDetailRepositoryImpl(override val domainEventPublisher: DomainEventPublisher) :
+    UserDetailRepository,
+    AbstractRepository(),
+    DomainEventPublishableRepository<UserDetail> {
     override val logger: Logger
         get() = Companion.logger
 
-    override suspend fun save(userDetail: UserDetail): UserDetail = query {
-        val singleOrNull =
-            UserDetails.selectAll().where { UserDetails.id eq userDetail.id.id }.forUpdate().singleOrNull()
-        if (singleOrNull == null) {
-            UserDetails.insert {
-                it[id] = userDetail.id.id
-                it[actorId] = userDetail.actorId.id
-                it[password] = userDetail.password.password
-                it[autoAcceptFolloweeFollowRequest] = userDetail.autoAcceptFolloweeFollowRequest
-                it[lastMigration] = userDetail.lastMigration
+    override suspend fun save(userDetail: UserDetail): UserDetail {
+        val userDetail1 = query {
+            val singleOrNull =
+                UserDetails.selectAll().where { UserDetails.id eq userDetail.id.id }.forUpdate().singleOrNull()
+            if (singleOrNull == null) {
+                UserDetails.insert {
+                    it[id] = userDetail.id.id
+                    it[actorId] = userDetail.actorId.id
+                    it[password] = userDetail.password.password
+                    it[autoAcceptFolloweeFollowRequest] = userDetail.autoAcceptFolloweeFollowRequest
+                    it[lastMigration] = userDetail.lastMigration
+                    it[homeTimelineId] = userDetail.homeTimelineId?.value
+                }
+            } else {
+                UserDetails.update({ UserDetails.id eq userDetail.id.id }) {
+                    it[actorId] = userDetail.actorId.id
+                    it[password] = userDetail.password.password
+                    it[autoAcceptFolloweeFollowRequest] = userDetail.autoAcceptFolloweeFollowRequest
+                    it[lastMigration] = userDetail.lastMigration
+                    it[homeTimelineId] = userDetail.homeTimelineId?.value
+                }
             }
-        } else {
-            UserDetails.update({ UserDetails.id eq userDetail.id.id }) {
-                it[actorId] = userDetail.actorId.id
-                it[password] = userDetail.password.password
-                it[autoAcceptFolloweeFollowRequest] = userDetail.autoAcceptFolloweeFollowRequest
-                it[lastMigration] = userDetail.lastMigration
+            onComplete {
+                update(userDetail)
             }
+            userDetail
         }
-        return@query userDetail
+
+        return userDetail1
     }
 
-    override suspend fun delete(userDetail: UserDetail): Unit = query {
-        UserDetails.deleteWhere { id eq userDetail.id.id }
+    override suspend fun delete(userDetail: UserDetail) {
+        query {
+            UserDetails.deleteWhere { id eq userDetail.id.id }
+            onComplete {
+                update(userDetail)
+            }
+        }
     }
 
     override suspend fun findByActorId(actorId: Long): UserDetail? = query {
@@ -89,7 +108,7 @@ class UserDetailRepositoryImpl : UserDetailRepository, AbstractRepository() {
         }
     }
 
-    private fun userDetail(it: ResultRow) = UserDetail.create(
+    private fun userDetail(it: ResultRow) = UserDetail(
         UserDetailId(it[UserDetails.id]),
         ActorId(it[UserDetails.actorId]),
         UserDetailHashedPassword(it[UserDetails.password]),

@@ -19,6 +19,17 @@ interface InternalTimelineObjectRepository {
     suspend fun deleteByTimelineIdAndActorId(timelineId: TimelineId, actorId: ActorId)
 
     suspend fun deleteByTimelineId(timelineId: TimelineId)
+
+    /**
+     * 指定したTimelineIdより大きく、近いものを返す
+     */
+    suspend fun findByTimelineIdAndPostIdGT(timelineId: TimelineId, postId: PostId): TimelineObject?
+
+    /**
+     * 指定したTimelineIdより小さく、近いものを返す
+     */
+    suspend fun findByTimelineIdAndPostIdLT(timelineId: TimelineId, postId: PostId): TimelineObject?
+
     suspend fun findByTimelineId(
         timelineId: TimelineId,
         internalTimelineObjectOption: InternalTimelineObjectOption? = null,

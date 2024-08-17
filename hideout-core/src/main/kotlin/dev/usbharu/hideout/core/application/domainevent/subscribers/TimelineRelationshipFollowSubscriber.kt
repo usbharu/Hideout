@@ -32,7 +32,7 @@ class TimelineRelationshipFollowSubscriber(
                 AddTimelineRelationship(
                     TimelineRelationship(
                         TimelineRelationshipId(idGenerateService.generateId()),
-                        userDetail.homeTimelineId,
+                        userDetail.homeTimelineId!!,
                         relationship.targetActorId,
                         Visible.FOLLOWERS
                     )

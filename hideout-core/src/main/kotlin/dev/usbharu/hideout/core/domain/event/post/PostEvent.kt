@@ -17,7 +17,9 @@
 package dev.usbharu.hideout.core.domain.event.post
 
 import dev.usbharu.hideout.core.domain.model.actor.Actor
+import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.post.Post
+import dev.usbharu.hideout.core.domain.model.post.PostId
 import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEvent
 import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventBody
 
@@ -25,14 +27,14 @@ class PostDomainEventFactory(private val post: Post, private val actor: Actor? =
     fun createEvent(postEvent: PostEvent): DomainEvent<PostEventBody> {
         return DomainEvent.create(
             postEvent.eventName,
-            PostEventBody(post, actor)
+            PostEventBody(post.id, actor?.id)
         )
     }
 }
 
-class PostEventBody(post: Post, actor: Actor?) : DomainEventBody(mapOf("post" to post, "actor" to actor)) {
-    fun getPost(): Post = toMap()["post"] as Post
-    fun getActor(): Actor? = toMap()["actor"] as Actor?
+class PostEventBody(post: PostId, actor: ActorId?) : DomainEventBody(mapOf("post" to post, "actor" to actor)) {
+    fun getPostId(): PostId = toMap()["post"] as PostId
+    fun getActorId(): ActorId? = toMap()["actor"] as ActorId?
 }
 
 enum class PostEvent(val eventName: String) {

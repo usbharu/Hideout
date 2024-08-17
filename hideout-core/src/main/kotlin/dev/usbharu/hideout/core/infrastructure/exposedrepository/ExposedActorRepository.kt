@@ -59,8 +59,11 @@ class ExposedActorRepository(
                 this[ActorsAlsoKnownAs.actorId] = actor.id.id
                 this[ActorsAlsoKnownAs.alsoKnownAs] = it.id
             }
+            onComplete {
+                update(actor)
+            }
         }
-        update(actor)
+
         return actor
     }
 
@@ -68,8 +71,10 @@ class ExposedActorRepository(
         query {
             Actors.deleteWhere { id eq actor.id.id }
             ActorsAlsoKnownAs.deleteWhere { actorId eq actor.id.id }
+            onComplete {
+                update(actor)
+            }
         }
-        update(actor)
     }
 
     override suspend fun findById(id: ActorId): Actor? {

@@ -22,6 +22,18 @@ interface RelationshipRepository {
     suspend fun save(relationship: Relationship): Relationship
     suspend fun delete(relationship: Relationship)
     suspend fun findByActorIdAndTargetId(actorId: ActorId, targetId: ActorId): Relationship?
+    suspend fun findByActorIdsAndTargetIdAndBlocking(
+        actorIds: List<ActorId>,
+        targetId: ActorId,
+        blocking: Boolean
+    ): List<Relationship>
+
+    suspend fun findByActorIdAndTargetIdsAndFollowing(
+        actorId: ActorId,
+        targetIds: List<ActorId>,
+        following: Boolean
+    ): List<Relationship>
+
     suspend fun findByTargetId(
         targetId: ActorId,
         option: FindRelationshipOption? = null,

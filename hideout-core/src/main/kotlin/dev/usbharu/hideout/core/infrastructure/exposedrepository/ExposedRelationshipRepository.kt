@@ -47,8 +47,11 @@ class ExposedRelationshipRepository(override val domainEventPublisher: DomainEve
                 it[followRequesting] = relationship.followRequesting
                 it[mutingFollowRequest] = relationship.mutingFollowRequest
             }
+            onComplete {
+                update(relationship)
+            }
         }
-        update(relationship)
+
         return relationship
     }
 
@@ -57,14 +60,36 @@ class ExposedRelationshipRepository(override val domainEventPublisher: DomainEve
             Relationships.deleteWhere {
                 actorId eq relationship.actorId.id and (targetActorId eq relationship.targetActorId.id)
             }
+            onComplete {
+                update(relationship)
+            }
         }
-        update(relationship)
     }
 
     override suspend fun findByActorIdAndTargetId(actorId: ActorId, targetId: ActorId): Relationship? = query {
         Relationships.selectAll().where {
             Relationships.actorId eq actorId.id and (Relationships.targetActorId eq targetId.id)
         }.singleOrNull()?.toRelationships()
+    }
+
+    override suspend fun findByActorIdsAndTargetIdAndBlocking(
+        actorIds: List<ActorId>,
+        targetId: ActorId,
+        blocking: Boolean
+    ): List<Relationship> = query {
+        Relationships.selectAll().where {
+            Relationships.actorId inList actorIds.map { it.id } and (Relationships.targetActorId eq targetId.id)
+        }.map { it.toRelationships() }
+    }
+
+    override suspend fun findByActorIdAndTargetIdsAndFollowing(
+        actorId: ActorId,
+        targetIds: List<ActorId>,
+        following: Boolean
+    ): List<Relationship> = query {
+        Relationships.selectAll().where {
+            Relationships.actorId eq actorId.id and (Relationships.targetActorId inList targetIds.map { it.id })
+        }.map { it.toRelationships() }
     }
 
     override suspend fun findByTargetId(

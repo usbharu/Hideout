@@ -59,22 +59,22 @@ class ExposedFilterRepository(private val filterQueryMapper: QueryMapper<Filter>
         Filters.deleteWhere { id eq filter.id.id }
     }
 
-    override suspend fun findByFilterKeywordId(filterKeywordId: FilterKeywordId): Filter? {
+    override suspend fun findByFilterKeywordId(filterKeywordId: FilterKeywordId): Filter? = query {
         val filterId = FilterKeywords
             .selectAll()
             .where { FilterKeywords.id eq filterKeywordId.id }
-            .firstOrNull()?.get(FilterKeywords.filterId) ?: return null
+            .firstOrNull()?.get(FilterKeywords.filterId) ?: return@query null
         val where = Filters.selectAll().where { Filters.id eq filterId }
-        return filterQueryMapper.map(where).firstOrNull()
+        return@query filterQueryMapper.map(where).firstOrNull()
     }
 
-    override suspend fun findByFilterId(filterId: FilterId): Filter? {
+    override suspend fun findByFilterId(filterId: FilterId): Filter? = query {
         val where = Filters.selectAll().where { Filters.id eq filterId.id }
-        return filterQueryMapper.map(where).firstOrNull()
+        return@query filterQueryMapper.map(where).firstOrNull()
     }
 
-    override suspend fun findByUserDetailId(userDetailId: UserDetailId): List<Filter> {
-        return Filters.selectAll().where { Filters.userId eq userDetailId.id }.let(filterQueryMapper::map)
+    override suspend fun findByUserDetailId(userDetailId: UserDetailId): List<Filter> = query {
+        return@query Filters.selectAll().where { Filters.userId eq userDetailId.id }.let(filterQueryMapper::map)
     }
 
     companion object {

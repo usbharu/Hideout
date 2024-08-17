@@ -8,12 +8,17 @@ import dev.usbharu.hideout.core.domain.model.filter.Filter
 import dev.usbharu.hideout.core.domain.model.filter.FilterContext
 import dev.usbharu.hideout.core.domain.model.filter.FilterRepository
 import dev.usbharu.hideout.core.domain.model.filter.FilteredPost
+import dev.usbharu.hideout.core.domain.model.media.Media
+import dev.usbharu.hideout.core.domain.model.media.MediaId
+import dev.usbharu.hideout.core.domain.model.media.MediaRepository
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.domain.model.post.PostId
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.domain.model.post.Visibility
 import dev.usbharu.hideout.core.domain.model.support.page.Page
 import dev.usbharu.hideout.core.domain.model.support.page.PaginationList
+import dev.usbharu.hideout.core.domain.model.support.principal.Principal
+import dev.usbharu.hideout.core.domain.model.support.timelineobjectdetail.TimelineObjectDetail
 import dev.usbharu.hideout.core.domain.model.timeline.Timeline
 import dev.usbharu.hideout.core.domain.model.timeline.TimelineId
 import dev.usbharu.hideout.core.domain.model.timeline.TimelineRepository
@@ -24,6 +29,7 @@ import dev.usbharu.hideout.core.domain.model.userdetails.UserDetail
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
 import dev.usbharu.hideout.core.domain.service.filter.FilterDomainService
+import dev.usbharu.hideout.core.domain.service.post.IPostReadAccessControl
 import dev.usbharu.hideout.core.domain.shared.id.IdGenerateService
 import dev.usbharu.hideout.core.external.timeline.ReadTimelineOption
 import org.springframework.stereotype.Component
@@ -40,7 +46,9 @@ open class DefaultTimelineStore(
     private val defaultTimelineStoreConfig: DefaultTimelineStoreConfig,
     private val internalTimelineObjectRepository: InternalTimelineObjectRepository,
     private val userDetailRepository: UserDetailRepository,
-    private val actorRepository: ActorRepository
+    private val actorRepository: ActorRepository,
+    private val mediaRepository: MediaRepository,
+    private val postIPostReadAccessControl: IPostReadAccessControl
 ) : AbstractTimelineStore(idGenerateService) {
     override suspend fun getTimelines(actorId: ActorId): List<Timeline> {
         return timelineRepository.findByIds(
@@ -60,7 +68,7 @@ open class DefaultTimelineStore(
     }
 
     override suspend fun getNewerFilters(userDetailId: UserDetailId, lastUpdateAt: Instant): List<Filter> {
-        TODO("Not yet implemented")
+        return filterRepository.findByUserDetailId(userDetailId)
     }
 
     override suspend fun applyFilters(post: Post, filters: List<Filter>): FilteredPost {
@@ -99,8 +107,9 @@ open class DefaultTimelineStore(
         return timelineRelationshipList.flatMap { getActorPost(it.actorId, visibilities(it)) }
     }
 
-    override suspend fun getPostsByPostId(postIds: List<PostId>): List<Post> {
-        return postRepository.findAllById(postIds)
+    override suspend fun getPostsByPostId(postIds: List<PostId>, principal: Principal): List<Post> {
+        val findAllById = postRepository.findAllById(postIds)
+        return postIPostReadAccessControl.areAllows(findAllById, principal)
     }
 
     override suspend fun getTimelineObject(
@@ -127,8 +136,34 @@ open class DefaultTimelineStore(
         )
     }
 
+    override suspend fun getNextPaging(
+        timelineId: TimelineId,
+        page: Page?
+    ): PaginationList<TimelineObjectDetail, PostId> {
+        if (page?.maxId != null) {
+            return PaginationList(
+                emptyList(),
+                null,
+                internalTimelineObjectRepository.findByTimelineIdAndPostIdLT(timelineId, PostId(page.maxId!!))?.postId
+                    ?: PostId(0)
+            )
+        } else if (page?.minId != null) {
+            return PaginationList(
+                emptyList(),
+                internalTimelineObjectRepository.findByTimelineIdAndPostIdGT(timelineId, PostId(page.minId!!))?.postId
+                    ?: PostId(Long.MAX_VALUE),
+                null
+            )
+        }
+        return PaginationList(emptyList(), page?.maxId?.let { PostId(it) }, page?.minId?.let { PostId(it) })
+    }
+
     override suspend fun getActors(actorIds: List<ActorId>): Map<ActorId, Actor> {
         return actorRepository.findAllById(actorIds).associateBy { it.id }
+    }
+
+    override suspend fun getMedias(mediaIds: List<MediaId>): Map<MediaId, Media> {
+        return mediaRepository.findByIds(mediaIds).associateBy { it.id }
     }
 
     override suspend fun getUserDetails(userDetailIdList: List<UserDetailId>): Map<UserDetailId, UserDetail> {

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component
 
 interface IPostReadAccessControl {
     suspend fun isAllow(post: Post, principal: Principal): Boolean
+    suspend fun areAllows(postList: List<Post>, principal: Principal): List<Post>
 }
 
 @Component
@@ -56,5 +57,48 @@ class DefaultPostReadAccessControl(private val relationshipRepository: Relations
 
         // その他の場合は見れない
         return false
+    }
+
+    override suspend fun areAllows(postList: List<Post>, principal: Principal): List<Post> {
+        val actorIds = postList.map { it.actorId }
+        val relationshipList =
+            relationshipRepository.findByActorIdsAndTargetIdAndBlocking(actorIds, principal.actorId, true)
+                .map { it.actorId }
+        val inverseRelationshipList =
+            relationshipRepository.findByActorIdAndTargetIdsAndFollowing(principal.actorId, actorIds, true)
+                .map { it.actorId }
+
+        fun internalAllow(post: Post): Boolean {
+            // ポスト主は無条件で見れる
+            if (post.actorId == principal.actorId) {
+                return true
+            }
+
+            if (relationshipList.contains(post.actorId)) {
+                return false
+            }
+
+            if (post.visibility == Visibility.PUBLIC || post.visibility == Visibility.UNLISTED) {
+                return true
+            }
+
+            if (principal is Anonymous) {
+                return false
+            }
+
+            if (post.visibility == Visibility.DIRECT && post.visibleActors.contains(principal.actorId)) {
+                return true
+            }
+
+            if (post.visibility == Visibility.FOLLOWERS && inverseRelationshipList.contains(principal.actorId)) {
+                return true
+            }
+            return false
+        }
+
+        return postList
+            .filter {
+                internalAllow(it)
+            }
     }
 }

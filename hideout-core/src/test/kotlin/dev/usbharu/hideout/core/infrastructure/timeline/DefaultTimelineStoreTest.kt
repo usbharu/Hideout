@@ -3,6 +3,7 @@ package dev.usbharu.hideout.core.infrastructure.timeline
 import dev.usbharu.hideout.core.config.DefaultTimelineStoreConfig
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.filter.*
+import dev.usbharu.hideout.core.domain.model.media.MediaRepository
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.domain.model.post.TestPostFactory
 import dev.usbharu.hideout.core.domain.model.post.Visibility
@@ -16,6 +17,7 @@ import dev.usbharu.hideout.core.domain.model.timelinerelationship.Visible
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
 import dev.usbharu.hideout.core.domain.service.filter.FilterDomainService
+import dev.usbharu.hideout.core.domain.service.post.IPostReadAccessControl
 import dev.usbharu.hideout.core.infrastructure.other.TwitterSnowflakeIdGenerateService
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
@@ -55,6 +57,12 @@ class DefaultTimelineStoreTest {
 
     @Mock
     lateinit var actorRepository: ActorRepository
+
+    @Mock
+    lateinit var mediaRepository: MediaRepository
+
+    @Mock
+    lateinit var iPostReadAccessControl: IPostReadAccessControl
 
     @Spy
     val defaultTimelineStoreConfig = DefaultTimelineStoreConfig(500)
