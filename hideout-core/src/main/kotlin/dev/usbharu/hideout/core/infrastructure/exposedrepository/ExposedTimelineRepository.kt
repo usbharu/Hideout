@@ -15,6 +15,9 @@ class ExposedTimelineRepository(override val domainEventPublisher: DomainEventPu
     TimelineRepository,
     AbstractRepository(),
     DomainEventPublishableRepository<Timeline> {
+    override val logger: Logger
+        get() = Companion.logger
+
     override suspend fun save(timeline: Timeline): Timeline {
         query {
             Timelines.insert {
@@ -58,9 +61,6 @@ class ExposedTimelineRepository(override val domainEventPublisher: DomainEventPu
     companion object {
         private val logger = LoggerFactory.getLogger(ExposedTimelineRepository::class.java.name)
     }
-
-    override val logger: Logger
-        get() = Companion.logger
 }
 
 fun ResultRow.toTimeline(): Timeline {

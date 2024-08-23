@@ -44,6 +44,7 @@ class UserDetail(
     override fun hashCode(): Int = id.hashCode()
 
     companion object {
+        @Suppress("LongParameterList")
         fun create(
             id: UserDetailId,
             actorId: ActorId,

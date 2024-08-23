@@ -35,7 +35,7 @@ abstract class AbstractApplicationService<T : Any, R>(
         } catch (e: CancellationException) {
             logger.debug("Coroutine canceled", e)
             throw e
-        } catch (e: Exception) {
+        } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
             logger.warn("Command execution error", e)
             throw e
         }

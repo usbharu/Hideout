@@ -34,7 +34,7 @@ class PostDomainEventFactory(private val post: Post, private val actor: Actor? =
 
 class PostEventBody(post: PostId, actor: ActorId?) : DomainEventBody(mapOf("post" to post, "actor" to actor)) {
     fun getPostId(): PostId = toMap()["post"] as PostId
-    fun getActorId(): ActorId? = toMap()["actor"] as ActorId?
+    fun getActorId(): ActorId? = toMap()["actor"] as? ActorId
 }
 
 enum class PostEvent(val eventName: String) {

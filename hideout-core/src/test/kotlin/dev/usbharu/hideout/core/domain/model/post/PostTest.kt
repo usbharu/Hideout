@@ -677,7 +677,7 @@ class PostTest {
         val actor = TestActorFactory.create(post.actorId.id)
 
         assertThrows<IllegalArgumentException> {
-            post.moveTo(PostId(2), actor)
+            post.moveTo(PostId(2))
         }
     }
 
@@ -687,7 +687,7 @@ class PostTest {
         val actor = TestActorFactory.create(post.actorId.id)
 
         assertDoesNotThrow {
-            post.moveTo(PostId(2), actor)
+            post.moveTo(PostId(2))
         }
 
         assertEquals(PostId(2), post.moveTo)

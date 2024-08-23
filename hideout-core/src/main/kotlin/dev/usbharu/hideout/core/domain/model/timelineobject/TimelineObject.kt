@@ -13,6 +13,7 @@ import dev.usbharu.hideout.core.domain.model.timeline.TimelineId
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
 import java.time.Instant
 
+@Suppress("LongParameterList")
 class TimelineObject(
     val id: TimelineObjectId,
     val userDetailId: UserDetailId,
@@ -59,7 +60,10 @@ class TimelineObject(
         emojiIds = post.emojiIds.toList()
         lastUpdatedAt = Instant.now()
         isPureRepost =
-            post.repostId != null && post.replyId == null && post.text.isEmpty() && post.overview?.overview.isNullOrEmpty()
+            post.repostId != null &&
+                    post.replyId == null &&
+                    post.text.isEmpty() &&
+                    post.overview?.overview.isNullOrEmpty()
         warnFilters = filterResults.map { TimelineObjectWarnFilter(it.filter.id, it.matchedKeyword) }
     }
 
@@ -102,6 +106,7 @@ class TimelineObject(
             )
         }
 
+        @Suppress("LongParameterList")
         fun create(
             timelineObjectId: TimelineObjectId,
             timeline: Timeline,

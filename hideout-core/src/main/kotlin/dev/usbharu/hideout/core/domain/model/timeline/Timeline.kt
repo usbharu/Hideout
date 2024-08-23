@@ -16,15 +16,15 @@ class Timeline(
     var visibility = visibility
         private set
 
+    var name = name
+        private set
+
     fun setVisibility(visibility: TimelineVisibility, userDetail: UserDetail) {
         check(isSystem.not())
         require(userDetailId == userDetail.id)
         this.visibility = visibility
         addDomainEvent(TimelineEventFactory(this).createEvent(TimelineEvent.CHANGE_VISIBILITY))
     }
-
-    var name = name
-        private set
 
     companion object {
         fun create(

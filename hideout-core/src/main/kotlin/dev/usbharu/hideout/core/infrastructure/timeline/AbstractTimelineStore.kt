@@ -58,7 +58,9 @@ abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateSe
         if (timeline.visibility == TimelineVisibility.PUBLIC && post.visibility != Visibility.PUBLIC) {
             return null
         }
-        if (timeline.visibility == TimelineVisibility.UNLISTED && (post.visibility != Visibility.PUBLIC || post.visibility != Visibility.UNLISTED)) {
+        if (timeline.visibility == TimelineVisibility.UNLISTED &&
+            (post.visibility != Visibility.PUBLIC || post.visibility != Visibility.UNLISTED)
+        ) {
             return null
         }
 
@@ -68,21 +70,21 @@ abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateSe
 
         if (repost != null) {
             return TimelineObject.create(
-                TimelineObjectId(idGenerateService.generateId()),
-                timeline,
-                post,
-                replyActorId,
-                repost,
-                applyFilters.filterResults
+                timelineObjectId = TimelineObjectId(idGenerateService.generateId()),
+                timeline = timeline,
+                post = post,
+                replyActorId = replyActorId,
+                repost = repost,
+                filterResults = applyFilters.filterResults
             )
         }
 
         return TimelineObject.create(
-            TimelineObjectId(idGenerateService.generateId()),
-            timeline,
-            post,
-            replyActorId,
-            applyFilters.filterResults
+            timelineObjectId = TimelineObjectId(idGenerateService.generateId()),
+            timeline = timeline,
+            post = post,
+            replyActorId = replyActorId,
+            filterResults = applyFilters.filterResults
         )
     }
 
@@ -106,7 +108,10 @@ abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateSe
 
     protected abstract suspend fun removeTimelineObject(timelineId: TimelineId)
 
-    protected abstract suspend fun getPostsByTimelineRelationshipList(timelineRelationshipList: List<TimelineRelationship>): List<Post>
+    @Suppress("FunctionMaxLength")
+    protected abstract suspend fun getPostsByTimelineRelationshipList(
+        timelineRelationshipList: List<TimelineRelationship>
+    ): List<Post>
 
     protected abstract suspend fun getPostsByPostId(postIds: List<PostId>, principal: Principal): List<Post>
 
@@ -116,6 +121,7 @@ abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateSe
         page: Page?
     ): PaginationList<TimelineObject, PostId>
 
+    @Suppress("RedundantHigherOrderMapUsage") // if式に対応していないため
     override suspend fun updatePost(post: Post) {
         val timelineObjectByPostId = getTimelineObjectByPostId(post.id)
 
@@ -236,16 +242,19 @@ abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateSe
 
         val actors =
             getActors(
-                timelineObjectList.map {
-                    it.postActorId
-                } + timelineObjectList.mapNotNull { it.repostActorId } + timelineObjectList.mapNotNull { it.replyActorId }
+                timelineObjectList.map { it.postActorId } +
+                        timelineObjectList.mapNotNull { it.repostActorId } +
+                        timelineObjectList.mapNotNull { it.replyActorId }
             )
 
         val postMap = posts.associate { post ->
             post.id to applyFilters(post, newerFilters)
         }
 
-        val mediaMap = getMedias(posts.flatMap { it.mediaIds } + actors.mapNotNull { it.value.icon })
+        val mediaMap = getMedias(
+            posts.flatMap { it.mediaIds } +
+                    actors.mapNotNull { it.value.icon }
+        )
 
         return PaginationList(
             timelineObjectList.mapNotNull<TimelineObject, TimelineObjectDetail> {
@@ -274,10 +283,10 @@ abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateSe
                     repostPostMedias = repostMedias,
                     repostPostActor = repostActor,
                     repostPostActorIconMedia = mediaMap[repostActor?.icon],
-                    warnFilter = it.warnFilters + post.filterResults.map {
+                    warnFilter = it.warnFilters + post.filterResults.map { filterResult ->
                         TimelineObjectWarnFilter(
-                            it.filter.id,
-                            it.matchedKeyword
+                            filterResult.filter.id,
+                            filterResult.matchedKeyword
                         )
                     }
                 )

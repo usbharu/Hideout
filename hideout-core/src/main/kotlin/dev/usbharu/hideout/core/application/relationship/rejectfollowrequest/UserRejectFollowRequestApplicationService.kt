@@ -41,7 +41,7 @@ class UserRejectFollowRequestApplicationService(
         val targetId = ActorId(command.sourceActorId)
 
         val relationship = relationshipRepository.findByActorIdAndTargetId(targetId, actor.id)
-            ?: throw Exception("Follow request not found")
+            ?: throw IllegalArgumentException("Follow request not found")
 
         relationship.rejectFollowRequest()
 

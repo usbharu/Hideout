@@ -11,9 +11,7 @@ class TimelineEventFactory(private val timeline: Timeline) {
 }
 
 class TimelineEventBody(timelineId: TimelineId) : DomainEventBody(mapOf("timeline" to timelineId)) {
-    fun getTimelineId(): TimelineId {
-        return toMap()["timeline"] as TimelineId
-    }
+    fun getTimelineId(): TimelineId = toMap()["timeline"] as TimelineId
 }
 
 enum class TimelineEvent(val eventName: String) {

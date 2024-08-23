@@ -36,6 +36,7 @@ import org.springframework.stereotype.Component
 import java.time.Instant
 
 @Component
+@Suppress("LongParameterList")
 open class DefaultTimelineStore(
     private val timelineRepository: TimelineRepository,
     private val timelineRelationshipRepository: TimelineRelationshipRepository,
@@ -59,25 +60,18 @@ open class DefaultTimelineStore(
         )
     }
 
-    override suspend fun getTimeline(timelineId: TimelineId): Timeline? {
-        return timelineRepository.findById(timelineId)
-    }
+    override suspend fun getTimeline(timelineId: TimelineId): Timeline? = timelineRepository.findById(timelineId)
 
-    override suspend fun getFilters(userDetailId: UserDetailId): List<Filter> {
-        return filterRepository.findByUserDetailId(userDetailId)
-    }
+    override suspend fun getFilters(userDetailId: UserDetailId): List<Filter> =
+        filterRepository.findByUserDetailId(userDetailId)
 
-    override suspend fun getNewerFilters(userDetailId: UserDetailId, lastUpdateAt: Instant): List<Filter> {
-        return filterRepository.findByUserDetailId(userDetailId)
-    }
+    override suspend fun getNewerFilters(userDetailId: UserDetailId, lastUpdateAt: Instant): List<Filter> =
+        filterRepository.findByUserDetailId(userDetailId)
 
-    override suspend fun applyFilters(post: Post, filters: List<Filter>): FilteredPost {
-        return filterDomainService.apply(post, FilterContext.HOME, filters)
-    }
+    override suspend fun applyFilters(post: Post, filters: List<Filter>): FilteredPost =
+        filterDomainService.apply(post, FilterContext.HOME, filters)
 
-    override suspend fun getPost(postId: PostId): Post? {
-        return postRepository.findById(postId)
-    }
+    override suspend fun getPost(postId: PostId): Post? = postRepository.findById(postId)
 
     override suspend fun insertTimelineObject(timelineObjectList: List<TimelineObject>) {
         internalTimelineObjectRepository.saveAll(timelineObjectList)
@@ -87,9 +81,8 @@ open class DefaultTimelineStore(
         internalTimelineObjectRepository.saveAll(timelineObjectList)
     }
 
-    override suspend fun getTimelineObjectByPostId(postId: PostId): List<TimelineObject> {
-        return internalTimelineObjectRepository.findByPostId(postId)
-    }
+    override suspend fun getTimelineObjectByPostId(postId: PostId): List<TimelineObject> =
+        internalTimelineObjectRepository.findByPostId(postId)
 
     override suspend fun removeTimelineObject(postId: PostId) {
         internalTimelineObjectRepository.deleteByPostId(postId)
@@ -103,9 +96,8 @@ open class DefaultTimelineStore(
         internalTimelineObjectRepository.deleteByTimelineId(timelineId)
     }
 
-    override suspend fun getPostsByTimelineRelationshipList(timelineRelationshipList: List<TimelineRelationship>): List<Post> {
-        return timelineRelationshipList.flatMap { getActorPost(it.actorId, visibilities(it)) }
-    }
+    override suspend fun getPostsByTimelineRelationshipList(timelineRelationshipList: List<TimelineRelationship>): List<Post> =
+        timelineRelationshipList.flatMap { getActorPost(it.actorId, visibilities(it)) }
 
     override suspend fun getPostsByPostId(postIds: List<PostId>, principal: Principal): List<Post> {
         val findAllById = postRepository.findAllById(postIds)
@@ -136,6 +128,7 @@ open class DefaultTimelineStore(
         )
     }
 
+    @Suppress("UnsafeCallOnNullableType")
     override suspend fun getNextPaging(
         timelineId: TimelineId,
         page: Page?
@@ -158,15 +151,12 @@ open class DefaultTimelineStore(
         return PaginationList(emptyList(), page?.maxId?.let { PostId(it) }, page?.minId?.let { PostId(it) })
     }
 
-    override suspend fun getActors(actorIds: List<ActorId>): Map<ActorId, Actor> {
-        return actorRepository.findAllById(actorIds).associateBy { it.id }
-    }
+    override suspend fun getActors(actorIds: List<ActorId>): Map<ActorId, Actor> =
+        actorRepository.findAllById(actorIds).associateBy { it.id }
 
-    override suspend fun getMedias(mediaIds: List<MediaId>): Map<MediaId, Media> {
-        return mediaRepository.findByIds(mediaIds).associateBy { it.id }
-    }
+    override suspend fun getMedias(mediaIds: List<MediaId>): Map<MediaId, Media> =
+        mediaRepository.findByIds(mediaIds).associateBy { it.id }
 
-    override suspend fun getUserDetails(userDetailIdList: List<UserDetailId>): Map<UserDetailId, UserDetail> {
-        return userDetailRepository.findAllById(userDetailIdList).associateBy { it.id }
-    }
+    override suspend fun getUserDetails(userDetailIdList: List<UserDetailId>): Map<UserDetailId, UserDetail> =
+        userDetailRepository.findAllById(userDetailIdList).associateBy { it.id }
 }

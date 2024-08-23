@@ -18,6 +18,7 @@ package dev.usbharu.hideout.core.domain.model.media
 
 import java.net.URI
 
+@Suppress("LongParameterList")
 class Media(
     val id: MediaId,
     val name: MediaName,
@@ -35,6 +36,18 @@ class Media(
     fun setUrl(url: URI) {
         this.url = url
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Media
+
+        return id == other.id
+    }
+
+    override fun hashCode(): Int = id.hashCode()
+
     override fun toString(): String {
         return "Media(" +
             "id=$id, " +

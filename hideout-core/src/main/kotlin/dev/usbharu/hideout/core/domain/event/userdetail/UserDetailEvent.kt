@@ -19,9 +19,7 @@ class UserDetailEventBody(userDetail: UserDetailId) : DomainEventBody(
         "userDetail" to userDetail
     )
 ) {
-    fun getUserDetail(): UserDetailId {
-        return toMap()["userDetail"] as UserDetailId
-    }
+    fun getUserDetail(): UserDetailId = toMap()["userDetail"] as UserDetailId
 }
 
 enum class UserDetailEvent(val eventName: String) {

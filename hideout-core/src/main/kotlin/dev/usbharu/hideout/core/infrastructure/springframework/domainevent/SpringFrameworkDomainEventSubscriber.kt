@@ -23,7 +23,7 @@ class SpringFrameworkDomainEventSubscriber : DomainEventSubscriber {
         map[domainEvent.name]?.forEach {
             try {
                 it.invoke(domainEvent)
-            } catch (e: Exception) {
+            } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
                 logger.error("", e)
             }
         }

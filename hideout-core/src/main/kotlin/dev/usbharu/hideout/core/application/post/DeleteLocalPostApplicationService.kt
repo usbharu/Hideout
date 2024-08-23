@@ -16,6 +16,7 @@
 
 package dev.usbharu.hideout.core.application.post
 
+import dev.usbharu.hideout.core.application.exception.InternalServerException
 import dev.usbharu.hideout.core.application.exception.PermissionDeniedException
 import dev.usbharu.hideout.core.application.shared.LocalUserAbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
@@ -34,11 +35,13 @@ class DeleteLocalPostApplicationService(
 ) : LocalUserAbstractApplicationService<DeleteLocalPost, Unit>(transaction, logger) {
 
     override suspend fun internalExecute(command: DeleteLocalPost, principal: LocalUser) {
-        val findById = postRepository.findById(PostId(command.postId))!!
+        val findById = postRepository.findById(PostId(command.postId))
+            ?: throw IllegalArgumentException("Post ${command.postId} not found.")
         if (findById.actorId != principal.actorId) {
             throw PermissionDeniedException()
         }
-        val actor = actorRepository.findById(principal.actorId)!!
+        val actor = actorRepository.findById(principal.actorId)
+            ?: throw InternalServerException("Actor ${principal.actorId} not found.")
         findById.delete(actor)
         postRepository.save(findById)
     }

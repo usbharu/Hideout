@@ -32,7 +32,8 @@ class TimelineController(
                 ?: throw InternalServerException("UserDetail not found.")
         }
 
-        val homeTimelineId = userDetail.homeTimelineId!!
+        val homeTimelineId =
+            userDetail.homeTimelineId ?: throw InternalServerException("HomeTimeline ${userDetail.id} is null.")
         val execute = readTimelineApplicationService.execute(
             ReadTimeline(
                 timelineId = homeTimelineId.value,

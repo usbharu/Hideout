@@ -5,7 +5,6 @@ import dev.usbharu.hideout.core.application.timeline.TimelineAddPostApplicationS
 import dev.usbharu.hideout.core.domain.event.post.PostEvent
 import dev.usbharu.hideout.core.domain.event.post.PostEventBody
 import dev.usbharu.hideout.core.domain.model.support.principal.Anonymous
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
 @Component
@@ -17,9 +16,5 @@ class TimelinePostCreateSubscriber(
         domainEventSubscriber.subscribe<PostEventBody>(PostEvent.CREATE.eventName) {
             timelineAddPostApplicationService.execute(AddPost(it.body.getPostId()), Anonymous)
         }
-    }
-
-    companion object {
-        private val logger = LoggerFactory.getLogger(TimelinePostCreateSubscriber::class.java)
     }
 }

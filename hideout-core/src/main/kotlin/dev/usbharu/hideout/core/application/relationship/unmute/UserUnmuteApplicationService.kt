@@ -35,10 +35,6 @@ class UserUnmuteApplicationService(
     private val actorRepository: ActorRepository,
 ) :
     LocalUserAbstractApplicationService<Unmute, Unit>(transaction, logger) {
-    companion object {
-        private val logger = LoggerFactory.getLogger(UserBlockApplicationService::class.java)
-    }
-
     override suspend fun internalExecute(command: Unmute, principal: LocalUser) {
         val actor = actorRepository.findById(principal.actorId)
             ?: throw InternalServerException("Actor ${principal.actorId} not found.")
@@ -52,5 +48,9 @@ class UserUnmuteApplicationService(
         relationship.unmute()
 
         relationshipRepository.save(relationship)
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(UserBlockApplicationService::class.java)
     }
 }

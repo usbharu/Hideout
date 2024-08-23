@@ -42,6 +42,7 @@ class ReadTimelineApplicationService(
 
         val postDetailList = timeline.map {
             val reply = if (it.replyPost != null) {
+                @Suppress("UnsafeCallOnNullableType")
                 PostDetail.of(
                     it.replyPost,
                     it.replyPostActor!!,
@@ -53,6 +54,7 @@ class ReadTimelineApplicationService(
             }
 
             val repost = if (it.repostPost != null) {
+                @Suppress("UnsafeCallOnNullableType")
                 PostDetail.of(
                     it.repostPost,
                     it.repostPostActor!!,
@@ -64,12 +66,12 @@ class ReadTimelineApplicationService(
             }
 
             PostDetail.of(
-                it.post,
-                it.postActor,
-                it.postActorIconMedia,
-                it.postMedias,
-                reply,
-                repost
+                post = it.post,
+                actor = it.postActor,
+                iconMedia = it.postActorIconMedia,
+                mediaList = it.postMedias,
+                reply = reply,
+                repost = repost
             )
         }
 

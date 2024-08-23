@@ -30,6 +30,8 @@ class PublishController(
         }
 
         val instance = getLocalInstanceApplicationService.execute(Unit, principal)
+
+        @Suppress("UnsafeCallOnNullableType")
         val userDetail = getUserDetailApplicationService.execute(GetUserDetail(principal.userDetailId!!.id), principal)
         model.addAttribute("instance", instance)
         model.addAttribute("user", userDetail)

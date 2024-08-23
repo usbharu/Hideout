@@ -46,9 +46,8 @@ class MongoInternalTimelineObjectRepository(
         return timelineObjectList
     }
 
-    override suspend fun findByPostId(postId: PostId): List<TimelineObject> {
-        return springDataMongoTimelineObjectRepository.findByPostId(postId.id).map { it.toTimelineObject() }.toList()
-    }
+    override suspend fun findByPostId(postId: PostId): List<TimelineObject> =
+        springDataMongoTimelineObjectRepository.findByPostId(postId.id).map { it.toTimelineObject() }.toList()
 
     override suspend fun deleteByPostId(postId: PostId) {
         springDataMongoTimelineObjectRepository.deleteByPostId(postId.id)
@@ -139,48 +138,48 @@ data class SpringDataMongoTimelineObject(
 
     fun toTimelineObject(): TimelineObject {
         return TimelineObject(
-            TimelineObjectId(id),
-            UserDetailId(userDetailId),
-            TimelineId(timelineId),
-            PostId(postId),
-            ActorId(postActorId),
-            Instant.ofEpochSecond(postCreatedAt),
-            replyId?.let { PostId(it) },
-            replyActorId?.let { ActorId(it) },
-            repostId?.let { PostId(it) },
-            repostActorId?.let { ActorId(it) },
-            visibility,
-            isPureRepost,
-            mediaIds.map { MediaId(it) },
-            emojiIds.map { EmojiId(it) },
-            visibleActors.map { ActorId(it) },
-            hasMediaInRepost,
-            Instant.ofEpochSecond(lastUpdatedAt),
-            warnFilters.map { it.toTimelineObjectWarnFilter() }
+            id = TimelineObjectId(id),
+            userDetailId = UserDetailId(userDetailId),
+            timelineId = TimelineId(timelineId),
+            postId = PostId(postId),
+            postActorId = ActorId(postActorId),
+            postCreatedAt = Instant.ofEpochSecond(postCreatedAt),
+            replyId = replyId?.let { PostId(it) },
+            replyActorId = replyActorId?.let { ActorId(it) },
+            repostId = repostId?.let { PostId(it) },
+            repostActorId = repostActorId?.let { ActorId(it) },
+            visibility = visibility,
+            isPureRepost = isPureRepost,
+            mediaIds = mediaIds.map { MediaId(it) },
+            emojiIds = emojiIds.map { EmojiId(it) },
+            visibleActors = visibleActors.map { ActorId(it) },
+            hasMediaInRepost = hasMediaInRepost,
+            lastUpdatedAt = Instant.ofEpochSecond(lastUpdatedAt),
+            warnFilters = warnFilters.map { it.toTimelineObjectWarnFilter() }
         )
     }
 
     companion object {
         fun of(timelineObject: TimelineObject): SpringDataMongoTimelineObject {
             return SpringDataMongoTimelineObject(
-                timelineObject.id.value,
-                timelineObject.userDetailId.id,
-                timelineObject.timelineId.value,
-                timelineObject.postId.id,
-                timelineObject.postActorId.id,
-                timelineObject.postCreatedAt.epochSecond,
-                timelineObject.replyId?.id,
-                timelineObject.replyActorId?.id,
-                timelineObject.repostId?.id,
-                timelineObject.repostActorId?.id,
-                timelineObject.visibility,
-                timelineObject.isPureRepost,
-                timelineObject.mediaIds.map { it.id },
-                timelineObject.emojiIds.map { it.emojiId },
-                timelineObject.visibleActors.map { it.id },
-                timelineObject.hasMediaInRepost,
-                timelineObject.lastUpdatedAt.epochSecond,
-                timelineObject.warnFilters.map { SpringDataMongoTimelineObjectWarnFilter.of(it) }
+                id = timelineObject.id.value,
+                userDetailId = timelineObject.userDetailId.id,
+                timelineId = timelineObject.timelineId.value,
+                postId = timelineObject.postId.id,
+                postActorId = timelineObject.postActorId.id,
+                postCreatedAt = timelineObject.postCreatedAt.epochSecond,
+                replyId = timelineObject.replyId?.id,
+                replyActorId = timelineObject.replyActorId?.id,
+                repostId = timelineObject.repostId?.id,
+                repostActorId = timelineObject.repostActorId?.id,
+                visibility = timelineObject.visibility,
+                isPureRepost = timelineObject.isPureRepost,
+                mediaIds = timelineObject.mediaIds.map { it.id },
+                emojiIds = timelineObject.emojiIds.map { it.emojiId },
+                visibleActors = timelineObject.visibleActors.map { it.id },
+                hasMediaInRepost = timelineObject.hasMediaInRepost,
+                lastUpdatedAt = timelineObject.lastUpdatedAt.epochSecond,
+                warnFilters = timelineObject.warnFilters.map { SpringDataMongoTimelineObjectWarnFilter.of(it) }
             )
         }
     }
@@ -208,6 +207,7 @@ data class SpringDataMongoTimelineObjectWarnFilter(
     }
 }
 
+@Suppress("FunctionMaxLength")
 interface SpringDataMongoTimelineObjectRepository : CoroutineCrudRepository<SpringDataMongoTimelineObject, Long> {
     fun findByPostId(postId: Long): Flow<SpringDataMongoTimelineObject>
 
@@ -216,8 +216,6 @@ interface SpringDataMongoTimelineObjectRepository : CoroutineCrudRepository<Spri
     suspend fun deleteByTimelineIdAndPostActorId(timelineId: Long, postActorId: Long)
 
     suspend fun deleteByTimelineId(timelineId: Long)
-
-    suspend fun findByTimelineId(timelineId: TimelineId): Flow<SpringDataMongoTimelineObject>
 
     suspend fun findFirstByTimelineIdAndPostIdGreaterThanOrderByIdAsc(
         timelineId: Long,
