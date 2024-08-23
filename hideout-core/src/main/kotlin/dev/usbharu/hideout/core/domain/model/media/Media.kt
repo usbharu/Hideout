@@ -38,7 +38,6 @@ class Media(
         this.url = url
     }
 
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -54,18 +53,16 @@ class Media(
 
     override fun toString(): String {
         return "Media(" +
-                "id=$id, " +
-                "name=$name, " +
-                "remoteUrl=$remoteUrl, " +
-                "thumbnailUrl=$thumbnailUrl, " +
-                "type=$type, " +
-                "mimeType=$mimeType, " +
-                "blurHash=$blurHash, " +
-                "description=$description, " +
-                "actorId=$actorId, " +
-                "url=$url" +
-                ")"
+            "id=$id, " +
+            "name=$name, " +
+            "remoteUrl=$remoteUrl, " +
+            "thumbnailUrl=$thumbnailUrl, " +
+            "type=$type, " +
+            "mimeType=$mimeType, " +
+            "blurHash=$blurHash, " +
+            "description=$description, " +
+            "actorId=$actorId, " +
+            "url=$url" +
+            ")"
     }
-
-
 }
