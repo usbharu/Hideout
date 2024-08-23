@@ -16,6 +16,7 @@
 
 package dev.usbharu.hideout.core.domain.model.media
 
+import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import java.net.URI
 
 class Media(
@@ -28,6 +29,7 @@ class Media(
     val mimeType: MimeType,
     val blurHash: MediaBlurHash?,
     val description: MediaDescription? = null,
+    val actorId: ActorId,
 ) {
     var url = url
         private set
@@ -35,17 +37,35 @@ class Media(
     fun setUrl(url: URI) {
         this.url = url
     }
+
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Media
+
+        return id == other.id
+    }
+
+    override fun hashCode(): Int {
+        return id.hashCode()
+    }
+
     override fun toString(): String {
         return "Media(" +
-            "id=$id, " +
-            "name=$name, " +
-            "url=$url, " +
-            "remoteUrl=$remoteUrl, " +
-            "thumbnailUrl=$thumbnailUrl, " +
-            "type=$type, " +
-            "mimeType=$mimeType, " +
-            "blurHash=$blurHash, " +
-            "description=$description" +
-            ")"
+                "id=$id, " +
+                "name=$name, " +
+                "remoteUrl=$remoteUrl, " +
+                "thumbnailUrl=$thumbnailUrl, " +
+                "type=$type, " +
+                "mimeType=$mimeType, " +
+                "blurHash=$blurHash, " +
+                "description=$description, " +
+                "actorId=$actorId, " +
+                "url=$url" +
+                ")"
     }
+
+
 }
