@@ -10,18 +10,20 @@ data class MediaDetail(
     val thumbnailUrl: URI?,
     val sensitive: Boolean,
     val description: String,
-    val blurhash: String
+    val blurhash: String,
+    val actorId: Long
 ) {
     companion object {
         fun of(media: Media): MediaDetail {
             return MediaDetail(
-                media.id.id,
-                media.type.name,
-                media.url,
-                media.thumbnailUrl,
-                false,
-                media.description?.description.orEmpty(),
-                media.blurHash?.hash.orEmpty()
+                mediaId = media.id.id,
+                type = media.type.name,
+                url = media.url,
+                thumbnailUrl = media.thumbnailUrl,
+                sensitive = false,
+                description = media.description?.description.orEmpty(),
+                blurhash = media.blurHash?.hash.orEmpty(),
+                actorId = media.actorId.id
             )
         }
     }

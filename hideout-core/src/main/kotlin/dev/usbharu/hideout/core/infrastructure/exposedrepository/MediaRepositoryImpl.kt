@@ -16,6 +16,7 @@
 
 package dev.usbharu.hideout.core.infrastructure.exposedrepository
 
+import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.media.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -66,6 +67,7 @@ class MediaRepositoryImpl : MediaRepository, AbstractRepository() {
                 it[blurhash] = media.blurHash?.hash
                 it[mimeType] = media.mimeType.type + "/" + media.mimeType.subtype
                 it[description] = media.description?.description
+                it[actorId] = media.actorId.id
             }
         } else {
             Media.insert {
@@ -78,6 +80,7 @@ class MediaRepositoryImpl : MediaRepository, AbstractRepository() {
                 it[blurhash] = media.blurHash?.hash
                 it[mimeType] = media.mimeType.type + "/" + media.mimeType.subtype
                 it[description] = media.description?.description
+                it[actorId] = media.actorId.id
             }
         }
         return@query media
@@ -100,7 +103,8 @@ fun ResultRow.toMedia(): EntityMedia {
         type = fileType,
         blurHash = this[Media.blurhash]?.let { MediaBlurHash(it) },
         mimeType = MimeType(mimeType.substringBefore("/"), mimeType.substringAfter("/"), fileType),
-        description = this[Media.description]?.let { MediaDescription(it) }
+        description = this[Media.description]?.let { MediaDescription(it) },
+        actorId = ActorId(this[Media.actorId])
     )
 }
 
@@ -114,5 +118,6 @@ object Media : Table("media") {
     val blurhash = varchar("blurhash", 255).nullable()
     val mimeType = varchar("mime_type", 255)
     val description = varchar("description", 4000).nullable()
+    val actorId = long("actor_id").references(Actors.id)
     override val primaryKey = PrimaryKey(id)
 }

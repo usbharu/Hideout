@@ -32,7 +32,7 @@ class ExposedActorRepository(
                 it[description] = actor.description.description
                 it[inbox] = actor.inbox.toString()
                 it[outbox] = actor.outbox.toString()
-                it[url] = actor.outbox.toString()
+                it[url] = actor.url.toString()
                 it[publicKey] = actor.publicKey.publicKey
                 it[privateKey] = actor.privateKey?.privateKey
                 it[createdAt] = actor.createdAt
