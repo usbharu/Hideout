@@ -16,6 +16,7 @@
 
 package dev.usbharu.hideout.mastodon.infrastructure.exposedquery
 
+import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.emoji.CustomEmoji
 import dev.usbharu.hideout.core.domain.model.media.*
 import dev.usbharu.hideout.core.domain.model.post.Visibility
@@ -285,7 +286,8 @@ fun ResultRow.toMedia(): EntityMedia {
         type = fileType,
         blurHash = this[Media.blurhash]?.let { MediaBlurHash(it) },
         mimeType = MimeType(mimeType.substringBefore("/"), mimeType.substringAfter("/"), fileType),
-        description = this[Media.description]?.let { MediaDescription(it) }
+        description = this[Media.description]?.let { MediaDescription(it) },
+        actorId = ActorId(this[Media.actorId])
     )
 }
 
@@ -301,7 +303,8 @@ fun ResultRow.toMediaOrNull(): EntityMedia? {
         type = FileType.valueOf(this[Media.type]),
         blurHash = this[Media.blurhash]?.let { MediaBlurHash(it) },
         mimeType = MimeType(mimeType.substringBefore("/"), mimeType.substringAfter("/"), fileType),
-        description = this[Media.description]?.let { MediaDescription(it) }
+        description = this[Media.description]?.let { MediaDescription(it) },
+        actorId = ActorId(this[Media.actorId])
     )
 }
 

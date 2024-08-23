@@ -58,7 +58,8 @@ class UploadMediaApplicationService(
             type = process.fileType,
             mimeType = process.mimeType,
             blurHash = process.blurHash?.let { MediaBlurHash(it) },
-            description = command.description?.let { MediaDescription(it) }
+            description = command.description?.let { MediaDescription(it) },
+            actorId = principal.actorId
         )
 
         mediaRepository.save(media)
