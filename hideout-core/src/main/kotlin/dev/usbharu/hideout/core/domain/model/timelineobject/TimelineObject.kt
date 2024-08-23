@@ -61,9 +61,9 @@ class TimelineObject(
         lastUpdatedAt = Instant.now()
         isPureRepost =
             post.repostId != null &&
-                    post.replyId == null &&
-                    post.text.isEmpty() &&
-                    post.overview?.overview.isNullOrEmpty()
+            post.replyId == null &&
+            post.text.isEmpty() &&
+            post.overview?.overview.isNullOrEmpty()
         warnFilters = filterResults.map { TimelineObjectWarnFilter(it.filter.id, it.matchedKeyword) }
     }
 

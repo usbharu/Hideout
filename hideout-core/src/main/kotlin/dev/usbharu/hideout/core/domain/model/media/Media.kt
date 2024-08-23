@@ -48,7 +48,6 @@ class Media(
         return id == other.id
     }
 
-
     override fun hashCode(): Int = id.hashCode()
 
     override fun toString(): String {
