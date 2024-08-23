@@ -46,7 +46,7 @@ jobs:
           gradle-home-cache-cleanup: true
 
       - name: Build
-        run: ./hideout-core/gradlew :hideout-core:classes --no-daemon
+        run: ./gradlew classes --no-daemon
 
   unit-test:
     name: Unit Test
@@ -115,7 +115,7 @@ jobs:
           gradle-home-cache-cleanup: true
 
       - name: Build with Gradle
-        run: ./hideout-core/gradlew :hideout-core:detektMain
+        run: ./gradlew :hideout-core:detektMain :hideout-mastodon:detektMain
 
       - name: Auto Commit
         if: ${{ always() }}
