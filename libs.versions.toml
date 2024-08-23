@@ -1,6 +1,6 @@
 [versions]
 
-kotlin = "2.0.10"
+kotlin = "2.0.20"
 ktor = "2.3.12"
 exposed = "0.53.0"
 javacv-ffmpeg = "6.1.1-1.5.10"
@@ -65,20 +65,20 @@ jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-
 
 blurhash = { module = "io.trbl:blurhash", version = "1.0.0" }
 
-aws-s3 = { module = "software.amazon.awssdk:s3", version = "2.27.7" }
+aws-s3 = { module = "software.amazon.awssdk:s3", version = "2.27.11" }
 
 jsoup = { module = "org.jsoup:jsoup", version = "1.18.1" }
 
 owasp-java-html-sanitizer = { module = "com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer", version = "20240325.1" }
 
-postgresql = { module = "org.postgresql:postgresql", version = "42.7.3" }
+postgresql = { module = "org.postgresql:postgresql", version = "42.7.4" }
 
 imageio-webp = { module = "com.twelvemonkeys.imageio:imageio-webp", version = "3.11.0" }
 
 thumbnailator = { module = "net.coobird:thumbnailator", version = "0.4.20" }
 
 flyway-core = { module = "org.flywaydb:flyway-core" }
-flyway-postgresql = { module = "org.flywaydb:flyway-database-postgresql", version = "10.17.1" }
+flyway-postgresql = { module = "org.flywaydb:flyway-database-postgresql", version = "10.17.2" }
 
 h2db = { module = "com.h2database:h2", version = "2.3.232" }
 
@@ -122,10 +122,10 @@ grpc-kotlin = ["grpc-kotlin-stub", "grpc-netty", "grpc-protobuf", "protobuf-kotl
 [plugins]
 
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-spring-boot = { id = "org.springframework.boot", version = "3.3.2" }
+spring-boot = { id = "org.springframework.boot", version = "3.3.3" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
 kover = { id = "org.jetbrains.kotlinx.kover", version = "0.8.3" }
-openapi-generator = { id = "org.openapi.generator", version = "7.7.0" }
+openapi-generator = { id = "org.openapi.generator", version = "7.8.0" }
 license-report = { id = "com.github.jk1.dependency-license-report", version = "2.9" }
 protobuf-plugin = { id = "com.google.protobuf", version = "0.9.4" }
