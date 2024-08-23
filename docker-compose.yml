@@ -9,3 +9,8 @@ services:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "password"
       POSTGRES_DB: "hideout"
+
+  mongodb:
+    image: mongo:7.0.12
+    ports:
+      - "27017:27017"
