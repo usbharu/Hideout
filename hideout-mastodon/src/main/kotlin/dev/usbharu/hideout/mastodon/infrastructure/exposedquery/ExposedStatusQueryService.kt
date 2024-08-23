@@ -55,7 +55,8 @@ class StatusQueryServiceImpl : StatusQueryService {
             .leftJoin(
                 relationshipsAlias,
                 onColumn = { Posts.actorId },
-                otherColumn = { relationshipsAlias[Relationships.targetActorId] })
+                otherColumn = { relationshipsAlias[Relationships.targetActorId] }
+            )
             .select(Posts.columns)
             .where {
                 Posts.visibility eq Visibility.PUBLIC.name or

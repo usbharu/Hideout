@@ -25,7 +25,7 @@ import org.jetbrains.exposed.sql.selectAll
 import org.springframework.stereotype.Repository
 
 @Repository
-class AccountQueryServiceImpl(private val applicationConfig: ApplicationConfig) : AccountQueryService {
+class ExposedAccountQueryServiceImpl(private val applicationConfig: ApplicationConfig) : AccountQueryService {
     override suspend fun findById(accountId: Long): Account? {
         val query = Actors.selectAll().where { Actors.id eq accountId }
 

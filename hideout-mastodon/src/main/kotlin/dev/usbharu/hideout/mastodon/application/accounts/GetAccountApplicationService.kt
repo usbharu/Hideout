@@ -31,7 +31,8 @@ class GetAccountApplicationService(private val accountQueryService: AccountQuery
         logger
     ) {
     override suspend fun internalExecute(command: GetAccount, principal: LocalUser): Account {
-        return accountQueryService.findById(command.accountId.toLong()) ?: throw Exception("Account not found")
+        return accountQueryService.findById(command.accountId.toLong())
+            ?: throw IllegalArgumentException("Account ${command.accountId} not found")
     }
 
     companion object {

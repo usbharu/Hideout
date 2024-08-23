@@ -17,23 +17,19 @@
 package dev.usbharu.hideout.mastodon.interfaces.api
 
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.InstanceApi
-import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.*
-import kotlinx.coroutines.flow.Flow
+import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.ExtendedDescription
+import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.Instance
+import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.V1Instance
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 
 @Controller
 class SpringInstanceApi : InstanceApi {
 
-    override suspend fun apiV1InstanceExtendedDescriptionGet(): ResponseEntity<ExtendedDescription> {
-        return super.apiV1InstanceExtendedDescriptionGet()
-    }
+    override suspend fun apiV1InstanceExtendedDescriptionGet(): ResponseEntity<ExtendedDescription> =
+        super.apiV1InstanceExtendedDescriptionGet()
 
-    override suspend fun apiV1InstanceGet(): ResponseEntity<V1Instance> {
-        return super.apiV1InstanceGet()
-    }
+    override suspend fun apiV1InstanceGet(): ResponseEntity<V1Instance> = super.apiV1InstanceGet()
 
-    override suspend fun apiV2InstanceGet(): ResponseEntity<Instance> {
-        return super.apiV2InstanceGet()
-    }
+    override suspend fun apiV2InstanceGet(): ResponseEntity<Instance> = super.apiV2InstanceGet()
 }
