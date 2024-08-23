@@ -23,6 +23,7 @@ class GetLocalInstanceApplicationService(
 
     override suspend fun internalExecute(command: Unit, principal: Principal): Instance {
         if (cachedInstance != null) {
+            @Suppress("UnsafeCallOnNullableType")
             return cachedInstance!!
         }
 
@@ -32,6 +33,7 @@ class GetLocalInstanceApplicationService(
             )
 
         cachedInstance = Instance.of(instance)
+        @Suppress("UnsafeCallOnNullableType")
         return cachedInstance!!
     }
 

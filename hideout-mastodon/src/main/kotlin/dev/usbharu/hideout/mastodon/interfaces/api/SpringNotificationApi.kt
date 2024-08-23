@@ -18,21 +18,16 @@ package dev.usbharu.hideout.mastodon.interfaces.api
 
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.NotificationsApi
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.Notification
-import kotlinx.coroutines.flow.Flow
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 
 @Controller
 class SpringNotificationApi : NotificationsApi {
-    override suspend fun apiV1NotificationsClearPost(): ResponseEntity<Any> {
-        return super.apiV1NotificationsClearPost()
-    }
+    override suspend fun apiV1NotificationsClearPost(): ResponseEntity<Any> = super.apiV1NotificationsClearPost()
 
-    override suspend fun apiV1NotificationsIdDismissPost(id: String): ResponseEntity<Any> {
-        return super.apiV1NotificationsIdDismissPost(id)
-    }
+    override suspend fun apiV1NotificationsIdDismissPost(id: String): ResponseEntity<Any> =
+        super.apiV1NotificationsIdDismissPost(id)
 
-    override suspend fun apiV1NotificationsIdGet(id: String): ResponseEntity<Notification> {
-        return super.apiV1NotificationsIdGet(id)
-    }
+    override suspend fun apiV1NotificationsIdGet(id: String): ResponseEntity<Notification> =
+        super.apiV1NotificationsIdGet(id)
 }

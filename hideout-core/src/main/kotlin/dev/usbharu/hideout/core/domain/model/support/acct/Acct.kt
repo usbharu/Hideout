@@ -4,7 +4,5 @@ data class Acct(
     val userpart: String,
     val host: String
 ) {
-    override fun toString(): String {
-        return "acct:$userpart@$host"
-    }
+    override fun toString(): String = "acct:$userpart@$host"
 }

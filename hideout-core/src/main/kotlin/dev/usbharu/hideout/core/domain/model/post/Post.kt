@@ -201,7 +201,7 @@ class Post(
     var moveTo = moveTo
         private set
 
-    fun moveTo(moveTo: PostId, actor: Actor) {
+    fun moveTo(moveTo: PostId) {
         require(this.moveTo == null)
         this.moveTo = moveTo
     }

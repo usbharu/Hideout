@@ -32,6 +32,7 @@ data class TimelineObjectDetail(
     val warnFilter: List<TimelineObjectWarnFilter>
 ) {
     companion object {
+        @Suppress("LongParameterList")
         fun of(
             timelineObject: TimelineObject,
             timelineUserDetail: UserDetail,

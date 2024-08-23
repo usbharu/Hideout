@@ -34,25 +34,22 @@ class SpringStatusApi(
     private val getStatusApplicationService: GetStatusApplicationService,
     private val principalContextHolder: SpringSecurityOauth2PrincipalContextHolder
 ) : StatusApi {
-    override suspend fun apiV1StatusesIdEmojiReactionsEmojiDelete(id: String, emoji: String): ResponseEntity<Status> {
-        return super.apiV1StatusesIdEmojiReactionsEmojiDelete(id, emoji)
-    }
+    override suspend fun apiV1StatusesIdEmojiReactionsEmojiDelete(id: String, emoji: String): ResponseEntity<Status> =
+        super.apiV1StatusesIdEmojiReactionsEmojiDelete(id, emoji)
 
-    override suspend fun apiV1StatusesIdEmojiReactionsEmojiPut(id: String, emoji: String): ResponseEntity<Status> {
-        return super.apiV1StatusesIdEmojiReactionsEmojiPut(id, emoji)
-    }
+    override suspend fun apiV1StatusesIdEmojiReactionsEmojiPut(id: String, emoji: String): ResponseEntity<Status> =
+        super.apiV1StatusesIdEmojiReactionsEmojiPut(id, emoji)
 
     override suspend fun apiV1StatusesIdGet(id: String): ResponseEntity<Status> {
-
         return ResponseEntity.ok(
             getStatusApplicationService.execute(
-                GetStatus(id), principalContextHolder.getPrincipal()
+                GetStatus(id),
+                principalContextHolder.getPrincipal()
             )
         )
     }
 
-    override suspend fun apiV1StatusesPost(statusesRequest: dev.usbharu.hideout.mastodon.interfaces.api.StatusesRequest): ResponseEntity<Status> {
-
+    override suspend fun apiV1StatusesPost(statusesRequest: StatusesRequest): ResponseEntity<Status> {
         val principal = principalContextHolder.getPrincipal()
         val execute = registerLocalPostApplicationService.execute(
             RegisterLocalPost(
@@ -69,9 +66,9 @@ class SpringStatusApi(
                 replyId = statusesRequest.in_reply_to_id?.toLong(),
                 sensitive = statusesRequest.sensitive == true,
                 mediaIds = statusesRequest.media_ids.map { it.toLong() }
-            ), principal
+            ),
+            principal
         )
-
 
         val status =
             getStatusApplicationService.execute(GetStatus(execute.toString()), principal)

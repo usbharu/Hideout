@@ -27,6 +27,8 @@ interface PostRepository {
     suspend fun findAllById(ids: List<PostId>): List<Post>
     suspend fun findByActorId(id: ActorId, page: Page? = null): PaginationList<Post, PostId>
     suspend fun delete(post: Post)
+
+    @Suppress("FunctionMaxLength")
     suspend fun findByActorIdAndVisibilityInList(
         actorId: ActorId,
         visibilityList: List<Visibility>,

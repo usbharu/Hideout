@@ -16,22 +16,29 @@
 
 package dev.usbharu.hideout.core.application.actor
 
+import dev.usbharu.hideout.core.application.shared.LocalUserAbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
+import dev.usbharu.hideout.core.domain.model.support.principal.LocalUser
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
 class SuspendLocalActorApplicationService(
-    private val transaction: Transaction,
+    transaction: Transaction,
     private val actorRepository: ActorRepository,
-) {
-    suspend fun suspend(actorId: Long, executor: ActorId) {
-        transaction.transaction {
-            val id = ActorId(actorId)
+) : LocalUserAbstractApplicationService<SuspendLocalActor, Unit>(transaction, logger) {
 
-            val actor = actorRepository.findById(id)!!
-            actor.suspend = true
-        }
+    override suspend fun internalExecute(command: SuspendLocalActor, principal: LocalUser) {
+        val id = ActorId(command.actorId)
+        val actor =
+            actorRepository.findById(id) ?: throw IllegalArgumentException("Actor ${command.actorId} not found.")
+        actor.suspend = true
+        actorRepository.save(actor)
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(SuspendLocalActorApplicationService::class.java)
     }
 }

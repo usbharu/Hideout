@@ -109,12 +109,12 @@ class UserDetailRepositoryImpl(override val domainEventPublisher: DomainEventPub
     }
 
     private fun userDetail(it: ResultRow) = UserDetail(
-        UserDetailId(it[UserDetails.id]),
-        ActorId(it[UserDetails.actorId]),
-        UserDetailHashedPassword(it[UserDetails.password]),
-        it[UserDetails.autoAcceptFolloweeFollowRequest],
-        it[UserDetails.lastMigration],
-        it[UserDetails.homeTimelineId]?.let { it1 -> TimelineId(it1) }
+        id = UserDetailId(it[UserDetails.id]),
+        actorId = ActorId(it[UserDetails.actorId]),
+        password = UserDetailHashedPassword(it[UserDetails.password]),
+        autoAcceptFolloweeFollowRequest = it[UserDetails.autoAcceptFolloweeFollowRequest],
+        lastMigration = it[UserDetails.lastMigration],
+        homeTimelineId = it[UserDetails.homeTimelineId]?.let { it1 -> TimelineId(it1) }
     )
 
     companion object {

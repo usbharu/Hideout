@@ -18,6 +18,7 @@ package dev.usbharu.hideout.core.domain.model.relationship
 
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 
+@Suppress("FunctionMaxLength")
 interface RelationshipRepository {
     suspend fun save(relationship: Relationship): Relationship
     suspend fun delete(relationship: Relationship)

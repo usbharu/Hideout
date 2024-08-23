@@ -48,6 +48,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 
 @Controller
+@Suppress("LongParameterList")
 class SpringAccountApi(
     private val getUserDetailApplicationService: GetUserDetailApplicationService,
     private val getAccountApplicationService: GetAccountApplicationService,
@@ -64,7 +65,6 @@ class SpringAccountApi(
     private val principalContextHolder: SpringSecurityOauth2PrincipalContextHolder
 ) : AccountApi {
 
-
     override suspend fun apiV1AccountsIdBlockPost(id: String): ResponseEntity<Relationship> {
         userBlockApplicationService.execute(Block(id.toLong()), principalContextHolder.getPrincipal())
         return fetchRelationship(id)
@@ -74,9 +74,9 @@ class SpringAccountApi(
         id: String,
         followRequestBody: FollowRequestBody?,
     ): ResponseEntity<Relationship> {
-
         userFollowRequestApplicationService.execute(
-            FollowRequest(id.toLong()), principalContextHolder.getPrincipal()
+            FollowRequest(id.toLong()),
+            principalContextHolder.getPrincipal()
         )
         return fetchRelationship(id)
     }
@@ -110,53 +110,57 @@ class SpringAccountApi(
     override suspend fun apiV1AccountsIdGet(id: String): ResponseEntity<Account> {
         return ResponseEntity.ok(
             getAccountApplicationService.execute(
-                GetAccount(id), principalContextHolder.getPrincipal()
+                GetAccount(id),
+                principalContextHolder.getPrincipal()
             )
         )
     }
 
     override suspend fun apiV1AccountsIdMutePost(id: String): ResponseEntity<Relationship> {
         userMuteApplicationService.execute(
-            Mute(id.toLong()), principalContextHolder.getPrincipal()
+            Mute(id.toLong()),
+            principalContextHolder.getPrincipal()
         )
         return fetchRelationship(id)
     }
 
     override suspend fun apiV1AccountsIdRemoveFromFollowersPost(id: String): ResponseEntity<Relationship> {
         userRemoveFromFollowersApplicationService.execute(
-            RemoveFromFollowers(id.toLong()), principalContextHolder.getPrincipal()
+            RemoveFromFollowers(id.toLong()),
+            principalContextHolder.getPrincipal()
         )
         return fetchRelationship(id)
     }
 
     override suspend fun apiV1AccountsIdUnblockPost(id: String): ResponseEntity<Relationship> {
         userUnblockApplicationService.execute(
-            Unblock(id.toLong()), principalContextHolder.getPrincipal()
+            Unblock(id.toLong()),
+            principalContextHolder.getPrincipal()
         )
         return fetchRelationship(id)
     }
 
     override suspend fun apiV1AccountsIdUnfollowPost(id: String): ResponseEntity<Relationship> {
         userUnfollowApplicationService.execute(
-            Unfollow(id.toLong()), principalContextHolder.getPrincipal()
+            Unfollow(id.toLong()),
+            principalContextHolder.getPrincipal()
         )
         return fetchRelationship(id)
     }
 
     override suspend fun apiV1AccountsIdUnmutePost(id: String): ResponseEntity<Relationship> {
         userUnmuteApplicationService.execute(
-            Unmute(id.toLong()), principalContextHolder.getPrincipal()
+            Unmute(id.toLong()),
+            principalContextHolder.getPrincipal()
         )
         return fetchRelationship(id)
     }
 
-    override suspend fun apiV1AccountsPost(accountsCreateRequest: AccountsCreateRequest): ResponseEntity<Unit> {
-        return super.apiV1AccountsPost(accountsCreateRequest)
-    }
+    override suspend fun apiV1AccountsPost(accountsCreateRequest: AccountsCreateRequest): ResponseEntity<Unit> =
+        super.apiV1AccountsPost(accountsCreateRequest)
 
-    override suspend fun apiV1AccountsUpdateCredentialsPatch(updateCredentials: UpdateCredentials?): ResponseEntity<Account> {
-        return super.apiV1AccountsUpdateCredentialsPatch(updateCredentials)
-    }
+    override suspend fun apiV1AccountsUpdateCredentialsPatch(updateCredentials: UpdateCredentials?): ResponseEntity<Account> =
+        super.apiV1AccountsUpdateCredentialsPatch(updateCredentials)
 
     override suspend fun apiV1AccountsVerifyCredentialsGet(): ResponseEntity<CredentialAccount> {
         val principal = principalContextHolder.getPrincipal()
@@ -164,7 +168,8 @@ class SpringAccountApi(
             getUserDetailApplicationService.execute(
                 GetUserDetail(
                     principal.userDetailId?.id ?: throw PermissionDeniedException()
-                ), principal
+                ),
+                principal
             )
 
         return ResponseEntity.ok(
@@ -215,19 +220,18 @@ class SpringAccountApi(
     }
 
     override suspend fun apiV1FollowRequestsAccountIdAuthorizePost(accountId: String): ResponseEntity<Relationship> {
-
         userAcceptFollowRequestApplicationService.execute(
-            AcceptFollowRequest(accountId.toLong()), principalContextHolder.getPrincipal()
+            AcceptFollowRequest(accountId.toLong()),
+            principalContextHolder.getPrincipal()
         )
         return fetchRelationship(accountId)
     }
 
     override suspend fun apiV1FollowRequestsAccountIdRejectPost(accountId: String): ResponseEntity<Relationship> {
-
         userRejectFollowRequestApplicationService.execute(
-            RejectFollowRequest(accountId.toLong()), principalContextHolder.getPrincipal()
+            RejectFollowRequest(accountId.toLong()),
+            principalContextHolder.getPrincipal()
         )
         return fetchRelationship(accountId)
     }
-
 }

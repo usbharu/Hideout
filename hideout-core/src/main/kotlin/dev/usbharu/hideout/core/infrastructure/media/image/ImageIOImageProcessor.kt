@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.core.infrastructure.media.image
 
+import dev.usbharu.hideout.core.application.exception.InternalServerException
 import dev.usbharu.hideout.core.config.ImageIOImageConfig
 import dev.usbharu.hideout.core.domain.model.media.FileType
 import dev.usbharu.hideout.core.domain.model.media.MimeType
@@ -59,7 +60,7 @@ class ImageIOImageProcessor(
         tempFile.outputStream().use {
             if (ImageIO.write(bufferedImage, imageIOImageConfig.format, it).not()) {
                 logger.warn("Failed to save a temporary file. type: {} ,path: {}", imageIOImageConfig.format, tempFile)
-                throw Exception("Failed to save a temporary file.")
+                throw InternalServerException("Failed to save a temporary file.")
             }
         }
 

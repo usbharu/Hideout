@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.core.application.domainevent.subscribers
 
+import dev.usbharu.hideout.core.application.exception.InternalServerException
 import dev.usbharu.hideout.core.application.timeline.AddTimelineRelationship
 import dev.usbharu.hideout.core.application.timeline.UserAddTimelineRelationshipApplicationService
 import dev.usbharu.hideout.core.domain.event.relationship.RelationshipEvent
@@ -23,11 +24,14 @@ class TimelineRelationshipFollowSubscriber(
     init {
         domainEventSubscriber.subscribe<RelationshipEventBody>(RelationshipEvent.FOLLOW.eventName) {
             val relationship = it.body.getRelationship()
-            val userDetail = userDetailRepository.findByActorId(relationship.actorId.id) ?: throw Exception()
+            val userDetail = userDetailRepository.findByActorId(relationship.actorId.id)
+                ?: throw InternalServerException("Userdetail ${relationship.actorId} not found by actorid.")
             if (userDetail.homeTimelineId == null) {
                 logger.warn("Home timeline for ${relationship.actorId} is not found")
                 return@subscribe
             }
+
+            @Suppress("UnsafeCallOnNullableType")
             userAddTimelineRelationshipApplicationService.execute(
                 AddTimelineRelationship(
                     TimelineRelationship(

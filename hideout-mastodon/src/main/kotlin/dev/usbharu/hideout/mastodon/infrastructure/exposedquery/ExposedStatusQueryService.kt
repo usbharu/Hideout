@@ -56,14 +56,15 @@ class StatusQueryServiceImpl : StatusQueryService {
             .leftJoin(
                 relationshipsAlias,
                 onColumn = { Posts.actorId },
-                otherColumn = { relationshipsAlias[Relationships.targetActorId] })
+                otherColumn = { relationshipsAlias[Relationships.targetActorId] }
+            )
             .select(Posts.columns)
             .where {
                 Posts.visibility eq Visibility.PUBLIC.name or
-                        (Posts.visibility eq Visibility.UNLISTED.name) or
-                        (Posts.visibility eq Visibility.DIRECT.name and (PostsVisibleActors.actorId eq principal.actorId.id)) or
-                        (Posts.visibility eq Visibility.FOLLOWERS.name and (Relationships.blocking eq false and (relationshipsAlias[Relationships.following] eq true))) or
-                        (Posts.actorId eq principal.actorId.id)
+                    (Posts.visibility eq Visibility.UNLISTED.name) or
+                    (Posts.visibility eq Visibility.DIRECT.name and (PostsVisibleActors.actorId eq principal.actorId.id)) or
+                    (Posts.visibility eq Visibility.FOLLOWERS.name and (Relationships.blocking eq false and (relationshipsAlias[Relationships.following] eq true))) or
+                    (Posts.actorId eq principal.actorId.id)
             }
             .alias("authorized_table")
     }

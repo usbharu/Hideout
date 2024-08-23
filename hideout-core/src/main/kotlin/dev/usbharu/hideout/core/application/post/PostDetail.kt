@@ -26,6 +26,7 @@ data class PostDetail(
     val moveTo: PostDetail?
 ) {
     companion object {
+        @Suppress("LongParameterList")
         fun of(
             post: Post,
             actor: Actor,

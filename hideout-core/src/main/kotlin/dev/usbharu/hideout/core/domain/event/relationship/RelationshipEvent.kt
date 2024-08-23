@@ -31,9 +31,7 @@ class RelationshipEventBody(
     relationship: Relationship,
     override val principal: Principal
 ) : DomainEventBody(mapOf("relationship" to relationship), principal) {
-    fun getRelationship(): Relationship {
-        return toMap()["relationship"] as Relationship
-    }
+    fun getRelationship(): Relationship = toMap()["relationship"] as Relationship
 }
 
 enum class RelationshipEvent(val eventName: String) {

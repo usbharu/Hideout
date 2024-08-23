@@ -31,7 +31,8 @@ import org.springframework.stereotype.Repository
 @Repository
 class GetFilterV1ApplicationService(private val filterRepository: FilterRepository, transaction: Transaction) :
     AbstractApplicationService<GetFilterV1, V1Filter>(
-        transaction, logger
+        transaction,
+        logger
     ) {
     override suspend fun internalExecute(command: GetFilterV1, principal: Principal): V1Filter {
         val filter = filterRepository.findByFilterKeywordId(FilterKeywordId(command.filterKeywordId))

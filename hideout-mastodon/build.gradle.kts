@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.openapi.generator)
     alias(libs.plugins.spring.boot)
     alias(libs.plugins.kotlin.spring)
+    alias(libs.plugins.detekt)
 }
 
 
@@ -48,6 +49,7 @@ configurations {
 }
 
 dependencies {
+    detektPlugins(libs.detekt.formatting)
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
@@ -115,3 +117,35 @@ sourceSets.main {
     )
 }
 
+detekt {
+    parallel = true
+    config.setFrom(files("../detekt.yml"))
+    buildUponDefaultConfig = true
+    basePath = "${rootDir.absolutePath}/src/main/kotlin"
+    autoCorrect = true
+}
+
+configurations.matching { it.name == "detekt" }.all {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "org.jetbrains.kotlin") {
+            useVersion(io.gitlab.arturbosch.detekt.getSupportedKotlinVersion())
+        }
+    }
+}
+
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt> {
+    exclude("**/generated/**")
+    doFirst {
+
+    }
+    setSource("src/main/kotlin")
+    exclude("build/")
+}
+
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+    exclude("**/org/koin/ksp/generated/**", "**/generated/**")
+}
+
+tasks.withType<io.gitlab.arturbosch.detekt.DetektCreateBaselineTask>().configureEach {
+    exclude("**/org/koin/ksp/generated/**", "**/generated/**")
+}

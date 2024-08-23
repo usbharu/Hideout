@@ -52,24 +52,25 @@ class SpringMediaApi(
                 file.originalFilename ?: file.name,
                 null,
                 description
-            ), principalContextHolder.getPrincipal()
+            ),
+            principalContextHolder.getPrincipal()
         )
 
         return ResponseEntity.ok(
             MediaAttachment(
-                media.id.toString(),
-                when (media.type) {
+                id = media.id.toString(),
+                type = when (media.type) {
                     Image -> MediaAttachment.Type.image
                     Video -> MediaAttachment.Type.video
                     Audio -> MediaAttachment.Type.audio
                     Unknown -> MediaAttachment.Type.unknown
                 },
-                media.url.toString(),
-                media.thumbprintURI?.toString(),
-                media.remoteURL?.toString(),
-                media.description,
-                media.blurHash,
-                media.url.toASCIIString()
+                url = media.url.toString(),
+                previewUrl = media.thumbprintURI?.toString(),
+                remoteUrl = media.remoteURL?.toString(),
+                description = media.description,
+                blurhash = media.blurHash,
+                textUrl = media.url.toASCIIString()
             )
         )
     }

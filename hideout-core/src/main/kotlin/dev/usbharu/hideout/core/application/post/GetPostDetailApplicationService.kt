@@ -39,13 +39,13 @@ class GetPostDetailApplicationService(
         val mediaList = mediaRepository.findByIds(post.mediaIds)
 
         return PostDetail.of(
-            post,
-            actor,
-            iconMedia,
-            mediaList,
-            post.replyId?.let { fetchChild(it, actor, iconMedia, principal) },
-            post.repostId?.let { fetchChild(it, actor, iconMedia, principal) },
-            post.moveTo?.let { fetchChild(it, actor, iconMedia, principal) },
+            post = post,
+            actor = actor,
+            iconMedia = iconMedia,
+            mediaList = mediaList,
+            reply = post.replyId?.let { fetchChild(it, actor, iconMedia, principal) },
+            repost = post.repostId?.let { fetchChild(it, actor, iconMedia, principal) },
+            moveTo = post.moveTo?.let { fetchChild(it, actor, iconMedia, principal) },
         )
     }
 

@@ -28,7 +28,8 @@ import org.springframework.stereotype.Service
 @Service
 class DeleteFilterV1ApplicationService(private val filterRepository: FilterRepository, transaction: Transaction) :
     LocalUserAbstractApplicationService<DeleteFilterV1, Unit>(
-        transaction, logger
+        transaction,
+        logger
     ) {
     override suspend fun internalExecute(command: DeleteFilterV1, principal: LocalUser) {
         val filter = filterRepository.findByFilterKeywordId(FilterKeywordId(command.filterKeywordId))

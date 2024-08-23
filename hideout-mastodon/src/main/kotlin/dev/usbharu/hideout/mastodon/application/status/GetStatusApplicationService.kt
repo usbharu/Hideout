@@ -32,13 +32,12 @@ class GetStatusApplicationService(
     transaction,
     logger
 ) {
-    companion object {
-        val logger = LoggerFactory.getLogger(GetStatusApplicationService::class.java)!!
-    }
-
     override suspend fun internalExecute(command: GetStatus, principal: Principal): Status {
         return statusQueryService.findByPostId(command.id.toLong(), principal)
             ?: throw IllegalArgumentException("Post ${command.id} not found.")
+    }
 
+    companion object {
+        val logger = LoggerFactory.getLogger(GetStatusApplicationService::class.java)!!
     }
 }

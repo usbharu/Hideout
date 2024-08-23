@@ -152,8 +152,8 @@ class ExposedPostRepository(
                 this[PostsVisibleActors.actorId] = it.second
             }
             onComplete {
-                posts.forEach {
-                    update(it)
+                posts.forEach { post: Post ->
+                    update(post)
                 }
             }
         }

@@ -29,7 +29,6 @@ import java.net.URI
 @Controller
 class SpringAppApi(private val registerApplicationApplicationService: RegisterApplicationApplicationService) : AppApi {
     override suspend fun apiV1AppsPost(appsRequest: AppsRequest): ResponseEntity<Application> {
-
         val registerApplication = RegisterApplication(
             appsRequest.clientName,
             setOf(URI.create(appsRequest.redirectUris)),
@@ -39,12 +38,12 @@ class SpringAppApi(private val registerApplicationApplicationService: RegisterAp
         val registeredApplication = registerApplicationApplicationService.execute(registerApplication, Anonymous)
         return ResponseEntity.ok(
             Application(
-                registeredApplication.name,
-                "invalid-vapid-key",
-                null,
-                registeredApplication.clientId,
-                registeredApplication.clientSecret,
-                appsRequest.redirectUris
+                name = registeredApplication.name,
+                vapidKey = "invalid-vapid-key",
+                website = null,
+                clientId = registeredApplication.clientId,
+                clientSecret = registeredApplication.clientSecret,
+                redirectUri = appsRequest.redirectUris
             )
         )
     }

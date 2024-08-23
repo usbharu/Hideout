@@ -47,7 +47,8 @@ class SpringFilterApi(
     override suspend fun apiV1FiltersIdDelete(id: String): ResponseEntity<Any> {
         return ResponseEntity.ok(
             deleteFilterV1ApplicationService.execute(
-                DeleteFilterV1(id.toLong()), principalContextHolder.getPrincipal()
+                DeleteFilterV1(id.toLong()),
+                principalContextHolder.getPrincipal()
             )
         )
     }
@@ -55,7 +56,8 @@ class SpringFilterApi(
     override suspend fun apiV1FiltersIdGet(id: String): ResponseEntity<V1Filter> {
         return ResponseEntity.ok(
             getFilterV1ApplicationService.execute(
-                GetFilterV1(id.toLong()), principalContextHolder.getPrincipal()
+                GetFilterV1(id.toLong()),
+                principalContextHolder.getPrincipal()
             )
         )
     }
@@ -67,12 +69,9 @@ class SpringFilterApi(
         irreversible: Boolean?,
         wholeWord: Boolean?,
         expiresIn: Int?,
-    ): ResponseEntity<V1Filter> {
-        return super.apiV1FiltersIdPut(id, phrase, context, irreversible, wholeWord, expiresIn)
-    }
+    ): ResponseEntity<V1Filter> = super.apiV1FiltersIdPut(id, phrase, context, irreversible, wholeWord, expiresIn)
 
     override suspend fun apiV1FiltersPost(v1FilterPostRequest: V1FilterPostRequest): ResponseEntity<V1Filter> {
-
         val filterMode = if (v1FilterPostRequest.wholeWord == true) {
             FilterMode.WHOLE_WORD
         } else {
@@ -89,13 +88,17 @@ class SpringFilterApi(
         }.toSet()
         val filter = userRegisterFilterApplicationService.execute(
             RegisterFilter(
-                v1FilterPostRequest.phrase, filterContext, FilterAction.WARN,
+                v1FilterPostRequest.phrase,
+                filterContext,
+                FilterAction.WARN,
                 setOf(RegisterFilterKeyword(v1FilterPostRequest.phrase, filterMode))
-            ), principalContextHolder.getPrincipal()
+            ),
+            principalContextHolder.getPrincipal()
         )
         return ResponseEntity.ok(
             getFilterV1ApplicationService.execute(
-                GetFilterV1(filter.filterKeywords.first().id), principalContextHolder.getPrincipal()
+                GetFilterV1(filter.filterKeywords.first().id),
+                principalContextHolder.getPrincipal()
             )
         )
     }
@@ -103,27 +106,25 @@ class SpringFilterApi(
     override suspend fun apiV2FiltersFilterIdKeywordsPost(
         filterId: String,
         filterKeywordsPostRequest: FilterKeywordsPostRequest,
-    ): ResponseEntity<FilterKeyword> {
-        return super.apiV2FiltersFilterIdKeywordsPost(filterId, filterKeywordsPostRequest)
-    }
+    ): ResponseEntity<FilterKeyword> = super.apiV2FiltersFilterIdKeywordsPost(filterId, filterKeywordsPostRequest)
 
     override suspend fun apiV2FiltersFilterIdStatusesPost(
         filterId: String,
         filterStatusRequest: FilterStatusRequest,
-    ): ResponseEntity<FilterStatus> {
-        return super.apiV2FiltersFilterIdStatusesPost(filterId, filterStatusRequest)
-    }
+    ): ResponseEntity<FilterStatus> = super.apiV2FiltersFilterIdStatusesPost(filterId, filterStatusRequest)
 
     override suspend fun apiV2FiltersIdDelete(id: String): ResponseEntity<Any> {
         userDeleteFilterApplicationService.execute(
-            DeleteFilter(id.toLong()), principalContextHolder.getPrincipal()
+            DeleteFilter(id.toLong()),
+            principalContextHolder.getPrincipal()
         )
         return ResponseEntity.ok(Unit)
     }
 
     override suspend fun apiV2FiltersIdGet(id: String): ResponseEntity<Filter> {
         val filter = userGetFilterApplicationService.execute(
-            GetFilter(id.toLong()), principalContextHolder.getPrincipal()
+            GetFilter(id.toLong()),
+            principalContextHolder.getPrincipal()
         )
         return ResponseEntity.ok(
             filter(filter)
@@ -146,7 +147,6 @@ class SpringFilterApi(
         filterAction = when (filter.filterAction) {
             FilterAction.WARN -> Filter.FilterAction.warn
             FilterAction.HIDE -> Filter.FilterAction.hide
-
         },
         keywords = filter.filterKeywords.map {
             FilterKeyword(
@@ -154,7 +154,8 @@ class SpringFilterApi(
                 it.keyword,
                 it.filterMode == FilterMode.WHOLE_WORD
             )
-        }, statuses = null
+        },
+        statuses = null
     )
 
     override suspend fun apiV2FiltersIdPut(
@@ -164,29 +165,23 @@ class SpringFilterApi(
         filterAction: String?,
         expiresIn: Int?,
         keywordsAttributes: List<FilterPubRequestKeyword>?,
-    ): ResponseEntity<Filter> {
-        return super.apiV2FiltersIdPut(id, title, context, filterAction, expiresIn, keywordsAttributes)
-    }
+    ): ResponseEntity<Filter> =
+        super.apiV2FiltersIdPut(id, title, context, filterAction, expiresIn, keywordsAttributes)
 
-    override suspend fun apiV2FiltersKeywordsIdDelete(id: String): ResponseEntity<Any> {
-        return super.apiV2FiltersKeywordsIdDelete(id)
-    }
+    override suspend fun apiV2FiltersKeywordsIdDelete(id: String): ResponseEntity<Any> =
+        super.apiV2FiltersKeywordsIdDelete(id)
 
-    override suspend fun apiV2FiltersKeywordsIdGet(id: String): ResponseEntity<FilterKeyword> {
-        return super.apiV2FiltersKeywordsIdGet(id)
-    }
+    override suspend fun apiV2FiltersKeywordsIdGet(id: String): ResponseEntity<FilterKeyword> =
+        super.apiV2FiltersKeywordsIdGet(id)
 
     override suspend fun apiV2FiltersKeywordsIdPut(
         id: String,
         keyword: String?,
         wholeWord: Boolean?,
         regex: Boolean?,
-    ): ResponseEntity<FilterKeyword> {
-        return super.apiV2FiltersKeywordsIdPut(id, keyword, wholeWord, regex)
-    }
+    ): ResponseEntity<FilterKeyword> = super.apiV2FiltersKeywordsIdPut(id, keyword, wholeWord, regex)
 
     override suspend fun apiV2FiltersPost(filterPostRequest: FilterPostRequest): ResponseEntity<Filter> {
-
         val filter = userRegisterFilterApplicationService.execute(
             RegisterFilter(
                 filterName = filterPostRequest.title,
@@ -216,16 +211,15 @@ class SpringFilterApi(
                         }
                     )
                 }.toSet()
-            ), principalContextHolder.getPrincipal()
+            ),
+            principalContextHolder.getPrincipal()
         )
         return ResponseEntity.ok(filter(filter))
     }
 
-    override suspend fun apiV2FiltersStatusesIdDelete(id: String): ResponseEntity<Any> {
-        return ResponseEntity.notFound().build()
-    }
+    override suspend fun apiV2FiltersStatusesIdDelete(id: String): ResponseEntity<Any> =
+        ResponseEntity.notFound().build()
 
-    override suspend fun apiV2FiltersStatusesIdGet(id: String): ResponseEntity<FilterStatus> {
-        return ResponseEntity.notFound().build()
-    }
+    override suspend fun apiV2FiltersStatusesIdGet(id: String): ResponseEntity<FilterStatus> =
+        ResponseEntity.notFound().build()
 }

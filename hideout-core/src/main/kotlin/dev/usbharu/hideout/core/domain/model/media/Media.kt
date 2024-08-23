@@ -19,6 +19,7 @@ package dev.usbharu.hideout.core.domain.model.media
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import java.net.URI
 
+@Suppress("LongParameterList")
 class Media(
     val id: MediaId,
     val name: MediaName,
@@ -47,9 +48,7 @@ class Media(
         return id == other.id
     }
 
-    override fun hashCode(): Int {
-        return id.hashCode()
-    }
+    override fun hashCode(): Int = id.hashCode()
 
     override fun toString(): String {
         return "Media(" +

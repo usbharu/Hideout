@@ -14,6 +14,9 @@ import org.springframework.stereotype.Repository
 
 @Repository
 class ExposedPrincipalQueryService : PrincipalQueryService, AbstractRepository() {
+    override val logger: Logger
+        get() = Companion.logger
+
     override suspend fun findByUserDetailId(userDetailId: UserDetailId): PrincipalDTO {
         return query {
             UserDetails.leftJoin(Actors).selectAll().where { UserDetails.id eq userDetailId.id }.single()
@@ -27,9 +30,6 @@ class ExposedPrincipalQueryService : PrincipalQueryService, AbstractRepository()
                 }
         }
     }
-
-    override val logger: Logger
-        get() = Companion.logger
 
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(ExposedPrincipalQueryService::class.java)
