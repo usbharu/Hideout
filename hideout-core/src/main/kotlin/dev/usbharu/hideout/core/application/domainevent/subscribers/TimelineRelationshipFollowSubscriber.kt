@@ -18,10 +18,10 @@ class TimelineRelationshipFollowSubscriber(
     private val userAddTimelineRelationshipApplicationService: UserAddTimelineRelationshipApplicationService,
     private val idGenerateService: IdGenerateService,
     private val userDetailRepository: UserDetailRepository,
-    domainEventSubscriber: DomainEventSubscriber
+    private val domainEventSubscriber: DomainEventSubscriber
 ) : Subscriber {
 
-    init {
+    override fun init() {
         domainEventSubscriber.subscribe<RelationshipEventBody>(RelationshipEvent.FOLLOW.eventName) {
             val relationship = it.body.getRelationship()
             val userDetail = userDetailRepository.findByActorId(relationship.actorId.id)

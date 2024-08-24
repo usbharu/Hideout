@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component
 @Component
 class TimelinePostCreateSubscriber(
     private val timelineAddPostApplicationService: TimelineAddPostApplicationService,
-    domainEventSubscriber: DomainEventSubscriber,
+    private val domainEventSubscriber: DomainEventSubscriber,
 ) : Subscriber {
-    init {
+    override fun init() {
         domainEventSubscriber.subscribe<PostEventBody>(PostEvent.CREATE.eventName) {
             timelineAddPostApplicationService.execute(AddPost(it.body.getPostId()), Anonymous)
         }
