@@ -6,13 +6,13 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Root level="DEBUG">
+        <Root level="INFO">
             <AppenderRef ref="Console"/>
         </Root>
         <Logger name="dev.usbharu.owl.broker.service.QueuedTaskAssignerImpl" level="TRACE"/>
-        <!--        <Logger name="org.mongodb.driver.cluster" level=""/>-->
+        <Logger name="org.mongodb.driver.cluster" level="INFO"/>
         <Logger name="org.apache.tomcat.util.net.NioEndpoint" level="INFO"/>
-        <Logger name="Exposed" level="DEBUG"/>
+        <!--        <Logger name="Exposed" level="DEBUG"/>-->
         <Logger name="sun.rmi" level="INFO"/>
         <Logger name="javax.management.remote.rmi" level="INFO"/>
     </Loggers>

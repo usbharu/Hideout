@@ -30,7 +30,8 @@ abstract class AbstractApplicationService<T : Any, R>(
             val response = transaction.transaction<R> {
                 internalExecute(command, principal)
             }
-            logger.info("SUCCESS ${command::class.simpleName}")
+
+            logger.info("SUCCESS $command $response")
             response
         } catch (e: CancellationException) {
             logger.debug("Coroutine canceled", e)
