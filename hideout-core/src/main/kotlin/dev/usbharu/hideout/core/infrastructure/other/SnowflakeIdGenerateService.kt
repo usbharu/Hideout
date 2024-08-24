@@ -80,6 +80,4 @@ open class SnowflakeIdGenerateService(private val baseTime: Long) : IdGenerateSe
         result = 31 * result + mutex.hashCode()
         return result
     }
-
-
 }
