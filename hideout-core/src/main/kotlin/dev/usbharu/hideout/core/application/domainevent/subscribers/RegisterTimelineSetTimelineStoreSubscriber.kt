@@ -9,11 +9,11 @@ import org.springframework.stereotype.Component
 
 @Component
 class RegisterTimelineSetTimelineStoreSubscriber(
-    domainEventSubscriber: DomainEventSubscriber,
+    private val domainEventSubscriber: DomainEventSubscriber,
     private val setTimelineToTimelineStoreApplicationService: SetTimelineToTimelineStoreApplicationService
-) :
-    Subscriber {
-    init {
+) : Subscriber {
+
+    override fun init() {
         domainEventSubscriber.subscribe<TimelineEventBody>(TimelineEvent.CREATE.eventName) {
             setTimelineToTimelineStoreApplicationService.execute(SetTimleineStore(it.body.getTimelineId()), Anonymous)
         }

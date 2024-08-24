@@ -7,11 +7,10 @@ import org.springframework.stereotype.Component
 
 @Component
 class RegisterLocalUserSetHomeTimelineSubscriber(
-    domainEventSubscriber: DomainEventSubscriber,
+    private val domainEventSubscriber: DomainEventSubscriber,
     private val userRegisterHomeTimelineApplicationService: UserRegisterHomeTimelineApplicationService
-) :
-    Subscriber {
-    init {
+) : Subscriber {
+    override fun init() {
         domainEventSubscriber.subscribe<UserDetailEventBody>(UserDetailEvent.CREATE.eventName) {
             userRegisterHomeTimelineApplicationService.execute(
                 RegisterHomeTimeline(it.body.getUserDetail().id),
