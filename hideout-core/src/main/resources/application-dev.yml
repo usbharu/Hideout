@@ -1,0 +1,35 @@
+hideout:
+  url: "http://localhost:8081"
+  private: true
+  debug:
+    trace-query-exception: true
+    trace-query-call: true
+spring:
+  data:
+    mongodb:
+      auto-index-creation: true
+      host: localhost
+      port: 27017
+      database: hideout
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: "jdbc:postgresql:hideout"
+    username: "postgres"
+    password: "password"
+  servlet:
+    multipart:
+      max-file-size: 40MB
+      max-request-size: 40MB
+  threads:
+    virtual:
+      enabled: true
+  messages:
+    basename: messages.hideout-web-messages
+server:
+  tomcat:
+    basedir: tomcat
+    accesslog:
+      enabled: true
+    max-http-form-post-size: 40MB
+    max-swallow-size: 40MB
+  port: 8081
