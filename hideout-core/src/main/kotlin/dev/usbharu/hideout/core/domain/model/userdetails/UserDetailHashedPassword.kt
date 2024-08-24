@@ -17,4 +17,8 @@
 package dev.usbharu.hideout.core.domain.model.userdetails
 
 @JvmInline
-value class UserDetailHashedPassword(val password: String)
+value class UserDetailHashedPassword(val password: String) {
+    override fun toString(): String {
+        return "[MASKED]"
+    }
+}

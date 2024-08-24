@@ -42,6 +42,16 @@ class UserDetail(
     }
 
     override fun hashCode(): Int = id.hashCode()
+    override fun toString(): String {
+        return "UserDetail(" +
+                "id=$id, " +
+                "actorId=$actorId, " +
+                "password=$password, " +
+                "autoAcceptFolloweeFollowRequest=$autoAcceptFolloweeFollowRequest, " +
+                "lastMigration=$lastMigration, " +
+                "homeTimelineId=$homeTimelineId" +
+                ")"
+    }
 
     companion object {
         @Suppress("LongParameterList")
