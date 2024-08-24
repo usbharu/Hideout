@@ -101,10 +101,12 @@ create table if not exists media
     url           varchar(255)  not null unique,
     remote_url    varchar(255)  null unique,
     thumbnail_url varchar(255)  null unique,
-    "type" varchar(100) not null,
+    "type"      varchar(100)  not null,
     blurhash      varchar(255)  null,
     mime_type     varchar(255)  not null,
-    description   varchar(4000) null
+    description varchar(4000) null,
+    actor_id    bigint        not null,
+    constraint fk_media_actor_id__id foreign key (actor_id) references actors (id) on delete restrict on update restrict
 );
 
 alter table actors
