@@ -24,9 +24,9 @@ import java.time.Instant
 
 @Suppress("MagicNumber")
 open class SnowflakeIdGenerateService(private val baseTime: Long) : IdGenerateService {
-    var lastTimeStamp: Long = -1
-    var sequenceId: Int = 0
-    val mutex = Mutex()
+    private var lastTimeStamp: Long = -1
+    private var sequenceId: Long = 0
+    private val mutex = Mutex()
 
     @Throws(IllegalStateException::class)
     override suspend fun generateId(): Long {
@@ -34,7 +34,6 @@ open class SnowflakeIdGenerateService(private val baseTime: Long) : IdGenerateSe
             var timestamp = getTime()
             if (timestamp < lastTimeStamp) {
                 timestamp = wait(timestamp)
-                //            throw IllegalStateException(" $lastTimeStamp $timestamp ${lastTimeStamp-timestamp}  ")
             }
             if (timestamp == lastTimeStamp) {
                 sequenceId++
@@ -46,7 +45,7 @@ open class SnowflakeIdGenerateService(private val baseTime: Long) : IdGenerateSe
                 sequenceId = 0
             }
             lastTimeStamp = timestamp
-            return@withLock (timestamp - baseTime).shl(22).or(1L.shl(12)).or(sequenceId.toLong())
+            return@withLock (timestamp - baseTime).shl(22).or(1L.shl(12)).or(sequenceId)
         }
     }
 
@@ -77,8 +76,10 @@ open class SnowflakeIdGenerateService(private val baseTime: Long) : IdGenerateSe
     override fun hashCode(): Int {
         var result = baseTime.hashCode()
         result = 31 * result + lastTimeStamp.hashCode()
-        result = 31 * result + sequenceId
+        result = 31 * result + sequenceId.hashCode()
         result = 31 * result + mutex.hashCode()
         return result
     }
+
+
 }
