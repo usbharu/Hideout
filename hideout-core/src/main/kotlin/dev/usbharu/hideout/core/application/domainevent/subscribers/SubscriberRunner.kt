@@ -5,7 +5,8 @@ import org.springframework.boot.ApplicationRunner
 import org.springframework.stereotype.Component
 
 @Component
-class SubscriberRunner(subscribers: List<Subscriber>) : ApplicationRunner {
+class SubscriberRunner(private val subscribers: List<Subscriber>) : ApplicationRunner {
     override fun run(args: ApplicationArguments?) {
+        subscribers.forEach { it.init() }
     }
 }
