@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.core.interfaces.api.auth
+package dev.usbharu.hideout.core.interfaces.web.auth
 
 data class SignUpForm(
     val username: String,

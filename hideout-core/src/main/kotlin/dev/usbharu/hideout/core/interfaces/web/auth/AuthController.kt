@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.interfaces.api.auth
+package dev.usbharu.hideout.core.interfaces.web.auth
 
 import dev.usbharu.hideout.core.application.actor.RegisterLocalActor
 import dev.usbharu.hideout.core.application.actor.RegisterLocalActorApplicationService
+import dev.usbharu.hideout.core.application.instance.GetLocalInstanceApplicationService
 import dev.usbharu.hideout.core.domain.model.support.principal.Anonymous
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.stereotype.Controller
+import org.springframework.ui.Model
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ModelAttribute
@@ -29,10 +31,14 @@ import org.springframework.web.bind.annotation.PostMapping
 @Controller
 class AuthController(
     private val registerLocalActorApplicationService: RegisterLocalActorApplicationService,
+    private val getLocalInstanceApplicationService: GetLocalInstanceApplicationService,
 ) {
     @GetMapping("/auth/sign_up")
     @Suppress("FunctionOnlyReturningConstant")
-    fun signUp(): String = "sign_up"
+    suspend fun signUp(model: Model): String {
+        model.addAttribute("instance", getLocalInstanceApplicationService.execute(Unit, Anonymous))
+        return "sign_up"
+    }
 
     @PostMapping("/auth/sign_up")
     suspend fun signUp(@Validated @ModelAttribute signUpForm: SignUpForm, request: HttpServletRequest): String {

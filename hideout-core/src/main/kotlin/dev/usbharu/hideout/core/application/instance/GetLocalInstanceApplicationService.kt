@@ -19,7 +19,7 @@ class GetLocalInstanceApplicationService(
         transaction,
         logger
     ) {
-    var cachedInstance: Instance? = null
+    private var cachedInstance: Instance? = null
 
     override suspend fun internalExecute(command: Unit, principal: Principal): Instance {
         if (cachedInstance != null) {
@@ -28,9 +28,9 @@ class GetLocalInstanceApplicationService(
         }
 
         val instance = (
-            instanceRepository.findByUrl(applicationConfig.url.toURI())
-                ?: throw InternalServerException("Local instance not found.")
-            )
+                instanceRepository.findByUrl(applicationConfig.url.toURI())
+                    ?: throw InternalServerException("Local instance not found.")
+                )
 
         cachedInstance = Instance.of(instance)
         @Suppress("UnsafeCallOnNullableType")
