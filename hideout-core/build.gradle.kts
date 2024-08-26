@@ -74,6 +74,7 @@ val os = org.gradle.nativeplatform.platform.internal
 
 dependencies {
     developmentOnly(libs.h2db)
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
     detektPlugins(libs.detekt.formatting)
 
     implementation(libs.bundles.exposed)
@@ -151,6 +152,12 @@ configurations.matching { it.name == "detekt" }.all {
         }
     }
 }
+
+//tasks{
+//    bootRun {
+//        sourceResources(sourceSets.main.get())
+//    }
+//}
 
 tasks.withType<io.gitlab.arturbosch.detekt.Detekt> {
     exclude("**/generated/**")

@@ -5,6 +5,11 @@ hideout:
     trace-query-exception: true
     trace-query-call: true
 spring:
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: true
   data:
     mongodb:
       auto-index-creation: true
@@ -25,6 +30,8 @@ spring:
       enabled: true
   messages:
     basename: messages.hideout-web-messages
+  thymeleaf:
+    cache: false
 server:
   tomcat:
     basedir: tomcat
