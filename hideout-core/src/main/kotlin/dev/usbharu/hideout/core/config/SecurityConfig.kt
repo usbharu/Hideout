@@ -132,7 +132,6 @@ class SecurityConfig {
 
     @Bean
     fun loadJwkSource(jwkConfig: JwkConfig, applicationConfig: ApplicationConfig): JWKSource<SecurityContext> {
-
         if (jwkConfig.keyId == null) {
             logger.error("hideout.security.jwt.keyId is null.")
         }
@@ -150,7 +149,8 @@ class SecurityConfig {
             jwkConfig.keyId = UUID.randomUUID().toString()
             jwkConfig.publicKey = RsaUtil.encodeRsaPublicKey(generateKeyPair.public as RSAPublicKey)
             jwkConfig.privateKey = RsaUtil.encodeRsaPrivateKey(generateKeyPair.private as RSAPrivateKey)
-            logger.error("""
+            logger.error(
+                """
                 |==============
                 |==============
                 |
@@ -165,9 +165,9 @@ class SecurityConfig {
                 |
                 |==============
                 |==============
-            """.trimMargin())
+                """.trimMargin()
+            )
         }
-
 
         val rsaKey = RSAKey.Builder(RsaUtil.decodeRsaPublicKey(jwkConfig.publicKey!!))
             .privateKey(RsaUtil.decodeRsaPrivateKey(jwkConfig.privateKey!!)).keyID(jwkConfig.keyId).build()
