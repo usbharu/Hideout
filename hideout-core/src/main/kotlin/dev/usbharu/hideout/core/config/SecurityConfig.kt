@@ -23,6 +23,7 @@ import com.nimbusds.jose.jwk.source.JWKSource
 import com.nimbusds.jose.proc.SecurityContext
 import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.HideoutUserDetails
 import dev.usbharu.hideout.util.RsaUtil
+import org.slf4j.LoggerFactory
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -50,6 +51,10 @@ import org.springframework.security.oauth2.server.authorization.token.JwtEncodin
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint
+import java.security.KeyPairGenerator
+import java.security.interfaces.RSAPrivateKey
+import java.security.interfaces.RSAPublicKey
+import java.util.*
 
 @Configuration
 @EnableWebSecurity(debug = false)
@@ -126,17 +131,54 @@ class SecurityConfig {
     }
 
     @Bean
-    fun loadJwkSource(jwkConfig: JwkConfig): JWKSource<SecurityContext> {
-        val rsaKey = RSAKey.Builder(RsaUtil.decodeRsaPublicKey(jwkConfig.publicKey))
-            .privateKey(RsaUtil.decodeRsaPrivateKey(jwkConfig.privateKey)).keyID(jwkConfig.keyId).build()
+    fun loadJwkSource(jwkConfig: JwkConfig, applicationConfig: ApplicationConfig): JWKSource<SecurityContext> {
+        if (jwkConfig.keyId == null) {
+            logger.error("hideout.security.jwt.keyId is null.")
+        }
+        if (jwkConfig.publicKey == null) {
+            logger.error("hideout.security.jwt.publicKey is null.")
+        }
+        if (jwkConfig.privateKey == null) {
+            logger.error("hideout.security.jwt.privateKey is null.")
+        }
+        if (jwkConfig.keyId == null || jwkConfig.publicKey == null || jwkConfig.privateKey == null) {
+            val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
+            keyPairGenerator.initialize(applicationConfig.keySize)
+            val generateKeyPair = keyPairGenerator.generateKeyPair()
+
+            jwkConfig.keyId = UUID.randomUUID().toString()
+            jwkConfig.publicKey = RsaUtil.encodeRsaPublicKey(generateKeyPair.public as RSAPublicKey)
+            jwkConfig.privateKey = RsaUtil.encodeRsaPrivateKey(generateKeyPair.private as RSAPrivateKey)
+            logger.error(
+                """
+                |==============
+                |==============
+                |
+                |**Write the following settings in application.yml**
+                |
+                |hideout:
+                |   security:
+                |       jwt:
+                |           keyId: ${jwkConfig.keyId}
+                |           publicKey: ${jwkConfig.publicKey}
+                |           privateKey: ${jwkConfig.privateKey}
+                |
+                |==============
+                |==============
+                """.trimMargin()
+            )
+        }
+
+        val rsaKey = RSAKey.Builder(RsaUtil.decodeRsaPublicKey(jwkConfig.publicKey!!))
+            .privateKey(RsaUtil.decodeRsaPrivateKey(jwkConfig.privateKey!!)).keyID(jwkConfig.keyId).build()
         return ImmutableJWKSet(JWKSet(rsaKey))
     }
 
     @ConfigurationProperties("hideout.security.jwt")
     data class JwkConfig(
-        val keyId: String,
-        val publicKey: String,
-        val privateKey: String,
+        var keyId: String?,
+        var publicKey: String?,
+        var privateKey: String?,
     )
 
     @Bean
@@ -194,5 +236,9 @@ class SecurityConfig {
         )
 
         return roleHierarchyImpl
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(SecurityConfig::class.java)
     }
 }

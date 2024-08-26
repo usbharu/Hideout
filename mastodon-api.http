@@ -1,0 +1,14 @@
+POST http://{{host}}/api/v1/apps
+Accept: application/json
+Content-Type: application/json
+
+{
+  "client_name": "test-client",
+  "redirect_uris": "https://example.com",
+  "scopes": "write read"
+}
+
+###
+
+GET http://{{host}}/api/v1/accounts/verify_credentials
+Authorization: Bearer {{$auth.token("auth-id")}}
