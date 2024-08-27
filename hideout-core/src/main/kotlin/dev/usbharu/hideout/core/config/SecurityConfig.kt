@@ -87,6 +87,7 @@ class SecurityConfig {
                 authorize(GET, "/auth/sign_up", hasRole("ANONYMOUS"))
                 authorize(POST, "/auth/sign_up", permitAll)
                 authorize(GET, "/users/{username}/posts/{postId}", permitAll)
+                authorize(GET, "/users/{userid}", permitAll)
                 authorize(GET, "/files/*", permitAll)
                 authorize(POST, "/publish", authenticated)
                 authorize(GET, "/publish", authenticated)
