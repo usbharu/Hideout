@@ -10,7 +10,7 @@ swagger = "2.2.23"
 tika = "2.9.2"
 owl = "0.0.1"
 jackson = "2.17.2"
-protobuf = "4.27.4"
+protobuf = "4.28.0"
 grpc-java = "1.66.0"
 grpc-kotlin = "1.4.1"
 
