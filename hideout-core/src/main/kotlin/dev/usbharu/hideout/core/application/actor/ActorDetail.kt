@@ -15,7 +15,7 @@ data class ActorDetail(
     val iconUrl: URI?,
     val bannerURL: URI?,
     val followingCount: Int?,
-    val followersCount: Int?
+    val followersCount: Int?,
 ) {
     companion object {
         fun of(actor: Actor, iconUrl: URI?, bannerURL: URI?): ActorDetail {
@@ -31,7 +31,7 @@ data class ActorDetail(
                 iconUrl = iconUrl,
                 bannerURL = bannerURL,
                 followingCount = actor.followingCount?.relationshipCount,
-                followersCount = actor.followersCount?.relationshipCount
+                followersCount = actor.followersCount?.relationshipCount,
             )
         }
     }
