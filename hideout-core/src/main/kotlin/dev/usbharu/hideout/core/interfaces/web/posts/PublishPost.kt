@@ -4,6 +4,6 @@ data class PublishPost(
     var status: String? = null,
     var overview: String? = null,
     var visibility: String = "PUBLIC",
-    var replyTo: Long? = null,
+    var reply_to: Long? = null,
     var repost: Long? = null
 )

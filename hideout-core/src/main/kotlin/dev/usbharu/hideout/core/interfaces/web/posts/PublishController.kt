@@ -23,7 +23,7 @@ class PublishController(
     private val userRegisterLocalPostApplicationService: RegisterLocalPostApplicationService
 ) {
     @GetMapping("/publish")
-    suspend fun publish(model: Model,@RequestParam replyTo: Long?,@RequestParam repost: Long?): String {
+    suspend fun publish(model: Model, @RequestParam("reply_to") replyTo: Long?, @RequestParam repost: Long?): String {
         val principal = springSecurityFormLoginPrincipalContextHolder.getPrincipal()
 
         if (principal.userDetailId == null) {
@@ -36,7 +36,7 @@ class PublishController(
         val userDetail = getUserDetailApplicationService.execute(GetUserDetail(principal.userDetailId!!.id), principal)
         model.addAttribute("instance", instance)
         model.addAttribute("user", userDetail)
-        model.addAttribute("form", PublishPost(replyTo = replyTo, repost = repost))
+        model.addAttribute("form", PublishPost(reply_to = replyTo, repost = repost))
         return "post-postForm"
     }
 
@@ -52,7 +52,7 @@ class PublishController(
             overview = publishPost.overview,
             visibility = Visibility.valueOf(publishPost.visibility.uppercase()),
             repostId = publishPost.repost,
-            replyId = publishPost.replyTo,
+            replyId = publishPost.reply_to,
             sensitive = false,
             mediaIds = emptyList()
         )

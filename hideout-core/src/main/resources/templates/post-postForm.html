@@ -18,7 +18,7 @@
     <form action="/publish" method="post" th:action="@{/publish}" th:object="${form}">
         <div>
             <label for="status-form-replyto" th:text="#{post-form.new-posts-replyTo}">Reply to</label>
-            <input id="status-form-replyto" name="reply_to" type="number" th:value="${form.replyTo}">
+            <input id="status-form-replyto" name="reply_to" th:value="${form.reply_to}" type="number">
         </div>
         <div>
             <label for="status-form-repost" th:text="#{post-form.new-posts.repost}">Repost</label>

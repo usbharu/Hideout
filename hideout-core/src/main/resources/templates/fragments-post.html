@@ -43,6 +43,7 @@
 
 <div class="post-controller" th:fragment="single-post-controller(post)">
     <!--/*@thymesVar id="post" type="dev.usbharu.hideout.core.application.post.PostDetail"*/-->
+    <a th:href="${'/publish?reply_to=' + post.id}">Reply</a>
     <a th:href="${post.apId}">
         <time th:datetime="${post.createdAt}" th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}"></time>
     </a>
