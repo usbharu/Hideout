@@ -25,9 +25,9 @@ class UserController(
     @GetMapping("/users/{name}")
     suspend fun userById(
         @PathVariable name: String,
-        @RequestParam minId: Long?,
-        @RequestParam maxId: Long?,
-        @RequestParam sinceId: Long?,
+        @RequestParam("min_id") minId: Long?,
+        @RequestParam("max_id") maxId: Long?,
+        @RequestParam("since_id") sinceId: Long?,
         model: Model
     ): String {
         val principal = springSecurityFormLoginPrincipalContextHolder.getPrincipal()

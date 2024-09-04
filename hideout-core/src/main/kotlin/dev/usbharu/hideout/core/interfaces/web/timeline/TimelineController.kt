@@ -22,9 +22,9 @@ class TimelineController(
     @GetMapping("/home")
     suspend fun homeTimeline(
         model: Model,
-        @RequestParam sinceId: String?,
-        @RequestParam maxId: String?,
-        @RequestParam minId: String?
+        @RequestParam("since_id") sinceId: String?,
+        @RequestParam("max_id") maxId: String?,
+        @RequestParam("min_id") minId: String?
     ): String {
         val principal = springSecurityFormLoginPrincipalContextHolder.getPrincipal()
         val userDetail = transaction.transaction {

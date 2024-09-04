@@ -8,7 +8,7 @@
 <th:block th:fragment="simple-timline(timelineObject,href)">
     <!--/*@thymesVar id="timelineObject" type="dev.usbharu.hideout.core.domain.model.support.page.PaginationList<dev.usbharu.hideout.core.application.post.PostDetail,dev.usbharu.hideout.core.domain.model.post.PostId>"*/-->
     <div th:if="${timelineObject.prev != null}">
-        <a th:href="${href + '?minId=' + timelineObject.prev.id}" th:text="#{common.paging-load}">Show more</a>
+        <a th:href="${href + '?min_id=' + timelineObject.prev.id}" th:text="#{common.paging-load}">Show more</a>
     </div>
     <div th:if="${timelineObject.isEmpty()}" th:text="#{common.empty}"></div>
     <div th:each="postDetail : ${timelineObject}">
@@ -16,7 +16,7 @@
         <th:block th:replace="~{fragments-post :: single-post-controller(${postDetail})}"></th:block>
     </div>
     <div th:if="${timelineObject.next != null}">
-        <a th:href="${href + '?maxId=' + timelineObject.next.id}" th:text="#{common.paging-load}">Show more</a>
+        <a th:href="${href + '?max_id=' + timelineObject.next.id}" th:text="#{common.paging-load}">Show more</a>
     </div>
 </th:block>
 </body>
