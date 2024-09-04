@@ -7,8 +7,8 @@
 <body>
 <noscript>
     <div>
-        <img height="150px" th:src="${user.iconUrl}" width="150px">
-        <img height="150px" th:src="${user.bannerURL}" width="600px">
+        <img height="150px" th:src="${user.iconUrl}" width="150px" alt="">
+        <img height="150px" th:src="${user.bannerURL}" width="600px" alt="">
     </div>
     <div>
         <th:block th:if="${user.locked}">

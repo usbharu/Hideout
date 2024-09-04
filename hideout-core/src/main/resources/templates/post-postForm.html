@@ -17,6 +17,14 @@
     </div>
     <form action="/publish" method="post" th:action="@{/publish}" th:object="${form}">
         <div>
+            <label for="status-form-replyto" th:text="#{post-form.new-posts-replyTo}">Reply to</label>
+            <input id="status-form-replyto" name="reply_to" type="number" th:value="${form.replyTo}">
+        </div>
+        <div>
+            <label for="status-form-repost" th:text="#{post-form.new-posts.repost}">Repost</label>
+            <input id="status-form-repost" name="repost" type="number" th:value="${form.repost}">
+        </div>
+        <div>
             <label for="stats-form-overview" th:text="#{post-form.new-posts-cw}"
                    th:title="#{post-form.new-posts-cw-title}"
                    title="Add content warning">CW</label>
@@ -31,13 +39,16 @@
             <fieldset>
                 <legend th:text="#{common.visibility}">Visibility</legend>
                 <label for="status-form-visibility-public" th:text="#{common.visibility-public}">Public</label>
-                <input id="status-form-visibility-public" name="visibility" th:checked="${form.visibility == 'PUBLIC'}" type="radio"
+                <input id="status-form-visibility-public" name="visibility" th:checked="${form.visibility == 'PUBLIC'}"
+                       type="radio"
                        value="PUBLIC">
                 <label for="status-form-visibility-unlisted" th:text="#{common.visibility-unlisted}">Unlisted</label>
-                <input id="status-form-visibility-unlisted" name="visibility" th:checked="${form.visibility == 'UNLISTED'}" type="radio"
+                <input id="status-form-visibility-unlisted" name="visibility"
+                       th:checked="${form.visibility == 'UNLISTED'}" type="radio"
                        value="UNLISTED">
                 <label for="status-form-visibility-followers" th:text="#{common.visibility-followers}">Followers</label>
-                <input id="status-form-visibility-followers" name="visibility" th:checked="${form.visibility == 'FOLLOWERS'}" type="radio"
+                <input id="status-form-visibility-followers" name="visibility"
+                       th:checked="${form.visibility == 'FOLLOWERS'}" type="radio"
                        value="FOLLOWERS">
             </fieldset>
         </div>
