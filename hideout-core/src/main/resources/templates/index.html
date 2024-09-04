@@ -9,6 +9,7 @@
     <th:block th:if="${image != null}">
         <meta property="og:image" th:content="${image}">
     </th:block>
+    <meta http-equiv="refresh" th:content="${'1; url='+nsUrl}">
 </head>
 <body>
 <noscript>

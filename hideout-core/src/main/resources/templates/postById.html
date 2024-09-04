@@ -18,8 +18,8 @@
 
 </head>
 <body>
-<noscript>
-    <th:block th:if=" ${post.reply != null}">
+
+<th:block th:if=" ${post.reply != null}">
         <th:block th:replace="~{fragments-post :: single-simple-post(${post.reply})}"></th:block>
         <hr>
     </th:block>
@@ -40,6 +40,5 @@
         <th:block th:replace="={fragments-post :: single-simple-post(${post.repost})}"></th:block>
         <cite th:text="${post.repost.apId}"></cite>
     </th:block>
-</noscript>
 </body>
 </html>
