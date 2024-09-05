@@ -42,7 +42,8 @@ class GetUserTimelineApplicationService(
                     reply = postDetailMap[it.replyId?.id]
                 )
             },
-            postList.next, postList.prev
+            postList.next,
+            postList.prev
         )
     }
 
