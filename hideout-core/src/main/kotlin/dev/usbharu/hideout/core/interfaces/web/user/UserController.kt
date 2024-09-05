@@ -39,11 +39,13 @@ class UserController(
             actorDetail
         )
         model.addAttribute(
-            "userTimeline", getUserTimelineApplicationService.execute(
+            "userTimeline",
+            getUserTimelineApplicationService.execute(
                 GetUserTimeline(
                     actorDetail.id,
                     Page.of(maxId, sinceId, minId, 20)
-                ), principal
+                ),
+                principal
             )
         )
         return "userById"

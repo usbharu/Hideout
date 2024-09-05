@@ -35,12 +35,15 @@ class GetUserTimelineApplicationService(
 
         val postDetailMap = userTimelineQueryService.findByIdAll(postIdList, principal).associateBy { it.id }
 
-        return PaginationList(postList.mapNotNull {
-            postDetailMap[it.id.id]?.copy(
-                repost = postDetailMap[it.repostId?.id],
-                reply = postDetailMap[it.replyId?.id]
-            )
-        }, postList.next, postList.prev)
+        return PaginationList(
+            postList.mapNotNull {
+                postDetailMap[it.id.id]?.copy(
+                    repost = postDetailMap[it.repostId?.id],
+                    reply = postDetailMap[it.replyId?.id]
+                )
+            },
+            postList.next, postList.prev
+        )
     }
 
     companion object {

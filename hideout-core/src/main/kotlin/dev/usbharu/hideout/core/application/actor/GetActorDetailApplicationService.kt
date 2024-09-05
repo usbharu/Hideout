@@ -18,14 +18,14 @@ class GetActorDetailApplicationService(
     transaction: Transaction
 ) :
     AbstractApplicationService<GetActorDetail, ActorDetail>(
-        transaction, logger
+        transaction,
+        logger
     ) {
     override suspend fun internalExecute(command: GetActorDetail, principal: Principal): ActorDetail {
         val actor = if (command.id != null) {
             actorRepository.findById(ActorId(command.id))
                 ?: throw IllegalArgumentException("Actor ${command.id} not found.")
         } else if (command.actorName != null) {
-
             val host = if (command.actorName.host.isEmpty()) {
                 applicationConfig.url.host
             } else {

@@ -11,7 +11,6 @@ import org.springframework.web.servlet.ModelAndView
 class SPAInterceptor : HandlerInterceptor {
 
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
-
         if (request.getParameter("s") == "f") {
             request.session.setAttribute("s", "f")
         } else if (request.getParameter("s") == "t") {
