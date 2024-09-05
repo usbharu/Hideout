@@ -97,6 +97,12 @@ class SecurityConfig {
             }
             formLogin {
                 loginPage = "/auth/sign_in"
+                loginProcessingUrl = "/login"
+                defaultSuccessUrl("/home", false)
+            }
+            logout {
+                logoutUrl = "/auth/sign_out"
+                logoutSuccessUrl = "/auth/sign_in"
             }
         }
         return http.build()

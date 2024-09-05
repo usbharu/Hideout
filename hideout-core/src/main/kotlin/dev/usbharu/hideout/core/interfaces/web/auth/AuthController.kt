@@ -19,6 +19,7 @@ package dev.usbharu.hideout.core.interfaces.web.auth
 import dev.usbharu.hideout.core.application.actor.RegisterLocalActor
 import dev.usbharu.hideout.core.application.actor.RegisterLocalActorApplicationService
 import dev.usbharu.hideout.core.application.instance.GetLocalInstanceApplicationService
+import dev.usbharu.hideout.core.config.ApplicationConfig
 import dev.usbharu.hideout.core.domain.model.support.principal.Anonymous
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.stereotype.Controller
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.PostMapping
 
 @Controller
 class AuthController(
+    private val applicationConfig: ApplicationConfig,
     private val registerLocalActorApplicationService: RegisterLocalActorApplicationService,
     private val getLocalInstanceApplicationService: GetLocalInstanceApplicationService,
 ) {
@@ -49,5 +51,16 @@ class AuthController(
         )
         request.login(signUpForm.username, signUpForm.password)
         return "redirect:$uri"
+    }
+
+    @GetMapping("/auth/sign_in")
+    suspend fun signIn(model: Model): String {
+        model.addAttribute("applicationConfig", applicationConfig)
+        return "sign_in"
+    }
+
+    @GetMapping("/auth/sign_out")
+    fun signOut(): String {
+        return "sign_out"
     }
 }

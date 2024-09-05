@@ -1,21 +1,15 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head prefix="og: http://ogp.me/ns#">
+<head>
     <meta charset="UTF-8">
     <title th:title="${title}">Index</title>
     <meta property="og:url" th:content="${url}">
     <meta property="og:title" th:content="${title}">
     <meta property="og:description" th:content="${description}">
-    <th:block th:if="${image != null}">
-        <meta property="og:image" th:content="${image}">
-    </th:block>
-    <noscript>
-        <meta http-equiv="refresh" th:content="${'1; url='+nsUrl}">
-    </noscript>
+    <meta property="og:image" th:content="${image}">
 </head>
 <body>
-<noscript>
-    <a th:href="${nsUrl}">No Script</a>
-</noscript>
+<h1 th:text="${applicationConfig.url + ' - Hideout'}">Hideout</h1>
+<div><a href="/auth/sign_up"></a></div>
 </body>
 </html>
