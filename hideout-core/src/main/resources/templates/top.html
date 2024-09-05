@@ -9,7 +9,8 @@
     <meta property="og:image" th:content="${image}">
 </head>
 <body>
-<h1 th:text="${applicationConfig.url + ' - Hideout'}">Hideout</h1>
-<div><a href="/auth/sign_up"></a></div>
+<h1 th:text="${instance.name + ' - Hideout'}">Hideout</h1>
+<div><a href="/auth/sign_up" th:unless="${applicationConfig.private}">Sign up</a> <a href="/auth/sign_in">Sign in</a>
+</div>
 </body>
 </html>
