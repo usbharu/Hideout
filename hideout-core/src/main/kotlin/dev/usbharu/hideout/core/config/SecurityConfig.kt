@@ -68,7 +68,7 @@ class SecurityConfig {
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http)
         http {
             exceptionHandling {
-                authenticationEntryPoint = LoginUrlAuthenticationEntryPoint("/login")
+                authenticationEntryPoint = LoginUrlAuthenticationEntryPoint("/auth/sign_in")
             }
         }
         return http.build()
@@ -80,7 +80,7 @@ class SecurityConfig {
         http {
             authorizeHttpRequests {
                 authorize("/error", permitAll)
-                authorize("/login", permitAll)
+                authorize("/auth/sign_in", permitAll)
                 authorize(GET, "/.well-known/**", permitAll)
                 authorize(GET, "/nodeinfo/2.0", permitAll)
 
@@ -91,10 +91,12 @@ class SecurityConfig {
                 authorize(GET, "/files/*", permitAll)
                 authorize(POST, "/publish", authenticated)
                 authorize(GET, "/publish", authenticated)
+                authorize(GET, "/", permitAll)
 
                 authorize(anyRequest, authenticated)
             }
             formLogin {
+                loginPage = "/auth/sign_in"
             }
         }
         return http.build()
