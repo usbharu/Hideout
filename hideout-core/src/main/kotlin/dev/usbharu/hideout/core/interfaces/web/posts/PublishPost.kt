@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.core.interfaces.web.posts
 
+@Suppress("ConstructorParameterNaming")
 data class PublishPost(
     var status: String? = null,
     var overview: String? = null,

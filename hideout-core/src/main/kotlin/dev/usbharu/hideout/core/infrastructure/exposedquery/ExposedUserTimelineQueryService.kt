@@ -17,6 +17,9 @@ import java.net.URI
 @Repository
 class ExposedUserTimelineQueryService : UserTimelineQueryService, AbstractRepository() {
 
+    override val logger: Logger
+        get() = Companion.logger
+
     protected fun authorizedQuery(principal: Principal? = null): QueryAlias {
         if (principal == null) {
             return Posts
@@ -73,8 +76,8 @@ class ExposedUserTimelineQueryService : UserTimelineQueryService, AbstractReposi
 
     private fun toPostDetail(it: ResultRow, authorizedQuery: QueryAlias, iconMedia: Alias<Media>): PostDetail {
         return PostDetail(
-            it[authorizedQuery[Posts.id]],
-            ActorDetail(
+            id = it[authorizedQuery[Posts.id]],
+            actor = ActorDetail(
                 actorId = it[authorizedQuery[Posts.actorId]],
                 instanceId = it[Actors.instance],
                 name = it[Actors.name],
@@ -100,9 +103,6 @@ class ExposedUserTimelineQueryService : UserTimelineQueryService, AbstractReposi
             moveTo = null
         )
     }
-
-    override val logger: Logger
-        get() = Companion.logger
 
     companion object {
         private val logger = LoggerFactory.getLogger(ExposedUserTimelineQueryService::class.java)

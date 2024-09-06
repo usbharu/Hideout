@@ -22,7 +22,5 @@ class MessageSourceConfig {
     @Bean
     @Profile("dev")
     @ConfigurationProperties(prefix = "spring.messages")
-    fun messageSourceProperties(): MessageSourceProperties {
-        return MessageSourceProperties()
-    }
+    fun messageSourceProperties(): MessageSourceProperties = MessageSourceProperties()
 }

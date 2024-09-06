@@ -140,6 +140,7 @@ class SecurityConfig {
     }
 
     @Bean
+    @Suppress("UnsafeCallOnNullableType")
     fun loadJwkSource(jwkConfig: JwkConfig, applicationConfig: ApplicationConfig): JWKSource<SecurityContext> {
         if (jwkConfig.keyId == null) {
             logger.error("hideout.security.jwt.keyId is null.")

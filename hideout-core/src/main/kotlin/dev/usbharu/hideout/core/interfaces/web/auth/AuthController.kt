@@ -60,7 +60,6 @@ class AuthController(
     }
 
     @GetMapping("/auth/sign_out")
-    fun signOut(): String {
-        return "sign_out"
-    }
+    @Suppress("FunctionOnlyReturningConstant")
+    fun signOut(): String = "sign_out"
 }
