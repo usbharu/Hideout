@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<html lang="ja" th:replace="~{layout::layout(${ogp}, ~{::#content})}" xmlns:th="http://www.thymeleaf.org">
 <head prefix="og: http://ogp.me/ns#">
     <meta charset="UTF-8">
     <title th:text="#{post-form.new-posts}">New Posts!</title>
@@ -7,6 +7,7 @@
     <meta property="og:title" th:content="#{post-form.new-posts}">
 </head>
 <body>
+<div id="content">
 
     <div>
         <img alt="" height="80px" src="" th:src="${user.iconUrl}" width="80px">
@@ -56,5 +57,6 @@
         </div>
     </form>
 
+</div>
 </body>
 </html>

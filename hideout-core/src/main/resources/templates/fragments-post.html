@@ -11,7 +11,8 @@
     <!--/*@thymesVar id="post" type="dev.usbharu.hideout.core.application.post.PostDetail"*/-->
     <img alt="" height="80px" src="" th:src="${post.actor.icon}" width="80px">
     <div style="display: inline-block">
-        <p th:text="${post.actor.screenName}+'('+${post.actor.name}+'@'+${post.actor.domain}+')'"></p>
+        <a th:href="${post.actor.url}"
+           th:text="${post.actor.screenName}+'(@'+${post.actor.name}+'@'+${post.actor.domain}+')'"></a>
     </div>
 
     <div th:utext="${post.content}">

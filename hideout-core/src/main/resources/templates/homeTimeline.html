@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" th:replace="~{layout::layout(${ogp}, ~{::#content})}" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
-<div th:replace="~{fragments-timeline :: simple-timline(${timeline},'/home')}"></div>
+<div id="content" th:replace="~{fragments-timeline :: simple-timline(${timeline},'/home')}"></div>
 </body>
 </html>

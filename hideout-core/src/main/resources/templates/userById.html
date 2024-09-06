@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" th:replace="~{layout::layout(${ogp}, ~{::#content})}" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text="#{user-by-id.title(${user.screenName},${instance.name})}">User - hideout</title>
+    <title>User - hideout</title>
 </head>
 <body>
+<div id="content">
 <div>
     <img alt="" height="150px" th:src="${user.iconUrl}" width="150px">
     <img alt="" height="150px" th:src="${user.bannerURL}" width="600px">
@@ -17,7 +18,7 @@
     <th:block th:if="!${user.locked}">
         <h2 th:text="${user.screenName}"></h2>
     </th:block>
-    <p th:text="${user.name} + '@' + ${user.host}"></p>
+    <p th:text="'@'+${user.name} + '@' + ${user.host}"></p>
 </div>
 <div>
     <p th:text="${user.description}"></p>
@@ -30,5 +31,7 @@
         Followers</p>
 </div>
 <div th:replace="~{fragments-timeline :: simple-timline(${userTimeline},'/users/'+${user.name}+'@'+${user.host})}"></div>
+
+</div>
 </body>
 </html>
