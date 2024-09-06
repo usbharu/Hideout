@@ -19,7 +19,7 @@ class ExposedTimelineRelationshipRepository : AbstractRepository(), TimelineRela
 
     override suspend fun save(timelineRelationship: TimelineRelationship): TimelineRelationship {
         query {
-            TimelineRelationships.insert {
+            TimelineRelationships.upsert {
                 it[id] = timelineRelationship.id.value
                 it[timelineId] = timelineRelationship.timelineId.value
                 it[actorId] = timelineRelationship.actorId.id

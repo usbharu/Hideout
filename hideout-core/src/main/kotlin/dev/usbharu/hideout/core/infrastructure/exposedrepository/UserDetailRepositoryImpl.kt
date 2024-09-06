@@ -41,26 +41,15 @@ class UserDetailRepositoryImpl(override val domainEventPublisher: DomainEventPub
 
     override suspend fun save(userDetail: UserDetail): UserDetail {
         val userDetail1 = query {
-            val singleOrNull =
-                UserDetails.selectAll().where { UserDetails.id eq userDetail.id.id }.forUpdate().singleOrNull()
-            if (singleOrNull == null) {
-                UserDetails.insert {
-                    it[id] = userDetail.id.id
-                    it[actorId] = userDetail.actorId.id
-                    it[password] = userDetail.password.password
-                    it[autoAcceptFolloweeFollowRequest] = userDetail.autoAcceptFolloweeFollowRequest
-                    it[lastMigration] = userDetail.lastMigration
-                    it[homeTimelineId] = userDetail.homeTimelineId?.value
-                }
-            } else {
-                UserDetails.update({ UserDetails.id eq userDetail.id.id }) {
-                    it[actorId] = userDetail.actorId.id
-                    it[password] = userDetail.password.password
-                    it[autoAcceptFolloweeFollowRequest] = userDetail.autoAcceptFolloweeFollowRequest
-                    it[lastMigration] = userDetail.lastMigration
-                    it[homeTimelineId] = userDetail.homeTimelineId?.value
-                }
+            UserDetails.upsert {
+                it[id] = userDetail.id.id
+                it[actorId] = userDetail.actorId.id
+                it[password] = userDetail.password.password
+                it[autoAcceptFolloweeFollowRequest] = userDetail.autoAcceptFolloweeFollowRequest
+                it[lastMigration] = userDetail.lastMigration
+                it[homeTimelineId] = userDetail.homeTimelineId?.value
             }
+
             onComplete {
                 update(userDetail)
             }

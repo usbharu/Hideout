@@ -33,36 +33,21 @@ class InstanceRepositoryImpl : InstanceRepository,
         get() = Companion.logger
 
     override suspend fun save(instance: InstanceEntity): InstanceEntity = query {
-        if (Instance.selectAll().where { Instance.id.eq(instance.id.instanceId) }.forUpdate().empty()) {
-            Instance.insert {
-                it[id] = instance.id.instanceId
-                it[name] = instance.name.name
-                it[description] = instance.description.description
-                it[url] = instance.url.toString()
-                it[iconUrl] = instance.iconUrl.toString()
-                it[sharedInbox] = instance.sharedInbox?.toString()
-                it[software] = instance.software.software
-                it[version] = instance.version.version
-                it[isBlocked] = instance.isBlocked
-                it[isMuted] = instance.isMuted
-                it[moderationNote] = instance.moderationNote.note
-                it[createdAt] = instance.createdAt
-            }
-        } else {
-            Instance.update({ Instance.id eq instance.id.instanceId }) {
-                it[name] = instance.name.name
-                it[description] = instance.description.description
-                it[url] = instance.url.toString()
-                it[iconUrl] = instance.iconUrl.toString()
-                it[sharedInbox] = instance.sharedInbox?.toString()
-                it[software] = instance.software.software
-                it[version] = instance.version.version
-                it[isBlocked] = instance.isBlocked
-                it[isMuted] = instance.isMuted
-                it[moderationNote] = instance.moderationNote.note
-                it[createdAt] = instance.createdAt
-            }
+        Instance.upsert {
+            it[id] = instance.id.instanceId
+            it[name] = instance.name.name
+            it[description] = instance.description.description
+            it[url] = instance.url.toString()
+            it[iconUrl] = instance.iconUrl.toString()
+            it[sharedInbox] = instance.sharedInbox?.toString()
+            it[software] = instance.software.software
+            it[version] = instance.version.version
+            it[isBlocked] = instance.isBlocked
+            it[isMuted] = instance.isMuted
+            it[moderationNote] = instance.moderationNote.note
+            it[createdAt] = instance.createdAt
         }
+
         return@query instance
     }
 
