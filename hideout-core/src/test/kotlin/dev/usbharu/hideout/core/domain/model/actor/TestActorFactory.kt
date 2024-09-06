@@ -2,6 +2,7 @@ package dev.usbharu.hideout.core.domain.model.actor
 
 import dev.usbharu.hideout.core.domain.model.emoji.EmojiId
 import dev.usbharu.hideout.core.domain.model.instance.InstanceId
+import dev.usbharu.hideout.core.domain.model.media.MediaId
 import dev.usbharu.hideout.core.domain.model.support.domain.Domain
 import dev.usbharu.hideout.core.infrastructure.other.TwitterSnowflakeIdGenerateService
 import kotlinx.coroutines.runBlocking
@@ -37,7 +38,8 @@ object TestActorFactory {
         moveTo: Long? = null,
         emojiIds: Set<EmojiId> = emptySet(),
         deleted: Boolean = false,
-        roles: Set<Role> = emptySet(),
+        icon: Long? = null,
+        banner: Long? = null
     ): Actor {
         return runBlocking {
             Actor(
@@ -66,8 +68,8 @@ object TestActorFactory {
                 moveTo = moveTo?.let { ActorId(it) },
                 emojiIds = emojiIds,
                 deleted = deleted,
-                icon = null,
-                banner = null,
+                icon = icon?.let { MediaId(it) },
+                banner = banner?.let { MediaId(it) },
 
             )
         }
