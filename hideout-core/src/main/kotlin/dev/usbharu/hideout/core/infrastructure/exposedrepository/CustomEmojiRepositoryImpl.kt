@@ -37,27 +37,14 @@ class CustomEmojiRepositoryImpl : CustomEmojiRepository,
         get() = Companion.logger
 
     override suspend fun save(customEmoji: CustomEmoji): CustomEmoji = query {
-        val singleOrNull =
-            CustomEmojis.selectAll().where { CustomEmojis.id eq customEmoji.id.emojiId }.forUpdate().singleOrNull()
-        if (singleOrNull == null) {
-            CustomEmojis.insert {
-                it[id] = customEmoji.id.emojiId
-                it[name] = customEmoji.name
-                it[domain] = customEmoji.domain.domain
-                it[instanceId] = customEmoji.instanceId.instanceId
-                it[url] = customEmoji.url.toString()
-                it[category] = customEmoji.category
-                it[createdAt] = customEmoji.createdAt
-            }
-        } else {
-            CustomEmojis.update({ CustomEmojis.id eq customEmoji.id.emojiId }) {
-                it[name] = customEmoji.name
-                it[domain] = customEmoji.domain.domain
-                it[instanceId] = customEmoji.instanceId.instanceId
-                it[url] = customEmoji.url.toString()
-                it[category] = customEmoji.category
-                it[createdAt] = customEmoji.createdAt
-            }
+        CustomEmojis.upsert {
+            it[id] = customEmoji.id.emojiId
+            it[name] = customEmoji.name
+            it[domain] = customEmoji.domain.domain
+            it[instanceId] = customEmoji.instanceId.instanceId
+            it[url] = customEmoji.url.toString()
+            it[category] = customEmoji.category
+            it[createdAt] = customEmoji.createdAt
         }
         return@query customEmoji
     }

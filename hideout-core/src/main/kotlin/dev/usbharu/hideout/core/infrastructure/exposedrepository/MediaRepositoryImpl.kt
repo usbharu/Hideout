@@ -31,6 +31,22 @@ class MediaRepositoryImpl : MediaRepository, AbstractRepository() {
     override val logger: Logger
         get() = Companion.logger
 
+    override suspend fun save(media: EntityMedia): EntityMedia = query {
+        Media.upsert {
+            it[id] = media.id.id
+            it[name] = media.name.name
+            it[url] = media.url.toString()
+            it[remoteUrl] = media.remoteUrl?.toString()
+            it[thumbnailUrl] = media.thumbnailUrl?.toString()
+            it[type] = media.type.name
+            it[blurhash] = media.blurHash?.hash
+            it[mimeType] = media.mimeType.type + "/" + media.mimeType.subtype
+            it[description] = media.description?.description
+            it[actorId] = media.actorId.id
+        }
+        return@query media
+    }
+
     override suspend fun findById(id: MediaId): dev.usbharu.hideout.core.domain.model.media.Media? {
         return query {
             return@query Media
@@ -53,37 +69,6 @@ class MediaRepositoryImpl : MediaRepository, AbstractRepository() {
         Media.deleteWhere {
             id eq id
         }
-    }
-
-    override suspend fun save(media: EntityMedia): EntityMedia = query {
-        if (Media.selectAll().where { Media.id eq media.id.id }.forUpdate().singleOrNull() != null
-        ) {
-            Media.update({ Media.id eq media.id.id }) {
-                it[name] = media.name.name
-                it[url] = media.url.toString()
-                it[remoteUrl] = media.remoteUrl?.toString()
-                it[thumbnailUrl] = media.thumbnailUrl?.toString()
-                it[type] = media.type.name
-                it[blurhash] = media.blurHash?.hash
-                it[mimeType] = media.mimeType.type + "/" + media.mimeType.subtype
-                it[description] = media.description?.description
-                it[actorId] = media.actorId.id
-            }
-        } else {
-            Media.insert {
-                it[id] = media.id.id
-                it[name] = media.name.name
-                it[url] = media.url.toString()
-                it[remoteUrl] = media.remoteUrl?.toString()
-                it[thumbnailUrl] = media.thumbnailUrl?.toString()
-                it[type] = media.type.name
-                it[blurhash] = media.blurHash?.hash
-                it[mimeType] = media.mimeType.type + "/" + media.mimeType.subtype
-                it[description] = media.description?.description
-                it[actorId] = media.actorId.id
-            }
-        }
-        return@query media
     }
 
     companion object {
