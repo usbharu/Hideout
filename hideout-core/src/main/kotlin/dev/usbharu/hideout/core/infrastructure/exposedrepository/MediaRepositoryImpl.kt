@@ -71,7 +71,6 @@ class MediaRepositoryImpl : MediaRepository, AbstractRepository() {
         }
     }
 
-
     companion object {
         private val logger = LoggerFactory.getLogger(MediaRepositoryImpl::class.java)
     }
