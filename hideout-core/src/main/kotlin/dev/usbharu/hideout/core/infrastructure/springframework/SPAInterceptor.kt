@@ -25,6 +25,10 @@ class SPAInterceptor : HandlerInterceptor {
         handler: Any,
         modelAndView: ModelAndView?
     ) {
+        if (modelAndView?.viewName == "error") {
+            return
+        }
+
         if (request.session.getAttribute("s") == "f") {
             return
         }
