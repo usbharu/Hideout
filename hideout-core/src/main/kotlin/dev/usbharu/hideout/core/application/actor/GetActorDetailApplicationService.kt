@@ -26,10 +26,8 @@ class GetActorDetailApplicationService(
             actorRepository.findById(ActorId(command.id))
                 ?: throw IllegalArgumentException("Actor ${command.id} not found.")
         } else if (command.actorName != null) {
-            val host = if (command.actorName.host.isEmpty()) {
+            val host = command.actorName.host.ifEmpty {
                 applicationConfig.url.host
-            } else {
-                command.actorName.host
             }
             actorRepository.findByNameAndDomain(command.actorName.userpart, host)
                 ?: throw IllegalArgumentException("Actor ${command.actorName} not found.")
