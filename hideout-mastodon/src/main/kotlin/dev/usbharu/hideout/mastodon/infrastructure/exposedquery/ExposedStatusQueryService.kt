@@ -16,9 +16,8 @@
 
 package dev.usbharu.hideout.mastodon.infrastructure.exposedquery
 
-import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.emoji.CustomEmoji
-import dev.usbharu.hideout.core.domain.model.media.*
+import dev.usbharu.hideout.core.domain.model.media.FileType
 import dev.usbharu.hideout.core.domain.model.post.Visibility
 import dev.usbharu.hideout.core.domain.model.support.principal.Principal
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.*
@@ -30,7 +29,6 @@ import dev.usbharu.hideout.mastodon.query.StatusQuery
 import dev.usbharu.hideout.mastodon.query.StatusQueryService
 import org.jetbrains.exposed.sql.*
 import org.springframework.stereotype.Repository
-import java.net.URI
 import dev.usbharu.hideout.core.domain.model.media.Media as EntityMedia
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.CustomEmoji as MastodonEmoji
 
@@ -273,40 +271,6 @@ private fun toStatus(it: ResultRow, queryAlias: QueryAlias, inReplyToAlias: Alia
     text = it[queryAlias[Posts.text]],
     editedAt = null
 )
-
-fun ResultRow.toMedia(): EntityMedia {
-    val fileType = FileType.valueOf(this[Media.type])
-    val mimeType = this[Media.mimeType]
-    return EntityMedia(
-        id = MediaId(this[Media.id]),
-        name = MediaName(this[Media.name]),
-        url = URI.create(this[Media.url]),
-        remoteUrl = this[Media.remoteUrl]?.let { URI.create(it) },
-        thumbnailUrl = this[Media.thumbnailUrl]?.let { URI.create(it) },
-        type = fileType,
-        blurHash = this[Media.blurhash]?.let { MediaBlurHash(it) },
-        mimeType = MimeType(mimeType.substringBefore("/"), mimeType.substringAfter("/"), fileType),
-        description = this[Media.description]?.let { MediaDescription(it) },
-        actorId = ActorId(this[Media.actorId])
-    )
-}
-
-fun ResultRow.toMediaOrNull(): EntityMedia? {
-    val fileType = FileType.valueOf(this.getOrNull(Media.type) ?: return null)
-    val mimeType = this.getOrNull(Media.mimeType) ?: return null
-    return EntityMedia(
-        id = MediaId(this.getOrNull(Media.id) ?: return null),
-        name = MediaName(this.getOrNull(Media.name) ?: return null),
-        url = URI.create(this.getOrNull(Media.url) ?: return null),
-        remoteUrl = this[Media.remoteUrl]?.let { URI.create(it) },
-        thumbnailUrl = this[Media.thumbnailUrl]?.let { URI.create(it) },
-        type = FileType.valueOf(this[Media.type]),
-        blurHash = this[Media.blurhash]?.let { MediaBlurHash(it) },
-        mimeType = MimeType(mimeType.substringBefore("/"), mimeType.substringAfter("/"), fileType),
-        description = this[Media.description]?.let { MediaDescription(it) },
-        actorId = ActorId(this[Media.actorId])
-    )
-}
 
 fun EntityMedia.toMediaAttachments(): MediaAttachment = MediaAttachment(
     id = id.id.toString(),

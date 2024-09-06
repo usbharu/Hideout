@@ -211,17 +211,38 @@ class ExposedPostRepository(
         visibilityList: List<Visibility>,
         of: Page?
     ): PaginationList<Post, PostId> {
+        val postList = query {
+            val query = Posts
+                .selectAll()
+                .where {
+                    Posts.actorId eq actorId.id and (visibility inList visibilityList.map { it.name })
+                }
+
+            if (of?.minId != null) {
+                query.orderBy(Posts.createdAt, SortOrder.ASC)
+                of.minId?.let { query.andWhere { Posts.id greater it } }
+                of.maxId?.let { query.andWhere { Posts.id less it } }
+            } else {
+                query.orderBy(Posts.createdAt, SortOrder.DESC)
+                of?.sinceId?.let { query.andWhere { Posts.id greater it } }
+                of?.maxId?.let { query.andWhere { Posts.id less it } }
+            }
+
+            of?.limit?.let { query.limit(it) }
+
+            query.let(postQueryMapper::map)
+        }
+
+        val posts = if (of?.minId != null) {
+            postList.reversed()
+        } else {
+            postList
+        }
+
         return PaginationList(
-            query {
-                Posts
-                    .selectAll()
-                    .where {
-                        Posts.actorId eq actorId.id and (visibility inList visibilityList.map { it.name })
-                    }
-                    .let(postQueryMapper::map)
-            },
-            null,
-            null
+            posts,
+            posts.lastOrNull()?.id,
+            posts.firstOrNull()?.id
         )
     }
 

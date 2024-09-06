@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:title="${title}">Index</title>
+    <meta property="og:url" th:content="${url}">
+    <meta property="og:title" th:content="${title}">
+    <meta property="og:description" th:content="${description}">
+    <meta property="og:image" th:content="${image}">
+</head>
+<body>
+<h1 th:text="${instance.name + ' - Hideout'}">Hideout</h1>
+<div><a href="/auth/sign_up" th:unless="${applicationConfig.private}">Sign up</a> <a href="/auth/sign_in">Sign in</a>
+</div>
+</body>
+</html>

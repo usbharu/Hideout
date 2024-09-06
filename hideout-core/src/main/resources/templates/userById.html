@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" th:replace="~{layout::layout(${ogp}, ~{::#content})}" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User - hideout</title>
+</head>
+<body>
+<div id="content">
+<div>
+    <img alt="" height="150px" th:src="${user.iconUrl}" width="150px">
+    <img alt="" height="150px" th:src="${user.bannerURL}" width="600px">
+</div>
+<div>
+    <th:block th:if="${user.locked}">
+        <h2 th:text="${user.screenName} + '(private)'"></h2>
+    </th:block>
+
+    <th:block th:if="!${user.locked}">
+        <h2 th:text="${user.screenName}"></h2>
+    </th:block>
+    <p th:text="'@'+${user.name} + '@' + ${user.host}"></p>
+</div>
+<div>
+    <p th:text="${user.description}"></p>
+</div>
+<div>
+    <p th:if="user.postsCount != null" th:text="#{user-by-id.postsCount(${user.postsCount})}">0 Posts</p>
+    <p th:if="user.followingCount != null" th:text="#{user-by-id.followingCount(${user.followingCount})}">0
+        Following</p>
+    <p th:if="user.followersCount != null" th:text="#{user-by-id.followersCount(${user.followersCount})}">0
+        Followers</p>
+</div>
+<div th:replace="~{fragments-timeline :: simple-timline(${userTimeline},'/users/'+${user.name}+'@'+${user.host})}"></div>
+
+</div>
+</body>
+</html>

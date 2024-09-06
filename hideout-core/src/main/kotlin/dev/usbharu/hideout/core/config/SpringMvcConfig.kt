@@ -16,19 +16,28 @@
 
 package dev.usbharu.hideout.core.config
 
+import dev.usbharu.hideout.core.infrastructure.springframework.SPAInterceptor
 import dev.usbharu.hideout.generate.JsonOrFormModelMethodProcessor
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.web.method.support.HandlerMethodArgumentResolver
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor
 import org.springframework.web.servlet.mvc.method.annotation.ServletModelAttributeMethodProcessor
 
 @Configuration
-class MvcConfigurer(private val jsonOrFormModelMethodProcessor: JsonOrFormModelMethodProcessor) : WebMvcConfigurer {
+class MvcConfigurer(
+    private val jsonOrFormModelMethodProcessor: JsonOrFormModelMethodProcessor,
+    private val spaInterceptor: SPAInterceptor
+) : WebMvcConfigurer {
     override fun addArgumentResolvers(resolvers: MutableList<HandlerMethodArgumentResolver>) {
         resolvers.add(jsonOrFormModelMethodProcessor)
+    }
+
+    override fun addInterceptors(registry: InterceptorRegistry) {
+        registry.addInterceptor(spaInterceptor)
     }
 }
 

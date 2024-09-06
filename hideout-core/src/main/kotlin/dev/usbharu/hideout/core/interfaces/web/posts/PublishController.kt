@@ -13,6 +13,7 @@ import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestParam
 
 @Controller
 class PublishController(
@@ -22,7 +23,7 @@ class PublishController(
     private val userRegisterLocalPostApplicationService: RegisterLocalPostApplicationService
 ) {
     @GetMapping("/publish")
-    suspend fun publish(model: Model): String {
+    suspend fun publish(model: Model, @RequestParam("reply_to") replyTo: Long?, @RequestParam repost: Long?): String {
         val principal = springSecurityFormLoginPrincipalContextHolder.getPrincipal()
 
         if (principal.userDetailId == null) {
@@ -35,7 +36,7 @@ class PublishController(
         val userDetail = getUserDetailApplicationService.execute(GetUserDetail(principal.userDetailId!!.id), principal)
         model.addAttribute("instance", instance)
         model.addAttribute("user", userDetail)
-        model.addAttribute("form", PublishPost())
+        model.addAttribute("form", PublishPost(reply_to = replyTo, repost = repost))
         return "post-postForm"
     }
 
@@ -50,8 +51,8 @@ class PublishController(
             content = publishPost.status.orEmpty(),
             overview = publishPost.overview,
             visibility = Visibility.valueOf(publishPost.visibility.uppercase()),
-            repostId = null,
-            replyId = null,
+            repostId = publishPost.repost,
+            replyId = publishPost.reply_to,
             sensitive = false,
             mediaIds = emptyList()
         )

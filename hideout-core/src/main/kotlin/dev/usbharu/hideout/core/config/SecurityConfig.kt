@@ -68,7 +68,7 @@ class SecurityConfig {
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http)
         http {
             exceptionHandling {
-                authenticationEntryPoint = LoginUrlAuthenticationEntryPoint("/login")
+                authenticationEntryPoint = LoginUrlAuthenticationEntryPoint("/auth/sign_in")
             }
         }
         return http.build()
@@ -80,20 +80,29 @@ class SecurityConfig {
         http {
             authorizeHttpRequests {
                 authorize("/error", permitAll)
-                authorize("/login", permitAll)
+                authorize("/auth/sign_in", permitAll)
                 authorize(GET, "/.well-known/**", permitAll)
                 authorize(GET, "/nodeinfo/2.0", permitAll)
 
                 authorize(GET, "/auth/sign_up", hasRole("ANONYMOUS"))
                 authorize(POST, "/auth/sign_up", permitAll)
                 authorize(GET, "/users/{username}/posts/{postId}", permitAll)
+                authorize(GET, "/users/{userid}", permitAll)
                 authorize(GET, "/files/*", permitAll)
                 authorize(POST, "/publish", authenticated)
                 authorize(GET, "/publish", authenticated)
+                authorize(GET, "/", permitAll)
 
                 authorize(anyRequest, authenticated)
             }
             formLogin {
+                loginPage = "/auth/sign_in"
+                loginProcessingUrl = "/login"
+                defaultSuccessUrl("/home", false)
+            }
+            logout {
+                logoutUrl = "/auth/sign_out"
+                logoutSuccessUrl = "/auth/sign_in"
             }
         }
         return http.build()
@@ -131,6 +140,7 @@ class SecurityConfig {
     }
 
     @Bean
+    @Suppress("UnsafeCallOnNullableType")
     fun loadJwkSource(jwkConfig: JwkConfig, applicationConfig: ApplicationConfig): JWKSource<SecurityContext> {
         if (jwkConfig.keyId == null) {
             logger.error("hideout.security.jwt.keyId is null.")

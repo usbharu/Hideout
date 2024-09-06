@@ -108,6 +108,23 @@ fun ResultRow.toMedia(): EntityMedia {
     )
 }
 
+fun ResultRow.toMediaOrNull(): EntityMedia? {
+    val fileType = FileType.valueOf(this.getOrNull(Media.type) ?: return null)
+    val mimeType = this.getOrNull(Media.mimeType) ?: return null
+    return EntityMedia(
+        id = MediaId(this.getOrNull(Media.id) ?: return null),
+        name = MediaName(this.getOrNull(Media.name) ?: return null),
+        url = URI.create(this.getOrNull(Media.url) ?: return null),
+        remoteUrl = this[Media.remoteUrl]?.let { URI.create(it) },
+        thumbnailUrl = this[Media.thumbnailUrl]?.let { URI.create(it) },
+        type = FileType.valueOf(this[Media.type]),
+        blurHash = this[Media.blurhash]?.let { MediaBlurHash(it) },
+        mimeType = MimeType(mimeType.substringBefore("/"), mimeType.substringAfter("/"), fileType),
+        description = this[Media.description]?.let { MediaDescription(it) },
+        actorId = ActorId(this[Media.actorId])
+    )
+}
+
 object Media : Table("media") {
     val id = long("id")
     val name = varchar("name", 255)

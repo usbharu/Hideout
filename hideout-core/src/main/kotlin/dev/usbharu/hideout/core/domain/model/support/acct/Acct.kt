@@ -5,4 +5,14 @@ data class Acct(
     val host: String
 ) {
     override fun toString(): String = "acct:$userpart@$host"
+
+    companion object {
+
+        fun of(acct: String): Acct {
+            return Acct(
+                acct.substringBeforeLast('@'),
+                acct.substringAfterLast('@', "")
+            )
+        }
+    }
 }

@@ -29,7 +29,8 @@ spring:
     virtual:
       enabled: true
   messages:
-    basename: messages.hideout-web-messages
+    basename: messages/hideout-web-messages
+    cache-duration: -1
   thymeleaf:
     cache: false
 server:
