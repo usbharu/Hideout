@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head prefix="og: http://ogp.me/ns#">
+    <meta charset="UTF-8">
+    <title th:title="${ogp?.title}">Index</title>
+    <meta property="og:url" th:content="${ogp?.url}">
+    <meta property="og:title" th:content="${ogp?.title}">
+    <meta property="og:description" th:content="${ogp?.description}">
+    <th:block th:if="${ogp?.image != null}">
+        <meta property="og:image" th:content="${ogp.image}">
+    </th:block>
+    <noscript>
+        <meta http-equiv="refresh" th:content="${'1; url='+nsUrl}">
+    </noscript>
+</head>
+<body>
+<noscript>
+    <a th:href="${nsUrl}">No Script</a>
+</noscript>
+</body>
+</html>

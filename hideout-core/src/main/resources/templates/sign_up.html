@@ -2,13 +2,21 @@
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>SignUp</title>
+    <title th:text="#{auth-signUp.register}">Register Account</title>
+    <meta property="og:url" th:content="${instance.url + '/auth/sign_up'}">
+    <meta property="og:title" th:content="#{auth-signUp.register}">
 </head>
 <body>
 
 <form method='post' th:action="@{/auth/sign_up}">
-    <input name='username' type='text' value=''>
-    <input name='password' type='password'>
+    <div>
+        <label for="signUp-form-username" th:text="#{auth-signUp.username}">Username</label>
+        <input id="signUp-form-username" name='username' type='text' value=''>
+    </div>
+    <div>
+        <label for="signUp-form-password" th:text="#{auth-signUp.password}">Password</label>
+        <input id="signUp-form-password" name='password' type='password'>
+    </div>
     <input type="submit">
 </form>
 </body>

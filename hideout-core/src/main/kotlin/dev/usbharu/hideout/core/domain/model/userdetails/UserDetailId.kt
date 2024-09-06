@@ -18,7 +18,5 @@ package dev.usbharu.hideout.core.domain.model.userdetails
 
 @JvmInline
 value class UserDetailId(val id: Long) {
-    override fun toString(): String {
-        return "UserDetailId(id=$id)"
-    }
+    override fun toString(): String = "UserDetailId(id=$id)"
 }

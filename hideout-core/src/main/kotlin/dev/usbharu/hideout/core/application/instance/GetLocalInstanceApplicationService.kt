@@ -19,10 +19,11 @@ class GetLocalInstanceApplicationService(
         transaction,
         logger
     ) {
-    var cachedInstance: Instance? = null
+    private var cachedInstance: Instance? = null
 
     override suspend fun internalExecute(command: Unit, principal: Principal): Instance {
         if (cachedInstance != null) {
+            logger.trace("Use cache {}", cachedInstance)
             @Suppress("UnsafeCallOnNullableType")
             return cachedInstance!!
         }

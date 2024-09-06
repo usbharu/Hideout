@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{auth-signIn.title(${applicationConfig.url})}">Sign In - Hideout</title>
+</head>
+<body>
+<div th:if="${param.error}">
+    Invalid username and password.
+</div>
+<div th:if="${param.logout}">
+    You have been logged out.
+</div>
+<form method="post" th:action="@{/login}">
+    <div>
+        <input name="username" placeholder="Username" type="text"/>
+    </div>
+    <div>
+        <input name="password" placeholder="Password" type="password"/>
+    </div>
+    <input type="submit" value="Log in"/>
+</form>
+</body>
+</html>
