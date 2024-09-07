@@ -46,7 +46,11 @@ class Relationship(
 
     fun unfollow() {
         following = false
-        addDomainEvent(RelationshipEventFactory(this).createEvent(RelationshipEvent.UNFOLLOW))
+        followRequesting = false
+        val relationshipEventFactory = RelationshipEventFactory(this)
+        addDomainEvent(relationshipEventFactory.createEvent(RelationshipEvent.UNFOLLOW))
+        addDomainEvent(relationshipEventFactory.createEvent(RelationshipEvent.UNFOLLOW_REQUEST))
+
     }
 
     fun block() {
