@@ -58,6 +58,17 @@ class ExposedTimelineRepository(override val domainEventPublisher: DomainEventPu
         }
     }
 
+    override suspend fun findAllByUserDetailIdAndVisibilityIn(
+        userDetailId: UserDetailId,
+        visibility: List<TimelineVisibility>
+    ): List<Timeline> {
+        return query {
+            Timelines.selectAll().where {
+                Timelines.userDetailId eq userDetailId.id and (Timelines.visibility inList visibility.map { it.name })
+            }.map { it.toTimeline() }
+        }
+    }
+
     companion object {
         private val logger = LoggerFactory.getLogger(ExposedTimelineRepository::class.java.name)
     }

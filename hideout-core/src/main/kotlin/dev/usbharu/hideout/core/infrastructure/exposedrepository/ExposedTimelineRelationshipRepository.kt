@@ -45,6 +45,22 @@ class ExposedTimelineRelationshipRepository : AbstractRepository(), TimelineRela
         }
     }
 
+    override suspend fun findById(timelineRelationshipId: TimelineRelationshipId): TimelineRelationship? {
+        return query {
+            TimelineRelationships.selectAll().where {
+                TimelineRelationships.id eq timelineRelationshipId.value
+            }.singleOrNull()?.toTimelineRelationship()
+        }
+    }
+
+    override suspend fun findByTimelineIdAndActorId(timelineId: TimelineId, actorId: ActorId): TimelineRelationship? {
+        return query {
+            TimelineRelationships.selectAll().where {
+                TimelineRelationships.timelineId eq timelineId.value and (TimelineRelationships.actorId eq actorId.id)
+            }.singleOrNull()?.toTimelineRelationship()
+        }
+    }
+
     companion object {
         private val logger = LoggerFactory.getLogger(ExposedTimelineRelationshipRepository::class.java)
     }

@@ -1,5 +1,7 @@
 package dev.usbharu.hideout.core.domain.model.timeline
 
+import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
+
 interface TimelineRepository {
     suspend fun save(timeline: Timeline): Timeline
     suspend fun delete(timeline: Timeline)
@@ -7,4 +9,8 @@ interface TimelineRepository {
     suspend fun findByIds(ids: List<TimelineId>): List<Timeline>
 
     suspend fun findById(id: TimelineId): Timeline?
+    suspend fun findAllByUserDetailIdAndVisibilityIn(
+        userDetailId: UserDetailId,
+        visibility: List<TimelineVisibility>
+    ): List<Timeline>
 }
