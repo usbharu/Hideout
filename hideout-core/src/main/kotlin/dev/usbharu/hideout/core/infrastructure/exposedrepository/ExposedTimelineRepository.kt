@@ -20,7 +20,7 @@ class ExposedTimelineRepository(override val domainEventPublisher: DomainEventPu
 
     override suspend fun save(timeline: Timeline): Timeline {
         query {
-            Timelines.insert {
+            Timelines.upsert {
                 it[id] = timeline.id.value
                 it[userDetailId] = timeline.userDetailId.id
                 it[name] = timeline.name.value
