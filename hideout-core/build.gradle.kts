@@ -124,8 +124,7 @@ dependencies {
 
     implementation(libs.http.signature)
     implementation(libs.emoji.kt)
-
-    implementation("co.elastic.logging:logback-ecs-encoder:1.6.0")
+    implementation(libs.logback.ecs.encoder)
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation(libs.kotlin.junit)
