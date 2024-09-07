@@ -76,7 +76,7 @@ fun ResultRow.toReaction(): Reaction {
 
 }
 
-object Reactions : Table("Reactions") {
+object Reactions : Table("reactions") {
     val id = long("id")
     val postId = long("post_id").references(Posts.id)
     val actorId = long("actor_id").references(Actors.id)
