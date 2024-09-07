@@ -4,6 +4,8 @@ hideout:
   private: true
 
 spring:
+  application:
+    name: hideout
   data:
     mongodb:
       auto-index-creation: true

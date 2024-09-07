@@ -48,12 +48,6 @@ repositories {
         }
     }
 }
-configurations {
-    all {
-        exclude("org.springframework.boot", "spring-boot-starter-logging")
-        exclude("ch.qos.logback", "logback-classic")
-    }
-}
 
 dependencies {
     implementation("dev.usbharu:hideout-core:0.0.1")

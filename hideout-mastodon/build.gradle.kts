@@ -41,19 +41,12 @@ repositories {
     }
 }
 
-configurations {
-    all {
-        exclude("org.springframework.boot", "spring-boot-starter-logging")
-        exclude("ch.qos.logback", "logback-classic")
-    }
-}
 
 dependencies {
     detektPlugins(libs.detekt.formatting)
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
-    implementation("org.springframework.boot:spring-boot-starter-log4j2")
 
     implementation("dev.usbharu:hideout-core:0.0.1")
 
