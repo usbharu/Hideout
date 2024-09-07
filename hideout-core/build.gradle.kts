@@ -90,7 +90,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
-    implementation("org.springframework.boot:spring-boot-starter-log4j2")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     annotationProcessor("org.springframework:spring-context-indexer")
 
@@ -125,8 +124,7 @@ dependencies {
 
     implementation(libs.http.signature)
     implementation(libs.emoji.kt)
-
-
+    implementation(libs.logback.ecs.encoder)
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation(libs.kotlin.junit)
@@ -134,7 +132,6 @@ dependencies {
     testImplementation(libs.ktor.client.mock)
     testImplementation(libs.h2db)
     testImplementation(libs.mockito.kotlin)
-
 }
 
 detekt {
@@ -145,13 +142,19 @@ detekt {
     autoCorrect = true
 }
 
-configurations.matching { it.name == "detekt" }.all {
-    resolutionStrategy.eachDependency {
-        if (requested.group == "org.jetbrains.kotlin") {
-            useVersion(io.gitlab.arturbosch.detekt.getSupportedKotlinVersion())
+configurations {
+    matching { it.name == "detekt" }.all {
+        resolutionStrategy.eachDependency {
+            if (requested.group == "org.jetbrains.kotlin") {
+                useVersion(io.gitlab.arturbosch.detekt.getSupportedKotlinVersion())
+            }
         }
     }
+    all {
+        exclude("org.apache.logging.log4j", "log4j-slf4j2-impl")
+    }
 }
+
 
 //tasks{
 //    bootRun {
@@ -174,13 +177,6 @@ tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
 
 tasks.withType<io.gitlab.arturbosch.detekt.DetektCreateBaselineTask>().configureEach {
     exclude("**/org/koin/ksp/generated/**", "**/generated/**")
-}
-
-configurations {
-    all {
-        exclude("org.springframework.boot", "spring-boot-starter-logging")
-        exclude("ch.qos.logback", "logback-classic")
-    }
 }
 
 project.gradle.taskGraph.whenReady {

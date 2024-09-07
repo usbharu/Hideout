@@ -105,6 +105,8 @@ mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version = "5.4.
 http-signature = { module = "dev.usbharu:http-signature", version = "1.0.0" }
 emoji-kt = { module = "dev.usbharu:emoji-kt", version = "2.0.0" }
 
+logback-ecs-encoder = { module = "co.elastic.logging:logback-ecs-encoder", version = "1.6.0" }
+
 [bundles]
 
 exposed = ["exposed-core", "exposed-java-time", "exposed-jdbc", "exposed-spring"]
