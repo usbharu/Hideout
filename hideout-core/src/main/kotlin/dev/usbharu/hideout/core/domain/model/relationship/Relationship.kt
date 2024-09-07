@@ -44,12 +44,6 @@ class Relationship(
     var mutingFollowRequest: Boolean = mutingFollowRequest
         private set
 
-    fun follow() {
-        require(blocking.not())
-        following = true
-        addDomainEvent(RelationshipEventFactory(this).createEvent(RelationshipEvent.FOLLOW))
-    }
-
     fun unfollow() {
         following = false
         addDomainEvent(RelationshipEventFactory(this).createEvent(RelationshipEvent.UNFOLLOW))
@@ -96,11 +90,15 @@ class Relationship(
     }
 
     fun acceptFollowRequest() {
-        follow()
+        require(blocking.not())
+        following = true
+        addDomainEvent(RelationshipEventFactory(this).createEvent(RelationshipEvent.ACCEPT_FOLLOW))
         followRequesting = false
     }
 
     fun rejectFollowRequest() {
+        require(followRequesting)
+        addDomainEvent(RelationshipEventFactory(this).createEvent(RelationshipEvent.REJECT_FOLLOW))
         followRequesting = false
     }
 

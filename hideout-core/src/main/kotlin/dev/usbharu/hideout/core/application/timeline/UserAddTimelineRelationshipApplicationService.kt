@@ -1,15 +1,22 @@
 package dev.usbharu.hideout.core.application.timeline
 
+import dev.usbharu.hideout.core.application.exception.PermissionDeniedException
 import dev.usbharu.hideout.core.application.shared.LocalUserAbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.support.principal.LocalUser
+import dev.usbharu.hideout.core.domain.model.timeline.TimelineRepository
+import dev.usbharu.hideout.core.domain.model.timelinerelationship.TimelineRelationship
+import dev.usbharu.hideout.core.domain.model.timelinerelationship.TimelineRelationshipId
 import dev.usbharu.hideout.core.domain.model.timelinerelationship.TimelineRelationshipRepository
+import dev.usbharu.hideout.core.domain.shared.id.IdGenerateService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
 class UserAddTimelineRelationshipApplicationService(
     private val timelineRelationshipRepository: TimelineRelationshipRepository,
+    private val timelineRepository: TimelineRepository,
+    private val idGenerateService: IdGenerateService,
     transaction: Transaction
 ) :
     LocalUserAbstractApplicationService<AddTimelineRelationship, Unit>(
@@ -17,7 +24,21 @@ class UserAddTimelineRelationshipApplicationService(
         logger
     ) {
     override suspend fun internalExecute(command: AddTimelineRelationship, principal: LocalUser) {
-        timelineRelationshipRepository.save(command.timelineRelationship)
+        val timeline = timelineRepository.findById(command.timelineId)
+            ?: throw IllegalArgumentException("Timeline ${command.timelineId} not found.")
+
+        if (timeline.userDetailId != principal.userDetailId) {
+            throw PermissionDeniedException()
+        }
+
+        timelineRelationshipRepository.save(
+            TimelineRelationship(
+                TimelineRelationshipId(idGenerateService.generateId()),
+                command.timelineId,
+                command.actorId,
+                command.visible
+            )
+        )
     }
 
     companion object {

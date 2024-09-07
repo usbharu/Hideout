@@ -35,7 +35,8 @@ class RelationshipEventBody(
 }
 
 enum class RelationshipEvent(val eventName: String) {
-    FOLLOW("RelationshipFollow"),
+    ACCEPT_FOLLOW("RelationshipFollow"),
+    REJECT_FOLLOW("RelationshipRejectFollow"),
     UNFOLLOW("RelationshipUnfollow"),
     BLOCK("RelationshipBlock"),
     UNBLOCK("RelationshipUnblock"),
