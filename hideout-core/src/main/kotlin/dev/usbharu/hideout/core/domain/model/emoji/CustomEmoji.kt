@@ -36,7 +36,7 @@ sealed class Emoji {
 }
 
 data class CustomEmoji(
-    val id: EmojiId,
+    val id: CustomEmojiId,
     override val name: String,
     override val domain: Domain,
     val instanceId: InstanceId,

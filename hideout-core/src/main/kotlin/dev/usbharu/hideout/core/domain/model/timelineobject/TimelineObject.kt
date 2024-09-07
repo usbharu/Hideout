@@ -1,7 +1,7 @@
 package dev.usbharu.hideout.core.domain.model.timelineobject
 
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
-import dev.usbharu.hideout.core.domain.model.emoji.EmojiId
+import dev.usbharu.hideout.core.domain.model.emoji.CustomEmojiId
 import dev.usbharu.hideout.core.domain.model.filter.FilterResult
 import dev.usbharu.hideout.core.domain.model.media.MediaId
 import dev.usbharu.hideout.core.domain.model.post.Post
@@ -28,13 +28,13 @@ class TimelineObject(
     visibility: Visibility,
     isPureRepost: Boolean,
     mediaIds: List<MediaId>,
-    emojiIds: List<EmojiId>,
+    emojiIds: List<CustomEmojiId>,
     visibleActors: List<ActorId>,
     hasMediaInRepost: Boolean,
     lastUpdatedAt: Instant,
     var warnFilters: List<TimelineObjectWarnFilter>,
 
-) {
+    ) {
     var isPureRepost = isPureRepost
         private set
     var visibleActors = visibleActors

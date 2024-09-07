@@ -1,7 +1,7 @@
 package dev.usbharu.hideout.core.infrastructure.mongorepository
 
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
-import dev.usbharu.hideout.core.domain.model.emoji.EmojiId
+import dev.usbharu.hideout.core.domain.model.emoji.CustomEmojiId
 import dev.usbharu.hideout.core.domain.model.filter.FilterId
 import dev.usbharu.hideout.core.domain.model.media.MediaId
 import dev.usbharu.hideout.core.domain.model.post.PostId
@@ -151,7 +151,7 @@ data class SpringDataMongoTimelineObject(
             visibility = visibility,
             isPureRepost = isPureRepost,
             mediaIds = mediaIds.map { MediaId(it) },
-            emojiIds = emojiIds.map { EmojiId(it) },
+            emojiIds = emojiIds.map { CustomEmojiId(it) },
             visibleActors = visibleActors.map { ActorId(it) },
             hasMediaInRepost = hasMediaInRepost,
             lastUpdatedAt = Instant.ofEpochSecond(lastUpdatedAt),
