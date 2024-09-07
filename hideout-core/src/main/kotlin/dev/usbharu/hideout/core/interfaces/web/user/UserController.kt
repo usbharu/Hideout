@@ -57,7 +57,6 @@ class UserController(
                 null
             }
 
-
         model.addAttribute("relationship", relationship)
         model.addAttribute(
             "userTimeline",

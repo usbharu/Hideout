@@ -50,7 +50,6 @@ class Relationship(
         val relationshipEventFactory = RelationshipEventFactory(this)
         addDomainEvent(relationshipEventFactory.createEvent(RelationshipEvent.UNFOLLOW))
         addDomainEvent(relationshipEventFactory.createEvent(RelationshipEvent.UNFOLLOW_REQUEST))
-
     }
 
     fun block() {

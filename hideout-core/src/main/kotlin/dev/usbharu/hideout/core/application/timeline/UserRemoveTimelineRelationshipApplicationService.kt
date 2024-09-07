@@ -16,15 +16,20 @@ class UserRemoveTimelineRelationshipApplicationService(
     private val timelineRepository: TimelineRepository
 ) :
     LocalUserAbstractApplicationService<RemoveTimelineRelationship, Unit>(
-        transaction, logger
+        transaction,
+        logger
     ) {
 
     override suspend fun internalExecute(command: RemoveTimelineRelationship, principal: LocalUser) {
-        val timelineRelationship = (timelineRelationshipRepository.findById(command.timelineRelationshipId)
-            ?: throw IllegalArgumentException("TimelineRelationship ${command.timelineRelationshipId} not found."))
+        val timelineRelationship = (
+            timelineRelationshipRepository.findById(command.timelineRelationshipId)
+                ?: throw IllegalArgumentException("TimelineRelationship ${command.timelineRelationshipId} not found.")
+            )
 
-        val timeline = (timelineRepository.findById(timelineRelationship.timelineId)
-            ?: throw IllegalArgumentException("Timeline ${timelineRelationship.timelineId} not found."))
+        val timeline = (
+            timelineRepository.findById(timelineRelationship.timelineId)
+                ?: throw IllegalArgumentException("Timeline ${timelineRelationship.timelineId} not found.")
+            )
 
         if (timeline.userDetailId != principal.userDetailId) {
             throw PermissionDeniedException()

@@ -13,10 +13,10 @@ import org.springframework.stereotype.Service
 @Service
 class UserGetTimelinesApplicationService(transaction: Transaction, private val timelineRepository: TimelineRepository) :
     AbstractApplicationService<GetTimelines, List<Timeline>>(
-        transaction, logger
+        transaction,
+        logger
     ) {
     override suspend fun internalExecute(command: GetTimelines, principal: Principal): List<Timeline> {
-
         val userDetailId = UserDetailId(command.userDetailId)
 
         val timelineVisibility = if (userDetailId == principal.userDetailId) {
