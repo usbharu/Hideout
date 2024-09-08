@@ -82,6 +82,21 @@ class ExposedReactionRepository(override val domainEventPublisher: DomainEventPu
         }
     }
 
+    override suspend fun findByPostIdAndActorIdAndCustomEmojiIdOrUnicodeEmoji(
+        postId: PostId,
+        actorId: ActorId,
+        customEmojiId: CustomEmojiId?,
+        unicodeEmoji: String
+    ): Reaction? {
+        return query {
+
+            Reactions.selectAll().where {
+                Reactions.postId.eq(postId.id).and(Reactions.actorId eq actorId.id)
+                    .and((Reactions.customEmojiId eq customEmojiId?.emojiId or (Reactions.unicodeEmoji eq unicodeEmoji)))
+            }.limit(1).singleOrNull()?.toReaction()
+        }
+    }
+
     companion object {
         private val logger = LoggerFactory.getLogger(ExposedReactionRepository::class.java)
     }

@@ -15,5 +15,12 @@ interface ReactionRepository {
         unicodeEmoji: String
     ): Boolean
 
+    suspend fun findByPostIdAndActorIdAndCustomEmojiIdOrUnicodeEmoji(
+        postId: PostId,
+        actorId: ActorId,
+        customEmojiId: CustomEmojiId?,
+        unicodeEmoji: String
+    ): Reaction?
+
     suspend fun delete(reaction: Reaction)
 }

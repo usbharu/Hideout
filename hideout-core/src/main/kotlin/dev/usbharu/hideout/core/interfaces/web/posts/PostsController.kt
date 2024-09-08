@@ -5,7 +5,9 @@ import dev.usbharu.hideout.core.application.instance.GetLocalInstanceApplication
 import dev.usbharu.hideout.core.application.post.GetPostDetail
 import dev.usbharu.hideout.core.application.post.GetPostDetailApplicationService
 import dev.usbharu.hideout.core.application.reaction.CreateReaction
+import dev.usbharu.hideout.core.application.reaction.RemoveReaction
 import dev.usbharu.hideout.core.application.reaction.UserCreateReactionApplicationService
+import dev.usbharu.hideout.core.application.reaction.UserRemoveReactionApplicationService
 import dev.usbharu.hideout.core.infrastructure.springframework.SpringSecurityFormLoginPrincipalContextHolder
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.stereotype.Controller
@@ -19,7 +21,8 @@ class PostsController(
     private val getPostDetailApplicationService: GetPostDetailApplicationService,
     private val springSecurityFormLoginPrincipalContextHolder: SpringSecurityFormLoginPrincipalContextHolder,
     private val getLocalInstanceApplicationService: GetLocalInstanceApplicationService,
-    private val userCreateReactionApplicationService: UserCreateReactionApplicationService
+    private val userCreateReactionApplicationService: UserCreateReactionApplicationService,
+    private val userRemoveReactionApplicationService: UserRemoveReactionApplicationService
 ) {
     @GetMapping("/users/{name}/posts/{id}")
     suspend fun postById(@PathVariable id: Long, model: Model): String {
@@ -41,6 +44,19 @@ class PostsController(
         val principal = springSecurityFormLoginPrincipalContextHolder.getPrincipal()
         userCreateReactionApplicationService.execute(
             CreateReaction(
+                id,
+                null,
+                "❤"
+            ), principal
+        )
+        return "redirect:/users/$name/posts/$id"
+    }
+
+    @PostMapping("/users/{name}/posts/{id}/unfavourite")
+    suspend fun unfavourite(@PathVariable id: Long, @PathVariable name: String): String {
+        val principal = springSecurityFormLoginPrincipalContextHolder.getPrincipal()
+        userRemoveReactionApplicationService.execute(
+            RemoveReaction(
                 id,
                 null,
                 "❤"

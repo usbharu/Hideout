@@ -32,6 +32,10 @@ class Reaction(
         return id.hashCode()
     }
 
+    fun delete() {
+        addDomainEvent(ReactionEventFactory(this).createEvent(ReactionEvent.DELETE))
+    }
+
     companion object {
         fun create(
             id: ReactionId,

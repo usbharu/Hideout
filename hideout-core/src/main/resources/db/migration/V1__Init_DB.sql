@@ -329,5 +329,6 @@ create table if not exists reactions
     unicode_emoji   varchar(100) not null,
     created_at      timestamp    not null,
     constraint fk_reactions_post_id__id foreign key (post_id) references posts (id) on delete cascade on update cascade,
-    constraint fk_reactions_actor_id__id foreign key (actor_id) references actors (id) on delete cascade on update cascade
+    constraint fk_reactions_actor_id__id foreign key (actor_id) references actors (id) on delete cascade on update cascade,
+    unique (post_id, actor_id, created_at, unicode_emoji)
 );

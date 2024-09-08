@@ -44,14 +44,27 @@
 
 <div class="post-controller" th:fragment="single-post-controller(post)">
     <!--/*@thymesVar id="post" type="dev.usbharu.hideout.core.application.post.PostDetail"*/-->
-    <form method="post" th:action="@{/users/a/posts/{id}/favourite(id=${post.id})}">
-        <a th:href="${'/publish?reply_to=' + post.id}">Reply</a>
-        <input type="submit" value="❤">
-        <a th:href="${post.apId}">
-            <time th:datetime="${post.createdAt}"
-                  th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}"></time>
-        </a>
-    </form>
+    <th:block th:if="${post.favourited}">
+        <form method="post" th:action="@{/users/a/posts/{id}/unfavourite(id=${post.id})}">
+            <a th:href="${'/publish?reply_to=' + post.id}">Reply</a>
+            <input type="submit" value="[❤]">
+            <a th:href="${post.apId}">
+                <time th:datetime="${post.createdAt}"
+                      th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}"></time>
+            </a>
+        </form>
+    </th:block>
+    <th:block th:unless="${post.favourited}">
+        <form method="post" th:action="@{/users/a/posts/{id}/favourite(id=${post.id})}">
+            <a th:href="${'/publish?reply_to=' + post.id}">Reply</a>
+            <input type="submit" value="❤">
+            <a th:href="${post.apId}">
+                <time th:datetime="${post.createdAt}"
+                      th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}"></time>
+            </a>
+        </form>
+    </th:block>
+
 </div>
 
 
