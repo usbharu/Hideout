@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.core.infrastructure.timeline
 
+import dev.usbharu.hideout.core.application.model.Reactions
 import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.filter.Filter
@@ -243,8 +244,8 @@ abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateSe
         val actors =
             getActors(
                 timelineObjectList.map { it.postActorId } +
-                    timelineObjectList.mapNotNull { it.repostActorId } +
-                    timelineObjectList.mapNotNull { it.replyActorId }
+                        timelineObjectList.mapNotNull { it.repostActorId } +
+                        timelineObjectList.mapNotNull { it.replyActorId }
             )
 
         val postMap = posts.associate { post ->
@@ -253,8 +254,10 @@ abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateSe
 
         val mediaMap = getMedias(
             posts.flatMap { it.mediaIds } +
-                actors.mapNotNull { it.value.icon }
+                    actors.mapNotNull { it.value.icon }
         )
+
+        val reactions = getReactions(posts.map { it.id })
 
         return PaginationList(
             timelineObjectList.mapNotNull<TimelineObject, TimelineObjectDetail> {
@@ -268,6 +271,7 @@ abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateSe
                 val repost = postMap[it.repostId]
                 val repostMedias = repost?.post?.mediaIds?.mapNotNull { mediaId -> mediaMap[mediaId] }
                 val repostActor = actors[it.repostActorId]
+                val reactionsList = reactions[it.postId].orEmpty()
                 TimelineObjectDetail.of(
                     timelineObject = it,
                     timelineUserDetail = timelineUserDetail,
@@ -288,7 +292,8 @@ abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateSe
                             filterResult.filter.id,
                             filterResult.matchedKeyword
                         )
-                    }
+                    },
+                    reactionsList = reactionsList
                 )
             },
             timelineObjectList.lastOrNull()?.postId,
@@ -299,6 +304,8 @@ abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateSe
     protected abstract suspend fun getActors(actorIds: List<ActorId>): Map<ActorId, Actor>
 
     protected abstract suspend fun getMedias(mediaIds: List<MediaId>): Map<MediaId, Media>
+
+    protected abstract suspend fun getReactions(postIds: List<PostId>): Map<PostId, List<Reactions>>
 
     protected abstract suspend fun getUserDetails(userDetailIdList: List<UserDetailId>): Map<UserDetailId, UserDetail>
 }

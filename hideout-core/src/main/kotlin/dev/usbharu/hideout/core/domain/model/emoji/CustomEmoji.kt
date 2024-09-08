@@ -29,9 +29,9 @@ sealed class Emoji {
     abstract fun id(): String
     override fun toString(): String {
         return "Emoji(" +
-            "domain='$domain', " +
-            "name='$name'" +
-            ")"
+                "domain='$domain', " +
+                "name='$name'" +
+                ")"
     }
 }
 
@@ -50,6 +50,10 @@ data class CustomEmoji(
 data class UnicodeEmoji(
     override val name: String
 ) : Emoji() {
-    override val domain: Domain = Domain("unicode.org")
+    override val domain: Domain = Companion.domain
     override fun id(): String = name
+
+    companion object {
+        val domain = Domain("unicode.org")
+    }
 }
