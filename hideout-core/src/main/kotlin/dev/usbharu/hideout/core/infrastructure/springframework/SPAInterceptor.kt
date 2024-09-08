@@ -29,7 +29,7 @@ class SPAInterceptor : HandlerInterceptor {
             return
         }
 
-        if (request.getSession(false).getAttribute("s") == "f") {
+        if (request.getSession(false)?.getAttribute("s") == "f") {
             return
         }
 
