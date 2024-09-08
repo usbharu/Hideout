@@ -100,7 +100,8 @@ class ExposedUserTimelineQueryService : UserTimelineQueryService, AbstractReposi
             sensitive = it[authorizedQuery[Posts.sensitive]],
             deleted = it[authorizedQuery[Posts.deleted]],
             mediaDetailList = emptyList(),
-            moveTo = null
+            moveTo = null,
+            emptyList()
         )
     }
 

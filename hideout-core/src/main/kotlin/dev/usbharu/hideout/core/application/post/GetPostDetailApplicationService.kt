@@ -11,6 +11,7 @@ import dev.usbharu.hideout.core.domain.model.post.PostId
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.domain.model.support.principal.Principal
 import dev.usbharu.hideout.core.domain.service.post.IPostReadAccessControl
+import dev.usbharu.hideout.core.query.reactions.ReactionsQueryService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -20,7 +21,8 @@ class GetPostDetailApplicationService(
     private val postRepository: PostRepository,
     private val actorRepository: ActorRepository,
     private val mediaRepository: MediaRepository,
-    private val iPostReadAccessControl: IPostReadAccessControl
+    private val iPostReadAccessControl: IPostReadAccessControl,
+    private val reactionsQueryService: ReactionsQueryService,
 ) : AbstractApplicationService<GetPostDetail, PostDetail>(
     transaction,
     logger
@@ -38,6 +40,8 @@ class GetPostDetailApplicationService(
 
         val mediaList = mediaRepository.findByIds(post.mediaIds)
 
+        val reactions = reactionsQueryService.findAllByPostId(post.id)
+
         return PostDetail.of(
             post = post,
             actor = actor,
@@ -46,6 +50,7 @@ class GetPostDetailApplicationService(
             reply = post.replyId?.let { fetchChild(it, actor, iconMedia, principal) },
             repost = post.repostId?.let { fetchChild(it, actor, iconMedia, principal) },
             moveTo = post.moveTo?.let { fetchChild(it, actor, iconMedia, principal) },
+            reactionsList = reactions
         )
     }
 
@@ -69,10 +74,11 @@ class GetPostDetailApplicationService(
 
         val mediaList = mediaRepository.findByIds(post.mediaIds)
         return PostDetail.of(
-            post,
-            first,
-            third,
-            mediaList
+            post = post,
+            actor = first,
+            iconMedia = third,
+            mediaList = mediaList,
+            reactionsList = emptyList()
         )
     }
 

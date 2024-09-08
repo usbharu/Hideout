@@ -48,6 +48,14 @@ class ExposedReactionRepository(override val domainEventPublisher: DomainEventPu
         }
     }
 
+    override suspend fun findByPostId(postId: PostId): List<Reaction> {
+        return query {
+            Reactions.selectAll().where {
+                Reactions.postId eq postId.id
+            }.map { it.toReaction() }
+        }
+    }
+
     override suspend fun delete(reaction: Reaction) {
         return query {
             Reactions.deleteWhere {
