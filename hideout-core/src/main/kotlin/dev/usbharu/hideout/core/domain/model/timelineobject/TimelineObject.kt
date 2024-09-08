@@ -33,8 +33,8 @@ class TimelineObject(
     hasMediaInRepost: Boolean,
     lastUpdatedAt: Instant,
     var warnFilters: List<TimelineObjectWarnFilter>,
-
-    ) {
+    var favourited: Boolean
+) {
     var isPureRepost = isPureRepost
         private set
     var visibleActors = visibleActors
@@ -61,9 +61,9 @@ class TimelineObject(
         lastUpdatedAt = Instant.now()
         isPureRepost =
             post.repostId != null &&
-            post.replyId == null &&
-            post.text.isEmpty() &&
-            post.overview?.overview.isNullOrEmpty()
+                    post.replyId == null &&
+                    post.text.isEmpty() &&
+                    post.overview?.overview.isNullOrEmpty()
         warnFilters = filterResults.map { TimelineObjectWarnFilter(it.filter.id, it.matchedKeyword) }
     }
 
@@ -82,7 +82,8 @@ class TimelineObject(
             timeline: Timeline,
             post: Post,
             replyActorId: ActorId?,
-            filterResults: List<FilterResult>
+            filterResults: List<FilterResult>,
+            favourited: Boolean
         ): TimelineObject {
             return TimelineObject(
                 id = timelineObjectId,
@@ -102,7 +103,8 @@ class TimelineObject(
                 visibleActors = post.visibleActors.toList(),
                 hasMediaInRepost = false,
                 lastUpdatedAt = Instant.now(),
-                warnFilters = filterResults.map { TimelineObjectWarnFilter(it.filter.id, it.matchedKeyword) }
+                warnFilters = filterResults.map { TimelineObjectWarnFilter(it.filter.id, it.matchedKeyword) },
+                favourited = favourited
             )
         }
 
@@ -113,7 +115,8 @@ class TimelineObject(
             post: Post,
             replyActorId: ActorId?,
             repost: Post,
-            filterResults: List<FilterResult>
+            filterResults: List<FilterResult>,
+            favourited: Boolean
         ): TimelineObject {
             require(post.repostId == repost.id)
 
@@ -130,15 +133,16 @@ class TimelineObject(
                 repostActorId = repost.actorId,
                 visibility = post.visibility,
                 isPureRepost = repost.mediaIds.isEmpty() &&
-                    repost.overview == null &&
-                    repost.content == PostContent.empty &&
-                    repost.replyId == null,
+                        repost.overview == null &&
+                        repost.content == PostContent.empty &&
+                        repost.replyId == null,
                 mediaIds = post.mediaIds,
                 emojiIds = post.emojiIds,
                 visibleActors = post.visibleActors.toList(),
                 hasMediaInRepost = repost.mediaIds.isNotEmpty(),
                 lastUpdatedAt = Instant.now(),
-                warnFilters = filterResults.map { TimelineObjectWarnFilter(it.filter.id, it.matchedKeyword) }
+                warnFilters = filterResults.map { TimelineObjectWarnFilter(it.filter.id, it.matchedKeyword) },
+                favourited = favourited
             )
         }
     }

@@ -49,6 +49,7 @@ class ReadTimelineApplicationService(
                     it.replyPostActorIconMedia,
                     it.replyPostMedias.orEmpty(),
                     reactionsList = emptyList(),
+                    favourited = false,
                 )
             } else {
                 null
@@ -61,7 +62,8 @@ class ReadTimelineApplicationService(
                     actor = it.repostPostActor!!,
                     iconMedia = it.repostPostActorIconMedia,
                     mediaList = it.repostPostMedias.orEmpty(),
-                    reactionsList = emptyList()
+                    reactionsList = emptyList(),
+                    favourited = false
                 )
             } else {
                 null
@@ -74,7 +76,8 @@ class ReadTimelineApplicationService(
                 mediaList = it.postMedias,
                 reply = reply,
                 repost = repost,
-                reactionsList = emptyList()
+                reactionsList = emptyList(),
+                favourited = it.favourited
             )
         }
 

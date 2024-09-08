@@ -133,7 +133,8 @@ data class SpringDataMongoTimelineObject(
     val visibleActors: List<Long>,
     val hasMediaInRepost: Boolean,
     val lastUpdatedAt: Long,
-    val warnFilters: List<SpringDataMongoTimelineObjectWarnFilter>
+    val warnFilters: List<SpringDataMongoTimelineObjectWarnFilter>,
+    val favourited: Boolean
 ) {
 
     fun toTimelineObject(): TimelineObject {
@@ -155,7 +156,8 @@ data class SpringDataMongoTimelineObject(
             visibleActors = visibleActors.map { ActorId(it) },
             hasMediaInRepost = hasMediaInRepost,
             lastUpdatedAt = Instant.ofEpochSecond(lastUpdatedAt),
-            warnFilters = warnFilters.map { it.toTimelineObjectWarnFilter() }
+            warnFilters = warnFilters.map { it.toTimelineObjectWarnFilter() },
+            favourited = favourited
         )
     }
 
@@ -179,7 +181,8 @@ data class SpringDataMongoTimelineObject(
                 visibleActors = timelineObject.visibleActors.map { it.id },
                 hasMediaInRepost = timelineObject.hasMediaInRepost,
                 lastUpdatedAt = timelineObject.lastUpdatedAt.epochSecond,
-                warnFilters = timelineObject.warnFilters.map { SpringDataMongoTimelineObjectWarnFilter.of(it) }
+                warnFilters = timelineObject.warnFilters.map { SpringDataMongoTimelineObjectWarnFilter.of(it) },
+                favourited = timelineObject.favourited
             )
         }
     }

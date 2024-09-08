@@ -76,7 +76,8 @@ abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateSe
                 post = post,
                 replyActorId = replyActorId,
                 repost = repost,
-                filterResults = applyFilters.filterResults
+                filterResults = applyFilters.filterResults,
+                favourited = false
             )
         }
 
@@ -85,7 +86,8 @@ abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateSe
             timeline = timeline,
             post = post,
             replyActorId = replyActorId,
-            filterResults = applyFilters.filterResults
+            filterResults = applyFilters.filterResults,
+            favourited = false
         )
     }
 
@@ -293,7 +295,8 @@ abstract class AbstractTimelineStore(private val idGenerateService: IdGenerateSe
                             filterResult.matchedKeyword
                         )
                     },
-                    reactionsList = reactionsList
+                    reactionsList = reactionsList,
+                    favourited = it.favourited
                 )
             },
             timelineObjectList.lastOrNull()?.postId,

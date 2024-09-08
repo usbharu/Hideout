@@ -32,6 +32,7 @@ class ExposedReactionRepository(override val domainEventPublisher: DomainEventPu
                 it[Reactions.actorId] = reaction.actorId.id
                 it[Reactions.customEmojiId] = reaction.customEmojiId?.emojiId
                 it[Reactions.unicodeEmoji] = reaction.unicodeEmoji.name
+                it[Reactions.createdAt] = reaction.createdAt
             }
             onComplete {
                 update(reaction)
@@ -53,6 +54,20 @@ class ExposedReactionRepository(override val domainEventPublisher: DomainEventPu
             Reactions.selectAll().where {
                 Reactions.postId eq postId.id
             }.map { it.toReaction() }
+        }
+    }
+
+    override suspend fun existsByPostIdAndActorIdAndCustomEmojiIdOrUnicodeEmoji(
+        postId: PostId,
+        actorId: ActorId,
+        customEmojiId: CustomEmojiId?,
+        unicodeEmoji: String
+    ): Boolean {
+        return query {
+            Reactions.selectAll().where {
+                Reactions.postId.eq(postId.id).and(Reactions.actorId eq actorId.id)
+                    .and((Reactions.customEmojiId eq customEmojiId?.emojiId or (Reactions.unicodeEmoji eq unicodeEmoji)))
+            }.empty().not()
         }
     }
 

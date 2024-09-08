@@ -31,7 +31,8 @@ data class TimelineObjectDetail(
     val lastUpdateAt: Instant,
     val hasMediaInRepost: Boolean,
     val warnFilter: List<TimelineObjectWarnFilter>,
-    val reactionsList: List<Reactions>
+    val reactionsList: List<Reactions>,
+    val favourited: Boolean
 ) {
     companion object {
         @Suppress("LongParameterList")
@@ -51,7 +52,8 @@ data class TimelineObjectDetail(
             repostPostActor: Actor?,
             repostPostActorIconMedia: Media?,
             warnFilter: List<TimelineObjectWarnFilter>,
-            reactionsList: List<Reactions>
+            reactionsList: List<Reactions>,
+            favourited: Boolean
         ): TimelineObjectDetail {
             return TimelineObjectDetail(
                 id = timelineObject.id,
@@ -73,7 +75,8 @@ data class TimelineObjectDetail(
                 lastUpdateAt = timelineObject.lastUpdatedAt,
                 hasMediaInRepost = timelineObject.hasMediaInRepost,
                 warnFilter = warnFilter,
-                reactionsList = reactionsList
+                reactionsList = reactionsList,
+                favourited = favourited
             )
         }
     }

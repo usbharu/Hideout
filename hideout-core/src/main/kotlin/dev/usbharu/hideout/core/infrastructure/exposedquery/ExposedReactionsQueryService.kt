@@ -46,7 +46,7 @@ class ExposedReactionsQueryService : ReactionsQueryService, AbstractRepository()
                     ExposedrepositoryReactions.postId,
                     ExposedrepositoryReactions.postId.count(),
                     ExposedrepositoryReactions.customEmojiId.max(),
-                    ExposedrepositoryReactions.unicodeEmoji.max(),
+                    ExposedrepositoryReactions.unicodeEmoji.max<String, String>(),
                     actorIdsQuery
                 )
                 .where { ExposedrepositoryReactions.postId inList postIds.map { it.id } }
@@ -55,7 +55,8 @@ class ExposedReactionsQueryService : ReactionsQueryService, AbstractRepository()
                     Reactions(
                         it[ExposedrepositoryReactions.postId],
                         it[ExposedrepositoryReactions.postId.count()].toInt(),
-                        it.getOrNull(CustomEmojis.name) ?: it[ExposedrepositoryReactions.unicodeEmoji],
+                        it.getOrNull(CustomEmojis.name)
+                            ?: it[ExposedrepositoryReactions.unicodeEmoji.max<String, String>()]!!,
                         it.getOrNull(CustomEmojis.domain) ?: UnicodeEmoji.domain.domain,
                         it.getOrNull(CustomEmojis.url)?.let { it1 -> URI.create(it1) },
                         it[actorIdsQuery].split(",").mapNotNull { it.toLongOrNull() }

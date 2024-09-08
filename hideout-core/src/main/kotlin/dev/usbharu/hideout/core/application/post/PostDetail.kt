@@ -25,7 +25,8 @@ data class PostDetail(
     val deleted: Boolean,
     val mediaDetailList: List<MediaDetail>,
     val moveTo: PostDetail?,
-    val reactionsList: List<Reactions>
+    val reactionsList: List<Reactions>,
+    val favourited: Boolean
 ) {
     companion object {
         @Suppress("LongParameterList")
@@ -37,7 +38,8 @@ data class PostDetail(
             reply: PostDetail? = null,
             repost: PostDetail? = null,
             moveTo: PostDetail? = null,
-            reactionsList: List<Reactions>
+            reactionsList: List<Reactions>,
+            favourited: Boolean
         ): PostDetail {
             return PostDetail(
                 id = post.id.id,
@@ -56,7 +58,8 @@ data class PostDetail(
                 deleted = false,
                 mediaDetailList = mediaList.map { MediaDetail.of(it) },
                 moveTo = moveTo,
-                reactionsList = reactionsList
+                reactionsList = reactionsList,
+                favourited = favourited
             )
         }
     }
