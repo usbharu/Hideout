@@ -18,6 +18,10 @@ package dev.usbharu.hideout.mastodon.interfaces.api
 
 import dev.usbharu.hideout.core.application.post.RegisterLocalPost
 import dev.usbharu.hideout.core.application.post.RegisterLocalPostApplicationService
+import dev.usbharu.hideout.core.application.reaction.CreateReaction
+import dev.usbharu.hideout.core.application.reaction.RemoveReaction
+import dev.usbharu.hideout.core.application.reaction.UserCreateReactionApplicationService
+import dev.usbharu.hideout.core.application.reaction.UserRemoveReactionApplicationService
 import dev.usbharu.hideout.core.domain.model.post.Visibility
 import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.SpringSecurityOauth2PrincipalContextHolder
 import dev.usbharu.hideout.mastodon.application.status.GetStatus
@@ -32,7 +36,9 @@ import org.springframework.stereotype.Controller
 class SpringStatusApi(
     private val registerLocalPostApplicationService: RegisterLocalPostApplicationService,
     private val getStatusApplicationService: GetStatusApplicationService,
-    private val principalContextHolder: SpringSecurityOauth2PrincipalContextHolder
+    private val principalContextHolder: SpringSecurityOauth2PrincipalContextHolder,
+    private val userCreateReactionApplicationService: UserCreateReactionApplicationService,
+    private val userRemoveReactionApplicationService: UserRemoveReactionApplicationService
 ) : StatusApi {
     override suspend fun apiV1StatusesIdEmojiReactionsEmojiDelete(id: String, emoji: String): ResponseEntity<Status> =
         super.apiV1StatusesIdEmojiReactionsEmojiDelete(id, emoji)
@@ -47,6 +53,20 @@ class SpringStatusApi(
                 principalContextHolder.getPrincipal()
             )
         )
+    }
+
+    override suspend fun apiV1StatusesIdFavouritePost(id: String): ResponseEntity<Status> {
+        val principal = principalContextHolder.getPrincipal()
+
+        userCreateReactionApplicationService.execute(CreateReaction(postId = id.toLong(), null, "❤"), principal)
+        return ResponseEntity.ok(getStatusApplicationService.execute(GetStatus(id), principal))
+    }
+
+    override suspend fun apiV1StatusesIdUnfavouritePost(id: String): ResponseEntity<Status> {
+        val principal = principalContextHolder.getPrincipal()
+
+        userRemoveReactionApplicationService.execute(RemoveReaction(postId = id.toLong(), null, "❤"), principal)
+        return ResponseEntity.ok(getStatusApplicationService.execute(GetStatus(id), principal))
     }
 
     override suspend fun apiV1StatusesPost(statusesRequest: StatusesRequest): ResponseEntity<Status> {

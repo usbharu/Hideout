@@ -177,6 +177,48 @@ paths:
               schema:
                 $ref: "#/components/schemas/Status"
 
+  /api/v1/statuses/{id}/favourite:
+    post:
+      tags:
+        - status
+      security:
+        - OAuth2:
+            - "write:favourites"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+
+  /api/v1/statuses/{id}/unfavourite:
+    post:
+      tags:
+        - status
+      security:
+        - OAuth2:
+            - "write:favourites"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+
   /api/v1/statuses/{id}/emoji_reactions/{emoji}:
     put:
       tags:
