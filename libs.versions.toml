@@ -103,7 +103,7 @@ mongodb-kotlin-coroutine = { module = "org.mongodb:mongodb-driver-kotlin-corouti
 mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version = "5.4.0" }
 
 http-signature = { module = "dev.usbharu:http-signature", version = "1.0.0" }
-emoji-kt = { module = "dev.usbharu:emoji-kt", version = "2.0.0" }
+emoji-kt = { module = "dev.usbharu:emoji-kt", version = "2.0.1" }
 
 logback-ecs-encoder = { module = "co.elastic.logging:logback-ecs-encoder", version = "1.6.0" }
 
