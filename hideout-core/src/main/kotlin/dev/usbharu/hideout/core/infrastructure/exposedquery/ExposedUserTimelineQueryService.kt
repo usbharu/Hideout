@@ -61,6 +61,12 @@ class ExposedUserTimelineQueryService : UserTimelineQueryService, AbstractReposi
             .leftJoin(iconMedia, { Actors.icon }, { iconMedia[Media.id] })
             .leftJoin(PostsMedia, { authorizedQuery[Posts.id] }, { PostsMedia.postId })
             .leftJoin(Media, { PostsMedia.mediaId }, { Media.id })
+            .leftJoin(
+                Reactions,
+                { authorizedQuery[Posts.id] },
+                { Reactions.postId },
+                { Reactions.id isDistinctFrom principal.actorId.id }
+            )
             .selectAll()
             .where { authorizedQuery[Posts.id] inList idList.map { it.id } }
             .groupBy { it[authorizedQuery[Posts.id]] }
@@ -69,7 +75,8 @@ class ExposedUserTimelineQueryService : UserTimelineQueryService, AbstractReposi
                 toPostDetail(it.first(), authorizedQuery, iconMedia).copy(
                     mediaDetailList = it.mapNotNull { resultRow ->
                         resultRow.toMediaOrNull()?.let { it1 -> MediaDetail.of(it1) }
-                    }
+                    },
+                    favourited = it.any { it.getOrNull(Reactions.actorId) != null }
                 )
             }
     }
@@ -100,7 +107,9 @@ class ExposedUserTimelineQueryService : UserTimelineQueryService, AbstractReposi
             sensitive = it[authorizedQuery[Posts.sensitive]],
             deleted = it[authorizedQuery[Posts.deleted]],
             mediaDetailList = emptyList(),
-            moveTo = null
+            moveTo = null,
+            emptyList(),
+            favourited = false
         )
     }
 

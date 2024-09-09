@@ -47,7 +47,9 @@ class ReadTimelineApplicationService(
                     it.replyPost,
                     it.replyPostActor!!,
                     it.replyPostActorIconMedia,
-                    it.replyPostMedias.orEmpty()
+                    it.replyPostMedias.orEmpty(),
+                    reactionsList = emptyList(),
+                    favourited = false,
                 )
             } else {
                 null
@@ -56,10 +58,12 @@ class ReadTimelineApplicationService(
             val repost = if (it.repostPost != null) {
                 @Suppress("UnsafeCallOnNullableType")
                 PostDetail.of(
-                    it.repostPost,
-                    it.repostPostActor!!,
-                    it.repostPostActorIconMedia,
-                    it.repostPostMedias.orEmpty()
+                    post = it.repostPost,
+                    actor = it.repostPostActor!!,
+                    iconMedia = it.repostPostActorIconMedia,
+                    mediaList = it.repostPostMedias.orEmpty(),
+                    reactionsList = emptyList(),
+                    favourited = false
                 )
             } else {
                 null
@@ -71,7 +75,9 @@ class ReadTimelineApplicationService(
                 iconMedia = it.postActorIconMedia,
                 mediaList = it.postMedias,
                 reply = reply,
-                repost = repost
+                repost = repost,
+                reactionsList = emptyList(),
+                favourited = it.favourited
             )
         }
 

@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.core.application.post
 
+import dev.usbharu.hideout.core.application.model.Reactions
 import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.media.Media
 import dev.usbharu.hideout.core.domain.model.post.Post
@@ -23,7 +24,9 @@ data class PostDetail(
     val sensitive: Boolean,
     val deleted: Boolean,
     val mediaDetailList: List<MediaDetail>,
-    val moveTo: PostDetail?
+    val moveTo: PostDetail?,
+    val reactionsList: List<Reactions>,
+    val favourited: Boolean
 ) {
     companion object {
         @Suppress("LongParameterList")
@@ -35,6 +38,8 @@ data class PostDetail(
             reply: PostDetail? = null,
             repost: PostDetail? = null,
             moveTo: PostDetail? = null,
+            reactionsList: List<Reactions>,
+            favourited: Boolean
         ): PostDetail {
             return PostDetail(
                 id = post.id.id,
@@ -52,7 +57,9 @@ data class PostDetail(
                 sensitive = post.sensitive,
                 deleted = false,
                 mediaDetailList = mediaList.map { MediaDetail.of(it) },
-                moveTo = moveTo
+                moveTo = moveTo,
+                reactionsList = reactionsList,
+                favourited = favourited
             )
         }
     }

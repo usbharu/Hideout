@@ -1,6 +1,6 @@
 package dev.usbharu.hideout.core.domain.model.actor
 
-import dev.usbharu.hideout.core.domain.model.emoji.EmojiId
+import dev.usbharu.hideout.core.domain.model.emoji.CustomEmojiId
 import dev.usbharu.hideout.core.domain.model.instance.InstanceId
 import dev.usbharu.hideout.core.domain.model.support.domain.Domain
 import dev.usbharu.hideout.core.infrastructure.other.TwitterSnowflakeIdGenerateService
@@ -35,7 +35,7 @@ object TestActorFactory {
         suspend: Boolean = false,
         alsoKnownAs: Set<ActorId> = emptySet(),
         moveTo: Long? = null,
-        emojiIds: Set<EmojiId> = emptySet(),
+        emojiIds: Set<CustomEmojiId> = emptySet(),
         deleted: Boolean = false,
         roles: Set<Role> = emptySet(),
     ): Actor {
