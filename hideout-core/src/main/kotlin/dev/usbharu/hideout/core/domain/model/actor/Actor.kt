@@ -18,7 +18,7 @@ package dev.usbharu.hideout.core.domain.model.actor
 
 import dev.usbharu.hideout.core.domain.event.actor.ActorDomainEventFactory
 import dev.usbharu.hideout.core.domain.event.actor.ActorEvent.*
-import dev.usbharu.hideout.core.domain.model.emoji.CustomEmojiId
+import dev.usbharu.hideout.core.domain.model.emoji.EmojiId
 import dev.usbharu.hideout.core.domain.model.instance.InstanceId
 import dev.usbharu.hideout.core.domain.model.media.MediaId
 import dev.usbharu.hideout.core.domain.model.support.domain.Domain
@@ -52,7 +52,7 @@ class Actor(
     var lastUpdateAt: Instant = createdAt,
     alsoKnownAs: Set<ActorId> = emptySet(),
     moveTo: ActorId? = null,
-    emojiIds: Set<CustomEmojiId>,
+    emojiIds: Set<EmojiId>,
     deleted: Boolean,
     icon: MediaId?,
     banner: MediaId?,

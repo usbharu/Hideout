@@ -1,6 +1,5 @@
 package dev.usbharu.hideout.core.infrastructure.timeline
 
-import dev.usbharu.hideout.core.application.model.Reactions
 import dev.usbharu.hideout.core.config.DefaultTimelineStoreConfig
 import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
@@ -33,7 +32,6 @@ import dev.usbharu.hideout.core.domain.service.filter.FilterDomainService
 import dev.usbharu.hideout.core.domain.service.post.IPostReadAccessControl
 import dev.usbharu.hideout.core.domain.shared.id.IdGenerateService
 import dev.usbharu.hideout.core.external.timeline.ReadTimelineOption
-import dev.usbharu.hideout.core.query.reactions.ReactionsQueryService
 import org.springframework.stereotype.Component
 import java.time.Instant
 
@@ -51,8 +49,7 @@ open class DefaultTimelineStore(
     private val userDetailRepository: UserDetailRepository,
     private val actorRepository: ActorRepository,
     private val mediaRepository: MediaRepository,
-    private val postIPostReadAccessControl: IPostReadAccessControl,
-    private val reactionsQueryService: ReactionsQueryService,
+    private val postIPostReadAccessControl: IPostReadAccessControl
 ) : AbstractTimelineStore(idGenerateService) {
     override suspend fun getTimelines(actorId: ActorId): List<Timeline> {
         return timelineRepository.findByIds(
@@ -159,10 +156,6 @@ open class DefaultTimelineStore(
 
     override suspend fun getMedias(mediaIds: List<MediaId>): Map<MediaId, Media> =
         mediaRepository.findByIds(mediaIds).associateBy { it.id }
-
-    override suspend fun getReactions(postIds: List<PostId>): Map<PostId, List<Reactions>> {
-        return reactionsQueryService.findAllByPostIdIn(postIds).groupBy { PostId(it.postId) }
-    }
 
     override suspend fun getUserDetails(userDetailIdList: List<UserDetailId>): Map<UserDetailId, UserDetail> =
         userDetailRepository.findAllById(userDetailIdList).associateBy { it.id }

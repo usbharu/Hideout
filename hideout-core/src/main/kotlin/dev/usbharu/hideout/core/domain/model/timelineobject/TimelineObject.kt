@@ -1,7 +1,7 @@
 package dev.usbharu.hideout.core.domain.model.timelineobject
 
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
-import dev.usbharu.hideout.core.domain.model.emoji.CustomEmojiId
+import dev.usbharu.hideout.core.domain.model.emoji.EmojiId
 import dev.usbharu.hideout.core.domain.model.filter.FilterResult
 import dev.usbharu.hideout.core.domain.model.media.MediaId
 import dev.usbharu.hideout.core.domain.model.post.Post
@@ -28,12 +28,12 @@ class TimelineObject(
     visibility: Visibility,
     isPureRepost: Boolean,
     mediaIds: List<MediaId>,
-    emojiIds: List<CustomEmojiId>,
+    emojiIds: List<EmojiId>,
     visibleActors: List<ActorId>,
     hasMediaInRepost: Boolean,
     lastUpdatedAt: Instant,
     var warnFilters: List<TimelineObjectWarnFilter>,
-    var favourited: Boolean
+
 ) {
     var isPureRepost = isPureRepost
         private set
@@ -82,8 +82,7 @@ class TimelineObject(
             timeline: Timeline,
             post: Post,
             replyActorId: ActorId?,
-            filterResults: List<FilterResult>,
-            favourited: Boolean
+            filterResults: List<FilterResult>
         ): TimelineObject {
             return TimelineObject(
                 id = timelineObjectId,
@@ -103,8 +102,7 @@ class TimelineObject(
                 visibleActors = post.visibleActors.toList(),
                 hasMediaInRepost = false,
                 lastUpdatedAt = Instant.now(),
-                warnFilters = filterResults.map { TimelineObjectWarnFilter(it.filter.id, it.matchedKeyword) },
-                favourited = favourited
+                warnFilters = filterResults.map { TimelineObjectWarnFilter(it.filter.id, it.matchedKeyword) }
             )
         }
 
@@ -115,8 +113,7 @@ class TimelineObject(
             post: Post,
             replyActorId: ActorId?,
             repost: Post,
-            filterResults: List<FilterResult>,
-            favourited: Boolean
+            filterResults: List<FilterResult>
         ): TimelineObject {
             require(post.repostId == repost.id)
 
@@ -141,8 +138,7 @@ class TimelineObject(
                 visibleActors = post.visibleActors.toList(),
                 hasMediaInRepost = repost.mediaIds.isNotEmpty(),
                 lastUpdatedAt = Instant.now(),
-                warnFilters = filterResults.map { TimelineObjectWarnFilter(it.filter.id, it.matchedKeyword) },
-                favourited = favourited
+                warnFilters = filterResults.map { TimelineObjectWarnFilter(it.filter.id, it.matchedKeyword) }
             )
         }
     }
