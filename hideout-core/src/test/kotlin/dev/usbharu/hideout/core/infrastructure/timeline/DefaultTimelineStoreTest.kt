@@ -19,6 +19,7 @@ import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
 import dev.usbharu.hideout.core.domain.service.filter.FilterDomainService
 import dev.usbharu.hideout.core.domain.service.post.IPostReadAccessControl
 import dev.usbharu.hideout.core.infrastructure.other.TwitterSnowflakeIdGenerateService
+import dev.usbharu.hideout.core.query.reactions.ReactionsQueryService
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -63,6 +64,9 @@ class DefaultTimelineStoreTest {
 
     @Mock
     lateinit var iPostReadAccessControl: IPostReadAccessControl
+
+    @Mock
+    lateinit var reactionsQueryService: ReactionsQueryService
 
     @Spy
     val defaultTimelineStoreConfig = DefaultTimelineStoreConfig(500)
