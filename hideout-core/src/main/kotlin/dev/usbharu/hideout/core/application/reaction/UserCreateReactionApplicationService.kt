@@ -29,10 +29,10 @@ class UserCreateReactionApplicationService(
     private val unicodeEmojiService: UnicodeEmojiService
 ) :
     LocalUserAbstractApplicationService<CreateReaction, Unit>(
-        transaction, logger
+        transaction,
+        logger
     ) {
     override suspend fun internalExecute(command: CreateReaction, principal: LocalUser) {
-
         val postId = PostId(command.postId)
         val post = postRepository.findById(postId) ?: throw IllegalArgumentException("Post $postId not found.")
         if (postReadAccessControl.isAllow(post, principal).not()) {
