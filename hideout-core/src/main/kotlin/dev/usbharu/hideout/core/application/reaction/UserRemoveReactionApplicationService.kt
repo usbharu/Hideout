@@ -18,7 +18,8 @@ class UserRemoveReactionApplicationService(
     private val unicodeEmojiService: UnicodeEmojiService
 ) :
     LocalUserAbstractApplicationService<RemoveReaction, Unit>(
-        transaction, logger
+        transaction,
+        logger
     ) {
     override suspend fun internalExecute(command: RemoveReaction, principal: LocalUser) {
         val postId = PostId(command.postId)
