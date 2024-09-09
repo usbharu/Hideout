@@ -16,12 +16,12 @@ data class Reactions(
         fun of(reactionList: List<Reaction>, customEmoji: CustomEmoji?): Reactions {
             val first = reactionList.first()
             return Reactions(
-                first.id.value,
-                reactionList.size,
-                customEmoji?.name ?: first.unicodeEmoji.name,
-                customEmoji?.domain?.domain ?: first.unicodeEmoji.domain.domain,
-                customEmoji?.url,
-                reactionList.map { it.actorId.id }
+                postId = first.id.value,
+                count = reactionList.size,
+                name = customEmoji?.name ?: first.unicodeEmoji.name,
+                domain = customEmoji?.domain?.domain ?: first.unicodeEmoji.domain.domain,
+                url = customEmoji?.url,
+                actorIds = reactionList.map { it.actorId.id }
             )
         }
     }
