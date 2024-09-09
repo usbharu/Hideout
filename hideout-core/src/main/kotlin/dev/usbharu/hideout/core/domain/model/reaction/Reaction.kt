@@ -27,15 +27,14 @@ class Reaction(
         return id == other.id
     }
 
-    override fun hashCode(): Int {
-        return id.hashCode()
-    }
+    override fun hashCode(): Int = id.hashCode()
 
     fun delete() {
         addDomainEvent(ReactionEventFactory(this).createEvent(ReactionEvent.DELETE))
     }
 
     companion object {
+        @Suppress("LongParameterList")
         fun create(
             id: ReactionId,
             postId: PostId,

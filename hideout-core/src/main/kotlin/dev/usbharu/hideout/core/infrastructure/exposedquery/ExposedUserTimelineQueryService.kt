@@ -76,7 +76,7 @@ class ExposedUserTimelineQueryService : UserTimelineQueryService, AbstractReposi
                     mediaDetailList = it.mapNotNull { resultRow ->
                         resultRow.toMediaOrNull()?.let { it1 -> MediaDetail.of(it1) }
                     },
-                    favourited = it.any { it.getOrNull(Reactions.actorId) != null }
+                    favourited = it.any { resultRow -> resultRow.getOrNull(Reactions.actorId) != null }
                 )
             }
     }
@@ -108,7 +108,7 @@ class ExposedUserTimelineQueryService : UserTimelineQueryService, AbstractReposi
             deleted = it[authorizedQuery[Posts.deleted]],
             mediaDetailList = emptyList(),
             moveTo = null,
-            emptyList(),
+            reactionsList = emptyList(),
             favourited = false
         )
     }

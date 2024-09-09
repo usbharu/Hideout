@@ -17,6 +17,9 @@ import dev.usbharu.hideout.core.infrastructure.exposedrepository.Reactions as Ex
 
 @Repository
 class ExposedReactionsQueryService : ReactionsQueryService, AbstractRepository() {
+    override val logger: Logger
+        get() = Companion.logger
+
     override suspend fun findAllByPostId(postId: PostId): List<Reactions> {
         return query {
             ExposedrepositoryReactions.leftJoin(CustomEmojis).selectAll()
@@ -52,20 +55,17 @@ class ExposedReactionsQueryService : ReactionsQueryService, AbstractRepository()
                 .groupBy(ExposedrepositoryReactions.postId)
                 .map {
                     Reactions(
-                        it[ExposedrepositoryReactions.postId],
-                        it[ExposedrepositoryReactions.postId.count()].toInt(),
-                        it.getOrNull(CustomEmojis.name)
+                        postId = it[ExposedrepositoryReactions.postId],
+                        count = it[ExposedrepositoryReactions.postId.count()].toInt(),
+                        name = it.getOrNull(CustomEmojis.name)
                             ?: it[ExposedrepositoryReactions.unicodeEmoji.max<String, String>()]!!,
-                        it.getOrNull(CustomEmojis.domain) ?: UnicodeEmoji.domain.domain,
-                        it.getOrNull(CustomEmojis.url)?.let { it1 -> URI.create(it1) },
-                        it[actorIdsQuery].split(",").mapNotNull { it.toLongOrNull() }
+                        domain = it.getOrNull(CustomEmojis.domain) ?: UnicodeEmoji.domain.domain,
+                        url = it.getOrNull(CustomEmojis.url)?.let { it1 -> URI.create(it1) },
+                        actorIds = it[actorIdsQuery].split(",").mapNotNull { s -> s.toLongOrNull() }
                     )
                 }
         }
     }
-
-    override val logger: Logger
-        get() = Companion.logger
 
     companion object {
         private val logger = LoggerFactory.getLogger(ExposedReactionsQueryService::class.java)

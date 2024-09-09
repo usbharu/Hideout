@@ -6,7 +6,5 @@ import org.springframework.stereotype.Service
 
 @Service
 class EmojiKtUnicodeEmojiService : UnicodeEmojiService {
-    override fun isUnicodeEmoji(emoji: String): Boolean {
-        return Emojis.allEmojis.singleOrNull { it.char == emoji } != null
-    }
+    override fun isUnicodeEmoji(emoji: String): Boolean = Emojis.allEmojis.singleOrNull { it.char == emoji } != null
 }

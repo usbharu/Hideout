@@ -9,6 +9,8 @@ interface TimelineRepository {
     suspend fun findByIds(ids: List<TimelineId>): List<Timeline>
 
     suspend fun findById(id: TimelineId): Timeline?
+
+    @Suppress("FunctionMaxLength")
     suspend fun findAllByUserDetailIdAndVisibilityIn(
         userDetailId: UserDetailId,
         visibility: List<TimelineVisibility>
