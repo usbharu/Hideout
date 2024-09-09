@@ -44,10 +44,10 @@ class ReadTimelineApplicationService(
             val reply = if (it.replyPost != null) {
                 @Suppress("UnsafeCallOnNullableType")
                 PostDetail.of(
-                    it.replyPost,
-                    it.replyPostActor!!,
-                    it.replyPostActorIconMedia,
-                    it.replyPostMedias.orEmpty(),
+                    post = it.replyPost,
+                    actor = it.replyPostActor!!,
+                    iconMedia = it.replyPostActorIconMedia,
+                    mediaList = it.replyPostMedias.orEmpty(),
                     reactionsList = emptyList(),
                     favourited = false,
                 )

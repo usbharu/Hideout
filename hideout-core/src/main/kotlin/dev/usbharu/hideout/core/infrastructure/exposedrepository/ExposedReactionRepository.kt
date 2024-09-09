@@ -108,12 +108,12 @@ class ExposedReactionRepository(override val domainEventPublisher: DomainEventPu
 
 fun ResultRow.toReaction(): Reaction {
     return Reaction(
-        ReactionId(this[Reactions.id]),
-        PostId(this[Reactions.postId]),
-        ActorId(this[Reactions.actorId]),
-        this[Reactions.customEmojiId]?.let { CustomEmojiId(it) },
-        UnicodeEmoji(this[Reactions.unicodeEmoji]),
-        this[Reactions.createdAt]
+        id = ReactionId(this[Reactions.id]),
+        postId = PostId(this[Reactions.postId]),
+        actorId = ActorId(this[Reactions.actorId]),
+        customEmojiId = this[Reactions.customEmojiId]?.let { CustomEmojiId(it) },
+        unicodeEmoji = UnicodeEmoji(this[Reactions.unicodeEmoji]),
+        createdAt = this[Reactions.createdAt]
     )
 }
 

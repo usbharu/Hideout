@@ -4,6 +4,7 @@ import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.emoji.CustomEmojiId
 import dev.usbharu.hideout.core.domain.model.post.PostId
 
+@Suppress("FunctionMaxLength")
 interface ReactionRepository {
     suspend fun save(reaction: Reaction): Reaction
     suspend fun findById(reactionId: ReactionId): Reaction?
