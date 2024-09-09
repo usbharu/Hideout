@@ -16,9 +16,9 @@
 
 package dev.usbharu.hideout.core.domain.model.post
 
-import dev.usbharu.hideout.core.domain.model.emoji.CustomEmojiId
+import dev.usbharu.hideout.core.domain.model.emoji.EmojiId
 
-data class PostContent(val text: String, val content: String, val emojiIds: List<CustomEmojiId>) {
+data class PostContent(val text: String, val content: String, val emojiIds: List<EmojiId>) {
 
     companion object {
         val empty = PostContent("", "", emptyList())

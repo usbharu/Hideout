@@ -20,7 +20,7 @@ import dev.usbharu.hideout.core.domain.event.post.PostDomainEventFactory
 import dev.usbharu.hideout.core.domain.event.post.PostEvent
 import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
-import dev.usbharu.hideout.core.domain.model.emoji.CustomEmojiId
+import dev.usbharu.hideout.core.domain.model.emoji.EmojiId
 import dev.usbharu.hideout.core.domain.model.instance.InstanceId
 import dev.usbharu.hideout.core.domain.model.media.MediaId
 import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventStorable
@@ -138,7 +138,7 @@ class Post(
             return content.text
         }
 
-    val emojiIds: List<CustomEmojiId>
+    val emojiIds: List<EmojiId>
         get() {
             if (hide) {
                 return PostContent.empty.emojiIds
@@ -217,7 +217,7 @@ class Post(
 
     override fun hashCode(): Int = id.hashCode()
 
-    fun reconstructWith(mediaIds: List<MediaId>, emojis: List<CustomEmojiId>, visibleActors: Set<ActorId>): Post {
+    fun reconstructWith(mediaIds: List<MediaId>, emojis: List<EmojiId>, visibleActors: Set<ActorId>): Post {
         return Post(
             id = id,
             actorId = actorId,

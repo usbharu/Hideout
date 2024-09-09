@@ -17,8 +17,8 @@
 package dev.usbharu.hideout.core.infrastructure.exposedrepository
 
 import dev.usbharu.hideout.core.domain.model.emoji.CustomEmoji
-import dev.usbharu.hideout.core.domain.model.emoji.CustomEmojiId
 import dev.usbharu.hideout.core.domain.model.emoji.CustomEmojiRepository
+import dev.usbharu.hideout.core.domain.model.emoji.EmojiId
 import dev.usbharu.hideout.core.domain.model.instance.InstanceId
 import dev.usbharu.hideout.core.domain.model.support.domain.Domain
 import org.jetbrains.exposed.sql.*
@@ -81,7 +81,7 @@ class CustomEmojiRepositoryImpl : CustomEmojiRepository,
 }
 
 fun ResultRow.toCustomEmoji(): CustomEmoji = CustomEmoji(
-    id = CustomEmojiId(this[CustomEmojis.id]),
+    id = EmojiId(this[CustomEmojis.id]),
     name = this[CustomEmojis.name],
     domain = Domain(this[CustomEmojis.domain]),
     instanceId = InstanceId(this[CustomEmojis.instanceId]),
@@ -92,7 +92,7 @@ fun ResultRow.toCustomEmoji(): CustomEmoji = CustomEmoji(
 
 fun ResultRow.toCustomEmojiOrNull(): CustomEmoji? {
     return CustomEmoji(
-        id = CustomEmojiId(this.getOrNull(CustomEmojis.id) ?: return null),
+        id = EmojiId(this.getOrNull(CustomEmojis.id) ?: return null),
         name = this.getOrNull(CustomEmojis.name) ?: return null,
         domain = Domain(this.getOrNull(CustomEmojis.domain) ?: return null),
         instanceId = InstanceId(this.getOrNull(CustomEmojis.instanceId) ?: return null),

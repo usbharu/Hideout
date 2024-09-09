@@ -4,7 +4,7 @@ import dev.usbharu.hideout.core.domain.event.post.PostEvent
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.actor.ActorPublicKey
 import dev.usbharu.hideout.core.domain.model.actor.TestActorFactory
-import dev.usbharu.hideout.core.domain.model.emoji.CustomEmojiId
+import dev.usbharu.hideout.core.domain.model.emoji.EmojiId
 import dev.usbharu.hideout.core.domain.model.media.MediaId
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -447,7 +447,7 @@ class PostTest {
     @Test
     fun `emojiIds hideがtrueの時empty`() {
         val actor = TestActorFactory.create()
-        val emojiIds = listOf(CustomEmojiId(1), CustomEmojiId(2))
+        val emojiIds = listOf(EmojiId(1), EmojiId(2))
         val post = Post.create(
             id = PostId(1),
             actorId = actor.id,
@@ -473,7 +473,7 @@ class PostTest {
     @Test
     fun `emojiIds hideがfalseの時中身が返される`() {
         val actor = TestActorFactory.create()
-        val emojiIds = listOf(CustomEmojiId(1), CustomEmojiId(2))
+        val emojiIds = listOf(EmojiId(1), EmojiId(2))
         val post = Post.create(
             id = PostId(1),
             actorId = actor.id,
@@ -500,7 +500,7 @@ class PostTest {
         val post = TestPostFactory.create()
         val mediaIds = listOf<MediaId>(MediaId(1))
         val visibleActors = setOf<ActorId>((ActorId(2)))
-        val emojis = listOf<CustomEmojiId>(CustomEmojiId(3))
+        val emojis = listOf<EmojiId>(EmojiId(3))
         val reconstructWith = post.reconstructWith(mediaIds, emojis, visibleActors)
 
         assertEquals(mediaIds, reconstructWith.mediaIds)
@@ -511,7 +511,7 @@ class PostTest {
     @Test
     fun `mediaIds hideがtrueの時emptyが返される`() {
         val actor = TestActorFactory.create()
-        val emojiIds = listOf(CustomEmojiId(1), CustomEmojiId(2))
+        val emojiIds = listOf(EmojiId(1), EmojiId(2))
         val mediaIds = listOf(MediaId(1))
         val post = Post.create(
             id = PostId(1),
@@ -538,7 +538,7 @@ class PostTest {
     @Test
     fun `mediaIds hideがfalseの時中身が返される`() {
         val actor = TestActorFactory.create()
-        val emojiIds = listOf(CustomEmojiId(1), CustomEmojiId(2))
+        val emojiIds = listOf(EmojiId(1), EmojiId(2))
         val mediaIds = listOf(MediaId(2))
         val post = Post.create(
             id = PostId(1),
@@ -603,7 +603,7 @@ class PostTest {
     fun `restore 指定された引数で再構成されCHECKUPDATEイベントが発生する`() {
         val post = TestPostFactory.create(deleted = true)
 
-        val postContent = PostContent("aiueo", "aiueo", listOf(CustomEmojiId(1)))
+        val postContent = PostContent("aiueo", "aiueo", listOf(EmojiId(1)))
         val overview = PostOverview("overview")
         val mediaIds = listOf(MediaId(1))
         post.restore(
@@ -622,7 +622,7 @@ class PostTest {
     fun deletedがfalseの時失敗する() {
         val post = TestPostFactory.create(deleted = false)
 
-        val postContent = PostContent("aiueo", "aiueo", listOf(CustomEmojiId(1)))
+        val postContent = PostContent("aiueo", "aiueo", listOf(EmojiId(1)))
         val overview = PostOverview("overview")
         val mediaIds = listOf(MediaId(1))
         assertThrows<IllegalArgumentException> {

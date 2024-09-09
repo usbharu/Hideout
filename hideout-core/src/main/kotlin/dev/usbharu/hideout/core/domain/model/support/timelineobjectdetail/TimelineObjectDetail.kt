@@ -1,6 +1,5 @@
 package dev.usbharu.hideout.core.domain.model.support.timelineobjectdetail
 
-import dev.usbharu.hideout.core.application.model.Reactions
 import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.media.Media
 import dev.usbharu.hideout.core.domain.model.post.Post
@@ -30,9 +29,7 @@ data class TimelineObjectDetail(
     val isPureRepost: Boolean,
     val lastUpdateAt: Instant,
     val hasMediaInRepost: Boolean,
-    val warnFilter: List<TimelineObjectWarnFilter>,
-    val reactionsList: List<Reactions>,
-    val favourited: Boolean
+    val warnFilter: List<TimelineObjectWarnFilter>
 ) {
     companion object {
         @Suppress("LongParameterList")
@@ -51,9 +48,7 @@ data class TimelineObjectDetail(
             repostPostMedias: List<Media>?,
             repostPostActor: Actor?,
             repostPostActorIconMedia: Media?,
-            warnFilter: List<TimelineObjectWarnFilter>,
-            reactionsList: List<Reactions>,
-            favourited: Boolean
+            warnFilter: List<TimelineObjectWarnFilter>
         ): TimelineObjectDetail {
             return TimelineObjectDetail(
                 id = timelineObject.id,
@@ -74,9 +69,7 @@ data class TimelineObjectDetail(
                 isPureRepost = timelineObject.isPureRepost,
                 lastUpdateAt = timelineObject.lastUpdatedAt,
                 hasMediaInRepost = timelineObject.hasMediaInRepost,
-                warnFilter = warnFilter,
-                reactionsList = reactionsList,
-                favourited = favourited
+                warnFilter = warnFilter
             )
         }
     }

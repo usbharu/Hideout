@@ -168,7 +168,7 @@ class ExposedPostRepository(
                 Posts.id eq id.id
             }
             .let(postQueryMapper::map)
-            .firstOrNull()
+            .first()
     }
 
     override suspend fun findAllById(ids: List<PostId>): List<Post> {

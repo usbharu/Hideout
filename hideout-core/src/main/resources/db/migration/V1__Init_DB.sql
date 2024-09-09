@@ -318,17 +318,4 @@ create table if not exists filter_keywords
     keyword   varchar(1000) not null,
     mode      varchar(100)  not null,
     constraint fk_filter_keywords_filter_id__id foreign key (filter_id) references filters (id) on delete cascade on update cascade
-);
-
-create table if not exists reactions
-(
-    id              bigint primary key,
-    post_id         bigint       not null,
-    actor_id        bigint       not null,
-    custom_emoji_id bigint       null,
-    unicode_emoji   varchar(100) not null,
-    created_at      timestamp    not null,
-    constraint fk_reactions_post_id__id foreign key (post_id) references posts (id) on delete cascade on update cascade,
-    constraint fk_reactions_actor_id__id foreign key (actor_id) references actors (id) on delete cascade on update cascade,
-    unique (post_id, actor_id, created_at, unicode_emoji)
-);
+)
