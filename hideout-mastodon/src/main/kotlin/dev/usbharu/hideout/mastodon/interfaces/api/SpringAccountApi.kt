@@ -39,11 +39,16 @@ import dev.usbharu.hideout.core.application.relationship.unfollow.Unfollow
 import dev.usbharu.hideout.core.application.relationship.unfollow.UserUnfollowApplicationService
 import dev.usbharu.hideout.core.application.relationship.unmute.Unmute
 import dev.usbharu.hideout.core.application.relationship.unmute.UserUnmuteApplicationService
+import dev.usbharu.hideout.core.domain.model.support.principal.Principal
 import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.SpringSecurityOauth2PrincipalContextHolder
 import dev.usbharu.hideout.mastodon.application.accounts.GetAccount
 import dev.usbharu.hideout.mastodon.application.accounts.GetAccountApplicationService
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.AccountApi
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.runBlocking
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 
@@ -66,27 +71,30 @@ class SpringAccountApi(
 ) : AccountApi {
 
     override suspend fun apiV1AccountsIdBlockPost(id: String): ResponseEntity<Relationship> {
-        userBlockApplicationService.execute(Block(id.toLong()), principalContextHolder.getPrincipal())
-        return fetchRelationship(id)
+        val principal = principalContextHolder.getPrincipal()
+        userBlockApplicationService.execute(Block(id.toLong()), principal)
+        return fetchRelationship(id, principal)
     }
 
     override suspend fun apiV1AccountsIdFollowPost(
         id: String,
         followRequestBody: FollowRequestBody?,
     ): ResponseEntity<Relationship> {
+        val principal = principalContextHolder.getPrincipal()
         userFollowRequestApplicationService.execute(
             FollowRequest(id.toLong()),
-            principalContextHolder.getPrincipal()
+            principal
         )
-        return fetchRelationship(id)
+        return fetchRelationship(id, principal)
     }
 
     private suspend fun fetchRelationship(
         id: String,
+        principal: Principal
     ): ResponseEntity<Relationship> {
         val relationship = getRelationshipApplicationService.execute(
             GetRelationship(id.toLong()),
-            principalContextHolder.getPrincipal()
+            principal
         )
         return ResponseEntity.ok(
             Relationship(
@@ -117,43 +125,56 @@ class SpringAccountApi(
     }
 
     override suspend fun apiV1AccountsIdMutePost(id: String): ResponseEntity<Relationship> {
+        val principal = principalContextHolder.getPrincipal()
         userMuteApplicationService.execute(
             Mute(id.toLong()),
-            principalContextHolder.getPrincipal()
+            principal
         )
-        return fetchRelationship(id)
+        return fetchRelationship(id, principal)
     }
 
     override suspend fun apiV1AccountsIdRemoveFromFollowersPost(id: String): ResponseEntity<Relationship> {
+        val principal = principalContextHolder.getPrincipal()
         userRemoveFromFollowersApplicationService.execute(
             RemoveFromFollowers(id.toLong()),
-            principalContextHolder.getPrincipal()
+            principal
         )
-        return fetchRelationship(id)
+        return fetchRelationship(id, principal)
     }
 
     override suspend fun apiV1AccountsIdUnblockPost(id: String): ResponseEntity<Relationship> {
+        val principal = principalContextHolder.getPrincipal()
         userUnblockApplicationService.execute(
             Unblock(id.toLong()),
-            principalContextHolder.getPrincipal()
+            principal
         )
-        return fetchRelationship(id)
+        return fetchRelationship(id, principal)
     }
 
     override suspend fun apiV1AccountsIdUnfollowPost(id: String): ResponseEntity<Relationship> {
+        val principal = principalContextHolder.getPrincipal()
         userUnfollowApplicationService.execute(
             Unfollow(id.toLong()),
-            principalContextHolder.getPrincipal()
+            principal
         )
-        return fetchRelationship(id)
+        return fetchRelationship(id, principal)
+    }
+
+    override fun apiV1AccountsRelationshipsGet(
+        id: List<String>?,
+        withSuspended: Boolean
+    ): ResponseEntity<Flow<Relationship>> {
+        val principal = runBlocking { principalContextHolder.getPrincipal() }
+        return ResponseEntity.ok(id.orEmpty().asFlow().mapNotNull { fetchRelationship(it, principal).body })
     }
 
     override suspend fun apiV1AccountsIdUnmutePost(id: String): ResponseEntity<Relationship> {
+        val principal = principalContextHolder.getPrincipal()
         userUnmuteApplicationService.execute(
             Unmute(id.toLong()),
-            principalContextHolder.getPrincipal()
+            principal
         )
-        return fetchRelationship(id)
+        return fetchRelationship(id, principal)
     }
 
     override suspend fun apiV1AccountsPost(accountsCreateRequest: AccountsCreateRequest): ResponseEntity<Unit> =
@@ -220,18 +241,20 @@ class SpringAccountApi(
     }
 
     override suspend fun apiV1FollowRequestsAccountIdAuthorizePost(accountId: String): ResponseEntity<Relationship> {
+        val principal = principalContextHolder.getPrincipal()
         userAcceptFollowRequestApplicationService.execute(
             AcceptFollowRequest(accountId.toLong()),
-            principalContextHolder.getPrincipal()
+            principal
         )
-        return fetchRelationship(accountId)
+        return fetchRelationship(accountId, principal)
     }
 
     override suspend fun apiV1FollowRequestsAccountIdRejectPost(accountId: String): ResponseEntity<Relationship> {
+        val principal = principalContextHolder.getPrincipal()
         userRejectFollowRequestApplicationService.execute(
             RejectFollowRequest(accountId.toLong()),
-            principalContextHolder.getPrincipal()
+            principal
         )
-        return fetchRelationship(accountId)
+        return fetchRelationship(accountId, principal)
     }
 }

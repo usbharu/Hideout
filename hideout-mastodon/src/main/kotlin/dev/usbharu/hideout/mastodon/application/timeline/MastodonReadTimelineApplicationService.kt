@@ -69,7 +69,6 @@ class MastodonReadTimelineApplicationService(
                     lastStatusAt = it.postActor.lastPostAt?.toString(),
                     followersCount = it.postActor.followersCount?.relationshipCount,
                     followingCount = it.postActor.followingCount?.relationshipCount,
-                    source = null
                 ),
                 content = it.post.content.content,
                 visibility = when (it.post.visibility) {
