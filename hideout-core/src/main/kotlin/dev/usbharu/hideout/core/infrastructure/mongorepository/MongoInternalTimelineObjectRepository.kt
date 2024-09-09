@@ -1,7 +1,7 @@
 package dev.usbharu.hideout.core.infrastructure.mongorepository
 
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
-import dev.usbharu.hideout.core.domain.model.emoji.CustomEmojiId
+import dev.usbharu.hideout.core.domain.model.emoji.EmojiId
 import dev.usbharu.hideout.core.domain.model.filter.FilterId
 import dev.usbharu.hideout.core.domain.model.media.MediaId
 import dev.usbharu.hideout.core.domain.model.post.PostId
@@ -133,8 +133,7 @@ data class SpringDataMongoTimelineObject(
     val visibleActors: List<Long>,
     val hasMediaInRepost: Boolean,
     val lastUpdatedAt: Long,
-    val warnFilters: List<SpringDataMongoTimelineObjectWarnFilter>,
-    val favourited: Boolean
+    val warnFilters: List<SpringDataMongoTimelineObjectWarnFilter>
 ) {
 
     fun toTimelineObject(): TimelineObject {
@@ -152,12 +151,11 @@ data class SpringDataMongoTimelineObject(
             visibility = visibility,
             isPureRepost = isPureRepost,
             mediaIds = mediaIds.map { MediaId(it) },
-            emojiIds = emojiIds.map { CustomEmojiId(it) },
+            emojiIds = emojiIds.map { EmojiId(it) },
             visibleActors = visibleActors.map { ActorId(it) },
             hasMediaInRepost = hasMediaInRepost,
             lastUpdatedAt = Instant.ofEpochSecond(lastUpdatedAt),
-            warnFilters = warnFilters.map { it.toTimelineObjectWarnFilter() },
-            favourited = favourited
+            warnFilters = warnFilters.map { it.toTimelineObjectWarnFilter() }
         )
     }
 
@@ -181,8 +179,7 @@ data class SpringDataMongoTimelineObject(
                 visibleActors = timelineObject.visibleActors.map { it.id },
                 hasMediaInRepost = timelineObject.hasMediaInRepost,
                 lastUpdatedAt = timelineObject.lastUpdatedAt.epochSecond,
-                warnFilters = timelineObject.warnFilters.map { SpringDataMongoTimelineObjectWarnFilter.of(it) },
-                favourited = timelineObject.favourited
+                warnFilters = timelineObject.warnFilters.map { SpringDataMongoTimelineObjectWarnFilter.of(it) }
             )
         }
     }

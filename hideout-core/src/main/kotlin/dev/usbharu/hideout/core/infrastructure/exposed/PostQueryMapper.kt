@@ -17,7 +17,7 @@
 package dev.usbharu.hideout.core.infrastructure.exposed
 
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
-import dev.usbharu.hideout.core.domain.model.emoji.CustomEmojiId
+import dev.usbharu.hideout.core.domain.model.emoji.EmojiId
 import dev.usbharu.hideout.core.domain.model.media.MediaId
 import dev.usbharu.hideout.core.domain.model.post.Post
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Posts
@@ -55,7 +55,7 @@ class PostQueryMapper(private val postResultRowMapper: ResultRowMapper<Post>) : 
                 .mapNotNull { resultRow: ResultRow ->
                     resultRow
                         .getOrNull(PostsEmojis.emojiId)
-                        ?.let { emojiId -> CustomEmojiId(emojiId) }
+                        ?.let { emojiId -> EmojiId(emojiId) }
                 },
             visibleActors = it.mapNotNull { resultRow: ResultRow ->
                 resultRow

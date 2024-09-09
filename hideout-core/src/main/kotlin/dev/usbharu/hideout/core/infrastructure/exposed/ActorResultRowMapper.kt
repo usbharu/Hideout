@@ -17,7 +17,7 @@
 package dev.usbharu.hideout.core.infrastructure.exposed
 
 import dev.usbharu.hideout.core.domain.model.actor.*
-import dev.usbharu.hideout.core.domain.model.emoji.CustomEmojiId
+import dev.usbharu.hideout.core.domain.model.emoji.EmojiId
 import dev.usbharu.hideout.core.domain.model.instance.InstanceId
 import dev.usbharu.hideout.core.domain.model.media.MediaId
 import dev.usbharu.hideout.core.domain.model.support.domain.Domain
@@ -57,7 +57,7 @@ class ActorResultRowMapper : ResultRowMapper<Actor> {
             emojiIds = resultRow[Actors.emojis]
                 .split(",")
                 .filter { it.isNotEmpty() }
-                .map { CustomEmojiId(it.toLong()) }
+                .map { EmojiId(it.toLong()) }
                 .toSet(),
             deleted = resultRow[Actors.deleted],
             icon = resultRow[Actors.icon]?.let { MediaId(it) },
