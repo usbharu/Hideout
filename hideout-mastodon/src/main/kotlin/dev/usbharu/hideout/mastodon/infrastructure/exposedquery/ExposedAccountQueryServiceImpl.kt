@@ -53,10 +53,10 @@ class ExposedAccountQueryServiceImpl(private val applicationConfig: ApplicationC
             url = resultRow[Actors.url],
             displayName = resultRow[Actors.screenName],
             note = resultRow[Actors.description],
-            avatar = userUrl + "/icon.jpg",
-            avatarStatic = userUrl + "/icon.jpg",
-            header = userUrl + "/header.jpg",
-            headerStatic = userUrl + "/header.jpg",
+            avatar = "$userUrl/icon.jpg",
+            avatarStatic = "$userUrl/icon.jpg",
+            header = "$userUrl/header.jpg",
+            headerStatic = "$userUrl/header.jpg",
             locked = resultRow[Actors.locked],
             fields = emptyList(),
             emojis = emptyList(),
@@ -68,6 +68,10 @@ class ExposedAccountQueryServiceImpl(private val applicationConfig: ApplicationC
             statusesCount = resultRow[Actors.postsCount],
             followersCount = resultRow[Actors.followersCount],
             followingCount = resultRow[Actors.followingCount],
+            noindex = false,
+            moved = false,
+            suspended = resultRow[Actors.suspend],
+            limited = false,
         )
     }
 }
