@@ -18,7 +18,6 @@ class Reaction(
     val createdAt: Instant
 ) : DomainEventStorable() {
 
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -46,7 +45,12 @@ class Reaction(
             createdAt: Instant
         ): Reaction {
             return Reaction(
-                id, postId, actorId, customEmojiId, unicodeEmoji, createdAt
+                id,
+                postId,
+                actorId,
+                customEmojiId,
+                unicodeEmoji,
+                createdAt
             ).apply { addDomainEvent(ReactionEventFactory(this).createEvent(ReactionEvent.CREATE)) }
         }
     }

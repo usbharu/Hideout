@@ -2020,7 +2020,7 @@ components:
       type: object
       properties:
         filter:
-          $ref: "#/components/schemas/FilterResult"
+          $ref: "#/components/schemas/Filter"
         keyword_matches:
           type: array
           items:
