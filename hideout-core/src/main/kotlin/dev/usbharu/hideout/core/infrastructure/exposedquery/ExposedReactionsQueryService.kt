@@ -37,7 +37,6 @@ class ExposedReactionsQueryService : ReactionsQueryService, AbstractRepository()
 
     override suspend fun findAllByPostIdIn(postIds: List<PostId>): List<Reactions> {
         return query {
-
             val actorIdsQuery =
                 ExposedrepositoryReactions.actorId.castTo<String>(VarCharColumnType()).groupConcat(",", true)
 

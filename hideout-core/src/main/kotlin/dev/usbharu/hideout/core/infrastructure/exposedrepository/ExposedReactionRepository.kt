@@ -17,12 +17,13 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 
 @Repository
-class ExposedReactionRepository(override val domainEventPublisher: DomainEventPublisher) : ReactionRepository,
-    AbstractRepository(), DomainEventPublishableRepository<Reaction> {
+class ExposedReactionRepository(override val domainEventPublisher: DomainEventPublisher) :
+    ReactionRepository,
+    AbstractRepository(),
+    DomainEventPublishableRepository<Reaction> {
 
     override val logger: Logger
         get() = Companion.logger
-
 
     override suspend fun save(reaction: Reaction): Reaction {
         return query {
@@ -66,7 +67,9 @@ class ExposedReactionRepository(override val domainEventPublisher: DomainEventPu
         return query {
             Reactions.selectAll().where {
                 Reactions.postId.eq(postId.id).and(Reactions.actorId eq actorId.id)
-                    .and((Reactions.customEmojiId eq customEmojiId?.emojiId or (Reactions.unicodeEmoji eq unicodeEmoji)))
+                    .and(
+                        (Reactions.customEmojiId eq customEmojiId?.emojiId or (Reactions.unicodeEmoji eq unicodeEmoji))
+                    )
             }.empty().not()
         }
     }
@@ -89,10 +92,11 @@ class ExposedReactionRepository(override val domainEventPublisher: DomainEventPu
         unicodeEmoji: String
     ): Reaction? {
         return query {
-
             Reactions.selectAll().where {
                 Reactions.postId.eq(postId.id).and(Reactions.actorId eq actorId.id)
-                    .and((Reactions.customEmojiId eq customEmojiId?.emojiId or (Reactions.unicodeEmoji eq unicodeEmoji)))
+                    .and(
+                        (Reactions.customEmojiId eq customEmojiId?.emojiId or (Reactions.unicodeEmoji eq unicodeEmoji))
+                    )
             }.limit(1).singleOrNull()?.toReaction()
         }
     }
@@ -111,7 +115,6 @@ fun ResultRow.toReaction(): Reaction {
         UnicodeEmoji(this[Reactions.unicodeEmoji]),
         this[Reactions.createdAt]
     )
-
 }
 
 object Reactions : Table("reactions") {

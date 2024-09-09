@@ -47,7 +47,8 @@ class PostsController(
                 id,
                 null,
                 "❤"
-            ), principal
+            ),
+            principal
         )
         return "redirect:/users/$name/posts/$id"
     }
@@ -60,7 +61,8 @@ class PostsController(
                 id,
                 null,
                 "❤"
-            ), principal
+            ),
+            principal
         )
         return "redirect:/users/$name/posts/$id"
     }
