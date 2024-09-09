@@ -25,6 +25,7 @@ import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
+import org.springframework.data.mongodb.core.query.isEqualTo
 import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 import org.springframework.stereotype.Repository
 import java.time.Instant
@@ -83,6 +84,8 @@ class MongoInternalTimelineObjectRepository(
         page: Page?
     ): PaginationList<TimelineObject, PostId> {
         val query = Query()
+
+        query.addCriteria(Criteria.where("timelineId").isEqualTo(timelineId.value))
 
         if (page?.minId != null) {
             query.with(Sort.by(Sort.Direction.ASC, "postCreatedAt"))

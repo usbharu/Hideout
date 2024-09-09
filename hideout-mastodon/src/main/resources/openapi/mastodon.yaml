@@ -1597,8 +1597,6 @@ components:
           type: integer
         following_count:
           type: integer
-        source:
-          $ref: "#/components/schemas/AccountSource"
 
       required:
         - id
@@ -2020,7 +2018,7 @@ components:
       type: object
       properties:
         filter:
-          $ref: "#/components/schemas/FilterResult"
+          $ref: "#/components/schemas/Filter"
         keyword_matches:
           type: array
           items:
