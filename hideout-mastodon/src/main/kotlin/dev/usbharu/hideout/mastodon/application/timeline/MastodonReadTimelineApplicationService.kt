@@ -38,72 +38,75 @@ class MastodonReadTimelineApplicationService(
 
         val readTimeline = timelineStore.readTimeline(timeline, readTimelineOption, command.page, principal)
 
-        return PaginationList(readTimeline.map {
-            Status(
-                it.postId.id.toString(),
-                it.post.url.toString(),
-                it.post.createdAt.toString(),
-                account = Account(
-                    id = it.postActor.id.id.toString(),
-                    username = it.postActor.name.name,
-                    acct = Acct(it.postActor.name.name, it.postActor.domain.domain).toString(),
-                    url = it.postActor.url.toString(),
-                    displayName = it.postActor.screenName.screenName,
-                    note = it.postActor.description.description,
-                    avatar = it.postActorIconMedia?.url.toString(),
-                    avatarStatic = it.postActorIconMedia?.thumbnailUrl.toString(),
-                    header = "",
-                    headerStatic = "",
-                    locked = false,
-                    fields = emptyList(),
+        return PaginationList(
+            readTimeline.map {
+                Status(
+                    it.postId.id.toString(),
+                    it.post.url.toString(),
+                    it.post.createdAt.toString(),
+                    account = Account(
+                        id = it.postActor.id.id.toString(),
+                        username = it.postActor.name.name,
+                        acct = Acct(it.postActor.name.name, it.postActor.domain.domain).toString(),
+                        url = it.postActor.url.toString(),
+                        displayName = it.postActor.screenName.screenName,
+                        note = it.postActor.description.description,
+                        avatar = it.postActorIconMedia?.url.toString(),
+                        avatarStatic = it.postActorIconMedia?.thumbnailUrl.toString(),
+                        header = "",
+                        headerStatic = "",
+                        locked = false,
+                        fields = emptyList(),
+                        emojis = emptyList(),
+                        bot = false,
+                        group = false,
+                        discoverable = true,
+                        createdAt = it.postActor.createdAt.toString(),
+                        statusesCount = it.postActor.postsCount.postsCount,
+                        noindex = true,
+                        moved = it.postActor.moveTo != null,
+                        suspended = it.postActor.suspend,
+                        limited = false,
+                        lastStatusAt = it.postActor.lastPostAt?.toString(),
+                        followersCount = it.postActor.followersCount?.relationshipCount,
+                        followingCount = it.postActor.followingCount?.relationshipCount,
+                    ),
+                    content = it.post.content.content,
+                    visibility = when (it.post.visibility) {
+                        PUBLIC -> Status.Visibility.public
+                        UNLISTED -> Status.Visibility.unlisted
+                        FOLLOWERS -> Status.Visibility.private
+                        DIRECT -> Status.Visibility.direct
+                    },
+                    sensitive = it.post.sensitive,
+                    spoilerText = it.post.overview?.overview.orEmpty(),
+                    mediaAttachments = it.postMedias.map { MediaAttachment(it.id.id.toString()) },
+                    mentions = emptyList(),
+                    tags = emptyList(),
                     emojis = emptyList(),
-                    bot = false,
-                    group = false,
-                    discoverable = true,
-                    createdAt = it.postActor.createdAt.toString(),
-                    statusesCount = it.postActor.postsCount.postsCount,
-                    noindex = true,
-                    moved = it.postActor.moveTo != null,
-                    suspended = it.postActor.suspend,
-                    limited = false,
-                    lastStatusAt = it.postActor.lastPostAt?.toString(),
-                    followersCount = it.postActor.followersCount?.relationshipCount,
-                    followingCount = it.postActor.followingCount?.relationshipCount,
-                ),
-                content = it.post.content.content,
-                visibility = when (it.post.visibility) {
-                    PUBLIC -> Status.Visibility.public
-                    UNLISTED -> Status.Visibility.unlisted
-                    FOLLOWERS -> Status.Visibility.private
-                    DIRECT -> Status.Visibility.direct
-                },
-                sensitive = it.post.sensitive,
-                spoilerText = it.post.overview?.overview.orEmpty(),
-                mediaAttachments = it.postMedias.map { MediaAttachment(it.id.id.toString()) },
-                mentions = emptyList(),
-                tags = emptyList(),
-                emojis = emptyList(),
-                reblogsCount = 0,
-                favouritesCount = it.reactionsList.sumOf { it.count },
-                repliesCount = 0,
-                url = it.post.url.toString(),
-                text = it.post.content.text,
-                application = null,
-                inReplyToId = it.replyPost?.id?.toString(),
-                inReplyToAccountId = it.replyPostActor?.id?.toString(),
-                reblog = null,
-                poll = null,
-                card = null,
-                language = null,
-                editedAt = null,
-                favourited = it.favourited,
-                reblogged = false,
-                muted = false,
-                bookmarked = false,
-                pinned = false,
-                filtered = emptyList(),
-            )
-        }, readTimeline.next?.id, readTimeline.prev?.id)
+                    reblogsCount = 0,
+                    favouritesCount = it.reactionsList.sumOf { it.count },
+                    repliesCount = 0,
+                    url = it.post.url.toString(),
+                    text = it.post.content.text,
+                    application = null,
+                    inReplyToId = it.replyPost?.id?.toString(),
+                    inReplyToAccountId = it.replyPostActor?.id?.toString(),
+                    reblog = null,
+                    poll = null,
+                    card = null,
+                    language = null,
+                    editedAt = null,
+                    favourited = it.favourited,
+                    reblogged = false,
+                    muted = false,
+                    bookmarked = false,
+                    pinned = false,
+                    filtered = emptyList(),
+                )
+            },
+            readTimeline.next?.id, readTimeline.prev?.id
+        )
     }
 
     companion object {
