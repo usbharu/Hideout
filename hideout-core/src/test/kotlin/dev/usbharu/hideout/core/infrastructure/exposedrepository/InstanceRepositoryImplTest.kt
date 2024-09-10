@@ -173,6 +173,129 @@ class InstanceRepositoryImplTest : AbstractRepositoryTest(InstanceTable) {
         assertNull(InstanceRepositoryImpl().findById(InstanceId(1)))
     }
 
+    @Test
+    fun findByUrl_指定したURLで存在したら返す() = runTest {
+        dbSetup(to = dataSource) {
+            insertInto(InstanceTable.tableName) {
+                columns(
+                    "ID",
+                    "name",
+                    "DESCRIPTION",
+                    "URL",
+                    "ICON_URL",
+                    "SHARED_INBOX",
+                    "SOFTWARE",
+                    "VERSION",
+                    "IS_BLOCKED",
+                    "IS_MUTED",
+                    "MODERATION_NOTE",
+                    "CREATED_AT"
+                )
+                values(
+                    1,
+                    "test",
+                    "description",
+                    "https://www.example.com",
+                    "https://www.example.com",
+                    null,
+                    "",
+                    "",
+                    false,
+                    false,
+                    "",
+                    Timestamp.from(Instant.parse("2020-01-01T00:00:00Z"))
+                )
+            }
+        }.launch()
+
+        val actual = InstanceRepositoryImpl().findByUrl(URI.create("https://www.example.com"))
+        val expected = Instance(
+            id = InstanceId(1),
+            name = InstanceName("test"),
+            description = InstanceDescription("description"),
+            url = URI.create("https://www.example.com"),
+            iconUrl = URI.create("https://www.example.com"),
+            sharedInbox = null,
+            software = InstanceSoftware(""),
+            version = InstanceVersion(""),
+            isBlocked = false,
+            isMuted = false,
+            moderationNote = InstanceModerationNote(""),
+            createdAt = Instant.parse("2020-01-01T00:00:00Z"),
+        )
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun findByUrl_指定したURLで存在しないとnull() = runTest {
+        assertNull(InstanceRepositoryImpl().findByUrl(URI.create("https://www.example.com")))
+    }
+
+    @Test
+    fun delete_削除() = runTest {
+        dbSetup(to = dataSource) {
+            insertInto(InstanceTable.tableName) {
+                columns(
+                    "ID",
+                    "name",
+                    "DESCRIPTION",
+                    "URL",
+                    "ICON_URL",
+                    "SHARED_INBOX",
+                    "SOFTWARE",
+                    "VERSION",
+                    "IS_BLOCKED",
+                    "IS_MUTED",
+                    "MODERATION_NOTE",
+                    "CREATED_AT"
+                )
+                values(
+                    1,
+                    "test",
+                    "description",
+                    "https://www.example.com",
+                    "https://www.example.com",
+                    null,
+                    "",
+                    "",
+                    false,
+                    false,
+                    "",
+                    Timestamp.from(Instant.parse("2020-01-01T00:00:00Z"))
+                )
+            }
+        }.launch()
+
+        val instance = Instance(
+            id = InstanceId(1),
+            name = InstanceName("test"),
+            description = InstanceDescription("description"),
+            url = URI.create("https://www.example.com"),
+            iconUrl = URI.create("https://www.example.com"),
+            sharedInbox = null,
+            software = InstanceSoftware(""),
+            version = InstanceVersion(""),
+            isBlocked = false,
+            isMuted = false,
+            moderationNote = InstanceModerationNote(""),
+            createdAt = Instant.parse("2020-01-01T00:00:00Z"),
+        )
+
+        change.setStartPointNow()
+
+        InstanceRepositoryImpl().delete(instance)
+
+        change.setEndPointNow()
+
+        assertThat(change)
+            .hasNumberOfChanges(1)
+            .changeOfDeletionOnTable(InstanceTable.tableName)
+            .rowAtStartPoint()
+            .value(InstanceTable.id.name).isEqualTo(1)
+
+    }
+
     companion object {
         fun assertEquals(expected: Instance, actual: Instance?) {
             assertNotNull(actual)

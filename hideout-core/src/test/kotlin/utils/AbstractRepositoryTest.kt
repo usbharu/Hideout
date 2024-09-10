@@ -4,6 +4,7 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import org.assertj.db.api.TableRowAssert
 import org.assertj.db.api.TableRowValueAssert
+import org.assertj.db.type.Changes
 import org.assertj.db.type.Table
 import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.Column
@@ -31,11 +32,14 @@ abstract class AbstractRepositoryTest(private val exposedTable: org.jetbrains.ex
 
     private lateinit var transaction: Transaction
 
+    protected lateinit var change: Changes
+
     @BeforeEach
     fun setUp() {
         flyway.clean()
         flyway.migrate()
         transaction = TransactionManager.currentOrNew(Connection.TRANSACTION_READ_UNCOMMITTED)
+        change = Changes(assertTable)
     }
 
     @AfterEach
