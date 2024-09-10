@@ -27,7 +27,7 @@ import java.net.URI
 import dev.usbharu.hideout.core.domain.model.media.Media as EntityMedia
 
 @Repository
-class MediaRepositoryImpl : MediaRepository, AbstractRepository() {
+class ExposedMediaRepository : MediaRepository, AbstractRepository() {
     override val logger: Logger
         get() = Companion.logger
 
@@ -51,12 +51,13 @@ class MediaRepositoryImpl : MediaRepository, AbstractRepository() {
         return query {
             return@query Media
                 .selectAll().where { Media.id eq id.id }
+                .limit(1)
                 .singleOrNull()
                 ?.toMedia()
         }
     }
 
-    override suspend fun findByIds(ids: List<MediaId>): List<dev.usbharu.hideout.core.domain.model.media.Media> {
+    override suspend fun findByIdIn(ids: List<MediaId>): List<dev.usbharu.hideout.core.domain.model.media.Media> {
         return query {
             return@query Media
                 .selectAll()
@@ -72,7 +73,7 @@ class MediaRepositoryImpl : MediaRepository, AbstractRepository() {
     }
 
     companion object {
-        private val logger = LoggerFactory.getLogger(MediaRepositoryImpl::class.java)
+        private val logger = LoggerFactory.getLogger(ExposedMediaRepository::class.java)
     }
 }
 

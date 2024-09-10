@@ -40,7 +40,7 @@ class GetPostDetailApplicationService(
 
         val iconMedia = actor.icon?.let { mediaRepository.findById(it) }
 
-        val mediaList = mediaRepository.findByIds(post.mediaIds)
+        val mediaList = mediaRepository.findByIdIn(post.mediaIds)
 
         val reactions = reactionsQueryService.findAllByPostId(post.id)
 
@@ -82,7 +82,7 @@ class GetPostDetailApplicationService(
             actor to iconMedia
         }
 
-        val mediaList = mediaRepository.findByIds(post.mediaIds)
+        val mediaList = mediaRepository.findByIdIn(post.mediaIds)
         return PostDetail.of(
             post = post,
             actor = first,
