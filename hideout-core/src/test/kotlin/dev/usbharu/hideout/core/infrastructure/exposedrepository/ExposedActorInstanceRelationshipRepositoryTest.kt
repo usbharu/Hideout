@@ -40,18 +40,7 @@ class ExposedActorInstanceRelationshipRepositoryTest : AbstractRepositoryTest(Ac
             execute(Operations.sql("SET REFERENTIAL_INTEGRITY FALSE"))
             insertInto(Instance.tableName) {
                 columns(
-                    "ID",
-                    "name",
-                    "DESCRIPTION",
-                    "URL",
-                    "ICON_URL",
-                    "SHARED_INBOX",
-                    "SOFTWARE",
-                    "VERSION",
-                    "IS_BLOCKED",
-                    "IS_MUTED",
-                    "MODERATION_NOTE",
-                    "CREATED_AT"
+                    Instance.columns
                 )
                 values(
                     1,
@@ -70,33 +59,7 @@ class ExposedActorInstanceRelationshipRepositoryTest : AbstractRepositoryTest(Ac
             }
             insertInto("public.actors") {
                 columns(
-                    "id",
-                    "name",
-                    "domain",
-                    "screen_name",
-                    "description",
-                    "inbox",
-                    "outbox",
-                    "url",
-                    "public_key",
-                    "private_key",
-                    "created_at",
-                    "key_id",
-                    "following",
-                    "followers",
-                    "instance",
-                    "locked",
-                    "following_count",
-                    "followers_count",
-                    "posts_count",
-                    "last_post_at",
-                    "last_update_at",
-                    "suspend",
-                    "move_to",
-                    "emojis",
-                    "deleted",
-                    "icon",
-                    "banner"
+                    Actors.columns
                 )
                 values(
                     1,
@@ -153,18 +116,7 @@ class ExposedActorInstanceRelationshipRepositoryTest : AbstractRepositoryTest(Ac
             execute(Operations.sql("SET REFERENTIAL_INTEGRITY FALSE"))
             insertInto(Instance.tableName) {
                 columns(
-                    "ID",
-                    "name",
-                    "DESCRIPTION",
-                    "URL",
-                    "ICON_URL",
-                    "SHARED_INBOX",
-                    "SOFTWARE",
-                    "VERSION",
-                    "IS_BLOCKED",
-                    "IS_MUTED",
-                    "MODERATION_NOTE",
-                    "CREATED_AT"
+                    Instance.columns
                 )
                 values(
                     1,
@@ -183,33 +135,7 @@ class ExposedActorInstanceRelationshipRepositoryTest : AbstractRepositoryTest(Ac
             }
             insertInto("public.actors") {
                 columns(
-                    "id",
-                    "name",
-                    "domain",
-                    "screen_name",
-                    "description",
-                    "inbox",
-                    "outbox",
-                    "url",
-                    "public_key",
-                    "private_key",
-                    "created_at",
-                    "key_id",
-                    "following",
-                    "followers",
-                    "instance",
-                    "locked",
-                    "following_count",
-                    "followers_count",
-                    "posts_count",
-                    "last_post_at",
-                    "last_update_at",
-                    "suspend",
-                    "move_to",
-                    "emojis",
-                    "deleted",
-                    "icon",
-                    "banner"
+                    Actors.columns
                 )
                 values(
                     1,

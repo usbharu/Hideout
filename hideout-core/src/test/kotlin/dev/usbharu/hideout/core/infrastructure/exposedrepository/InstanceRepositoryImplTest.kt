@@ -8,6 +8,7 @@ import org.assertj.db.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import utils.AbstractRepositoryTest
+import utils.columns
 import utils.isEqualTo
 import utils.value
 import java.net.URI
@@ -56,18 +57,7 @@ class InstanceRepositoryImplTest : AbstractRepositoryTest(InstanceTable) {
         dbSetup(to = dataSource) {
             insertInto(InstanceTable.tableName) {
                 columns(
-                    "ID",
-                    "name",
-                    "DESCRIPTION",
-                    "URL",
-                    "ICON_URL",
-                    "SHARED_INBOX",
-                    "SOFTWARE",
-                    "VERSION",
-                    "IS_BLOCKED",
-                    "IS_MUTED",
-                    "MODERATION_NOTE",
-                    "CREATED_AT"
+                    InstanceTable.columns
                 )
                 values(
                     1,
@@ -119,18 +109,7 @@ class InstanceRepositoryImplTest : AbstractRepositoryTest(InstanceTable) {
         dbSetup(to = dataSource) {
             insertInto(InstanceTable.tableName) {
                 columns(
-                    "ID",
-                    "name",
-                    "DESCRIPTION",
-                    "URL",
-                    "ICON_URL",
-                    "SHARED_INBOX",
-                    "SOFTWARE",
-                    "VERSION",
-                    "IS_BLOCKED",
-                    "IS_MUTED",
-                    "MODERATION_NOTE",
-                    "CREATED_AT"
+                    InstanceTable.columns
                 )
                 values(
                     1,
@@ -178,18 +157,7 @@ class InstanceRepositoryImplTest : AbstractRepositoryTest(InstanceTable) {
         dbSetup(to = dataSource) {
             insertInto(InstanceTable.tableName) {
                 columns(
-                    "ID",
-                    "name",
-                    "DESCRIPTION",
-                    "URL",
-                    "ICON_URL",
-                    "SHARED_INBOX",
-                    "SOFTWARE",
-                    "VERSION",
-                    "IS_BLOCKED",
-                    "IS_MUTED",
-                    "MODERATION_NOTE",
-                    "CREATED_AT"
+                    InstanceTable.columns
                 )
                 values(
                     1,
@@ -237,18 +205,7 @@ class InstanceRepositoryImplTest : AbstractRepositoryTest(InstanceTable) {
         dbSetup(to = dataSource) {
             insertInto(InstanceTable.tableName) {
                 columns(
-                    "ID",
-                    "name",
-                    "DESCRIPTION",
-                    "URL",
-                    "ICON_URL",
-                    "SHARED_INBOX",
-                    "SOFTWARE",
-                    "VERSION",
-                    "IS_BLOCKED",
-                    "IS_MUTED",
-                    "MODERATION_NOTE",
-                    "CREATED_AT"
+                    InstanceTable.columns
                 )
                 values(
                     1,
