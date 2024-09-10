@@ -75,6 +75,7 @@ class ExposedActorInstanceRelationshipRepository(override val domainEventPublish
                 ActorInstanceRelationships.actorId eq actorId.id and
                     (ActorInstanceRelationships.instanceId eq instanceId.instanceId)
             }
+            .limit(1)
             .singleOrNull()
             ?.toActorInstanceRelationship()
     }

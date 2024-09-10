@@ -1,5 +1,8 @@
 package utils
 
+import com.ninja_squad.dbsetup.Operations
+import com.ninja_squad.dbsetup.operation.Insert
+import com.ninja_squad.dbsetup_kotlin.dbSetup
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import org.assertj.db.api.TableRowAssert
@@ -44,6 +47,9 @@ abstract class AbstractRepositoryTest(private val exposedTable: org.jetbrains.ex
 
     @AfterEach
     fun tearDown() {
+        dbSetup(to = dataSource) {
+            execute(Operations.sql("SET REFERENTIAL_INTEGRITY TRUE"))
+        }
         transaction.rollback()
     }
 
@@ -90,3 +96,28 @@ fun <T> TableRowAssert.isEqualTo(column: Column<T>, value: T): TableRowValueAsse
 fun <T> TableRowValueAssert.isEqualTo(column: Column<T>, value: T): TableRowValueAssert {
     return value(column).isEqualTo(value)
 }
+
+fun Insert.Builder.columns(columns: List<Column<*>>): Insert.Builder {
+    columns(*columns.map { it.name }.toTypedArray())
+    return this
+}
+
+fun Insert.Builder.columns(vararg columns: Column<*>): Insert.Builder {
+    columns(*columns.map { it.name }.toTypedArray())
+    return this
+}
+
+fun Changes.with(block: () -> Unit) {
+    setStartPointNow()
+    block()
+    setEndPointNow()
+}
+
+suspend fun Changes.withSuspend(block: suspend () -> Unit) {
+    setStartPointNow()
+    block()
+    setEndPointNow()
+}
+
+val disableReferenceIntegrityConstraints = Operations.sql("SET REFERENTIAL_INTEGRITY FALSE")
+val enableReferenceIntegrityConstraints = Operations.sql("SET REFERENTIAL_INTEGRITY TRUE")
