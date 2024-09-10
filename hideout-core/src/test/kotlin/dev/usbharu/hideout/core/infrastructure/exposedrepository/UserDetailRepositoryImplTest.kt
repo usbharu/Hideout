@@ -38,35 +38,7 @@ class UserDetailRepositoryImplTest : AbstractRepositoryTest(UserDetails) {
         dbSetup(to = dataSource) {
             execute(disableReferenceIntegrityConstraints)
             insertInto("public.actors") {
-                columns(
-                    "id",
-                    "name",
-                    "domain",
-                    "screen_name",
-                    "description",
-                    "inbox",
-                    "outbox",
-                    "url",
-                    "public_key",
-                    "private_key",
-                    "created_at",
-                    "key_id",
-                    "following",
-                    "followers",
-                    "instance",
-                    "locked",
-                    "following_count",
-                    "followers_count",
-                    "posts_count",
-                    "last_post_at",
-                    "last_update_at",
-                    "suspend",
-                    "move_to",
-                    "emojis",
-                    "deleted",
-                    "icon",
-                    "banner"
-                )
+                columns(Actors.columns)
                 values(
                     1,
                     "b",
@@ -111,13 +83,9 @@ class UserDetailRepositoryImplTest : AbstractRepositoryTest(UserDetails) {
             )
         )
 
-        assertThat(assertTable)
-            .row(0)
-            .isEqualTo(UserDetails.id, 1)
-            .isEqualTo(UserDetails.actorId, 1)
+        assertThat(assertTable).row(0).isEqualTo(UserDetails.id, 1).isEqualTo(UserDetails.actorId, 1)
             .isEqualTo(UserDetails.password, "VeeeeeeeeeeeeeryStrongPassword")
-            .isEqualTo(UserDetails.lastMigration, null)
-            .isEqualTo(UserDetails.autoAcceptFolloweeFollowRequest, false)
+            .isEqualTo(UserDetails.lastMigration, null).isEqualTo(UserDetails.autoAcceptFolloweeFollowRequest, false)
             .isEqualTo(UserDetails.homeTimelineId, null)
     }
 
@@ -126,9 +94,7 @@ class UserDetailRepositoryImplTest : AbstractRepositoryTest(UserDetails) {
         dbSetup(to = dataSource) {
             execute(disableReferenceIntegrityConstraints)
             insertInto("public.actors") {
-                columns(
-                    Actors.columns
-                )
+                columns(Actors.columns)
                 values(
                     1,
                     "b",
@@ -160,9 +126,7 @@ class UserDetailRepositoryImplTest : AbstractRepositoryTest(UserDetails) {
                 )
             }
             insertInto("public.user_details") {
-                columns(
-                    UserDetails.columns
-                )
+                columns(UserDetails.columns)
                 values(
                     1,
                     1,
@@ -186,13 +150,9 @@ class UserDetailRepositoryImplTest : AbstractRepositoryTest(UserDetails) {
             )
         )
 
-        assertThat(assertTable)
-            .row(0)
-            .isEqualTo(UserDetails.id, 1)
-            .isEqualTo(UserDetails.actorId, 1)
+        assertThat(assertTable).row(0).isEqualTo(UserDetails.id, 1).isEqualTo(UserDetails.actorId, 1)
             .isEqualTo(UserDetails.password, "VeeeeeeeeeeeeeryStrongPassword")
-            .isEqualTo(UserDetails.lastMigration, null)
-            .isEqualTo(UserDetails.autoAcceptFolloweeFollowRequest, false)
+            .isEqualTo(UserDetails.lastMigration, null).isEqualTo(UserDetails.autoAcceptFolloweeFollowRequest, false)
             .isEqualTo(UserDetails.homeTimelineId, null)
     }
 
@@ -201,9 +161,7 @@ class UserDetailRepositoryImplTest : AbstractRepositoryTest(UserDetails) {
         dbSetup(to = dataSource) {
             execute(disableReferenceIntegrityConstraints)
             insertInto("public.user_details") {
-                columns(
-                    UserDetails.columns
-                )
+                columns(UserDetails.columns)
                 values(
                     1,
                     1,
@@ -217,22 +175,15 @@ class UserDetailRepositoryImplTest : AbstractRepositoryTest(UserDetails) {
         }.launch()
 
         val userDetail = UserDetail(
-            UserDetailId(1),
-            ActorId(1),
-            UserDetailHashedPassword("VeeeeeeeeeeeeeryStrongPassword"),
-            false,
-            null,
-            null
+            UserDetailId(1), ActorId(1), UserDetailHashedPassword("VeeeeeeeeeeeeeryStrongPassword"), false, null, null
         )
 
         change.withSuspend {
             userDetailRepository.delete(userDetail)
         }
 
-        assertThat(change)
-            .changeOfDeletionOnTable(UserDetails.tableName)
-            .rowAtStartPoint()
-            .value(UserDetails.id.name).isEqualTo(1)
+        assertThat(change).changeOfDeletionOnTable(UserDetails.tableName).rowAtStartPoint().value(UserDetails.id.name)
+            .isEqualTo(1)
     }
 
     @Test
@@ -240,9 +191,7 @@ class UserDetailRepositoryImplTest : AbstractRepositoryTest(UserDetails) {
         dbSetup(to = dataSource) {
             execute(disableReferenceIntegrityConstraints)
             insertInto("public.user_details") {
-                columns(
-                    UserDetails.columns
-                )
+                columns(UserDetails.columns)
                 values(
                     1,
                     1,
@@ -279,9 +228,7 @@ class UserDetailRepositoryImplTest : AbstractRepositoryTest(UserDetails) {
         dbSetup(to = dataSource) {
             execute(disableReferenceIntegrityConstraints)
             insertInto("public.user_details") {
-                columns(
-                    UserDetails.columns
-                )
+                columns(UserDetails.columns)
                 values(
                     1,
                     1,
@@ -318,16 +265,9 @@ class UserDetailRepositoryImplTest : AbstractRepositoryTest(UserDetails) {
         dbSetup(to = dataSource) {
             execute(disableReferenceIntegrityConstraints)
             insertInto("public.user_details") {
-                columns(
-                    UserDetails.columns
-                )
+                columns(UserDetails.columns)
                 values(
-                    1,
-                    1,
-                    "$2a$10\$EBj3lstVOv0wz3CxLpzYJu8FFrUJ2MPJW9Vlklyg.bfGEOn5sqIwm",
-                    false,
-                    null,
-                    null
+                    1, 1, "$2a$10\$EBj3lstVOv0wz3CxLpzYJu8FFrUJ2MPJW9Vlklyg.bfGEOn5sqIwm", false, null, null
                 )
                 values(
                     2,
@@ -351,8 +291,7 @@ class UserDetailRepositoryImplTest : AbstractRepositoryTest(UserDetails) {
 
         val userDetailList = userDetailRepository.findAllById(listOf(UserDetailId(1), UserDetailId(3)))
 
-        assertThat(userDetailList)
-            .hasSize(2)
+        assertThat(userDetailList).hasSize(2)
     }
 
     @Test
@@ -414,8 +353,7 @@ class UserDetailRepositoryImplTest : AbstractRepositoryTest(UserDetails) {
     }
 
     private fun assertEquals(
-        actual: UserDetail?,
-        expect: UserDetail
+        actual: UserDetail?, expect: UserDetail
     ) {
         assertNotNull(actual)
         kotlin.test.assertEquals(expect, actual)
