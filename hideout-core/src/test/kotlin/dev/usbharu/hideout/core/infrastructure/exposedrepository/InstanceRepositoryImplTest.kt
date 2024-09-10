@@ -44,8 +44,9 @@ class InstanceRepositoryImplTest : AbstractRepositoryTest(InstanceTable) {
 
         val table = assertTable
         assertThat(table).row(1).isEqualTo(InstanceTable.id, 1).isEqualTo(InstanceTable.name, "test")
-            .isEqualTo(InstanceTable.url, "https://www.example.com")
-            .isEqualTo(InstanceTable.iconUrl, "https://www.example.com").isEqualTo(InstanceTable.sharedInbox, null)
+            .value(InstanceTable.url).isEqualTo("https://www.example.com")
+            .value(InstanceTable.iconUrl).isEqualTo("https://www.example.com")
+            .isEqualTo(InstanceTable.sharedInbox, null)
             .isEqualTo(InstanceTable.software, "").isEqualTo(InstanceTable.version, "")
             .isEqualTo(InstanceTable.isBlocked, false).isEqualTo(InstanceTable.isMuted, false)
             .isEqualTo(InstanceTable.moderationNote, "").value(InstanceTable.createdAt)
@@ -96,8 +97,9 @@ class InstanceRepositoryImplTest : AbstractRepositoryTest(InstanceTable) {
 
         val table = assertTable
         assertThat(table).row(1).isEqualTo(InstanceTable.id, 1).isEqualTo(InstanceTable.name, "test")
-            .isEqualTo(InstanceTable.url, "https://www.example.com")
-            .isEqualTo(InstanceTable.iconUrl, "https://www.example.com").isEqualTo(InstanceTable.sharedInbox, null)
+            .value(InstanceTable.url).isEqualTo("https://www.example.com")
+            .value(InstanceTable.iconUrl).isEqualTo("https://www.example.com")
+            .isEqualTo(InstanceTable.sharedInbox, null)
             .isEqualTo(InstanceTable.software, "").isEqualTo(InstanceTable.version, "")
             .isEqualTo(InstanceTable.isBlocked, false).isEqualTo(InstanceTable.isMuted, false)
             .isEqualTo(InstanceTable.moderationNote, "").value(InstanceTable.createdAt)
