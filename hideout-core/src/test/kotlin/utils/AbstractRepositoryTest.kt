@@ -64,7 +64,7 @@ abstract class AbstractRepositoryTest(private val exposedTable: org.jetbrains.ex
         fun setup() {
             val hikariConfig = HikariConfig()
             hikariConfig.jdbcUrl =
-                "jdbc:h2:./test;MODE=POSTGRESQL;DB_CLOSE_DELAY=-1;CASE_INSENSITIVE_IDENTIFIERS=true;TRACE_LEVEL_FILE=4;"
+                "jdbc:h2:mem:test;MODE=POSTGRESQL;DB_CLOSE_DELAY=-1;CASE_INSENSITIVE_IDENTIFIERS=true;TRACE_LEVEL_FILE=4;"
             hikariConfig.driverClassName = "org.h2.Driver"
             hikariConfig.transactionIsolation = "TRANSACTION_READ_UNCOMMITTED"
             dataSource = HikariDataSource(hikariConfig)
