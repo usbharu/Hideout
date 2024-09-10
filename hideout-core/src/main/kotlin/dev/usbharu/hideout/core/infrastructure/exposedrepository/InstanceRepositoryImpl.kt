@@ -52,7 +52,7 @@ class InstanceRepositoryImpl : InstanceRepository,
     }
 
     override suspend fun findById(id: InstanceId): InstanceEntity? = query {
-        return@query Instance.selectAll().where { Instance.id eq id.instanceId }
+        return@query Instance.selectAll().where { Instance.id eq id.instanceId }.limit(1)
             .singleOrNull()?.toInstance()
     }
 
@@ -61,7 +61,7 @@ class InstanceRepositoryImpl : InstanceRepository,
     }
 
     override suspend fun findByUrl(url: URI): dev.usbharu.hideout.core.domain.model.instance.Instance? = query {
-        return@query Instance.selectAll().where { Instance.url eq url.toString() }.singleOrNull()?.toInstance()
+        return@query Instance.selectAll().where { Instance.url eq url.toString() }.limit(1).singleOrNull()?.toInstance()
     }
 
     companion object {

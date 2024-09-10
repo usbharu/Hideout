@@ -33,6 +33,8 @@ abstract class AbstractRepositoryTest(private val exposedTable: org.jetbrains.ex
 
     @BeforeEach
     fun setUp() {
+        flyway.clean()
+        flyway.migrate()
         transaction = TransactionManager.currentOrNew(Connection.TRANSACTION_READ_UNCOMMITTED)
     }
 
@@ -58,8 +60,9 @@ abstract class AbstractRepositoryTest(private val exposedTable: org.jetbrains.ex
 
 
             flyway = Flyway.configure().cleanDisabled(false).dataSource(dataSource).load()
-            val db = Database.connect(dataSource, databaseConfig = DatabaseConfig {
-                this.defaultMaxAttempts = 1
+            Database.connect(dataSource, databaseConfig = DatabaseConfig {
+                defaultMaxAttempts = 1
+
             })
             flyway.clean()
             flyway.migrate()
