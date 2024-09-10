@@ -105,7 +105,8 @@ class MastodonReadTimelineApplicationService(
                     filtered = emptyList(),
                 )
             },
-            readTimeline.next?.id, readTimeline.prev?.id
+            readTimeline.next?.id,
+            readTimeline.prev?.id
         )
     }
 
