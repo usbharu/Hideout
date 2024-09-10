@@ -41,7 +41,7 @@ abstract class AbstractRepositoryTest(private val exposedTable: org.jetbrains.ex
     fun setUp() {
         flyway.clean()
         flyway.migrate()
-        transaction = TransactionManager.currentOrNew(Connection.TRANSACTION_READ_UNCOMMITTED)
+        transaction = TransactionManager.manager.newTransaction(Connection.TRANSACTION_READ_UNCOMMITTED)
         change = Changes(assertTable)
     }
 
@@ -51,6 +51,7 @@ abstract class AbstractRepositoryTest(private val exposedTable: org.jetbrains.ex
             execute(Operations.sql("SET REFERENTIAL_INTEGRITY TRUE"))
         }
         transaction.rollback()
+        transaction.close()
     }
 
     companion object {

@@ -10,7 +10,6 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.db.api.Assertions.assertThat
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
@@ -26,7 +25,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension::class)
 class ExposedActorInstanceRelationshipRepositoryTest : AbstractRepositoryTest(ActorInstanceRelationships) {
 
@@ -328,10 +326,6 @@ class ExposedActorInstanceRelationshipRepositoryTest : AbstractRepositoryTest(Ac
 
         dbSetup(to = dataSource) {
             execute(disableReferenceIntegrityConstraints)
-            insertInto(ActorInstanceRelationships.tableName) {
-                columns(ActorInstanceRelationships.columns)
-                values(1, 1, true, true, true)
-            }
         }.launch()
 
         val actorInstanceRelationship = ActorInstanceRelationship(
@@ -350,6 +344,10 @@ class ExposedActorInstanceRelationshipRepositoryTest : AbstractRepositoryTest(Ac
 
         dbSetup(to = dataSource) {
             execute(disableReferenceIntegrityConstraints)
+            insertInto(ActorInstanceRelationships.tableName) {
+                columns(ActorInstanceRelationships.columns)
+                values(1, 1, true, true, true)
+            }
         }.launch()
 
         val actorInstanceRelationship = ActorInstanceRelationship(
