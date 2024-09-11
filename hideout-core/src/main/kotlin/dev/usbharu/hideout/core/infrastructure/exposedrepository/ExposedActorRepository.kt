@@ -69,8 +69,8 @@ class ExposedActorRepository(
 
     override suspend fun delete(actor: Actor) {
         query {
-            Actors.deleteWhere { id eq actor.id.id }
             ActorsAlsoKnownAs.deleteWhere { actorId eq actor.id.id }
+            Actors.deleteWhere { id eq actor.id.id }
             onComplete {
                 update(actor)
             }

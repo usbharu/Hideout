@@ -59,7 +59,7 @@ class UserDetailsServiceImplTest {
     fun userDetailが見つからない場合失敗() = runTest {
         whenever(actorRepository.findByNameAndDomain(eq("test"), eq("example.com"))).doReturn(
             TestActorFactory.create(
-                actorName = "test", id = 1
+                id = 1, actorName = "test"
             )
         )
         assertThrows<UsernameNotFoundException> {

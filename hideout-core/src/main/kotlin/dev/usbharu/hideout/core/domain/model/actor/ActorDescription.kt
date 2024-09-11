@@ -19,6 +19,19 @@ package dev.usbharu.hideout.core.domain.model.actor
 class ActorDescription(description: String) {
     val description: String = description.take(LENGTH)
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ActorDescription
+
+        return description == other.description
+    }
+
+    override fun hashCode(): Int {
+        return description.hashCode()
+    }
+
     companion object {
         const val LENGTH = 10000
         val empty = ActorDescription("")

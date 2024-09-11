@@ -85,31 +85,40 @@ class Actor(
         }
 
     var alsoKnownAs = alsoKnownAs
-        set(value) {
-            require(value.none { it == id })
-            field = value
-        }
+        private set
+
+    fun setAlsoKnownAs(alsoKnownAs: Set<ActorId>) {
+        require(alsoKnownAs.none { it == id })
+        this.alsoKnownAs = alsoKnownAs
+    }
 
     var moveTo = moveTo
-        set(value) {
-            require(value != id)
-            addDomainEvent(ActorDomainEventFactory(this).createEvent(MOVE))
-            field = value
-        }
+        private set
+
+    fun setMoveTo(moveTo: ActorId?) {
+        require(moveTo != id)
+        addDomainEvent(ActorDomainEventFactory(this).createEvent(MOVE))
+        this.moveTo = moveTo
+    }
 
     var emojis = emojiIds
         private set
 
     var description = description
-        set(value) {
-            addDomainEvent(ActorDomainEventFactory(this).createEvent(UPDATE))
-            field = value
-        }
+        private set
+
+    fun setDescription(description: ActorDescription) {
+        addDomainEvent(ActorDomainEventFactory(this).createEvent(UPDATE))
+        this.description = description
+    }
+
     var screenName = screenName
-        set(value) {
-            addDomainEvent(ActorDomainEventFactory(this).createEvent(UPDATE))
-            field = value
-        }
+        private set
+
+    fun setScreenName(screenName: ActorScreenName) {
+        addDomainEvent(ActorDomainEventFactory(this).createEvent(UPDATE))
+        this.screenName = screenName
+    }
 
     var deleted = deleted
         private set
@@ -135,4 +144,52 @@ class Actor(
     fun checkUpdate() {
         addDomainEvent(ActorDomainEventFactory(this).createEvent(CHECK_UPDATE))
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Actor
+
+        return id == other.id
+    }
+
+    override fun hashCode(): Int {
+        return id.hashCode()
+    }
+
+    override fun toString(): String {
+        return "Actor(" +
+                "id=$id, " +
+                "name=$name, " +
+                "domain=$domain, " +
+                "inbox=$inbox, " +
+                "outbox=$outbox, " +
+                "url=$url, " +
+                "publicKey=$publicKey, " +
+                "privateKey=$privateKey, " +
+                "createdAt=$createdAt, " +
+                "keyId=$keyId, " +
+                "followersEndpoint=$followersEndpoint, " +
+                "followingEndpoint=$followingEndpoint, " +
+                "instance=$instance, " +
+                "locked=$locked, " +
+                "followersCount=$followersCount, " +
+                "followingCount=$followingCount, " +
+                "postsCount=$postsCount, " +
+                "lastPostAt=$lastPostAt, " +
+                "lastUpdateAt=$lastUpdateAt, " +
+                "banner=$banner, " +
+                "icon=$icon, " +
+                "suspend=$suspend, " +
+                "alsoKnownAs=$alsoKnownAs, " +
+                "moveTo=$moveTo, " +
+                "emojis=$emojis, " +
+                "description=$description, " +
+                "screenName=$screenName, " +
+                "deleted=$deleted" +
+                ")"
+    }
+
+
 }

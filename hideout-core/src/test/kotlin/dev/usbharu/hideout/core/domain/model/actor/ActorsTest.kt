@@ -34,7 +34,7 @@ class ActorsTest {
         val actor = TestActorFactory.create(publicKey = ActorPublicKey(""))
 
         val actorIds = setOf(ActorId(100), ActorId(200))
-        actor.alsoKnownAs = actorIds
+        actor.setAlsoKnownAs(actorIds)
 
         assertEquals(actorIds, actor.alsoKnownAs)
     }
@@ -44,7 +44,7 @@ class ActorsTest {
         val actor = TestActorFactory.create(publicKey = ActorPublicKey(""))
 
 
-        actor.moveTo = ActorId(100)
+        actor.setMoveTo(ActorId(100))
 
         assertContainsEvent(actor, ActorEvent.MOVE.eventName)
     }
@@ -54,7 +54,7 @@ class ActorsTest {
         val actor = TestActorFactory.create(publicKey = ActorPublicKey(""))
 
         assertThrows<IllegalArgumentException> {
-            actor.alsoKnownAs = setOf(actor.id)
+            actor.setAlsoKnownAs(setOf(actor.id))
         }
     }
 
@@ -63,7 +63,7 @@ class ActorsTest {
         val actor = TestActorFactory.create(publicKey = ActorPublicKey(""))
 
         assertThrows<IllegalArgumentException> {
-            actor.moveTo = actor.id
+            actor.setMoveTo(actor.id)
         }
     }
 
@@ -71,7 +71,7 @@ class ActorsTest {
     fun descriptionが更新されたときupdateイベントが発生する() {
         val actor = TestActorFactory.create(publicKey = ActorPublicKey(""))
 
-        actor.description = ActorDescription("hoge fuga")
+        actor.setDescription(ActorDescription("hoge fuga"))
 
         assertContainsEvent(actor, ActorEvent.UPDATE.eventName)
     }
@@ -80,7 +80,7 @@ class ActorsTest {
     fun screenNameが更新されたときupdateイベントが発生する() {
         val actor = TestActorFactory.create(publicKey = ActorPublicKey(""))
 
-        actor.screenName = ActorScreenName("fuga hoge")
+        actor.setScreenName(ActorScreenName("fuga hoge"))
 
         assertContainsEvent(actor, ActorEvent.UPDATE.eventName)
     }

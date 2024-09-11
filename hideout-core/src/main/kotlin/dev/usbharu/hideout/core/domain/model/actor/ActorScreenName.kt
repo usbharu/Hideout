@@ -20,6 +20,19 @@ class ActorScreenName(screenName: String) {
 
     val screenName: String = screenName.take(LENGTH)
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ActorScreenName
+
+        return screenName == other.screenName
+    }
+
+    override fun hashCode(): Int {
+        return screenName.hashCode()
+    }
+
     companion object {
         const val LENGTH = 300
         val empty = ActorScreenName("")
