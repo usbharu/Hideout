@@ -8,6 +8,4 @@ class MastodonReadTimeline(
     val localOnly: Boolean,
     val remoteOnly: Boolean,
     val page: Page
-) {
-
-}
+)
