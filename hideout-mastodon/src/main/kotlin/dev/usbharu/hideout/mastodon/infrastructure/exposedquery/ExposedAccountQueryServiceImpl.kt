@@ -50,7 +50,7 @@ class ExposedAccountQueryServiceImpl(private val applicationConfig: ApplicationC
             id = resultRow[Actors.id].toString(),
             username = resultRow[Actors.name],
             acct = "${resultRow[Actors.name]}@${resultRow[Actors.domain]}",
-            url = resultRow[Actors.url],
+            url = resultRow[Actors.url].toString(),
             displayName = resultRow[Actors.screenName],
             note = resultRow[Actors.description],
             avatar = "$userUrl/icon.jpg",
