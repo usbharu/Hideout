@@ -163,6 +163,8 @@ class ExposedPostRepository(
     override suspend fun findById(id: PostId): Post? = query {
         Posts
             .leftJoin(PostsMedia)
+            .leftJoin(PostsEmojis)
+            .leftJoin(PostsVisibleActors)
             .selectAll()
             .where {
                 Posts.id eq id.id
@@ -174,6 +176,9 @@ class ExposedPostRepository(
     override suspend fun findAllById(ids: List<PostId>): List<Post> {
         return query {
             Posts
+                .leftJoin(PostsMedia)
+                .leftJoin(PostsEmojis)
+                .leftJoin(PostsVisibleActors)
                 .selectAll()
                 .where {
                     Posts.id inList ids.map { it.id }
@@ -182,21 +187,48 @@ class ExposedPostRepository(
         }
     }
 
-    override suspend fun findByActorId(id: ActorId, page: Page?): PaginationList<Post, PostId> = PaginationList(
-        query {
-            Posts
+    override suspend fun findByActorId(id: ActorId, page: Page?): PaginationList<Post, PostId> {
+        val postList = query {
+            val query = Posts
+                .leftJoin(PostsMedia)
+                .leftJoin(PostsEmojis)
+                .leftJoin(PostsVisibleActors)
                 .selectAll()
                 .where {
-                    actorId eq actorId
+                    actorId eq id.id
                 }
-                .let(postQueryMapper::map)
-        },
-        null,
-        null
-    )
+
+            page(page, query)
+
+            page?.limit?.let { query.limit(it) }
+
+            query.let(postQueryMapper::map)
+        }
+
+        val posts = if (page?.minId != null) {
+            postList.reversed()
+        } else {
+            postList
+        }
+
+        return PaginationList(
+            posts,
+            null,
+            null
+        )
+    }
 
     override suspend fun delete(post: Post) {
         query {
+            PostsMedia.deleteWhere {
+                postId eq post.id.id
+            }
+            PostsEmojis.deleteWhere {
+                postId eq post.id.id
+            }
+            PostsVisibleActors.deleteWhere {
+                postId eq post.id.id
+            }
             Posts.deleteWhere {
                 id eq post.id.id
             }
@@ -213,20 +245,15 @@ class ExposedPostRepository(
     ): PaginationList<Post, PostId> {
         val postList = query {
             val query = Posts
+                .leftJoin(PostsMedia)
+                .leftJoin(PostsEmojis)
+                .leftJoin(PostsVisibleActors)
                 .selectAll()
                 .where {
                     Posts.actorId eq actorId.id and (visibility inList visibilityList.map { it.name })
                 }
 
-            if (of?.minId != null) {
-                query.orderBy(Posts.createdAt, SortOrder.ASC)
-                of.minId?.let { query.andWhere { Posts.id greater it } }
-                of.maxId?.let { query.andWhere { Posts.id less it } }
-            } else {
-                query.orderBy(Posts.createdAt, SortOrder.DESC)
-                of?.sinceId?.let { query.andWhere { Posts.id greater it } }
-                of?.maxId?.let { query.andWhere { Posts.id less it } }
-            }
+            page(of, query)
 
             of?.limit?.let { query.limit(it) }
 
@@ -244,6 +271,21 @@ class ExposedPostRepository(
             posts.lastOrNull()?.id,
             posts.firstOrNull()?.id
         )
+    }
+
+    private fun page(
+        page: Page?,
+        query: Query
+    ) {
+        if (page?.minId != null) {
+            query.orderBy(createdAt, SortOrder.ASC)
+            page.minId?.let { query.andWhere { id greater it } }
+            page.maxId?.let { query.andWhere { id less it } }
+        } else {
+            query.orderBy(createdAt, SortOrder.DESC)
+            page?.sinceId?.let { query.andWhere { id greater it } }
+            page?.maxId?.let { query.andWhere { id less it } }
+        }
     }
 
     companion object {
