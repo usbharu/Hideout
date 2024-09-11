@@ -190,17 +190,12 @@ class ExposedPostRepository(
     override suspend fun findByActorId(id: ActorId, page: Page?): PaginationList<Post, PostId> {
         val postList = query {
             val query = Posts
-                .leftJoin(PostsMedia)
-                .leftJoin(PostsEmojis)
-                .leftJoin(PostsVisibleActors)
                 .selectAll()
                 .where {
                     actorId eq id.id
                 }
 
             page(page, query)
-
-            page?.limit?.let { query.limit(it) }
 
             query.let(postQueryMapper::map)
         }
@@ -213,8 +208,8 @@ class ExposedPostRepository(
 
         return PaginationList(
             posts,
-            null,
-            null
+            posts.lastOrNull()?.id,
+            posts.firstOrNull()?.id
         )
     }
 
@@ -245,17 +240,12 @@ class ExposedPostRepository(
     ): PaginationList<Post, PostId> {
         val postList = query {
             val query = Posts
-                .leftJoin(PostsMedia)
-                .leftJoin(PostsEmojis)
-                .leftJoin(PostsVisibleActors)
                 .selectAll()
                 .where {
                     Posts.actorId eq actorId.id and (visibility inList visibilityList.map { it.name })
                 }
 
             page(of, query)
-
-            of?.limit?.let { query.limit(it) }
 
             query.let(postQueryMapper::map)
         }
@@ -279,13 +269,15 @@ class ExposedPostRepository(
     ) {
         if (page?.minId != null) {
             query.orderBy(createdAt, SortOrder.ASC)
-            page.minId?.let { query.andWhere { id greater it } }
+            page.minId!!.let { query.andWhere { id greater it } }
             page.maxId?.let { query.andWhere { id less it } }
         } else {
             query.orderBy(createdAt, SortOrder.DESC)
             page?.sinceId?.let { query.andWhere { id greater it } }
             page?.maxId?.let { query.andWhere { id less it } }
         }
+
+        page?.limit?.let { query.limit(it) }
     }
 
     companion object {

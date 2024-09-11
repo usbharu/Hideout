@@ -6,18 +6,24 @@ import dev.usbharu.hideout.core.domain.model.emoji.CustomEmojiId
 import dev.usbharu.hideout.core.domain.model.instance.InstanceId
 import dev.usbharu.hideout.core.domain.model.media.MediaId
 import dev.usbharu.hideout.core.domain.model.post.*
+import dev.usbharu.hideout.core.domain.model.support.page.Page
 import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventPublisher
 import dev.usbharu.hideout.core.infrastructure.exposed.PostQueryMapper
 import dev.usbharu.hideout.core.infrastructure.exposed.PostResultRowMapper
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.db.api.Assertions.assertThat
+import org.assertj.db.type.Changes
+import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Spy
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.any
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
 import utils.*
 import java.net.URI
 import java.sql.Timestamp
@@ -523,5 +529,672 @@ class ExposedPostRepositoryTest : AbstractRepositoryTest(Posts) {
 
         assertThat(findAllById)
             .hasSize(2)
+    }
+
+    @Test
+    fun findByActorId_page_max() = runTest {
+        dbSetup(to = dataSource) {
+            execute(disableReferenceIntegrityConstraints)
+            insertInto("public.posts") {
+                columns(Posts.columns)
+                values(
+                    1,
+                    1,
+                    1832779642545639424,
+                    null,
+                    "<p>test</p>",
+                    "test",
+                    Timestamp.from(Instant.parse("2020-01-01T00:00:00Z")),
+                    "PUBLIC",
+                    "http://localhost:8081/users/a/posts/1832779994749734912",
+                    2,
+                    2,
+                    false,
+                    "http://localhost:8081/users/a/posts/1832779994749734912",
+                    false,
+                    false,
+                    null
+                )
+                values(
+                    2,
+                    1,
+                    1832779642545639424,
+                    null,
+                    "<p>test</p>",
+                    "test",
+                    Timestamp.from(Instant.parse("2020-01-02T00:00:00Z")),
+                    "PUBLIC",
+                    "http://localhost:8081/users/a/posts/18327739994749734912",
+                    null,
+                    null,
+                    false,
+                    "http://localhost:8081/users/a/posts/18327793994749734912",
+                    false,
+                    false,
+                    null
+                )
+                values(
+                    3,
+                    1,
+                    1832779642545639424,
+                    "",
+                    "<p>test</p>",
+                    "test",
+                    Timestamp.from(Instant.parse("2020-01-03T00:00:00Z")),
+                    "PUBLIC",
+                    "http://localhost:8081/users/a/posts/183277399947494734912",
+                    null,
+                    null,
+                    false,
+                    "http://localhost:8081/users/a/posts/183277939947493734912",
+                    false,
+                    false,
+                    2
+                )
+            }
+        }.launch()
+
+        val findAllById = repository.findByActorId(ActorId(1), Page.of(maxId = 3))
+
+        assertThat(findAllById)
+            .hasSize(2)
+
+        assertEquals(2, findAllById[0].id.id)
+        assertEquals(1, findAllById[1].id.id)
+    }
+
+    @Test
+    fun findByActorId_page_min() = runTest {
+        dbSetup(to = dataSource) {
+            execute(disableReferenceIntegrityConstraints)
+            insertInto("public.posts") {
+                columns(Posts.columns)
+                values(
+                    1,
+                    1,
+                    1832779642545639424,
+                    null,
+                    "<p>test</p>",
+                    "test",
+                    Timestamp.from(Instant.parse("2020-01-01T00:00:00Z")),
+                    "PUBLIC",
+                    "http://localhost:8081/users/a/posts/1832779994749734912",
+                    2,
+                    2,
+                    false,
+                    "http://localhost:8081/users/a/posts/1832779994749734912",
+                    false,
+                    false,
+                    null
+                )
+                values(
+                    2,
+                    1,
+                    1832779642545639424,
+                    null,
+                    "<p>test</p>",
+                    "test",
+                    Timestamp.from(Instant.parse("2020-01-02T00:00:00Z")),
+                    "PUBLIC",
+                    "http://localhost:8081/users/a/posts/18327739994749734912",
+                    null,
+                    null,
+                    false,
+                    "http://localhost:8081/users/a/posts/18327793994749734912",
+                    false,
+                    false,
+                    null
+                )
+                values(
+                    3,
+                    1,
+                    1832779642545639424,
+                    "",
+                    "<p>test</p>",
+                    "test",
+                    Timestamp.from(Instant.parse("2020-01-03T00:00:00Z")),
+                    "PUBLIC",
+                    "http://localhost:8081/users/a/posts/183277399947494734912",
+                    null,
+                    null,
+                    false,
+                    "http://localhost:8081/users/a/posts/183277939947493734912",
+                    false,
+                    false,
+                    2
+                )
+            }
+        }.launch()
+
+        val findAllById = repository.findByActorId(ActorId(1), Page.of(minId = 1))
+
+        assertThat(findAllById)
+            .hasSize(2)
+
+        assertEquals(3, findAllById[0].id.id)
+        assertEquals(2, findAllById[1].id.id)
+    }
+
+    @Test
+    fun findByActorId_page_since() = runTest {
+        dbSetup(to = dataSource) {
+            execute(disableReferenceIntegrityConstraints)
+            insertInto("public.posts") {
+                columns(Posts.columns)
+                values(
+                    1,
+                    1,
+                    1832779642545639424,
+                    null,
+                    "<p>test</p>",
+                    "test",
+                    Timestamp.from(Instant.parse("2020-01-01T00:00:00Z")),
+                    "PUBLIC",
+                    "http://localhost:8081/users/a/posts/1832779994749734912",
+                    2,
+                    2,
+                    false,
+                    "http://localhost:8081/users/a/posts/1832779994749734912",
+                    false,
+                    false,
+                    null
+                )
+                values(
+                    2,
+                    1,
+                    1832779642545639424,
+                    null,
+                    "<p>test</p>",
+                    "test",
+                    Timestamp.from(Instant.parse("2020-01-02T00:00:00Z")),
+                    "PUBLIC",
+                    "http://localhost:8081/users/a/posts/18327739994749734912",
+                    null,
+                    null,
+                    false,
+                    "http://localhost:8081/users/a/posts/18327793994749734912",
+                    false,
+                    false,
+                    null
+                )
+                values(
+                    3,
+                    1,
+                    1832779642545639424,
+                    "",
+                    "<p>test</p>",
+                    "test",
+                    Timestamp.from(Instant.parse("2020-01-03T00:00:00Z")),
+                    "PUBLIC",
+                    "http://localhost:8081/users/a/posts/183277399947494734912",
+                    null,
+                    null,
+                    false,
+                    "http://localhost:8081/users/a/posts/183277939947493734912",
+                    false,
+                    false,
+                    2
+                )
+            }
+        }.launch()
+
+        val findAllById = repository.findByActorId(ActorId(1), Page.of(sinceId = 1))
+
+        assertThat(findAllById)
+            .hasSize(2)
+
+        assertEquals(3, findAllById[0].id.id)
+        assertEquals(2, findAllById[1].id.id)
+    }
+
+    @Test
+    fun findByActorId_page_limit() = runTest {
+        dbSetup(to = dataSource) {
+            execute(disableReferenceIntegrityConstraints)
+            insertInto("public.posts") {
+                columns(Posts.columns)
+                values(
+                    1,
+                    1,
+                    1832779642545639424,
+                    null,
+                    "<p>test</p>",
+                    "test",
+                    Timestamp.from(Instant.parse("2020-01-01T00:00:00Z")),
+                    "PUBLIC",
+                    "http://localhost:8081/users/a/posts/1832779994749734912",
+                    2,
+                    2,
+                    false,
+                    "http://localhost:8081/users/a/posts/1832779994749734912",
+                    false,
+                    false,
+                    null
+                )
+                values(
+                    2,
+                    1,
+                    1832779642545639424,
+                    null,
+                    "<p>test</p>",
+                    "test",
+                    Timestamp.from(Instant.parse("2020-01-02T00:00:00Z")),
+                    "PUBLIC",
+                    "http://localhost:8081/users/a/posts/18327739994749734912",
+                    null,
+                    null,
+                    false,
+                    "http://localhost:8081/users/a/posts/18327793994749734912",
+                    false,
+                    false,
+                    null
+                )
+                values(
+                    3,
+                    1,
+                    1832779642545639424,
+                    "",
+                    "<p>test</p>",
+                    "test",
+                    Timestamp.from(Instant.parse("2020-01-03T00:00:00Z")),
+                    "PUBLIC",
+                    "http://localhost:8081/users/a/posts/183277399947494734912",
+                    null,
+                    null,
+                    false,
+                    "http://localhost:8081/users/a/posts/183277939947493734912",
+                    false,
+                    false,
+                    2
+                )
+            }
+        }.launch()
+
+        val findAllById = repository.findByActorId(ActorId(1), Page.of(limit = 1))
+
+        assertThat(findAllById)
+            .hasSize(1)
+
+        assertEquals(3, findAllById[0].id.id)
+    }
+
+    @Test
+    fun delete_削除される() = runTest {
+        dbSetup(to = dataSource) {
+            execute(disableReferenceIntegrityConstraints)
+            insertInto("public.posts") {
+                columns(Posts.columns)
+                values(
+                    1,
+                    1832779978794602496,
+                    1832779642545639424,
+                    "",
+                    "<p>test</p>",
+                    "test",
+                    Timestamp.from(Instant.parse("2020-01-01T00:00:00Z")),
+                    "PUBLIC",
+                    "http://localhost:8081/users/a/posts/1832779994749734912",
+                    null,
+                    null,
+                    false,
+                    "http://localhost:8081/users/a/posts/1832779994749734912",
+                    false,
+                    false,
+                    null
+                )
+            }
+            insertInto(PostsMedia.tableName) {
+                columns(PostsMedia.columns)
+                values(1, 2)
+            }
+            insertInto(PostsEmojis.tableName) {
+                columns(PostsEmojis.columns)
+                values(1, 3)
+            }
+            insertInto(PostsVisibleActors.tableName) {
+                columns(PostsVisibleActors.columns)
+                values(1, 4)
+            }
+        }.launch()
+
+        val post = TestPostFactory.create(1)
+
+        val changes = Changes(dataSource)
+        changes.withSuspend {
+            repository.delete(post)
+        }
+
+        assertThat(changes)
+            .changeOfDeletionOnTable(Posts.tableName)
+            .rowAtStartPoint()
+            .value(Posts.id.name).isEqualTo(1)
+            .changeOfDeletionOnTable(PostsMedia.tableName)
+            .rowAtStartPoint()
+            .value(PostsMedia.mediaId.name).isEqualTo(2)
+            .changeOfDeletionOnTable(PostsEmojis.tableName)
+            .rowAtStartPoint()
+            .value(PostsEmojis.emojiId.name).isEqualTo(3)
+            .changeOfDeletionOnTable(PostsVisibleActors.tableName)
+            .rowAtStartPoint()
+            .value(PostsVisibleActors.actorId.name).isEqualTo(4)
+    }
+
+    @Test
+    fun findByActorIdAndVisiblilityInList_指定されたActorIdかつVisibilityのPostすべて返す() = runTest {
+        dbSetup(to = dataSource) {
+            execute(disableReferenceIntegrityConstraints)
+            insertInto("public.posts") {
+                columns(Posts.columns)
+                values(
+                    1,
+                    1,
+                    1832779642545639424,
+                    null,
+                    "<p>test</p>",
+                    "test",
+                    Timestamp.from(Instant.parse("2020-01-01T00:00:00Z")),
+                    "PUBLIC",
+                    "http://localhost:8081/users/a/posts/1832779994749734912",
+                    2,
+                    2,
+                    false,
+                    "http://localhost:8081/users/a/posts/1832779994749734912",
+                    false,
+                    false,
+                    null
+                )
+                values(
+                    2,
+                    2,
+                    1832779642545639424,
+                    null,
+                    "<p>test</p>",
+                    "test",
+                    Timestamp.from(Instant.parse("2020-01-02T00:00:00Z")),
+                    "PUBLIC",
+                    "http://localhost:8081/users/a/posts/18327739994749734912",
+                    null,
+                    null,
+                    false,
+                    "http://localhost:8081/users/a/posts/18327793994749734912",
+                    false,
+                    false,
+                    null
+                )
+                values(
+                    3,
+                    1,
+                    1832779642545639424,
+                    "",
+                    "<p>test</p>",
+                    "test",
+                    Timestamp.from(Instant.parse("2020-01-03T00:00:00Z")),
+                    "UNLISTED",
+                    "http://localhost:8081/users/a/posts/183277399947494734912",
+                    null,
+                    null,
+                    false,
+                    "http://localhost:8081/users/a/posts/183277939947493734912",
+                    false,
+                    false,
+                    2
+                )
+                values(
+                    4,
+                    1,
+                    1832779642545639424,
+                    "",
+                    "<p>test</p>",
+                    "test",
+                    Timestamp.from(Instant.parse("2020-01-04T00:00:00Z")),
+                    "FOLLOWERS",
+                    "http://localhost:8081/users/a/posts/1832773999474947343912",
+                    null,
+                    null,
+                    false,
+                    "http://localhost:8081/users/a/posts/1832779399474937349312",
+                    false,
+                    false,
+                    2
+                )
+            }
+        }.launch()
+
+        val findAllById =
+            repository.findByActorIdAndVisibilityInList(ActorId(1), listOf(Visibility.PUBLIC, Visibility.FOLLOWERS))
+
+        assertThat(findAllById)
+            .hasSize(2)
+
+        assertEquals(4, findAllById[0].id.id)
+        assertEquals(1, findAllById[1].id.id)
+    }
+
+    @Test
+    fun saveAll_idがある場合はinsertなければupdateされる() = runTest {
+
+        dbSetup(to = dataSource) {
+            execute(disableReferenceIntegrityConstraints)
+            insertInto("public.posts") {
+                columns(Posts.columns)
+                values(
+                    1,
+                    1,
+                    1832779642545639424,
+                    null,
+                    "<p>test</p>",
+                    "test",
+                    Timestamp.from(Instant.parse("2020-01-01T00:00:00Z")),
+                    "PUBLIC",
+                    "http://localhost:8081/users/a/posts/1832779994749734912",
+                    2,
+                    2,
+                    false,
+                    "http://localhost:8081/users/a/posts/1832779994749734912",
+                    false,
+                    false,
+                    null
+                )
+                values(
+                    3,
+                    1,
+                    1832779642545639424,
+                    "",
+                    "<p>test</p>",
+                    "test",
+                    Timestamp.from(Instant.parse("2020-01-03T00:00:00Z")),
+                    "UNLISTED",
+                    "http://localhost:8081/users/a/posts/183277399947494734912",
+                    null,
+                    null,
+                    false,
+                    "http://localhost:8081/users/a/posts/183277939947493734912",
+                    false,
+                    false,
+                    2
+                )
+            }
+            insertInto(PostsMedia.tableName) {
+                columns(PostsMedia.columns)
+                values(1, 1)
+            }
+            insertInto(PostsEmojis.tableName) {
+                columns(PostsEmojis.columns)
+                values(1, 2)
+            }
+            insertInto(PostsVisibleActors.tableName) {
+                columns(PostsVisibleActors.columns)
+                values(1, 3)
+            }
+        }.launch()
+
+        val pl = listOf(
+            TestPostFactory.create(1, createdAt = Instant.parse("2020-01-04T00:00:00Z"), mediaIds = listOf(5)),
+            TestPostFactory.create(2, createdAt = Instant.parse("2020-01-05T00:00:00Z"), emojiIds = listOf(6)),
+            TestPostFactory.create(
+                3,
+                createdAt = Instant.parse("2020-01-06T00:00:00Z"),
+                visibleActors = listOf(7),
+                overview = "",
+                replyId = 1,
+                repostId = 1,
+                moveTo = 1
+            )
+        )
+
+        repository.saveAll(pl)
+
+        assertThat(assertTable)
+            .row(0)
+            .isEqualTo(Posts.id, 1)
+            .value(Posts.createdAt).isEqualTo(Timestamp.from(pl[0].createdAt))
+            .row(1)
+            .isEqualTo(Posts.id, 2)
+            .value(Posts.createdAt).isEqualTo(Timestamp.from(pl[1].createdAt))
+            .row(2)
+            .isEqualTo(Posts.id, 3)
+            .value(Posts.createdAt).isEqualTo(Timestamp.from(pl[2].createdAt))
+
+        assertThat(getTable(PostsMedia.tableName))
+            .row(0)
+            .isEqualTo(PostsMedia.mediaId, 5)
+
+        assertThat(getTable(PostsEmojis.tableName))
+            .row(0)
+            .isEqualTo(PostsEmojis.emojiId, 6)
+
+        assertThat(getTable(PostsVisibleActors.tableName))
+            .row(0)
+            .isEqualTo(PostsVisibleActors.actorId, 7)
+    }
+
+    @Test
+    fun save_ドメインイベントがパブリッシュされる() = runTest {
+        dbSetup(to = dataSource) {
+            execute(disableReferenceIntegrityConstraints)
+        }.launch()
+
+        val post = TestPostFactory.create()
+        post.checkUpdate()
+        repository.save(post)
+
+        TransactionManager.current().commit()
+
+        verify(domainEventPublisher, times(1)).publishEvent(any())
+    }
+
+    @Test
+    fun saveAll_ドメインイベントがすべてパブリッシュされる() = runTest {
+        dbSetup(to = dataSource) {
+            execute(disableReferenceIntegrityConstraints)
+            insertInto("public.posts") {
+                columns(Posts.columns)
+                values(
+                    1,
+                    1,
+                    1832779642545639424,
+                    null,
+                    "<p>test</p>",
+                    "test",
+                    Timestamp.from(Instant.parse("2020-01-01T00:00:00Z")),
+                    "PUBLIC",
+                    "http://localhost:8081/users/a/posts/1832779994749734912",
+                    2,
+                    2,
+                    false,
+                    "http://localhost:8081/users/a/posts/1832779994749734912",
+                    false,
+                    false,
+                    null
+                )
+                values(
+                    3,
+                    1,
+                    1832779642545639424,
+                    "",
+                    "<p>test</p>",
+                    "test",
+                    Timestamp.from(Instant.parse("2020-01-03T00:00:00Z")),
+                    "UNLISTED",
+                    "http://localhost:8081/users/a/posts/183277399947494734912",
+                    null,
+                    null,
+                    false,
+                    "http://localhost:8081/users/a/posts/183277939947493734912",
+                    false,
+                    false,
+                    2
+                )
+            }
+            insertInto(PostsMedia.tableName) {
+                columns(PostsMedia.columns)
+                values(1, 1)
+            }
+            insertInto(PostsEmojis.tableName) {
+                columns(PostsEmojis.columns)
+                values(1, 2)
+            }
+            insertInto(PostsVisibleActors.tableName) {
+                columns(PostsVisibleActors.columns)
+                values(1, 3)
+            }
+        }.launch()
+
+        val pl = listOf(
+            TestPostFactory.create(1, createdAt = Instant.parse("2020-01-04T00:00:00Z"), mediaIds = listOf(5)),
+            TestPostFactory.create(2, createdAt = Instant.parse("2020-01-05T00:00:00Z"), emojiIds = listOf(6)),
+            TestPostFactory.create(
+                3,
+                createdAt = Instant.parse("2020-01-06T00:00:00Z"),
+                visibleActors = listOf(7),
+                overview = "",
+                replyId = 1,
+                repostId = 1,
+                moveTo = 1
+            )
+        ).map { it.checkUpdate();it }
+
+        repository.saveAll(pl)
+
+        TransactionManager.current().commit()
+
+        verify(domainEventPublisher, times(3)).publishEvent(any())
+    }
+
+    @Test
+    fun delete_ドメインイベントがパブリッシュされる() = runTest {
+        dbSetup(to = dataSource) {
+            execute(disableReferenceIntegrityConstraints)
+            insertInto("public.posts") {
+                columns(Posts.columns)
+                values(
+                    1,
+                    1,
+                    1832779642545639424,
+                    null,
+                    "<p>test</p>",
+                    "test",
+                    Timestamp.from(Instant.parse("2020-01-01T00:00:00Z")),
+                    "PUBLIC",
+                    "http://localhost:8081/users/a/posts/1832779994749734912",
+                    2,
+                    2,
+                    false,
+                    "http://localhost:8081/users/a/posts/1832779994749734912",
+                    false,
+                    false,
+                    null
+                )
+
+            }
+        }.launch()
+
+        val post = TestPostFactory.create(1)
+        post.checkUpdate()
+        repository.delete(post)
+
+        TransactionManager.current().commit()
+
+        verify(domainEventPublisher, times(1)).publishEvent(any())
     }
 }
