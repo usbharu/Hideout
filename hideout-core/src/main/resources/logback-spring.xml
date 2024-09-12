@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <property name="LOG_FILE" value="logs/logFile.log"/>
-    <property name="CONSOLE_LOG_THRESHOLD" value="${CONSOLE_LOG_THRESHOLD:-INFO}"/>
+    <property name="CONSOLE_LOG_THRESHOLD" value="${CONSOLE_LOG_THRESHOLD:-TRACE}"/>
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
     <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
     <include resource="org/springframework/boot/logging/logback/file-appender.xml"/>
@@ -12,4 +12,8 @@
         <appender-ref ref="ECS_JSON_FILE"/>
         <appender-ref ref="FILE"/>
     </root>
+    <logger name="javax.management" level="INFO"/>
+    <logger name="sun.rmi.loader" level="INFO"/>
+    <logger name="sun.rmi" level="INFO"/>
+    <logger name="java.io.serialization" level="INFO"/>
 </configuration>
