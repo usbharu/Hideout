@@ -67,7 +67,8 @@ class SpringTimelineApi(
                         minId?.toLongOrNull(),
                         limit
                     )
-                ), principal
+                ),
+                principal
             ).asFlow()
         )
     }
