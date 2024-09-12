@@ -19,6 +19,7 @@ package dev.usbharu.hideout.core.application.shared
 import dev.usbharu.hideout.core.domain.model.support.principal.Principal
 import kotlinx.coroutines.CancellationException
 import org.slf4j.Logger
+import org.slf4j.MDC
 
 abstract class AbstractApplicationService<T : Any, R>(
     protected val transaction: Transaction,
@@ -26,6 +27,7 @@ abstract class AbstractApplicationService<T : Any, R>(
 ) : ApplicationService<T, R> {
     override suspend fun execute(command: T, principal: Principal): R {
         return try {
+            MDC.put("applicationService", this::class.simpleName)
             logger.debug("START {}", command::class.simpleName)
             val response = transaction.transaction<R> {
                 internalExecute(command, principal)
@@ -39,6 +41,8 @@ abstract class AbstractApplicationService<T : Any, R>(
         } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
             logger.warn("Command execution error", e)
             throw e
+        } finally {
+            MDC.remove("applicationService")
         }
     }
 
