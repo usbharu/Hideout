@@ -49,6 +49,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.slf4j.MDCContext
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 
@@ -164,7 +165,7 @@ class SpringAccountApi(
         id: List<String>?,
         withSuspended: Boolean
     ): ResponseEntity<Flow<Relationship>> {
-        val principal = runBlocking { principalContextHolder.getPrincipal() }
+        val principal = runBlocking(MDCContext()) { principalContextHolder.getPrincipal() }
         return ResponseEntity.ok(id.orEmpty().asFlow().mapNotNull { fetchRelationship(it, principal).body })
     }
 
