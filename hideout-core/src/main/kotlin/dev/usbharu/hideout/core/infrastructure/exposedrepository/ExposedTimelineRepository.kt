@@ -54,7 +54,7 @@ class ExposedTimelineRepository(override val domainEventPublisher: DomainEventPu
 
     override suspend fun findById(id: TimelineId): Timeline? {
         return query {
-            Timelines.selectAll().where { Timelines.id eq id.value }.firstOrNull()?.toTimeline()
+            Timelines.selectAll().where { Timelines.id eq id.value }.limit(1).firstOrNull()?.toTimeline()
         }
     }
 
