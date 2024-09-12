@@ -30,8 +30,6 @@ class ApplicationRequestLogInterceptor : AsyncHandlerInterceptor {
             }
         }
 
-
-
         if (userDetailId != null) {
             MDC.put(userId, userDetailId.toString())
         }

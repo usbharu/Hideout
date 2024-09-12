@@ -49,7 +49,7 @@ class MvcConfigurer(
     fun mdcFilter(): FilterRegistrationBean<MDCInsertingServletFilter> {
         val bean = FilterRegistrationBean<MDCInsertingServletFilter>()
         bean.filter = MDCInsertingServletFilter()
-        bean.addUrlPatterns("/*");
+        bean.addUrlPatterns("/*")
         bean.order = Int.MIN_VALUE
         return bean
     }
