@@ -18,7 +18,9 @@ package dev.usbharu.hideout.core.infrastructure.springframework.domainevent
 
 import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEvent
 import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventPublisher
+import dev.usbharu.hideout.core.infrastructure.springframework.ApplicationRequestLogInterceptor
 import org.slf4j.LoggerFactory
+import org.slf4j.MDC
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Component
 
@@ -27,10 +29,19 @@ class SpringFrameworkDomainEventPublisher(private val applicationEventPublisher:
     DomainEventPublisher {
     override suspend fun publishEvent(domainEvent: DomainEvent<*>) {
         logger.trace("Publish ${domainEvent.id} ${domainEvent.name}")
-        applicationEventPublisher.publishEvent(domainEvent)
+
+        val requestId: String? = MDC.get(ApplicationRequestLogInterceptor.requestId)
+        val springDomainEvent = SpringDomainEvent(
+            requestId,
+            domainEvent
+        )
+
+        applicationEventPublisher.publishEvent(springDomainEvent)
     }
 
     companion object {
         private val logger = LoggerFactory.getLogger(SpringFrameworkDomainEventPublisher::class.java)
     }
 }
+
+data class SpringDomainEvent(val requestId: String?, val domainEvent: DomainEvent<*>)

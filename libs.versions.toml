@@ -10,7 +10,7 @@ swagger = "2.2.23"
 tika = "2.9.2"
 owl = "0.0.1"
 jackson = "2.17.2"
-protobuf = "4.28.0"
+protobuf = "4.28.1"
 grpc-java = "1.66.0"
 grpc-kotlin = "1.4.1"
 
@@ -78,7 +78,7 @@ imageio-webp = { module = "com.twelvemonkeys.imageio:imageio-webp", version = "3
 thumbnailator = { module = "net.coobird:thumbnailator", version = "0.4.20" }
 
 flyway-core = { module = "org.flywaydb:flyway-core" }
-flyway-postgresql = { module = "org.flywaydb:flyway-database-postgresql", version = "10.17.3" }
+flyway-postgresql = { module = "org.flywaydb:flyway-database-postgresql", version = "10.18.0" }
 
 h2db = { module = "com.h2database:h2", version = "2.3.232" }
 

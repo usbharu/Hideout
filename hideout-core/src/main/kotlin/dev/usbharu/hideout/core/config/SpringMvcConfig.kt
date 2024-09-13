@@ -16,8 +16,11 @@
 
 package dev.usbharu.hideout.core.config
 
+import ch.qos.logback.classic.helpers.MDCInsertingServletFilter
+import dev.usbharu.hideout.core.infrastructure.springframework.ApplicationRequestLogInterceptor
 import dev.usbharu.hideout.core.infrastructure.springframework.SPAInterceptor
 import dev.usbharu.hideout.generate.JsonOrFormModelMethodProcessor
+import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.converter.HttpMessageConverter
@@ -30,7 +33,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ServletModelAttribu
 @Configuration
 class MvcConfigurer(
     private val jsonOrFormModelMethodProcessor: JsonOrFormModelMethodProcessor,
-    private val spaInterceptor: SPAInterceptor
+    private val spaInterceptor: SPAInterceptor,
+    private val applicationRequestLogInterceptor: ApplicationRequestLogInterceptor
 ) : WebMvcConfigurer {
     override fun addArgumentResolvers(resolvers: MutableList<HandlerMethodArgumentResolver>) {
         resolvers.add(jsonOrFormModelMethodProcessor)
@@ -38,6 +42,16 @@ class MvcConfigurer(
 
     override fun addInterceptors(registry: InterceptorRegistry) {
         registry.addInterceptor(spaInterceptor)
+        registry.addInterceptor(applicationRequestLogInterceptor)
+    }
+
+    @Bean
+    fun mdcFilter(): FilterRegistrationBean<MDCInsertingServletFilter> {
+        val bean = FilterRegistrationBean<MDCInsertingServletFilter>()
+        bean.filter = MDCInsertingServletFilter()
+        bean.addUrlPatterns("/*")
+        bean.order = Int.MIN_VALUE
+        return bean
     }
 }
 

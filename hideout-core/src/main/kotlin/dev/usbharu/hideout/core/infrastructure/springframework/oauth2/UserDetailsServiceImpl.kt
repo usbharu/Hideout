@@ -21,6 +21,7 @@ import dev.usbharu.hideout.core.config.ApplicationConfig
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.slf4j.MDCContext
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -33,7 +34,7 @@ class UserDetailsServiceImpl(
     private val applicationConfig: ApplicationConfig,
     private val transaction: Transaction,
 ) : UserDetailsService {
-    override fun loadUserByUsername(username: String?): UserDetails = runBlocking {
+    override fun loadUserByUsername(username: String?): UserDetails = runBlocking(MDCContext()) {
         if (username == null) {
             throw UsernameNotFoundException("Username not found")
         }

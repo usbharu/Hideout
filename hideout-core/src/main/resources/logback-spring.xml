@@ -12,4 +12,8 @@
         <appender-ref ref="ECS_JSON_FILE"/>
         <appender-ref ref="FILE"/>
     </root>
+    <logger name="javax.management" level="INFO"/>
+    <logger name="sun.rmi.loader" level="INFO"/>
+    <logger name="sun.rmi" level="INFO"/>
+    <logger name="java.io.serialization" level="INFO"/>
 </configuration>
