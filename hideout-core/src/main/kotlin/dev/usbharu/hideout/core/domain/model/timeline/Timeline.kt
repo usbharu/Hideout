@@ -39,7 +39,6 @@ class Timeline(
         return id.hashCode()
     }
 
-
     companion object {
         fun create(
             id: TimelineId,
