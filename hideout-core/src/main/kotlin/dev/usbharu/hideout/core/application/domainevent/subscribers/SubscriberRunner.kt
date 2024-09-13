@@ -38,7 +38,6 @@ class SubscriberRunner(
 
             logger.debug("{}{}{}", header, value, footer)
         }
-
     }
 
     companion object {

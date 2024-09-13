@@ -28,7 +28,6 @@ class SpringFrameworkDomainEventSubscriber : DomainEventSubscriber {
 
     @EventListener
     suspend fun onDomainEventPublished(domainEvent: SpringDomainEvent) {
-
         logger.debug(
             "Domain Event Published: {} id: {} requestId: {}",
             domainEvent.domainEvent.name,
@@ -36,7 +35,6 @@ class SpringFrameworkDomainEventSubscriber : DomainEventSubscriber {
             domainEvent.requestId
         )
         coroutineScope {
-
             map[domainEvent.domainEvent.name]?.map {
                 async(MDCContext()) {
                     try {
@@ -50,7 +48,6 @@ class SpringFrameworkDomainEventSubscriber : DomainEventSubscriber {
                     }
                 }
             }?.awaitAll()
-
         }
     }
 
