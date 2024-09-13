@@ -32,7 +32,8 @@ class SpringFrameworkDomainEventPublisher(private val applicationEventPublisher:
 
         val requestId: String? = MDC.get(ApplicationRequestLogInterceptor.requestId)
         val springDomainEvent = SpringDomainEvent(
-            requestId, domainEvent
+            requestId,
+            domainEvent
         )
 
         applicationEventPublisher.publishEvent(springDomainEvent)

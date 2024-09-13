@@ -22,7 +22,6 @@ class TimelineRelationshipFollowSubscriber(
         domainEventSubscriber.subscribe<RelationshipEventBody>(RelationshipEvent.ACCEPT_FOLLOW.eventName, this)
     }
 
-
     override suspend fun invoke(p1: DomainEvent<RelationshipEventBody>) {
         val relationship = p1.body.getRelationship()
         val userDetail = userDetailRepository.findByActorId(relationship.actorId.id)
