@@ -30,7 +30,6 @@ services:
       - "9200:9200"
     volumes:
       - elasticsearch-data:/usr/share/elasticsearch/data
-    restart: always
   kibana:
     image: docker.elastic.co/kibana/kibana:7.17.24
     container_name: kibana
@@ -42,7 +41,6 @@ services:
       - ELASTICSEARCH_PASSWORD=Passw0rd
     depends_on:
       - elasticsearch
-    restart: always
 
   fluentd:
     build: ./fluentd
