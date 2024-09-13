@@ -28,6 +28,7 @@ import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.Status
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.slf4j.MDCContext
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 
@@ -44,7 +45,7 @@ class SpringTimelineApi(
         sinceId: String?,
         minId: String?,
         limit: Int?
-    ): ResponseEntity<Flow<Status>> = runBlocking {
+    ): ResponseEntity<Flow<Status>> = runBlocking(MDCContext()) {
         val principal = principalContextHolder.getPrincipal()
         val userDetail = transaction.transaction {
             userDetailRepository.findByActorId(principal.actorId.id)
@@ -67,7 +68,8 @@ class SpringTimelineApi(
                         minId?.toLongOrNull(),
                         limit
                     )
-                ), principal
+                ),
+                principal
             ).asFlow()
         )
     }
