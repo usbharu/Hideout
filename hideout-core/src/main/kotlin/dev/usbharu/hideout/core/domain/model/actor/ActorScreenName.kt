@@ -29,9 +29,7 @@ class ActorScreenName(screenName: String) {
         return screenName == other.screenName
     }
 
-    override fun hashCode(): Int {
-        return screenName.hashCode()
-    }
+    override fun hashCode(): Int = screenName.hashCode()
 
     companion object {
         const val LENGTH = 300

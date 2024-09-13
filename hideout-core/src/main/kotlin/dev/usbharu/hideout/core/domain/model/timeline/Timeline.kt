@@ -35,9 +35,7 @@ class Timeline(
         return id == other.id
     }
 
-    override fun hashCode(): Int {
-        return id.hashCode()
-    }
+    override fun hashCode(): Int = id.hashCode()
 
     companion object {
         fun create(

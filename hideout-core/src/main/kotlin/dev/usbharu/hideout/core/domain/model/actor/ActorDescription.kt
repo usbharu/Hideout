@@ -28,9 +28,7 @@ class ActorDescription(description: String) {
         return description == other.description
     }
 
-    override fun hashCode(): Int {
-        return description.hashCode()
-    }
+    override fun hashCode(): Int = description.hashCode()
 
     companion object {
         const val LENGTH = 10000
