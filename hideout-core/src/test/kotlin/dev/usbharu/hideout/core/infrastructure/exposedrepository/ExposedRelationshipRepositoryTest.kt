@@ -6,11 +6,15 @@ import dev.usbharu.hideout.core.domain.model.relationship.Relationship
 import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventPublisher
 import kotlinx.coroutines.test.runTest
 import org.assertj.db.api.Assertions.assertThat
+import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.any
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
 import utils.*
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
@@ -444,4 +448,56 @@ class ExposedRelationshipRepositoryTest : AbstractRepositoryTest(Relationships) 
         assertContentEquals(expected2, actual2)
     }
 
+    @Test
+    fun save_ドメインイベントがパブリッシュされる() = runTest {
+        dbSetup(to = dataSource) {
+            execute(disableReferenceIntegrityConstraints)
+        }.launch()
+
+        val relationship = Relationship(
+            actorId = ActorId(1),
+            targetActorId = ActorId(2),
+            following = false,
+            blocking = true,
+            muting = false,
+            followRequesting = false,
+            mutingFollowRequest = false,
+        )
+
+        relationship.block()
+
+        repository.save(relationship)
+
+        TransactionManager.current().commit()
+
+        verify(domainEventPublisher, times(1)).publishEvent(any())
+    }
+
+    @Test
+    fun delete_ドメインイベントがパブリッシュされる() = runTest {
+        dbSetup(to = dataSource) {
+            execute(disableReferenceIntegrityConstraints)
+            insertInto(Relationships.tableName) {
+                columns(Relationships.columns)
+                values(1, 2, true, false, false, false, false)
+            }
+        }.launch()
+
+        val relationship = Relationship(
+            actorId = ActorId(1),
+            targetActorId = ActorId(2),
+            following = false,
+            blocking = true,
+            muting = false,
+            followRequesting = false,
+            mutingFollowRequest = false,
+        )
+        relationship.block()
+
+        repository.delete(relationship)
+
+        TransactionManager.current().commit()
+
+        verify(domainEventPublisher, times(1)).publishEvent(any())
+    }
 }

@@ -1,20 +1,27 @@
 package dev.usbharu.hideout.core.infrastructure.exposedrepository
 
 import com.ninja_squad.dbsetup_kotlin.dbSetup
+import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.timeline.Timeline
 import dev.usbharu.hideout.core.domain.model.timeline.TimelineId
 import dev.usbharu.hideout.core.domain.model.timeline.TimelineName
 import dev.usbharu.hideout.core.domain.model.timeline.TimelineVisibility
+import dev.usbharu.hideout.core.domain.model.userdetails.UserDetail
+import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailHashedPassword
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
 import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventPublisher
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.db.api.Assertions.assertThat
+import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.any
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
 import utils.*
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -47,13 +54,9 @@ class ExposedTimelineRepositoryTest : AbstractRepositoryTest(Timelines) {
 
         repository.save(timeline)
 
-        assertThat(assertTable)
-            .row(0)
-            .isEqualTo(Timelines.id, timeline.id.value)
-            .isEqualTo(Timelines.userDetailId, timeline.userDetailId.id)
-            .isEqualTo(Timelines.name, timeline.name.value)
-            .isEqualTo(Timelines.visibility, timeline.visibility.name)
-            .isEqualTo(Timelines.isSystem, timeline.isSystem)
+        assertThat(assertTable).row(0).isEqualTo(Timelines.id, timeline.id.value)
+            .isEqualTo(Timelines.userDetailId, timeline.userDetailId.id).isEqualTo(Timelines.name, timeline.name.value)
+            .isEqualTo(Timelines.visibility, timeline.visibility.name).isEqualTo(Timelines.isSystem, timeline.isSystem)
     }
 
     @Test
@@ -80,13 +83,9 @@ class ExposedTimelineRepositoryTest : AbstractRepositoryTest(Timelines) {
 
         repository.save(timeline)
 
-        assertThat(assertTable)
-            .row(0)
-            .isEqualTo(Timelines.id, timeline.id.value)
-            .isEqualTo(Timelines.userDetailId, timeline.userDetailId.id)
-            .isEqualTo(Timelines.name, timeline.name.value)
-            .isEqualTo(Timelines.visibility, timeline.visibility.name)
-            .isEqualTo(Timelines.isSystem, timeline.isSystem)
+        assertThat(assertTable).row(0).isEqualTo(Timelines.id, timeline.id.value)
+            .isEqualTo(Timelines.userDetailId, timeline.userDetailId.id).isEqualTo(Timelines.name, timeline.name.value)
+            .isEqualTo(Timelines.visibility, timeline.visibility.name).isEqualTo(Timelines.isSystem, timeline.isSystem)
     }
 
     @Test
@@ -115,10 +114,8 @@ class ExposedTimelineRepositoryTest : AbstractRepositoryTest(Timelines) {
             repository.delete(timeline)
         }
 
-        assertThat(change)
-            .changeOfDeletionOnTable(Timelines.tableName)
-            .rowAtStartPoint()
-            .value(Timelines.id.name).isEqualTo(timeline.id.value)
+        assertThat(change).changeOfDeletionOnTable(Timelines.tableName).rowAtStartPoint().value(Timelines.id.name)
+            .isEqualTo(timeline.id.value)
     }
 
     @Test
@@ -135,8 +132,7 @@ class ExposedTimelineRepositoryTest : AbstractRepositoryTest(Timelines) {
 
         val findByIds = repository.findByIds(listOf(TimelineId(1), TimelineId(3)))
 
-        assertThat(findByIds)
-            .hasSize(2)
+        assertThat(findByIds).hasSize(2)
     }
 
     @Test
@@ -186,7 +182,69 @@ class ExposedTimelineRepositoryTest : AbstractRepositoryTest(Timelines) {
         val timelines =
             repository.findAllByUserDetailIdAndVisibilityIn(UserDetailId(1), listOf(TimelineVisibility.PUBLIC))
 
-        assertThat(timelines)
-            .hasSize(2)
+        assertThat(timelines).hasSize(2)
+    }
+
+    @Test
+    fun save_ドメインイベントがパブリッシュされる() = runTest {
+        dbSetup(to = dataSource) {
+            execute(disableReferenceIntegrityConstraints)
+        }.launch()
+        val timeline = Timeline(
+            id = TimelineId(1),
+            userDetailId = UserDetailId(1),
+            name = TimelineName("timeline"),
+            visibility = TimelineVisibility.PRIVATE,
+            isSystem = false
+        )
+
+        timeline.setVisibility(
+            TimelineVisibility.PUBLIC, UserDetail.create(
+                UserDetailId(1), ActorId(1),
+                UserDetailHashedPassword("aaaaaa"),
+            )
+        )
+
+        repository.save(timeline)
+
+        TransactionManager.current().commit()
+
+        verify(domainEventPublisher, times(1)).publishEvent(any())
+    }
+
+    @Test
+    fun delete_ドメインイベントがパブリッシュされる() = runTest {
+        dbSetup(to = dataSource) {
+            execute(disableReferenceIntegrityConstraints)
+            insertInto(UserDetails.tableName) {
+                columns(UserDetails.columns)
+                values(1, 1, "veeeeeeeeeeeeeeryStrongPassword", true, null, null)
+            }
+            insertInto(Timelines.tableName) {
+                columns(Timelines.columns)
+                values(1, 1, "test-timeline", "PUBLIC", true)
+            }
+
+        }.launch()
+        val timeline = Timeline(
+            id = TimelineId(1),
+            userDetailId = UserDetailId(1),
+            name = TimelineName("timeline"),
+            visibility = TimelineVisibility.PRIVATE,
+            isSystem = false
+        )
+
+        timeline.setVisibility(
+            TimelineVisibility.PUBLIC, UserDetail.create(
+                UserDetailId(1), ActorId(1),
+                UserDetailHashedPassword("aaaaaa"),
+            )
+        )
+
+        repository.delete(timeline)
+
+        TransactionManager.current().commit()
+
+        verify(domainEventPublisher, times(1)).publishEvent(any())
     }
 }
