@@ -63,18 +63,20 @@ class ExposedFilterRepository(private val filterQueryMapper: QueryMapper<Filter>
         val filterId = FilterKeywords
             .selectAll()
             .where { FilterKeywords.id eq filterKeywordId.id }
+            .limit(1)
             .firstOrNull()?.get(FilterKeywords.filterId) ?: return@query null
-        val where = Filters.selectAll().where { Filters.id eq filterId }
+        val where = Filters.leftJoin(FilterKeywords).selectAll().where { Filters.id eq filterId }
         return@query filterQueryMapper.map(where).firstOrNull()
     }
 
     override suspend fun findByFilterId(filterId: FilterId): Filter? = query {
-        val where = Filters.selectAll().where { Filters.id eq filterId.id }
+        val where = Filters.leftJoin(FilterKeywords).selectAll().where { Filters.id eq filterId.id }
         return@query filterQueryMapper.map(where).firstOrNull()
     }
 
     override suspend fun findByUserDetailId(userDetailId: UserDetailId): List<Filter> = query {
-        return@query Filters.selectAll().where { Filters.userId eq userDetailId.id }.let(filterQueryMapper::map)
+        return@query Filters.leftJoin(FilterKeywords).selectAll().where { Filters.userId eq userDetailId.id }
+            .let(filterQueryMapper::map)
     }
 
     companion object {
