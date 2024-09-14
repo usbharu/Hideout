@@ -17,6 +17,7 @@
 package dev.usbharu.hideout.core.application.relationship.get
 
 import dev.usbharu.hideout.core.application.exception.InternalServerException
+import dev.usbharu.hideout.core.application.model.Relationship
 import dev.usbharu.hideout.core.application.shared.LocalUserAbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.actor.ActorId

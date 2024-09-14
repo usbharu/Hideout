@@ -16,10 +16,10 @@
 
 package dev.usbharu.hideout.core.application.filter
 
+import dev.usbharu.hideout.core.application.model.Filter
 import dev.usbharu.hideout.core.application.shared.LocalUserAbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.filter.*
-import dev.usbharu.hideout.core.domain.model.filter.FilterKeyword
 import dev.usbharu.hideout.core.domain.model.support.principal.LocalUser
 import dev.usbharu.hideout.core.domain.shared.id.IdGenerateService
 import org.slf4j.LoggerFactory

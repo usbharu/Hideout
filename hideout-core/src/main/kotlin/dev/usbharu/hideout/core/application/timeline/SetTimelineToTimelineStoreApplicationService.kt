@@ -3,6 +3,7 @@ package dev.usbharu.hideout.core.application.timeline
 import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.support.principal.Principal
+import dev.usbharu.hideout.core.domain.model.timeline.TimelineId
 import dev.usbharu.hideout.core.domain.model.timeline.TimelineRepository
 import dev.usbharu.hideout.core.external.timeline.TimelineStore
 import org.slf4j.LoggerFactory
@@ -28,3 +29,5 @@ class SetTimelineToTimelineStoreApplicationService(
         private val logger = LoggerFactory.getLogger(SetTimelineToTimelineStoreApplicationService::class.java)
     }
 }
+
+data class SetTimleineStore(val timelineId: TimelineId)

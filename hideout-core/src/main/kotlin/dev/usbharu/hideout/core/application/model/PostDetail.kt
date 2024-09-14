@@ -1,6 +1,6 @@
-package dev.usbharu.hideout.core.application.post
+package dev.usbharu.hideout.core.application.model
 
-import dev.usbharu.hideout.core.application.model.Reactions
+import dev.usbharu.hideout.core.application.post.MediaDetail
 import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.media.Media
 import dev.usbharu.hideout.core.domain.model.post.Post
@@ -43,7 +43,7 @@ data class PostDetail(
         ): PostDetail {
             return PostDetail(
                 id = post.id.id,
-                actor = ActorDetail.of(actor, iconMedia),
+                actor = ActorDetail.of(actor, iconMedia, null),
                 overview = post.overview?.overview,
                 text = post.text,
                 content = post.content.content,

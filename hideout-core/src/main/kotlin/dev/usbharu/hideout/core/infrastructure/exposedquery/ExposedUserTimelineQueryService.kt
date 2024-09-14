@@ -1,8 +1,8 @@
 package dev.usbharu.hideout.core.infrastructure.exposedquery
 
-import dev.usbharu.hideout.core.application.post.ActorDetail
+import dev.usbharu.hideout.core.application.model.ActorDetail
+import dev.usbharu.hideout.core.application.model.PostDetail
 import dev.usbharu.hideout.core.application.post.MediaDetail
-import dev.usbharu.hideout.core.application.post.PostDetail
 import dev.usbharu.hideout.core.domain.model.post.PostId
 import dev.usbharu.hideout.core.domain.model.post.Visibility
 import dev.usbharu.hideout.core.domain.model.support.principal.Principal

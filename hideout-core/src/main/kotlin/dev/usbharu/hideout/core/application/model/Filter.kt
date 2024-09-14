@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.application.filter
+package dev.usbharu.hideout.core.application.model
 
 import dev.usbharu.hideout.core.domain.model.filter.Filter
 import dev.usbharu.hideout.core.domain.model.filter.FilterAction
@@ -29,7 +29,7 @@ data class Filter(
     val filterKeywords: Set<FilterKeyword>,
 ) {
     companion object {
-        fun of(filter: Filter): dev.usbharu.hideout.core.application.filter.Filter {
+        fun of(filter: Filter): dev.usbharu.hideout.core.application.model.Filter {
             return Filter(
                 filterId = filter.id.id,
                 userDetailId = filter.userDetailId.id,

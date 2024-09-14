@@ -1,11 +1,11 @@
-package dev.usbharu.hideout.core.application.instance
+package dev.usbharu.hideout.core.application.model
 
 import dev.usbharu.hideout.core.domain.model.instance.Instance
 import java.net.URI
 
 data class Instance(val id: Long, val name: String, val url: URI, val description: String) {
     companion object {
-        fun of(instance: Instance): dev.usbharu.hideout.core.application.instance.Instance {
+        fun of(instance: Instance): dev.usbharu.hideout.core.application.model.Instance {
             return Instance(
                 instance.id.instanceId,
                 instance.name.name,

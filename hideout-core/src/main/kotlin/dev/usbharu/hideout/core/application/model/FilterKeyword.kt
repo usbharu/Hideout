@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.application.media
+package dev.usbharu.hideout.core.application.model
 
-import java.net.URI
-import java.nio.file.Path
+import dev.usbharu.hideout.core.domain.model.filter.FilterMode
 
-data class UploadMedia(val path: Path, val name: String, val remoteUri: URI?, val description: String?)
+data class FilterKeyword(
+    val id: Long,
+    val keyword: String,
+    val filterMode: FilterMode,
+)

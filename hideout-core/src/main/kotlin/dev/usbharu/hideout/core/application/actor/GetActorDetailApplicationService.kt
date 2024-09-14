@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.core.application.actor
 
+import dev.usbharu.hideout.core.application.model.ActorDetail
 import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.config.ApplicationConfig

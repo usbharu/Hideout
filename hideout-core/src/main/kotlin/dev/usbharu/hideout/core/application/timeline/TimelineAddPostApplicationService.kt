@@ -2,6 +2,7 @@ package dev.usbharu.hideout.core.application.timeline
 
 import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
+import dev.usbharu.hideout.core.domain.model.post.PostId
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.domain.model.support.principal.Principal
 import dev.usbharu.hideout.core.external.timeline.TimelineStore
@@ -27,3 +28,5 @@ class TimelineAddPostApplicationService(
         private val logger = LoggerFactory.getLogger(TimelineAddPostApplicationService::class.java)
     }
 }
+
+data class AddPost(val postId: PostId)

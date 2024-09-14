@@ -1,6 +1,7 @@
 package dev.usbharu.hideout.core.application.instance
 
 import dev.usbharu.hideout.core.application.exception.InternalServerException
+import dev.usbharu.hideout.core.application.model.Instance
 import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.config.ApplicationConfig

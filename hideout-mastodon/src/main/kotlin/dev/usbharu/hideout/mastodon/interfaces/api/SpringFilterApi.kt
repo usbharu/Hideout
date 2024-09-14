@@ -27,8 +27,6 @@ import dev.usbharu.hideout.mastodon.application.filter.GetFilterV1
 import dev.usbharu.hideout.mastodon.application.filter.GetFilterV1ApplicationService
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.FilterApi
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.*
-import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.Filter
-import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.FilterKeyword
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.FilterPostRequest.Context
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.V1FilterPostRequest.Context.*
 import org.springframework.http.ResponseEntity
@@ -131,7 +129,7 @@ class SpringFilterApi(
         )
     }
 
-    private fun filter(filter: dev.usbharu.hideout.core.application.filter.Filter) = Filter(
+    private fun filter(filter: dev.usbharu.hideout.core.application.model.Filter) = Filter(
         id = filter.filterId.toString(),
         title = filter.name,
         context = filter.filterContext.map {

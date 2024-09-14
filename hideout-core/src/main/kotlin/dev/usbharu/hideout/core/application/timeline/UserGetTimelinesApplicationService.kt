@@ -35,3 +35,5 @@ class UserGetTimelinesApplicationService(transaction: Transaction, private val t
         private val logger = LoggerFactory.getLogger(UserGetTimelinesApplicationService::class.java)
     }
 }
+
+data class GetTimelines(val userDetailId: Long)

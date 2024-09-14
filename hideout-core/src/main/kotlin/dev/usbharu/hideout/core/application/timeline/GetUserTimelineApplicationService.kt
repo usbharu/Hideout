@@ -1,12 +1,13 @@
 package dev.usbharu.hideout.core.application.timeline
 
-import dev.usbharu.hideout.core.application.post.PostDetail
+import dev.usbharu.hideout.core.application.model.PostDetail
 import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.post.PostId
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
 import dev.usbharu.hideout.core.domain.model.post.Visibility
+import dev.usbharu.hideout.core.domain.model.support.page.Page
 import dev.usbharu.hideout.core.domain.model.support.page.PaginationList
 import dev.usbharu.hideout.core.domain.model.support.principal.Principal
 import dev.usbharu.hideout.core.query.usertimeline.UserTimelineQueryService
@@ -51,3 +52,5 @@ class GetUserTimelineApplicationService(
         private val logger = LoggerFactory.getLogger(GetUserTimelineApplicationService::class.java)
     }
 }
+
+data class GetUserTimeline(val id: Long, val page: Page)

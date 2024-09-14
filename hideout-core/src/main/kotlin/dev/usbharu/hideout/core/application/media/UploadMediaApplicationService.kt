@@ -16,6 +16,7 @@
 
 package dev.usbharu.hideout.core.application.media
 
+import dev.usbharu.hideout.core.application.post.MediaDetail
 import dev.usbharu.hideout.core.application.shared.LocalUserAbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.media.*
@@ -26,6 +27,8 @@ import dev.usbharu.hideout.core.external.mediastore.MediaStore
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
+import java.net.URI
+import java.nio.file.Path
 import dev.usbharu.hideout.core.domain.model.media.Media as MediaModel
 
 @Service
@@ -35,11 +38,11 @@ class UploadMediaApplicationService(
     private val mediaRepository: MediaRepository,
     private val idGenerateService: IdGenerateService,
     transaction: Transaction
-) : LocalUserAbstractApplicationService<UploadMedia, Media>(
+) : LocalUserAbstractApplicationService<UploadMedia, MediaDetail>(
     transaction,
     logger
 ) {
-    override suspend fun internalExecute(command: UploadMedia, principal: LocalUser): Media {
+    override suspend fun internalExecute(command: UploadMedia, principal: LocalUser): MediaDetail {
         val process = mediaProcessor.process(command.path, command.name, null)
         val id = idGenerateService.generateId()
         val thumbnailUri = if (process.thumbnailPath != null) {
@@ -64,10 +67,17 @@ class UploadMediaApplicationService(
 
         mediaRepository.save(media)
 
-        return Media.of(media)
+        return MediaDetail.of(media)
     }
 
     companion object {
         private val logger = LoggerFactory.getLogger(UploadMediaApplicationService::class.java)
     }
 }
+
+data class UploadMedia(
+    val path: Path,
+    val name: String,
+    val remoteUri: URI?,
+    val description: String?
+)

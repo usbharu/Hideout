@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.application.actor
+package dev.usbharu.hideout.core.application.model
 
 import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.emoji.CustomEmoji
@@ -45,7 +45,7 @@ data class UserDetail(
             actor: Actor,
             userDetail: UserDetail,
             customEmojis: List<CustomEmoji>,
-        ): dev.usbharu.hideout.core.application.actor.UserDetail {
+        ): dev.usbharu.hideout.core.application.model.UserDetail {
             return UserDetail(
                 id = actor.id.id,
                 userDetailId = userDetail.id.id,

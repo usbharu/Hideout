@@ -50,3 +50,5 @@ class DeleteLocalPostApplicationService(
         private val logger = LoggerFactory.getLogger(DeleteLocalPostApplicationService::class.java)
     }
 }
+
+data class DeleteLocalPost(val postId: Long)

@@ -5,6 +5,7 @@ import dev.usbharu.hideout.core.application.shared.LocalUserAbstractApplicationS
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.support.principal.LocalUser
 import dev.usbharu.hideout.core.domain.model.timeline.TimelineRepository
+import dev.usbharu.hideout.core.domain.model.timelinerelationship.TimelineRelationshipId
 import dev.usbharu.hideout.core.domain.model.timelinerelationship.TimelineRelationshipRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -42,3 +43,5 @@ class UserRemoveTimelineRelationshipApplicationService(
         private val logger = LoggerFactory.getLogger(UserRemoveTimelineRelationshipApplicationService::class.java)
     }
 }
+
+data class RemoveTimelineRelationship(val timelineRelationshipId: TimelineRelationshipId)
