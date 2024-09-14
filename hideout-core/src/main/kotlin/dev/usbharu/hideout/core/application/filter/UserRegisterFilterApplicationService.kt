@@ -61,3 +61,15 @@ class UserRegisterFilterApplicationService(
         private val logger = LoggerFactory.getLogger(UserRegisterFilterApplicationService::class.java)
     }
 }
+
+data class RegisterFilter(
+    val filterName: String,
+    val filterContext: Set<FilterContext>,
+    val filterAction: FilterAction,
+    val filterKeywords: Set<RegisterFilterKeyword>,
+)
+
+data class RegisterFilterKeyword(
+    val keyword: String,
+    val filterMode: FilterMode,
+)

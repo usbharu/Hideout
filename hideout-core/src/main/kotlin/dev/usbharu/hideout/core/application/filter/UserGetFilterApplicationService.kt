@@ -45,3 +45,5 @@ class UserGetFilterApplicationService(private val filterRepository: FilterReposi
         private val logger = LoggerFactory.getLogger(UserGetFilterApplicationService::class.java)
     }
 }
+
+data class GetFilter(val filterId: Long)

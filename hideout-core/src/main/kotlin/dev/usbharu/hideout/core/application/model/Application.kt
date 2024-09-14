@@ -14,6 +14,14 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.application.actor
+package dev.usbharu.hideout.core.application.model
 
-data class GetUserDetail(val id: Long)
+import java.net.URI
+
+data class Application(
+    val id: Long,
+    val name: String,
+    val redirectUris: Set<URI>,
+    val clientSecret: String,
+    val clientId: String,
+)

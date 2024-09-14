@@ -7,6 +7,7 @@ import dev.usbharu.hideout.core.config.ApplicationConfig
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.media.MediaRepository
+import dev.usbharu.hideout.core.domain.model.support.acct.Acct
 import dev.usbharu.hideout.core.domain.model.support.principal.Principal
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -48,3 +49,8 @@ class GetActorDetailApplicationService(
         private val logger = LoggerFactory.getLogger(GetActorDetailApplicationService::class.java)
     }
 }
+
+data class GetActorDetail(
+    val actorName: Acct? = null,
+    val id: Long? = null
+)

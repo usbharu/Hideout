@@ -51,3 +51,5 @@ class GetUserDetailApplicationService(
         val logger = LoggerFactory.getLogger(GetUserDetailApplicationService::class.java)
     }
 }
+
+data class GetUserDetail(val id: Long)

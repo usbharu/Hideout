@@ -74,3 +74,5 @@ class MigrationLocalActorApplicationService(
         private val logger = LoggerFactory.getLogger(MigrationLocalActorApplicationService::class.java)
     }
 }
+
+data class MigrationLocalActor(val from: Long, val to: Long)

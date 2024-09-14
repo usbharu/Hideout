@@ -44,3 +44,5 @@ class UserDeleteFilterApplicationService(private val filterRepository: FilterRep
         private val logger = LoggerFactory.getLogger(UserDeleteFilterApplicationService::class.java)
     }
 }
+
+data class DeleteFilter(val filterId: Long)
