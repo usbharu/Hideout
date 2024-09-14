@@ -31,7 +31,7 @@ import org.springframework.stereotype.Repository
 import java.net.URI
 
 @Repository
-class CustomEmojiRepositoryImpl : CustomEmojiRepository,
+class ExposedCustomEmojiRepository : CustomEmojiRepository,
     AbstractRepository() {
     override val logger: Logger
         get() = Companion.logger
@@ -76,7 +76,7 @@ class CustomEmojiRepositoryImpl : CustomEmojiRepository,
     }
 
     companion object {
-        private val logger = LoggerFactory.getLogger(CustomEmojiRepositoryImpl::class.java)
+        private val logger = LoggerFactory.getLogger(ExposedCustomEmojiRepository::class.java)
     }
 }
 

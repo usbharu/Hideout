@@ -20,12 +20,12 @@ import kotlin.test.assertNull
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Instance as InstanceTable
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class InstanceRepositoryImplTest : AbstractRepositoryTest(InstanceTable) {
+class ExposedInstanceRepositoryTest : AbstractRepositoryTest(InstanceTable) {
 
 
     @Test
     fun save_idが同じレコードがない場合はinsertされる() = runTest {
-        InstanceRepositoryImpl().save(
+        ExposedInstanceRepository().save(
             Instance(
                 id = InstanceId(1),
                 name = InstanceName("test"),
@@ -78,7 +78,7 @@ class InstanceRepositoryImplTest : AbstractRepositoryTest(InstanceTable) {
         }.launch()
 
 
-        InstanceRepositoryImpl().save(
+        ExposedInstanceRepository().save(
             Instance(
                 id = InstanceId(1),
                 name = InstanceName("test"),
@@ -130,7 +130,7 @@ class InstanceRepositoryImplTest : AbstractRepositoryTest(InstanceTable) {
             }
         }.launch()
 
-        val actual = InstanceRepositoryImpl().findById(InstanceId(1))
+        val actual = ExposedInstanceRepository().findById(InstanceId(1))
         val expected = Instance(
             id = InstanceId(1),
             name = InstanceName("test"),
@@ -151,7 +151,7 @@ class InstanceRepositoryImplTest : AbstractRepositoryTest(InstanceTable) {
 
     @Test
     fun findById_指定したIDで存在しないとnull() = runTest {
-        assertNull(InstanceRepositoryImpl().findById(InstanceId(1)))
+        assertNull(ExposedInstanceRepository().findById(InstanceId(1)))
     }
 
     @Test
@@ -178,7 +178,7 @@ class InstanceRepositoryImplTest : AbstractRepositoryTest(InstanceTable) {
             }
         }.launch()
 
-        val actual = InstanceRepositoryImpl().findByUrl(URI.create("https://www.example.com"))
+        val actual = ExposedInstanceRepository().findByUrl(URI.create("https://www.example.com"))
         val expected = Instance(
             id = InstanceId(1),
             name = InstanceName("test"),
@@ -199,7 +199,7 @@ class InstanceRepositoryImplTest : AbstractRepositoryTest(InstanceTable) {
 
     @Test
     fun findByUrl_指定したURLで存在しないとnull() = runTest {
-        assertNull(InstanceRepositoryImpl().findByUrl(URI.create("https://www.example.com")))
+        assertNull(ExposedInstanceRepository().findByUrl(URI.create("https://www.example.com")))
     }
 
     @Test
@@ -243,7 +243,7 @@ class InstanceRepositoryImplTest : AbstractRepositoryTest(InstanceTable) {
 
         change.setStartPointNow()
 
-        InstanceRepositoryImpl().delete(instance)
+        ExposedInstanceRepository().delete(instance)
 
         change.setEndPointNow()
 

@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 
 @Repository
-class UserDetailRepositoryImpl(override val domainEventPublisher: DomainEventPublisher) :
+class ExposedUserDetailRepository(override val domainEventPublisher: DomainEventPublisher) :
     UserDetailRepository,
     AbstractRepository(),
     DomainEventPublishableRepository<UserDetail> {
@@ -105,7 +105,7 @@ class UserDetailRepositoryImpl(override val domainEventPublisher: DomainEventPub
     )
 
     companion object {
-        private val logger = LoggerFactory.getLogger(UserDetailRepositoryImpl::class.java)
+        private val logger = LoggerFactory.getLogger(ExposedUserDetailRepository::class.java)
     }
 }
 

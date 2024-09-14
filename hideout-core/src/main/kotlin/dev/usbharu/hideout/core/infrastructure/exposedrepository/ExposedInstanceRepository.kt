@@ -28,7 +28,7 @@ import java.net.URI
 import dev.usbharu.hideout.core.domain.model.instance.Instance as InstanceEntity
 
 @Repository
-class InstanceRepositoryImpl : InstanceRepository,
+class ExposedInstanceRepository : InstanceRepository,
     AbstractRepository() {
     override val logger: Logger
         get() = Companion.logger
@@ -66,7 +66,7 @@ class InstanceRepositoryImpl : InstanceRepository,
     }
 
     companion object {
-        private val logger = LoggerFactory.getLogger(InstanceRepositoryImpl::class.java)
+        private val logger = LoggerFactory.getLogger(ExposedInstanceRepository::class.java)
     }
 }
 

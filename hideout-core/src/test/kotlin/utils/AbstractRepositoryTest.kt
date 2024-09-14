@@ -49,7 +49,7 @@ abstract class AbstractRepositoryTest(private val exposedTable: org.jetbrains.ex
     fun tearDown() {
         dbSetup(to = dataSource) {
             execute(Operations.sql("SET REFERENTIAL_INTEGRITY TRUE"))
-        }
+        }.launch()
         transaction.rollback()
         transaction.close()
     }

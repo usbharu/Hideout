@@ -25,10 +25,10 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
 @ExtendWith(MockitoExtension::class)
-class UserDetailRepositoryImplTest : AbstractRepositoryTest(UserDetails) {
+class ExposedUserDetailRepositoryTest : AbstractRepositoryTest(UserDetails) {
 
     @InjectMocks
-    lateinit var userDetailRepository: UserDetailRepositoryImpl
+    lateinit var userDetailRepository: ExposedUserDetailRepository
 
     @Mock
     lateinit var domainEventPublisher: DomainEventPublisher
