@@ -34,6 +34,4 @@ interface RelationshipRepository {
         targetIds: List<ActorId>,
         following: Boolean
     ): List<Relationship>
-
 }
-

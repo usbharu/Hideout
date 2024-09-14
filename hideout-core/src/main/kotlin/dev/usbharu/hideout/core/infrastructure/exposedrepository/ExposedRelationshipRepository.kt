@@ -77,7 +77,9 @@ class ExposedRelationshipRepository(override val domainEventPublisher: DomainEve
         blocking: Boolean
     ): List<Relationship> = query {
         Relationships.selectAll().where {
-            Relationships.actorId inList actorIds.map { it.id } and (Relationships.targetActorId eq targetId.id) and (Relationships.blocking eq blocking)
+            Relationships.actorId inList actorIds.map {
+                it.id
+            } and (Relationships.targetActorId eq targetId.id) and (Relationships.blocking eq blocking)
         }.map { it.toRelationships() }
     }
 
@@ -87,7 +89,9 @@ class ExposedRelationshipRepository(override val domainEventPublisher: DomainEve
         following: Boolean
     ): List<Relationship> = query {
         Relationships.selectAll().where {
-            Relationships.actorId eq actorId.id and (Relationships.targetActorId inList targetIds.map { it.id }) and (Relationships.following eq following)
+            Relationships.actorId eq actorId.id and (Relationships.targetActorId inList targetIds.map {
+                it.id
+            }) and (Relationships.following eq following)
         }.map { it.toRelationships() }
     }
 
