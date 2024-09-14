@@ -42,10 +42,10 @@ class ExposedUserTimelineQueryService : UserTimelineQueryService, AbstractReposi
             .select(Posts.columns)
             .where {
                 Posts.visibility eq Visibility.PUBLIC.name or
-                    (Posts.visibility eq Visibility.UNLISTED.name) or
-                    (Posts.visibility eq Visibility.DIRECT.name and (PostsVisibleActors.actorId eq principal.actorId.id)) or
-                    (Posts.visibility eq Visibility.FOLLOWERS.name and (Relationships.blocking eq false and (relationshipsAlias[Relationships.following] eq true))) or
-                    (Posts.actorId eq principal.actorId.id)
+                        (Posts.visibility eq Visibility.UNLISTED.name) or
+                        (Posts.visibility eq Visibility.DIRECT.name and (PostsVisibleActors.actorId eq principal.actorId.id)) or
+                        (Posts.visibility eq Visibility.FOLLOWERS.name and (Relationships.blocking eq false and (relationshipsAlias[Relationships.following] eq true))) or
+                        (Posts.actorId eq principal.actorId.id)
             }
             .alias("authorized_table")
     }
@@ -56,15 +56,15 @@ class ExposedUserTimelineQueryService : UserTimelineQueryService, AbstractReposi
         val iconMedia = Media.alias("ICON_MEDIA")
 
         return authorizedQuery
-            .leftJoin(PostsVisibleActors, { authorizedQuery[Posts.id] }, { PostsVisibleActors.postId })
-            .leftJoin(Actors, { authorizedQuery[Posts.actorId] }, { Actors.id })
+            .leftJoin(PostsVisibleActors, { authorizedQuery[Posts.id] }, { postId })
+            .leftJoin(Actors, { authorizedQuery[Posts.actorId] }, { id })
             .leftJoin(iconMedia, { Actors.icon }, { iconMedia[Media.id] })
-            .leftJoin(PostsMedia, { authorizedQuery[Posts.id] }, { PostsMedia.postId })
-            .leftJoin(Media, { PostsMedia.mediaId }, { Media.id })
+            .leftJoin(PostsMedia, { authorizedQuery[Posts.id] }, { postId })
+            .leftJoin(Media, { PostsMedia.mediaId }, { id })
             .leftJoin(
                 Reactions,
                 { authorizedQuery[Posts.id] },
-                { Reactions.postId },
+                { postId },
                 { Reactions.id isDistinctFrom principal.actorId.id }
             )
             .selectAll()
@@ -85,14 +85,19 @@ class ExposedUserTimelineQueryService : UserTimelineQueryService, AbstractReposi
         return PostDetail(
             id = it[authorizedQuery[Posts.id]],
             actor = ActorDetail(
-                actorId = it[authorizedQuery[Posts.actorId]],
+                id = it[authorizedQuery[Posts.actorId]],
                 instanceId = it[Actors.instance],
                 name = it[Actors.name],
-                domain = it[Actors.domain],
+                host = it[Actors.domain],
                 screenName = it[Actors.screenName],
-                url = it[Actors.url],
+                remoteUrl = it[Actors.url],
                 locked = it[Actors.locked],
-                icon = it.getOrNull(iconMedia[Media.url])
+                iconUrl = it.getOrNull(iconMedia[Media.url]),
+                description = it[Actors.description],
+                postsCount = it[Actors.postsCount],
+                bannerURL = null,
+                followingCount = it[Actors.followingCount],
+                followersCount = it[Actors.followersCount],
             ),
             overview = it[authorizedQuery[Posts.overview]],
             text = it[authorizedQuery[Posts.text]],

@@ -39,8 +39,8 @@ class GetActorDetailApplicationService(
             throw IllegalArgumentException("id and actorName are null.")
         }
 
-        val iconUrl = actor.icon?.let { mediaRepository.findById(it)?.url }
-        val bannerUrl = actor.banner?.let { mediaRepository.findById(it)?.url }
+        val iconUrl = actor.icon?.let { mediaRepository.findById(it) }
+        val bannerUrl = actor.banner?.let { mediaRepository.findById(it) }
 
         return ActorDetail.of(actor, iconUrl, bannerUrl)
     }

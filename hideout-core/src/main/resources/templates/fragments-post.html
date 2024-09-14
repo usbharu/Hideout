@@ -9,10 +9,10 @@
 
 <article class="post" th:fragment="single-simple-post(post)">
     <!--/*@thymesVar id="post" type="dev.usbharu.hideout.core.application.model.PostDetail"*/-->
-    <img alt="" height="80px" src="" th:src="${post.actor.icon}" width="80px">
+    <img alt="" height="80px" src="" th:src="${post.actor.iconUrl}" width="80px">
     <div style="display: inline-block">
-        <a th:href="${post.actor.url}"
-           th:text="${post.actor.screenName}+'(@'+${post.actor.name}+'@'+${post.actor.domain}+')'"></a>
+        <a th:href="${post.actor.remoteUrl}"
+           th:text="${post.actor.screenName}+'(@'+${post.actor.name}+'@'+${post.actor.host}+')'"></a>
     </div>
 
     <div th:utext="${post.content}">

@@ -16,7 +16,6 @@
 
 package dev.usbharu.hideout.core.application.application
 
-import dev.usbharu.hideout.core.application.model.Application
 import dev.usbharu.hideout.core.application.shared.AbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.application.Application
