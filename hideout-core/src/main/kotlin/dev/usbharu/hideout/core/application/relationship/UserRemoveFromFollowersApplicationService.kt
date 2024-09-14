@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.application.relationship.unmute
+package dev.usbharu.hideout.core.application.relationship
 
 import dev.usbharu.hideout.core.application.exception.InternalServerException
-import dev.usbharu.hideout.core.application.relationship.block.UserBlockApplicationService
 import dev.usbharu.hideout.core.application.shared.LocalUserAbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
@@ -29,23 +28,23 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
-class UserUnmuteApplicationService(
+class UserRemoveFromFollowersApplicationService(
     private val relationshipRepository: RelationshipRepository,
     transaction: Transaction,
     private val actorRepository: ActorRepository,
 ) :
-    LocalUserAbstractApplicationService<Unmute, Unit>(transaction, logger) {
-    override suspend fun internalExecute(command: Unmute, principal: LocalUser) {
+    LocalUserAbstractApplicationService<RemoveFromFollowers, Unit>(transaction, logger) {
+    override suspend fun internalExecute(command: RemoveFromFollowers, principal: LocalUser) {
         val actor = actorRepository.findById(principal.actorId)
             ?: throw InternalServerException("Actor ${principal.actorId} not found.")
 
         val targetId = ActorId(command.targetActorId)
-        val relationship = relationshipRepository.findByActorIdAndTargetId(actor.id, targetId) ?: Relationship.default(
-            actor.id,
-            targetId
+        val relationship = relationshipRepository.findByActorIdAndTargetId(targetId, actor.id) ?: Relationship.default(
+            targetId,
+            actor.id
         )
 
-        relationship.unmute()
+        relationship.unfollow()
 
         relationshipRepository.save(relationship)
     }
@@ -54,3 +53,5 @@ class UserUnmuteApplicationService(
         private val logger = LoggerFactory.getLogger(UserBlockApplicationService::class.java)
     }
 }
+
+data class RemoveFromFollowers(val targetActorId: Long)

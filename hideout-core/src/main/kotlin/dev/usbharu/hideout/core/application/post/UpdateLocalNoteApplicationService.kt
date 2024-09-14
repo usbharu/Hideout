@@ -64,3 +64,11 @@ class UpdateLocalNoteApplicationService(
         private val logger = LoggerFactory.getLogger(UpdateLocalNoteApplicationService::class.java)
     }
 }
+
+data class UpdateLocalNote(
+    val postId: Long,
+    val overview: String?,
+    val content: String,
+    val sensitive: Boolean,
+    val mediaIds: List<Long>
+)

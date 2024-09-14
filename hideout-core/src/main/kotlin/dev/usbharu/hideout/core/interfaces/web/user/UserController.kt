@@ -3,12 +3,7 @@ package dev.usbharu.hideout.core.interfaces.web.user
 import dev.usbharu.hideout.core.application.actor.GetActorDetail
 import dev.usbharu.hideout.core.application.actor.GetActorDetailApplicationService
 import dev.usbharu.hideout.core.application.instance.GetLocalInstanceApplicationService
-import dev.usbharu.hideout.core.application.relationship.followrequest.FollowRequest
-import dev.usbharu.hideout.core.application.relationship.followrequest.UserFollowRequestApplicationService
-import dev.usbharu.hideout.core.application.relationship.get.GetRelationship
-import dev.usbharu.hideout.core.application.relationship.get.GetRelationshipApplicationService
-import dev.usbharu.hideout.core.application.relationship.unfollow.Unfollow
-import dev.usbharu.hideout.core.application.relationship.unfollow.UserUnfollowApplicationService
+import dev.usbharu.hideout.core.application.relationship.*
 import dev.usbharu.hideout.core.application.timeline.GetUserTimeline
 import dev.usbharu.hideout.core.application.timeline.GetUserTimelineApplicationService
 import dev.usbharu.hideout.core.domain.model.support.acct.Acct

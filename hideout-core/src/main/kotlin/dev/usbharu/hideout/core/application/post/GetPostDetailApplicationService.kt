@@ -98,3 +98,5 @@ class GetPostDetailApplicationService(
         private val logger = LoggerFactory.getLogger(GetPostDetailApplicationService::class.java)
     }
 }
+
+data class GetPostDetail(val postId: Long)

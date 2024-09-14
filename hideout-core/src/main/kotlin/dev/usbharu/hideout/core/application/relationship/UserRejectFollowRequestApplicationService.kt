@@ -14,50 +14,42 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.application.relationship.block
+package dev.usbharu.hideout.core.application.relationship
 
+import dev.usbharu.hideout.core.application.exception.InternalServerException
 import dev.usbharu.hideout.core.application.shared.LocalUserAbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
-import dev.usbharu.hideout.core.domain.model.relationship.Relationship
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
 import dev.usbharu.hideout.core.domain.model.support.principal.LocalUser
-import dev.usbharu.hideout.core.domain.service.relationship.RelationshipDomainService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
-class UserBlockApplicationService(
+class UserRejectFollowRequestApplicationService(
     private val relationshipRepository: RelationshipRepository,
     transaction: Transaction,
     private val actorRepository: ActorRepository,
-    private val relationshipDomainService: RelationshipDomainService,
 ) :
-    LocalUserAbstractApplicationService<Block, Unit>(transaction, logger) {
-    override suspend fun internalExecute(command: Block, principal: LocalUser) {
+    LocalUserAbstractApplicationService<RejectFollowRequest, Unit>(transaction, logger) {
+    override suspend fun internalExecute(command: RejectFollowRequest, principal: LocalUser) {
         val actor = actorRepository.findById(principal.actorId)
-            ?: throw IllegalStateException("Actor ${principal.actorId} not found")
+            ?: throw InternalServerException("Actor ${principal.actorId} not found.")
 
-        val targetId = ActorId(command.targetActorId)
-        val relationship = relationshipRepository.findByActorIdAndTargetId(actor.id, targetId) ?: Relationship.default(
-            actor.id,
-            targetId
-        )
+        val targetId = ActorId(command.sourceActorId)
 
-        val inverseRelationship =
-            relationshipRepository.findByActorIdAndTargetId(targetId, actor.id) ?: Relationship.default(
-                targetId,
-                actor.id
-            )
+        val relationship = relationshipRepository.findByActorIdAndTargetId(targetId, actor.id)
+            ?: throw IllegalArgumentException("Follow request not found")
 
-        relationshipDomainService.block(relationship, inverseRelationship)
+        relationship.rejectFollowRequest()
 
         relationshipRepository.save(relationship)
-        relationshipRepository.save(inverseRelationship)
     }
 
     companion object {
         private val logger = LoggerFactory.getLogger(UserBlockApplicationService::class.java)
     }
 }
+
+data class RejectFollowRequest(val sourceActorId: Long)

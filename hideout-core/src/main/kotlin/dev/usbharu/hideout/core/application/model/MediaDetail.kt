@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.core.application.post
+package dev.usbharu.hideout.core.application.model
 
 import dev.usbharu.hideout.core.domain.model.media.Media
 import java.net.URI

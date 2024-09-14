@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.application.relationship.get
+package dev.usbharu.hideout.core.application.relationship
 
 import dev.usbharu.hideout.core.application.exception.InternalServerException
 import dev.usbharu.hideout.core.application.model.Relationship
@@ -70,3 +70,5 @@ class GetRelationshipApplicationService(
         private val logger = LoggerFactory.getLogger(GetRelationshipApplicationService::class.java)
     }
 }
+
+data class GetRelationship(val targetActorId: Long)

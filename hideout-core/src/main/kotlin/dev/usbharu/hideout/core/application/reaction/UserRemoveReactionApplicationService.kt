@@ -49,3 +49,9 @@ class UserRemoveReactionApplicationService(
         private val logger = LoggerFactory.getLogger(UserRemoveReactionApplicationService::class.java)
     }
 }
+
+data class RemoveReaction(
+    val postId: Long,
+    val customEmojiId: Long?,
+    val unicodeEmoji: String
+)

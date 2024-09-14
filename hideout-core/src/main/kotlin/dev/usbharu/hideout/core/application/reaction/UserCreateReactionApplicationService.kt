@@ -63,3 +63,5 @@ class UserCreateReactionApplicationService(
         private val logger = LoggerFactory.getLogger(UserCreateReactionApplicationService::class.java)
     }
 }
+
+data class CreateReaction(val postId: Long, val customEmojiId: Long?, val unicodeEmoji: String)

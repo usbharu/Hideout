@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.application.relationship.followrequest
+package dev.usbharu.hideout.core.application.relationship
 
 import dev.usbharu.hideout.core.application.exception.InternalServerException
 import dev.usbharu.hideout.core.application.shared.LocalUserAbstractApplicationService
@@ -28,16 +28,13 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
-class UserFollowRequestApplicationService(
+class UserUnblockApplicationService(
     private val relationshipRepository: RelationshipRepository,
     transaction: Transaction,
     private val actorRepository: ActorRepository,
-) : LocalUserAbstractApplicationService<FollowRequest, Unit>(
-    transaction,
-    logger
-) {
-
-    override suspend fun internalExecute(command: FollowRequest, principal: LocalUser) {
+) :
+    LocalUserAbstractApplicationService<Unblock, Unit>(transaction, logger) {
+    override suspend fun internalExecute(command: Unblock, principal: LocalUser) {
         val actor = actorRepository.findById(principal.actorId)
             ?: throw InternalServerException("Actor ${principal.actorId} not found.")
 
@@ -47,12 +44,14 @@ class UserFollowRequestApplicationService(
             targetId
         )
 
-        relationship.followRequest()
+        relationship.unblock()
 
         relationshipRepository.save(relationship)
     }
 
     companion object {
-        private val logger = LoggerFactory.getLogger(UserFollowRequestApplicationService::class.java)
+        private val logger = LoggerFactory.getLogger(UserBlockApplicationService::class.java)
     }
 }
+
+data class Unblock(val targetActorId: Long)
