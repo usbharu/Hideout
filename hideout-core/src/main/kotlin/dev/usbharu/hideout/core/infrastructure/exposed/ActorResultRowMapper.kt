@@ -24,7 +24,6 @@ import dev.usbharu.hideout.core.domain.model.support.domain.Domain
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Actors
 import org.jetbrains.exposed.sql.ResultRow
 import org.springframework.stereotype.Component
-import java.net.URI
 
 @Component
 class ActorResultRowMapper : ResultRowMapper<Actor> {
@@ -35,15 +34,15 @@ class ActorResultRowMapper : ResultRowMapper<Actor> {
             domain = Domain(resultRow[Actors.domain]),
             screenName = ActorScreenName(resultRow[Actors.screenName]),
             description = ActorDescription(resultRow[Actors.description]),
-            inbox = URI.create(resultRow[Actors.inbox]),
-            outbox = URI.create(resultRow[Actors.outbox]),
-            url = URI.create(resultRow[Actors.url]),
+            inbox = resultRow[Actors.inbox],
+            outbox = resultRow[Actors.outbox],
+            url = resultRow[Actors.url],
             publicKey = ActorPublicKey(resultRow[Actors.publicKey]),
             privateKey = resultRow[Actors.privateKey]?.let { ActorPrivateKey(it) },
             createdAt = resultRow[Actors.createdAt],
             keyId = ActorKeyId(resultRow[Actors.keyId]),
-            followersEndpoint = resultRow[Actors.followers]?.let { URI.create(it) },
-            followingEndpoint = resultRow[Actors.following]?.let { URI.create(it) },
+            followersEndpoint = resultRow[Actors.followers],
+            followingEndpoint = resultRow[Actors.following],
             instance = InstanceId(resultRow[Actors.instance]),
             locked = resultRow[Actors.locked],
             followersCount = resultRow[Actors.followersCount]?.let { ActorRelationshipCount(it) },

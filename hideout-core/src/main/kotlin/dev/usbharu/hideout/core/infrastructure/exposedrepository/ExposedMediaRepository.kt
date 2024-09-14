@@ -18,16 +18,16 @@ package dev.usbharu.hideout.core.infrastructure.exposedrepository
 
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.media.*
+import dev.usbharu.hideout.core.infrastructure.exposed.uri
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
-import java.net.URI
 import dev.usbharu.hideout.core.domain.model.media.Media as EntityMedia
 
 @Repository
-class MediaRepositoryImpl : MediaRepository, AbstractRepository() {
+class ExposedMediaRepository : MediaRepository, AbstractRepository() {
     override val logger: Logger
         get() = Companion.logger
 
@@ -35,9 +35,9 @@ class MediaRepositoryImpl : MediaRepository, AbstractRepository() {
         Media.upsert {
             it[id] = media.id.id
             it[name] = media.name.name
-            it[url] = media.url.toString()
-            it[remoteUrl] = media.remoteUrl?.toString()
-            it[thumbnailUrl] = media.thumbnailUrl?.toString()
+            it[url] = media.url
+            it[remoteUrl] = media.remoteUrl
+            it[thumbnailUrl] = media.thumbnailUrl
             it[type] = media.type.name
             it[blurhash] = media.blurHash?.hash
             it[mimeType] = media.mimeType.type + "/" + media.mimeType.subtype
@@ -51,12 +51,13 @@ class MediaRepositoryImpl : MediaRepository, AbstractRepository() {
         return query {
             return@query Media
                 .selectAll().where { Media.id eq id.id }
+                .limit(1)
                 .singleOrNull()
                 ?.toMedia()
         }
     }
 
-    override suspend fun findByIds(ids: List<MediaId>): List<dev.usbharu.hideout.core.domain.model.media.Media> {
+    override suspend fun findByIdIn(ids: List<MediaId>): List<dev.usbharu.hideout.core.domain.model.media.Media> {
         return query {
             return@query Media
                 .selectAll()
@@ -72,7 +73,7 @@ class MediaRepositoryImpl : MediaRepository, AbstractRepository() {
     }
 
     companion object {
-        private val logger = LoggerFactory.getLogger(MediaRepositoryImpl::class.java)
+        private val logger = LoggerFactory.getLogger(ExposedMediaRepository::class.java)
     }
 }
 
@@ -82,9 +83,9 @@ fun ResultRow.toMedia(): EntityMedia {
     return EntityMedia(
         id = MediaId(this[Media.id]),
         name = MediaName(this[Media.name]),
-        url = URI.create(this[Media.url]),
-        remoteUrl = this[Media.remoteUrl]?.let { URI.create(it) },
-        thumbnailUrl = this[Media.thumbnailUrl]?.let { URI.create(it) },
+        url = this[Media.url],
+        remoteUrl = this[Media.remoteUrl],
+        thumbnailUrl = this[Media.thumbnailUrl],
         type = fileType,
         blurHash = this[Media.blurhash]?.let { MediaBlurHash(it) },
         mimeType = MimeType(mimeType.substringBefore("/"), mimeType.substringAfter("/"), fileType),
@@ -99,9 +100,9 @@ fun ResultRow.toMediaOrNull(): EntityMedia? {
     return EntityMedia(
         id = MediaId(this.getOrNull(Media.id) ?: return null),
         name = MediaName(this.getOrNull(Media.name) ?: return null),
-        url = URI.create(this.getOrNull(Media.url) ?: return null),
-        remoteUrl = this[Media.remoteUrl]?.let { URI.create(it) },
-        thumbnailUrl = this[Media.thumbnailUrl]?.let { URI.create(it) },
+        url = this.getOrNull(Media.url) ?: return null,
+        remoteUrl = this[Media.remoteUrl],
+        thumbnailUrl = this[Media.thumbnailUrl],
         type = FileType.valueOf(this[Media.type]),
         blurHash = this[Media.blurhash]?.let { MediaBlurHash(it) },
         mimeType = MimeType(mimeType.substringBefore("/"), mimeType.substringAfter("/"), fileType),
@@ -113,9 +114,9 @@ fun ResultRow.toMediaOrNull(): EntityMedia? {
 object Media : Table("media") {
     val id = long("id")
     val name = varchar("name", 255)
-    val url = varchar("url", 255).uniqueIndex()
-    val remoteUrl = varchar("remote_url", 255).uniqueIndex().nullable()
-    val thumbnailUrl = varchar("thumbnail_url", 255).uniqueIndex().nullable()
+    val url = uri("url", 255).uniqueIndex()
+    val remoteUrl = uri("remote_url", 255).uniqueIndex().nullable()
+    val thumbnailUrl = uri("thumbnail_url", 255).uniqueIndex().nullable()
     val type = varchar("type", 100)
     val blurhash = varchar("blurhash", 255).nullable()
     val mimeType = varchar("mime_type", 255)

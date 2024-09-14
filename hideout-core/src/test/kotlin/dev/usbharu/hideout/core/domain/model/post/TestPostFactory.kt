@@ -1,6 +1,7 @@
 package dev.usbharu.hideout.core.domain.model.post
 
 import dev.usbharu.hideout.core.domain.model.actor.ActorId
+import dev.usbharu.hideout.core.domain.model.emoji.CustomEmojiId
 import dev.usbharu.hideout.core.domain.model.instance.InstanceId
 import dev.usbharu.hideout.core.domain.model.media.MediaId
 import dev.usbharu.hideout.core.infrastructure.other.TwitterSnowflakeIdGenerateService
@@ -29,13 +30,14 @@ object TestPostFactory {
         visibleActors: List<Long> = emptyList(),
         hide: Boolean = false,
         moveTo: Long? = null,
+        emojiIds: List<Long> = emptyList(),
     ): Post {
         return Post(
             PostId(id),
             ActorId(actorId),
             instanceId = InstanceId(instanceId),
             overview = overview?.let { PostOverview(it) },
-            content = PostContent(content, content, emptyList()),
+            content = PostContent(content, content, emojiIds.map { CustomEmojiId(it) }),
             createdAt = createdAt,
             visibility = visibility,
             url = url,

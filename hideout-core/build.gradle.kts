@@ -132,6 +132,8 @@ dependencies {
     testImplementation(libs.ktor.client.mock)
     testImplementation(libs.h2db)
     testImplementation(libs.mockito.kotlin)
+    testImplementation("org.assertj:assertj-db:2.0.2")
+    testImplementation("com.ninja-squad:DbSetup-kotlin:2.1.0")
 }
 
 detekt {

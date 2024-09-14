@@ -158,7 +158,7 @@ open class DefaultTimelineStore(
         actorRepository.findAllById(actorIds).associateBy { it.id }
 
     override suspend fun getMedias(mediaIds: List<MediaId>): Map<MediaId, Media> =
-        mediaRepository.findByIds(mediaIds).associateBy { it.id }
+        mediaRepository.findByIdIn(mediaIds).associateBy { it.id }
 
     override suspend fun getReactions(postIds: List<PostId>): Map<PostId, List<Reactions>> =
         reactionsQueryService.findAllByPostIdIn(postIds).groupBy { PostId(it.postId) }

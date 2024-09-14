@@ -56,7 +56,7 @@ class MigrationLocalActorApplicationService(
         val canAccountMigration =
             localActorMigrationCheckDomainService.canAccountMigration(userDetail, fromActor, toActor)
         if (canAccountMigration.canMigration) {
-            fromActor.moveTo = toActorId
+            fromActor.setMoveTo(toActorId)
             actorRepository.save(fromActor)
         } else {
             when (canAccountMigration) {

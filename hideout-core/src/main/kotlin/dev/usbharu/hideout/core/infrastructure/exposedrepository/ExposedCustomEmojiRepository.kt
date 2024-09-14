@@ -31,8 +31,7 @@ import org.springframework.stereotype.Repository
 import java.net.URI
 
 @Repository
-class CustomEmojiRepositoryImpl : CustomEmojiRepository,
-    AbstractRepository() {
+class ExposedCustomEmojiRepository : CustomEmojiRepository, AbstractRepository() {
     override val logger: Logger
         get() = Companion.logger
 
@@ -50,7 +49,12 @@ class CustomEmojiRepositoryImpl : CustomEmojiRepository,
     }
 
     override suspend fun findById(id: Long): CustomEmoji? = query {
-        return@query CustomEmojis.selectAll().where { CustomEmojis.id eq id }.singleOrNull()?.toCustomEmoji()
+        CustomEmojis
+            .selectAll()
+            .where { CustomEmojis.id eq id }
+            .limit(1)
+            .singleOrNull()
+            ?.toCustomEmoji()
     }
 
     override suspend fun delete(customEmoji: CustomEmoji): Unit = query {
@@ -58,7 +62,7 @@ class CustomEmojiRepositoryImpl : CustomEmojiRepository,
     }
 
     override suspend fun findByNamesAndDomain(names: List<String>, domain: String): List<CustomEmoji> = query {
-        return@query CustomEmojis
+        CustomEmojis
             .selectAll()
             .where {
                 CustomEmojis.name inList names and (CustomEmojis.domain eq domain)
@@ -67,7 +71,7 @@ class CustomEmojiRepositoryImpl : CustomEmojiRepository,
     }
 
     override suspend fun findByIds(ids: List<Long>): List<CustomEmoji> = query {
-        return@query CustomEmojis
+        CustomEmojis
             .selectAll()
             .where {
                 CustomEmojis.id inList ids
@@ -76,7 +80,7 @@ class CustomEmojiRepositoryImpl : CustomEmojiRepository,
     }
 
     companion object {
-        private val logger = LoggerFactory.getLogger(CustomEmojiRepositoryImpl::class.java)
+        private val logger = LoggerFactory.getLogger(ExposedCustomEmojiRepository::class.java)
     }
 }
 

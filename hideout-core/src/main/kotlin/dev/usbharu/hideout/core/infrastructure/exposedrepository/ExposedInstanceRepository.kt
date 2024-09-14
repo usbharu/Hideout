@@ -17,6 +17,7 @@
 package dev.usbharu.hideout.core.infrastructure.exposedrepository
 
 import dev.usbharu.hideout.core.domain.model.instance.*
+import dev.usbharu.hideout.core.infrastructure.exposed.uri
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.javatime.timestamp
@@ -27,7 +28,7 @@ import java.net.URI
 import dev.usbharu.hideout.core.domain.model.instance.Instance as InstanceEntity
 
 @Repository
-class InstanceRepositoryImpl : InstanceRepository,
+class ExposedInstanceRepository : InstanceRepository,
     AbstractRepository() {
     override val logger: Logger
         get() = Companion.logger
@@ -37,9 +38,9 @@ class InstanceRepositoryImpl : InstanceRepository,
             it[id] = instance.id.instanceId
             it[name] = instance.name.name
             it[description] = instance.description.description
-            it[url] = instance.url.toString()
-            it[iconUrl] = instance.iconUrl.toString()
-            it[sharedInbox] = instance.sharedInbox?.toString()
+            it[url] = instance.url
+            it[iconUrl] = instance.iconUrl
+            it[sharedInbox] = instance.sharedInbox
             it[software] = instance.software.software
             it[version] = instance.version.version
             it[isBlocked] = instance.isBlocked
@@ -52,7 +53,7 @@ class InstanceRepositoryImpl : InstanceRepository,
     }
 
     override suspend fun findById(id: InstanceId): InstanceEntity? = query {
-        return@query Instance.selectAll().where { Instance.id eq id.instanceId }
+        return@query Instance.selectAll().where { Instance.id eq id.instanceId }.limit(1)
             .singleOrNull()?.toInstance()
     }
 
@@ -61,11 +62,11 @@ class InstanceRepositoryImpl : InstanceRepository,
     }
 
     override suspend fun findByUrl(url: URI): dev.usbharu.hideout.core.domain.model.instance.Instance? = query {
-        return@query Instance.selectAll().where { Instance.url eq url.toString() }.singleOrNull()?.toInstance()
+        return@query Instance.selectAll().where { Instance.url eq url }.limit(1).singleOrNull()?.toInstance()
     }
 
     companion object {
-        private val logger = LoggerFactory.getLogger(InstanceRepositoryImpl::class.java)
+        private val logger = LoggerFactory.getLogger(ExposedInstanceRepository::class.java)
     }
 }
 
@@ -74,9 +75,9 @@ fun ResultRow.toInstance(): InstanceEntity {
         id = InstanceId(this[Instance.id]),
         name = InstanceName(this[Instance.name]),
         description = InstanceDescription(this[Instance.description]),
-        url = URI.create(this[Instance.url]),
-        iconUrl = URI.create(this[Instance.iconUrl]),
-        sharedInbox = this[Instance.sharedInbox]?.let { URI.create(it) },
+        url = this[Instance.url],
+        iconUrl = this[Instance.iconUrl],
+        sharedInbox = this[Instance.sharedInbox],
         software = InstanceSoftware(this[Instance.software]),
         version = InstanceVersion(this[Instance.version]),
         isBlocked = this[Instance.isBlocked],
@@ -90,9 +91,9 @@ object Instance : Table("instance") {
     val id = long("id")
     val name = varchar("name", 1000)
     val description = varchar("description", 5000)
-    val url = varchar("url", 255).uniqueIndex()
-    val iconUrl = varchar("icon_url", 255)
-    val sharedInbox = varchar("shared_inbox", 255).nullable().uniqueIndex()
+    val url = uri("url", 255).uniqueIndex()
+    val iconUrl = uri("icon_url", 255)
+    val sharedInbox = uri("shared_inbox", 255).nullable().uniqueIndex()
     val software = varchar("software", 255)
     val version = varchar("version", 255)
     val isBlocked = bool("is_blocked")

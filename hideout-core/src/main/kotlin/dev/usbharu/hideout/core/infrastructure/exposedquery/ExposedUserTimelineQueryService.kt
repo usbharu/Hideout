@@ -90,9 +90,9 @@ class ExposedUserTimelineQueryService : UserTimelineQueryService, AbstractReposi
                 name = it[Actors.name],
                 domain = it[Actors.domain],
                 screenName = it[Actors.screenName],
-                url = URI.create(it[Actors.url]),
+                url = it[Actors.url],
                 locked = it[Actors.locked],
-                icon = it.getOrNull(iconMedia[Media.url])?.let { URI.create(it) }
+                icon = it.getOrNull(iconMedia[Media.url])
             ),
             overview = it[authorizedQuery[Posts.overview]],
             text = it[authorizedQuery[Posts.text]],

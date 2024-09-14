@@ -2,6 +2,7 @@ package dev.usbharu.hideout.core.domain.model.actor
 
 import dev.usbharu.hideout.core.domain.model.emoji.CustomEmojiId
 import dev.usbharu.hideout.core.domain.model.instance.InstanceId
+import dev.usbharu.hideout.core.domain.model.media.MediaId
 import dev.usbharu.hideout.core.domain.model.support.domain.Domain
 import dev.usbharu.hideout.core.infrastructure.other.TwitterSnowflakeIdGenerateService
 import kotlinx.coroutines.runBlocking
@@ -32,12 +33,14 @@ object TestActorFactory {
         followingCount: Int = 0,
         postCount: Int = 0,
         lastPostDate: Instant? = null,
+        lastUpdateAt: Instant = createdAt,
         suspend: Boolean = false,
         alsoKnownAs: Set<ActorId> = emptySet(),
         moveTo: Long? = null,
         emojiIds: Set<CustomEmojiId> = emptySet(),
         deleted: Boolean = false,
-        roles: Set<Role> = emptySet(),
+        icon: Long? = null,
+        banner: Long? = null,
     ): Actor {
         return runBlocking {
             Actor(
@@ -61,13 +64,14 @@ object TestActorFactory {
                 followingCount = ActorRelationshipCount(followingCount),
                 postsCount = ActorPostsCount(postCount),
                 lastPostAt = lastPostDate,
+                lastUpdateAt = lastUpdateAt,
                 suspend = suspend,
                 alsoKnownAs = alsoKnownAs,
                 moveTo = moveTo?.let { ActorId(it) },
                 emojiIds = emojiIds,
                 deleted = deleted,
-                icon = null,
-                banner = null,
+                icon = icon?.let { MediaId(it) },
+                banner = banner?.let { MediaId(it) },
 
             )
         }

@@ -34,18 +34,4 @@ interface RelationshipRepository {
         targetIds: List<ActorId>,
         following: Boolean
     ): List<Relationship>
-
-    suspend fun findByTargetId(
-        targetId: ActorId,
-        option: FindRelationshipOption? = null,
-        inverseOption: FindRelationshipOption? = null
-    ): List<Relationship>
 }
-
-data class FindRelationshipOption(
-    val follow: Boolean? = null,
-    val block: Boolean? = null,
-    val mute: Boolean? = null,
-    val followRequest: Boolean? = null,
-    val muteFollowRequest: Boolean? = null
-)

@@ -35,7 +35,7 @@ class ActorQueryMapper(private val actorResultRowMapper: ResultRowMapper<Actor>)
                     .first()
                     .let(actorResultRowMapper::map)
                     .apply {
-                        alsoKnownAs = buildAlsoKnownAs(it)
+                        setAlsoKnownAs(buildAlsoKnownAs(it))
                         clearDomainEvents()
                     }
             }

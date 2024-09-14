@@ -32,31 +32,27 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 
 @Repository
-class UserDetailRepositoryImpl(override val domainEventPublisher: DomainEventPublisher) :
+class ExposedUserDetailRepository(override val domainEventPublisher: DomainEventPublisher) :
     UserDetailRepository,
     AbstractRepository(),
     DomainEventPublishableRepository<UserDetail> {
     override val logger: Logger
         get() = Companion.logger
 
-    override suspend fun save(userDetail: UserDetail): UserDetail {
-        val userDetail1 = query {
-            UserDetails.upsert {
-                it[id] = userDetail.id.id
-                it[actorId] = userDetail.actorId.id
-                it[password] = userDetail.password.password
-                it[autoAcceptFolloweeFollowRequest] = userDetail.autoAcceptFolloweeFollowRequest
-                it[lastMigration] = userDetail.lastMigration
-                it[homeTimelineId] = userDetail.homeTimelineId?.value
-            }
-
-            onComplete {
-                update(userDetail)
-            }
-            userDetail
+    override suspend fun save(userDetail: UserDetail): UserDetail = query {
+        UserDetails.upsert {
+            it[id] = userDetail.id.id
+            it[actorId] = userDetail.actorId.id
+            it[password] = userDetail.password.password
+            it[autoAcceptFolloweeFollowRequest] = userDetail.autoAcceptFolloweeFollowRequest
+            it[lastMigration] = userDetail.lastMigration
+            it[homeTimelineId] = userDetail.homeTimelineId?.value
         }
 
-        return userDetail1
+        onComplete {
+            update(userDetail)
+        }
+        userDetail
     }
 
     override suspend fun delete(userDetail: UserDetail) {
@@ -71,6 +67,7 @@ class UserDetailRepositoryImpl(override val domainEventPublisher: DomainEventPub
     override suspend fun findByActorId(actorId: Long): UserDetail? = query {
         return@query UserDetails
             .selectAll().where { UserDetails.actorId eq actorId }
+            .limit(1)
             .singleOrNull()
             ?.let {
                 userDetail(it)
@@ -80,6 +77,7 @@ class UserDetailRepositoryImpl(override val domainEventPublisher: DomainEventPub
     override suspend fun findById(id: UserDetailId): UserDetail? = query {
         UserDetails
             .selectAll().where { UserDetails.id eq id.id }
+            .limit(1)
             .singleOrNull()
             ?.let {
                 userDetail(it)
@@ -107,7 +105,7 @@ class UserDetailRepositoryImpl(override val domainEventPublisher: DomainEventPub
     )
 
     companion object {
-        private val logger = LoggerFactory.getLogger(UserDetailRepositoryImpl::class.java)
+        private val logger = LoggerFactory.getLogger(ExposedUserDetailRepository::class.java)
     }
 }
 
