@@ -20,6 +20,4 @@ class FilterName(name: String) {
     companion object {
         const val LENGTH = 300
     }
-
-
 }
