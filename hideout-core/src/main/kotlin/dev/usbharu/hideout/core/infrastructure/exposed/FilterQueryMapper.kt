@@ -33,7 +33,7 @@ class FilterQueryMapper(private val filterResultRowMapper: ResultRowMapper<Filte
                 it
                     .first()
                     .let(filterResultRowMapper::map)
-                    .apply {
+                    .run {
                         reconstructWith(
                             it.mapNotNull { resultRow: ResultRow ->
                                 FilterKeyword(
