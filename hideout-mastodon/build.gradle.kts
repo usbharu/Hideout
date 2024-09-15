@@ -60,9 +60,14 @@ dependencies {
     implementation(libs.bundles.coroutines)
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.security:spring-security-test")
+    testImplementation(libs.bundles.spring.boot.oauth2)
     testImplementation(libs.kotlin.junit)
     testImplementation(libs.coroutines.test)
     testImplementation(libs.h2db)
+    testImplementation(libs.flyway.core)
+    testImplementation(libs.http.signature)
+    testRuntimeOnly(libs.flyway.postgresql)
 }
 
 
