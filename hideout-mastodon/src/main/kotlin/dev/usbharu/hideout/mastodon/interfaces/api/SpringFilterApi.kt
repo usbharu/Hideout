@@ -84,6 +84,7 @@ class SpringFilterApi(
                 account -> FilterContext.ACCOUNT
             }
         }.toSet()
+        val principal = principalContextHolder.getPrincipal()
         val filter = userRegisterFilterApplicationService.execute(
             RegisterFilter(
                 v1FilterPostRequest.phrase,
@@ -91,12 +92,12 @@ class SpringFilterApi(
                 FilterAction.WARN,
                 setOf(RegisterFilterKeyword(v1FilterPostRequest.phrase, filterMode))
             ),
-            principalContextHolder.getPrincipal()
+            principal
         )
         return ResponseEntity.ok(
             getFilterV1ApplicationService.execute(
                 GetFilterV1(filter.filterKeywords.first().id),
-                principalContextHolder.getPrincipal()
+                principal
             )
         )
     }

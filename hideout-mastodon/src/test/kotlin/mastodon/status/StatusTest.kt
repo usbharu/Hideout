@@ -49,7 +49,7 @@ import org.springframework.web.context.WebApplicationContext
 @SpringBootTest(classes = [SpringApplication::class])
 @AutoConfigureMockMvc
 @Transactional
-@Sql("/sql/actors.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
+@Sql("/sql/actors.sql", "/sql/userdetail.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 @Sql("/sql/posts.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 @Sql("/sql/test-custom-emoji.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 class StatusTest {

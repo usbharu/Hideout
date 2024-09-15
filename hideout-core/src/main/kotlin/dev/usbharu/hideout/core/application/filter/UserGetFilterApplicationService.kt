@@ -34,7 +34,8 @@ class UserGetFilterApplicationService(private val filterRepository: FilterReposi
     ) {
     override suspend fun internalExecute(command: GetFilter, principal: LocalUser): Filter {
         val filter =
-            filterRepository.findByFilterId(FilterId(command.filterId)) ?: throw IllegalArgumentException("Not Found")
+            filterRepository.findByFilterId(FilterId(command.filterId))
+                ?: throw IllegalArgumentException("Filter ${command.filterId} not found.")
         if (filter.userDetailId != principal.userDetailId) {
             throw PermissionDeniedException()
         }

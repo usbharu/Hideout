@@ -418,7 +418,7 @@ class FilterTest {
                 )
             }
             .asyncDispatch()
-            .andExpect { status { isOk() } }
+            .andExpect { status { isNotFound() } }
     }
 
     @Test
@@ -431,7 +431,7 @@ class FilterTest {
                 )
             }
             .asyncDispatch()
-            .andExpect { status { isOk() } }
+            .andExpect { status { isNotFound() } }
     }
 
     @Test
@@ -456,7 +456,7 @@ class FilterTest {
                 )
             }
             .asyncDispatch()
-            .andExpect { status { isOk() } }
+            .andExpect { status { isNotFound() } }
     }
 
     @Test
@@ -469,7 +469,7 @@ class FilterTest {
                 )
             }
             .asyncDispatch()
-            .andExpect { status { isOk() } }
+            .andExpect { status { isNotFound() } }
     }
 
     @Test
@@ -494,7 +494,7 @@ class FilterTest {
                 )
             }
             .asyncDispatch()
-            .andExpect { status { isOk() } }
+            .andExpect { status { isNotFound() } }
     }
 
     @Test
@@ -507,7 +507,7 @@ class FilterTest {
                 )
             }
             .asyncDispatch()
-            .andExpect { status { isOk() } }
+            .andExpect { status { isNotFound() } }
     }
 
     @Test
@@ -664,6 +664,7 @@ class FilterTest {
     }
 
     @Test
+    @Sql("/sql/filter/test-filter.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     fun `apiV1FiltersIdDelete writeで削除できる`() {
         mockMvc
             .delete("/api/v1/filters/1") {
@@ -676,6 +677,7 @@ class FilterTest {
     }
 
     @Test
+    @Sql("/sql/filter/test-filter.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     fun `apiV1FiltersIdDelete write_filtersで削除できる`() {
         mockMvc
             .delete("/api/v1/filters/1") {
@@ -692,11 +694,10 @@ class FilterTest {
         mockMvc
             .delete("/api/v1/filters/1") {
                 with(
-                    jwt().jwt { it.claim("uid", "1") }.authorities(SimpleGrantedAuthority("SCOPE_write"))
+                    jwt().jwt { it.claim("uid", "1") }.authorities(SimpleGrantedAuthority("SCOPE_read"))
                 )
             }
-            .asyncDispatch()
-            .andExpect { status { isOk() } }
+            .andExpect { status { isForbidden() } }
     }
 
     companion object {
