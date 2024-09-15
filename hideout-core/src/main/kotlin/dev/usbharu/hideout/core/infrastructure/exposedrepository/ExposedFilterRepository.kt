@@ -24,15 +24,12 @@ import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
 import dev.usbharu.hideout.core.infrastructure.exposed.QueryMapper
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 
 @Repository
 class ExposedFilterRepository(private val filterQueryMapper: QueryMapper<Filter>) : FilterRepository,
-    AbstractRepository() {
-    override val logger: Logger
-        get() = Companion.logger
+    AbstractRepository(logger) {
 
     override suspend fun save(filter: Filter): Filter = query {
         Filters.upsert { upsertStatement ->

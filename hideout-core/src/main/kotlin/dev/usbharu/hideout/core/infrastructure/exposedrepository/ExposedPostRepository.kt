@@ -43,7 +43,6 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.inList
 import org.jetbrains.exposed.sql.javatime.timestamp
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 
@@ -53,9 +52,8 @@ class ExposedPostRepository(
     override val domainEventPublisher: DomainEventPublisher,
 ) :
     PostRepository,
-    AbstractRepository(),
+    AbstractRepository(logger),
     DomainEventPublishableRepository<Post> {
-    override val logger: Logger = Companion.logger
 
     override suspend fun save(post: Post): Post {
         query {

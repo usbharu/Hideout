@@ -76,3 +76,8 @@ class RegisterLocalActorApplicationService(
         private val logger = LoggerFactory.getLogger(RegisterLocalActorApplicationService::class.java)
     }
 }
+
+data class RegisterLocalActor(
+    val name: String,
+    val password: String,
+)

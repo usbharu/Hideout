@@ -24,6 +24,7 @@ import dev.usbharu.hideout.core.domain.model.media.MediaId
 import dev.usbharu.hideout.core.domain.model.post.PostId
 import dev.usbharu.hideout.core.domain.model.post.PostOverview
 import dev.usbharu.hideout.core.domain.model.post.PostRepository
+import dev.usbharu.hideout.core.domain.model.post.Visibility
 import dev.usbharu.hideout.core.domain.model.support.principal.LocalUser
 import dev.usbharu.hideout.core.infrastructure.factory.PostFactoryImpl
 import org.slf4j.Logger
@@ -64,3 +65,13 @@ class RegisterLocalPostApplicationService(
         val logger: Logger = LoggerFactory.getLogger(RegisterLocalPostApplicationService::class.java)
     }
 }
+
+data class RegisterLocalPost(
+    val content: String,
+    val overview: String?,
+    val visibility: Visibility,
+    val repostId: Long?,
+    val replyId: Long?,
+    val sensitive: Boolean,
+    val mediaIds: List<Long>,
+)

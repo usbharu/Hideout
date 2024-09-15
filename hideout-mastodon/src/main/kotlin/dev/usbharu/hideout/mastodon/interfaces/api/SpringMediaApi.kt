@@ -18,7 +18,6 @@ package dev.usbharu.hideout.mastodon.interfaces.api
 
 import dev.usbharu.hideout.core.application.media.UploadMedia
 import dev.usbharu.hideout.core.application.media.UploadMediaApplicationService
-import dev.usbharu.hideout.core.domain.model.media.FileType.*
 import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.SpringSecurityOauth2PrincipalContextHolder
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.MediaApi
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.MediaAttachment
@@ -58,18 +57,18 @@ class SpringMediaApi(
 
         return ResponseEntity.ok(
             MediaAttachment(
-                id = media.id.toString(),
+                id = media.mediaId.toString(),
                 type = when (media.type) {
-                    Image -> MediaAttachment.Type.image
-                    Video -> MediaAttachment.Type.video
-                    Audio -> MediaAttachment.Type.audio
-                    Unknown -> MediaAttachment.Type.unknown
+                    "Image" -> MediaAttachment.Type.image
+                    "Video" -> MediaAttachment.Type.video
+                    "Audio" -> MediaAttachment.Type.audio
+                    else -> MediaAttachment.Type.unknown
                 },
                 url = media.url.toString(),
-                previewUrl = media.thumbprintURI?.toString(),
-                remoteUrl = media.remoteURL?.toString(),
+                previewUrl = media.thumbnailUrl?.toString(),
+                remoteUrl = null,
                 description = media.description,
-                blurhash = media.blurHash,
+                blurhash = media.blurhash,
                 textUrl = media.url.toASCIIString()
             )
         )

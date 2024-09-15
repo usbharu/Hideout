@@ -42,3 +42,5 @@ class UnsuspendLocalActorApplicationService(
         private val logger = LoggerFactory.getLogger(UnsuspendLocalActorApplicationService::class.java)
     }
 }
+
+data class UnsuspendLocalActor(val actorId: Long)

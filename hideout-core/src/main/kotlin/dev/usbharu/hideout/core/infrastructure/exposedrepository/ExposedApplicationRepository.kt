@@ -22,14 +22,11 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.upsert
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 
 @Repository
-class ExposedApplicationRepository : ApplicationRepository, AbstractRepository() {
-    override val logger: Logger
-        get() = Companion.logger
+class ExposedApplicationRepository : ApplicationRepository, AbstractRepository(logger) {
 
     override suspend fun save(application: Application) = query {
         Applications.upsert {

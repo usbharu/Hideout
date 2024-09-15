@@ -20,6 +20,7 @@ import dev.usbharu.hideout.core.application.exception.InternalServerException
 import dev.usbharu.hideout.core.application.exception.PermissionDeniedException
 import dev.usbharu.hideout.core.application.shared.LocalUserAbstractApplicationService
 import dev.usbharu.hideout.core.application.shared.Transaction
+import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.support.principal.LocalUser
 import org.slf4j.LoggerFactory
@@ -44,3 +45,5 @@ class StartDeleteLocalActorApplicationService(
         private val logger = LoggerFactory.getLogger(StartDeleteLocalActorApplicationService::class.java)
     }
 }
+
+data class DeleteLocalActor(val actorId: ActorId)

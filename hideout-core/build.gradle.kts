@@ -1,8 +1,25 @@
+/*
+ * Copyright (C) 2024 usbharu
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import com.github.jk1.license.filter.DependencyFilter
 import com.github.jk1.license.filter.LicenseBundleNormalizer
 import com.github.jk1.license.importer.DependencyDataImporter
 import com.github.jk1.license.importer.XmlReportImporter
 import com.github.jk1.license.render.*
+import kotlinx.kover.gradle.plugin.dsl.CoverageUnit
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -20,19 +37,6 @@ apply {
 
 group = "dev.usbharu"
 version = "0.0.1"
-
-
-tasks.withType<Test> {
-    useJUnitPlatform()
-    doFirst {
-        jvmArgs = arrayOf(
-            "--add-opens", "java.base/java.lang=ALL-UNNAMED",
-            "--add-opens", "java.base/java.util=ALL-UNNAMED",
-            "--add-opens", "java.naming/javax.naming=ALL-UNNAMED",
-            "--add-opens", "java.base/java.util.concurrent.locks=ALL-UNNAMED"
-        ).toMutableList()
-    }
-}
 
 kotlin {
     jvmToolchain(21)
@@ -69,8 +73,7 @@ repositories {
 }
 
 
-val os = org.gradle.nativeplatform.platform.internal
-    .DefaultNativePlatform.getCurrentOperatingSystem()
+val os = org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.getCurrentOperatingSystem()
 
 dependencies {
     developmentOnly(libs.h2db)
@@ -157,35 +160,40 @@ configurations {
     }
 }
 
-
-//tasks{
-//    bootRun {
-//        sourceResources(sourceSets.main.get())
-//    }
-//}
-
-tasks.withType<io.gitlab.arturbosch.detekt.Detekt> {
-    exclude("**/generated/**")
-    doFirst {
-
+tasks {
+    withType<io.gitlab.arturbosch.detekt.Detekt> {
+        exclude("**/generated/**")
+        setSource("src/main/kotlin")
+        exclude("build/")
+        configureEach {
+            exclude("**/org/koin/ksp/generated/**", "**/generated/**")
+        }
     }
-    setSource("src/main/kotlin")
-    exclude("build/")
+    withType<io.gitlab.arturbosch.detekt.DetektCreateBaselineTask>() {
+        configureEach {
+            exclude("**/org/koin/ksp/generated/**", "**/generated/**")
+        }
+    }
+    withType<Test> {
+        useJUnitPlatform()
+        doFirst {
+            jvmArgs = arrayOf(
+                "--add-opens",
+                "java.base/java.lang=ALL-UNNAMED",
+                "--add-opens",
+                "java.base/java.util=ALL-UNNAMED",
+                "--add-opens",
+                "java.naming/javax.naming=ALL-UNNAMED",
+                "--add-opens",
+                "java.base/java.util.concurrent.locks=ALL-UNNAMED"
+            ).toMutableList()
+        }
+    }
 }
 
-tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
-    exclude("**/org/koin/ksp/generated/**", "**/generated/**")
-}
-
-tasks.withType<io.gitlab.arturbosch.detekt.DetektCreateBaselineTask>().configureEach {
-    exclude("**/org/koin/ksp/generated/**", "**/generated/**")
-}
 
 project.gradle.taskGraph.whenReady {
-    println(this.allTasks)
-    this.allTasks.map { println(it.name) }
     if (this.hasTask(":koverGenerateArtifact")) {
-        println("has task")
         val task = this.allTasks.find { it.name == "test" }
         val verificationTask = task as VerificationTask
         verificationTask.ignoreFailures = true
@@ -195,23 +203,22 @@ project.gradle.taskGraph.whenReady {
 kover {
     currentProject {
         sources {
-            excludedSourceSets.addAll(
-                "aot", "e2eTest", "intTest"
-            )
+
 
         }
     }
 
     reports {
+        verify {
+            rule {
+                bound{
+                    minValue = 50
+                    coverageUnits = CoverageUnit.INSTRUCTION
+                }
+            }
+        }
         filters {
             excludes {
-                packages(
-                    "dev.usbharu.hideout.activitypub.domain.exception",
-                    "dev.usbharu.hideout.core.domain.exception",
-                    "dev.usbharu.hideout.core.domain.exception.media",
-                    "dev.usbharu.hideout.core.domain.exception.resource",
-                    "dev.usbharu.hideout.core.domain.exception.resource.local"
-                )
                 annotatedBy("org.springframework.context.annotation.Configuration")
                 annotatedBy("org.springframework.boot.context.properties.ConfigurationProperties")
                 packages(
@@ -236,10 +243,7 @@ licenseReport {
 
     importers = arrayOf<DependencyDataImporter>(XmlReportImporter("hideout", File("$projectDir/license-list.xml")))
     renderers = arrayOf<ReportRenderer>(
-        InventoryHtmlReportRenderer(),
-        CsvReportRenderer(),
-        JsonReportRenderer(),
-        XmlReportRenderer()
+        InventoryHtmlReportRenderer(), CsvReportRenderer(), JsonReportRenderer(), XmlReportRenderer()
     )
     filters = arrayOf<DependencyFilter>(LicenseBundleNormalizer("$projectDir/license-normalizer-bundle.json", true))
     allowedLicensesFile = File("$projectDir/allowed-licenses.json")

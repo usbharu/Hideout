@@ -28,8 +28,7 @@ import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator
 import java.sql.SQLException
 
 @Suppress("VarCouldBeVal")
-abstract class AbstractRepository {
-    protected abstract val logger: Logger
+abstract class AbstractRepository(protected val logger: Logger) {
     private val sqlErrorCodeSQLExceptionTranslator = SQLErrorCodeSQLExceptionTranslator()
     private val springDataAccessExceptionSQLExceptionTranslator = SpringDataAccessExceptionSQLExceptionTranslator()
 

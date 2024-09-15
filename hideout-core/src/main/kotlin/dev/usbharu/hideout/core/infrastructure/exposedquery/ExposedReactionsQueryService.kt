@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2024 usbharu
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package dev.usbharu.hideout.core.infrastructure.exposedquery
 
 import dev.usbharu.hideout.core.application.model.Reactions
@@ -9,16 +25,13 @@ import dev.usbharu.hideout.core.infrastructure.exposedrepository.toCustomEmojiOr
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.toReaction
 import dev.usbharu.hideout.core.query.reactions.ReactionsQueryService
 import org.jetbrains.exposed.sql.*
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 import java.net.URI
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Reactions as ExposedrepositoryReactions
 
 @Repository
-class ExposedReactionsQueryService : ReactionsQueryService, AbstractRepository() {
-    override val logger: Logger
-        get() = Companion.logger
+class ExposedReactionsQueryService : ReactionsQueryService, AbstractRepository(logger) {
 
     override suspend fun findAllByPostId(postId: PostId): List<Reactions> {
         return query {

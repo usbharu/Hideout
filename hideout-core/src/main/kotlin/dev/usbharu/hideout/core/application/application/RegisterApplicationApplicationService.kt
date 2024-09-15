@@ -34,6 +34,7 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings
 import org.springframework.stereotype.Service
+import java.net.URI
 import java.time.Duration
 
 @Service
@@ -44,9 +45,15 @@ class RegisterApplicationApplicationService(
     private val registeredClientRepository: RegisteredClientRepository,
     transaction: Transaction,
     private val applicationRepository: ApplicationRepository,
-) : AbstractApplicationService<RegisterApplication, RegisteredApplication>(transaction, logger) {
+) : AbstractApplicationService<RegisterApplication, dev.usbharu.hideout.core.application.model.Application>(
+    transaction,
+    logger
+) {
 
-    override suspend fun internalExecute(command: RegisterApplication, principal: Principal): RegisteredApplication {
+    override suspend fun internalExecute(
+        command: RegisterApplication,
+        principal: Principal
+    ): dev.usbharu.hideout.core.application.model.Application {
         val id = idGenerateService.generateId()
         val clientSecret = secureTokenGenerator.generate()
         val registeredClient = RegisteredClient
@@ -82,7 +89,7 @@ class RegisterApplicationApplicationService(
         val application = Application(ApplicationId(id), ApplicationName(command.name))
 
         applicationRepository.save(application)
-        return RegisteredApplication(
+        return dev.usbharu.hideout.core.application.model.Application(
             id = id,
             name = command.name,
             clientSecret = clientSecret,
@@ -95,3 +102,10 @@ class RegisterApplicationApplicationService(
         private val logger = LoggerFactory.getLogger(RegisterApplicationApplicationService::class.java)
     }
 }
+
+data class RegisterApplication(
+    val name: String,
+    val redirectUris: Set<URI>,
+    val useRefreshToken: Boolean,
+    val scopes: Set<String>,
+)
