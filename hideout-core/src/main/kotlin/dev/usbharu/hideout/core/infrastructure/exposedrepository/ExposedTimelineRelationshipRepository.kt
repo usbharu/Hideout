@@ -24,14 +24,11 @@ import dev.usbharu.hideout.core.domain.model.timelinerelationship.TimelineRelati
 import dev.usbharu.hideout.core.domain.model.timelinerelationship.Visible
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 
 @Repository
-class ExposedTimelineRelationshipRepository : AbstractRepository(), TimelineRelationshipRepository {
-    override val logger: Logger
-        get() = Companion.logger
+class ExposedTimelineRelationshipRepository : AbstractRepository(logger), TimelineRelationshipRepository {
 
     override suspend fun save(timelineRelationship: TimelineRelationship): TimelineRelationship {
         query {

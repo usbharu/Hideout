@@ -25,16 +25,13 @@ import dev.usbharu.hideout.core.infrastructure.exposedrepository.toCustomEmojiOr
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.toReaction
 import dev.usbharu.hideout.core.query.reactions.ReactionsQueryService
 import org.jetbrains.exposed.sql.*
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 import java.net.URI
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Reactions as ExposedrepositoryReactions
 
 @Repository
-class ExposedReactionsQueryService : ReactionsQueryService, AbstractRepository() {
-    override val logger: Logger
-        get() = Companion.logger
+class ExposedReactionsQueryService : ReactionsQueryService, AbstractRepository(logger) {
 
     override suspend fun findAllByPostId(postId: PostId): List<Reactions> {
         return query {

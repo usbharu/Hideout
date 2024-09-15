@@ -25,17 +25,12 @@ import dev.usbharu.hideout.core.domain.model.support.principal.Principal
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.*
 import dev.usbharu.hideout.core.query.usertimeline.UserTimelineQueryService
 import org.jetbrains.exposed.sql.*
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 import java.net.URI
 
 @Repository
-class ExposedUserTimelineQueryService : UserTimelineQueryService, AbstractRepository() {
-
-    override val logger: Logger
-        get() = Companion.logger
-
+class ExposedUserTimelineQueryService : UserTimelineQueryService, AbstractRepository(logger) {
     protected fun authorizedQuery(principal: Principal? = null): QueryAlias {
         if (principal == null) {
             return Posts
@@ -58,10 +53,10 @@ class ExposedUserTimelineQueryService : UserTimelineQueryService, AbstractReposi
             .select(Posts.columns)
             .where {
                 Posts.visibility eq Visibility.PUBLIC.name or
-                    (Posts.visibility eq Visibility.UNLISTED.name) or
-                    (Posts.visibility eq Visibility.DIRECT.name and (PostsVisibleActors.actorId eq principal.actorId.id)) or
-                    (Posts.visibility eq Visibility.FOLLOWERS.name and (Relationships.blocking eq false and (relationshipsAlias[Relationships.following] eq true))) or
-                    (Posts.actorId eq principal.actorId.id)
+                        (Posts.visibility eq Visibility.UNLISTED.name) or
+                        (Posts.visibility eq Visibility.DIRECT.name and (PostsVisibleActors.actorId eq principal.actorId.id)) or
+                        (Posts.visibility eq Visibility.FOLLOWERS.name and (Relationships.blocking eq false and (relationshipsAlias[Relationships.following] eq true))) or
+                        (Posts.actorId eq principal.actorId.id)
             }
             .alias("authorized_table")
     }

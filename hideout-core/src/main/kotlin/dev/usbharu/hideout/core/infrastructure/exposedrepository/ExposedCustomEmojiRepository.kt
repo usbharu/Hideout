@@ -25,15 +25,12 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.javatime.CurrentTimestamp
 import org.jetbrains.exposed.sql.javatime.timestamp
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 import java.net.URI
 
 @Repository
-class ExposedCustomEmojiRepository : CustomEmojiRepository, AbstractRepository() {
-    override val logger: Logger
-        get() = Companion.logger
+class ExposedCustomEmojiRepository : CustomEmojiRepository, AbstractRepository(logger) {
 
     override suspend fun save(customEmoji: CustomEmoji): CustomEmoji = query {
         CustomEmojis.upsert {

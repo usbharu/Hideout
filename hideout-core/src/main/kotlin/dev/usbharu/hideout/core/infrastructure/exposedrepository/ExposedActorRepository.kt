@@ -25,7 +25,6 @@ import dev.usbharu.hideout.core.infrastructure.exposed.uri
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.javatime.timestamp
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 
@@ -33,11 +32,9 @@ import org.springframework.stereotype.Repository
 class ExposedActorRepository(
     private val actorQueryMapper: QueryMapper<Actor>,
     override val domainEventPublisher: DomainEventPublisher,
-) : AbstractRepository(),
+) : AbstractRepository(logger),
     DomainEventPublishableRepository<Actor>,
     ActorRepository {
-    override val logger: Logger
-        get() = Companion.logger
 
     override suspend fun save(actor: Actor): Actor {
         query {

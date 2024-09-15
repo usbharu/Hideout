@@ -21,15 +21,12 @@ import dev.usbharu.hideout.core.domain.model.media.*
 import dev.usbharu.hideout.core.infrastructure.exposed.uri
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 import dev.usbharu.hideout.core.domain.model.media.Media as EntityMedia
 
 @Repository
-class ExposedMediaRepository : MediaRepository, AbstractRepository() {
-    override val logger: Logger
-        get() = Companion.logger
+class ExposedMediaRepository : MediaRepository, AbstractRepository(logger) {
 
     override suspend fun save(media: EntityMedia): EntityMedia = query {
         Media.upsert {

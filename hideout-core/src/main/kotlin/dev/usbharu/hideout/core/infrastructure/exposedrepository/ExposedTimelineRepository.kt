@@ -22,17 +22,14 @@ import dev.usbharu.hideout.core.domain.shared.domainevent.DomainEventPublisher
 import dev.usbharu.hideout.core.domain.shared.repository.DomainEventPublishableRepository
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 
 @Repository
 class ExposedTimelineRepository(override val domainEventPublisher: DomainEventPublisher) :
     TimelineRepository,
-    AbstractRepository(),
+    AbstractRepository(logger),
     DomainEventPublishableRepository<Timeline> {
-    override val logger: Logger
-        get() = Companion.logger
 
     override suspend fun save(timeline: Timeline): Timeline {
         query {

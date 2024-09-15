@@ -29,9 +29,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 
 @Repository
-class ExposedPrincipalQueryService : PrincipalQueryService, AbstractRepository() {
-    override val logger: Logger
-        get() = Companion.logger
+class ExposedPrincipalQueryService : PrincipalQueryService, AbstractRepository(logger) {
 
     override suspend fun findByUserDetailId(userDetailId: UserDetailId): PrincipalDTO {
         return query {

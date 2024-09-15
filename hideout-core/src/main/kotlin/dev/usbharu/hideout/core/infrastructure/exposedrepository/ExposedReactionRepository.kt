@@ -28,18 +28,14 @@ import dev.usbharu.hideout.core.domain.shared.repository.DomainEventPublishableR
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.javatime.timestamp
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 
 @Repository
 class ExposedReactionRepository(override val domainEventPublisher: DomainEventPublisher) :
     ReactionRepository,
-    AbstractRepository(),
+    AbstractRepository(logger),
     DomainEventPublishableRepository<Reaction> {
-
-    override val logger: Logger
-        get() = Companion.logger
 
     override suspend fun save(reaction: Reaction): Reaction {
         return query {
