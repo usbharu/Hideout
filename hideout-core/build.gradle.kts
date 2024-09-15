@@ -211,23 +211,19 @@ project.gradle.taskGraph.whenReady {
 kover {
     currentProject {
         sources {
-            excludedSourceSets.addAll(
-                "aot", "e2eTest", "intTest"
-            )
+
 
         }
     }
 
     reports {
+        verify{
+            rule{
+                minBound(50)
+            }
+        }
         filters {
             excludes {
-                packages(
-                    "dev.usbharu.hideout.activitypub.domain.exception",
-                    "dev.usbharu.hideout.core.domain.exception",
-                    "dev.usbharu.hideout.core.domain.exception.media",
-                    "dev.usbharu.hideout.core.domain.exception.resource",
-                    "dev.usbharu.hideout.core.domain.exception.resource.local"
-                )
                 annotatedBy("org.springframework.context.annotation.Configuration")
                 annotatedBy("org.springframework.boot.context.properties.ConfigurationProperties")
                 packages(
