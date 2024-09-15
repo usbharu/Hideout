@@ -51,3 +51,4 @@ out/
 /http-client.private.env.json
 /logs/
 /hideout-mastodon/logs/
+/hideout-mastodon/files/
