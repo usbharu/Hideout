@@ -16,6 +16,7 @@
 
 package dev.usbharu.hideout.core.application.domainevent.subscribers
 
+import dev.usbharu.hideout.core.application.timeline.UserRegisterHomeTimelineApplicationService
 import dev.usbharu.hideout.core.domain.event.userdetail.UserDetailEvent
 import dev.usbharu.hideout.core.domain.event.userdetail.UserDetailEventBody
 import dev.usbharu.hideout.core.domain.model.support.principal.Anonymous
