@@ -219,6 +219,7 @@ kover {
         }
         total {
             xml {
+                title = "Hideout Core"
                 xmlFile = file("$buildDir/reports/kover/hideout-core.xml")
             }
         }

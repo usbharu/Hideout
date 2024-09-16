@@ -160,6 +160,7 @@ kover {
         }
         total {
             xml {
+                title = "Hideout Mastodon"
                 xmlFile = file("$buildDir/reports/kover/hideout-mastodon.xml")
             }
         }
