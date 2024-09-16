@@ -197,10 +197,10 @@ jobs:
       - name: Download Coverage Report
         uses: actions/download-artifact@v4
         with:
-          path: 'hideout-core/build/reports/kover/'
+          path: 'hideout-core/build/reports/kover'
 
 
-      - run: cd ./hideout-core/build/reports/kover || ls -lah
+      - run: ls -R hideout-core/build/reports/kover
 
       - name: Report Coverage
         uses: madrapps/jacoco-report@v1.7.0
