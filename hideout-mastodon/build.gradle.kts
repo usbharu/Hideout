@@ -1,3 +1,4 @@
+import kotlinx.kover.gradle.plugin.dsl.CoverageUnit
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 plugins {
@@ -6,6 +7,7 @@ plugins {
     alias(libs.plugins.spring.boot)
     alias(libs.plugins.kotlin.spring)
     alias(libs.plugins.detekt)
+    alias(libs.plugins.kover)
 }
 
 
@@ -128,6 +130,52 @@ configurations.matching { it.name == "detekt" }.all {
         if (requested.group == "org.jetbrains.kotlin") {
             useVersion(io.gitlab.arturbosch.detekt.getSupportedKotlinVersion())
         }
+    }
+}
+
+project.gradle.taskGraph.whenReady {
+    if (this.hasTask(":koverGenerateArtifact")) {
+        val task = this.allTasks.find { it.name == "test" }
+        val verificationTask = task as VerificationTask
+        verificationTask.ignoreFailures = true
+    }
+}
+
+kover {
+    currentProject {
+        sources {
+
+
+        }
+    }
+
+    reports {
+        verify {
+            rule {
+                bound {
+                    minValue = 50
+                    coverageUnits = CoverageUnit.INSTRUCTION
+                }
+            }
+        }
+        total {
+            xml {
+                xmlFile = file("$buildDir/reports/kover/hideout-core.xml")
+            }
+        }
+        filters {
+            excludes {
+                annotatedBy("org.springframework.context.annotation.Configuration")
+                annotatedBy("org.springframework.boot.context.properties.ConfigurationProperties")
+                packages(
+                    "dev.usbharu.hideout.controller.mastodon.generated",
+                    "dev.usbharu.hideout.domain.mastodon.model.generated"
+                )
+                packages("org.springframework")
+                packages("org.jetbrains")
+            }
+        }
+
     }
 }
 

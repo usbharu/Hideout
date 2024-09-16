@@ -76,7 +76,36 @@ jobs:
           gradle-home-cache-cleanup: true
 
       - name: Build
-        run: ./gradlew classes --no-daemon
+        run: ./gradlew :hideout-core:classes --no-daemon
+
+  hideout-mastodon-setup:
+    needs:
+      - change
+    if: github.event.pull_request.draft == false && needs.change.outputs.mastodon == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT }}
+
+      - name: Gradle Wrapper Validation
+        uses: gradle/actions/wrapper-validation@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: false
+          gradle-home-cache-cleanup: true
+
+      - name: Build
+        run: ./gradlew :hideout-mastodon:classes --no-daemon
 
   hideout-core-unit-test:
     needs:
@@ -117,22 +146,62 @@ jobs:
           name: 'hideout-core.xml'
           path: 'hideout-core/build/reports/kover/hideout-core.xml'
 
+
+  hideout-mastodon-unit-test:
+    needs:
+      - hideout-mastodon-setup
+      - change
+    if: github.event.pull_request.draft == false && needs.change.outputs.mastodon == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT }}
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: false
+          gradle-home-cache-cleanup: true
+
+      - name: Unit Test
+        run: ./hideout-mastodon/gradlew :hideout-mastodon:koverXmlReport
+
+      - name: JUnit Test Report
+        uses: mikepenz/action-junit-report@v4
+        with:
+          report_paths: '**/TEST-*.xml'
+          check_name: 'hideout-core JUnit Test Report'
+
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: 'hideout-core.xml'
+          path: 'hideout-core/build/reports/kover/hideout-mastodon.xml'
+
   coverage:
     needs:
       - change
       - hideout-core-unit-test
+      - hideout-mastodon-unit-test
     runs-on: ubuntu-latest
     steps:
       - name: Download Coverage Report
         uses: actions/download-artifact@v4
         with:
-          name: 'hideout-core.xml'
           path: 'hideout-core/build/reports/kover/'
       - name: Report Coverage
         uses: madrapps/jacoco-report@v1.7.0
         with:
           paths: |
-            ${{ github.workspace }}/hideout-core/build/reports/kover/hideout-core.xml
+            ${{ github.workspace }}/hideout-core/build/reports/kover/**.xml
           token: ${{ secrets.GITHUB_TOKEN }}
           title: Code Coverage
           update-comment: true
@@ -143,6 +212,7 @@ jobs:
     needs:
       - change
       - hideout-core-setup
+      - hideout-mastodon-setup
     runs-on: ubuntu-latest
     permissions:
       contents: write
