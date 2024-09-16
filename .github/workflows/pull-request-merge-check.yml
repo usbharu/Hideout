@@ -25,6 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       core: ${{ steps.filter.outputs.core }}
+      mastodon: ${{ steps.filter.outputs.mastodon }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
