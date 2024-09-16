@@ -160,7 +160,7 @@ kover {
         }
         total {
             xml {
-                xmlFile = file("$buildDir/reports/kover/hideout-core.xml")
+                xmlFile = file("$buildDir/reports/kover/hideout-mastodon.xml")
             }
         }
         filters {
