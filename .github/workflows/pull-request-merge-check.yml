@@ -206,8 +206,7 @@ jobs:
         uses: madrapps/jacoco-report@v1.7.0
         with:
           paths: |
-            ${{ github.workspace }}/hideout-core/build/reports/kover/hideout-core.xml,
-            ${{ github.workspace }}/hideout-core/build/reports/kover/hideout-mastodon.xml
+            ${{ github.workspace }}/hideout-core/build/reports/kover/**/**.xml
           token: ${{ secrets.GITHUB_TOKEN }}
           title: Code Coverage
           update-comment: true
