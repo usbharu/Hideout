@@ -185,7 +185,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: 'hideout-mastodon.xml'
-          path: 'hideout-core/build/reports/kover/hideout-mastodon.xml'
+          path: 'hideout-mastodon/build/reports/kover/hideout-mastodon.xml'
 
   coverage:
     needs:
