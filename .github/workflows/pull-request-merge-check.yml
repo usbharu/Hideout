@@ -121,8 +121,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: 'hideout-core.xml'
-          path: 'hideout-core/build/reports/kover/hideout-core.xml'
-      - run: echo ${{ github.workspace }}/hideout-core/build/reports/kover/hideout-core.xml
+          path: 'hideout-core/build/reports/kover/'
       - name: Report Coverage
         uses: madrapps/jacoco-report@v1.7.0
         with:
