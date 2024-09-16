@@ -1,30 +1,52 @@
-name: PullRequest Merge Check
-
+name: pull-request-merge-check.yml
 on:
   pull_request:
-    paths-ignore:
-      - 'owl/**'
     branches:
       - "develop"
     types:
-      - opened # default
-      - reopened # default
-      - synchronize # default
-      - ready_for_review # 必要
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
-permissions:
-  contents: read
-  checks: write
-  id-token: write
-  pull-requests: write
-
 jobs:
-  setup:
-    name: Setup
+  change:
     if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    outputs:
+      core: ${{ steps.filter.outputs.core }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT }}
+
+      - name: Check Changes
+        uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            core:
+              - 'hideout-core/**'
+              - 'libs.versions.toml'
+            ap:
+              - 'hideout-activitypub/**'
+              - 'libs.versions.toml'
+            mastodon:
+              - 'hideout-mastodon/**'
+              - 'libs.versions.toml'
+            owl:
+              - 'owl/**'
+              - 'libs.versions.toml'
+
+  hideout-core-setup:
+    needs:
+      - change
+    if: github.event.pull_request.draft == false && needs.change.outputs.core == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -50,9 +72,11 @@ jobs:
       - name: Build
         run: ./gradlew classes --no-daemon
 
-  unit-test:
-    name: Unit Test
-    needs: [ setup ]
+  hideout-core-unit-test:
+    needs:
+      - hideout-core-setup
+      - change
+    if: github.event.pull_request.draft == false && needs.change.outputs.core == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -75,30 +99,44 @@ jobs:
       - name: Unit Test
         run: ./hideout-core/gradlew :hideout-core:koverXmlReport
 
-      - name: Add coverage report to PR
-        if: always()
-        id: kover
+      - name: JUnit Test Report
+        uses: mikepenz/action-junit-report@v4
+        with:
+          report_paths: '**/TEST-*.xml'
+          check_name: 'hideout-core JUnit Test Report'
+
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: 'hideout-core.xml'
+          path: 'hideout-core/build/reports/kover/hideout-core.xml'
+
+  coverage:
+    needs:
+      - change
+      - hideout-core-unit-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Coverage Report
+        uses: actions/download-artifact@v4
+        with:
+          name: 'hideout-core.xml'
+          path: 'hideout-core/build/reports/kover/hideout-core.xml'
+      - name: Report Coverage
         uses: madrapps/jacoco-report@v1.7.0
         with:
           paths: |
-            ${{ github.workspace }}/hideout-core/build/reports/kover/report.xml
+            ${{ github.workspace }}/hideout-core/build/reports/kover/hideout-core.xml
           token: ${{ secrets.GITHUB_TOKEN }}
           title: Code Coverage
           update-comment: true
           min-coverage-overall: 50
           min-coverage-changed-files: 80
 
-      - name: JUnit Test Report
-        uses: mikepenz/action-junit-report@v4
-        with:
-          report_paths: '**/TEST-*.xml'
-
-      - name: Verify Coverage
-        run: ./hideout-core/gradlew :hideout-core:koverVerify
-
   lint:
-    name: Lint
-    needs: [ setup ]
+    needs:
+      - change
+      - hideout-core-setup
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -107,7 +145,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
-          token: '${{ secrets.PAT }}'
+          token: ${{ secrets.PAT }}
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -121,7 +159,7 @@ jobs:
           cache-read-only: false
           gradle-home-cache-cleanup: true
 
-      - name: Build with Gradle
+      - name: Lint
         run: ./gradlew :hideout-core:detektMain :hideout-mastodon:detektMain
 
       - name: Auto Commit
