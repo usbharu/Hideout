@@ -46,7 +46,7 @@ jobs:
   hideout-core-setup:
     needs:
       - change
-    if: github.event.pull_request.draft == false && needs.change.outputs.core == true
+    if: github.event.pull_request.draft == false && needs.change.outputs.core == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -76,7 +76,7 @@ jobs:
     needs:
       - hideout-core-setup
       - change
-    if: github.event.pull_request.draft == false && needs.change.outputs.core == true
+    if: github.event.pull_request.draft == false && needs.change.outputs.core == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
