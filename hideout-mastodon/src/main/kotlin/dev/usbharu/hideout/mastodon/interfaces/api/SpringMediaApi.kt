@@ -40,12 +40,10 @@ class SpringMediaApi(
         description: String?,
         focus: String?,
     ): ResponseEntity<MediaAttachment> {
-
         if (file.size == 0L) {
             logger.warn("File is empty.")
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "File is empty.")
         }
-
 
         val tempFile = Files.createTempFile("hideout-tmp-file", ".tmp")
 
