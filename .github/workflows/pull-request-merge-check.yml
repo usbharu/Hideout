@@ -181,8 +181,6 @@ jobs:
           report_paths: '**/TEST-*.xml'
           check_name: 'hideout-mastodon JUnit Test Report'
 
-      - run: cd ./hideout-core/build/reports/kover || ls -lah
-
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v4
         with:
@@ -200,6 +198,10 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: 'hideout-core/build/reports/kover/'
+
+
+      - run: cd ./hideout-core/build/reports/kover || ls -lah
+
       - name: Report Coverage
         uses: madrapps/jacoco-report@v1.7.0
         with:
