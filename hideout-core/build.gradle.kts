@@ -211,10 +211,15 @@ kover {
     reports {
         verify {
             rule {
-                bound{
+                bound {
                     minValue = 50
                     coverageUnits = CoverageUnit.INSTRUCTION
                 }
+            }
+        }
+        total {
+            xml {
+                xmlFile = file("$buildDir/reports/kover/hideout-core.xml")
             }
         }
         filters {
@@ -229,6 +234,7 @@ kover {
                 packages("org.jetbrains")
             }
         }
+
     }
 }
 
