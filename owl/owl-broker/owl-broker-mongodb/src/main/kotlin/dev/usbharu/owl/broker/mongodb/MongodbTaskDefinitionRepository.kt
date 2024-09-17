@@ -41,7 +41,7 @@ class MongodbTaskDefinitionRepository(database: MongoDatabase) : TaskDefinitionR
     }
 
     override suspend fun deleteByName(name: String): Unit = withContext(Dispatchers.IO) {
-        collection.deleteOne(Filters.eq("_id",name))
+        collection.deleteOne(Filters.eq("_id", name))
     }
 
     override suspend fun findByName(name: String): TaskDefinition? = withContext(Dispatchers.IO) {

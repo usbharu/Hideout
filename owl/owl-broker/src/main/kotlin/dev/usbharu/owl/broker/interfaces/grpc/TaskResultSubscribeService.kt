@@ -41,15 +41,17 @@ class TaskResultSubscribeService(
                     name = it.name
                     attempt = it.attempt
                     success = it.success
-                    results.addAll(it.results.map {
-                        taskResult {
-                            id = it.taskId.toUUID()
-                            success = it.success
-                            attempt = it.attempt
-                            result.putAll(PropertySerializeUtils.serialize(propertySerializerFactory, it.result))
-                            message = it.message
+                    results.addAll(
+                        it.results.map {
+                            taskResult {
+                                id = it.taskId.toUUID()
+                                success = it.success
+                                attempt = it.attempt
+                                result.putAll(PropertySerializeUtils.serialize(propertySerializerFactory, it.result))
+                                message = it.message
+                            }
                         }
-                    })
+                    )
                 }
             }
     }

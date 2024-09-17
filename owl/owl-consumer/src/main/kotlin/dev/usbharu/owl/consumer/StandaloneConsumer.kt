@@ -90,9 +90,11 @@ class StandaloneConsumer(
      */
     suspend fun start() {
         consumer.start()
-        Runtime.getRuntime().addShutdownHook(Thread {
-            consumer.stop()
-        })
+        Runtime.getRuntime().addShutdownHook(
+            Thread {
+                consumer.stop()
+            }
+        )
     }
 
     /**
@@ -102,5 +104,4 @@ class StandaloneConsumer(
     fun stop() {
         consumer.stop()
     }
-
 }

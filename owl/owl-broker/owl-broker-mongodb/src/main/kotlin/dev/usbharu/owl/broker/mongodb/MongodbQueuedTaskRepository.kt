@@ -48,7 +48,8 @@ class MongodbQueuedTaskRepository(
     override suspend fun save(queuedTask: QueuedTask): QueuedTask {
         withContext(Dispatchers.IO) {
             collection.replaceOne(
-                eq("_id", queuedTask.task.id.toString()), QueuedTaskMongodb.of(propertySerializerFactory, queuedTask),
+                eq("_id", queuedTask.task.id.toString()),
+                QueuedTaskMongodb.of(propertySerializerFactory, queuedTask),
                 ReplaceOptions().upsert(true)
             )
         }
@@ -57,7 +58,6 @@ class MongodbQueuedTaskRepository(
 
     override suspend fun findByTaskIdAndAssignedConsumerIsNullAndUpdate(id: UUID, update: QueuedTask): QueuedTask {
         return withContext(Dispatchers.IO) {
-
             val findOneAndUpdate = collection.findOneAndUpdate(
                 and(
                     eq("_id", id.toString()),
@@ -108,7 +108,7 @@ data class QueuedTaskMongodb(
     val task: TaskMongodb,
     val attempt: Int,
     val queuedAt: Instant,
-    val priority:Int,
+    val priority: Int,
     val isActive: Boolean,
     val timeoutAt: Instant?,
     val assignedConsumer: String?,
@@ -155,14 +155,14 @@ data class QueuedTaskMongodb(
         companion object {
             fun of(propertySerializerFactory: PropertySerializerFactory, task: Task): TaskMongodb {
                 return TaskMongodb(
-                    task.name,
-                    task.id.toString(),
-                    task.publishProducerId.toString(),
-                    task.publishedAt,
-                    task.nextRetry,
-                    task.completedAt,
-                    task.attempt,
-                    PropertySerializeUtils.serialize(propertySerializerFactory, task.properties)
+                    name = task.name,
+                    id = task.id.toString(),
+                    publishProducerId = task.publishProducerId.toString(),
+                    publishedAt = task.publishedAt,
+                    nextRetry = task.nextRetry,
+                    completedAt = task.completedAt,
+                    attempt = task.attempt,
+                    properties = PropertySerializeUtils.serialize(propertySerializerFactory, task.properties)
                 )
             }
         }
@@ -171,15 +171,15 @@ data class QueuedTaskMongodb(
     companion object {
         fun of(propertySerializerFactory: PropertySerializerFactory, queuedTask: QueuedTask): QueuedTaskMongodb {
             return QueuedTaskMongodb(
-                queuedTask.task.id.toString(),
-                TaskMongodb.of(propertySerializerFactory, queuedTask.task),
-                queuedTask.attempt,
-                queuedTask.queuedAt,
-                queuedTask.priority,
-                queuedTask.isActive,
-                queuedTask.timeoutAt,
-                queuedTask.assignedConsumer?.toString(),
-                queuedTask.assignedAt
+                id = queuedTask.task.id.toString(),
+                task = TaskMongodb.of(propertySerializerFactory, queuedTask.task),
+                attempt = queuedTask.attempt,
+                queuedAt = queuedTask.queuedAt,
+                priority = queuedTask.priority,
+                isActive = queuedTask.isActive,
+                timeoutAt = queuedTask.timeoutAt,
+                assignedConsumer = queuedTask.assignedConsumer?.toString(),
+                assignedAt = queuedTask.assignedAt
             )
         }
     }

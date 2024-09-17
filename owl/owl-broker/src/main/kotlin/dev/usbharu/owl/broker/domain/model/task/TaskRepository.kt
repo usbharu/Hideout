@@ -21,15 +21,15 @@ import java.time.Instant
 import java.util.*
 
 interface TaskRepository {
-    suspend fun save(task: Task):Task
+    suspend fun save(task: Task): Task
 
-    suspend fun saveAll(tasks:List<Task>)
+    suspend fun saveAll(tasks: List<Task>)
 
-    fun findByNextRetryBeforeAndCompletedAtIsNull(timestamp:Instant): Flow<Task>
+    fun findByNextRetryBeforeAndCompletedAtIsNull(timestamp: Instant): Flow<Task>
 
     suspend fun findById(uuid: UUID): Task?
 
-    suspend fun findByIdAndUpdate(id:UUID,task: Task)
+    suspend fun findByIdAndUpdate(id: UUID, task: Task)
 
-    suspend fun findByPublishProducerIdAndCompletedAtIsNotNull(publishProducerId:UUID):Flow<Task>
+    fun findByPublishProducerIdAndCompletedAtIsNotNull(publishProducerId: UUID): Flow<Task>
 }

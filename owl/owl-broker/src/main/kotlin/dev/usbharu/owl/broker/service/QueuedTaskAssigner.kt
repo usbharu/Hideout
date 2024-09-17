@@ -27,7 +27,6 @@ interface QueuedTaskAssigner {
     fun ready(consumerId: UUID, numberOfConcurrent: Int): Flow<QueuedTask>
 }
 
-
 class QueuedTaskAssignerImpl(
     private val taskManagementService: TaskManagementService,
     private val queueStore: QueueStore
@@ -49,7 +48,6 @@ class QueuedTaskAssignerImpl(
 
     private suspend fun assignTask(queuedTask: QueuedTask, consumerId: UUID): QueuedTask? {
         return try {
-
             val assignedTaskQueue =
                 queuedTask.copy(assignedConsumer = consumerId, assignedAt = Instant.now(), isActive = false)
             logger.trace(

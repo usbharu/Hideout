@@ -26,19 +26,12 @@ class FloatPropertyValue(override val value: Float) : PropertyValue<Float>() {
  *
  */
 class FloatPropertySerializer : PropertySerializer<Float> {
-    override fun isSupported(propertyValue: PropertyValue<*>): Boolean {
-        return propertyValue.value is Float
-    }
+    override fun isSupported(propertyValue: PropertyValue<*>): Boolean = propertyValue.value is Float
 
-    override fun isSupported(string: String): Boolean {
-        return string.startsWith("float:")
-    }
+    override fun isSupported(string: String): Boolean = string.startsWith("float:")
 
-    override fun serialize(propertyValue: PropertyValue<*>): String {
-        return "float:" + propertyValue.value.toString()
-    }
+    override fun serialize(propertyValue: PropertyValue<*>): String = "float:" + propertyValue.value.toString()
 
-    override fun deserialize(string: String): PropertyValue<Float> {
-        return FloatPropertyValue(string.replace("float:", "").toFloat())
-    }
+    override fun deserialize(string: String): PropertyValue<Float> =
+        FloatPropertyValue(string.replace("float:", "").toFloat())
 }

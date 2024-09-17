@@ -53,7 +53,6 @@ subprojects {
         autoCorrect = true
     }
 
-
     project.gradle.taskGraph.whenReady {
         if (this.hasTask(":koverGenerateArtifact")) {
             val task = this.allTasks.find { println(it.name);it.name == "test" }
@@ -61,8 +60,23 @@ subprojects {
             verificationTask.ignoreFailures = true
         }
     }
-    tasks.test {
-        useJUnitPlatform()
+    tasks {
+        withType<io.gitlab.arturbosch.detekt.Detekt> {
+            exclude("**/generated/**")
+            setSource("src/main/kotlin")
+            exclude("build/")
+            configureEach {
+                exclude("**/org/koin/ksp/generated/**", "**/generated/**")
+            }
+        }
+        withType<io.gitlab.arturbosch.detekt.DetektCreateBaselineTask>() {
+            configureEach {
+                exclude("**/org/koin/ksp/generated/**", "**/generated/**")
+            }
+        }
+        withType<Test> {
+            useJUnitPlatform()
+        }
     }
 
     publishing {

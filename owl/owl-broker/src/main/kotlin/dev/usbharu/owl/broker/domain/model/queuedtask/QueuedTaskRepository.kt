@@ -21,12 +21,12 @@ import java.time.Instant
 import java.util.*
 
 interface QueuedTaskRepository {
-    suspend fun save(queuedTask: QueuedTask):QueuedTask
+    suspend fun save(queuedTask: QueuedTask): QueuedTask
 
     /**
      * トランザクションの代わり
      */
-    suspend fun findByTaskIdAndAssignedConsumerIsNullAndUpdate(id:UUID,update:QueuedTask):QueuedTask
+    suspend fun findByTaskIdAndAssignedConsumerIsNullAndUpdate(id: UUID, update: QueuedTask): QueuedTask
 
     fun findByTaskNameInAndIsActiveIsTrueAndOrderByPriority(tasks: List<String>, limit: Int): Flow<QueuedTask>
 

@@ -78,7 +78,6 @@ class TaskPublishServiceImpl(
     }
 
     override suspend fun publishTasks(list: List<PublishTask>): List<PublishedTask> {
-
         val first = list.first()
 
         val definition = taskDefinitionRepository.findByName(first.name)
@@ -90,14 +89,14 @@ class TaskPublishServiceImpl(
 
         val tasks = list.map {
             Task(
-                it.name,
-                UUID.randomUUID(),
-                first.producerId,
-                published,
-                nextRetry,
-                null,
-                0,
-                it.properties
+                name = it.name,
+                id = UUID.randomUUID(),
+                publishProducerId = first.producerId,
+                publishedAt = published,
+                nextRetry = nextRetry,
+                completedAt = null,
+                attempt = 0,
+                properties = it.properties
             )
         }
 

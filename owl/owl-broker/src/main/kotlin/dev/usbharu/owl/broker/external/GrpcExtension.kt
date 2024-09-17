@@ -32,4 +32,4 @@ fun UUID.toUUID(): Uuid.UUID = Uuid
 
 fun Timestamp.toInstant(): Instant = Instant.ofEpochSecond(seconds, nanos.toLong())
 
-fun Instant.toTimestamp():Timestamp = Timestamp.newBuilder().setSeconds(this.epochSecond).setNanos(this.nano).build()
+fun Instant.toTimestamp(): Timestamp = Timestamp.newBuilder().setSeconds(this.epochSecond).setNanos(this.nano).build()

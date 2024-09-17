@@ -39,13 +39,9 @@ class TaskPublishService(
     TaskPublishServiceCoroutineImplBase(coroutineContext) {
 
     override suspend fun publishTask(request: PublishTaskOuterClass.PublishTask): PublishedTask {
-
         logger.warn("aaaaaaaaaaa")
 
-
-
         return try {
-
             val publishedTask = taskPublishService.publishTask(
                 PublishTask(
                     request.name,
@@ -61,7 +57,6 @@ class TaskPublishService(
     }
 
     override suspend fun publishTasks(request: PublishTaskOuterClass.PublishTasks): PublishedTasks {
-
         val tasks = request.propertiesArrayList.map {
             PublishTask(
                 request.name,

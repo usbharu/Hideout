@@ -31,9 +31,5 @@ abstract class PropertyValue<T> {
      * プロパティの型
      */
     abstract val type: PropertyType
-    override fun toString(): String {
-        return "PropertyValue(value=$value, type=$type)"
-    }
-
-
+    override fun toString(): String = "PropertyValue(value=$value, type=$type)"
 }

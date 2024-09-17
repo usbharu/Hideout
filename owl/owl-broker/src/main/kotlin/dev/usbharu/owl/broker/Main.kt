@@ -90,7 +90,6 @@ fun main() {
 
     logger.info("Use module name: {}", moduleContext)
 
-
     val koin = startKoin {
         printLogger()
 
@@ -98,7 +97,6 @@ fun main() {
             single<RetryPolicyFactory> {
                 DefaultRetryPolicyFactory(mapOf("" to ExponentialRetryPolicy()))
             }
-
         }
         modules(mainModule, module, moduleContext.module())
     }

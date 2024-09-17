@@ -107,7 +107,6 @@ interface TaskDefinition<T : Task> {
      * @return デシリアライズされたタスク
      */
     fun deserialize(value: Map<String, PropertyValue<*>>): T {
-
         val task = try {
             type.getDeclaredConstructor().newInstance()
         } catch (e: Exception) {

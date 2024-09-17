@@ -96,7 +96,6 @@ class EmbeddedOwlProducer(
     }
 
     override suspend fun <T : Task> publishTask(task: T): PublishedTask<T> {
-
         val taskDefinition = taskMap.getValue(task::class.java) as TaskDefinition<T>
 
         val publishTask = application.get<TaskPublishService>().publishTask(

@@ -24,16 +24,18 @@ import dev.usbharu.owl.generated.ProducerServiceGrpcKt.ProducerServiceCoroutineI
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
-
 class ProducerService(
     coroutineContext: CoroutineContext = EmptyCoroutineContext,
     private val producerService: ProducerService
 ) :
     ProducerServiceCoroutineImplBase(coroutineContext) {
-    override suspend fun registerProducer(request: ProducerOuterClass.Producer): ProducerOuterClass.RegisterProducerResponse {
+    override suspend fun registerProducer(
+        request: ProducerOuterClass.Producer
+    ): ProducerOuterClass.RegisterProducerResponse {
         val registerProducer = producerService.registerProducer(
             RegisterProducerRequest(
-                request.name, request.hostname
+                request.name,
+                request.hostname
             )
         )
         return ProducerOuterClass.RegisterProducerResponse.newBuilder().setId(registerProducer.toUUID()).build()

@@ -36,10 +36,12 @@ class DefaultOwlProducer(private val defaultOwlProducerConfig: DefaultOwlProduce
     override suspend fun start() {
         producerServiceCoroutineStub =
             ProducerServiceGrpcKt.ProducerServiceCoroutineStub(defaultOwlProducerConfig.channel)
-        producerId = producerServiceCoroutineStub.registerProducer(producer {
-            this.name = defaultOwlProducerConfig.name
-            this.hostname = defaultOwlProducerConfig.hostname
-        }).id
+        producerId = producerServiceCoroutineStub.registerProducer(
+            producer {
+                this.name = defaultOwlProducerConfig.name
+                this.hostname = defaultOwlProducerConfig.hostname
+            }
+        ).id
 
         defineTaskServiceCoroutineStub =
             DefinitionTaskServiceGrpcKt.DefinitionTaskServiceCoroutineStub(defaultOwlProducerConfig.channel)
@@ -48,17 +50,18 @@ class DefaultOwlProducer(private val defaultOwlProducerConfig: DefaultOwlProduce
             TaskPublishServiceGrpcKt.TaskPublishServiceCoroutineStub(defaultOwlProducerConfig.channel)
     }
 
-
     override suspend fun <T : Task> registerTask(taskDefinition: TaskDefinition<T>) {
-        defineTaskServiceCoroutineStub.register(taskDefinition {
-            this.producerId = this@DefaultOwlProducer.producerId
-            this.name = taskDefinition.name
-            this.maxRetry = taskDefinition.maxRetry
-            this.priority = taskDefinition.priority
-            this.retryPolicy = taskDefinition.retryPolicy
-            this.timeoutMilli = taskDefinition.timeoutMilli
-            this.propertyDefinitionHash = taskDefinition.propertyDefinition.hash()
-        })
+        defineTaskServiceCoroutineStub.register(
+            taskDefinition {
+                this.producerId = this@DefaultOwlProducer.producerId
+                this.name = taskDefinition.name
+                this.maxRetry = taskDefinition.maxRetry
+                this.priority = taskDefinition.priority
+                this.retryPolicy = taskDefinition.retryPolicy
+                this.timeoutMilli = taskDefinition.timeoutMilli
+                this.propertyDefinitionHash = taskDefinition.propertyDefinition.hash()
+            }
+        )
     }
 
     override suspend fun <T : Task> publishTask(task: T): PublishedTask<T> {

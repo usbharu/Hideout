@@ -16,7 +16,6 @@
 
 package dev.usbharu.owl.broker.interfaces.grpc
 
-
 import dev.usbharu.owl.broker.external.toTimestamp
 import dev.usbharu.owl.broker.external.toUUID
 import dev.usbharu.owl.broker.service.QueuedTaskAssigner
@@ -33,7 +32,6 @@ import org.slf4j.LoggerFactory
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
-
 class AssignmentTaskService(
     coroutineContext: CoroutineContext = EmptyCoroutineContext,
     private val queuedTaskAssigner: QueuedTaskAssigner,
@@ -42,7 +40,6 @@ class AssignmentTaskService(
     AssignmentTaskServiceGrpcKt.AssignmentTaskServiceCoroutineImplBase(coroutineContext) {
 
     override fun ready(requests: Flow<Task.ReadyRequest>): Flow<Task.TaskRequest> {
-
         return try {
             requests
                 .flatMapMerge {
