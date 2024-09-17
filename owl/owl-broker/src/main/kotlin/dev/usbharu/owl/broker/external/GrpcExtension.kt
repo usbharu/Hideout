@@ -17,7 +17,7 @@
 package dev.usbharu.owl.broker.external
 
 import com.google.protobuf.Timestamp
-import dev.usbharu.owl.Uuid
+import dev.usbharu.owl.generated.Uuid
 import java.time.Instant
 import java.util.*
 

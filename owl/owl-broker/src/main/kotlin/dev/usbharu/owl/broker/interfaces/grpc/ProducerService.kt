@@ -16,11 +16,11 @@
 
 package dev.usbharu.owl.broker.interfaces.grpc
 
-import dev.usbharu.owl.ProducerOuterClass
-import dev.usbharu.owl.ProducerServiceGrpcKt.ProducerServiceCoroutineImplBase
 import dev.usbharu.owl.broker.external.toUUID
 import dev.usbharu.owl.broker.service.ProducerService
 import dev.usbharu.owl.broker.service.RegisterProducerRequest
+import dev.usbharu.owl.generated.ProducerOuterClass
+import dev.usbharu.owl.generated.ProducerServiceGrpcKt.ProducerServiceCoroutineImplBase
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 

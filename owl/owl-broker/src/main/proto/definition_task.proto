@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option java_package = "dev.usbharu.owl";
+option java_package = "dev.usbharu.owl.generated";
 
 import "google/protobuf/empty.proto";
 import "uuid.proto";

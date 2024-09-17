@@ -16,15 +16,15 @@
 
 package dev.usbharu.owl.broker.interfaces.grpc
 
-import dev.usbharu.owl.PublishTaskOuterClass
-import dev.usbharu.owl.PublishTaskOuterClass.PublishedTask
-import dev.usbharu.owl.PublishTaskOuterClass.PublishedTasks
-import dev.usbharu.owl.TaskPublishServiceGrpcKt.TaskPublishServiceCoroutineImplBase
 import dev.usbharu.owl.broker.external.toUUID
 import dev.usbharu.owl.broker.service.PublishTask
 import dev.usbharu.owl.broker.service.TaskPublishService
 import dev.usbharu.owl.common.property.PropertySerializeUtils
 import dev.usbharu.owl.common.property.PropertySerializerFactory
+import dev.usbharu.owl.generated.PublishTaskOuterClass
+import dev.usbharu.owl.generated.PublishTaskOuterClass.PublishedTask
+import dev.usbharu.owl.generated.PublishTaskOuterClass.PublishedTasks
+import dev.usbharu.owl.generated.TaskPublishServiceGrpcKt.TaskPublishServiceCoroutineImplBase
 import io.grpc.Status
 import io.grpc.StatusException
 import org.slf4j.LoggerFactory

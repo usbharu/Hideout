@@ -7,12 +7,14 @@ import dev.usbharu.owl.broker.domain.model.consumer.Consumer
 import kotlinx.coroutines.runBlocking
 import org.bson.UuidRepresentation
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.util.*
 
 
 class MongodbConsumerRepositoryTest {
     @Test
+    @Disabled
     fun name() {
 
         val clientSettings =

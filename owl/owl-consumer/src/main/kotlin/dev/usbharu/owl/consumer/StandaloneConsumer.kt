@@ -16,11 +16,11 @@
 
 package dev.usbharu.owl.consumer
 
-import dev.usbharu.owl.AssignmentTaskServiceGrpcKt
-import dev.usbharu.owl.SubscribeTaskServiceGrpcKt
-import dev.usbharu.owl.TaskResultServiceGrpcKt
 import dev.usbharu.owl.common.property.CustomPropertySerializerFactory
 import dev.usbharu.owl.common.property.PropertySerializerFactory
+import dev.usbharu.owl.generated.AssignmentTaskServiceGrpcKt
+import dev.usbharu.owl.generated.SubscribeTaskServiceGrpcKt
+import dev.usbharu.owl.generated.TaskResultServiceGrpcKt
 import io.grpc.ManagedChannelBuilder
 import java.nio.file.Path
 

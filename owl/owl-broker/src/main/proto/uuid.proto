@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option java_package = "dev.usbharu.owl";
+option java_package = "dev.usbharu.owl.generated";
 
 message UUID {
   uint64 most_significant_uuid_bits = 1;

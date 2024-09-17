@@ -17,13 +17,13 @@
 package dev.usbharu.owl.broker.interfaces.grpc
 
 
-import dev.usbharu.owl.AssignmentTaskServiceGrpcKt
-import dev.usbharu.owl.Task
 import dev.usbharu.owl.broker.external.toTimestamp
 import dev.usbharu.owl.broker.external.toUUID
 import dev.usbharu.owl.broker.service.QueuedTaskAssigner
 import dev.usbharu.owl.common.property.PropertySerializeUtils
 import dev.usbharu.owl.common.property.PropertySerializerFactory
+import dev.usbharu.owl.generated.AssignmentTaskServiceGrpcKt
+import dev.usbharu.owl.generated.Task
 import io.grpc.Status
 import io.grpc.StatusException
 import kotlinx.coroutines.flow.Flow

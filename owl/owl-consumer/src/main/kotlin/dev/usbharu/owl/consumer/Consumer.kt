@@ -16,10 +16,10 @@
 
 package dev.usbharu.owl.consumer
 
-import dev.usbharu.owl.*
-import dev.usbharu.owl.Uuid.UUID
 import dev.usbharu.owl.common.property.PropertySerializeUtils
 import dev.usbharu.owl.common.property.PropertySerializerFactory
+import dev.usbharu.owl.generated.*
+import dev.usbharu.owl.generated.Uuid.UUID
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import org.slf4j.LoggerFactory

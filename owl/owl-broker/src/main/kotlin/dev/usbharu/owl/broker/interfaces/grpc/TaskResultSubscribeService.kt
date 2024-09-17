@@ -16,11 +16,11 @@
 
 package dev.usbharu.owl.broker.interfaces.grpc
 
-import dev.usbharu.owl.*
 import dev.usbharu.owl.broker.external.toUUID
 import dev.usbharu.owl.broker.service.TaskManagementService
 import dev.usbharu.owl.common.property.PropertySerializeUtils
 import dev.usbharu.owl.common.property.PropertySerializerFactory
+import dev.usbharu.owl.generated.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlin.coroutines.CoroutineContext

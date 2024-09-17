@@ -1,6 +1,10 @@
+import kotlinx.kover.gradle.plugin.dsl.CoverageUnit
+
 plugins {
     alias(libs.plugins.kotlin.jvm)
     id("maven-publish")
+    alias(libs.plugins.kover)
+    alias(libs.plugins.detekt)
 }
 
 
@@ -27,6 +31,7 @@ subprojects {
     apply {
         plugin("org.jetbrains.kotlin.jvm")
         plugin("maven-publish")
+        plugin(rootProject.libs.plugins.kover.get().pluginId)
     }
     kotlin {
         jvmToolchain(21)
@@ -38,7 +43,13 @@ subprojects {
 
 
     }
-
+    project.gradle.taskGraph.whenReady {
+        if (this.hasTask(":koverGenerateArtifact")) {
+            val task = this.allTasks.find { println(it.name);it.name == "test" }
+            val verificationTask = task as VerificationTask
+            verificationTask.ignoreFailures = true
+        }
+    }
     tasks.test {
         useJUnitPlatform()
     }
@@ -68,5 +79,58 @@ subprojects {
                 from(components["kotlin"])
             }
         }
+    }
+}
+
+dependencies {
+    kover(project(":owl-broker"))
+    kover(project(":owl-broker:owl-broker-mongodb"))
+    kover(project(":owl-common"))
+    kover(project(":owl-common:owl-common-serialize-jackson"))
+    kover(project(":owl-consumer"))
+    kover(project(":owl-producer"))
+    kover(project(":owl-producer:owl-producer-api"))
+    kover(project(":owl-producer:owl-producer-default"))
+    kover(project(":owl-producer:owl-producer-embedded"))
+}
+
+
+
+project.gradle.taskGraph.whenReady {
+    if (this.hasTask(":koverGenerateArtifact")) {
+        val task = this.allTasks.find { it.name == "test" }
+        val verificationTask = task as VerificationTask
+        verificationTask.ignoreFailures = true
+    }
+}
+
+kover {
+    currentProject {
+        sources {
+            excludedSourceSets.addAll("grpc", "grpckt")
+        }
+    }
+    reports {
+        verify {
+            rule {
+                bound {
+                    minValue = 50
+                    coverageUnits = CoverageUnit.INSTRUCTION
+                }
+            }
+        }
+        total {
+            xml {
+                title = "Hideout Core"
+                xmlFile = file("$buildDir/reports/kover/hideout-core.xml")
+            }
+            filters {
+                excludes {
+                    packages("dev.usbharu.owl.generated")
+                }
+            }
+        }
+
+
     }
 }

@@ -17,12 +17,12 @@
 package dev.usbharu.owl.producer.defaultimpl
 
 import com.google.protobuf.timestamp
-import dev.usbharu.owl.*
-import dev.usbharu.owl.Uuid.UUID
 import dev.usbharu.owl.common.property.PropertySerializeUtils
 import dev.usbharu.owl.common.task.PublishedTask
 import dev.usbharu.owl.common.task.Task
 import dev.usbharu.owl.common.task.TaskDefinition
+import dev.usbharu.owl.generated.*
+import dev.usbharu.owl.generated.Uuid.UUID
 import dev.usbharu.owl.producer.api.OwlProducer
 import java.time.Instant
 
@@ -69,7 +69,7 @@ class DefaultOwlProducer(private val defaultOwlProducerConfig: DefaultOwlProduce
         )
         val now = Instant.now()
         val publishTask = taskPublishServiceCoroutineStub.publishTask(
-            dev.usbharu.owl.publishTask {
+            dev.usbharu.owl.generated.publishTask {
                 this.producerId = this@DefaultOwlProducer.producerId
 
                 this.publishedAt = timestamp {
