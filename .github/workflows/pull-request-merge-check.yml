@@ -313,7 +313,7 @@ jobs:
 
       - name: Unit Test
         working-directory: owl
-        run: ./gradlew :koverXmlReport --rerun-task
+        run: ./gradlew :koverXmlReport --rerun-tasks
 
       - name: JUnit Test Report
         uses: mikepenz/action-junit-report@v4
