@@ -326,7 +326,7 @@ jobs:
           path: 'owl/build/reports/kover/owl.xml'
 
   coverage:
-    if: needs.change.outputs.core == 'true' || needs.change.outputs.activitypub == 'true' || needs.change.outputs.mastodon == 'true' || needs.change.outputs.owl == 'true'
+    if: always() && (needs.change.outputs.core == 'true' || needs.change.outputs.activitypub == 'true' || needs.change.outputs.mastodon == 'true' || needs.change.outputs.owl == 'true')
     needs:
       - change
       - hideout-core-unit-test
@@ -355,7 +355,7 @@ jobs:
           min-coverage-changed-files: 80
 
   lint:
-    if: needs.change.outputs.core == 'true' || needs.change.outputs.activitypub == 'true' || needs.change.outputs.mastodon == 'true' || needs.change.outputs.owl == 'true'
+    if: always() && (needs.change.outputs.core == 'true' || needs.change.outputs.activitypub == 'true' || needs.change.outputs.mastodon == 'true' || needs.change.outputs.owl == 'true')
     needs:
       - change
       - hideout-core-setup
