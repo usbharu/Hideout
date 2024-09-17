@@ -199,12 +199,6 @@ jobs:
         with:
           path: 'hideout-core/build/reports/kover'
 
-
-      - run: ls -R hideout-core/build/reports/kover
-
-      - run: cat ${{ github.workspace }}/hideout-core/build/reports/kover/hideout-core.xml/hideout-core.xml
-      - run: cat ${{ github.workspace }}/hideout-core/build/reports/kover/hideout-mastodon.xml/hideout-mastodon.xml
-
       - name: Report Coverage
         uses: madrapps/jacoco-report@v1.7.0
         with:
