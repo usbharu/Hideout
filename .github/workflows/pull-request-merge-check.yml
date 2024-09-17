@@ -312,7 +312,8 @@ jobs:
           gradle-home-cache-cleanup: true
 
       - name: Unit Test
-        run: ./owl/gradlew :owl:koverXmlReport
+        working-directory: owl
+        run: ./gradlew :koverXmlReport
 
       - name: JUnit Test Report
         uses: mikepenz/action-junit-report@v4
