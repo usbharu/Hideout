@@ -32,6 +32,7 @@ subprojects {
         plugin("org.jetbrains.kotlin.jvm")
         plugin("maven-publish")
         plugin(rootProject.libs.plugins.kover.get().pluginId)
+        plugin(rootProject.libs.plugins.detekt.get().pluginId)
     }
     kotlin {
         jvmToolchain(21)
@@ -40,9 +41,19 @@ subprojects {
     dependencies {
         implementation("org.slf4j:slf4j-api:2.0.15")
         testImplementation("org.junit.jupiter:junit-jupiter:5.10.3")
-
+        detektPlugins(rootProject.libs.detekt.formatting)
 
     }
+
+    detekt {
+        parallel = true
+        config.setFrom(files("$rootDir/../detekt.yml"))
+        buildUponDefaultConfig = true
+        basePath = "${projectDir}/src/main/kotlin"
+        autoCorrect = true
+    }
+
+
     project.gradle.taskGraph.whenReady {
         if (this.hasTask(":koverGenerateArtifact")) {
             val task = this.allTasks.find { println(it.name);it.name == "test" }
@@ -94,7 +105,13 @@ dependencies {
     kover(project(":owl-producer:owl-producer-embedded"))
 }
 
-
+detekt {
+    parallel = true
+    config.setFrom(files("../detekt.yml"))
+    buildUponDefaultConfig = true
+    basePath = "${projectDir}/src/main/kotlin"
+    autoCorrect = true
+}
 
 project.gradle.taskGraph.whenReady {
     if (this.hasTask(":koverGenerateArtifact")) {

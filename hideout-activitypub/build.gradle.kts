@@ -1,4 +1,3 @@
-import dev.usbharu.hideout.core.infrastructure.exposedrepository.Instance.version
 import kotlinx.kover.gradle.plugin.dsl.CoverageUnit
 
 plugins {

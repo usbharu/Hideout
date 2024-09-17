@@ -1,5 +1,3 @@
-import dev.usbharu.hideout.core.infrastructure.exposedrepository.UserDetails.password
-
 /*
  * Copyright (C) 2024 usbharu
  *
