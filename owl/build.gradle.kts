@@ -55,7 +55,7 @@ subprojects {
 
     project.gradle.taskGraph.whenReady {
         if (this.hasTask(":koverGenerateArtifact")) {
-            val task = this.allTasks.find { println(it.name);it.name == "test" }
+            val task = this.allTasks.find { it.name == "test" }
             val verificationTask = task as VerificationTask
             verificationTask.ignoreFailures = true
         }
@@ -152,8 +152,8 @@ kover {
         }
         total {
             xml {
-                title = "Hideout Core"
-                xmlFile = file("$buildDir/reports/kover/hideout-core.xml")
+                title = "Owl"
+                xmlFile = file("$buildDir/reports/kover/owl.xml")
             }
             filters {
                 excludes {
