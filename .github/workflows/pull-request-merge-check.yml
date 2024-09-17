@@ -27,7 +27,7 @@ jobs:
       core: ${{ steps.filter.outputs.core }}
       mastodon: ${{ steps.filter.outputs.mastodon }}
       activitypub: ${{ steps.filter.outputs.ap }}
-      owl: $${{ steps.filter.outputs.owl }}
+      owl: ${{ steps.filter.outputs.owl }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
