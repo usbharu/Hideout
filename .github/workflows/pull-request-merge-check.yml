@@ -166,7 +166,8 @@ jobs:
           gradle-home-cache-cleanup: true
 
       - name: Build
-        run: ./owl/gradlew :owl:classes --no-daemon
+        working-directory: owl
+        run: ./gradlew :classes --no-daemon
 
   hideout-core-unit-test:
     needs:
