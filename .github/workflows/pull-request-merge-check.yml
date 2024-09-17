@@ -391,7 +391,8 @@ jobs:
 
       - name: owl Lint
         if: always()
-        run: ./owl/gradlew :owl:detektMain
+        working-directory: owl
+        run: ./gradlew :detektMain
 
       - name: Auto Commit
         if: ${{ always() }}

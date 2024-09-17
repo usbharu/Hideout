@@ -15,6 +15,7 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
+    detektPlugins(libs.detekt.formatting)
 }
 
 tasks.test {
@@ -64,6 +65,14 @@ project.gradle.taskGraph.whenReady {
         val verificationTask = task as VerificationTask
         verificationTask.ignoreFailures = true
     }
+}
+
+detekt {
+    parallel = true
+    config.setFrom(files("../detekt.yml"))
+    buildUponDefaultConfig = true
+    basePath = "${rootDir.absolutePath}/src/main/kotlin"
+    autoCorrect = true
 }
 
 kover {
