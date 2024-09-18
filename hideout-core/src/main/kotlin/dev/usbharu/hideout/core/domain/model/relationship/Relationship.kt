@@ -53,7 +53,7 @@ class Relationship(
     }
 
     fun block() {
-        require(following.not())
+        unfollow()
         blocking = true
         addDomainEvent(RelationshipEventFactory(this).createEvent(RelationshipEvent.BLOCK))
     }
