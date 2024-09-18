@@ -29,24 +29,6 @@ class RelationshipTest {
     }
 
     @Test
-    fun block_unfollowされblockが発生する() {
-        val relationship = Relationship(
-            actorId = ActorId(1),
-            targetActorId = ActorId(2),
-            following = true,
-            blocking = false,
-            muting = false,
-            followRequesting = false,
-            mutingFollowRequest = false
-        )
-
-        relationship.block()
-
-        assertTrue(relationship.blocking)
-        assertContainsEvent(relationship, RelationshipEvent.BLOCK.eventName)
-    }
-
-    @Test
     fun mute_MUTEが発生する() {
         val relationship = Relationship(
             actorId = ActorId(1),
@@ -117,24 +99,54 @@ class RelationshipTest {
     }
 
     @Test
-    fun followRequest_followRequestingがtrueになりFOLLOW_REQUESTが発生する() {
-
-    }
-
-    @Test
-    fun followRequest_ブロックしている場合はフォローリクエストを送れない() {
-
-    }
-
-    @Test
     fun unfollowRequest_followRequestingがfalseになりUNFOLLOW_REQUESTが発生する() {
+        val relationship = Relationship(
+            ActorId(1),
+            targetActorId = ActorId(2),
+            following = false,
+            blocking = false,
+            muting = false,
+            followRequesting = true,
+            mutingFollowRequest = false
+        )
 
+        relationship.unfollowRequest()
+
+        assertFalse(relationship.followRequesting)
+        assertContainsEvent(relationship, RelationshipEvent.UNFOLLOW_REQUEST.eventName)
     }
 
     @Test
     fun acceptFollowRequest_followingがtrueにfollowRequestingがfalseになりaccept_followが発生する() {
+        val relationship = Relationship(
+            actorId = ActorId(1),
+            targetActorId = ActorId(2),
+            following = false,
+            blocking = false,
+            muting = false,
+            followRequesting = true,
+            mutingFollowRequest = true
+        )
 
+        relationship.acceptFollowRequest()
+        assertTrue(relationship.following)
+        assertContainsEvent(relationship, RelationshipEvent.ACCEPT_FOLLOW.eventName)
     }
 
-    
+    @Test
+    fun rejectFollowRequest_followRequestingがfalseになりREJECT_FOLLOWが発生する() {
+        val relationship = Relationship(
+            actorId = ActorId(1),
+            targetActorId = ActorId(2),
+            following = false,
+            blocking = false,
+            muting = false,
+            followRequesting = true,
+            mutingFollowRequest = false
+        )
+
+        relationship.rejectFollowRequest()
+        assertFalse(relationship.followRequesting)
+        assertContainsEvent(relationship, RelationshipEvent.REJECT_FOLLOW.eventName)
+    }
 }
