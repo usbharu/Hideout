@@ -52,6 +52,7 @@ repositories {
 dependencies {
     implementation("dev.usbharu:hideout-core:0.0.1")
     implementation("dev.usbharu:hideout-mastodon:1.0-SNAPSHOT")
+    implementation("dev.usbharu:hideout-activitypub:1.0-SNAPSHOT")
 }
 
 tasks.register("run") {

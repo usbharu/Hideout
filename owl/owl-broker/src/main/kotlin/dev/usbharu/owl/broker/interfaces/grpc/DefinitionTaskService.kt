@@ -17,25 +17,28 @@
 package dev.usbharu.owl.broker.interfaces.grpc
 
 import com.google.protobuf.Empty
-import dev.usbharu.owl.DefinitionTask
-import dev.usbharu.owl.DefinitionTask.TaskDefined
-import dev.usbharu.owl.DefinitionTaskServiceGrpcKt.DefinitionTaskServiceCoroutineImplBase
 import dev.usbharu.owl.broker.domain.model.taskdefinition.TaskDefinition
 import dev.usbharu.owl.broker.service.RegisterTaskService
+import dev.usbharu.owl.generated.DefinitionTask
+import dev.usbharu.owl.generated.DefinitionTask.TaskDefined
+import dev.usbharu.owl.generated.DefinitionTaskServiceGrpcKt.DefinitionTaskServiceCoroutineImplBase
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
-class DefinitionTaskService(coroutineContext: CoroutineContext = EmptyCoroutineContext,private val registerTaskService: RegisterTaskService) :
+class DefinitionTaskService(
+    coroutineContext: CoroutineContext = EmptyCoroutineContext,
+    private val registerTaskService: RegisterTaskService
+) :
     DefinitionTaskServiceCoroutineImplBase(coroutineContext) {
     override suspend fun register(request: DefinitionTask.TaskDefinition): TaskDefined {
         registerTaskService.registerTask(
             TaskDefinition(
-                request.name,
-                request.priority,
-                request.maxRetry,
-                request.timeoutMilli,
-                request.propertyDefinitionHash,
-                request.retryPolicy
+                name = request.name,
+                priority = request.priority,
+                maxRetry = request.maxRetry,
+                timeoutMilli = request.timeoutMilli,
+                propertyDefinitionHash = request.propertyDefinitionHash,
+                retryPolicy = request.retryPolicy
             )
         )
         return TaskDefined

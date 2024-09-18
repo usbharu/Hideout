@@ -39,7 +39,7 @@ class GetFilterV1ApplicationService(private val filterRepository: FilterReposito
             ?: throw IllegalArgumentException("Filter ${command.filterKeywordId} not found")
 
         if (filter.userDetailId != principal.userDetailId) {
-            throw PermissionDeniedException()
+            throw PermissionDeniedException(principal)
         }
 
         val filterKeyword = filter.filterKeywords.find { it.id.id == command.filterKeywordId }

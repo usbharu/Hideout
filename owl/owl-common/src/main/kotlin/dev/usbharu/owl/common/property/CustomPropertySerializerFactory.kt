@@ -23,12 +23,9 @@ package dev.usbharu.owl.common.property
  */
 open class CustomPropertySerializerFactory(private val propertySerializers: Set<PropertySerializer<*>>) :
     PropertySerializerFactory {
-    override fun <T> factory(propertyValue: PropertyValue<T>): PropertySerializer<T> {
-        return propertySerializers.firstOrNull { it.isSupported(propertyValue) } as PropertySerializer<T>?
+    override fun <T> factory(propertyValue: PropertyValue<T>): PropertySerializer<T> =
+        propertySerializers.firstOrNull { it.isSupported(propertyValue) } as PropertySerializer<T>?
             ?: throw IllegalArgumentException("PropertySerializer not found: $propertyValue")
-    }
 
-    override fun factory(string: String): PropertySerializer<*> {
-        return propertySerializers.first { it.isSupported(string) }
-    }
+    override fun factory(string: String): PropertySerializer<*> = propertySerializers.first { it.isSupported(string) }
 }

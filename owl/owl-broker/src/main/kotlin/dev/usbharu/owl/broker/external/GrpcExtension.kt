@@ -17,7 +17,7 @@
 package dev.usbharu.owl.broker.external
 
 import com.google.protobuf.Timestamp
-import dev.usbharu.owl.Uuid
+import dev.usbharu.owl.generated.Uuid
 import java.time.Instant
 import java.util.*
 
@@ -32,4 +32,4 @@ fun UUID.toUUID(): Uuid.UUID = Uuid
 
 fun Timestamp.toInstant(): Instant = Instant.ofEpochSecond(seconds, nanos.toLong())
 
-fun Instant.toTimestamp():Timestamp = Timestamp.newBuilder().setSeconds(this.epochSecond).setNanos(this.nano).build()
+fun Instant.toTimestamp(): Timestamp = Timestamp.newBuilder().setSeconds(this.epochSecond).setNanos(this.nano).build()

@@ -3,3 +3,14 @@ plugins {
 }
 rootProject.name = "hideout-activitypub"
 
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+    }
+
+    versionCatalogs {
+        create("libs") {
+            from(files("../libs.versions.toml"))
+        }
+    }
+}

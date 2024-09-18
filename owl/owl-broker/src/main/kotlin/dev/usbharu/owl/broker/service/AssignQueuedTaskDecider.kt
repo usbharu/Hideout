@@ -42,7 +42,5 @@ class AssignQueuedTaskDeciderImpl(
                 ).take(numberOfConcurrent)
             )
         }
-
     }
-
 }

@@ -16,7 +16,6 @@
 
 package dev.usbharu.owl.common.retry
 
-
 import org.slf4j.LoggerFactory
 
 interface RetryPolicyFactory {
@@ -24,9 +23,7 @@ interface RetryPolicyFactory {
 }
 
 class DefaultRetryPolicyFactory(private val map: Map<String, RetryPolicy>) : RetryPolicyFactory {
-    override fun factory(name: String): RetryPolicy {
-        return map[name] ?: throwException(name)
-    }
+    override fun factory(name: String): RetryPolicy = map[name] ?: throwException(name)
 
     private fun throwException(name: String): Nothing {
         logger.warn("RetryPolicy not found. name: {}", name)

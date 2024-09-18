@@ -30,9 +30,9 @@ import java.util.*
  * @property properties タスクに渡されたパラメータ
  */
 data class TaskRequest(
-    val name:String,
-    val id:UUID,
-    val attempt:Int,
+    val name: String,
+    val id: UUID,
+    val attempt: Int,
     val queuedAt: Instant,
-    val properties:Map<String,PropertyValue<*>>
+    val properties: Map<String, PropertyValue<*>>
 )

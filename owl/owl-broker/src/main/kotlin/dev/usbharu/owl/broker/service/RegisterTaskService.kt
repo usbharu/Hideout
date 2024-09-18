@@ -24,9 +24,8 @@ import org.slf4j.LoggerFactory
 interface RegisterTaskService {
     suspend fun registerTask(taskDefinition: TaskDefinition)
 
-    suspend fun unregisterTask(name:String)
+    suspend fun unregisterTask(name: String)
 }
-
 
 class RegisterTaskServiceImpl(private val taskDefinitionRepository: TaskDefinitionRepository) : RegisterTaskService {
     override suspend fun registerTask(taskDefinition: TaskDefinition) {
@@ -34,23 +33,25 @@ class RegisterTaskServiceImpl(private val taskDefinitionRepository: TaskDefiniti
         if (definedTask != null) {
             logger.debug("Task already defined. name: ${taskDefinition.name}")
             if (taskDefinition.propertyDefinitionHash != definedTask.propertyDefinitionHash) {
-                throw IncompatibleTaskException("Task ${taskDefinition.name} has already been defined, and the parameters are incompatible.")
+                throw IncompatibleTaskException(
+                    "Task ${taskDefinition.name} has already been defined, and the parameters are incompatible."
+                )
             }
             return
         }
         taskDefinitionRepository.save(taskDefinition)
 
-        logger.info("Register a new task. name: {}",taskDefinition.name)
+        logger.info("Register a new task. name: {}", taskDefinition.name)
     }
 
     // todo すでにpublish済みのタスクをどうするか決めさせる
     override suspend fun unregisterTask(name: String) {
         taskDefinitionRepository.deleteByName(name)
 
-        logger.info("Unregister a task. name: {}",name)
+        logger.info("Unregister a task. name: {}", name)
     }
 
-    companion object{
+    companion object {
         private val logger = LoggerFactory.getLogger(RegisterTaskServiceImpl::class.java)
     }
 }

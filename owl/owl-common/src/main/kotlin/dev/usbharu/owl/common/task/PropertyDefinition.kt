@@ -36,6 +36,4 @@ class PropertyDefinition(val map: Map<String, PropertyType>) : Map<String, Prope
         map.map { it.key + it.value.name }.joinToString("").map { hash *= it.code * 31 }
         return hash
     }
-
-
 }

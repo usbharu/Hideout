@@ -34,7 +34,7 @@ protobuf {
             artifact = libs.protoc.gen.grpc.java.get().toString()
         }
         create("grpckt") {
-            artifact = libs.protoc.gen.grpc.kotlin.get().toString() + "jdk8@jar"
+            artifact = libs.protoc.gen.grpc.kotlin.get().toString() + ":jdk8@jar"
         }
     }
     generateProtoTasks {

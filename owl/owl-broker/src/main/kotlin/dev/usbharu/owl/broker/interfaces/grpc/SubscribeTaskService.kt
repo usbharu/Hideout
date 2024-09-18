@@ -16,11 +16,11 @@
 
 package dev.usbharu.owl.broker.interfaces.grpc
 
-import dev.usbharu.owl.Consumer
-import dev.usbharu.owl.SubscribeTaskServiceGrpcKt.SubscribeTaskServiceCoroutineImplBase
 import dev.usbharu.owl.broker.external.toUUID
 import dev.usbharu.owl.broker.service.ConsumerService
 import dev.usbharu.owl.broker.service.RegisterConsumerRequest
+import dev.usbharu.owl.generated.Consumer
+import dev.usbharu.owl.generated.SubscribeTaskServiceGrpcKt.SubscribeTaskServiceCoroutineImplBase
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 

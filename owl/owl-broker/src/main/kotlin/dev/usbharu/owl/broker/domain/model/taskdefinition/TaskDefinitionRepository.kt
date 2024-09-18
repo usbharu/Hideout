@@ -18,7 +18,7 @@ package dev.usbharu.owl.broker.domain.model.taskdefinition
 
 interface TaskDefinitionRepository {
     suspend fun save(taskDefinition: TaskDefinition): TaskDefinition
-    suspend fun deleteByName(name:String)
+    suspend fun deleteByName(name: String)
 
-    suspend fun findByName(name:String):TaskDefinition?
+    suspend fun findByName(name: String): TaskDefinition?
 }

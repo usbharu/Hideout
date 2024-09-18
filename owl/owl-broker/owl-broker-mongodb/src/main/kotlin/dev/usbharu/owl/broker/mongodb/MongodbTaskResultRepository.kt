@@ -41,14 +41,17 @@ class MongodbTaskResultRepository(
     private val collection = database.getCollection<TaskResultMongodb>("task_results")
     override suspend fun save(taskResult: TaskResult): TaskResult = withContext(Dispatchers.IO) {
         collection.replaceOne(
-            Filters.eq(taskResult.id.toString()), TaskResultMongodb.of(propertySerializerFactory, taskResult),
+            Filters.eq(taskResult.id.toString()),
+            TaskResultMongodb.of(propertySerializerFactory, taskResult),
             ReplaceOptions().upsert(true)
         )
         return@withContext taskResult
     }
 
     override fun findByTaskId(id: UUID): Flow<TaskResult> {
-        return collection.find(Filters.eq(id.toString())).map { it.toTaskResult(propertySerializerFactory) }.flowOn(Dispatchers.IO)
+        return collection.find(
+            Filters.eq(id.toString())
+        ).map { it.toTaskResult(propertySerializerFactory) }.flowOn(Dispatchers.IO)
     }
 }
 
@@ -65,27 +68,25 @@ data class TaskResultMongodb(
 
     fun toTaskResult(propertySerializerFactory: PropertySerializerFactory): TaskResult {
         return TaskResult(
-            UUID.fromString(id),
-            UUID.fromString(taskId),
-            success,
-            attempt,
-            PropertySerializeUtils.deserialize(propertySerializerFactory, result),
-            message
+            id = UUID.fromString(id),
+            taskId = UUID.fromString(taskId),
+            success = success,
+            attempt = attempt,
+            result = PropertySerializeUtils.deserialize(propertySerializerFactory, result),
+            message = message
         )
     }
 
     companion object {
         fun of(propertySerializerFactory: PropertySerializerFactory, taskResult: TaskResult): TaskResultMongodb {
             return TaskResultMongodb(
-                taskResult.id.toString(),
-                taskResult.taskId.toString(),
-                taskResult.success,
-                taskResult.attempt,
-                PropertySerializeUtils.serialize(propertySerializerFactory, taskResult.result),
-                taskResult.message
+                id = taskResult.id.toString(),
+                taskId = taskResult.taskId.toString(),
+                success = taskResult.success,
+                attempt = taskResult.attempt,
+                result = PropertySerializeUtils.serialize(propertySerializerFactory, taskResult.result),
+                message = taskResult.message
             )
-
         }
-
     }
 }

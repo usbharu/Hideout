@@ -26,10 +26,8 @@ interface ProducerService {
     suspend fun registerProducer(producer: RegisterProducerRequest): UUID
 }
 
-
 class ProducerServiceImpl(private val producerRepository: ProducerRepository) : ProducerService {
     override suspend fun registerProducer(producer: RegisterProducerRequest): UUID {
-
         val id = UUID.randomUUID()
 
         val saveProducer = Producer(

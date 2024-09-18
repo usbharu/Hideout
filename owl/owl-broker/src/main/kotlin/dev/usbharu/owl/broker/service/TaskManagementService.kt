@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory
 import java.time.Instant
 import java.util.*
 
-
 interface TaskManagementService {
 
     suspend fun startManagement(coroutineScope: CoroutineScope)
@@ -75,13 +74,11 @@ class TaskManagementServiceImpl(
         }
     }
 
-
     override fun findAssignableTask(consumerId: UUID, numberOfConcurrent: Int): Flow<QueuedTask> {
         return assignQueuedTaskDecider.findAssignableQueue(consumerId, numberOfConcurrent)
     }
 
     private suspend fun enqueueTask(task: Task): QueuedTask {
-
         val definedTask = taskDefinitionRepository.findByName(task.name)
             ?: throw TaskNotRegisterException("Task ${task.name} not definition.")
 
@@ -112,7 +109,6 @@ class TaskManagementServiceImpl(
         val timeoutQueue = queuedTask.copy(isActive = false, timeoutAt = Instant.now())
 
         queueStore.dequeue(timeoutQueue)
-
 
         val task = taskRepository.findById(timeoutQueue.task.id)
             ?: throw RecordNotFoundException("Task not found. id: ${timeoutQueue.task.id}")
@@ -148,12 +144,10 @@ class TaskManagementServiceImpl(
             taskResult.taskId,
             task.copy(completedAt = completedAt, attempt = taskResult.attempt)
         )
-
     }
 
     override fun subscribeResult(producerId: UUID): Flow<TaskResults> {
         return flow {
-
             while (currentCoroutineContext().isActive) {
                 taskRepository
                     .findByPublishProducerIdAndCompletedAtIsNotNull(producerId)
@@ -163,7 +157,7 @@ class TaskManagementServiceImpl(
                             TaskResults(
                                 it.name,
                                 it.id,
-                                results.any { it.success },
+                                results.any { taskResult -> taskResult.success },
                                 it.attempt,
                                 results
                             )
@@ -171,9 +165,7 @@ class TaskManagementServiceImpl(
                     }
                 delay(500)
             }
-
         }
-
     }
 
     companion object {

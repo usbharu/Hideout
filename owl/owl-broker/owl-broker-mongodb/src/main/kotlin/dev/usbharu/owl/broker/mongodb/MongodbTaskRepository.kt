@@ -36,27 +36,29 @@ import org.bson.codecs.pojo.annotations.BsonRepresentation
 import java.time.Instant
 import java.util.*
 
-
 class MongodbTaskRepository(database: MongoDatabase, private val propertySerializerFactory: PropertySerializerFactory) :
     TaskRepository {
 
     private val collection = database.getCollection<TaskMongodb>("tasks")
     override suspend fun save(task: Task): Task = withContext(Dispatchers.IO) {
         collection.replaceOne(
-            Filters.eq("_id", task.id.toString()), TaskMongodb.of(propertySerializerFactory, task),
+            Filters.eq("_id", task.id.toString()),
+            TaskMongodb.of(propertySerializerFactory, task),
             ReplaceOptions().upsert(true)
         )
         return@withContext task
     }
 
     override suspend fun saveAll(tasks: List<Task>): Unit = withContext(Dispatchers.IO) {
-        collection.bulkWrite(tasks.map {
-            ReplaceOneModel(
-                Filters.eq(it.id.toString()),
-                TaskMongodb.of(propertySerializerFactory, it),
-                ReplaceOptions().upsert(true)
-            )
-        })
+        collection.bulkWrite(
+            tasks.map {
+                ReplaceOneModel(
+                    Filters.eq(it.id.toString()),
+                    TaskMongodb.of(propertySerializerFactory, it),
+                    ReplaceOptions().upsert(true)
+                )
+            }
+        )
     }
 
     override fun findByNextRetryBeforeAndCompletedAtIsNull(timestamp: Instant): Flow<Task> {
@@ -75,12 +77,13 @@ class MongodbTaskRepository(database: MongoDatabase, private val propertySeriali
 
     override suspend fun findByIdAndUpdate(id: UUID, task: Task) {
         collection.replaceOne(
-            Filters.eq("_id", task.id.toString()), TaskMongodb.of(propertySerializerFactory, task),
+            Filters.eq("_id", task.id.toString()),
+            TaskMongodb.of(propertySerializerFactory, task),
             ReplaceOptions().upsert(false)
         )
     }
 
-    override suspend fun findByPublishProducerIdAndCompletedAtIsNotNull(publishProducerId: UUID): Flow<Task> {
+    override fun findByPublishProducerIdAndCompletedAtIsNotNull(publishProducerId: UUID): Flow<Task> {
         return collection
             .find(Filters.eq(TaskMongodb::publishProducerId.name, publishProducerId.toString()))
             .map { it.toTask(propertySerializerFactory) }
@@ -116,14 +119,14 @@ data class TaskMongodb(
     companion object {
         fun of(propertySerializerFactory: PropertySerializerFactory, task: Task): TaskMongodb {
             return TaskMongodb(
-                task.name,
-                task.id.toString(),
-                task.publishProducerId.toString(),
-                task.publishedAt,
-                task.nextRetry,
-                task.completedAt,
-                task.attempt,
-                PropertySerializeUtils.serialize(propertySerializerFactory, task.properties)
+                name = task.name,
+                id = task.id.toString(),
+                publishProducerId = task.publishProducerId.toString(),
+                publishedAt = task.publishedAt,
+                nextRetry = task.nextRetry,
+                completedAt = task.completedAt,
+                attempt = task.attempt,
+                properties = PropertySerializeUtils.serialize(propertySerializerFactory, task.properties)
             )
         }
     }

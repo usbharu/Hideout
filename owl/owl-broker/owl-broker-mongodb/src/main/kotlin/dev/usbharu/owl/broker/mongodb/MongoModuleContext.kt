@@ -32,7 +32,6 @@ import org.koin.dsl.module
 
 class MongoModuleContext : ModuleContext {
     override fun module(): Module {
-
         return module {
             single {
                 val clientSettings =
@@ -46,7 +45,6 @@ class MongoModuleContext : ModuleContext {
                             )
                         )
                         .uuidRepresentation(UuidRepresentation.STANDARD).build()
-
 
                 MongoClient.create(clientSettings)
                     .getDatabase(System.getProperty("owl.broker.mongo.database", "mongo-test"))

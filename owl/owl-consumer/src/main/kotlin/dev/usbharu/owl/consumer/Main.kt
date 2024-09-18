@@ -25,5 +25,4 @@ fun main() {
         standaloneConsumer.init()
         standaloneConsumer.start()
     }
-
 }

@@ -27,19 +27,12 @@ class LongPropertyValue(override val value: Long) : PropertyValue<Long>() {
  *
  */
 class LongPropertySerializer : PropertySerializer<Long> {
-    override fun isSupported(propertyValue: PropertyValue<*>): Boolean {
-        return propertyValue.value is Long
-    }
+    override fun isSupported(propertyValue: PropertyValue<*>): Boolean = propertyValue.value is Long
 
-    override fun isSupported(string: String): Boolean {
-        return string.startsWith("int64:")
-    }
+    override fun isSupported(string: String): Boolean = string.startsWith("int64:")
 
-    override fun serialize(propertyValue: PropertyValue<*>): String {
-        return "int64:" + propertyValue.value.toString()
-    }
+    override fun serialize(propertyValue: PropertyValue<*>): String = "int64:" + propertyValue.value.toString()
 
-    override fun deserialize(string: String): PropertyValue<Long> {
-        return LongPropertyValue(string.replace("int64:", "").toLong())
-    }
+    override fun deserialize(string: String): PropertyValue<Long> =
+        LongPropertyValue(string.replace("int64:", "").toLong())
 }

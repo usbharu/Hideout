@@ -22,5 +22,5 @@ data class TaskDefinition(
     val maxRetry: Int,
     val timeoutMilli: Long,
     val propertyDefinitionHash: Long,
-    val retryPolicy:String
+    val retryPolicy: String
 )

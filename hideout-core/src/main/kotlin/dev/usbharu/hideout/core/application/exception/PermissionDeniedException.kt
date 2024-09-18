@@ -16,7 +16,10 @@
 
 package dev.usbharu.hideout.core.application.exception
 
+import dev.usbharu.hideout.core.domain.model.support.principal.Principal
+
 class PermissionDeniedException : RuntimeException {
+    constructor(principal: Principal) : super("Permission Denied $principal")
     constructor() : super()
     constructor(message: String?) : super(message)
     constructor(message: String?, cause: Throwable?) : super(message, cause)

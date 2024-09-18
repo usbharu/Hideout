@@ -16,24 +16,26 @@
 
 package dev.usbharu.owl.broker.interfaces.grpc
 
-import dev.usbharu.owl.ProducerOuterClass
-import dev.usbharu.owl.ProducerServiceGrpcKt.ProducerServiceCoroutineImplBase
 import dev.usbharu.owl.broker.external.toUUID
 import dev.usbharu.owl.broker.service.ProducerService
 import dev.usbharu.owl.broker.service.RegisterProducerRequest
+import dev.usbharu.owl.generated.ProducerOuterClass
+import dev.usbharu.owl.generated.ProducerServiceGrpcKt.ProducerServiceCoroutineImplBase
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
-
 
 class ProducerService(
     coroutineContext: CoroutineContext = EmptyCoroutineContext,
     private val producerService: ProducerService
 ) :
     ProducerServiceCoroutineImplBase(coroutineContext) {
-    override suspend fun registerProducer(request: ProducerOuterClass.Producer): ProducerOuterClass.RegisterProducerResponse {
+    override suspend fun registerProducer(
+        request: ProducerOuterClass.Producer
+    ): ProducerOuterClass.RegisterProducerResponse {
         val registerProducer = producerService.registerProducer(
             RegisterProducerRequest(
-                request.name, request.hostname
+                request.name,
+                request.hostname
             )
         )
         return ProducerOuterClass.RegisterProducerResponse.newBuilder().setId(registerProducer.toUUID()).build()

@@ -17,13 +17,13 @@
 package dev.usbharu.owl.broker.interfaces.grpc
 
 import com.google.protobuf.Empty
-import dev.usbharu.owl.TaskResultOuterClass
-import dev.usbharu.owl.TaskResultServiceGrpcKt
 import dev.usbharu.owl.broker.domain.model.taskresult.TaskResult
 import dev.usbharu.owl.broker.external.toUUID
 import dev.usbharu.owl.broker.service.TaskManagementService
 import dev.usbharu.owl.common.property.PropertySerializeUtils
 import dev.usbharu.owl.common.property.PropertySerializerFactory
+import dev.usbharu.owl.generated.TaskResultOuterClass
+import dev.usbharu.owl.generated.TaskResultServiceGrpcKt
 import io.grpc.Status
 import io.grpc.StatusException
 import kotlinx.coroutines.CancellationException

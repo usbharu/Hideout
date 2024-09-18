@@ -20,9 +20,9 @@ import dev.usbharu.owl.broker.domain.model.taskresult.TaskResult
 import java.util.*
 
 data class TaskResults(
-    val name:String,
-    val id:UUID,
-    val success:Boolean,
-    val attempt:Int,
+    val name: String,
+    val id: UUID,
+    val success: Boolean,
+    val attempt: Int,
     val results: List<TaskResult>
 )
