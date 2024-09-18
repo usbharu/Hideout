@@ -24,6 +24,7 @@ import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.relationship.Relationship
 import dev.usbharu.hideout.core.domain.model.relationship.RelationshipRepository
 import dev.usbharu.hideout.core.domain.model.support.principal.LocalUser
+import dev.usbharu.hideout.core.domain.service.relationship.RelationshipDomainService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -32,9 +33,9 @@ class UserFollowRequestApplicationService(
     private val relationshipRepository: RelationshipRepository,
     transaction: Transaction,
     private val actorRepository: ActorRepository,
+    private val relationshipDomainService: RelationshipDomainService
 ) : LocalUserAbstractApplicationService<FollowRequest, Unit>(
-    transaction,
-    logger
+    transaction, logger
 ) {
 
     override suspend fun internalExecute(command: FollowRequest, principal: LocalUser) {
@@ -43,11 +44,15 @@ class UserFollowRequestApplicationService(
 
         val targetId = ActorId(command.targetActorId)
         val relationship = relationshipRepository.findByActorIdAndTargetId(actor.id, targetId) ?: Relationship.default(
-            actor.id,
-            targetId
+            actor.id, targetId
         )
 
-        relationship.followRequest()
+        val inverseRelationship =
+            relationshipRepository.findByActorIdAndTargetId(targetId, actor.id) ?: Relationship.default(
+                targetId, actor.id
+            )
+
+        relationshipDomainService.followRequest(relationship, inverseRelationship)
 
         relationshipRepository.save(relationship)
     }
