@@ -33,4 +33,14 @@ class FilterKeyword(
     override fun hashCode(): Int {
         return id.hashCode()
     }
+
+    override fun toString(): String {
+        return "FilterKeyword(" +
+                "id=$id, " +
+                "keyword=$keyword, " +
+                "mode=$mode" +
+                ")"
+    }
+
+
 }

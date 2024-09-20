@@ -33,6 +33,13 @@ class FilterName(name: String) {
         return name.hashCode()
     }
 
+    override fun toString(): String {
+        return "FilterName(" +
+                "name='$name'" +
+                ")"
+    }
+
+
     companion object {
         const val LENGTH = 300
     }
