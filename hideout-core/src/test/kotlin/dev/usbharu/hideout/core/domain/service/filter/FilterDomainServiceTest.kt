@@ -62,6 +62,25 @@ class FilterDomainServiceTest {
 
     @Test
     fun applyAll_filterContextの適用範囲にフィルターが適用される() {
+        val postList = listOf(
+            TestPostFactory.create(),
+            TestPostFactory.create(),
+            TestPostFactory.create(content = "aaaaaaaaaa"),
+            TestPostFactory.create(),
+            TestPostFactory.create()
+        )
+        val filter = Filter(
+            FilterId(1),
+            userDetailId = UserDetailId(1),
+            FilterName("filter"),
+            setOf(FilterContext.HOME),
+            filterAction = FilterAction.HIDE,
+            setOf(FilterKeyword(FilterKeywordId(1), FilterKeywordKeyword("test"), FilterMode.NONE))
+        )
 
+
+        val filteredPosts = FilterDomainService().applyAll(postList, FilterContext.HOME, filters = listOf(filter))
+
+        assertEquals(5, filteredPosts.size)
     }
 }
