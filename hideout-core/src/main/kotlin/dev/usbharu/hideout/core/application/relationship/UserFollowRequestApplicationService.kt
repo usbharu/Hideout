@@ -35,7 +35,8 @@ class UserFollowRequestApplicationService(
     private val actorRepository: ActorRepository,
     private val relationshipDomainService: RelationshipDomainService
 ) : LocalUserAbstractApplicationService<FollowRequest, Unit>(
-    transaction, logger
+    transaction,
+    logger
 ) {
 
     override suspend fun internalExecute(command: FollowRequest, principal: LocalUser) {

@@ -36,11 +36,9 @@ class FilterKeyword(
 
     override fun toString(): String {
         return "FilterKeyword(" +
-                "id=$id, " +
-                "keyword=$keyword, " +
-                "mode=$mode" +
-                ")"
+            "id=$id, " +
+            "keyword=$keyword, " +
+            "mode=$mode" +
+            ")"
     }
-
-
 }

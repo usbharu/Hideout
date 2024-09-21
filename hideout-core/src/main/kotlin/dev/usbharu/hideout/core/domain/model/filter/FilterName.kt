@@ -35,10 +35,9 @@ class FilterName(name: String) {
 
     override fun toString(): String {
         return "FilterName(" +
-                "name='$name'" +
-                ")"
+            "name='$name'" +
+            ")"
     }
-
 
     companion object {
         const val LENGTH = 300
