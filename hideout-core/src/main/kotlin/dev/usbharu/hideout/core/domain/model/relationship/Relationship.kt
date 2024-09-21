@@ -123,6 +123,7 @@ class Relationship(
         return result
     }
 
+    @Suppress("UnnecessaryAbstractClass")
     abstract class InternalRelationshipDomainService {
         protected fun block(relationship: Relationship) {
             relationship.block()

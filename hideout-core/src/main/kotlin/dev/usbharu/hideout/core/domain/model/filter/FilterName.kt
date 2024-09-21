@@ -29,9 +29,7 @@ class FilterName(name: String) {
         return name == other.name
     }
 
-    override fun hashCode(): Int {
-        return name.hashCode()
-    }
+    override fun hashCode(): Int = name.hashCode()
 
     override fun toString(): String {
         return "FilterName(" +
