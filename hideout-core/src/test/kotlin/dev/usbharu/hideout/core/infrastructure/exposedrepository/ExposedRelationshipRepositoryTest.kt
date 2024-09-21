@@ -464,7 +464,7 @@ class ExposedRelationshipRepositoryTest : AbstractRepositoryTest(Relationships) 
             mutingFollowRequest = false,
         )
 
-        relationship.block()
+        relationship.mute()
 
         repository.save(relationship)
 
@@ -492,7 +492,7 @@ class ExposedRelationshipRepositoryTest : AbstractRepositoryTest(Relationships) 
             followRequesting = false,
             mutingFollowRequest = false,
         )
-        relationship.block()
+        relationship.mute()
 
         repository.delete(relationship)
 

@@ -27,7 +27,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator
 import java.sql.SQLException
 
-@Suppress("VarCouldBeVal")
+@Suppress("VarCouldBeVal", "UnnecessaryAbstractClass")
 abstract class AbstractRepository(protected val logger: Logger) {
     private val sqlErrorCodeSQLExceptionTranslator = SQLErrorCodeSQLExceptionTranslator()
     private val springDataAccessExceptionSQLExceptionTranslator = SpringDataAccessExceptionSQLExceptionTranslator()

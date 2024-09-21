@@ -18,4 +18,29 @@ package dev.usbharu.hideout.core.domain.model.filter
 
 import dev.usbharu.hideout.core.domain.model.post.Post
 
-class FilteredPost(val post: Post, val filterResults: List<FilterResult>)
+class FilteredPost(val post: Post, val filterResults: List<FilterResult>) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as FilteredPost
+
+        if (post != other.post) return false
+        if (filterResults != other.filterResults) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = post.hashCode()
+        result = 31 * result + filterResults.hashCode()
+        return result
+    }
+
+    override fun toString(): String {
+        return "FilteredPost(" +
+            "post=$post, " +
+            "filterResults=$filterResults" +
+            ")"
+    }
+}

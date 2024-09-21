@@ -82,6 +82,16 @@ class Filter(
     }
 
     override fun hashCode(): Int = id.hashCode()
+    override fun toString(): String {
+        return "Filter(" +
+            "id=$id, " +
+            "userDetailId=$userDetailId, " +
+            "name=$name, " +
+            "filterContext=$filterContext, " +
+            "filterAction=$filterAction, " +
+            "filterKeywords=$filterKeywords" +
+            ")"
+    }
 
     companion object {
         fun isAllow(user: UserDetail, action: Action, resource: Filter): Boolean {

@@ -52,8 +52,8 @@ class Relationship(
         addDomainEvent(relationshipEventFactory.createEvent(RelationshipEvent.UNFOLLOW_REQUEST))
     }
 
-    fun block() {
-        require(following.not())
+    private fun block() {
+        unfollow()
         blocking = true
         addDomainEvent(RelationshipEventFactory(this).createEvent(RelationshipEvent.BLOCK))
     }
@@ -81,7 +81,7 @@ class Relationship(
         mutingFollowRequest = false
     }
 
-    fun followRequest() {
+    private fun followRequest() {
         require(blocking.not())
         followRequesting = true
         addDomainEvent(RelationshipEventFactory(this).createEvent(RelationshipEvent.FOLLOW_REQUEST))
@@ -121,6 +121,17 @@ class Relationship(
         var result = actorId.hashCode()
         result = 31 * result + targetActorId.hashCode()
         return result
+    }
+
+    @Suppress("UnnecessaryAbstractClass")
+    abstract class InternalRelationshipDomainService {
+        protected fun block(relationship: Relationship) {
+            relationship.block()
+        }
+
+        protected fun followRequest(relationship: Relationship) {
+            relationship.followRequest()
+        }
     }
 
     companion object {
