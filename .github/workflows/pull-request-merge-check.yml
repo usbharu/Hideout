@@ -35,7 +35,7 @@ jobs:
           token: ${{ secrets.PAT }}
 
       - name: Check Changes
-        uses: dorny/paths-filter@v2
+        uses: dorny/paths-filter@v3
         id: filter
         with:
           filters: |
@@ -343,7 +343,7 @@ jobs:
           path: 'hideout-core/build/reports/kover'
 
       - name: Report Coverage
-        uses: madrapps/jacoco-report@v1.7.0
+        uses: madrapps/jacoco-report@v1.7.1
         with:
           paths: |
             ${{ github.workspace }}/hideout-core/build/reports/kover/hideout-core.xml/hideout-core.xml,
