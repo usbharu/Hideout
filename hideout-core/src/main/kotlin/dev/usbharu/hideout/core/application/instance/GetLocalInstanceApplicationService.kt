@@ -46,7 +46,7 @@ class GetLocalInstanceApplicationService(
         }
 
         val instance = (
-                instanceRepository.findByUrl(applicationConfig.url)
+            instanceRepository.findByUrl(applicationConfig.url)
                 ?: throw InternalServerException("Local instance not found.")
             )
 
