@@ -15,7 +15,7 @@ class RemoteActorCheckDomainServiceTest {
 
         val remoteActor = RemoteActorCheckDomainService(
             ApplicationConfig(
-                URI.create("https://local.example.com").toURL()
+                URI.create("https://local.example.com")
             )
         ).isRemoteActor(
             actor
@@ -30,7 +30,7 @@ class RemoteActorCheckDomainServiceTest {
 
         val localActor = RemoteActorCheckDomainService(
             ApplicationConfig(
-                URI.create("https://local.example.com").toURL()
+                URI.create("https://local.example.com")
             )
         ).isRemoteActor(
             actor

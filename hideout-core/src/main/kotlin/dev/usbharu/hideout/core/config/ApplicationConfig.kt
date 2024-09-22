@@ -17,11 +17,11 @@
 package dev.usbharu.hideout.core.config
 
 import org.springframework.boot.context.properties.ConfigurationProperties
-import java.net.URL
+import java.net.URI
 
 @ConfigurationProperties("hideout")
 data class ApplicationConfig(
-    val url: URL,
+    val url: URI,
     val private: Boolean = true,
     val keySize: Int = 2048,
 )

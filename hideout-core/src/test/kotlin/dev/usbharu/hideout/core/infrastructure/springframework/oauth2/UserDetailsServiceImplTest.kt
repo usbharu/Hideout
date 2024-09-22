@@ -19,7 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.*
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import utils.TestTransaction
-import java.net.URL
+import java.net.URI
 import kotlin.test.assertEquals
 
 @ExtendWith(MockitoExtension::class)
@@ -34,7 +34,7 @@ class UserDetailsServiceImplTest {
     lateinit var userDetailRepository: UserDetailRepository
 
     @Spy
-    val applicationConfig = ApplicationConfig(URL("http://example.com"))
+    val applicationConfig = ApplicationConfig(URI.create("http://example.com"))
 
     @Spy
     val transaction = TestTransaction

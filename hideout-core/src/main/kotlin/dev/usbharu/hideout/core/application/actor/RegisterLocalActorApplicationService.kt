@@ -51,7 +51,7 @@ class RegisterLocalActorApplicationService(
         if (actorDomainService.usernameAlreadyUse(command.name)) {
             throw IllegalArgumentException("Username already exists")
         }
-        val instance = instanceRepository.findByUrl(applicationConfig.url.toURI())
+        val instance = instanceRepository.findByUrl(applicationConfig.url)
             ?: throw InternalServerException("Local instance not found.")
 
         val actor = actorFactoryImpl.createLocal(

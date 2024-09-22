@@ -19,6 +19,7 @@ package dev.usbharu.hideout.core.infrastructure.springframework.oauth2
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.config.ApplicationConfig
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
+import dev.usbharu.hideout.core.domain.model.support.domain.apHost
 import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailRepository
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.slf4j.MDCContext
@@ -39,7 +40,7 @@ class UserDetailsServiceImpl(
             throw UsernameNotFoundException("Username not found")
         }
         transaction.transaction {
-            val actor = actorRepository.findByNameAndDomain(username, applicationConfig.url.host)
+            val actor = actorRepository.findByNameAndDomain(username, applicationConfig.url.apHost)
                 ?: throw UsernameNotFoundException("$username not found")
             val userDetail = userDetailRepository.findByActorId(actor.id.id)
                 ?: throw UsernameNotFoundException("${actor.id.id} not found")

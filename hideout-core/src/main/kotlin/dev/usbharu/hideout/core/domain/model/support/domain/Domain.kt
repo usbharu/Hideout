@@ -16,6 +16,8 @@
 
 package dev.usbharu.hideout.core.domain.model.support.domain
 
+import java.net.URI
+
 @JvmInline
 value class Domain(val domain: String) {
     init {
@@ -23,6 +25,15 @@ value class Domain(val domain: String) {
     }
 
     companion object {
-        const val LENGTH = 1000
+        const val LENGTH: Int = 1000
+
+        fun of(uri: URI): Domain = Domain(uri.apHost)
     }
 }
+
+val URI.apHost: String
+    get() = if (port == -1) {
+        host
+    } else {
+        "$host:$port"
+    }

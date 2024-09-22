@@ -15,7 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.whenever
-import java.net.URL
+import java.net.URI
 
 @ExtendWith(MockitoExtension::class)
 class LocalActorDomainServiceImplTest {
@@ -26,7 +26,7 @@ class LocalActorDomainServiceImplTest {
     lateinit var actorRepository: ActorRepository
 
     @Spy
-    val applicationConfig = ApplicationConfig(URL("http://example.com"))
+    val applicationConfig = ApplicationConfig(URI.create("http://example.com"))
 
     @Test
     fun findByNameAndDomainがnullならfalse() = runTest {
