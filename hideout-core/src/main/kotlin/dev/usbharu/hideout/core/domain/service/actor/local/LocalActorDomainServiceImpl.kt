@@ -20,6 +20,7 @@ import dev.usbharu.hideout.core.config.ApplicationConfig
 import dev.usbharu.hideout.core.domain.model.actor.ActorPrivateKey
 import dev.usbharu.hideout.core.domain.model.actor.ActorPublicKey
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
+import dev.usbharu.hideout.core.domain.model.support.domain.apHost
 import org.springframework.stereotype.Service
 import java.security.KeyPairGenerator
 
@@ -29,7 +30,7 @@ class LocalActorDomainServiceImpl(
     private val applicationConfig: ApplicationConfig,
 ) : LocalActorDomainService {
     override suspend fun usernameAlreadyUse(name: String): Boolean =
-        actorRepository.findByNameAndDomain(name, applicationConfig.url.host) != null
+        actorRepository.findByNameAndDomain(name, applicationConfig.url.apHost) != null
 
     override suspend fun generateKeyPair(): Pair<ActorPublicKey, ActorPrivateKey> {
         val keyPairGenerator = KeyPairGenerator.getInstance("RSA")

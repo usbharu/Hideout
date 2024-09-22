@@ -20,6 +20,7 @@ import dev.usbharu.hideout.core.config.ApplicationConfig
 import dev.usbharu.hideout.core.domain.model.actor.*
 import dev.usbharu.hideout.core.domain.model.instance.InstanceId
 import dev.usbharu.hideout.core.domain.model.support.domain.Domain
+import dev.usbharu.hideout.core.domain.model.support.domain.apHost
 import dev.usbharu.hideout.core.domain.shared.id.IdGenerateService
 import org.springframework.stereotype.Component
 import java.net.URI
@@ -40,7 +41,7 @@ class ActorFactoryImpl(
         return Actor(
             id = ActorId(idGenerateService.generateId()),
             name = actorName,
-            domain = Domain(applicationConfig.url.host),
+            domain = Domain(applicationConfig.url.apHost),
             screenName = ActorScreenName(name),
             description = ActorDescription(""),
             inbox = URI.create("$userUrl/inbox"),

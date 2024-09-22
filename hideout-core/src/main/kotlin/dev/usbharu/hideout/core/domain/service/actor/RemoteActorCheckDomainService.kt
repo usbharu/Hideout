@@ -18,6 +18,7 @@ package dev.usbharu.hideout.core.domain.service.actor
 
 import dev.usbharu.hideout.core.config.ApplicationConfig
 import dev.usbharu.hideout.core.domain.model.actor.Actor
+import dev.usbharu.hideout.core.domain.model.support.domain.apHost
 import org.springframework.stereotype.Service
 
 interface IRemoteActorCheckDomainService {
@@ -26,5 +27,5 @@ interface IRemoteActorCheckDomainService {
 
 @Service
 class RemoteActorCheckDomainService(private val applicationConfig: ApplicationConfig) : IRemoteActorCheckDomainService {
-    override fun isRemoteActor(actor: Actor): Boolean = actor.domain.domain != applicationConfig.url.host
+    override fun isRemoteActor(actor: Actor): Boolean = actor.domain.domain != applicationConfig.url.apHost
 }
