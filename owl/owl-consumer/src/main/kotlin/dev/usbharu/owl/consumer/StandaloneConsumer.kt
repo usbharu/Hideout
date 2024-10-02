@@ -16,11 +16,11 @@
 
 package dev.usbharu.owl.consumer
 
-import dev.usbharu.owl.AssignmentTaskServiceGrpcKt
-import dev.usbharu.owl.SubscribeTaskServiceGrpcKt
-import dev.usbharu.owl.TaskResultServiceGrpcKt
 import dev.usbharu.owl.common.property.CustomPropertySerializerFactory
 import dev.usbharu.owl.common.property.PropertySerializerFactory
+import dev.usbharu.owl.generated.AssignmentTaskServiceGrpcKt
+import dev.usbharu.owl.generated.SubscribeTaskServiceGrpcKt
+import dev.usbharu.owl.generated.TaskResultServiceGrpcKt
 import io.grpc.ManagedChannelBuilder
 import java.nio.file.Path
 
@@ -90,9 +90,11 @@ class StandaloneConsumer(
      */
     suspend fun start() {
         consumer.start()
-        Runtime.getRuntime().addShutdownHook(Thread {
-            consumer.stop()
-        })
+        Runtime.getRuntime().addShutdownHook(
+            Thread {
+                consumer.stop()
+            }
+        )
     }
 
     /**
@@ -102,5 +104,4 @@ class StandaloneConsumer(
     fun stop() {
         consumer.stop()
     }
-
 }

@@ -38,7 +38,7 @@ class OwlBrokerApplication(
 
     private lateinit var server: Server
 
-    fun start(port: Int,coroutineScope: CoroutineScope = GlobalScope):Job {
+    fun start(port: Int, coroutineScope: CoroutineScope = GlobalScope): Job {
         server = ServerBuilder.forPort(port)
             .addService(assignmentTaskService)
             .addService(definitionTaskService)
@@ -64,5 +64,4 @@ class OwlBrokerApplication(
     fun stop() {
         server.shutdown()
     }
-
 }

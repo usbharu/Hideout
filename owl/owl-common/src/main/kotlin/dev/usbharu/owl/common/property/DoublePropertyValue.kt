@@ -15,19 +15,12 @@ class DoublePropertyValue(override val value: Double) : PropertyValue<Double>() 
  *
  */
 class DoublePropertySerializer : PropertySerializer<Double> {
-    override fun isSupported(propertyValue: PropertyValue<*>): Boolean {
-        return propertyValue.value is Double
-    }
+    override fun isSupported(propertyValue: PropertyValue<*>): Boolean = propertyValue.value is Double
 
-    override fun isSupported(string: String): Boolean {
-        return string.startsWith("double:")
-    }
+    override fun isSupported(string: String): Boolean = string.startsWith("double:")
 
-    override fun serialize(propertyValue: PropertyValue<*>): String {
-        return "double:" + propertyValue.value.toString()
-    }
+    override fun serialize(propertyValue: PropertyValue<*>): String = "double:" + propertyValue.value.toString()
 
-    override fun deserialize(string: String): PropertyValue<Double> {
-        return DoublePropertyValue(string.replace("double:", "").toDouble())
-    }
+    override fun deserialize(string: String): PropertyValue<Double> =
+        DoublePropertyValue(string.replace("double:", "").toDouble())
 }

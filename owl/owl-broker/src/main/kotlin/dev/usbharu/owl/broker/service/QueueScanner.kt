@@ -29,19 +29,14 @@ interface QueueScanner {
     fun startScan(): Flow<QueuedTask>
 }
 
-
 class QueueScannerImpl(private val queueStore: QueueStore) : QueueScanner {
-    override fun startScan(): Flow<QueuedTask> {
-        return flow {
-            while (currentCoroutineContext().isActive) {
-                emitAll(scanQueue())
-                delay(1000)
-            }
+    override fun startScan(): Flow<QueuedTask> = flow {
+        while (currentCoroutineContext().isActive) {
+            emitAll(scanQueue())
+            delay(1000)
         }
     }
 
-    private fun scanQueue(): Flow<QueuedTask> {
-        return queueStore.findByQueuedAtBeforeAndIsActiveIsTrue(Instant.now().minusSeconds(10))
-    }
-
+    private fun scanQueue(): Flow<QueuedTask> =
+        queueStore.findByQueuedAtBeforeAndIsActiveIsTrue(Instant.now().minusSeconds(10))
 }

@@ -33,7 +33,7 @@ class DeleteFilterV1ApplicationService(private val filterRepository: FilterRepos
     ) {
     override suspend fun internalExecute(command: DeleteFilterV1, principal: LocalUser) {
         val filter = filterRepository.findByFilterKeywordId(FilterKeywordId(command.filterKeywordId))
-            ?: throw IllegalArgumentException("Filter ${command.filterKeywordId} not found")
+            ?: throw IllegalArgumentException("Filter ${command.filterKeywordId} by KeywordId not found")
         if (principal.userDetailId != filter.userDetailId) {
             throw PermissionDeniedException()
         }

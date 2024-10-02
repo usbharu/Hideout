@@ -24,11 +24,11 @@ import java.util.*
  * @param attempt 失敗を含めて試行した回数
  */
 data class Task(
-    val name:String,
+    val name: String,
     val id: UUID,
-    val publishProducerId:UUID,
+    val publishProducerId: UUID,
     val publishedAt: Instant,
-    val nextRetry:Instant,
+    val nextRetry: Instant,
     val completedAt: Instant? = null,
     val attempt: Int,
     val properties: Map<String, PropertyValue<*>>

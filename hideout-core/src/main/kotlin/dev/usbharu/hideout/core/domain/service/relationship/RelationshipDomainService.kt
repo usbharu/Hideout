@@ -17,17 +17,28 @@
 package dev.usbharu.hideout.core.domain.service.relationship
 
 import dev.usbharu.hideout.core.domain.model.relationship.Relationship
+import dev.usbharu.hideout.core.domain.model.relationship.Relationship.InternalRelationshipDomainService
 import org.springframework.stereotype.Service
 
 @Service
-class RelationshipDomainService {
+class RelationshipDomainService : InternalRelationshipDomainService() {
     fun block(relationship: Relationship, inverseRelationship: Relationship) {
         require(relationship != inverseRelationship)
         require(relationship.actorId == inverseRelationship.targetActorId)
         require(relationship.targetActorId == inverseRelationship.actorId)
 
-        relationship.block()
+        block(relationship)
         inverseRelationship.unfollow()
         inverseRelationship.unfollowRequest()
+    }
+
+    fun followRequest(relationship: Relationship, inverseRelationship: Relationship) {
+        require(relationship != inverseRelationship)
+        require(relationship.actorId == inverseRelationship.targetActorId)
+        require(relationship.targetActorId == inverseRelationship.actorId)
+        require(inverseRelationship.blocking.not())
+        require(relationship.blocking.not())
+
+        followRequest(relationship)
     }
 }

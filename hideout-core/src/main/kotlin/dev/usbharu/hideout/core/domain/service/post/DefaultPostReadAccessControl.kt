@@ -77,12 +77,12 @@ class DefaultPostReadAccessControl(private val relationshipRepository: Relations
 
     override suspend fun areAllows(postList: List<Post>, principal: Principal): List<Post> {
         val actorIds = postList.map { it.actorId }
-        val relationshipList =
+        val blockedByList =
             relationshipRepository.findByActorIdsAndTargetIdAndBlocking(actorIds, principal.actorId, true)
                 .map { it.actorId }
-        val inverseRelationshipList =
+        val followingList =
             relationshipRepository.findByActorIdAndTargetIdsAndFollowing(principal.actorId, actorIds, true)
-                .map { it.actorId }
+                .map { it.targetActorId }
 
         fun internalAllow(post: Post): Boolean {
             // ポスト主は無条件で見れる
@@ -90,7 +90,7 @@ class DefaultPostReadAccessControl(private val relationshipRepository: Relations
                 return true
             }
 
-            if (relationshipList.contains(post.actorId)) {
+            if (blockedByList.contains(post.actorId)) {
                 return false
             }
 
@@ -106,7 +106,7 @@ class DefaultPostReadAccessControl(private val relationshipRepository: Relations
                 return true
             }
 
-            if (post.visibility == Visibility.FOLLOWERS && inverseRelationshipList.contains(principal.actorId)) {
+            if (post.visibility == Visibility.FOLLOWERS && followingList.contains(post.actorId)) {
                 return true
             }
             return false

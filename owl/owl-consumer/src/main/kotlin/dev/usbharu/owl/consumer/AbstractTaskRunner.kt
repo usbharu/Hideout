@@ -29,5 +29,4 @@ abstract class AbstractTaskRunner<T : Task, D : TaskDefinition<T>>(private val t
     }
 
     abstract suspend fun typedRun(typedParam: T, taskRequest: TaskRequest): TaskResult
-
 }

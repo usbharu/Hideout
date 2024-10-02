@@ -18,6 +18,7 @@ package dev.usbharu.hideout.core.application.model
 
 import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.media.Media
+import dev.usbharu.hideout.core.domain.model.support.domain.apHost
 import java.net.URI
 
 data class ActorDetail(
@@ -41,7 +42,7 @@ data class ActorDetail(
                 id = actor.id.id,
                 name = actor.name.name,
                 screenName = actor.screenName.screenName,
-                host = actor.url.host,
+                host = actor.url.apHost,
                 instanceId = actor.instance.instanceId,
                 remoteUrl = actor.url,
                 locked = actor.locked,

@@ -50,3 +50,5 @@ out/
 /hideout-mastodon/.kotlin/sessions/
 /http-client.private.env.json
 /logs/
+/hideout-mastodon/logs/
+/hideout-mastodon/files/

@@ -16,4 +16,29 @@
 
 package dev.usbharu.hideout.core.domain.model.filter
 
-class FilterResult(val filter: Filter, val matchedKeyword: String)
+class FilterResult(val filter: Filter, val matchedKeyword: String) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as FilterResult
+
+        if (filter != other.filter) return false
+        if (matchedKeyword != other.matchedKeyword) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = filter.hashCode()
+        result = 31 * result + matchedKeyword.hashCode()
+        return result
+    }
+
+    override fun toString(): String {
+        return "FilterResult(" +
+            "filter=$filter, " +
+            "matchedKeyword='$matchedKeyword'" +
+            ")"
+    }
+}

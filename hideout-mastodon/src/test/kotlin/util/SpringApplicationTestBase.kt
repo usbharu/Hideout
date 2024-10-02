@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.domain.model.followtimeline
+package util
 
-import dev.usbharu.hideout.core.domain.model.timeline.TimelineId
-import dev.usbharu.hideout.core.domain.model.userdetails.UserDetailId
+import org.springframework.boot.test.context.SpringBootTest
 
-class FollowTimeline(val userDetailId: UserDetailId, val timelineId: TimelineId)
+@SpringBootTest
+abstract class SpringApplicationTestBase

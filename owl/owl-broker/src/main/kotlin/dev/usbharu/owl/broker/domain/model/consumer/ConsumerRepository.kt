@@ -19,7 +19,7 @@ package dev.usbharu.owl.broker.domain.model.consumer
 import java.util.*
 
 interface ConsumerRepository {
-    suspend fun save(consumer: Consumer):Consumer
+    suspend fun save(consumer: Consumer): Consumer
 
-    suspend fun findById(id:UUID):Consumer?
+    suspend fun findById(id: UUID): Consumer?
 }

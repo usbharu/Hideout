@@ -21,9 +21,12 @@ import dev.usbharu.hideout.core.application.media.UploadMediaApplicationService
 import dev.usbharu.hideout.core.infrastructure.springframework.oauth2.SpringSecurityOauth2PrincipalContextHolder
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.MediaApi
 import dev.usbharu.hideout.mastodon.interfaces.api.generated.model.MediaAttachment
+import org.slf4j.LoggerFactory
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.multipart.MultipartFile
+import org.springframework.web.server.ResponseStatusException
 import java.nio.file.Files
 
 @Controller
@@ -37,6 +40,11 @@ class SpringMediaApi(
         description: String?,
         focus: String?,
     ): ResponseEntity<MediaAttachment> {
+        if (file.size == 0L) {
+            logger.warn("File is empty.")
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "File is empty.")
+        }
+
         val tempFile = Files.createTempFile("hideout-tmp-file", ".tmp")
 
         Files.newOutputStream(tempFile).use { outputStream ->
@@ -72,5 +80,9 @@ class SpringMediaApi(
                 textUrl = media.url.toASCIIString()
             )
         )
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(SpringMediaApi::class.java)
     }
 }

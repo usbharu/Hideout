@@ -19,11 +19,9 @@ package dev.usbharu.owl.broker
 import org.koin.core.module.Module
 
 interface ModuleContext {
-    fun module():Module
+    fun module(): Module
 }
 
 data object EmptyModuleContext : ModuleContext {
-    override fun module(): Module {
-        return org.koin.dsl.module { }
-    }
+    override fun module(): Module = org.koin.dsl.module { }
 }

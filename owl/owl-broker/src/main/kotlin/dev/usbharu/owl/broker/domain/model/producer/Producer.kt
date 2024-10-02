@@ -20,9 +20,9 @@ import java.time.Instant
 import java.util.*
 
 data class Producer(
-    val id:UUID,
-    val name:String,
-    val hostname:String,
-    val registeredTask:List<String>,
+    val id: UUID,
+    val name: String,
+    val hostname: String,
+    val registeredTask: List<String>,
     val createdAt: Instant
 )

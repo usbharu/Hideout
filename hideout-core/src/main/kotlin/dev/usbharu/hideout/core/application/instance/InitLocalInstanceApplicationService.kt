@@ -19,6 +19,7 @@ package dev.usbharu.hideout.core.application.instance
 import dev.usbharu.hideout.core.application.shared.Transaction
 import dev.usbharu.hideout.core.config.ApplicationConfig
 import dev.usbharu.hideout.core.domain.model.instance.*
+import dev.usbharu.hideout.core.domain.model.support.domain.apHost
 import dev.usbharu.hideout.core.domain.shared.id.IdGenerateService
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.boot.info.BuildProperties
@@ -36,15 +37,15 @@ class InitLocalInstanceApplicationService(
 ) {
     @EventListener(ApplicationReadyEvent::class)
     suspend fun init() = transaction.transaction {
-        val findByUrl = instanceRepository.findByUrl(applicationConfig.url.toURI())
+        val findByUrl = instanceRepository.findByUrl(applicationConfig.url)
 
         if (findByUrl == null) {
             val instance = Instance(
                 id = InstanceId(idGenerateService.generateId()),
-                name = InstanceName(applicationConfig.url.host),
+                name = InstanceName(applicationConfig.url.apHost),
                 description = InstanceDescription(""),
-                url = applicationConfig.url.toURI(),
-                iconUrl = applicationConfig.url.toURI(),
+                url = applicationConfig.url,
+                iconUrl = applicationConfig.url,
                 sharedInbox = null,
                 software = InstanceSoftware("hideout"),
                 version = InstanceVersion(buildProperties.version),

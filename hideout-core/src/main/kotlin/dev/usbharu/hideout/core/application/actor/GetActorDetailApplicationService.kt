@@ -24,6 +24,7 @@ import dev.usbharu.hideout.core.domain.model.actor.ActorId
 import dev.usbharu.hideout.core.domain.model.actor.ActorRepository
 import dev.usbharu.hideout.core.domain.model.media.MediaRepository
 import dev.usbharu.hideout.core.domain.model.support.acct.Acct
+import dev.usbharu.hideout.core.domain.model.support.domain.apHost
 import dev.usbharu.hideout.core.domain.model.support.principal.Principal
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -45,7 +46,7 @@ class GetActorDetailApplicationService(
                 ?: throw IllegalArgumentException("Actor ${command.id} not found.")
         } else if (command.actorName != null) {
             val host = if (command.actorName.host.isEmpty()) {
-                applicationConfig.url.host
+                applicationConfig.url.apHost
             } else {
                 command.actorName.host
             }

@@ -3,7 +3,7 @@ import "uuid.proto";
 import "google/protobuf/timestamp.proto";
 import "property.proto";
 
-option java_package = "dev.usbharu.owl";
+option java_package = "dev.usbharu.owl.generated";
 
 message ReadyRequest {
   int32 number_of_concurrent = 1;

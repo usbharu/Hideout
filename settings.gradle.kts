@@ -21,6 +21,7 @@ rootProject.name = "hideout"
 
 includeBuild("hideout-core")
 includeBuild("hideout-mastodon")
+includeBuild("hideout-activitypub")
 
 dependencyResolutionManagement {
     repositories {

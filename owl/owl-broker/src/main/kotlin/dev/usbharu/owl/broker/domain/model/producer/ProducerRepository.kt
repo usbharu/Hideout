@@ -17,5 +17,5 @@
 package dev.usbharu.owl.broker.domain.model.producer
 
 interface ProducerRepository {
-    suspend fun save(producer: Producer):Producer
+    suspend fun save(producer: Producer): Producer
 }

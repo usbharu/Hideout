@@ -33,7 +33,11 @@ class MongodbConsumerRepository(database: MongoDatabase) : ConsumerRepository {
 
     private val collection = database.getCollection<ConsumerMongodb>("consumers")
     override suspend fun save(consumer: Consumer): Consumer = withContext(Dispatchers.IO) {
-        collection.replaceOne(Filters.eq("_id", consumer.id.toString()), ConsumerMongodb.of(consumer), ReplaceOptions().upsert(true))
+        collection.replaceOne(
+            Filters.eq("_id", consumer.id.toString()),
+            ConsumerMongodb.of(consumer),
+            ReplaceOptions().upsert(true)
+        )
         return@withContext consumer
     }
 
@@ -49,15 +53,19 @@ data class ConsumerMongodb(
     val name: String,
     val hostname: String,
     val tasks: List<String>
-){
+) {
 
-    fun toConsumer():Consumer{
+    fun toConsumer(): Consumer {
         return Consumer(
-            UUID.fromString(id), name, hostname, tasks
+            UUID.fromString(id),
+            name,
+            hostname,
+            tasks
         )
     }
-    companion object{
-        fun of(consumer: Consumer):ConsumerMongodb{
+
+    companion object {
+        fun of(consumer: Consumer): ConsumerMongodb {
             return ConsumerMongodb(
                 consumer.id.toString(),
                 consumer.name,

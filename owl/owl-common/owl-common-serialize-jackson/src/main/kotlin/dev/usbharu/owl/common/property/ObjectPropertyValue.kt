@@ -45,6 +45,5 @@ class ObjectPropertySerializer(private val objectMapper: ObjectMapper) : Propert
                 Class.forName(string.substringAfter("jackson:").substringBefore(":"))
             )
         )
-
     }
 }

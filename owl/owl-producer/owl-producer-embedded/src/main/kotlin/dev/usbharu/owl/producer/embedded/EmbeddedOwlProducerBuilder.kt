@@ -46,7 +46,6 @@ class EmbeddedOwlProducerBuilder : OwlProducerBuilder<EmbeddedOwlProducer, Embed
     override fun apply(owlProducerConfig: EmbeddedOwlProducerConfig) {
         this.config = owlProducerConfig
     }
-
 }
 
 val EMBEDDED by lazy { EmbeddedOwlProducerBuilder() }

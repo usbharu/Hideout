@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
-package dev.usbharu.hideout.core.domain.model.followtimeline
+package util
 
-interface FollowTimelineRepository {
-    suspend fun save(followTimeline: FollowTimeline): FollowTimeline
-    suspend fun delete(followTimeline: FollowTimeline)
+import dev.usbharu.hideout.core.application.shared.Transaction
+
+
+object TestTransaction : Transaction {
+    override suspend fun <T> transaction(block: suspend () -> T): T = block()
+
+    override suspend fun <T> transaction(transactionLevel: Int, block: suspend () -> T): T = block()
 }

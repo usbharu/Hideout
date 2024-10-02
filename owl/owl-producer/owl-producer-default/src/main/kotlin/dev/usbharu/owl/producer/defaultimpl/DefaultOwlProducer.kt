@@ -17,12 +17,12 @@
 package dev.usbharu.owl.producer.defaultimpl
 
 import com.google.protobuf.timestamp
-import dev.usbharu.owl.*
-import dev.usbharu.owl.Uuid.UUID
 import dev.usbharu.owl.common.property.PropertySerializeUtils
 import dev.usbharu.owl.common.task.PublishedTask
 import dev.usbharu.owl.common.task.Task
 import dev.usbharu.owl.common.task.TaskDefinition
+import dev.usbharu.owl.generated.*
+import dev.usbharu.owl.generated.Uuid.UUID
 import dev.usbharu.owl.producer.api.OwlProducer
 import java.time.Instant
 
@@ -36,10 +36,12 @@ class DefaultOwlProducer(private val defaultOwlProducerConfig: DefaultOwlProduce
     override suspend fun start() {
         producerServiceCoroutineStub =
             ProducerServiceGrpcKt.ProducerServiceCoroutineStub(defaultOwlProducerConfig.channel)
-        producerId = producerServiceCoroutineStub.registerProducer(producer {
-            this.name = defaultOwlProducerConfig.name
-            this.hostname = defaultOwlProducerConfig.hostname
-        }).id
+        producerId = producerServiceCoroutineStub.registerProducer(
+            producer {
+                this.name = defaultOwlProducerConfig.name
+                this.hostname = defaultOwlProducerConfig.hostname
+            }
+        ).id
 
         defineTaskServiceCoroutineStub =
             DefinitionTaskServiceGrpcKt.DefinitionTaskServiceCoroutineStub(defaultOwlProducerConfig.channel)
@@ -48,17 +50,18 @@ class DefaultOwlProducer(private val defaultOwlProducerConfig: DefaultOwlProduce
             TaskPublishServiceGrpcKt.TaskPublishServiceCoroutineStub(defaultOwlProducerConfig.channel)
     }
 
-
     override suspend fun <T : Task> registerTask(taskDefinition: TaskDefinition<T>) {
-        defineTaskServiceCoroutineStub.register(taskDefinition {
-            this.producerId = this@DefaultOwlProducer.producerId
-            this.name = taskDefinition.name
-            this.maxRetry = taskDefinition.maxRetry
-            this.priority = taskDefinition.priority
-            this.retryPolicy = taskDefinition.retryPolicy
-            this.timeoutMilli = taskDefinition.timeoutMilli
-            this.propertyDefinitionHash = taskDefinition.propertyDefinition.hash()
-        })
+        defineTaskServiceCoroutineStub.register(
+            taskDefinition {
+                this.producerId = this@DefaultOwlProducer.producerId
+                this.name = taskDefinition.name
+                this.maxRetry = taskDefinition.maxRetry
+                this.priority = taskDefinition.priority
+                this.retryPolicy = taskDefinition.retryPolicy
+                this.timeoutMilli = taskDefinition.timeoutMilli
+                this.propertyDefinitionHash = taskDefinition.propertyDefinition.hash()
+            }
+        )
     }
 
     override suspend fun <T : Task> publishTask(task: T): PublishedTask<T> {
@@ -69,7 +72,7 @@ class DefaultOwlProducer(private val defaultOwlProducerConfig: DefaultOwlProduce
         )
         val now = Instant.now()
         val publishTask = taskPublishServiceCoroutineStub.publishTask(
-            dev.usbharu.owl.publishTask {
+            dev.usbharu.owl.generated.publishTask {
                 this.producerId = this@DefaultOwlProducer.producerId
 
                 this.publishedAt = timestamp {

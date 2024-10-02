@@ -23,4 +23,7 @@ val Class<*>.allFields: List<Field>
         superclass.allFields + declaredFields
     } else {
         declaredFields.toList()
-    }.map { it.trySetAccessible();it }
+    }.map {
+        it.trySetAccessible()
+        it
+    }

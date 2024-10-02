@@ -16,10 +16,10 @@
 
 package dev.usbharu.owl.consumer
 
-import dev.usbharu.owl.*
-import dev.usbharu.owl.Uuid.UUID
 import dev.usbharu.owl.common.property.PropertySerializeUtils
 import dev.usbharu.owl.common.property.PropertySerializerFactory
+import dev.usbharu.owl.generated.*
+import dev.usbharu.owl.generated.Uuid.UUID
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import org.slf4j.LoggerFactory
@@ -66,11 +66,13 @@ class Consumer(
     suspend fun init(name: String, hostname: String) {
         logger.info("Initialize Consumer name: {} hostname: {}", name, hostname)
         logger.debug("Registered Tasks: {}", runnerMap.keys)
-        consumerId = subscribeTaskStub.subscribeTask(subscribeTaskRequest {
-            this.name = name
-            this.hostname = hostname
-            this.tasks.addAll(runnerMap.keys)
-        }).id
+        consumerId = subscribeTaskStub.subscribeTask(
+            subscribeTaskRequest {
+                this.name = name
+                this.hostname = hostname
+                this.tasks.addAll(runnerMap.keys)
+            }
+        ).id
         logger.info("Success initialize consumer. ConsumerID: {}", consumerId)
     }
 
@@ -84,78 +86,92 @@ class Consumer(
             while (isActive) {
                 try {
                     taskResultStub
-                        .tasKResult(flow {
-                            assignmentTaskStub
-                                .ready(flow {
-                                    requestTask()
-                                }).onEach {
-                                    logger.info("Start Task name: {} id: {}", it.name, it.id)
-                                    processing.update { it + 1 }
+                        .tasKResult(
+                            flow {
+                                assignmentTaskStub
+                                    .ready(
+                                        flow {
+                                            requestTask()
+                                        }
+                                    ).onEach {
+                                        logger.info("Start Task name: {} id: {}", it.name, it.id)
+                                        processing.update { it + 1 }
 
-                                    try {
-                                        val taskResult = runnerMap.getValue(it.name).run(
-                                            TaskRequest(
+                                        try {
+                                            val taskResult = runnerMap.getValue(it.name).run(
+                                                TaskRequest(
+                                                    it.name,
+                                                    java.util.UUID(
+                                                        it.id.mostSignificantUuidBits,
+                                                        it.id.leastSignificantUuidBits
+                                                    ),
+                                                    it.attempt,
+                                                    Instant.ofEpochSecond(
+                                                        it.queuedAt.seconds,
+                                                        it.queuedAt.nanos.toLong()
+                                                    ),
+                                                    PropertySerializeUtils.deserialize(
+                                                        propertySerializerFactory,
+                                                        it.propertiesMap
+                                                    )
+                                                )
+                                            )
+
+                                            emit(
+                                                taskResult {
+                                                    this.success = taskResult.success
+                                                    this.attempt = it.attempt
+                                                    this.id = it.id
+                                                    this.result.putAll(
+                                                        PropertySerializeUtils.serialize(
+                                                            propertySerializerFactory,
+                                                            taskResult.result
+                                                        )
+                                                    )
+                                                    this.message = taskResult.message
+                                                }
+                                            )
+                                            logger.info(
+                                                "Success execute task. name: {} success: {}",
                                                 it.name,
-                                                java.util.UUID(
-                                                    it.id.mostSignificantUuidBits,
-                                                    it.id.leastSignificantUuidBits
-                                                ),
-                                                it.attempt,
-                                                Instant.ofEpochSecond(it.queuedAt.seconds, it.queuedAt.nanos.toLong()),
-                                                PropertySerializeUtils.deserialize(
-                                                    propertySerializerFactory,
-                                                    it.propertiesMap
-                                                )
+                                                taskResult.success
                                             )
-                                        )
-
-                                        emit(taskResult {
-                                            this.success = taskResult.success
-                                            this.attempt = it.attempt
-                                            this.id = it.id
-                                            this.result.putAll(
-                                                PropertySerializeUtils.serialize(
-                                                    propertySerializerFactory, taskResult.result
-                                                )
+                                            logger.debug("TRACE RESULT {}", taskResult)
+                                        } catch (e: CancellationException) {
+                                            logger.warn("Cancelled execute task.", e)
+                                            emit(
+                                                taskResult {
+                                                    this.success = false
+                                                    this.attempt = it.attempt
+                                                    this.id = it.id
+                                                    this.message = e.localizedMessage
+                                                }
                                             )
-                                            this.message = taskResult.message
-                                        })
-                                        logger.info(
-                                            "Success execute task. name: {} success: {}",
-                                            it.name,
-                                            taskResult.success
-                                        )
-                                        logger.debug("TRACE RESULT {}", taskResult)
-                                    } catch (e: CancellationException) {
-                                        logger.warn("Cancelled execute task.", e)
-                                        emit(taskResult {
-                                            this.success = false
-                                            this.attempt = it.attempt
-                                            this.id = it.id
-                                            this.message = e.localizedMessage
-                                        })
-                                        throw e
-                                    } catch (e: Exception) {
-                                        logger.warn("Failed execute task. name: {} id: {}", it.name, it.id, e)
-                                        emit(taskResult {
-                                            this.success = false
-                                            this.attempt = it.attempt
-                                            this.id = it.id
-                                            this.message = e.localizedMessage
-                                        })
-                                    } finally {
-                                        logger.debug(" Task name: {} id: {}", it.name, it.id)
-                                        processing.update { it - 1 }
-                                        concurrent.update {
-                                            if (it < 64) {
-                                                it + 1
-                                            } else {
-                                                64
+                                            throw e
+                                        } catch (e: Exception) {
+                                            logger.warn("Failed execute task. name: {} id: {}", it.name, it.id, e)
+                                            emit(
+                                                taskResult {
+                                                    this.success = false
+                                                    this.attempt = it.attempt
+                                                    this.id = it.id
+                                                    this.message = e.localizedMessage
+                                                }
+                                            )
+                                        } finally {
+                                            logger.debug(" Task name: {} id: {}", it.name, it.id)
+                                            processing.update { it - 1 }
+                                            concurrent.update {
+                                                if (it < 64) {
+                                                    it + 1
+                                                } else {
+                                                    64
+                                                }
                                             }
                                         }
-                                    }
-                                }.flowOn(Dispatchers.Default).collect()
-                        })
+                                    }.flowOn(Dispatchers.Default).collect()
+                            }
+                        )
                 } catch (e: CancellationException) {
                     throw e
                 } catch (e: Exception) {
@@ -171,14 +187,15 @@ class Consumer(
         while (coroutineScope.isActive) {
             val andSet = concurrent.getAndUpdate { 0 }
 
-
             if (andSet != 0) {
                 logger.debug("Request {} tasks.", andSet)
                 try {
-                    emit(readyRequest {
-                        this.consumerId = this@Consumer.consumerId
-                        this.numberOfConcurrent = andSet
-                    })
+                    emit(
+                        readyRequest {
+                            this.consumerId = this@Consumer.consumerId
+                            this.numberOfConcurrent = andSet
+                        }
+                    )
                 } catch (e: CancellationException) {
                     throw e
                 } catch (e: Exception) {

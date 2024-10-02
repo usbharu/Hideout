@@ -22,7 +22,7 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.whenever
 import utils.TestTransaction
-import java.net.URL
+import java.net.URI
 
 @ExtendWith(MockitoExtension::class)
 class RegisterLocalActorApplicationServiceTest {
@@ -51,7 +51,7 @@ class RegisterLocalActorApplicationServiceTest {
     val transaction = TestTransaction
 
     @Spy
-    val applicationConfig = ApplicationConfig(URL("http://example.com"))
+    val applicationConfig = ApplicationConfig(URI.create("http://example.com"))
 
     @Spy
     val idGenerateService = TwitterSnowflakeIdGenerateService
