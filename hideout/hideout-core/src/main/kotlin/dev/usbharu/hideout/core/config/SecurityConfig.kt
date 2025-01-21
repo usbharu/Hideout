@@ -70,12 +70,10 @@ class SecurityConfig {
             securityMatcher(authorizationServer.endpointsMatcher)
             with(authorizationServer) {
                 authorizationEndpoint {
-
                 }
             }
             authorizeHttpRequests {
                 authorize(anyRequest, authenticated)
-
             }
             exceptionHandling {
                 authenticationEntryPoint = LoginUrlAuthenticationEntryPoint("/auth/sign_in")
