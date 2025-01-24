@@ -33,6 +33,7 @@ dependencies {
     implementation(libs.owl.producer.embedded)
     implementation(libs.owl.common.serialize.jackson)
     implementation(libs.activity.streams.serialization)
+    implementation(libs.coroutines.core)
 }
 
 tasks.test {
