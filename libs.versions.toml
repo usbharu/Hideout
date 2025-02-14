@@ -108,6 +108,8 @@ activity-streams-serialization = { module = "dev.usbharu:activity-streams-serial
 
 logback-ecs-encoder = { module = "co.elastic.logging:logback-ecs-encoder", version = "1.6.0" }
 
+jsonld = { module = "com.github.jsonld-java:jsonld-java", version = "0.13.5" }
+
 [bundles]
 
 exposed = ["exposed-core", "exposed-java-time", "exposed-jdbc", "exposed-spring"]

@@ -20,6 +20,15 @@ repositories {
     maven {
         url = uri("https://git.usbharu.dev/api/packages/usbharu/maven")
     }
+    maven {
+        name = "GitHubPackages"
+        url = uri("https://maven.pkg.github.com/usbharu/activity-streams-serialization")
+        credentials {
+
+            username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
+            password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
+        }
+    }
 }
 
 dependencies {
@@ -33,6 +42,7 @@ dependencies {
     implementation(libs.owl.producer.embedded)
     implementation(libs.owl.common.serialize.jackson)
     implementation(libs.activity.streams.serialization)
+    implementation(libs.jsonld)
     implementation(libs.coroutines.core)
 }
 
@@ -66,7 +76,7 @@ tasks {
             exclude("**/org/koin/ksp/generated/**", "**/generated/**")
         }
     }
-    withType<io.gitlab.arturbosch.detekt.DetektCreateBaselineTask>() {
+    withType<io.gitlab.arturbosch.detekt.DetektCreateBaselineTask> {
         configureEach {
             exclude("**/org/koin/ksp/generated/**", "**/generated/**")
         }
