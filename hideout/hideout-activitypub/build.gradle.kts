@@ -32,7 +32,6 @@ repositories {
 }
 
 dependencies {
-    testImplementation(kotlin("test"))
     detektPlugins(libs.detekt.formatting)
     implementation(project(":hideout-core"))
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -44,6 +43,14 @@ dependencies {
     implementation(libs.activity.streams.serialization)
     implementation(libs.jsonld)
     implementation(libs.coroutines.core)
+    implementation(libs.bundles.exposed)
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.security:spring-security-test")
+    testImplementation(libs.bundles.spring.boot.oauth2)
+    testImplementation(libs.kotlin.junit)
+    testImplementation(libs.coroutines.test)
+    testImplementation(libs.h2db)
+    testImplementation(libs.flyway.core)
 }
 
 tasks.test {
@@ -140,4 +147,8 @@ kover {
         }
 
     }
+}
+
+springBoot{
+    buildInfo { }
 }

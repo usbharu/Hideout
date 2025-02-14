@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable
 class APActorController(private val getActorApplicationService: GetActorApplicationService) {
     @GetMapping(
         "/users/{username}",
-        consumes = ["application/activity+json"],
+//        consumes = ["application/activity+json"],
         produces = ["application/activity+json"]
     )
     suspend fun user(@PathVariable username: String): ResponseEntity<JsonLd> {
