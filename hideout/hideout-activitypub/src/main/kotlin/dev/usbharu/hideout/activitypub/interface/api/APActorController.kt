@@ -1,8 +1,9 @@
 package dev.usbharu.hideout.activitypub.`interface`.api
 
+import dev.usbharu.activitystreamsserialization.other.JsonLd
 import dev.usbharu.hideout.activitypub.application.actor.GetActorApplicationService
-import dev.usbharu.hideout.core.domain.model.actor.Actor
 import dev.usbharu.hideout.core.domain.model.support.principal.Anonymous
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -14,7 +15,7 @@ class APActorController(private val getActorApplicationService: GetActorApplicat
         consumes = ["application/activity+json"],
         produces = ["application/activity+json"]
     )
-    suspend fun user(@PathVariable username: String): Actor {
-        return getActorApplicationService.execute(username, Anonymous)
+    suspend fun user(@PathVariable username: String): ResponseEntity<JsonLd> {
+        return ResponseEntity.ok(getActorApplicationService.execute(username, Anonymous))
     }
 }
