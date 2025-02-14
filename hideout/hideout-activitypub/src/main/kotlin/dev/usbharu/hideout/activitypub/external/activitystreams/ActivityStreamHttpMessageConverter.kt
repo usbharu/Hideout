@@ -29,17 +29,19 @@ class ActivityStreamHttpMessageConverter : HttpMessageConverter<JsonLd> {
         outputMessage.headers.contentType = MediaType.APPLICATION_JSON
         outputMessage.body.bufferedWriter()
             .use {
-                it.write(JsonUtils.toString(
-                    JsonLdProcessor.compact(
-                        JsonUtils.fromString(JacksonSerializationConverter.convert(t.json).toString()), "https://www.w3.org/ns/activitystreams",
-                        JsonLdOptions()
+                it.write(
+                    JsonUtils.toString(
+                        JsonLdProcessor.compact(
+                            JsonUtils.fromString(JacksonSerializationConverter.convert(t.json).toString()),
+                            "https://www.w3.org/ns/activitystreams",
+                            JsonLdOptions()
+                        )
                     )
-                ))
+                )
             }
     }
 
     override fun read(clazz: Class<out JsonLd>, inputMessage: HttpInputMessage): JsonLd {
         TODO("Not yet implemented")
     }
-
 }

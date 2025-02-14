@@ -10,6 +10,4 @@ class Task<out T : TaskBody>(
     val publishedOn: Instant,
     val body: T,
     val domain: Domain
-) : Task() {
-
-}
+) : Task()

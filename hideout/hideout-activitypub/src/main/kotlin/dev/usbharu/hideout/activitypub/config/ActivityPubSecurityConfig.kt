@@ -8,7 +8,6 @@ import org.springframework.http.HttpMethod.POST
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.invoke
 import org.springframework.security.web.SecurityFilterChain
-import org.springframework.security.web.util.matcher.AnyRequestMatcher
 import org.springframework.security.web.util.matcher.RequestMatcher
 
 @Configuration
@@ -17,10 +16,12 @@ class ActivityPubSecurityConfig {
     @Order(4)
     fun activityPubSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http {
-            securityMatcher(RequestMatcher {
-                val accept = it.getHeader("Accept") ?: ""
-                return@RequestMatcher accept == "application/json" || accept == "application/activity+json"
-            })
+            securityMatcher(
+                RequestMatcher {
+                    val accept = it.getHeader("Accept") ?: ""
+                    return@RequestMatcher accept == "application/json" || accept == "application/activity+json"
+                }
+            )
             authorizeHttpRequests {
                 authorize(POST, "/inbox", permitAll)
                 authorize(POST, "/users/{username}/inbox", permitAll)

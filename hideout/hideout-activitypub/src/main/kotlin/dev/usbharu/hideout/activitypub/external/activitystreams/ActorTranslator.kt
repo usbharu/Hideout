@@ -1,6 +1,5 @@
 package dev.usbharu.hideout.activitypub.external.activitystreams
 
-
 import dev.usbharu.activitystreamsserialization.dsl.ActivityBuilder
 import dev.usbharu.activitystreamsserialization.other.JsonLd
 import dev.usbharu.hideout.core.domain.model.actor.Actor
@@ -10,7 +9,7 @@ import org.springframework.stereotype.Service
 @Service
 class ActorTranslator {
     fun translate(actor: Actor, iconMedia: Media?, bannerMedia: Media?): JsonLd {
-        //todo actorにbot等の属性が生えてきたら対応する
+        // todo actorにbot等の属性が生えてきたら対応する
         val person = ActivityBuilder().Person {
             name(actor.name.name)
             id(actor.url)
@@ -25,16 +24,16 @@ class ActorTranslator {
                         owner(actor.url)
                         publicKeyPem(actor.publicKey.publicKey)
                         id(actor.keyId.keyId)
-                    })
-
+                    }
+                )
             }
             iconMedia?.let {
                 icon {
                     listOf(
                         Image {
                             url(iconMedia.url)
-                        })
-
+                        }
+                    )
                 }
             }
             bannerMedia?.let {
@@ -42,7 +41,8 @@ class ActorTranslator {
                     listOf(
                         Image {
                             url(bannerMedia.url)
-                        })
+                        }
+                    )
                 }
             }
         }
