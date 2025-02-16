@@ -1,7 +1,7 @@
 package activity
 
 import dev.usbharu.hideout.SpringApplication
-import dev.usbharu.hideout.activitypub.`interface`.api.APActorController
+import dev.usbharu.hideout.activitypub.interfaces.api.APActorController
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

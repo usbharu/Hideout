@@ -1,4 +1,4 @@
-package dev.usbharu.hideout.activitypub.`interface`.api
+package dev.usbharu.hideout.activitypub.interfaces.api
 
 import dev.usbharu.activitystreamsserialization.other.JsonLd
 import dev.usbharu.hideout.activitypub.application.actor.GetActorApplicationService
@@ -15,7 +15,6 @@ class APActorController(private val getActorApplicationService: GetActorApplicat
 //        consumes = ["application/activity+json"],
         produces = ["application/activity+json"]
     )
-    suspend fun user(@PathVariable username: String): ResponseEntity<JsonLd> {
-        return ResponseEntity.ok(getActorApplicationService.execute(username, Anonymous))
-    }
+    suspend fun user(@PathVariable username: String): ResponseEntity<JsonLd> =
+        ResponseEntity.ok(getActorApplicationService.execute(username, Anonymous))
 }

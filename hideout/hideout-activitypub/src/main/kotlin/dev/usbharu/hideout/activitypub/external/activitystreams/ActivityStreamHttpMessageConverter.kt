@@ -13,17 +13,11 @@ import org.springframework.stereotype.Component
 
 @Component
 class ActivityStreamHttpMessageConverter : HttpMessageConverter<JsonLd> {
-    override fun canRead(clazz: Class<*>, mediaType: MediaType?): Boolean {
-        return false
-    }
+    override fun canRead(clazz: Class<*>, mediaType: MediaType?): Boolean = false
 
-    override fun canWrite(clazz: Class<*>, mediaType: MediaType?): Boolean {
-        return JsonLd::class.java.isAssignableFrom(clazz)
-    }
+    override fun canWrite(clazz: Class<*>, mediaType: MediaType?): Boolean = JsonLd::class.java.isAssignableFrom(clazz)
 
-    override fun getSupportedMediaTypes(): MutableList<MediaType> {
-        return mutableListOf()
-    }
+    override fun getSupportedMediaTypes(): MutableList<MediaType> = mutableListOf()
 
     override fun write(t: JsonLd, contentType: MediaType?, outputMessage: HttpOutputMessage) {
         outputMessage.headers.contentType = MediaType.APPLICATION_JSON

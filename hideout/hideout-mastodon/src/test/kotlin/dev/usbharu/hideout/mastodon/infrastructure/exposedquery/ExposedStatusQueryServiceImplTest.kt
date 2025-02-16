@@ -19,10 +19,10 @@ import org.springframework.transaction.annotation.Transactional
 @Sql("/sql/relationships.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Transactional
 @SpringBootTest(classes = [SpringApplication::class])
-class StatusQueryServiceImplTest {
+class ExposedStatusQueryServiceImplTest {
 
     @Autowired
-    lateinit var statusQueryServiceImpl: StatusQueryServiceImpl
+    lateinit var statusQueryServiceImpl: ExposedStatusQueryServiceImpl
 
     @Test
     fun フォロワー限定をフォロワー以外は見れない() = runTest {

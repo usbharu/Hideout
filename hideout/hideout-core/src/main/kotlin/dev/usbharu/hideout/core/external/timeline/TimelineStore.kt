@@ -25,6 +25,7 @@ import dev.usbharu.hideout.core.domain.model.support.timelineobjectdetail.Timeli
 import dev.usbharu.hideout.core.domain.model.timeline.Timeline
 import dev.usbharu.hideout.core.domain.model.timelinerelationship.TimelineRelationship
 
+@Suppress("TooManyFunctions")
 interface TimelineStore {
     suspend fun addPost(post: Post)
     suspend fun updatePost(post: Post)
