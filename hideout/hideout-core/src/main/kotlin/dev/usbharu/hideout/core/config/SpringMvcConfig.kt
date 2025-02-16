@@ -23,6 +23,7 @@ import dev.usbharu.hideout.generate.JsonOrFormModelMethodProcessor
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.annotation.Order
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.web.method.support.HandlerMethodArgumentResolver
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
@@ -31,10 +32,11 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestResponseBody
 import org.springframework.web.servlet.mvc.method.annotation.ServletModelAttributeMethodProcessor
 
 @Configuration
+@Order(2)
 class MvcConfigurer(
     private val jsonOrFormModelMethodProcessor: JsonOrFormModelMethodProcessor,
     private val spaInterceptor: SPAInterceptor,
-    private val applicationRequestLogInterceptor: ApplicationRequestLogInterceptor
+    private val applicationRequestLogInterceptor: ApplicationRequestLogInterceptor,
 ) : WebMvcConfigurer {
     override fun addArgumentResolvers(resolvers: MutableList<HandlerMethodArgumentResolver>) {
         resolvers.add(jsonOrFormModelMethodProcessor)
