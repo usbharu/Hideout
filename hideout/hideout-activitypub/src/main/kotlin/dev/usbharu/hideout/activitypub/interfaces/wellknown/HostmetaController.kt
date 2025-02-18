@@ -11,22 +11,22 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/.well-known")
-class HostmetaController {
+class HostmetaController(private val linkList: List<Link> = emptyList()) {
     @Order(1)
     @GetMapping("/host-meta")
     fun hostmeta(): ResponseEntity<WebHostMetadata> {
         return ResponseEntity.ok().contentType(MediaType("application", "xrd+xml"))
-            .body(WebHostMetadata(listOf(Link("a", "b", "c"))))
+            .body(WebHostMetadata(linkList))
     }
 
     @Order(2)
     @GetMapping("/host-meta", produces = ["application/json"])
     fun hostmetaJson(): WebHostMetadata {
-        return WebHostMetadata(listOf(Link("a", "b", "c")))
+        return WebHostMetadata(linkList)
     }
 
     @GetMapping("/host-meta.json", produces = ["application/json"])
     fun hostmetaJson2(): WebHostMetadata {
-        return WebHostMetadata(listOf(Link("a", "b", "c")))
+        return WebHostMetadata(linkList)
     }
 }
