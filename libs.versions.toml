@@ -62,7 +62,7 @@ owl-common-serialize-jackson = { module = "dev.usbharu:owl-common-serialize-jack
 
 jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
 jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
-
+jackson-xml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-xml", version.ref = "jackson" }
 blurhash = { module = "io.trbl:blurhash", version = "1.0.0" }
 
 aws-s3 = { module = "software.amazon.awssdk:s3", version = "2.27.22" }
