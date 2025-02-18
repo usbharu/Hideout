@@ -23,6 +23,8 @@ class ActivityPubSecurityConfig {
                 }
             )
             authorizeHttpRequests {
+                authorize(GET, "/.well-known/**", permitAll)
+                authorize(GET, "/error", permitAll)
                 authorize(POST, "/inbox", permitAll)
                 authorize(POST, "/users/{username}/inbox", permitAll)
                 authorize(GET, "/outbox", permitAll)
