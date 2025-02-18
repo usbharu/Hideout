@@ -37,6 +37,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation(libs.bundles.jackson)
+    implementation(libs.jackson.xml)
     implementation(libs.owl.producer.api)
     implementation(libs.owl.producer.embedded)
     implementation(libs.owl.common.serialize.jackson)
