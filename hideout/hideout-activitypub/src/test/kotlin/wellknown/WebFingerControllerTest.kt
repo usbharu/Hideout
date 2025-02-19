@@ -10,16 +10,19 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
+import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.context.WebApplicationContext
 
 @SpringBootTest(classes = [SpringApplication::class])
 @AutoConfigureMockMvc
-class HostMetaControllerTest {
-
+@Transactional
+@Sql("/sql/actors.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
+class WebFingerControllerTest {
     @Autowired
     private lateinit var context: WebApplicationContext
 
@@ -33,36 +36,23 @@ class HostMetaControllerTest {
     }
 
     @Test
-    fun hostmeta() {
+    fun webfinger() {
         mockMvc
-            .get("/.well-known/host-meta") {
-                accept(MediaType.APPLICATION_XML)
+            .get("/.well-known/webfinger?resource=acct:test@example.com") {
+                accept(MediaType.APPLICATION_JSON)
             }
+            .asyncDispatch()
             .andDo { print() }
             .andExpect { status { isOk() } }
-            .andExpect { content { contentType(MediaType("application", "xrd+xml")) } }
     }
 
     @Test
-    fun hostmetaJson() {
+    fun `webfinger resourceが無いと400`() {
         mockMvc
-            .get("/.well-known/host-meta") {
+            .get("/.well-known/webfinger") {
                 accept(MediaType.APPLICATION_JSON)
             }
-            .andDo { print() }
-            .andExpect { status { isOk() } }
-            .andExpect { content { contentType(MediaType("application", "json")) } }
-    }
-
-    @Test
-    fun hostmetaJson2() {
-        mockMvc
-            .get("/.well-known/host-meta.json") {
-                accept(MediaType.APPLICATION_JSON)
-            }
-            .andDo { print() }
-            .andExpect { status { isOk() } }
-            .andExpect { content { contentType(MediaType("application", "json")) } }
+            .andExpect { status { isBadRequest() } }
     }
 
     companion object {
