@@ -9,7 +9,7 @@ import java.net.URI
 
 @JacksonXmlRootElement(localName = "XRD", namespace = "http://docs.oasis-open.org/ns/xri/xrd-1.0")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-class XRD(
+data class XRD(
     @JacksonXmlProperty(localName = "Link", namespace = "http://docs.oasis-open.org/ns/xri/xrd-1.0")
     @JacksonXmlElementWrapper(useWrapping = false)
     @JsonProperty("links")
@@ -21,7 +21,7 @@ class XRD(
 )
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-class Link(
+data class Link(
     @JacksonXmlProperty(localName = "rel", isAttribute = true) val rel: String,
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JacksonXmlProperty(localName = "template", isAttribute = true) val template: String?,

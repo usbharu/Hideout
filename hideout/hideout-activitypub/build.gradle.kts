@@ -52,6 +52,7 @@ dependencies {
     testImplementation(libs.coroutines.test)
     testImplementation(libs.h2db)
     testImplementation(libs.flyway.core)
+    testImplementation(libs.mockito.kotlin)
 }
 
 tasks.test {
