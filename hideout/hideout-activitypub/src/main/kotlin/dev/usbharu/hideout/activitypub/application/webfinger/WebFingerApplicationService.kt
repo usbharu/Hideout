@@ -19,7 +19,6 @@ class WebFingerApplicationService(
     private val actorRepository: ActorRepository,
 ) : AbstractApplicationService<String, XRD>(transaction, logger) {
 
-
     override suspend fun internalExecute(resource: String, principal: Principal): XRD {
         if (resource.startsWith("acct:").not()) {
             throw IllegalArgumentException("Parameter (resource) is invalid.")
@@ -42,7 +41,6 @@ class WebFingerApplicationService(
             listOf(Link("self", null, "application/activity+json", actor.url.toString())),
             URI.create("acct:${actor.name.name}@${actor.domain.domain}")
         )
-
     }
 
     companion object {
