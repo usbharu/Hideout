@@ -24,6 +24,7 @@ class ActivityPubSecurityConfig {
             )
             authorizeHttpRequests {
                 authorize(GET, "/.well-known/**", permitAll)
+                authorize(GET, "/nodeinfo/**", permitAll)
                 authorize(GET, "/error", permitAll)
                 authorize(POST, "/inbox", permitAll)
                 authorize(POST, "/users/{username}/inbox", permitAll)

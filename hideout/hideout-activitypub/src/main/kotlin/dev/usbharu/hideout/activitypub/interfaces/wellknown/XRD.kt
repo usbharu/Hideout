@@ -24,8 +24,9 @@ data class XRD(
 data class Link(
     @JacksonXmlProperty(localName = "rel", isAttribute = true) val rel: String,
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JacksonXmlProperty(localName = "template", isAttribute = true) val template: String?,
-    @JacksonXmlProperty(localName = "type", isAttribute = true) val type: String,
+    @JacksonXmlProperty(localName = "template", isAttribute = true) val template: String? = null,
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JacksonXmlProperty(localName = "href", isAttribute = true) val href: String?,
+    @JacksonXmlProperty(localName = "type", isAttribute = true) val type: String? = null,
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JacksonXmlProperty(localName = "href", isAttribute = true) val href: String? = null,
 )
