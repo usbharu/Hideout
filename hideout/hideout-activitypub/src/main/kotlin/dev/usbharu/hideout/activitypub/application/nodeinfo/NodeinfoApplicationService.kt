@@ -29,7 +29,7 @@ class NodeinfoApplicationService(
             protocol = listOf("activitypub"),
             NodeinfoUsage(
                 users = mapOf(
-                    "total" to "0", "activeMonth" to "0", "activeHalfyear" to "0"
+                    "total" to 0, "activeMonth" to 0, "activeHalfyear" to 0
                 ), localPosts = 0
             ),
             openRegistration = applicationConfig.private.not(),

@@ -10,6 +10,6 @@ data class Nodeinfo2_0(
 )
 
 data class NodeinfoUsage(
-    val users: Map<String, String>,
+    val users: Map<String, Long>,
     val localPosts: Long,
 )
