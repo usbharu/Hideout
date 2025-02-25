@@ -18,20 +18,25 @@ class NodeinfoApplicationService(
     private val applicationConfig: ApplicationConfig,
     transaction: Transaction,
 ) : AbstractApplicationService<NodeinfoRequest, Nodeinfo2_0>(
-    transaction, logger
+    transaction,
+    logger
 ) {
     override suspend fun internalExecute(command: NodeinfoRequest, principal: Principal): Nodeinfo2_0 {
         return when (command.version) {
             "2.0", "2.1" -> Nodeinfo2_0(
                 version = command.version,
                 software = mapOf(
-                    "name" to "hideout", "version" to (buildInfo?.version ?: "UNKNOWN")
+                    "name" to "hideout",
+                    "version" to (buildInfo?.version ?: "UNKNOWN")
                 ),
                 protocol = listOf("activitypub"),
                 NodeinfoUsage(
                     users = mapOf(
-                        "total" to 0, "activeMonth" to 0, "activeHalfyear" to 0
-                    ), localPosts = 0
+                        "total" to 0,
+                        "activeMonth" to 0,
+                        "activeHalfyear" to 0
+                    ),
+                    localPosts = 0
                 ),
                 openRegistration = applicationConfig.private.not(),
                 metadata = mapOf()

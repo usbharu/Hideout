@@ -19,7 +19,8 @@ class NodeinfoController(
             Link(
                 "http://nodeinfo.diaspora.software/ns/schema/2.1",
                 href = applicationConfig.url.resolve("/nodeinfo/2.1").toString()
-            ), Link(
+            ),
+            Link(
                 "http://nodeinfo.diaspora.software/ns/schema/2.0",
                 href = applicationConfig.url.resolve("/nodeinfo/2.0").toString()
             )
