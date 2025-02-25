@@ -28,12 +28,8 @@ class NodeinfoController(
     )
 
     @GetMapping("/nodeinfo/2.0", produces = ["application/json"])
-    suspend fun nodeinfo2_0(): Nodeinfo2_0 {
-        return nodeinfoApplicationService.execute(NodeinfoRequest("2.0"), Anonymous)
-    }
+    suspend fun nodeinfo2_0(): Nodeinfo2_0 = nodeinfoApplicationService.execute(NodeinfoRequest("2.0"), Anonymous)
 
     @GetMapping("/nodeinfo/2.1", produces = ["application/json"])
-    suspend fun nodeinfo2_1(): Nodeinfo2_0 {
-        return nodeinfoApplicationService.execute(NodeinfoRequest("2.1"), Anonymous)
-    }
+    suspend fun nodeinfo2_1(): Nodeinfo2_0 = nodeinfoApplicationService.execute(NodeinfoRequest("2.1"), Anonymous)
 }

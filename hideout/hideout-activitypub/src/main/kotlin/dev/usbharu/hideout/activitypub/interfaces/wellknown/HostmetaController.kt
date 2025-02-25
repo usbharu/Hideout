@@ -19,12 +19,8 @@ class HostmetaController(private val linkList: List<Link> = emptyList()) {
 
     @Order(2)
     @GetMapping("/host-meta", produces = ["application/json"])
-    fun hostmetaJson(): XRD {
-        return XRD(linkList)
-    }
+    fun hostmetaJson(): XRD = XRD(linkList)
 
     @GetMapping("/host-meta.json", produces = ["application/json"])
-    fun hostmetaJson2(): XRD {
-        return XRD(linkList)
-    }
+    fun hostmetaJson2(): XRD = XRD(linkList)
 }

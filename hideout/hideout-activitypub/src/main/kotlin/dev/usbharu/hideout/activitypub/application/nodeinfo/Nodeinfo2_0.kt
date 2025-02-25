@@ -1,5 +1,6 @@
 package dev.usbharu.hideout.activitypub.application.nodeinfo
 
+@Suppress("ClassName")
 data class Nodeinfo2_0(
     val version: String = "2,0",
     val software: Map<String, String>,
