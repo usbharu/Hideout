@@ -90,7 +90,7 @@ class SecurityConfig {
                 authorize("/error", permitAll)
                 authorize("/auth/sign_in", permitAll)
                 authorize(GET, "/.well-known/**", permitAll)
-                authorize(GET, "/nodeinfo/2.0", permitAll)
+                authorize(GET, "/nodeinfo/**", permitAll)
 
                 authorize(GET, "/auth/sign_up", hasRole("ANONYMOUS"))
                 authorize(POST, "/auth/sign_up", permitAll)
