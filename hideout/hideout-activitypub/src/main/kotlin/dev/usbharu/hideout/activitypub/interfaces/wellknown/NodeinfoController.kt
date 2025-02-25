@@ -2,6 +2,7 @@ package dev.usbharu.hideout.activitypub.interfaces.wellknown
 
 import dev.usbharu.hideout.activitypub.application.nodeinfo.Nodeinfo2_0
 import dev.usbharu.hideout.activitypub.application.nodeinfo.NodeinfoApplicationService
+import dev.usbharu.hideout.activitypub.application.nodeinfo.NodeinfoRequest
 import dev.usbharu.hideout.core.config.ApplicationConfig
 import dev.usbharu.hideout.core.domain.model.support.principal.Anonymous
 import org.springframework.web.bind.annotation.GetMapping
@@ -27,11 +28,11 @@ class NodeinfoController(
 
     @GetMapping("/nodeinfo/2.0", produces = ["application/json"])
     suspend fun nodeinfo2_0(): Nodeinfo2_0 {
-        return nodeinfoApplicationService.execute(Unit, Anonymous)
+        return nodeinfoApplicationService.execute(NodeinfoRequest("2.0"), Anonymous)
     }
 
     @GetMapping("/nodeinfo/2.1", produces = ["application/json"])
     suspend fun nodeinfo2_1(): Nodeinfo2_0 {
-        return nodeinfoApplicationService.execute(Unit, Anonymous)
+        return nodeinfoApplicationService.execute(NodeinfoRequest("2.1"), Anonymous)
     }
 }
