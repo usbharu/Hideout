@@ -133,4 +133,4 @@ kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotl
 kover = { id = "org.jetbrains.kotlinx.kover", version = "0.9.1" }
 openapi-generator = { id = "org.openapi.generator", version = "7.13.0" }
 license-report = { id = "com.github.jk1.dependency-license-report", version = "2.9" }
-protobuf-plugin = { id = "com.google.protobuf", version = "0.9.4" }
+protobuf-plugin = { id = "com.google.protobuf", version = "0.9.5" }
