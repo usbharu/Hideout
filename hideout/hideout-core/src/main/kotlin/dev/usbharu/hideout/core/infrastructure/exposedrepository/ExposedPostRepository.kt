@@ -75,6 +75,7 @@ class ExposedPostRepository(
                 it[deleted] = post.deleted
                 it[hide] = post.hide
                 it[moveTo] = post.moveTo?.id
+                it[wasTruncated] = post.wasTruncated
             }
             PostsMedia.deleteWhere {
                 postId eq post.id.id

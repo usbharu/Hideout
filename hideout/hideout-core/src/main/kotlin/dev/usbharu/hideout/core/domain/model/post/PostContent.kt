@@ -44,6 +44,7 @@ class PostContent {
 
         other as PostContent
 
+        if (wasTruncated != other.wasTruncated) return false
         if (text != other.text) return false
         if (content != other.content) return false
         if (emojiIds != other.emojiIds) return false
@@ -52,7 +53,8 @@ class PostContent {
     }
 
     override fun hashCode(): Int {
-        var result = text.hashCode()
+        var result = wasTruncated.hashCode()
+        result = 31 * result + text.hashCode()
         result = 31 * result + content.hashCode()
         result = 31 * result + emojiIds.hashCode()
         return result
@@ -62,7 +64,10 @@ class PostContent {
         return "PostContent(" +
                 "text='$text', " +
                 "content='$content', " +
-                "emojiIds=$emojiIds" +
+                "emojiIds=$emojiIds, " +
+                "wasTruncated=$wasTruncated" +
                 ")"
     }
+
+
 }
