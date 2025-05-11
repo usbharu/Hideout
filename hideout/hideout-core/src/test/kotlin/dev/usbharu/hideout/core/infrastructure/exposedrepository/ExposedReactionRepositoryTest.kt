@@ -56,7 +56,8 @@ class ExposedReactionRepositoryTest : AbstractRepositoryTest(Reactions) {
                     "https://example.com",
                     false,
                     false,
-                    null
+                    null,
+                    false
                 )
             }
             insertInto("public.actors") {
@@ -141,7 +142,8 @@ class ExposedReactionRepositoryTest : AbstractRepositoryTest(Reactions) {
                     "https://example.com",
                     false,
                     false,
-                    null
+                    null,
+                    false
                 )
             }
             insertInto("public.actors") {

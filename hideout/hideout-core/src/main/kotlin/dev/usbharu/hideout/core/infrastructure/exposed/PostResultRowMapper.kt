@@ -44,7 +44,8 @@ class PostResultRowMapper : ResultRowMapper<Post> {
             mediaIds = emptyList(),
             visibleActors = emptySet(),
             hide = resultRow[Posts.hide],
-            moveTo = resultRow[Posts.moveTo]?.let { PostId(it) }
+            moveTo = resultRow[Posts.moveTo]?.let { PostId(it) },
+            wasTruncated = resultRow[Posts.wasTruncated]
         )
     }
 }

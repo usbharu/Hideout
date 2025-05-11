@@ -270,7 +270,8 @@ class ExposedPostRepositoryTest : AbstractRepositoryTest(Posts) {
                     "http://localhost:8081/users/a/posts/1832779994749734912",
                     false,
                     false,
-                    null
+                    null,
+                    false
                 )
             }
         }.launch()
@@ -329,7 +330,8 @@ class ExposedPostRepositoryTest : AbstractRepositoryTest(Posts) {
                     "http://localhost:8081/users/a/posts/1832779994749734912",
                     false,
                     false,
-                    null
+                    null,
+                    false
                 )
             }
             insertInto(PostsMedia.tableName) {
@@ -364,7 +366,9 @@ class ExposedPostRepositoryTest : AbstractRepositoryTest(Posts) {
             deleted = false,
             mediaIds = listOf(MediaId(2)),
             visibleActors = setOf(ActorId(4)),
-            hide = false, moveTo = null
+            hide = false,
+            moveTo = null,
+            wasTruncated = false
         )
 
         assertNotNull(actual)
@@ -398,60 +402,9 @@ class ExposedPostRepositoryTest : AbstractRepositoryTest(Posts) {
             execute(disableReferenceIntegrityConstraints)
             insertInto("public.posts") {
                 columns(Posts.columns)
-                values(
-                    1,
-                    1832779978794602496,
-                    1832779642545639424,
-                    null,
-                    "<p>test</p>",
-                    "test",
-                    Timestamp.from(Instant.parse("2020-01-01T00:00:00Z")),
-                    "PUBLIC",
-                    "http://localhost:8081/users/a/posts/1832779994749734912",
-                    2,
-                    2,
-                    false,
-                    "http://localhost:8081/users/a/posts/1832779994749734912",
-                    false,
-                    false,
-                    null
-                )
-                values(
-                    2,
-                    1832779978794602496,
-                    1832779642545639424,
-                    null,
-                    "<p>test</p>",
-                    "test",
-                    Timestamp.from(Instant.parse("2020-01-01T00:00:00Z")),
-                    "PUBLIC",
-                    "http://localhost:8081/users/a/posts/18327739994749734912",
-                    null,
-                    null,
-                    false,
-                    "http://localhost:8081/users/a/posts/18327793994749734912",
-                    false,
-                    false,
-                    null
-                )
-                values(
-                    3,
-                    1832779978794602496,
-                    1832779642545639424,
-                    "",
-                    "<p>test</p>",
-                    "test",
-                    Timestamp.from(Instant.parse("2020-01-01T00:00:00Z")),
-                    "PUBLIC",
-                    "http://localhost:8081/users/a/posts/183277399947494734912",
-                    null,
-                    null,
-                    false,
-                    "http://localhost:8081/users/a/posts/183277939947493734912",
-                    false,
-                    false,
-                    2
-                )
+                postsValues(1)
+                postsValues(2)
+                postsValues(3)
             }
         }.launch()
 
@@ -467,60 +420,9 @@ class ExposedPostRepositoryTest : AbstractRepositoryTest(Posts) {
             execute(disableReferenceIntegrityConstraints)
             insertInto("public.posts") {
                 columns(Posts.columns)
-                values(
-                    1,
-                    1,
-                    1832779642545639424,
-                    null,
-                    "<p>test</p>",
-                    "test",
-                    Timestamp.from(Instant.parse("2020-01-01T00:00:00Z")),
-                    "PUBLIC",
-                    "http://localhost:8081/users/a/posts/1832779994749734912",
-                    2,
-                    2,
-                    false,
-                    "http://localhost:8081/users/a/posts/1832779994749734912",
-                    false,
-                    false,
-                    null
-                )
-                values(
-                    2,
-                    2,
-                    1832779642545639424,
-                    null,
-                    "<p>test</p>",
-                    "test",
-                    Timestamp.from(Instant.parse("2020-01-01T00:00:00Z")),
-                    "PUBLIC",
-                    "http://localhost:8081/users/a/posts/18327739994749734912",
-                    null,
-                    null,
-                    false,
-                    "http://localhost:8081/users/a/posts/18327793994749734912",
-                    false,
-                    false,
-                    null
-                )
-                values(
-                    3,
-                    1,
-                    1832779642545639424,
-                    "",
-                    "<p>test</p>",
-                    "test",
-                    Timestamp.from(Instant.parse("2020-01-01T00:00:00Z")),
-                    "PUBLIC",
-                    "http://localhost:8081/users/a/posts/183277399947494734912",
-                    null,
-                    null,
-                    false,
-                    "http://localhost:8081/users/a/posts/183277939947493734912",
-                    false,
-                    false,
-                    2
-                )
+                postsValues(1)
+                postsValues(2, 2)
+                postsValues(3)
             }
         }.launch()
 
@@ -536,64 +438,15 @@ class ExposedPostRepositoryTest : AbstractRepositoryTest(Posts) {
             execute(disableReferenceIntegrityConstraints)
             insertInto("public.posts") {
                 columns(Posts.columns)
-                values(
-                    1,
-                    1,
-                    1832779642545639424,
-                    null,
-                    "<p>test</p>",
-                    "test",
-                    Timestamp.from(Instant.parse("2020-01-01T00:00:00Z")),
-                    "PUBLIC",
-                    "http://localhost:8081/users/a/posts/1832779994749734912",
-                    2,
-                    2,
-                    false,
-                    "http://localhost:8081/users/a/posts/1832779994749734912",
-                    false,
-                    false,
-                    null
-                )
-                values(
-                    2,
-                    1,
-                    1832779642545639424,
-                    null,
-                    "<p>test</p>",
-                    "test",
-                    Timestamp.from(Instant.parse("2020-01-02T00:00:00Z")),
-                    "PUBLIC",
-                    "http://localhost:8081/users/a/posts/18327739994749734912",
-                    null,
-                    null,
-                    false,
-                    "http://localhost:8081/users/a/posts/18327793994749734912",
-                    false,
-                    false,
-                    null
-                )
-                values(
-                    3,
-                    1,
-                    1832779642545639424,
-                    "",
-                    "<p>test</p>",
-                    "test",
-                    Timestamp.from(Instant.parse("2020-01-03T00:00:00Z")),
-                    "PUBLIC",
-                    "http://localhost:8081/users/a/posts/183277399947494734912",
-                    null,
-                    null,
-                    false,
-                    "http://localhost:8081/users/a/posts/183277939947493734912",
-                    false,
-                    false,
-                    2
-                )
+                postsValues(1)
+                postsValues(2)
+                postsValues(3)
             }
         }.launch()
 
         val findAllById = repository.findByActorId(ActorId(1), Page.of(maxId = 3))
+
+        findAllById.forEach(::println)
 
         assertThat(findAllById)
             .hasSize(2)
@@ -608,60 +461,9 @@ class ExposedPostRepositoryTest : AbstractRepositoryTest(Posts) {
             execute(disableReferenceIntegrityConstraints)
             insertInto("public.posts") {
                 columns(Posts.columns)
-                values(
-                    1,
-                    1,
-                    1832779642545639424,
-                    null,
-                    "<p>test</p>",
-                    "test",
-                    Timestamp.from(Instant.parse("2020-01-01T00:00:00Z")),
-                    "PUBLIC",
-                    "http://localhost:8081/users/a/posts/1832779994749734912",
-                    2,
-                    2,
-                    false,
-                    "http://localhost:8081/users/a/posts/1832779994749734912",
-                    false,
-                    false,
-                    null
-                )
-                values(
-                    2,
-                    1,
-                    1832779642545639424,
-                    null,
-                    "<p>test</p>",
-                    "test",
-                    Timestamp.from(Instant.parse("2020-01-02T00:00:00Z")),
-                    "PUBLIC",
-                    "http://localhost:8081/users/a/posts/18327739994749734912",
-                    null,
-                    null,
-                    false,
-                    "http://localhost:8081/users/a/posts/18327793994749734912",
-                    false,
-                    false,
-                    null
-                )
-                values(
-                    3,
-                    1,
-                    1832779642545639424,
-                    "",
-                    "<p>test</p>",
-                    "test",
-                    Timestamp.from(Instant.parse("2020-01-03T00:00:00Z")),
-                    "PUBLIC",
-                    "http://localhost:8081/users/a/posts/183277399947494734912",
-                    null,
-                    null,
-                    false,
-                    "http://localhost:8081/users/a/posts/183277939947493734912",
-                    false,
-                    false,
-                    2
-                )
+                postsValues(1)
+                postsValues(2)
+                postsValues(3)
             }
         }.launch()
 
@@ -680,60 +482,9 @@ class ExposedPostRepositoryTest : AbstractRepositoryTest(Posts) {
             execute(disableReferenceIntegrityConstraints)
             insertInto("public.posts") {
                 columns(Posts.columns)
-                values(
-                    1,
-                    1,
-                    1832779642545639424,
-                    null,
-                    "<p>test</p>",
-                    "test",
-                    Timestamp.from(Instant.parse("2020-01-01T00:00:00Z")),
-                    "PUBLIC",
-                    "http://localhost:8081/users/a/posts/1832779994749734912",
-                    2,
-                    2,
-                    false,
-                    "http://localhost:8081/users/a/posts/1832779994749734912",
-                    false,
-                    false,
-                    null
-                )
-                values(
-                    2,
-                    1,
-                    1832779642545639424,
-                    null,
-                    "<p>test</p>",
-                    "test",
-                    Timestamp.from(Instant.parse("2020-01-02T00:00:00Z")),
-                    "PUBLIC",
-                    "http://localhost:8081/users/a/posts/18327739994749734912",
-                    null,
-                    null,
-                    false,
-                    "http://localhost:8081/users/a/posts/18327793994749734912",
-                    false,
-                    false,
-                    null
-                )
-                values(
-                    3,
-                    1,
-                    1832779642545639424,
-                    "",
-                    "<p>test</p>",
-                    "test",
-                    Timestamp.from(Instant.parse("2020-01-03T00:00:00Z")),
-                    "PUBLIC",
-                    "http://localhost:8081/users/a/posts/183277399947494734912",
-                    null,
-                    null,
-                    false,
-                    "http://localhost:8081/users/a/posts/183277939947493734912",
-                    false,
-                    false,
-                    2
-                )
+                postsValues(1)
+                postsValues(2)
+                postsValues(3)
             }
         }.launch()
 
@@ -752,60 +503,9 @@ class ExposedPostRepositoryTest : AbstractRepositoryTest(Posts) {
             execute(disableReferenceIntegrityConstraints)
             insertInto("public.posts") {
                 columns(Posts.columns)
-                values(
-                    1,
-                    1,
-                    1832779642545639424,
-                    null,
-                    "<p>test</p>",
-                    "test",
-                    Timestamp.from(Instant.parse("2020-01-01T00:00:00Z")),
-                    "PUBLIC",
-                    "http://localhost:8081/users/a/posts/1832779994749734912",
-                    2,
-                    2,
-                    false,
-                    "http://localhost:8081/users/a/posts/1832779994749734912",
-                    false,
-                    false,
-                    null
-                )
-                values(
-                    2,
-                    1,
-                    1832779642545639424,
-                    null,
-                    "<p>test</p>",
-                    "test",
-                    Timestamp.from(Instant.parse("2020-01-02T00:00:00Z")),
-                    "PUBLIC",
-                    "http://localhost:8081/users/a/posts/18327739994749734912",
-                    null,
-                    null,
-                    false,
-                    "http://localhost:8081/users/a/posts/18327793994749734912",
-                    false,
-                    false,
-                    null
-                )
-                values(
-                    3,
-                    1,
-                    1832779642545639424,
-                    "",
-                    "<p>test</p>",
-                    "test",
-                    Timestamp.from(Instant.parse("2020-01-03T00:00:00Z")),
-                    "PUBLIC",
-                    "http://localhost:8081/users/a/posts/183277399947494734912",
-                    null,
-                    null,
-                    false,
-                    "http://localhost:8081/users/a/posts/183277939947493734912",
-                    false,
-                    false,
-                    2
-                )
+                postsValues(1)
+                postsValues(2)
+                postsValues(3)
             }
         }.launch()
 
@@ -823,24 +523,7 @@ class ExposedPostRepositoryTest : AbstractRepositoryTest(Posts) {
             execute(disableReferenceIntegrityConstraints)
             insertInto("public.posts") {
                 columns(Posts.columns)
-                values(
-                    1,
-                    1832779978794602496,
-                    1832779642545639424,
-                    "",
-                    "<p>test</p>",
-                    "test",
-                    Timestamp.from(Instant.parse("2020-01-01T00:00:00Z")),
-                    "PUBLIC",
-                    "http://localhost:8081/users/a/posts/1832779994749734912",
-                    null,
-                    null,
-                    false,
-                    "http://localhost:8081/users/a/posts/1832779994749734912",
-                    false,
-                    false,
-                    null
-                )
+                postsValues(1)
             }
             insertInto(PostsMedia.tableName) {
                 columns(PostsMedia.columns)
@@ -884,78 +567,10 @@ class ExposedPostRepositoryTest : AbstractRepositoryTest(Posts) {
             execute(disableReferenceIntegrityConstraints)
             insertInto("public.posts") {
                 columns(Posts.columns)
-                values(
-                    1,
-                    1,
-                    1832779642545639424,
-                    null,
-                    "<p>test</p>",
-                    "test",
-                    Timestamp.from(Instant.parse("2020-01-01T00:00:00Z")),
-                    "PUBLIC",
-                    "http://localhost:8081/users/a/posts/1832779994749734912",
-                    2,
-                    2,
-                    false,
-                    "http://localhost:8081/users/a/posts/1832779994749734912",
-                    false,
-                    false,
-                    null
-                )
-                values(
-                    2,
-                    2,
-                    1832779642545639424,
-                    null,
-                    "<p>test</p>",
-                    "test",
-                    Timestamp.from(Instant.parse("2020-01-02T00:00:00Z")),
-                    "PUBLIC",
-                    "http://localhost:8081/users/a/posts/18327739994749734912",
-                    null,
-                    null,
-                    false,
-                    "http://localhost:8081/users/a/posts/18327793994749734912",
-                    false,
-                    false,
-                    null
-                )
-                values(
-                    3,
-                    1,
-                    1832779642545639424,
-                    "",
-                    "<p>test</p>",
-                    "test",
-                    Timestamp.from(Instant.parse("2020-01-03T00:00:00Z")),
-                    "UNLISTED",
-                    "http://localhost:8081/users/a/posts/183277399947494734912",
-                    null,
-                    null,
-                    false,
-                    "http://localhost:8081/users/a/posts/183277939947493734912",
-                    false,
-                    false,
-                    2
-                )
-                values(
-                    4,
-                    1,
-                    1832779642545639424,
-                    "",
-                    "<p>test</p>",
-                    "test",
-                    Timestamp.from(Instant.parse("2020-01-04T00:00:00Z")),
-                    "FOLLOWERS",
-                    "http://localhost:8081/users/a/posts/1832773999474947343912",
-                    null,
-                    null,
-                    false,
-                    "http://localhost:8081/users/a/posts/1832779399474937349312",
-                    false,
-                    false,
-                    2
-                )
+                postsValues(1)
+                postsValues(2, 2)
+                postsValues(3, 2)
+                postsValues(4)
             }
         }.launch()
 
@@ -975,42 +590,8 @@ class ExposedPostRepositoryTest : AbstractRepositoryTest(Posts) {
             execute(disableReferenceIntegrityConstraints)
             insertInto("public.posts") {
                 columns(Posts.columns)
-                values(
-                    1,
-                    1,
-                    1832779642545639424,
-                    null,
-                    "<p>test</p>",
-                    "test",
-                    Timestamp.from(Instant.parse("2020-01-01T00:00:00Z")),
-                    "PUBLIC",
-                    "http://localhost:8081/users/a/posts/1832779994749734912",
-                    2,
-                    2,
-                    false,
-                    "http://localhost:8081/users/a/posts/1832779994749734912",
-                    false,
-                    false,
-                    null
-                )
-                values(
-                    3,
-                    1,
-                    1832779642545639424,
-                    "",
-                    "<p>test</p>",
-                    "test",
-                    Timestamp.from(Instant.parse("2020-01-03T00:00:00Z")),
-                    "UNLISTED",
-                    "http://localhost:8081/users/a/posts/183277399947494734912",
-                    null,
-                    null,
-                    false,
-                    "http://localhost:8081/users/a/posts/183277939947493734912",
-                    false,
-                    false,
-                    2
-                )
+                postsValues(1)
+                postsValues(3)
             }
             insertInto(PostsMedia.tableName) {
                 columns(PostsMedia.columns)
@@ -1087,42 +668,8 @@ class ExposedPostRepositoryTest : AbstractRepositoryTest(Posts) {
             execute(disableReferenceIntegrityConstraints)
             insertInto("public.posts") {
                 columns(Posts.columns)
-                values(
-                    1,
-                    1,
-                    1832779642545639424,
-                    null,
-                    "<p>test</p>",
-                    "test",
-                    Timestamp.from(Instant.parse("2020-01-01T00:00:00Z")),
-                    "PUBLIC",
-                    "http://localhost:8081/users/a/posts/1832779994749734912",
-                    2,
-                    2,
-                    false,
-                    "http://localhost:8081/users/a/posts/1832779994749734912",
-                    false,
-                    false,
-                    null
-                )
-                values(
-                    3,
-                    1,
-                    1832779642545639424,
-                    "",
-                    "<p>test</p>",
-                    "test",
-                    Timestamp.from(Instant.parse("2020-01-03T00:00:00Z")),
-                    "UNLISTED",
-                    "http://localhost:8081/users/a/posts/183277399947494734912",
-                    null,
-                    null,
-                    false,
-                    "http://localhost:8081/users/a/posts/183277939947493734912",
-                    false,
-                    false,
-                    2
-                )
+                postsValues(1)
+                postsValues(3)
             }
             insertInto(PostsMedia.tableName) {
                 columns(PostsMedia.columns)
@@ -1168,24 +715,7 @@ class ExposedPostRepositoryTest : AbstractRepositoryTest(Posts) {
             execute(disableReferenceIntegrityConstraints)
             insertInto("public.posts") {
                 columns(Posts.columns)
-                values(
-                    1,
-                    1,
-                    1832779642545639424,
-                    null,
-                    "<p>test</p>",
-                    "test",
-                    Timestamp.from(Instant.parse("2020-01-01T00:00:00Z")),
-                    "PUBLIC",
-                    "http://localhost:8081/users/a/posts/1832779994749734912",
-                    2,
-                    2,
-                    false,
-                    "http://localhost:8081/users/a/posts/1832779994749734912",
-                    false,
-                    false,
-                    null
-                )
+                postsValues(1)
             }
         }.launch()
 
