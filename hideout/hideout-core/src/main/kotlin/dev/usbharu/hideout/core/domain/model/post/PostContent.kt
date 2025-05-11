@@ -18,11 +18,49 @@ package dev.usbharu.hideout.core.domain.model.post
 
 import dev.usbharu.hideout.core.domain.model.emoji.CustomEmojiId
 
-data class PostContent(val text: String, val content: String, val emojiIds: List<CustomEmojiId>) {
+class PostContent {
+
+    val text: String
+    val content: String
+    val emojiIds: List<CustomEmojiId>
+
+    constructor(text: String, content: String, emojiIds: List<CustomEmojiId>) {
+        this.text = text.take(TEXT_LENGTH)
+        this.content = content.take(CONTENT_LENGTH)
+        this.emojiIds = emojiIds.distinct()
+    }
 
     companion object {
         val empty = PostContent("", "", emptyList())
         const val CONTENT_LENGTH = 5000
         const val TEXT_LENGTH = 3000
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as PostContent
+
+        if (text != other.text) return false
+        if (content != other.content) return false
+        if (emojiIds != other.emojiIds) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = text.hashCode()
+        result = 31 * result + content.hashCode()
+        result = 31 * result + emojiIds.hashCode()
+        return result
+    }
+
+    override fun toString(): String {
+        return "PostContent(" +
+                "text='$text', " +
+                "content='$content', " +
+                "emojiIds=$emojiIds" +
+                ")"
     }
 }
