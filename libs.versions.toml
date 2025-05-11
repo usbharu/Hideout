@@ -12,7 +12,7 @@ owl = "0.0.1"
 jackson = "2.18.2"
 protobuf = "4.29.3"
 grpc-java = "1.72.0"
-grpc-kotlin = "1.4.1"
+grpc-kotlin = "1.4.3"
 
 [libraries]
 
