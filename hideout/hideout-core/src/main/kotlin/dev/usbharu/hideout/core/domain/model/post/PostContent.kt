@@ -62,12 +62,10 @@ class PostContent {
 
     override fun toString(): String {
         return "PostContent(" +
-                "text='$text', " +
-                "content='$content', " +
-                "emojiIds=$emojiIds, " +
-                "wasTruncated=$wasTruncated" +
-                ")"
+            "text='$text', " +
+            "content='$content', " +
+            "emojiIds=$emojiIds, " +
+            "wasTruncated=$wasTruncated" +
+            ")"
     }
-
-
 }
