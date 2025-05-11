@@ -11,7 +11,7 @@ tika = "3.1.0"
 owl = "0.0.1"
 jackson = "2.18.2"
 protobuf = "4.29.3"
-grpc-java = "1.69.1"
+grpc-java = "1.70.0"
 grpc-kotlin = "1.4.1"
 
 [libraries]
@@ -89,6 +89,7 @@ grpc-protobuf = { module = "io.grpc:grpc-protobuf", version.ref = "grpc-java" }
 grpc-netty = { module = "io.grpc:grpc-netty", version.ref = "grpc-java" }
 protoc-gen-grpc-java = { module = "io.grpc:protoc-gen-grpc-java", version.ref = "grpc-java" }
 protoc-gen-grpc-kotlin = { module = "io.grpc:protoc-gen-grpc-kotlin", version.ref = "grpc-kotlin" }
+grpc-stub = { module = "io.grpc:grpc-stub", version.ref = "grpc-java" }
 
 protobuf-kotlin = { module = "com.google.protobuf:protobuf-kotlin", version.ref = "protobuf" }
 protoc = { module = "com.google.protobuf:protoc", version.ref = "protobuf" }
@@ -122,7 +123,7 @@ apache-tika = ["apache-tika-core", "apache-tika-parsers"]
 owl-producer = ["owl-producer-api", "owl-producer-default", "owl-producer-embedded"]
 owl-broker = ["owl-broker", "owl-broker-mongodb"]
 jackson = ["jackson-databind", "jackson-module-kotlin"]
-grpc-kotlin = ["grpc-kotlin-stub", "grpc-netty", "grpc-protobuf", "protobuf-kotlin"]
+grpc-kotlin = ["grpc-kotlin-stub", "grpc-netty", "grpc-protobuf", "protobuf-kotlin", "grpc-stub"]
 
 [plugins]
 
@@ -133,4 +134,4 @@ kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotl
 kover = { id = "org.jetbrains.kotlinx.kover", version = "0.9.1" }
 openapi-generator = { id = "org.openapi.generator", version = "7.13.0" }
 license-report = { id = "com.github.jk1.dependency-license-report", version = "2.9" }
-protobuf-plugin = { id = "com.google.protobuf", version = "0.9.4" }
+protobuf-plugin = { id = "com.google.protobuf", version = "0.9.5" }
