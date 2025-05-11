@@ -31,6 +31,7 @@ object TestPostFactory {
         hide: Boolean = false,
         moveTo: Long? = null,
         emojiIds: List<Long> = emptyList(),
+        wasTruncated: Boolean = false,
     ): Post {
         return Post(
             PostId(id),
@@ -49,7 +50,8 @@ object TestPostFactory {
             mediaIds = mediaIds.map { MediaId(it) },
             visibleActors = visibleActors.map { ActorId(it) }.toSet(),
             hide = hide,
-            moveTo = moveTo?.let { PostId(it) }
+            moveTo = moveTo?.let { PostId(it) },
+            wasTruncated = wasTruncated
         )
     }
 

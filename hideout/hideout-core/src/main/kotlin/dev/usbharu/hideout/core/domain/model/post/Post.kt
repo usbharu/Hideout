@@ -46,6 +46,7 @@ class Post(
     visibleActors: Set<ActorId>,
     hide: Boolean,
     moveTo: PostId?,
+    val wasTruncated: Boolean,
 ) : DomainEventStorable() {
 
     val actorId = actorId
@@ -235,7 +236,8 @@ class Post(
             mediaIds = mediaIds,
             visibleActors = visibleActors,
             hide = hide,
-            moveTo = moveTo
+            moveTo = moveTo,
+            wasTruncated = wasTruncated
         )
     }
 
@@ -310,7 +312,8 @@ class Post(
                 mediaIds = mediaIds,
                 visibleActors = visibleActors,
                 hide = hide,
-                moveTo = moveTo
+                moveTo = moveTo,
+                wasTruncated = content.wasTruncated
             )
             post.addDomainEvent(PostDomainEventFactory(post).createEvent(PostEvent.CREATE))
             return post

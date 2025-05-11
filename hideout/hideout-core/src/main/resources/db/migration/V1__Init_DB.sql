@@ -149,22 +149,23 @@ alter table actors
 
 create table if not exists posts
 (
-    id          bigint primary key,
-    actor_id    bigint                not null,
-    instance_id bigint                not null,
-    overview    varchar(100)          null,
-    content     varchar(5000)         not null,
-    text        varchar(3000)         not null,
-    created_at  timestamp             not null,
-    visibility  varchar(100)          not null,
-    url         varchar(500)          not null,
-    repost_id   bigint                null,
-    reply_id    bigint                null,
-    "sensitive" boolean default false not null,
-    ap_id       varchar(100)          not null unique,
-    deleted     boolean default false not null,
-    hide        boolean default false not null,
-    move_to     bigint  default null  null
+    id            bigint primary key,
+    actor_id      bigint                not null,
+    instance_id   bigint                not null,
+    overview      varchar(100)          null,
+    content       varchar(5000)         not null,
+    text          varchar(3000)         not null,
+    created_at    timestamp             not null,
+    visibility    varchar(100)          not null,
+    url           varchar(500)          not null,
+    repost_id     bigint                null,
+    reply_id      bigint                null,
+    "sensitive"   boolean default false not null,
+    ap_id         varchar(100)          not null unique,
+    deleted       boolean default false not null,
+    hide          boolean default false not null,
+    move_to       bigint  default null  null,
+    was_truncated boolean default false not null
 );
 alter table posts
     add constraint fk_posts_instance_id__id foreign key (instance_id) references instance (id) on delete cascade on update cascade;

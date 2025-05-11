@@ -39,6 +39,7 @@ import dev.usbharu.hideout.core.infrastructure.exposedrepository.Posts.sensitive
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Posts.text
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Posts.url
 import dev.usbharu.hideout.core.infrastructure.exposedrepository.Posts.visibility
+import dev.usbharu.hideout.core.infrastructure.exposedrepository.Posts.wasTruncated
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.inList
@@ -123,6 +124,7 @@ class ExposedPostRepository(
                 this[deleted] = it.deleted
                 this[hide] = it.hide
                 this[moveTo] = it.moveTo?.id
+                this[wasTruncated] = it.wasTruncated
             }
             val mediaIds = posts.flatMap { post -> post.mediaIds.map { post.id.id to it.id } }
             val postsIds = posts.map { it.id.id }
@@ -296,10 +298,11 @@ object Posts : Table("posts") {
     val repostId = long("repost_id").references(id).nullable()
     val replyId = long("reply_id").references(id).nullable()
     val sensitive = bool("sensitive")
-    val apId = varchar("ap_id", 1000)
+    val apId = varchar("ap_id", 1000).uniqueIndex()
     val deleted = bool("deleted")
     val hide = bool("hide")
     val moveTo = long("move_to").references(id).nullable()
+    val wasTruncated = bool("was_truncated").default(false).clientDefault { false }
     override val primaryKey: PrimaryKey = PrimaryKey(id)
 }
 

@@ -23,8 +23,10 @@ class PostContent {
     val text: String
     val content: String
     val emojiIds: List<CustomEmojiId>
+    val wasTruncated: Boolean
 
     constructor(text: String, content: String, emojiIds: List<CustomEmojiId>) {
+        wasTruncated = text.length > TEXT_LENGTH || content.length > CONTENT_LENGTH
         this.text = text.take(TEXT_LENGTH)
         this.content = content.take(CONTENT_LENGTH)
         this.emojiIds = emojiIds.distinct()
