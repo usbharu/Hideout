@@ -21,6 +21,7 @@ import com.github.jk1.license.importer.XmlReportImporter
 import com.github.jk1.license.render.*
 import kotlinx.kover.gradle.plugin.dsl.CoverageUnit
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
@@ -138,8 +139,18 @@ tasks {
             ).toMutableList()
         }
     }
+
+    named<BootJar>("bootJar") {
+        layered {
+//            enabled.set(false)
+        }
+    }
+
 }
 
+springBoot {
+    buildInfo()
+}
 
 
 kover {
