@@ -57,28 +57,7 @@ subprojects {
     kotlin {
         jvmToolchain(21)
     }
-
 }
-
-val mergeChildResources by tasks.registering(Copy::class) {
-    // 各子プロジェクトの resources を処理後に取得
-    dependsOn(subprojects.map { it.tasks.named("processResources") })
-
-    subprojects.forEach { sub ->
-        // 各サブプロジェクトの 'bootBuildInfo' タスクを待機するように設定
-        dependsOn(sub.tasks.named("bootBuildInfo"))
-
-        // サブプロジェクトの 'resources/main' をマージ
-        from(sub.layout.buildDirectory.dir("resources/main"))
-    }
-    into(layout.buildDirectory.dir("resources/main"))
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-}
-
-tasks.named<ProcessResources>("processResources") {
-    dependsOn(mergeChildResources)
-}
-
 
 tasks {
     register("run") {
@@ -104,7 +83,7 @@ tasks {
     }
     named<BootJar>("bootJar") {
         layered {
-            enabled = false
+            enabled.set(false)
         }
     }
 }
