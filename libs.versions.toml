@@ -97,7 +97,7 @@ protoc = { module = "com.google.protobuf:protoc", version.ref = "protobuf" }
 koin-bom = { module = "io.insert-koin:koin-bom", version = "4.0.4" }
 koin-core = { module = "io.insert-koin:koin-core" }
 
-log4j2-slf4j = { module = "org.apache.logging.log4j:log4j-slf4j2-impl", version = "2.24.3" }
+log4j2-slf4j = { module = "org.apache.logging.log4j:log4j-slf4j2-impl", version = "2.25.1" }
 
 mongodb-kotlin-coroutine = { module = "org.mongodb:mongodb-driver-kotlin-coroutine", version = "5.3.1" }
 
