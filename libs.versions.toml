@@ -11,7 +11,7 @@ tika = "3.2.1"
 owl = "0.0.1"
 jackson = "2.19.2"
 protobuf = "4.31.1"
-grpc-java = "1.72.0"
+grpc-java = "1.74.0"
 grpc-kotlin = "1.4.3"
 
 [libraries]
